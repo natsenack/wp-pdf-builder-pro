@@ -7,7 +7,7 @@ namespace PDF_Builder\Utilities;
  * Gestionnaire de conversion PDF vers Images (PNG/JPG)
  *
  * @package PDF_Builder
- * @since 1.0.0
+ * @since   1.0.0
  */
 
 if (!defined('ABSPATH')) {
@@ -22,8 +22,9 @@ class ImageConverter
     /**
      * Convertit un PDF en image (PNG/JPG)
      *
-     * @param string $pdf_content Contenu PDF binaire
-     * @param array $params Paramètres de conversion
+     * @param  string $pdf_content Contenu PDF binaire
+     * @param  array  $params      Paramètres
+     *                             de conversion
      * @return array Résultat de la conversion
      */
     public static function convertPdfToImage($pdf_content, $params)
@@ -198,9 +199,11 @@ class ImageConverter
     /**
      * Optimise une image selon le format
      *
-     * @param string $image_data Données image
-     * @param string $format Format souhaité
-     * @param int $quality Qualité (1-100)
+     * @param  string $image_data Données image
+     * @param  string $format     Format
+     *                            souhaité
+     * @param  int    $quality    Qualité
+     *                            (1-100)
      * @return string Données optimisées
      */
     public static function optimizeImage($image_data, $format, $quality = 85)

@@ -4,7 +4,8 @@
  * Gère les intégrations avec des services tiers (Google Drive, Dropbox, etc.)
  */
 
-class PDF_Builder_API_Manager {
+class PDF_Builder_API_Manager
+{
     private static $instance = null;
 
     // Services supportés
@@ -26,19 +27,22 @@ class PDF_Builder_API_Manager {
     private $connections = [];
     private $api_clients = [];
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_hooks();
         $this->load_connections();
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // AJAX handlers
         add_action('wp_ajax_pdf_builder_connect_api', [$this, 'connect_api_ajax']);
         add_action('wp_ajax_pdf_builder_disconnect_api', [$this, 'disconnect_api_ajax']);
@@ -61,7 +65,8 @@ class PDF_Builder_API_Manager {
     /**
      * Charge les connexions API depuis la base de données
      */
-    private function load_connections() {
+    private function load_connections()
+    {
         $stored_connections = get_option('pdf_builder_api_connections', []);
 
         foreach ($stored_connections as $service => $connection) {
@@ -72,7 +77,8 @@ class PDF_Builder_API_Manager {
     /**
      * Enregistre une connexion API
      */
-    public function register_connection($service, $credentials, $settings = []) {
+    public function register_connection($service, $credentials, $settings = [])
+    {
         try {
             // Valider les credentials
             $this->validate_credentials($service, $credentials);
@@ -120,7 +126,8 @@ class PDF_Builder_API_Manager {
     /**
      * Déconnecte un service API
      */
-    public function disconnect_connection($service) {
+    public function disconnect_connection($service)
+    {
         if (!isset($this->connections[$service])) {
             return [
                 'success' => false,
@@ -150,7 +157,8 @@ class PDF_Builder_API_Manager {
     /**
      * Teste une connexion API
      */
-    public function test_connection($service, $credentials = null) {
+    public function test_connection($service, $credentials = null)
+    {
         try {
             if ($credentials === null && isset($this->connections[$service])) {
                 $credentials = $this->decrypt_credentials($this->connections[$service]['credentials']);
@@ -186,7 +194,8 @@ class PDF_Builder_API_Manager {
     /**
      * Obtient le client API pour un service
      */
-    private function get_api_client($service, $credentials) {
+    private function get_api_client($service, $credentials)
+    {
         if (!isset($this->api_clients[$service])) {
             $client_class = $this->get_client_class($service);
 
@@ -203,7 +212,8 @@ class PDF_Builder_API_Manager {
     /**
      * Obtient la classe client pour un service
      */
-    private function get_client_class($service) {
+    private function get_client_class($service)
+    {
         $classes = [
             self::SERVICE_GOOGLE_DRIVE => 'PDF_Builder_Google_Drive_API',
             self::SERVICE_DROPBOX => 'PDF_Builder_Dropbox_API',
@@ -220,7 +230,8 @@ class PDF_Builder_API_Manager {
     /**
      * Valide les credentials pour un service
      */
-    private function validate_credentials($service, $credentials) {
+    private function validate_credentials($service, $credentials)
+    {
         $required_fields = $this->get_required_fields($service);
 
         foreach ($required_fields as $field) {
@@ -233,7 +244,8 @@ class PDF_Builder_API_Manager {
     /**
      * Obtient les champs requis pour un service
      */
-    private function get_required_fields($service) {
+    private function get_required_fields($service)
+    {
         $fields = [
             self::SERVICE_GOOGLE_DRIVE => ['client_id', 'client_secret', 'access_token'],
             self::SERVICE_DROPBOX => ['access_token'],
@@ -250,7 +262,8 @@ class PDF_Builder_API_Manager {
     /**
      * Chiffre les credentials
      */
-    private function encrypt_credentials($credentials) {
+    private function encrypt_credentials($credentials)
+    {
         $key = wp_salt('auth');
         $json = json_encode($credentials);
 
@@ -265,7 +278,8 @@ class PDF_Builder_API_Manager {
     /**
      * Déchiffre les credentials
      */
-    private function decrypt_credentials($encrypted) {
+    private function decrypt_credentials($encrypted)
+    {
         $key = wp_salt('auth');
 
         if (function_exists('openssl_decrypt')) {
@@ -280,7 +294,8 @@ class PDF_Builder_API_Manager {
     /**
      * Calcule la date d'expiration des credentials
      */
-    private function calculate_expiry($service, $credentials) {
+    private function calculate_expiry($service, $credentials)
+    {
         // Pour les services OAuth, utiliser expires_in si disponible
         if (isset($credentials['expires_in'])) {
             return date('Y-m-d H:i:s', time() + $credentials['expires_in']);
@@ -293,7 +308,8 @@ class PDF_Builder_API_Manager {
     /**
      * Révoque les tokens pour un service
      */
-    private function revoke_tokens($service, $connection) {
+    private function revoke_tokens($service, $connection)
+    {
         try {
             $credentials = $this->decrypt_credentials($connection['credentials']);
             $client = $this->get_api_client($service, $credentials);
@@ -312,14 +328,16 @@ class PDF_Builder_API_Manager {
     /**
      * Sauvegarde les connexions dans la base de données
      */
-    private function save_connections() {
+    private function save_connections()
+    {
         update_option('pdf_builder_api_connections', $this->connections);
     }
 
     /**
      * Synchronise avec les services externes
      */
-    public function sync_with_external_services($data, $services = null) {
+    public function sync_with_external_services($data, $services = null)
+    {
         $services = $services ?: array_keys($this->connections);
         $results = [];
 
@@ -351,7 +369,8 @@ class PDF_Builder_API_Manager {
     /**
      * Sauvegarde vers les services externes
      */
-    public function backup_to_external_services($backup_path, $services = null) {
+    public function backup_to_external_services($backup_path, $services = null)
+    {
         $services = $services ?: array_keys($this->connections);
         $results = [];
 
@@ -385,7 +404,8 @@ class PDF_Builder_API_Manager {
     /**
      * Gère les webhooks entrants
      */
-    public function handle_incoming_webhook() {
+    public function handle_incoming_webhook()
+    {
         try {
             $payload = json_decode(file_get_contents('php://input'), true);
             $signature = $_SERVER['HTTP_X_HUB_SIGNATURE'] ?? '';
@@ -412,10 +432,12 @@ class PDF_Builder_API_Manager {
             $client = $this->get_api_client($service, $credentials);
             $result = $client->process_webhook($payload, $event);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Webhook traité avec succès',
                 'result' => $result
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur webhook: ' . $e->getMessage()]);
@@ -425,7 +447,8 @@ class PDF_Builder_API_Manager {
     /**
      * Identifie le service d'un webhook
      */
-    private function identify_webhook_service($payload, $signature) {
+    private function identify_webhook_service($payload, $signature)
+    {
         // Identifier selon les headers et le payload
         if (isset($_SERVER['HTTP_X_GITHUB_EVENT'])) {
             return self::SERVICE_WEBHOOK; // GitHub webhook
@@ -438,7 +461,8 @@ class PDF_Builder_API_Manager {
     /**
      * Vérifie la signature d'un webhook
      */
-    private function verify_webhook_signature($service, $payload, $signature, $credentials) {
+    private function verify_webhook_signature($service, $payload, $signature, $credentials)
+    {
         if (!isset($credentials['secret'])) {
             return false;
         }
@@ -451,7 +475,8 @@ class PDF_Builder_API_Manager {
     /**
      * Nettoie les tokens expirés
      */
-    public function cleanup_expired_tokens() {
+    public function cleanup_expired_tokens()
+    {
         $now = current_time('mysql');
         $expired = [];
 
@@ -474,7 +499,8 @@ class PDF_Builder_API_Manager {
     /**
      * Obtient le statut de toutes les connexions API
      */
-    public function get_api_status() {
+    public function get_api_status()
+    {
         $status = [];
 
         foreach ($this->connections as $service => $connection) {
@@ -493,7 +519,8 @@ class PDF_Builder_API_Manager {
     /**
      * AJAX - Connecte un service API
      */
-    public function connect_api_ajax() {
+    public function connect_api_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -521,10 +548,12 @@ class PDF_Builder_API_Manager {
             $result = $this->register_connection($service, $credentials, $settings);
 
             if ($result['success']) {
-                wp_send_json_success([
+                wp_send_json_success(
+                    [
                     'message' => $result['message'],
                     'connection' => $result['connection']
-                ]);
+                    ]
+                );
             } else {
                 wp_send_json_error(['message' => $result['message']]);
             }
@@ -537,7 +566,8 @@ class PDF_Builder_API_Manager {
     /**
      * AJAX - Déconnecte un service API
      */
-    public function disconnect_api_ajax() {
+    public function disconnect_api_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -572,7 +602,8 @@ class PDF_Builder_API_Manager {
     /**
      * AJAX - Teste une connexion API
      */
-    public function test_api_connection_ajax() {
+    public function test_api_connection_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -594,15 +625,19 @@ class PDF_Builder_API_Manager {
             $result = $this->test_connection($service);
 
             if ($result['success']) {
-                wp_send_json_success([
+                wp_send_json_success(
+                    [
                     'message' => 'Connexion testée avec succès',
                     'result' => $result
-                ]);
+                    ]
+                );
             } else {
-                wp_send_json_error([
+                wp_send_json_error(
+                    [
                     'message' => 'Échec du test de connexion',
                     'result' => $result
-                ]);
+                    ]
+                );
             }
 
         } catch (Exception $e) {
@@ -613,7 +648,8 @@ class PDF_Builder_API_Manager {
     /**
      * AJAX - Obtient le statut des APIs
      */
-    public function get_api_status_ajax() {
+    public function get_api_status_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -627,10 +663,12 @@ class PDF_Builder_API_Manager {
 
             $status = $this->get_api_status();
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Statut récupéré',
                 'status' => $status
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -639,10 +677,12 @@ class PDF_Builder_API_Manager {
 }
 
 // Classes de clients API de base
-abstract class PDF_Builder_API_Client_Base {
+abstract class PDF_Builder_API_Client_Base
+{
     protected $credentials;
 
-    public function __construct($credentials) {
+    public function __construct($credentials)
+    {
         $this->credentials = $credentials;
     }
 
@@ -654,69 +694,85 @@ abstract class PDF_Builder_API_Client_Base {
 }
 
 // Client Google Drive
-class PDF_Builder_Google_Drive_API extends PDF_Builder_API_Client_Base {
-    public function test_connection() {
+class PDF_Builder_Google_Drive_API extends PDF_Builder_API_Client_Base
+{
+    public function test_connection()
+    {
         // Implémentation du test de connexion Google Drive
         return ['success' => true, 'message' => 'Connexion Google Drive OK'];
     }
 
-    public function sync($data) {
+    public function sync($data)
+    {
         // Implémentation de la synchronisation
         return ['uploaded' => true, 'url' => 'https://drive.google.com/...'];
     }
 
-    public function upload_backup($path) {
+    public function upload_backup($path)
+    {
         // Implémentation de l'upload de sauvegarde
         return ['uploaded' => true, 'file_id' => '12345'];
     }
 
-    public function send_notification($message, $level) {
+    public function send_notification($message, $level)
+    {
         // Google Drive ne supporte pas les notifications
         return ['sent' => false, 'message' => 'Non supporté'];
     }
 
-    public function process_webhook($payload, $event) {
+    public function process_webhook($payload, $event)
+    {
         // Traitement des webhooks Google Drive
         return ['processed' => true];
     }
 }
 
 // Client Dropbox
-class PDF_Builder_Dropbox_API extends PDF_Builder_API_Client_Base {
-    public function test_connection() {
+class PDF_Builder_Dropbox_API extends PDF_Builder_API_Client_Base
+{
+    public function test_connection()
+    {
         // Implémentation du test de connexion Dropbox
         return ['success' => true, 'message' => 'Connexion Dropbox OK'];
     }
 
-    public function sync($data) {
+    public function sync($data)
+    {
         // Implémentation de la synchronisation
         return ['uploaded' => true, 'url' => 'https://dropbox.com/...'];
     }
 
-    public function upload_backup($path) {
+    public function upload_backup($path)
+    {
         // Implémentation de l'upload de sauvegarde
         return ['uploaded' => true, 'file_id' => '12345'];
     }
 
-    public function send_notification($message, $level) {
+    public function send_notification($message, $level)
+    {
         // Dropbox ne supporte pas les notifications
         return ['sent' => false, 'message' => 'Non supporté'];
     }
 
-    public function process_webhook($payload, $event) {
+    public function process_webhook($payload, $event)
+    {
         // Traitement des webhooks Dropbox
         return ['processed' => true];
     }
 }
 
 // Client Slack
-class PDF_Builder_Slack_API extends PDF_Builder_API_Client_Base {
-    public function test_connection() {
+class PDF_Builder_Slack_API extends PDF_Builder_API_Client_Base
+{
+    public function test_connection()
+    {
         // Test de connexion Slack
-        $response = wp_remote_post($this->credentials['webhook_url'], [
+        $response = wp_remote_post(
+            $this->credentials['webhook_url'], [
             'body' => json_encode(['text' => 'Test de connexion PDF Builder Pro']),
             'headers' => ['Content-Type' => 'application/json']
-        ]);
+            ]
+        );
 
         return [
             'success' => !is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200,
@@ -724,17 +780,20 @@ class PDF_Builder_Slack_API extends PDF_Builder_API_Client_Base {
         ];
     }
 
-    public function sync($data) {
+    public function sync($data)
+    {
         // Slack ne supporte pas la synchronisation de fichiers
         return ['uploaded' => false, 'message' => 'Non supporté'];
     }
 
-    public function upload_backup($path) {
+    public function upload_backup($path)
+    {
         // Slack ne supporte pas l'upload de fichiers via webhook
         return ['uploaded' => false, 'message' => 'Non supporté'];
     }
 
-    public function send_notification($message, $level) {
+    public function send_notification($message, $level)
+    {
         $emoji = [
             'info' => ':information_source:',
             'success' => ':white_check_mark:',
@@ -748,50 +807,61 @@ class PDF_Builder_Slack_API extends PDF_Builder_API_Client_Base {
             'channel' => $this->credentials['channel'] ?? '#general'
         ];
 
-        $response = wp_remote_post($this->credentials['webhook_url'], [
+        $response = wp_remote_post(
+            $this->credentials['webhook_url'], [
             'body' => json_encode($payload),
             'headers' => ['Content-Type' => 'application/json']
-        ]);
+            ]
+        );
 
         return [
             'sent' => !is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200
         ];
     }
 
-    public function process_webhook($payload, $event) {
+    public function process_webhook($payload, $event)
+    {
         // Slack peut envoyer des webhooks entrants
         return ['processed' => true, 'payload' => $payload];
     }
 }
 
 // Fonctions globales
-function pdf_builder_api_manager() {
+function pdf_builder_api_manager()
+{
     return PDF_Builder_API_Manager::get_instance();
 }
 
-function pdf_builder_connect_api($service, $credentials, $settings = []) {
+function pdf_builder_connect_api($service, $credentials, $settings = [])
+{
     return PDF_Builder_API_Manager::get_instance()->register_connection($service, $credentials, $settings);
 }
 
-function pdf_builder_disconnect_api($service) {
+function pdf_builder_disconnect_api($service)
+{
     return PDF_Builder_API_Manager::get_instance()->disconnect_connection($service);
 }
 
-function pdf_builder_test_api($service) {
+function pdf_builder_test_api($service)
+{
     return PDF_Builder_API_Manager::get_instance()->test_connection($service);
 }
 
-function pdf_builder_sync_external($data, $services = null) {
+function pdf_builder_sync_external($data, $services = null)
+{
     return PDF_Builder_API_Manager::get_instance()->sync_with_external_services($data, $services);
 }
 
-function pdf_builder_backup_external($path, $services = null) {
+function pdf_builder_backup_external($path, $services = null)
+{
     return PDF_Builder_API_Manager::get_instance()->backup_to_external_services($path, $services);
 }
 
 // pdf_builder_notify_external removed - external notifications disabled
 
 // Initialiser le gestionnaire d'APIs
-add_action('plugins_loaded', function() {
-    PDF_Builder_API_Manager::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_API_Manager::get_instance();
+    }
+);

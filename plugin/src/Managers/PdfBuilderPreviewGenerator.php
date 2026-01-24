@@ -27,9 +27,9 @@ class PdfBuilderPreviewGenerator
         $this->template_data = $template_data;
         $this->preview_type = $preview_type;
         $this->order_id = $order_id;
-// Génère une clé de cache unique
+        // Génère une clé de cache unique
         $this->cache_key = $this->generateCacheKey();
-// Initialise Dompdf
+        // Initialise Dompdf
         $this->initDompdf();
     }
 
@@ -39,7 +39,7 @@ class PdfBuilderPreviewGenerator
     public function generatePreview()
     {
         try {
-// Vérifie le cache d'abord
+            // Vérifie le cache d'abord
             $cached_url = $this->getCachedPreview();
             if ($cached_url) {
                 return $cached_url;
@@ -47,9 +47,9 @@ class PdfBuilderPreviewGenerator
 
             // Récupère les données d'aperçu
             $preview_data = $this->getPreviewData();
-// Génère le PDF
+            // Génère le PDF
             $this->renderPdf($preview_data);
-// Sauvegarde et retourne l'URL
+            // Sauvegarde et retourne l'URL
             return $this->saveAndGetUrl();
         } catch (Exception $e) {
             throw $e;
@@ -101,7 +101,7 @@ class PdfBuilderPreviewGenerator
         // Charger l'autoloader de Composer pour Dompdf
         $composer_autoload = WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
         if (file_exists($composer_autoload)) {
-            require_once $composer_autoload;
+            include_once $composer_autoload;
         } else {
             throw new Exception('Autoloader de Composer introuvable. Vérifiez que les dépendances sont installées.');
         }
@@ -132,14 +132,14 @@ class PdfBuilderPreviewGenerator
         $cache_dir = $this->getCacheDirectory();
         $cache_file = $cache_dir . $this->cache_key . '.png';
         if (file_exists($cache_file)) {
-        // Vérifie si le cache n'est pas trop vieux (5 minutes)
+            // Vérifie si le cache n'est pas trop vieux (5 minutes)
             $file_age = time() - filemtime($cache_file);
             if ($file_age < 300) {
                 $upload_dir = wp_upload_dir();
                 $relative_path = str_replace($upload_dir['basedir'], '', $cache_file);
                 return $upload_dir['baseurl'] . $relative_path;
             } else {
-    // Supprime le cache expiré
+                // Supprime le cache expiré
                 unlink($cache_file);
             }
         }
@@ -153,11 +153,11 @@ class PdfBuilderPreviewGenerator
     private function getPreviewData()
     {
         switch ($this->preview_type) {
-            case 'order':
-                return $this->getOrderData();
-            case 'sample':
-            default:
-                return $this->getSampleData();
+        case 'order':
+            return $this->getOrderData();
+        case 'sample':
+        default:
+            return $this->getSampleData();
         }
     }
 
@@ -171,7 +171,7 @@ class PdfBuilderPreviewGenerator
         }
 
         $order = call_user_func('wc_get_order', $this->order_id);
-// @phpstan-ignore-line
+        // @phpstan-ignore-line
         if (!$order) {
             return $this->getSampleData();
         }
@@ -275,7 +275,7 @@ class PdfBuilderPreviewGenerator
     {
         // Génère le HTML au lieu d'utiliser les méthodes TCPDF
         $html = $this->generatePreviewHtml($data);
-// Charge le HTML dans Dompdf
+        // Charge le HTML dans Dompdf
         $this->dompdf->loadHtml($html);
         $this->dompdf->render();
     }
@@ -444,24 +444,24 @@ class PdfBuilderPreviewGenerator
     {
         $output = '';
         switch ($element['type']) {
-            case 'text':
-                                         $content = $this->processTextContent($element['content'] ?? '', $data);
-                $output = '<div class="element-text">' . esc_html($content) . '</div>';
+        case 'text':
+                                     $content = $this->processTextContent($element['content'] ?? '', $data);
+            $output = '<div class="element-text">' . esc_html($content) . '</div>';
 
-                break;
-            case 'image':
-                                     $src = $element['src'] ?? '';
-                if ($src) {
-                    $output = '<div class="element-placeholder"><img src="' . esc_url($src) . '" alt="Image" style="max-width: 100%; height: auto;"></div>';
-                } else {
-                    $output = '<div class="element-placeholder">[IMAGE: non défini]</div>';
-                }
+            break;
+        case 'image':
+                                 $src = $element['src'] ?? '';
+            if ($src) {
+                $output = '<div class="element-placeholder"><img src="' . esc_url($src) . '" alt="Image" style="max-width: 100%; height: auto;"></div>';
+            } else {
+                $output = '<div class="element-placeholder">[IMAGE: non défini]</div>';
+            }
 
-                break;
-            default:
-                                     $output = '<div class="element-placeholder">[Élément: ' . esc_html($element['type']) . ']</div>';
+            break;
+        default:
+                                 $output = '<div class="element-placeholder">[Élément: ' . esc_html($element['type']) . ']</div>';
 
-                break;
+            break;
         }
 
         return $output;
@@ -491,17 +491,17 @@ class PdfBuilderPreviewGenerator
     private function saveAndGetUrl()
     {
         $cache_dir = $this->getCacheDirectory();
-// Crée le répertoire de cache s'il n'existe pas
+        // Crée le répertoire de cache s'il n'existe pas
         if (!file_exists($cache_dir)) {
             wp_mkdir_p($cache_dir);
         }
 
         // Génère le PDF avec Dompdf
         $pdf_content = $this->dompdf->output();
-// Sauvegarde en PDF
+        // Sauvegarde en PDF
         $cache_file = $cache_dir . $this->cache_key . '.pdf';
         file_put_contents($cache_file, $pdf_content);
-// Retourne l'URL du PDF
+        // Retourne l'URL du PDF
         $upload_dir = wp_upload_dir();
         $relative_path = str_replace($upload_dir['basedir'], '', $cache_file);
         return $upload_dir['baseurl'] . $relative_path;

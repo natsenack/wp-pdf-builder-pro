@@ -10,9 +10,15 @@ use PDF_Builder\Interfaces\DataProviderInterface;
  */
 class CanvasGenerator extends BaseGenerator
 {
-    /** @var string HTML généré pour le canvas */
+    /**
+     * 
+     *
+     * @var string HTML généré pour le canvas 
+     */
     private $canvas_html;
-/** @var array Métriques de performance */
+    /**
+     * @var array Métriques de performance 
+     */
     private $performance_metrics;
 
     /**
@@ -36,7 +42,7 @@ class CanvasGenerator extends BaseGenerator
     {
         $this->performance_metrics['render_time'] = microtime(true);
         try {
-        // Pour les formats image, générer directement avec GD
+            // Pour les formats image, générer directement avec GD
             if (in_array($output_type, ['png', 'jpg'])) {
                 $image_data = $this->generateCanvasImage($output_type);
                 $this->performance_metrics['render_time'] = microtime(true) - $this->performance_metrics['render_time'];
@@ -75,27 +81,27 @@ class CanvasGenerator extends BaseGenerator
     /**
      * Génère une image directement avec GD (équivalent du canvas côté serveur)
      *
-     * @param string $format Format de l'image (png ou jpg)
+     * @param  string $format Format de l'image (png ou jpg)
      * @return string Données binaires de l'image
      */
     private function generateCanvasImage(string $format): string
     {
         $template_data = $this->template_data;
         $data_provider = $this->data_provider;
-// Dimensions A4 en pixels (approximatif pour aperçu)
+        // Dimensions A4 en pixels (approximatif pour aperçu)
         $width = 800;
         $height = 600;
-// Créer l'image GD
+        // Créer l'image GD
         $image = imagecreatetruecolor($width, $height);
-// Couleurs
+        // Couleurs
         $white = imagecolorallocate($image, 255, 255, 255);
         $black = imagecolorallocate($image, 0, 0, 0);
         $gray = imagecolorallocate($image, 200, 200, 200);
-// Fond blanc
+        // Fond blanc
         imagefill($image, 0, 0, $white);
-// Bordure
+        // Bordure
         imagerectangle($image, 0, 0, $width - 1, $height - 1, $gray);
-// Rendre les éléments du template
+        // Rendre les éléments du template
         if (isset($template_data['template']['elements'])) {
             foreach ($template_data['template']['elements'] as $element) {
                 $this->renderElementToImage($image, $element, $width, $height);
@@ -125,20 +131,20 @@ class CanvasGenerator extends BaseGenerator
     private function renderElementToImage($image, array $element, int $canvas_width, int $canvas_height): void
     {
         $type = $element['type'] ?? 'text';
-// Calculer les positions (simplifié)
+        // Calculer les positions (simplifié)
         $x = intval(($element['x'] ?? 50) * $canvas_width / 100);
         $y = intval(($element['y'] ?? 50) * $canvas_height / 100);
         $width = intval(($element['width'] ?? 200) * $canvas_width / 100);
         $height = intval(($element['height'] ?? 50) * $canvas_height / 100);
         switch ($type) {
-            case 'text':
-                                                                                                                                                                                                                                                                                                                                                                                                           $this->renderTextToImage($image, $element, $x, $y, $width, $height);
+        case 'text':
+                                                                                                                                                                                                                                                                                                                                                                                                       $this->renderTextToImage($image, $element, $x, $y, $width, $height);
 
-                break;
-            case 'rectangle':
-                                                                                                                                                                                                                                                                                                                                                                                                       $this->renderRectangleToImage($image, $element, $x, $y, $width, $height);
+            break;
+        case 'rectangle':
+                                                                                                                                                                                                                                                                                                                                                                                                   $this->renderRectangleToImage($image, $element, $x, $y, $width, $height);
 
-                break;
+            break;
         }
     }
 
@@ -150,12 +156,12 @@ class CanvasGenerator extends BaseGenerator
         $text = $element['content'] ?? '';
         $font_size = intval($element['fontSize'] ?? 12);
         $color = $element['color'] ?? '#000000';
-// Convertir couleur hex en RGB
+        // Convertir couleur hex en RGB
         $rgb = $this->hexToRgb($color);
         $text_color = imagecolorallocate($image, $rgb['r'], $rgb['g'], $rgb['b']);
-// Utiliser une police GD built-in (simplifié)
+        // Utiliser une police GD built-in (simplifié)
         $gd_font = 5;
-// Police GD 1-5
+        // Police GD 1-5
         imagestring($image, $gd_font, $x + 10, $y + 10, $text, $text_color);
     }
 
@@ -170,9 +176,9 @@ class CanvasGenerator extends BaseGenerator
         $border_rgb = $this->hexToRgb($border_color);
         $bg_gd_color = imagecolorallocate($image, $bg_rgb['r'], $bg_rgb['g'], $bg_rgb['b']);
         $border_gd_color = imagecolorallocate($image, $border_rgb['r'], $border_rgb['g'], $border_rgb['b']);
-// Remplir le rectangle
+        // Remplir le rectangle
         imagefilledrectangle($image, $x, $y, $x + $width, $y + $height, $bg_gd_color);
-// Bordure
+        // Bordure
         imagerectangle($image, $x, $y, $x + $width, $y + $height, $border_gd_color);
     }
 
@@ -210,21 +216,21 @@ class CanvasGenerator extends BaseGenerator
     private function generateCanvasHTML(): string
     {
         $data_provider = $this->data_provider;
-// Dimensions A4 en pixels (approximatif pour aperçu)
+        // Dimensions A4 en pixels (approximatif pour aperçu)
         $width = 595;
         $height = 842;
         $html = '<div class="wp-pdf-canvas-preview" style="position: relative; width: ' . $width . 'px; height: ' . $height . 'px; background: white; border: 1px solid #ddd;">';
         $html .= '<canvas id="pdf-canvas-' . uniqid() . '" width="' . $width . '" height="' . $height . '" style="display: block;"></canvas>';
-// JavaScript pour rendre les éléments
+        // JavaScript pour rendre les éléments
         $html .= '<script>';
         $html .= 'function renderCanvasPreview() {';
         $html .= 'const canvas = document.querySelector("canvas");';
         $html .= 'if (!canvas) return;';
         $html .= 'const ctx = canvas.getContext("2d");';
-// Fond blanc
+        // Fond blanc
         $html .= 'ctx.fillStyle = "white";';
         $html .= 'ctx.fillRect(0, 0, ' . $width . ', ' . $height . ');';
-// Rendre les éléments du template
+        // Rendre les éléments du template
         if (isset($template_data['template']['elements'])) {
             foreach ($template_data['template']['elements'] as $element) {
                 $html .= $this->generateCanvasElementJS($element, $width, $height);
@@ -246,9 +252,10 @@ class CanvasGenerator extends BaseGenerator
     /**
      * Génère le JavaScript pour rendre un élément sur le canvas
      *
-     * @param array $element Données de l'élément
-     * @param int $canvas_width Largeur du canvas
-     * @param int $canvas_height Hauteur du canvas
+     * @param  array $element       Données de
+     *                              l'élément
+     * @param  int   $canvas_width  Largeur du canvas
+     * @param  int   $canvas_height Hauteur du canvas
      * @return string JavaScript pour rendre l'élément
      */
     private function generateCanvasElementJS(array $element, int $canvas_width, int $canvas_height): string
@@ -258,21 +265,21 @@ class CanvasGenerator extends BaseGenerator
         $y = intval($element['y'] ?? 0);
         $width = intval($element['width'] ?? 100);
         $height = intval($element['height'] ?? 50);
-// Conversion des coordonnées relatives en pixels
+        // Conversion des coordonnées relatives en pixels
         $pixel_x = ($x / 100) * $canvas_width;
         $pixel_y = ($y / 100) * $canvas_height;
         $pixel_width = ($width / 100) * $canvas_width;
         $pixel_height = ($height / 100) * $canvas_height;
         $js = '';
         switch ($type) {
-            case 'text':
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      $js .= $this->generateCanvasTextJS($element, $pixel_x, $pixel_y, $pixel_width, $pixel_height);
+        case 'text':
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  $js .= $this->generateCanvasTextJS($element, $pixel_x, $pixel_y, $pixel_width, $pixel_height);
 
-                break;
-            case 'rectangle':
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  $js .= $this->generateCanvasRectangleJS($element, $pixel_x, $pixel_y, $pixel_width, $pixel_height);
+            break;
+        case 'rectangle':
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              $js .= $this->generateCanvasRectangleJS($element, $pixel_x, $pixel_y, $pixel_width, $pixel_height);
 
-                break;
+            break;
         }
 
         return $js;

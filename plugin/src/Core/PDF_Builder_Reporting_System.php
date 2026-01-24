@@ -5,9 +5,9 @@
  * Génération de rapports complets avec analyses, métriques,
  * et export dans multiple formats.
  *
- * @package PDF_Builder
+ * @package    PDF_Builder
  * @subpackage Core
- * @since 1.1.0
+ * @since      1.1.0
  */
 
 if (!defined('ABSPATH')) {
@@ -17,7 +17,8 @@ if (!defined('ABSPATH')) {
 /**
  * Classe principale du système de reporting
  */
-class PDF_Builder_Reporting_System {
+class PDF_Builder_Reporting_System
+{
 
     /**
      * Instance unique
@@ -32,7 +33,8 @@ class PDF_Builder_Reporting_System {
     /**
      * Constructeur privé
      */
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_report_data();
         $this->register_hooks();
     }
@@ -40,7 +42,8 @@ class PDF_Builder_Reporting_System {
     /**
      * Obtenir l'instance unique
      */
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -50,7 +53,8 @@ class PDF_Builder_Reporting_System {
     /**
      * Initialiser les données de reporting
      */
-    private function init_report_data() {
+    private function init_report_data()
+    {
         $this->report_data = array(
             'system_info' => $this->get_system_info(),
             'performance_metrics' => $this->get_performance_metrics(),
@@ -64,7 +68,8 @@ class PDF_Builder_Reporting_System {
     /**
      * Enregistrer les hooks
      */
-    private function register_hooks() {
+    private function register_hooks()
+    {
         add_action('wp_ajax_pdf_builder_generate_report', array($this, 'ajax_generate_report'));
         add_action('wp_ajax_pdf_builder_export_report', array($this, 'ajax_export_report'));
         add_action('pdf_builder_weekly_report', array($this, 'generate_weekly_report'));
@@ -73,7 +78,8 @@ class PDF_Builder_Reporting_System {
     /**
      * Générer un rapport complet
      */
-    public function generate_full_report($format = 'html') {
+    public function generate_full_report($format = 'html')
+    {
         $report = array(
             'title' => 'Rapport Complet PDF Builder Pro',
             'generated_at' => current_time('Y-m-d H:i:s'),
@@ -94,7 +100,8 @@ class PDF_Builder_Reporting_System {
     /**
      * Générer un rapport système
      */
-    private function generate_system_report() {
+    private function generate_system_report()
+    {
         $system_info = $this->report_data['system_info'];
 
         return array(
@@ -108,7 +115,8 @@ class PDF_Builder_Reporting_System {
     /**
      * Générer un rapport de performance
      */
-    private function generate_performance_report() {
+    private function generate_performance_report()
+    {
         $metrics = $this->report_data['performance_metrics'];
 
         return array(
@@ -126,7 +134,8 @@ class PDF_Builder_Reporting_System {
     /**
      * Générer un rapport d'utilisation
      */
-    private function generate_usage_report() {
+    private function generate_usage_report()
+    {
         $stats = $this->report_data['usage_statistics'];
 
         return array(
@@ -144,7 +153,8 @@ class PDF_Builder_Reporting_System {
     /**
      * Générer un rapport de sécurité
      */
-    private function generate_security_report() {
+    private function generate_security_report()
+    {
         $security = $this->report_data['security_status'];
 
         return array(
@@ -159,7 +169,8 @@ class PDF_Builder_Reporting_System {
     /**
      * Générer un rapport de base de données
      */
-    private function generate_database_report() {
+    private function generate_database_report()
+    {
         $db_health = $this->report_data['database_health'];
 
         return array(
@@ -173,7 +184,8 @@ class PDF_Builder_Reporting_System {
     /**
      * Générer des recommandations
      */
-    private function generate_recommendations() {
+    private function generate_recommendations()
+    {
         $recommendations = array();
 
         // Recommandations basées sur les métriques
@@ -213,24 +225,26 @@ class PDF_Builder_Reporting_System {
     /**
      * Formater le rapport selon le format demandé
      */
-    private function format_report($report, $format) {
+    private function format_report($report, $format)
+    {
         switch ($format) {
-            case 'pdf':
-                return $this->format_pdf_report($report);
-            case 'csv':
-                return $this->format_csv_report($report);
-            case 'json':
-                return $this->format_json_report($report);
-            case 'html':
-            default:
-                return $this->format_html_report($report);
+        case 'pdf':
+            return $this->format_pdf_report($report);
+        case 'csv':
+            return $this->format_csv_report($report);
+        case 'json':
+            return $this->format_json_report($report);
+        case 'html':
+        default:
+            return $this->format_html_report($report);
         }
     }
 
     /**
      * Formater en HTML
      */
-    private function format_html_report($report) {
+    private function format_html_report($report)
+    {
         ob_start();
         ?>
         <!DOCTYPE html>
@@ -279,7 +293,8 @@ class PDF_Builder_Reporting_System {
     /**
      * Rendre le contenu d'une section
      */
-    private function render_section_content($section, $section_key) {
+    private function render_section_content($section, $section_key)
+    {
         if (isset($section['data']) && is_array($section['data'])) {
             echo '<table>';
             echo '<tr><th>Metric</th><th>Value</th><th>Status</th></tr>';
@@ -320,7 +335,8 @@ class PDF_Builder_Reporting_System {
     /**
      * Obtenir le statut d'une métrique
      */
-    private function get_metric_status($key, $value) {
+    private function get_metric_status($key, $value)
+    {
         $thresholds = array(
             'memory_usage' => array('good' => 60, 'warning' => 80),
             'cpu_usage' => array('good' => 70, 'warning' => 90),
@@ -345,7 +361,8 @@ class PDF_Builder_Reporting_System {
     /**
      * Méthodes pour obtenir les données du système
      */
-    private function get_system_info() {
+    private function get_system_info()
+    {
         return array(
             'wordpress_version' => get_bloginfo('version'),
             'php_version' => PHP_VERSION,
@@ -360,7 +377,8 @@ class PDF_Builder_Reporting_System {
         );
     }
 
-    private function get_performance_metrics() {
+    private function get_performance_metrics()
+    {
         return array(
             'memory_usage' => $this->get_memory_usage_percentage(),
             'cpu_usage' => $this->get_cpu_usage(),
@@ -371,7 +389,8 @@ class PDF_Builder_Reporting_System {
         );
     }
 
-    private function get_usage_statistics() {
+    private function get_usage_statistics()
+    {
         global $wpdb;
 
         $stats = array(
@@ -384,7 +403,8 @@ class PDF_Builder_Reporting_System {
         return $stats;
     }
 
-    private function get_security_status() {
+    private function get_security_status()
+    {
         return array(
             'failed_logins' => intval(get_option('pdf_builder_failed_logins', 0)),
             'blocked_ips' => count(get_option('pdf_builder_blocked_ips', array())),
@@ -395,7 +415,8 @@ class PDF_Builder_Reporting_System {
         );
     }
 
-    private function get_database_health() {
+    private function get_database_health()
+    {
         global $wpdb;
 
         return array(
@@ -407,7 +428,8 @@ class PDF_Builder_Reporting_System {
         );
     }
 
-    private function get_cache_status() {
+    private function get_cache_status()
+    {
         $cache_metrics = get_option('pdf_builder_cache_metrics', array());
 
         return array(
@@ -422,21 +444,23 @@ class PDF_Builder_Reporting_System {
     /**
      * Méthodes utilitaires
      */
-    private function get_mysql_version() {
+    private function get_mysql_version()
+    {
         global $wpdb;
         return $wpdb->get_var("SELECT VERSION()");
     }
 
-    private function get_memory_usage_percentage() {
+    private function get_memory_usage_percentage()
+    {
         $memory_limit = ini_get('memory_limit');
         if (preg_match('/^(\d+)(.)$/', $memory_limit, $matches)) {
             $limit = (int) $matches[1];
             $unit = strtolower($matches[2]);
 
             switch ($unit) {
-                case 'g': $limit *= 1024;
-                case 'm': $limit *= 1024;
-                case 'k': $limit *= 1024;
+            case 'g': $limit *= 1024;
+            case 'm': $limit *= 1024;
+            case 'k': $limit *= 1024;
             }
 
             $usage = memory_get_peak_usage(true);
@@ -445,12 +469,14 @@ class PDF_Builder_Reporting_System {
         return 0;
     }
 
-    private function get_cpu_usage() {
+    private function get_cpu_usage()
+    {
         // Estimation simple - en production, utiliser un monitoring réel
         return rand(10, 50); // Placeholder
     }
 
-    private function get_average_response_time() {
+    private function get_average_response_time()
+    {
         // Calcul basé sur les métriques stockées
         $response_times = get_option('pdf_builder_response_times', array());
         if (empty($response_times)) {
@@ -459,7 +485,8 @@ class PDF_Builder_Reporting_System {
         return round(array_sum($response_times) / count($response_times), 3);
     }
 
-    private function get_cache_hit_ratio() {
+    private function get_cache_hit_ratio()
+    {
         $metrics = get_option('pdf_builder_cache_metrics', array());
         $hits = $metrics['hits'] ?? 0;
         $misses = $metrics['misses'] ?? 0;
@@ -467,33 +494,40 @@ class PDF_Builder_Reporting_System {
         return $total > 0 ? round(($hits / $total) * 100, 2) : 0;
     }
 
-    private function calculate_hit_ratio($metrics) {
+    private function calculate_hit_ratio($metrics)
+    {
         $hits = $metrics['hits'] ?? 0;
         $misses = $metrics['misses'] ?? 0;
         $total = $hits + $misses;
         return $total > 0 ? round(($hits / $total) * 100, 2) : 0;
     }
 
-    private function get_database_size() {
+    private function get_database_size()
+    {
         global $wpdb;
-        $result = $wpdb->get_row("SELECT
+        $result = $wpdb->get_row(
+            "SELECT
             ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) as size_mb
             FROM information_schema.TABLES
-            WHERE table_schema = '{$wpdb->dbname}'");
+            WHERE table_schema = '{$wpdb->dbname}'"
+        );
         return $result ? $result->size_mb : 0;
     }
 
-    private function check_database_connection() {
+    private function check_database_connection()
+    {
         global $wpdb;
         return $wpdb->check_connection() ? 'Connected' : 'Disconnected';
     }
 
-    private function check_orphaned_data() {
+    private function check_orphaned_data()
+    {
         // Vérifier les données orphelines (simplifié)
         return 0; // Placeholder
     }
 
-    private function calculate_system_health_score($system_info) {
+    private function calculate_system_health_score($system_info)
+    {
         $score = 100;
 
         if (version_compare($system_info['php_version'], '7.4', '<')) {
@@ -507,7 +541,8 @@ class PDF_Builder_Reporting_System {
         return max(0, $score);
     }
 
-    private function get_system_alerts($system_info) {
+    private function get_system_alerts($system_info)
+    {
         $alerts = array();
 
         if (version_compare($system_info['php_version'], '7.4', '<')) {
@@ -524,34 +559,41 @@ class PDF_Builder_Reporting_System {
     /**
      * Générer des graphiques (placeholders pour HTML)
      */
-    private function generate_response_time_chart($metrics) {
+    private function generate_response_time_chart($metrics)
+    {
         return '<div class="chart-placeholder">Graphique des temps de réponse</div>';
     }
 
-    private function generate_memory_usage_chart($metrics) {
+    private function generate_memory_usage_chart($metrics)
+    {
         return '<div class="chart-placeholder">Graphique d\'utilisation mémoire</div>';
     }
 
-    private function generate_cpu_usage_chart($metrics) {
+    private function generate_cpu_usage_chart($metrics)
+    {
         return '<div class="chart-placeholder">Graphique d\'utilisation CPU</div>';
     }
 
-    private function generate_templates_chart($stats) {
+    private function generate_templates_chart($stats)
+    {
         return '<div class="chart-placeholder">Graphique des templates créés</div>';
     }
 
-    private function generate_pdfs_chart($stats) {
+    private function generate_pdfs_chart($stats)
+    {
         return '<div class="chart-placeholder">Graphique des PDFs générés</div>';
     }
 
-    private function generate_user_activity_chart($stats) {
+    private function generate_user_activity_chart($stats)
+    {
         return '<div class="chart-placeholder">Graphique d\'activité utilisateur</div>';
     }
 
     /**
      * Handlers AJAX
      */
-    public function ajax_generate_report() {
+    public function ajax_generate_report()
+    {
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Permissions insuffisantes');
         }
@@ -559,13 +601,16 @@ class PDF_Builder_Reporting_System {
         $format = sanitize_text_field($_POST['format'] ?? 'html');
         $report = $this->generate_full_report($format);
 
-        wp_send_json_success(array(
+        wp_send_json_success(
+            array(
             'report' => $report,
             'format' => $format,
-        ));
+            )
+        );
     }
 
-    public function ajax_export_report() {
+    public function ajax_export_report()
+    {
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Permissions insuffisantes');
         }
@@ -574,16 +619,19 @@ class PDF_Builder_Reporting_System {
         $report = $this->generate_full_report($format);
 
         // Pour l'instant, retourner le contenu - en production, générer un fichier
-        wp_send_json_success(array(
+        wp_send_json_success(
+            array(
             'content' => $report,
             'filename' => 'pdf-builder-report-' . date('Y-m-d') . '.' . $format,
-        ));
+            )
+        );
     }
 
     /**
      * Générer un rapport hebdomadaire automatique
      */
-    public function generate_weekly_report() {
+    public function generate_weekly_report()
+    {
         $report = $this->generate_full_report('html');
 
         // Sauvegarder le rapport
@@ -613,14 +661,44 @@ class PDF_Builder_Reporting_System {
     /**
      * Placeholders pour les autres méthodes
      */
-    private function get_performance_recommendations($metrics) { return array(); }
-    private function get_usage_insights($stats) { return array(); }
-    private function get_security_vulnerabilities($security) { return array(); }
-    private function get_security_recommendations($security) { return array(); }
-    private function check_compliance_status($security) { return array(); }
-    private function get_database_optimization_suggestions($db_health) { return array(); }
-    private function get_backup_status() { return array(); }
-    private function format_pdf_report($report) { return 'PDF format not implemented yet'; }
-    private function format_csv_report($report) { return 'CSV format not implemented yet'; }
-    private function format_json_report($report) { return json_encode($report); }
+    private function get_performance_recommendations($metrics)
+    {
+        return array(); 
+    }
+    private function get_usage_insights($stats)
+    {
+        return array(); 
+    }
+    private function get_security_vulnerabilities($security)
+    {
+        return array(); 
+    }
+    private function get_security_recommendations($security)
+    {
+        return array(); 
+    }
+    private function check_compliance_status($security)
+    {
+        return array(); 
+    }
+    private function get_database_optimization_suggestions($db_health)
+    {
+        return array(); 
+    }
+    private function get_backup_status()
+    {
+        return array(); 
+    }
+    private function format_pdf_report($report)
+    {
+        return 'PDF format not implemented yet'; 
+    }
+    private function format_csv_report($report)
+    {
+        return 'CSV format not implemented yet'; 
+    }
+    private function format_json_report($report)
+    {
+        return json_encode($report); 
+    }
 }

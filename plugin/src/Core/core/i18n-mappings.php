@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class PDF_Builder_I18n_Mappings {
+class PDF_Builder_I18n_Mappings
+{
 
     // ==========================================
     // DOMAINES DE TRADUCTION
@@ -456,28 +457,32 @@ class PDF_Builder_I18n_Mappings {
     /**
      * Obtenir les domaines de traduction
      */
-    public static function get_text_domains() {
+    public static function get_text_domains()
+    {
         return self::$text_domains;
     }
 
     /**
      * Obtenir un domaine de traduction spécifique
      */
-    public static function get_text_domain($key) {
+    public static function get_text_domain($key)
+    {
         return self::$text_domains[$key] ?? self::$text_domains['pdf_builder'];
     }
 
     /**
      * Obtenir toutes les chaînes de traduction
      */
-    public static function get_translation_strings() {
+    public static function get_translation_strings()
+    {
         return self::$translation_strings;
     }
 
     /**
      * Obtenir une chaîne de traduction
      */
-    public static function get_translation_string($key, $locale = null) {
+    public static function get_translation_string($key, $locale = null)
+    {
         $locale = $locale ?: self::get_current_locale();
         $strings = self::$translation_strings[$key] ?? null;
 
@@ -491,7 +496,8 @@ class PDF_Builder_I18n_Mappings {
     /**
      * Obtenir la configuration régionale
      */
-    public static function get_locale_config($locale = null) {
+    public static function get_locale_config($locale = null)
+    {
         $locale = $locale ?: self::get_current_locale();
         return self::$locale_configs[$locale] ?? self::$locale_configs['en_US'];
     }
@@ -499,14 +505,16 @@ class PDF_Builder_I18n_Mappings {
     /**
      * Obtenir les formes plurielles
      */
-    public static function get_plural_forms() {
+    public static function get_plural_forms()
+    {
         return self::$plural_forms;
     }
 
     /**
      * Obtenir une forme plurielle
      */
-    public static function get_plural_form($key, $count = 1, $locale = null) {
+    public static function get_plural_form($key, $count = 1, $locale = null)
+    {
         $locale = $locale ?: self::get_current_locale();
         $forms = self::$plural_forms[$key] ?? null;
 
@@ -523,14 +531,16 @@ class PDF_Builder_I18n_Mappings {
     /**
      * Obtenir la locale actuelle
      */
-    public static function get_current_locale() {
+    public static function get_current_locale()
+    {
         return get_locale() ?: 'en_US';
     }
 
     /**
      * Formater un nombre selon la locale
      */
-    public static function format_number($number, $locale = null) {
+    public static function format_number($number, $locale = null)
+    {
         $config = self::get_locale_config($locale);
         $format = $config['number_format'];
 
@@ -545,7 +555,8 @@ class PDF_Builder_I18n_Mappings {
     /**
      * Formater une monnaie selon la locale
      */
-    public static function format_currency($amount, $locale = null) {
+    public static function format_currency($amount, $locale = null)
+    {
         $config = self::get_locale_config($locale);
         $currency = $config['currency'];
 
@@ -561,7 +572,8 @@ class PDF_Builder_I18n_Mappings {
     /**
      * Formater une date selon la locale
      */
-    public static function format_date($timestamp, $locale = null) {
+    public static function format_date($timestamp, $locale = null)
+    {
         $config = self::get_locale_config($locale);
         return date($config['date_format'], $timestamp);
     }
@@ -569,7 +581,8 @@ class PDF_Builder_I18n_Mappings {
     /**
      * Formater une heure selon la locale
      */
-    public static function format_time($timestamp, $locale = null) {
+    public static function format_time($timestamp, $locale = null)
+    {
         $config = self::get_locale_config($locale);
         return date($config['time_format'], $timestamp);
     }
@@ -577,7 +590,8 @@ class PDF_Builder_I18n_Mappings {
     /**
      * Traduire une chaîne avec WordPress
      */
-    public static function __($key, $domain = null) {
+    public static function __($key, $domain = null)
+    {
         $domain = $domain ?: self::get_text_domain('pdf_builder');
         $text = self::get_translation_string($key);
 
@@ -587,7 +601,8 @@ class PDF_Builder_I18n_Mappings {
     /**
      * Traduire une chaîne plurielle avec WordPress
      */
-    public static function _n($key, $count, $domain = null) {
+    public static function _n($key, $count, $domain = null)
+    {
         $domain = $domain ?: self::get_text_domain('pdf_builder');
         $singular = self::get_translation_string($key);
         $plural = self::get_plural_form($key, 2); // Obtenir la forme plurielle
@@ -598,7 +613,8 @@ class PDF_Builder_I18n_Mappings {
     /**
      * Générer le fichier POT pour les traductions
      */
-    public static function generate_pot_file($output_path) {
+    public static function generate_pot_file($output_path)
+    {
         $pot_content = "# PDF Builder Pro Translation Template\n";
         $pot_content .= "# Copyright (C) " . date('Y') . " PDF Builder Pro\n";
         $pot_content .= "# This file is distributed under the same license as the PDF Builder Pro package.\n";
@@ -636,7 +652,8 @@ class PDF_Builder_I18n_Mappings {
     /**
      * Charger les traductions depuis un fichier MO
      */
-    public static function load_translations($locale, $domain = null) {
+    public static function load_translations($locale, $domain = null)
+    {
         $domain = $domain ?: self::get_text_domain('pdf_builder');
         $mo_file = WP_LANG_DIR . "/plugins/{$domain}-{$locale}.mo";
 

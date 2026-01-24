@@ -4,7 +4,8 @@
  * Gère les thèmes, couleurs, polices et personnalisation de l'interface
  */
 
-class PDF_Builder_Theme_Customizer {
+class PDF_Builder_Theme_Customizer
+{
     private static $instance = null;
 
     // Thèmes prédéfinis
@@ -56,19 +57,22 @@ class PDF_Builder_Theme_Customizer {
     // Configuration actuelle du thème
     private $current_theme_config = [];
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_hooks();
         $this->load_theme_config();
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Actions AJAX
         add_action('wp_ajax_pdf_builder_save_theme', [$this, 'save_theme_ajax']);
         add_action('wp_ajax_pdf_builder_reset_theme', [$this, 'reset_theme_ajax']);
@@ -94,52 +98,68 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Enregistre les paramètres du thème
      */
-    public function register_theme_settings() {
-        register_setting('pdf_builder_theme', 'pdf_builder_theme_preset', [
+    public function register_theme_settings()
+    {
+        register_setting(
+            'pdf_builder_theme', 'pdf_builder_theme_preset', [
             'type' => 'string',
             'default' => self::THEME_DEFAULT,
             'sanitize_callback' => [$this, 'sanitize_theme_preset']
-        ]);
+            ]
+        );
 
-        register_setting('pdf_builder_theme', 'pdf_builder_custom_colors', [
+        register_setting(
+            'pdf_builder_theme', 'pdf_builder_custom_colors', [
             'type' => 'array',
             'default' => [],
             'sanitize_callback' => [$this, 'sanitize_color_array']
-        ]);
+            ]
+        );
 
-        register_setting('pdf_builder_theme', 'pdf_builder_font_family', [
+        register_setting(
+            'pdf_builder_theme', 'pdf_builder_font_family', [
             'type' => 'string',
             'default' => 'system',
             'sanitize_callback' => [$this, 'sanitize_font_family']
-        ]);
+            ]
+        );
 
-        register_setting('pdf_builder_theme', 'pdf_builder_font_size', [
+        register_setting(
+            'pdf_builder_theme', 'pdf_builder_font_size', [
             'type' => 'string',
             'default' => 'base',
             'sanitize_callback' => [$this, 'sanitize_font_size']
-        ]);
+            ]
+        );
 
-        register_setting('pdf_builder_theme', 'pdf_builder_border_radius', [
+        register_setting(
+            'pdf_builder_theme', 'pdf_builder_border_radius', [
             'type' => 'string',
             'default' => '4px',
             'sanitize_callback' => 'sanitize_text_field'
-        ]);
+            ]
+        );
 
-        register_setting('pdf_builder_theme', 'pdf_builder_enable_animations', [
+        register_setting(
+            'pdf_builder_theme', 'pdf_builder_enable_animations', [
             'type' => 'boolean',
             'default' => true
-        ]);
+            ]
+        );
 
-        register_setting('pdf_builder_theme', 'pdf_builder_enable_shadows', [
+        register_setting(
+            'pdf_builder_theme', 'pdf_builder_enable_shadows', [
             'type' => 'boolean',
             'default' => true
-        ]);
+            ]
+        );
     }
 
     /**
      * Ajoute le menu du thème
      */
-    public function add_theme_menu() {
+    public function add_theme_menu()
+    {
         add_submenu_page(
             'pdf-builder-settings',
             pdf_builder_translate('Personnalisation du thème', 'theme'),
@@ -153,7 +173,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Rend la page du thème
      */
-    public function render_theme_page() {
+    public function render_theme_page()
+    {
         if (!current_user_can('manage_options')) {
             wp_die(pdf_builder_translate('Accès refusé', 'theme'));
         }
@@ -170,7 +191,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Charge la configuration du thème
      */
-    private function load_theme_config() {
+    private function load_theme_config()
+    {
         $this->current_theme_config = [
             'preset' => get_option('pdf_builder_theme_preset', self::THEME_DEFAULT),
             'colors' => array_merge($this->default_colors, get_option('pdf_builder_custom_colors', [])),
@@ -185,7 +207,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Obtient les thèmes disponibles
      */
-    public function get_available_themes() {
+    public function get_available_themes()
+    {
         return [
             self::THEME_DEFAULT => [
                 'name' => pdf_builder_translate('Par défaut', 'theme'),
@@ -195,44 +218,54 @@ class PDF_Builder_Theme_Customizer {
             self::THEME_DARK => [
                 'name' => pdf_builder_translate('Sombre', 'theme'),
                 'description' => pdf_builder_translate('Thème sombre moderne', 'theme'),
-                'colors' => array_merge($this->default_colors, [
+                'colors' => array_merge(
+                    $this->default_colors, [
                     'primary' => '#bb86fc',
                     'light' => '#1e1e1e',
                     'dark' => '#ffffff'
-                ])
+                    ]
+                )
             ],
             self::THEME_LIGHT => [
                 'name' => pdf_builder_translate('Clair', 'theme'),
                 'description' => pdf_builder_translate('Thème clair et aéré', 'theme'),
-                'colors' => array_merge($this->default_colors, [
+                'colors' => array_merge(
+                    $this->default_colors, [
                     'primary' => '#007cba',
                     'light' => '#ffffff',
                     'dark' => '#2c3338'
-                ])
+                    ]
+                )
             ],
             self::THEME_BLUE => [
                 'name' => pdf_builder_translate('Bleu', 'theme'),
                 'description' => pdf_builder_translate('Thème bleu professionnel', 'theme'),
-                'colors' => array_merge($this->default_colors, [
+                'colors' => array_merge(
+                    $this->default_colors, [
                     'primary' => '#0066cc',
                     'info' => '#0099ff'
-                ])
+                    ]
+                )
             ],
             self::THEME_GREEN => [
                 'name' => pdf_builder_translate('Vert', 'theme'),
                 'description' => pdf_builder_translate('Thème vert naturel', 'theme'),
-                'colors' => array_merge($this->default_colors, [
+                'colors' => array_merge(
+                    $this->default_colors, [
                     'primary' => '#28a745',
                     'success' => '#20c997'
-                ])
+                    ]
+                )
             ],
             self::THEME_PURPLE => [
                 'name' => pdf_builder_translate('Violet', 'theme'),
                 'description' => pdf_builder_translate('Thème violet créatif', 'theme'),
-                'colors' => array_merge($this->default_colors, [
+                'colors' => array_merge(
+                    $this->default_colors, [
                     'primary' => '#6f42c1',
                     'secondary' => '#e83e8c'
-                ])
+                    ]
+                )
             ]
         ];
     }
@@ -240,35 +273,40 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Obtient le thème actuel
      */
-    public function get_current_theme_preset() {
+    public function get_current_theme_preset()
+    {
         return $this->current_theme_config['preset'];
     }
 
     /**
      * Obtient les couleurs personnalisées
      */
-    public function get_custom_colors() {
+    public function get_custom_colors()
+    {
         return $this->current_theme_config['colors'];
     }
 
     /**
      * Obtient la police actuelle
      */
-    public function get_font_family() {
+    public function get_font_family()
+    {
         return $this->current_theme_config['font_family'];
     }
 
     /**
      * Obtient la taille de police actuelle
      */
-    public function get_font_size() {
+    public function get_font_size()
+    {
         return $this->current_theme_config['font_size'];
     }
 
     /**
      * Applique le CSS du thème
      */
-    public function apply_theme_css($css) {
+    public function apply_theme_css($css)
+    {
         $theme_css = $this->generate_theme_css();
 
         return $css . "\n" . $theme_css;
@@ -277,7 +315,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Génère le CSS du thème
      */
-    public function generate_theme_css() {
+    public function generate_theme_css()
+    {
         $config = $this->current_theme_config;
         $css = [];
 
@@ -335,7 +374,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Obtient le CSS de la police
      */
-    private function get_font_family_css($font_key) {
+    private function get_font_family_css($font_key)
+    {
         $font_map = [
             'system' => '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             'arial' => 'Arial, sans-serif',
@@ -355,7 +395,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Enqueue les styles du thème pour l'admin
      */
-    public function enqueue_theme_styles($hook) {
+    public function enqueue_theme_styles($hook)
+    {
         if (strpos($hook, 'pdf-builder') === false) {
             return;
         }
@@ -373,7 +414,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Enqueue les styles du thème pour le frontend
      */
-    public function enqueue_frontend_styles() {
+    public function enqueue_frontend_styles()
+    {
         if (!is_singular() || !has_shortcode(get_post()->post_content, 'pdf_builder')) {
             return;
         }
@@ -391,7 +433,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Sauvegarde la configuration du thème
      */
-    public function save_theme_config($config) {
+    public function save_theme_config($config)
+    {
         $sanitized_config = $this->sanitize_theme_config($config);
 
         foreach ($sanitized_config as $key => $value) {
@@ -409,7 +452,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Sanitise la configuration du thème
      */
-    private function sanitize_theme_config($config) {
+    private function sanitize_theme_config($config)
+    {
         return [
             'theme_preset' => $this->sanitize_theme_preset($config['theme_preset'] ?? self::THEME_DEFAULT),
             'custom_colors' => $this->sanitize_color_array($config['custom_colors'] ?? []),
@@ -424,7 +468,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Sanitise un preset de thème
      */
-    public function sanitize_theme_preset($preset) {
+    public function sanitize_theme_preset($preset)
+    {
         $available = array_keys($this->get_available_themes());
         return in_array($preset, $available) ? $preset : self::THEME_DEFAULT;
     }
@@ -432,7 +477,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Sanitise un tableau de couleurs
      */
-    public function sanitize_color_array($colors) {
+    public function sanitize_color_array($colors)
+    {
         $sanitized = [];
 
         foreach ($colors as $key => $color) {
@@ -447,21 +493,24 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Sanitise une police
      */
-    public function sanitize_font_family($font) {
+    public function sanitize_font_family($font)
+    {
         return isset($this->available_fonts[$font]) ? $font : 'system';
     }
 
     /**
      * Sanitise une taille de police
      */
-    public function sanitize_font_size($size) {
+    public function sanitize_font_size($size)
+    {
         return isset($this->font_sizes[$size]) ? $size : 'base';
     }
 
     /**
      * Réinitialise le thème
      */
-    public function reset_theme() {
+    public function reset_theme()
+    {
         delete_option('pdf_builder_theme_preset');
         delete_option('pdf_builder_custom_colors');
         delete_option('pdf_builder_font_family');
@@ -479,7 +528,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Vide le cache CSS
      */
-    private function clear_css_cache() {
+    private function clear_css_cache()
+    {
         $cache_dir = WP_CONTENT_DIR . '/cache/pdf-builder/';
 
         if (is_dir($cache_dir)) {
@@ -490,7 +540,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Supprime un dossier récursivement
      */
-    private function delete_directory_recursive($dir) {
+    private function delete_directory_recursive($dir)
+    {
         if (!is_dir($dir)) {
             return;
         }
@@ -517,7 +568,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Prévisualise un thème
      */
-    public function preview_theme($config) {
+    public function preview_theme($config)
+    {
         $original_config = $this->current_theme_config;
 
         // Appliquer temporairement la configuration
@@ -534,28 +586,32 @@ class PDF_Builder_Theme_Customizer {
     /**
      * Nettoie le cache du thème
      */
-    public function cleanup_theme_cache() {
+    public function cleanup_theme_cache()
+    {
         $this->clear_css_cache();
     }
 
     /**
      * Obtient les polices disponibles
      */
-    public function get_available_fonts() {
+    public function get_available_fonts()
+    {
         return $this->available_fonts;
     }
 
     /**
      * Obtient les tailles de police disponibles
      */
-    public function get_available_font_sizes() {
+    public function get_available_font_sizes()
+    {
         return $this->font_sizes;
     }
 
     /**
      * AJAX - Sauvegarde le thème
      */
-    public function save_theme_ajax() {
+    public function save_theme_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -577,10 +633,12 @@ class PDF_Builder_Theme_Customizer {
             $success = $this->save_theme_config($config);
 
             if ($success) {
-                wp_send_json_success([
+                wp_send_json_success(
+                    [
                     'message' => pdf_builder_translate('Thème sauvegardé avec succès', 'theme'),
                     'css' => $this->generate_theme_css()
-                ]);
+                    ]
+                );
             } else {
                 wp_send_json_error(['message' => pdf_builder_translate('Erreur lors de la sauvegarde', 'theme')]);
             }
@@ -593,7 +651,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * AJAX - Réinitialise le thème
      */
-    public function reset_theme_ajax() {
+    public function reset_theme_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -608,10 +667,12 @@ class PDF_Builder_Theme_Customizer {
             $success = $this->reset_theme();
 
             if ($success) {
-                wp_send_json_success([
+                wp_send_json_success(
+                    [
                     'message' => pdf_builder_translate('Thème réinitialisé avec succès', 'theme'),
                     'css' => $this->generate_theme_css()
-                ]);
+                    ]
+                );
             } else {
                 wp_send_json_error(['message' => pdf_builder_translate('Erreur lors de la réinitialisation', 'theme')]);
             }
@@ -624,7 +685,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * AJAX - Obtient la configuration du thème
      */
-    public function get_theme_config_ajax() {
+    public function get_theme_config_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -636,10 +698,12 @@ class PDF_Builder_Theme_Customizer {
             $config['available_fonts'] = $this->get_available_fonts();
             $config['available_font_sizes'] = $this->get_available_font_sizes();
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Configuration récupérée',
                 'config' => $config
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -649,7 +713,8 @@ class PDF_Builder_Theme_Customizer {
     /**
      * AJAX - Prévisualise un thème
      */
-    public function preview_theme_ajax() {
+    public function preview_theme_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -660,10 +725,12 @@ class PDF_Builder_Theme_Customizer {
 
             $css = $this->preview_theme($config);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Aperçu généré',
                 'css' => $css
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -672,44 +739,55 @@ class PDF_Builder_Theme_Customizer {
 }
 
 // Fonctions globales
-function pdf_builder_theme_customizer() {
+function pdf_builder_theme_customizer()
+{
     return PDF_Builder_Theme_Customizer::get_instance();
 }
 
-function pdf_builder_get_theme_css() {
+function pdf_builder_get_theme_css()
+{
     return PDF_Builder_Theme_Customizer::get_instance()->generate_theme_css();
 }
 
-function pdf_builder_get_available_themes() {
+function pdf_builder_get_available_themes()
+{
     return PDF_Builder_Theme_Customizer::get_instance()->get_available_themes();
 }
 
-function pdf_builder_save_theme_config($config) {
+function pdf_builder_save_theme_config($config)
+{
     return PDF_Builder_Theme_Customizer::get_instance()->save_theme_config($config);
 }
 
-function pdf_builder_reset_theme() {
+function pdf_builder_reset_theme()
+{
     return PDF_Builder_Theme_Customizer::get_instance()->reset_theme();
 }
 
-function pdf_builder_preview_theme($config) {
+function pdf_builder_preview_theme($config)
+{
     return PDF_Builder_Theme_Customizer::get_instance()->preview_theme($config);
 }
 
 // Classes utilitaires CSS
-function pdf_builder_get_color_class($color_name) {
+function pdf_builder_get_color_class($color_name)
+{
     return "pdf-text-{$color_name}";
 }
 
-function pdf_builder_get_bg_class($color_name) {
+function pdf_builder_get_bg_class($color_name)
+{
     return "pdf-bg-{$color_name}";
 }
 
-function pdf_builder_get_border_class($color_name) {
+function pdf_builder_get_border_class($color_name)
+{
     return "pdf-border-{$color_name}";
 }
 
 // Initialiser le système de thème
-add_action('plugins_loaded', function() {
-    PDF_Builder_Theme_Customizer::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_Theme_Customizer::get_instance();
+    }
+);

@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class PDF_Builder_Config_Manager {
+class PDF_Builder_Config_Manager
+{
 
     // ==========================================
     // CONFIGURATIONS D'OPTIONS CENTRALISÉES
@@ -133,35 +134,40 @@ class PDF_Builder_Config_Manager {
     /**
      * Obtenir la configuration d'une option
      */
-    public static function get_option_config($option_name) {
+    public static function get_option_config($option_name)
+    {
         return self::$option_configs[$option_name] ?? null;
     }
 
     /**
      * Obtenir toutes les configurations d'options
      */
-    public static function get_all_option_configs() {
+    public static function get_all_option_configs()
+    {
         return self::$option_configs;
     }
 
     /**
      * Obtenir la configuration de réponse pour une action
      */
-    public static function get_response_config($action) {
+    public static function get_response_config($action)
+    {
         return self::$response_configs[$action] ?? null;
     }
 
     /**
      * Obtenir toutes les configurations de réponse
      */
-    public static function get_all_response_configs() {
+    public static function get_all_response_configs()
+    {
         return self::$response_configs;
     }
 
     /**
      * Obtenir la valeur par défaut d'une option
      */
-    public static function get_default_value($option_name) {
+    public static function get_default_value($option_name)
+    {
         $config = self::get_option_config($option_name);
         return $config ? ($config['default'] ?? null) : null;
     }
@@ -169,7 +175,8 @@ class PDF_Builder_Config_Manager {
     /**
      * Sanitiser une valeur selon sa configuration
      */
-    public static function sanitize_value($option_name, $value) {
+    public static function sanitize_value($option_name, $value)
+    {
         $config = self::get_option_config($option_name);
         if (!$config || !isset($config['sanitize'])) {
             return $value;
@@ -186,23 +193,24 @@ class PDF_Builder_Config_Manager {
     /**
      * Valider le type d'une valeur
      */
-    public static function validate_type($option_name, $value) {
+    public static function validate_type($option_name, $value)
+    {
         $config = self::get_option_config($option_name);
         if (!$config || !isset($config['type'])) {
             return true; // Pas de validation si pas de type défini
         }
 
         switch ($config['type']) {
-            case 'boolean':
-                return is_bool($value) || in_array($value, [0, 1, '0', '1']);
-            case 'int':
-                return is_numeric($value) && intval($value) == $value;
-            case 'string':
-                return is_string($value);
-            case 'array':
-                return is_array($value);
-            default:
-                return true;
+        case 'boolean':
+            return is_bool($value) || in_array($value, [0, 1, '0', '1']);
+        case 'int':
+            return is_numeric($value) && intval($value) == $value;
+        case 'string':
+            return is_string($value);
+        case 'array':
+            return is_array($value);
+        default:
+            return true;
         }
     }
 
@@ -214,7 +222,8 @@ class PDF_Builder_Config_Manager {
     /**
      * Get singleton instance
      */
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -224,7 +233,8 @@ class PDF_Builder_Config_Manager {
     /**
      * Check health of configuration system
      */
-    public function check_health() {
+    public function check_health()
+    {
         $health = [
             'status' => 'ok',
             'issues' => [],

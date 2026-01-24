@@ -4,7 +4,8 @@
  * Automatise les déploiements, rollbacks et gestion des environnements
  */
 
-class PDF_Builder_Continuous_Deployment {
+class PDF_Builder_Continuous_Deployment
+{
     private static $instance = null;
 
     // Environnements de déploiement
@@ -27,20 +28,23 @@ class PDF_Builder_Continuous_Deployment {
     private $environments = [];
     private $current_env;
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->current_env = wp_get_environment_type() ?: self::ENV_PRODUCTION;
         $this->init_environments();
         $this->init_hooks();
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Déploiement automatique
         add_action('wp_ajax_pdf_builder_deploy', [$this, 'deploy_ajax']);
         add_action('wp_ajax_pdf_builder_get_deployment_status', [$this, 'get_deployment_status_ajax']);
@@ -63,7 +67,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Initialise les environnements de déploiement
      */
-    private function init_environments() {
+    private function init_environments()
+    {
         $this->environments = [
             self::ENV_DEVELOPMENT => [
                 'name' => 'Développement',
@@ -95,7 +100,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Effectue un déploiement
      */
-    public function deploy($version, $environment = null, $type = self::DEPLOY_TYPE_MANUAL) {
+    public function deploy($version, $environment = null, $type = self::DEPLOY_TYPE_MANUAL)
+    {
         try {
             $environment = $environment ?: $this->current_env;
 
@@ -132,20 +138,24 @@ class PDF_Builder_Continuous_Deployment {
             $this->run_post_deployment_checks($deployment_id);
 
             // Mettre à jour le statut
-            $this->update_deployment_status($deployment_id, self::STATUS_SUCCESS, [
+            $this->update_deployment_status(
+                $deployment_id, self::STATUS_SUCCESS, [
                 'backup_id' => $backup_id ?? null,
                 'completed_at' => current_time('mysql')
-            ]);
+                ]
+            );
 
             // Notifier le succès
             $this->notify_deployment_success($deployment_id);
 
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Deployment completed successfully', [
+                PDF_Builder_Logger::get_instance()->info(
+                    'Deployment completed successfully', [
                     'deployment_id' => $deployment_id,
                     'version' => $version,
                     'environment' => $environment
-                ]);
+                    ]
+                );
             }
 
             return $deployment_id;
@@ -153,10 +163,12 @@ class PDF_Builder_Continuous_Deployment {
         } catch (Exception $e) {
             // Marquer le déploiement comme échoué
             if (isset($deployment_id)) {
-                $this->update_deployment_status($deployment_id, self::STATUS_FAILED, [
+                $this->update_deployment_status(
+                    $deployment_id, self::STATUS_FAILED, [
                     'error' => $e->getMessage(),
                     'failed_at' => current_time('mysql')
-                ]);
+                    ]
+                );
             }
 
             // Notifier l'échec
@@ -170,7 +182,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Effectue un rollback
      */
-    public function rollback($deployment_id, $target_version = null) {
+    public function rollback($deployment_id, $target_version = null)
+    {
         try {
             $deployment = $this->get_deployment_record($deployment_id);
 
@@ -195,28 +208,34 @@ class PDF_Builder_Continuous_Deployment {
                 $this->rollback_to_version($target_version ?: $deployment['previous_version'], $rollback_id);
             }
 
-            $this->update_deployment_status($rollback_id, self::STATUS_SUCCESS, [
+            $this->update_deployment_status(
+                $rollback_id, self::STATUS_SUCCESS, [
                 'rolled_back_from' => $deployment_id,
                 'completed_at' => current_time('mysql')
-            ]);
+                ]
+            );
 
             // Notifier le rollback
             $this->notify_rollback_success($rollback_id, $deployment_id);
 
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Rollback completed successfully', [
+                PDF_Builder_Logger::get_instance()->info(
+                    'Rollback completed successfully', [
                     'rollback_id' => $rollback_id,
                     'from_deployment' => $deployment_id
-                ]);
+                    ]
+                );
             }
 
             return $rollback_id;
 
         } catch (Exception $e) {
             if (isset($rollback_id)) {
-                $this->update_deployment_status($rollback_id, self::STATUS_FAILED, [
+                $this->update_deployment_status(
+                    $rollback_id, self::STATUS_FAILED, [
                     'error' => $e->getMessage()
-                ]);
+                    ]
+                );
             }
 
             $this->notify_rollback_failure($rollback_id ?? null, $e);
@@ -228,7 +247,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Gère les webhooks pour CI/CD
      */
-    public function webhook_handler() {
+    public function webhook_handler()
+    {
         try {
             $payload = json_decode(file_get_contents('php://input'), true);
 
@@ -250,21 +270,21 @@ class PDF_Builder_Continuous_Deployment {
             $event_type = $_SERVER['HTTP_X_GITHUB_EVENT'] ?? $payload['event'] ?? '';
 
             switch ($event_type) {
-                case 'push':
-                    $this->handle_push_webhook($payload);
-                    break;
+            case 'push':
+                $this->handle_push_webhook($payload);
+                break;
 
-                case 'release':
-                    $this->handle_release_webhook($payload);
-                    break;
+            case 'release':
+                $this->handle_release_webhook($payload);
+                break;
 
-                case 'deployment':
-                    $this->handle_deployment_webhook($payload);
-                    break;
+            case 'deployment':
+                $this->handle_deployment_webhook($payload);
+                break;
 
-                default:
-                    wp_send_json(['message' => 'Événement non supporté']);
-                    return;
+            default:
+                wp_send_json(['message' => 'Événement non supporté']);
+                return;
             }
 
             wp_send_json_success(['message' => 'Webhook traité avec succès']);
@@ -277,7 +297,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Gère les webhooks de push
      */
-    private function handle_push_webhook($payload) {
+    private function handle_push_webhook($payload)
+    {
         $branch = $payload['ref'] ?? '';
 
         // Déploiement automatique pour la branche principale
@@ -292,7 +313,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Gère les webhooks de release
      */
-    private function handle_release_webhook($payload) {
+    private function handle_release_webhook($payload)
+    {
         if (($payload['action'] ?? '') === 'published') {
             $release = $payload['release'] ?? [];
             $version = $release['tag_name'] ?? '';
@@ -306,7 +328,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Gère les webhooks de déploiement
      */
-    private function handle_deployment_webhook($payload) {
+    private function handle_deployment_webhook($payload)
+    {
         // Traiter les statuts de déploiement externes
         $deployment = $payload['deployment'] ?? [];
         $status = $payload['deployment_status']['state'] ?? '';
@@ -320,7 +343,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Vérifie la signature du webhook
      */
-    private function verify_webhook_signature($payload, $signature, $secret) {
+    private function verify_webhook_signature($payload, $signature, $secret)
+    {
         if (empty($signature) || empty($secret)) {
             return false;
         }
@@ -333,7 +357,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Crée un enregistrement de déploiement
      */
-    private function create_deployment_record($version, $environment, $type) {
+    private function create_deployment_record($version, $environment, $type)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_deployments';
@@ -358,7 +383,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Met à jour le statut d'un déploiement
      */
-    private function update_deployment_status($deployment_id, $status, $additional_data = []) {
+    private function update_deployment_status($deployment_id, $status, $additional_data = [])
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_deployments';
@@ -377,20 +403,26 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Obtient un enregistrement de déploiement
      */
-    private function get_deployment_record($deployment_id) {
+    private function get_deployment_record($deployment_id)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_deployments';
 
-        return $wpdb->get_row($wpdb->prepare("
+        return $wpdb->get_row(
+            $wpdb->prepare(
+                "
             SELECT * FROM $table WHERE id = %d
-        ", $deployment_id), ARRAY_A);
+        ", $deployment_id
+            ), ARRAY_A
+        );
     }
 
     /**
      * Exécute les vérifications pré-déploiement
      */
-    private function run_pre_deployment_checks($deployment_id, $env_config) {
+    private function run_pre_deployment_checks($deployment_id, $env_config)
+    {
         $issues = [];
 
         // Vérifier les tests si requis
@@ -425,7 +457,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Exécute les tests de déploiement
      */
-    private function run_deployment_tests() {
+    private function run_deployment_tests()
+    {
         if (!class_exists('PDF_Builder_Test_Suite')) {
             return ['passed' => true, 'message' => 'Suite de tests non disponible'];
         }
@@ -447,7 +480,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Crée une sauvegarde pré-déploiement
      */
-    private function create_pre_deployment_backup($deployment_id) {
+    private function create_pre_deployment_backup($deployment_id)
+    {
         if (!class_exists('PDF_Builder_Backup_Recovery_System')) {
             return null;
         }
@@ -461,19 +495,22 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Télécharge une release
      */
-    private function download_release($version) {
+    private function download_release($version)
+    {
         // Pour l'instant, simuler un téléchargement
         // En production, cela téléchargerait depuis un repository Git ou un système de releases
 
         $download_url = "https://api.github.com/repos/your-org/pdf-builder-pro/releases/download/$version/pdf-builder-pro-$version.zip";
 
-        $response = wp_remote_get($download_url, [
+        $response = wp_remote_get(
+            $download_url, [
             'timeout' => 300,
             'headers' => [
                 'Authorization' => 'token ' . pdf_builder_config('github_token', ''),
                 'Accept' => 'application/octet-stream'
             ]
-        ]);
+            ]
+        );
 
         if (is_wp_error($response)) {
             throw new Exception('Erreur de téléchargement: ' . $response->get_error_message());
@@ -493,7 +530,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Extrait et déploie les fichiers
      */
-    private function extract_and_deploy($archive_path, $deployment_id) {
+    private function extract_and_deploy($archive_path, $deployment_id)
+    {
         // Valider les chemins d'entrée
         if (!file_exists($archive_path) || !is_readable($archive_path)) {
             throw new Exception('Archive non accessible ou inexistante');
@@ -534,7 +572,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Sauvegarde les fichiers actuels
      */
-    private function backup_current_files($deployment_id) {
+    private function backup_current_files($deployment_id)
+    {
         $plugin_dir = PDF_BUILDER_PLUGIN_DIR;
         $backup_dir = WP_CONTENT_DIR . '/pdf-builder-backups/deployment_' . $deployment_id;
 
@@ -547,7 +586,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Déploie les fichiers
      */
-    private function deploy_files($source_dir, $deployment_id) {
+    private function deploy_files($source_dir, $deployment_id)
+    {
         $plugin_dir = PDF_BUILDER_PLUGIN_DIR;
 
         // Copier les nouveaux fichiers
@@ -557,7 +597,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Copie un dossier récursivement
      */
-    private function copy_directory_recursive($source, $destination, $exclude = []) {
+    private function copy_directory_recursive($source, $destination, $exclude = [])
+    {
         if (!is_dir($source)) {
             return;
         }
@@ -588,7 +629,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Exécute les migrations
      */
-    private function run_migrations($version, $deployment_id) {
+    private function run_migrations($version, $deployment_id)
+    {
         $migration_file = PDF_BUILDER_PLUGIN_DIR . 'migrations.php';
 
         if (file_exists($migration_file)) {
@@ -603,7 +645,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Exécute les vérifications post-déploiement
      */
-    private function run_post_deployment_checks($deployment_id) {
+    private function run_post_deployment_checks($deployment_id)
+    {
         // Vérifier que le plugin fonctionne
         if (!function_exists('pdf_builder_init')) {
             throw new Exception('Fonction d\'initialisation du plugin manquante après déploiement');
@@ -624,7 +667,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Restaure une sauvegarde
      */
-    private function restore_backup($backup_id, $deployment_id) {
+    private function restore_backup($backup_id, $deployment_id)
+    {
         if (!class_exists('PDF_Builder_Backup_Recovery_System')) {
             throw new Exception('Système de sauvegarde non disponible');
         }
@@ -636,7 +680,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Effectue un rollback vers une version spécifique
      */
-    private function rollback_to_version($version, $deployment_id) {
+    private function rollback_to_version($version, $deployment_id)
+    {
         // Télécharger l'ancienne version
         $download_path = $this->download_release($version);
 
@@ -647,7 +692,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Nettoie les fichiers temporaires
      */
-    private function cleanup_temp_files($path) {
+    private function cleanup_temp_files($path)
+    {
         if (is_dir($path)) {
             $this->delete_directory($path);
         }
@@ -656,7 +702,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Supprime un dossier récursivement
      */
-    private function delete_directory($dir) {
+    private function delete_directory($dir)
+    {
         if (!is_dir($dir)) {
             return;
         }
@@ -683,7 +730,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Vérifications pré-déploiement périodiques
      */
-    public function pre_deployment_check() {
+    public function pre_deployment_check()
+    {
         $issues = [];
 
         // Vérifier les mises à jour disponibles
@@ -715,17 +763,22 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Nettoie les anciens déploiements
      */
-    public function cleanup_old_deployments() {
+    public function cleanup_old_deployments()
+    {
         global $wpdb;
 
         $retention_months = pdf_builder_config('deployment_retention_months', 12);
 
         $table = $wpdb->prefix . 'pdf_builder_deployments';
-        $deleted = $wpdb->query($wpdb->prepare("
+        $deleted = $wpdb->query(
+            $wpdb->prepare(
+                "
             DELETE FROM $table
             WHERE status = 'success'
             AND created_at < DATE_SUB(NOW(), INTERVAL %d MONTH)
-        ", $retention_months));
+        ", $retention_months
+            )
+        );
 
         if ($deleted > 0 && class_exists('PDF_Builder_Logger')) {
             PDF_Builder_Logger::get_instance()->info("Old deployments cleaned up: $deleted records removed");
@@ -735,23 +788,30 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Surveille les déploiements
      */
-    public function monitor_deployments() {
+    public function monitor_deployments()
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_deployments';
 
         // Vérifier les déploiements bloqués
-        $stuck_deployments = $wpdb->get_results($wpdb->prepare("
+        $stuck_deployments = $wpdb->get_results(
+            $wpdb->prepare(
+                "
             SELECT * FROM $table
             WHERE status = 'deploying'
             AND created_at < DATE_SUB(NOW(), INTERVAL 1 HOUR)
-        ", ARRAY_A));
+        ", ARRAY_A
+            )
+        );
 
         foreach ($stuck_deployments as $deployment) {
             // Marquer comme échoué
-            $this->update_deployment_status($deployment['id'], self::STATUS_FAILED, [
+            $this->update_deployment_status(
+                $deployment['id'], self::STATUS_FAILED, [
                 'error' => 'Déploiement bloqué - timeout dépassé'
-            ]);
+                ]
+            );
 
             // Legacy notification calls removed — log as error
             PDF_Builder_Logger::get_instance()->error("Déploiement bloqué détecté: Le déploiement {$deployment['id']} est bloqué depuis plus d'une heure", ['deployment' => $deployment]);
@@ -761,7 +821,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Notifie le succès d'un déploiement
      */
-    private function notify_deployment_success($deployment_id) {
+    private function notify_deployment_success($deployment_id)
+    {
         $deployment = $this->get_deployment_record($deployment_id);
         $env_config = $this->environments[$deployment['environment']];
 
@@ -778,7 +839,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Notifie l'échec d'un déploiement
      */
-    private function notify_deployment_failure($deployment_id, $exception) {
+    private function notify_deployment_failure($deployment_id, $exception)
+    {
         $deployment = $deployment_id ? $this->get_deployment_record($deployment_id) : null;
         $env_config = $deployment ? $this->environments[$deployment['environment']] : $this->environments[$this->current_env];
 
@@ -796,7 +858,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Notifie le succès d'un rollback
      */
-    private function notify_rollback_success($rollback_id, $original_deployment_id) {
+    private function notify_rollback_success($rollback_id, $original_deployment_id)
+    {
         $rollback = $this->get_deployment_record($rollback_id);
         $env_config = $this->environments[$rollback['environment']];
 
@@ -812,7 +875,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Notifie l'échec d'un rollback
      */
-    private function notify_rollback_failure($rollback_id, $exception) {
+    private function notify_rollback_failure($rollback_id, $exception)
+    {
         $rollback = $rollback_id ? $this->get_deployment_record($rollback_id) : null;
         $env_config = $rollback ? $this->environments[$rollback['environment']] : $this->environments[$this->current_env];
 
@@ -826,12 +890,15 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Log une erreur de déploiement
      */
-    private function log_deployment_error($operation, $exception) {
+    private function log_deployment_error($operation, $exception)
+    {
         if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->error("Deployment operation failed: $operation", [
+            PDF_Builder_Logger::get_instance()->error(
+                "Deployment operation failed: $operation", [
                 'error' => $exception->getMessage(),
                 'trace' => $exception->getTraceAsString()
-            ]);
+                ]
+            );
         } else {
             // // error_log("[PDF Builder Deployment Error] $operation: " . $exception->getMessage());
         }
@@ -840,7 +907,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * AJAX - Effectue un déploiement
      */
-    public function deploy_ajax() {
+    public function deploy_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -862,10 +930,12 @@ class PDF_Builder_Continuous_Deployment {
 
             $deployment_id = $this->deploy($version, $environment, self::DEPLOY_TYPE_MANUAL);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Déploiement lancé avec succès',
                 'deployment_id' => $deployment_id
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur lors du déploiement: ' . $e->getMessage()]);
@@ -875,7 +945,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * AJAX - Obtient le statut des déploiements
      */
-    public function get_deployment_status_ajax() {
+    public function get_deployment_status_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -889,12 +960,14 @@ class PDF_Builder_Continuous_Deployment {
 
             $deployments = $this->get_deployment_history(20);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Historique récupéré',
                 'deployments' => $deployments,
                 'current_version' => PDF_BUILDER_VERSION,
                 'current_environment' => $this->current_env
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -904,7 +977,8 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * AJAX - Effectue un rollback
      */
-    public function rollback_ajax() {
+    public function rollback_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -926,10 +1000,12 @@ class PDF_Builder_Continuous_Deployment {
 
             $rollback_id = $this->rollback($deployment_id, $target_version ?: null);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Rollback lancé avec succès',
                 'rollback_id' => $rollback_id
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur lors du rollback: ' . $e->getMessage()]);
@@ -939,39 +1015,50 @@ class PDF_Builder_Continuous_Deployment {
     /**
      * Obtient l'historique des déploiements
      */
-    public function get_deployment_history($limit = 20) {
+    public function get_deployment_history($limit = 20)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_deployments';
 
-        $deployments = $wpdb->get_results($wpdb->prepare("
+        $deployments = $wpdb->get_results(
+            $wpdb->prepare(
+                "
             SELECT * FROM $table
             ORDER BY created_at DESC
             LIMIT %d
-        ", $limit), ARRAY_A);
+        ", $limit
+            ), ARRAY_A
+        );
 
         return $deployments;
     }
 }
 
 // Fonctions globales
-function pdf_builder_deployment_system() {
+function pdf_builder_deployment_system()
+{
     return PDF_Builder_Continuous_Deployment::get_instance();
 }
 
-function pdf_builder_deploy($version, $environment = null) {
+function pdf_builder_deploy($version, $environment = null)
+{
     return PDF_Builder_Continuous_Deployment::get_instance()->deploy($version, $environment);
 }
 
-function pdf_builder_rollback($deployment_id, $target_version = null) {
+function pdf_builder_rollback($deployment_id, $target_version = null)
+{
     return PDF_Builder_Continuous_Deployment::get_instance()->rollback($deployment_id, $target_version);
 }
 
-function pdf_builder_get_deployments($limit = 20) {
+function pdf_builder_get_deployments($limit = 20)
+{
     return PDF_Builder_Continuous_Deployment::get_instance()->get_deployment_history($limit);
 }
 
 // Initialiser le système de déploiement continu
-add_action('plugins_loaded', function() {
-    PDF_Builder_Continuous_Deployment::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_Continuous_Deployment::get_instance();
+    }
+);

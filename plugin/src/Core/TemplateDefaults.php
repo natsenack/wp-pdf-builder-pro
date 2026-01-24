@@ -7,14 +7,16 @@ namespace PDF_Builder;
  * Fournit 3 templates gratuits de base (Modern, Classic, Corporate)
  */
 
-class TemplateDefaults {
+class TemplateDefaults
+{
 
     /**
      * Retourne la liste des templates gratuits disponibles
      *
      * @return array
      */
-    public static function get_free_templates() {
+    public static function get_free_templates()
+    {
         return [
             'modern' => [
                 'name' => 'Modern Invoice',
@@ -45,7 +47,8 @@ class TemplateDefaults {
      *
      * @return array
      */
-    public static function get_premium_templates() {
+    public static function get_premium_templates()
+    {
         return [
             'invoice_pro' => [
                 'name' => 'Invoice Pro',
@@ -79,12 +82,14 @@ class TemplateDefaults {
      *
      * @param int $user_id
      */
-    public static function create_default_templates_for_user($user_id) {
+    public static function create_default_templates_for_user($user_id)
+    {
         $free_templates = self::get_free_templates();
 
         foreach ($free_templates as $key => $template_data) {
             // Vérifier si le template existe déjà pour cet utilisateur
-            $existing = get_posts([
+            $existing = get_posts(
+                [
                 'post_type' => 'pdf_template',
                 'author' => $user_id,
                 'meta_query' => [
@@ -93,17 +98,20 @@ class TemplateDefaults {
                         'value' => $key
                     ]
                 ]
-            ]);
+                ]
+            );
 
             if (empty($existing)) {
                 // Créer le post template
-                $post_id = wp_insert_post([
+                $post_id = wp_insert_post(
+                    [
                     'post_title' => $template_data['name'],
                     'post_content' => $template_data['description'],
                     'post_type' => 'pdf_template',
                     'post_author' => $user_id,
                     'post_status' => 'publish'
-                ]);
+                    ]
+                );
 
                 if ($post_id && !is_wp_error($post_id)) {
                     // Sauvegarder les métadonnées
@@ -124,7 +132,8 @@ class TemplateDefaults {
     /**
      * Éléments du template Modern
      */
-    private static function get_modern_template_elements() {
+    private static function get_modern_template_elements()
+    {
         return [
             // En-tête avec logo et informations entreprise
             [
@@ -250,7 +259,8 @@ class TemplateDefaults {
     /**
      * Éléments du template Classic
      */
-    private static function get_classic_template_elements() {
+    private static function get_classic_template_elements()
+    {
         return [
             // En-tête traditionnel
             [
@@ -374,7 +384,8 @@ class TemplateDefaults {
     /**
      * Éléments du template Corporate
      */
-    private static function get_corporate_template_elements() {
+    private static function get_corporate_template_elements()
+    {
         return [
             // En-tête corporate avec ligne de séparation
             [

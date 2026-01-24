@@ -60,16 +60,18 @@ class PdfHtmlGenerator
         }
 
         if (is_array($elements)) {
-            usort($elements, function ($a, $b) {
-                $a_y = $a['position']['y'] ?? $a['y'] ?? 0;
-                $b_y = $b['position']['y'] ?? $b['y'] ?? 0;
-                if ($a_y === $b_y) {
-                    $a_x = $a['position']['x'] ?? $a['x'] ?? 0;
-                    $b_x = $b['position']['x'] ?? $b['x'] ?? 0;
-                    return $a_x <=> $b_x;
+            usort(
+                $elements, function ($a, $b) {
+                    $a_y = $a['position']['y'] ?? $a['y'] ?? 0;
+                    $b_y = $b['position']['y'] ?? $b['y'] ?? 0;
+                    if ($a_y === $b_y) {
+                        $a_x = $a['position']['x'] ?? $a['x'] ?? 0;
+                        $b_x = $b['position']['x'] ?? $b['x'] ?? 0;
+                        return $a_x <=> $b_x;
+                    }
+                    return $a_y <=> $b_y;
                 }
-                return $a_y <=> $b_y;
-            });
+            );
 
             foreach ($elements as $element) {
                 $html .= $this->renderElement($element, $order);
@@ -247,215 +249,215 @@ class PdfHtmlGenerator
         $html = '';
 
         switch ($element['type']) {
-            case 'text':
-            case 'dynamic-text':
-                $final_content = $order ? $this->admin->getHtmlRenderer()->replaceOrderVariables($content, $order) : $content;
-                $html = sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $safe_style, esc_html($final_content));
-                break;
+        case 'text':
+        case 'dynamic-text':
+            $final_content = $order ? $this->admin->getHtmlRenderer()->replaceOrderVariables($content, $order) : $content;
+            $html = sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $safe_style, esc_html($final_content));
+            break;
 
-            case 'multiline_text':
-                $final_content = $order ? $this->admin->getHtmlRenderer()->replaceOrderVariables($content, $order) : $content;
-                $html = sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $safe_style, nl2br(esc_html($final_content)));
-                break;
+        case 'multiline_text':
+            $final_content = $order ? $this->admin->getHtmlRenderer()->replaceOrderVariables($content, $order) : $content;
+            $html = sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $safe_style, nl2br(esc_html($final_content)));
+            break;
 
-            case 'mentions':
-                $mentions = $this->buildMentions($element);
-                $separator = isset($element['separator']) ? $element['separator'] : ' • ';
-                $mentions_text = implode($separator, $mentions);
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($mentions_text));
-                break;
+        case 'mentions':
+            $mentions = $this->buildMentions($element);
+            $separator = isset($element['separator']) ? $element['separator'] : ' • ';
+            $mentions_text = implode($separator, $mentions);
+            $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($mentions_text));
+            break;
 
-            case 'order_date':
-            case 'invoice_date':
-                if ($order) {
-                    $date = $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y');
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($date));
-                } else {
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Date'));
+        case 'order_date':
+        case 'invoice_date':
+            if ($order) {
+                $date = $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y');
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($date));
+            } else {
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Date'));
+            }
+            break;
+
+        case 'invoice_number':
+            if ($order) {
+                $invoice_number = $order->get_id() . '-' . time();
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($invoice_number));
+            } else {
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'N° de facture'));
+            }
+            break;
+
+        case 'order_number':
+            if ($order) {
+                $order_number = $order->get_order_number();
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($order_number));
+            } else {
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'N° de commande'));
+            }
+            break;
+
+        case 'customer_name':
+            if ($order) {
+                $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($customer_name));
+            } else {
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Nom du client'));
+            }
+            break;
+
+        case 'customer_address':
+            if ($order) {
+                $address = $this->formatAddress($order, 'billing');
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, nl2br(esc_html($address)));
+            } else {
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Adresse du client'));
+            }
+            break;
+
+        case 'subtotal':
+            if ($order) {
+                $subtotal = $order->get_subtotal();
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, wc_price($subtotal));
+            } else {
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Sous-total'));
+            }
+            break;
+
+        case 'tax':
+            if ($order) {
+                $tax = $order->get_total_tax();
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, wc_price($tax));
+            } else {
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Taxes'));
+            }
+            break;
+
+        case 'total':
+            if ($order) {
+                $total = $order->get_total();
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, wc_price($total));
+            } else {
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Total'));
+            }
+            break;
+
+        case 'rectangle':
+            $html = sprintf('<div class="pdf-element" style="%s"></div>', $safe_style);
+            break;
+
+        case 'image':
+        case 'company_logo':
+            $logo_url = $element['imageUrl'] ?? $content;
+            if (!$logo_url) {
+                $custom_logo_id = get_theme_mod('custom_logo');
+                if ($custom_logo_id) {
+                    $logo_url = wp_get_attachment_image_url($custom_logo_id, 'full');
                 }
-                break;
-
-            case 'invoice_number':
-                if ($order) {
-                    $invoice_number = $order->get_id() . '-' . time();
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($invoice_number));
-                } else {
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'N° de facture'));
+            }
+            if (!$logo_url) {
+                $site_logo_id = get_option('site_logo');
+                if ($site_logo_id) {
+                    $logo_url = wp_get_attachment_image_url($site_logo_id, 'full');
                 }
-                break;
+            }
+            if ($logo_url) {
+                $html = sprintf('<div class="pdf-element image-element" style="%s"><img src="%s" style="width: 100%%; height: 100%%; object-fit: contain;" alt="Logo" /></div>', $style, esc_url($logo_url));
+            } else {
+                $html = sprintf('<div class="pdf-element image-element" style="%s"><div style="width: 100%%; height: 100%%; background-color: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #666; font-size: 12px;">🏢 Logo</div></div>', $style);
+            }
+            break;
 
-            case 'order_number':
-                if ($order) {
-                    $order_number = $order->get_order_number();
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($order_number));
-                } else {
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'N° de commande'));
-                }
-                break;
+        case 'product_table':
+            if ($order) {
+                $table_style = $element['tableStyle'] ?? 'default';
+                $table_html = $this->admin->generateOrderProductsTable($order, $table_style, $element);
+                $html = '<div class="pdf-element table-element" style="' . $style . '">' . $table_html . '</div>';
+            } else {
+                $html = '<div class="pdf-element table-element" style="' . $style . '">' . $this->getSampleProductTable() . '</div>';
+            }
+            break;
 
-            case 'customer_name':
-                if ($order) {
-                    $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($customer_name));
-                } else {
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Nom du client'));
-                }
-                break;
+        case 'company_info':
+            $company_info = $this->admin->getHtmlRenderer()->formatCompleteCompanyInfo();
+            $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($company_info)));
+            break;
 
-            case 'customer_address':
-                if ($order) {
-                    $address = $this->formatAddress($order, 'billing');
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, nl2br(esc_html($address)));
-                } else {
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Adresse du client'));
-                }
-                break;
+        case 'document_type':
+            if ($order) {
+                $order_status = $order->get_status();
+                $document_type = $this->admin->getDataUtils()->detectDocumentType($order_status);
+                $docType = $this->admin->getDataUtils()->getDocumentTypeLabel($document_type);
+            } else {
+                $docType = $content ?: 'Document';
+            }
+            $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($docType));
+            break;
 
-            case 'subtotal':
-                if ($order) {
-                    $subtotal = $order->get_subtotal();
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, wc_price($subtotal));
-                } else {
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Sous-total'));
-                }
-                break;
+        case 'divider':
+            $thickness = $element['thickness'] ?? 2;
+            $color = $element['color'] ?? '#cccccc';
+            $margin = $element['margin'] ?? 10;
+            $divider_style = $style . sprintf('height: %dpx; background-color: %s; margin: %dpx 0;', $thickness, $color, $margin);
+            $html = sprintf('<div class="pdf-element divider" style="%s"></div>', $divider_style);
+            break;
 
-            case 'tax':
-                if ($order) {
-                    $tax = $order->get_total_tax();
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, wc_price($tax));
-                } else {
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Taxes'));
-                }
-                break;
+        case 'watermark':
+            $watermark_text = $element['content'] ?? 'CONFIDENTIEL';
+            $opacity = isset($element['opacity']) ? $element['opacity'] / 100 : 0.1;
+            $style .= sprintf('opacity: %s; color: rgba(0,0,0,%s); font-size: 48px; text-align: center; transform: rotate(-45deg); pointer-events: none;', $opacity, $opacity);
+            $html = sprintf('<div class="pdf-element watermark" style="%s">%s</div>', $style, esc_html($watermark_text));
+            break;
 
-            case 'total':
-                if ($order) {
-                    $total = $order->get_total();
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, wc_price($total));
-                } else {
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Total'));
-                }
-                break;
+        case 'progress-bar':
+            $progress = $element['progress'] ?? 50;
+            $progress_style = $style . sprintf('background: #f0f0f0; border: 1px solid #ccc; border-radius: 10px; overflow: hidden;');
+            $bar_style = sprintf('width: %d%%; height: 100%%; background: #007cba; border-radius: 8px;', $progress);
+            $html = sprintf('<div class="pdf-element progress-bar" style="%s"><div style="%s"></div></div>', $progress_style, $bar_style);
+            break;
 
-            case 'rectangle':
-                $html = sprintf('<div class="pdf-element" style="%s"></div>', $safe_style);
-                break;
+        case 'barcode':
+            if ($order) {
+                $barcode_data = $order->get_order_number();
+                $html = sprintf('<div class="pdf-element barcode" style="%s">*%s*</div>', $style, esc_html($barcode_data));
+            } else {
+                $html = sprintf('<div class="pdf-element barcode" style="%s">*BARCODE*</div>', $style);
+            }
+            break;
 
-            case 'image':
-            case 'company_logo':
-                $logo_url = $element['imageUrl'] ?? $content;
-                if (!$logo_url) {
-                    $custom_logo_id = get_theme_mod('custom_logo');
-                    if ($custom_logo_id) {
-                        $logo_url = wp_get_attachment_image_url($custom_logo_id, 'full');
-                    }
-                }
-                if (!$logo_url) {
-                    $site_logo_id = get_option('site_logo');
-                    if ($site_logo_id) {
-                        $logo_url = wp_get_attachment_image_url($site_logo_id, 'full');
-                    }
-                }
-                if ($logo_url) {
-                    $html = sprintf('<div class="pdf-element image-element" style="%s"><img src="%s" style="width: 100%%; height: 100%%; object-fit: contain;" alt="Logo" /></div>', $style, esc_url($logo_url));
-                } else {
-                    $html = sprintf('<div class="pdf-element image-element" style="%s"><div style="width: 100%%; height: 100%%; background-color: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #666; font-size: 12px;">🏢 Logo</div></div>', $style);
-                }
-                break;
+        case 'qrcode':
+            if ($order) {
+                $qr_data = 'Order: ' . $order->get_order_number();
+                $html = sprintf('<div class="pdf-element qrcode" style="%s">[QR:%s]</div>', $style, esc_html($qr_data));
+            } else {
+                $html = sprintf('<div class="pdf-element qrcode" style="%s">[QR:CODE]</div>', $style);
+            }
+            break;
 
-            case 'product_table':
-                if ($order) {
-                    $table_style = $element['tableStyle'] ?? 'default';
-                    $table_html = $this->admin->generateOrderProductsTable($order, $table_style, $element);
-                    $html = '<div class="pdf-element table-element" style="' . $style . '">' . $table_html . '</div>';
-                } else {
-                    $html = '<div class="pdf-element table-element" style="' . $style . '">' . $this->getSampleProductTable() . '</div>';
-                }
-                break;
+        case 'icon':
+            $html = sprintf('<div class="pdf-element icon" style="%s">📄</div>', $style);
+            break;
 
-            case 'company_info':
-                $company_info = $this->admin->getHtmlRenderer()->formatCompleteCompanyInfo();
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($company_info)));
-                break;
+        case 'line':
+            $line_style = $style . 'border-top: 2px solid #000; height: 0;';
+            $html = sprintf('<div class="pdf-element line" style="%s"></div>', $line_style);
+            break;
 
-            case 'document_type':
-                if ($order) {
-                    $order_status = $order->get_status();
-                    $document_type = $this->admin->getDataUtils()->detectDocumentType($order_status);
-                    $docType = $this->admin->getDataUtils()->getDocumentTypeLabel($document_type);
-                } else {
-                    $docType = $content ?: 'Document';
-                }
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($docType));
-                break;
+        case 'customer_info':
+            $html = $this->renderCustomerInfo($order, $style);
+            break;
 
-            case 'divider':
-                $thickness = $element['thickness'] ?? 2;
-                $color = $element['color'] ?? '#cccccc';
-                $margin = $element['margin'] ?? 10;
-                $divider_style = $style . sprintf('height: %dpx; background-color: %s; margin: %dpx 0;', $thickness, $color, $margin);
-                $html = sprintf('<div class="pdf-element divider" style="%s"></div>', $divider_style);
-                break;
+        case 'subtotal':
+            if ($order) {
+                $subtotal = $order->get_subtotal();
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, wc_price($subtotal));
+            } else {
+                $html = sprintf('<div class="pdf-element" style="%s">Sous-total</div>', $safe_style);
+            }
+            break;
 
-            case 'watermark':
-                $watermark_text = $element['content'] ?? 'CONFIDENTIEL';
-                $opacity = isset($element['opacity']) ? $element['opacity'] / 100 : 0.1;
-                $style .= sprintf('opacity: %s; color: rgba(0,0,0,%s); font-size: 48px; text-align: center; transform: rotate(-45deg); pointer-events: none;', $opacity, $opacity);
-                $html = sprintf('<div class="pdf-element watermark" style="%s">%s</div>', $style, esc_html($watermark_text));
-                break;
-
-            case 'progress-bar':
-                $progress = $element['progress'] ?? 50;
-                $progress_style = $style . sprintf('background: #f0f0f0; border: 1px solid #ccc; border-radius: 10px; overflow: hidden;');
-                $bar_style = sprintf('width: %d%%; height: 100%%; background: #007cba; border-radius: 8px;', $progress);
-                $html = sprintf('<div class="pdf-element progress-bar" style="%s"><div style="%s"></div></div>', $progress_style, $bar_style);
-                break;
-
-            case 'barcode':
-                if ($order) {
-                    $barcode_data = $order->get_order_number();
-                    $html = sprintf('<div class="pdf-element barcode" style="%s">*%s*</div>', $style, esc_html($barcode_data));
-                } else {
-                    $html = sprintf('<div class="pdf-element barcode" style="%s">*BARCODE*</div>', $style);
-                }
-                break;
-
-            case 'qrcode':
-                if ($order) {
-                    $qr_data = 'Order: ' . $order->get_order_number();
-                    $html = sprintf('<div class="pdf-element qrcode" style="%s">[QR:%s]</div>', $style, esc_html($qr_data));
-                } else {
-                    $html = sprintf('<div class="pdf-element qrcode" style="%s">[QR:CODE]</div>', $style);
-                }
-                break;
-
-            case 'icon':
-                $html = sprintf('<div class="pdf-element icon" style="%s">📄</div>', $style);
-                break;
-
-            case 'line':
-                $line_style = $style . 'border-top: 2px solid #000; height: 0;';
-                $html = sprintf('<div class="pdf-element line" style="%s"></div>', $line_style);
-                break;
-
-            case 'customer_info':
-                $html = $this->renderCustomerInfo($order, $style);
-                break;
-
-            case 'subtotal':
-                if ($order) {
-                    $subtotal = $order->get_subtotal();
-                    $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, wc_price($subtotal));
-                } else {
-                    $html = sprintf('<div class="pdf-element" style="%s">Sous-total</div>', $safe_style);
-                }
-                break;
-
-            default:
-                $final_content = $order ? $this->admin->getHtmlRenderer()->replaceOrderVariables($content, $order) : $content;
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($final_content ?: $element['type']));
-                break;
+        default:
+            $final_content = $order ? $this->admin->getHtmlRenderer()->replaceOrderVariables($content, $order) : $content;
+            $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($final_content ?: $element['type']));
+            break;
         }
 
         return $html;

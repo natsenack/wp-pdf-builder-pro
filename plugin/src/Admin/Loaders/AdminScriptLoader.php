@@ -115,7 +115,8 @@ class AdminScriptLoader
             wp_add_inline_script('pdf-builder-notifications', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings) . ';', 'before');
 
             // Localize notifications data pour les pages de paramètres
-            wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
+            wp_localize_script(
+                'pdf-builder-notifications', 'pdfBuilderNotifications', [
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('pdf_builder_notifications'),
                 'settings' => [
@@ -133,13 +134,16 @@ class AdminScriptLoader
                     'info' => __('Information', 'pdf-builder-pro'),
                     'close' => __('Fermer', 'pdf-builder-pro')
                 ]
-            ]);
+                ]
+            );
 
             // Localiser les variables AJAX
-            wp_localize_script('pdf-builder-settings-tabs', 'pdfBuilderAjax', [
+            wp_localize_script(
+                'pdf-builder-settings-tabs', 'pdfBuilderAjax', [
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('pdf_builder_settings')
-            ]);
+                ]
+            );
 
             // Définir les paramètres de debug JavaScript UNIQUEMENT pour settings-tabs
             $settings = get_option('pdf_builder_settings', array());
@@ -160,10 +164,12 @@ class AdminScriptLoader
         wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-integration.min.js', ['pdf-preview-api-client'], $version_param, true);
 
         // Localize ajaxurl for integration script
-        wp_localize_script('pdf-preview-integration', 'pdfBuilderAjax', [
+        wp_localize_script(
+            'pdf-preview-integration', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_order_actions')
-        ]);
+            ]
+        );
 
         // Outils développeur asynchrones
         wp_enqueue_script('pdf-builder-developer-tools', PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js', ['jquery', 'pdf-preview-api-client'], $version_param, true);
@@ -172,7 +178,8 @@ class AdminScriptLoader
         // error_log('[WP AdminScriptLoader] Current hook: ' . $hook);
 
         // Localize pdfBuilderAjax for API Preview scripts
-        wp_localize_script('pdf-preview-api-client', 'pdfBuilderAjax', [
+        wp_localize_script(
+            'pdf-preview-api-client', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_order_actions'),
             'version' => PDF_BUILDER_PRO_VERSION,
@@ -181,7 +188,8 @@ class AdminScriptLoader
                 'error_loading_preview' => __('Erreur lors du chargement de l\'aperçu', 'pdf-builder-pro'),
                 'generating_pdf' => __('Génération du PDF en cours...', 'pdf-builder-pro'),
             ]
-        ]);
+            ]
+        );
 
         // Nonce pour les templates
         wp_add_inline_script('pdf-preview-api-client', 'var pdfBuilderTemplatesNonce = "' . wp_create_nonce('pdf_builder_templates') . '";');
@@ -232,7 +240,8 @@ class AdminScriptLoader
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications CSS: ' . $notifications_css_url . ' with cache_bust: ' . $cache_bust);
 
         // Localize notifications data
-        wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
+        wp_localize_script(
+            'pdf-builder-notifications', 'pdfBuilderNotifications', [
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_notifications'),
             'settings' => [
@@ -250,7 +259,8 @@ class AdminScriptLoader
                 'info' => __('Information', 'pdf-builder-pro'),
                 'close' => __('Fermer', 'pdf-builder-pro')
             ]
-        ]);
+            ]
+        );
 
         // Définir les paramètres de debug JavaScript UNIQUEMENT pour l'éditeur React
         $settings = get_option('pdf_builder_settings', array());
@@ -306,7 +316,8 @@ class AdminScriptLoader
             $localize_data['canvasSettings'] = $canvas_settings;
             
             // Définir aussi window.pdfBuilderCanvasSettings pour la compatibilité React
-            wp_add_inline_script('pdf-builder-react-main', 
+            wp_add_inline_script(
+                'pdf-builder-react-main', 
                 'window.pdfBuilderCanvasSettings = ' . wp_json_encode($canvas_settings) . ';'
             );
         }
@@ -443,12 +454,13 @@ class AdminScriptLoader
             }
 
             // Also check for specific Elementor patterns as backup
-            if (strpos($tag, 'elementor-templates-modal__header__logo-area') !== false ||
-                strpos($tag, 'elementor-templates-modal__header__logo__icon-wrapper') !== false ||
-                strpos($tag, 'elementor-finder__search') !== false ||
-                strpos($tag, 'elementor-finder__no-results') !== false ||
-                strpos($tag, 'elementor-finder__results__category__title') !== false ||
-                strpos($tag, 'elementor-finder__results__item__link') !== false) {
+            if (strpos($tag, 'elementor-templates-modal__header__logo-area') !== false 
+                || strpos($tag, 'elementor-templates-modal__header__logo__icon-wrapper') !== false 
+                || strpos($tag, 'elementor-finder__search') !== false 
+                || strpos($tag, 'elementor-finder__no-results') !== false 
+                || strpos($tag, 'elementor-finder__results__category__title') !== false 
+                || strpos($tag, 'elementor-finder__results__item__link') !== false
+            ) {
 
                 error_log('[PDF Builder] Found Elementor template script, changing type to text/template for handle: ' . $handle);
 
@@ -491,27 +503,29 @@ class AdminScriptLoader
         // Regex pour trouver les scripts inline contenant du HTML au début
         $pattern = '/<script[^>]*>(?:\s*<[^>]+>.*?)<\/script>/is';
         
-        $content = preg_replace_callback($pattern, function($matches) {
-            $script_tag = $matches[0];
+        $content = preg_replace_callback(
+            $pattern, function ($matches) {
+                $script_tag = $matches[0];
             
-            // Extraire le contenu entre les balises script
-            if (preg_match('/<script[^>]*>(.*?)<\/script>/is', $script_tag, $inner_matches)) {
-                $inner_content = $inner_matches[1];
+                // Extraire le contenu entre les balises script
+                if (preg_match('/<script[^>]*>(.*?)<\/script>/is', $script_tag, $inner_matches)) {
+                    $inner_content = $inner_matches[1];
                 
-                // Vérifier si le contenu commence par du HTML (après espaces)
-                if (preg_match('/^\s*<[^>]+>/', $inner_content)) {
-                    // C'est un template HTML, changer le type au lieu de supprimer
-                    error_log('[PDF Builder] Changing Elementor HTML template script type to text/template: ' . substr($inner_content, 0, 100) . '...');
+                    // Vérifier si le contenu commence par du HTML (après espaces)
+                    if (preg_match('/^\s*<[^>]+>/', $inner_content)) {
+                        // C'est un template HTML, changer le type au lieu de supprimer
+                        error_log('[PDF Builder] Changing Elementor HTML template script type to text/template: ' . substr($inner_content, 0, 100) . '...');
                     
-                    // Remplacer type="text/javascript" par type="text/template"
-                    $modified_tag = preg_replace('/type=["\']text\/javascript["\']/', 'type="text/template"', $script_tag);
-                    return $modified_tag;
+                        // Remplacer type="text/javascript" par type="text/template"
+                        $modified_tag = preg_replace('/type=["\']text\/javascript["\']/', 'type="text/template"', $script_tag);
+                        return $modified_tag;
+                    }
                 }
-            }
             
-            // Garder le script normal
-            return $script_tag;
-        }, $content);
+                // Garder le script normal
+                return $script_tag;
+            }, $content
+        );
         
         error_log('[PDF Builder] Finished Elementor script filtering');
         return $content;

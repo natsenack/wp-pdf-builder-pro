@@ -31,8 +31,8 @@ class PdfBuilderAutoloader
         'PDF_Builder\Templates\\' => 'resources/templates/',
         'PDF_Builder\Core\\' => 'src/Core/core/',
     ];    /**
-     * Initialize the autoloader
-     */
+           * Initialize the autoloader
+           */
     public static function init($base_path)
     {
         // Add trailing slash if not present (equivalent to trailingslashit)
@@ -77,19 +77,18 @@ class PdfBuilderAutoloader
 
             // If the file exists, require it
             if (file_exists($file)) {
-                require_once $file;
+                include_once $file;
 
                 // Verify the class/interface was loaded
-                if (
-                    class_exists($class, false) || interface_exists($class, false) ||
-                    class_exists($class) || interface_exists($class)
+                if (class_exists($class, false) || interface_exists($class, false) 
+                    || class_exists($class) || interface_exists($class)
                 ) {
                     return true;
                 } else {
-                // Class/interface not found in file - this might indicate a namespace mismatch
+                    // Class/interface not found in file - this might indicate a namespace mismatch
                 }
             } else {
-            // File not found - log for debugging
+                // File not found - log for debugging
             }
         }
 

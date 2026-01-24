@@ -278,10 +278,12 @@ class TemplateManager
             }
 
             // $this->debug_log('Template saved successfully with ID: ' . $result);
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'template_id' => $result,
                 'message' => 'Template sauvegardé avec succès'
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
@@ -324,10 +326,12 @@ class TemplateManager
             }
 
             // $this->debug_log('Template loaded successfully, data size: ' . strlen(json_encode($template_data)));
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'template' => $template_data,
                 'message' => 'Template chargé avec succès'
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());

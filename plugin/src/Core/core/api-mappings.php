@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class PDF_Builder_API_Mappings {
+class PDF_Builder_API_Mappings
+{
 
     // ==========================================
     // ENDPOINTS API
@@ -324,21 +325,24 @@ class PDF_Builder_API_Mappings {
     /**
      * Obtenir tous les endpoints API
      */
-    public static function get_api_endpoints() {
+    public static function get_api_endpoints()
+    {
         return self::$api_endpoints;
     }
 
     /**
      * Obtenir un endpoint API spécifique
      */
-    public static function get_api_endpoint($category, $action) {
+    public static function get_api_endpoint($category, $action)
+    {
         return self::$api_endpoints[$category][$action] ?? null;
     }
 
     /**
      * Obtenir l'URL complète d'un endpoint
      */
-    public static function get_full_endpoint_url($category, $action, $params = []) {
+    public static function get_full_endpoint_url($category, $action, $params = [])
+    {
         $endpoint = self::get_api_endpoint($category, $action);
 
         if (!$endpoint) {
@@ -356,56 +360,64 @@ class PDF_Builder_API_Mappings {
     /**
      * Obtenir les schémas de données API
      */
-    public static function get_api_schemas() {
+    public static function get_api_schemas()
+    {
         return self::$api_schemas;
     }
 
     /**
      * Obtenir le schéma pour un type de données
      */
-    public static function get_api_schema($type) {
+    public static function get_api_schema($type)
+    {
         return self::$api_schemas[$type] ?? null;
     }
 
     /**
      * Obtenir les codes de réponse API
      */
-    public static function get_api_response_codes() {
+    public static function get_api_response_codes()
+    {
         return self::$api_response_codes;
     }
 
     /**
      * Obtenir un code de réponse spécifique
      */
-    public static function get_api_response_code($key) {
+    public static function get_api_response_code($key)
+    {
         return self::$api_response_codes[$key] ?? null;
     }
 
     /**
      * Obtenir la configuration d'authentification
      */
-    public static function get_api_authentication() {
+    public static function get_api_authentication()
+    {
         return self::$api_authentication;
     }
 
     /**
      * Obtenir la configuration de versionnement
      */
-    public static function get_api_versioning() {
+    public static function get_api_versioning()
+    {
         return self::$api_versioning;
     }
 
     /**
      * Obtenir la configuration des webhooks
      */
-    public static function get_webhooks() {
+    public static function get_webhooks()
+    {
         return self::$webhooks;
     }
 
     /**
      * Valider les données selon un schéma
      */
-    public static function validate_api_data($data, $schema_type) {
+    public static function validate_api_data($data, $schema_type)
+    {
         $schema = self::get_api_schema($schema_type);
 
         if (!$schema) {
@@ -430,43 +442,43 @@ class PDF_Builder_API_Mappings {
 
             // Validation par type
             switch ($rules['type']) {
-                case 'string':
-                    if (!is_string($value)) {
-                        $errors[] = "Field '{$field}' must be a string";
-                    } elseif (isset($rules['max_length']) && strlen($value) > $rules['max_length']) {
-                        $errors[] = "Field '{$field}' exceeds maximum length of {$rules['max_length']}";
-                    } elseif (isset($rules['enum']) && !in_array($value, $rules['enum'])) {
-                        $errors[] = "Field '{$field}' must be one of: " . implode(', ', $rules['enum']);
-                    }
-                    break;
+            case 'string':
+                if (!is_string($value)) {
+                    $errors[] = "Field '{$field}' must be a string";
+                } elseif (isset($rules['max_length']) && strlen($value) > $rules['max_length']) {
+                    $errors[] = "Field '{$field}' exceeds maximum length of {$rules['max_length']}";
+                } elseif (isset($rules['enum']) && !in_array($value, $rules['enum'])) {
+                    $errors[] = "Field '{$field}' must be one of: " . implode(', ', $rules['enum']);
+                }
+                break;
 
-                case 'integer':
-                    if (!is_numeric($value) || intval($value) != $value) {
-                        $errors[] = "Field '{$field}' must be an integer";
-                    } elseif (isset($rules['min']) && $value < $rules['min']) {
-                        $errors[] = "Field '{$field}' must be at least {$rules['min']}";
-                    } elseif (isset($rules['max']) && $value > $rules['max']) {
-                        $errors[] = "Field '{$field}' must be at most {$rules['max']}";
-                    }
-                    break;
+            case 'integer':
+                if (!is_numeric($value) || intval($value) != $value) {
+                    $errors[] = "Field '{$field}' must be an integer";
+                } elseif (isset($rules['min']) && $value < $rules['min']) {
+                    $errors[] = "Field '{$field}' must be at least {$rules['min']}";
+                } elseif (isset($rules['max']) && $value > $rules['max']) {
+                    $errors[] = "Field '{$field}' must be at most {$rules['max']}";
+                }
+                break;
 
-                case 'boolean':
-                    if (!is_bool($value) && !in_array($value, [0, 1, '0', '1', 'true', 'false'], true)) {
-                        $errors[] = "Field '{$field}' must be a boolean";
-                    }
-                    break;
+            case 'boolean':
+                if (!is_bool($value) && !in_array($value, [0, 1, '0', '1', 'true', 'false'], true)) {
+                    $errors[] = "Field '{$field}' must be a boolean";
+                }
+                break;
 
-                case 'object':
-                    if (!is_array($value) && !is_object($value)) {
-                        $errors[] = "Field '{$field}' must be an object";
-                    }
-                    break;
+            case 'object':
+                if (!is_array($value) && !is_object($value)) {
+                    $errors[] = "Field '{$field}' must be an object";
+                }
+                break;
 
-                case 'array':
-                    if (!is_array($value)) {
-                        $errors[] = "Field '{$field}' must be an array";
-                    }
-                    break;
+            case 'array':
+                if (!is_array($value)) {
+                    $errors[] = "Field '{$field}' must be an array";
+                }
+                break;
             }
         }
 
@@ -479,7 +491,8 @@ class PDF_Builder_API_Mappings {
     /**
      * Générer une réponse API standardisée
      */
-    public static function create_api_response($data = null, $status = 'success', $message = null, $errors = []) {
+    public static function create_api_response($data = null, $status = 'success', $message = null, $errors = [])
+    {
         $response_code = self::get_api_response_code($status);
 
         $response = [
@@ -503,7 +516,8 @@ class PDF_Builder_API_Mappings {
     /**
      * Vérifier les limites de taux pour une requête API
      */
-    public static function check_rate_limit($user_id = null, $endpoint = null) {
+    public static function check_rate_limit($user_id = null, $endpoint = null)
+    {
         $auth_config = self::$api_authentication['rate_limiting'];
 
         if (!$auth_config['enabled']) {

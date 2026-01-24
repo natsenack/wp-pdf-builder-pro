@@ -26,7 +26,7 @@ class PdfBuilderPreviewAjax
     public function generatePreview()
     {
         try {
-// Vérification des permissions
+            // Vérification des permissions
             if (!current_user_can('manage_options')) {
                 wp_die('Forbidden');
             }
@@ -45,13 +45,15 @@ class PdfBuilderPreviewAjax
             }
 
             // Création du générateur d'aperçu
-            require_once plugin_dir_path(__FILE__) . 'Managers/PDF_Builder_Preview_Generator.php';
+            include_once plugin_dir_path(__FILE__) . 'Managers/PDF_Builder_Preview_Generator.php';
             $generator = new PDF_Builder_Preview_Generator($template_data, $preview_type, $order_id);
             $preview_url = $generator->generate_preview();
-            wp_send_json_success(array(
+            wp_send_json_success(
+                array(
                 'preview_url' => $preview_url,
                 'cache_key' => $generator->get_cache_key()
-            ));
+                )
+            );
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors de la génération de l\'aperçu: ' . $e->getMessage());
         }
@@ -63,7 +65,7 @@ class PdfBuilderPreviewAjax
     public function getPreviewData()
     {
         try {
-// Vérification des permissions
+            // Vérification des permissions
             if (!current_user_can('manage_options')) {
                 wp_die('Forbidden');
             }
@@ -90,13 +92,15 @@ class PdfBuilderPreviewAjax
     private function getSampleOrders()
     {
         $sample_orders = array();
-// Récupère les 5 dernières commandes complétées
-        $orders = wc_get_orders(array(
+        // Récupère les 5 dernières commandes complétées
+        $orders = wc_get_orders(
+            array(
             'limit' => 5,
             'status' => 'completed',
             'orderby' => 'date',
             'order' => 'DESC'
-        ));
+            )
+        );
         foreach ($orders as $order) {
             $sample_orders[] = array(
                 'id' => $order->get_id(),

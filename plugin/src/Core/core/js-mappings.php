@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class PDF_Builder_JS_Mappings {
+class PDF_Builder_JS_Mappings
+{
 
     // ==========================================
     // CONSTANTES JAVASCRIPT
@@ -340,35 +341,40 @@ class PDF_Builder_JS_Mappings {
     /**
      * Obtenir toutes les constantes JavaScript
      */
-    public static function get_js_constants() {
+    public static function get_js_constants()
+    {
         return self::$js_constants;
     }
 
     /**
      * Obtenir une constante JavaScript spécifique
      */
-    public static function get_js_constant($key) {
+    public static function get_js_constant($key)
+    {
         return self::$js_constants[$key] ?? null;
     }
 
     /**
      * Obtenir tous les objets JavaScript
      */
-    public static function get_js_objects() {
+    public static function get_js_objects()
+    {
         return self::$js_objects;
     }
 
     /**
      * Obtenir un objet JavaScript spécifique
      */
-    public static function get_js_object($key) {
+    public static function get_js_object($key)
+    {
         return self::$js_objects[$key] ?? null;
     }
 
     /**
      * Générer le code JavaScript pour les constantes
      */
-    public static function generate_js_constants_script() {
+    public static function generate_js_constants_script()
+    {
         $script = "<script>\n";
         $script .= "window.PDF_BUILDER_CONSTANTS = {\n";
 
@@ -387,7 +393,8 @@ class PDF_Builder_JS_Mappings {
     /**
      * Générer le code JavaScript pour les objets
      */
-    public static function generate_js_objects_script() {
+    public static function generate_js_objects_script()
+    {
         $script = "<script>\n";
         $script .= "window.PDF_BUILDER_OBJECTS = {\n";
 
@@ -406,7 +413,8 @@ class PDF_Builder_JS_Mappings {
     /**
      * Générer tout le code JavaScript nécessaire
      */
-    public static function generate_all_js_scripts() {
+    public static function generate_all_js_scripts()
+    {
         return self::generate_js_constants_script() . "\n" . self::generate_js_objects_script();
     }
 }

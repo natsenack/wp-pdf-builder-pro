@@ -97,7 +97,7 @@ class PDFGenerator
             $pdf_metadata_enabled = get_option('pdf_builder_pdf_metadata_enabled', '1') === '1';
             $pdf_print_optimized = get_option('pdf_builder_pdf_print_optimized', '1') === '1';
             // Utiliser Dompdf pour générer le PDF
-            require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+            include_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
 
             if (class_exists('Dompdf\Dompdf')) {
                 // Créer les options Dompdf pour éviter l'erreur de dépréciation
@@ -109,19 +109,19 @@ class PDFGenerator
 
                 // Appliquer les paramètres de qualité
                 switch ($pdf_quality) {
-                    case 'low':
-                        $dompdf->set_option('dpi', 72);
-                        $dompdf->set_option('defaultMediaType', 'screen');
-                        break;
-                    case 'medium':
-                        $dompdf->set_option('dpi', 96);
-                        $dompdf->set_option('defaultMediaType', 'screen');
-                        break;
-                    case 'high':
-                    default:
-                        $dompdf->set_option('dpi', 150);
-                        $dompdf->set_option('defaultMediaType', 'print');
-                        break;
+                case 'low':
+                    $dompdf->set_option('dpi', 72);
+                    $dompdf->set_option('defaultMediaType', 'screen');
+                    break;
+                case 'medium':
+                    $dompdf->set_option('dpi', 96);
+                    $dompdf->set_option('defaultMediaType', 'screen');
+                    break;
+                case 'high':
+                default:
+                    $dompdf->set_option('dpi', 150);
+                    $dompdf->set_option('defaultMediaType', 'print');
+                    break;
                 }
 
                 // Appliquer la compression

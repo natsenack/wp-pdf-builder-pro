@@ -493,22 +493,26 @@ class PDF_Builder_WooCommerce_Integration
 
             if ($is_preview) {
                 // Mode aperçu - retourner l'URL pour affichage dans le navigateur
-                wp_send_json_success([
+                wp_send_json_success(
+                    [
                     'message' => 'Aperçu généré avec succès',
                     'preview_url' => $download_url,
                     'download_url' => $download_url,
                     'filename' => $filename
-                ]);
+                    ]
+                );
             } else {
                 // Mode téléchargement normal
-                wp_send_json_success([
+                wp_send_json_success(
+                    [
                     'message' => 'HTML généré avec succès - TCPDF supprimé complètement',
                     'url' => $download_url,
                     'html_url' => $download_url,
                     'pdf_url' => null,
                     'download_url' => $download_url,
                     'filename' => $filename
-                ]);
+                    ]
+                );
             }
         } catch (Exception $e) {
             wp_send_json_error('Erreur Exception: ' . $e->getMessage());
@@ -797,42 +801,42 @@ class PDF_Builder_WooCommerce_Integration
         }
 
         switch ($type) {
-            case 'text':
-                return esc_html($content);
+        case 'text':
+            return esc_html($content);
 
-            case 'textarea':
-                return nl2br(esc_html($content));
+        case 'textarea':
+            return nl2br(esc_html($content));
 
-            case 'image':
-                $src = $element['src'] ?? $element['content'] ?? '';
-                $alt = $element['alt'] ?? 'Image';
-                $width = $element['width'] ?? $element['size']['width'] ?? 'auto';
-                $height = $element['height'] ?? $element['size']['height'] ?? 'auto';
+        case 'image':
+            $src = $element['src'] ?? $element['content'] ?? '';
+            $alt = $element['alt'] ?? 'Image';
+            $width = $element['width'] ?? $element['size']['width'] ?? 'auto';
+            $height = $element['height'] ?? $element['size']['height'] ?? 'auto';
 
-                // Handle different width/height formats
-                if (is_numeric($width)) {
-                    $width .= 'px';
-                }
-                if (is_numeric($height)) {
-                    $height .= 'px';
-                }
+            // Handle different width/height formats
+            if (is_numeric($width)) {
+                $width .= 'px';
+            }
+            if (is_numeric($height)) {
+                $height .= 'px';
+            }
 
-                if (!empty($src)) {
-                    return "<img src=\"{$src}\" alt=\"{$alt}\" style=\"width: {$width}; height: {$height}; object-fit: cover; max-width: 100%; max-height: 100%;\">";
-                }
-                return '';
+            if (!empty($src)) {
+                return "<img src=\"{$src}\" alt=\"{$alt}\" style=\"width: {$width}; height: {$height}; object-fit: cover; max-width: 100%; max-height: 100%;\">";
+            }
+            return '';
 
-            case 'line':
-                return ''; // Handled by CSS styling only
+        case 'line':
+            return ''; // Handled by CSS styling only
 
-            case 'rectangle':
-                return ''; // Just a colored/styled div, no content needed
+        case 'rectangle':
+            return ''; // Just a colored/styled div, no content needed
 
-            case 'html':
-                // Allow basic HTML but sanitize it
-                return wp_kses(
-                    $content,
-                    [
+        case 'html':
+            // Allow basic HTML but sanitize it
+            return wp_kses(
+                $content,
+                [
                     'br' => [],
                     'strong' => [],
                     'b' => [],
@@ -849,10 +853,10 @@ class PDF_Builder_WooCommerce_Integration
                     'thead' => ['style' => []],
                     'tbody' => ['style' => []],
                     ]
-                );
+            );
 
-            default:
-                return esc_html($content);
+        default:
+            return esc_html($content);
         }
     }
 
@@ -1075,21 +1079,21 @@ class PDF_Builder_WooCommerce_Integration
     private function sanitizeElementContent($content, $type)
     {
         switch ($type) {
-            case 'text':
-            case 'dynamic-text':
-                return wp_kses(
-                    $content,
-                    [
+        case 'text':
+        case 'dynamic-text':
+            return wp_kses(
+                $content,
+                [
                     'br' => [],
                     'strong' => [],
                     'em' => [],
                     'u' => []
                     ]
-                );
-            case 'image':
-                return esc_url_raw($content);
-            default:
-                return sanitize_text_field($content);
+            );
+        case 'image':
+            return esc_url_raw($content);
+        default:
+            return sanitize_text_field($content);
         }
     }
 
@@ -1366,23 +1370,23 @@ class PDF_Builder_WooCommerce_Integration
     private function sanitizeElementField($field, $value)
     {
         switch ($field) {
-            case 'id':
-            case 'type':
-                return sanitize_text_field($value);
-            case 'x':
-            case 'y':
-            case 'width':
-            case 'height':
-            case 'rotation':
-            case 'opacity':
-            case 'zIndex':
-                return floatval($value);
-            case 'content':
-                return $this->sanitizeElementContent($value, 'text'); // Type par défaut
-            case 'style':
-                return is_array($value) ? $this->sanitizeElementStyles($value) : [];
-            default:
-                return sanitize_text_field($value);
+        case 'id':
+        case 'type':
+            return sanitize_text_field($value);
+        case 'x':
+        case 'y':
+        case 'width':
+        case 'height':
+        case 'rotation':
+        case 'opacity':
+        case 'zIndex':
+            return floatval($value);
+        case 'content':
+            return $this->sanitizeElementContent($value, 'text'); // Type par défaut
+        case 'style':
+            return is_array($value) ? $this->sanitizeElementStyles($value) : [];
+        default:
+            return sanitize_text_field($value);
         }
     }
 
@@ -1658,9 +1662,11 @@ class PDF_Builder_WooCommerce_Integration
                 }
             }
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'company' => $company_data
-            ]);
+                ]
+            );
         } catch (Exception $e) {
             wp_send_json_error('Erreur interne lors de la récupération des données entreprise');
         }

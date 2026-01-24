@@ -4,7 +4,8 @@
  * Collecte et analyse les métriques de performance et d'utilisation
  */
 
-class PDF_Builder_Metrics_Analytics {
+class PDF_Builder_Metrics_Analytics
+{
     private static $instance = null;
 
     // Types de métriques
@@ -25,19 +26,22 @@ class PDF_Builder_Metrics_Analytics {
     private $realtime_metrics = [];
     private $metric_buffers = [];
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_hooks();
         $this->init_metric_collection();
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Collecte de métriques
         add_action('wp_ajax_pdf_builder_track_metric', [$this, 'track_metric_ajax']);
         add_action('wp_ajax_pdf_builder_get_metrics', [$this, 'get_metrics_ajax']);
@@ -67,7 +71,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Initialise la collecte de métriques
      */
-    private function init_metric_collection() {
+    private function init_metric_collection()
+    {
         // Planifier les agrégations
         if (!wp_next_scheduled('pdf_builder_hourly_aggregation')) {
             wp_schedule_event(time(), 'hourly', 'pdf_builder_hourly_aggregation');
@@ -93,7 +98,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Suit une métrique
      */
-    public function track_metric($type, $name, $value = 1, $metadata = [], $user_id = null) {
+    public function track_metric($type, $name, $value = 1, $metadata = [], $user_id = null)
+    {
         $user_id = $user_id ?: get_current_user_id();
 
         $metric = [
@@ -123,7 +129,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Ajoute une métrique temps réel
      */
-    private function add_realtime_metric($metric) {
+    private function add_realtime_metric($metric)
+    {
         $key = $metric['type'] . '_' . $metric['name'];
 
         if (!isset($this->realtime_metrics[$key])) {
@@ -149,7 +156,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Met en buffer une métrique pour insertion en lot
      */
-    private function buffer_metric($metric) {
+    private function buffer_metric($metric)
+    {
         $this->metric_buffers[] = $metric;
 
         // Insérer en lot tous les 100 métriques ou toutes les 30 secondes
@@ -161,7 +169,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Vide le buffer de métriques
      */
-    public function flush_metric_buffer() {
+    public function flush_metric_buffer()
+    {
         if (empty($this->metric_buffers)) {
             return;
         }
@@ -174,7 +183,8 @@ class PDF_Builder_Metrics_Analytics {
         $placeholders = [];
 
         foreach ($this->metric_buffers as $metric) {
-            $values = array_merge($values, [
+            $values = array_merge(
+                $values, [
                 $metric['type'],
                 $metric['name'],
                 $metric['value'],
@@ -184,7 +194,8 @@ class PDF_Builder_Metrics_Analytics {
                 $metric['session_id'],
                 $metric['ip_address'],
                 $metric['user_agent']
-            ]);
+                ]
+            );
 
             $placeholders[] = '(%s, %s, %f, %s, %d, %s, %s, %s, %s)';
         }
@@ -199,7 +210,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Obtient l'adresse IP du client
      */
-    private function get_client_ip() {
+    private function get_client_ip()
+    {
         $ip_headers = [
             'HTTP_CF_CONNECTING_IP',
             'HTTP_CLIENT_IP',
@@ -233,7 +245,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Suit la génération de PDF
      */
-    public function track_pdf_generation($pdf_data) {
+    public function track_pdf_generation($pdf_data)
+    {
         $this->track_metric(
             self::METRIC_PDF_GENERATION,
             'pdf_generated',
@@ -250,7 +263,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Suit les appels API
      */
-    public function track_api_call($api_data) {
+    public function track_api_call($api_data)
+    {
         $this->track_metric(
             self::METRIC_API_CALLS,
             $api_data['endpoint'] ?? 'unknown',
@@ -267,7 +281,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Suit les actions utilisateur
      */
-    public function track_user_action($action_data) {
+    public function track_user_action($action_data)
+    {
         $this->track_metric(
             self::METRIC_USER_ACTIONS,
             $action_data['action'],
@@ -283,7 +298,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Suit les métriques de performance
      */
-    public function track_performance_metric($performance_data) {
+    public function track_performance_metric($performance_data)
+    {
         $this->track_metric(
             self::METRIC_PERFORMANCE,
             $performance_data['metric'],
@@ -298,7 +314,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Suit les erreurs
      */
-    public function track_error($error_data) {
+    public function track_error($error_data)
+    {
         $this->track_metric(
             self::METRIC_ERRORS,
             $error_data['type'] ?? 'unknown',
@@ -315,7 +332,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Suit les événements de sécurité
      */
-    public function track_security_event($security_data) {
+    public function track_security_event($security_data)
+    {
         $this->track_metric(
             self::METRIC_SECURITY,
             $security_data['event'],
@@ -331,7 +349,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Obtient les métriques temps réel
      */
-    public function get_realtime_metrics() {
+    public function get_realtime_metrics()
+    {
         // Nettoyer les métriques anciennes (plus de 5 minutes)
         $cutoff = time() - 300;
 
@@ -347,7 +366,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Obtient les métriques historiques
      */
-    public function get_metrics($type = null, $name = null, $period = self::PERIOD_DAILY, $limit = 30) {
+    public function get_metrics($type = null, $name = null, $period = self::PERIOD_DAILY, $limit = 30)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_metrics_aggregated';
@@ -365,12 +385,14 @@ class PDF_Builder_Metrics_Analytics {
             $params[] = $name;
         }
 
-        $query = $wpdb->prepare("
+        $query = $wpdb->prepare(
+            "
             SELECT * FROM $table
             WHERE " . implode(' AND ', $where) . "
             ORDER BY date DESC
             LIMIT %d
-        ", array_merge($params, [$limit]));
+        ", array_merge($params, [$limit])
+        );
 
         return $wpdb->get_results($query, ARRAY_A);
     }
@@ -378,7 +400,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Obtient les analyses avancées
      */
-    public function get_analytics($period = self::PERIOD_MONTHLY) {
+    public function get_analytics($period = self::PERIOD_MONTHLY)
+    {
         $analytics = [
             'overview' => $this->get_overview_analytics($period),
             'performance' => $this->get_performance_analytics($period),
@@ -394,7 +417,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Obtient les analyses générales
      */
-    private function get_overview_analytics($period) {
+    private function get_overview_analytics($period)
+    {
         $metrics = $this->get_metrics(null, null, $period, 1);
 
         if (empty($metrics)) {
@@ -420,7 +444,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Obtient les analyses de performance
      */
-    private function get_performance_analytics($period) {
+    private function get_performance_analytics($period)
+    {
         $performance_metrics = $this->get_metrics(self::METRIC_PERFORMANCE, null, $period, 30);
 
         $analytics = [
@@ -452,7 +477,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Obtient les analyses d'utilisation
      */
-    private function get_usage_analytics($period) {
+    private function get_usage_analytics($period)
+    {
         $usage_metrics = $this->get_metrics(self::METRIC_USER_ACTIONS, null, $period, 30);
 
         $analytics = [
@@ -481,7 +507,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Obtient les analyses d'erreurs
      */
-    private function get_error_analytics($period) {
+    private function get_error_analytics($period)
+    {
         $error_metrics = $this->get_metrics(self::METRIC_ERRORS, null, $period, 30);
 
         $analytics = [
@@ -510,7 +537,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Obtient les analyses de sécurité
      */
-    private function get_security_analytics($period) {
+    private function get_security_analytics($period)
+    {
         $security_metrics = $this->get_metrics(self::METRIC_SECURITY, null, $period, 30);
 
         $analytics = [
@@ -539,7 +567,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Obtient les analyses de tendances
      */
-    private function get_trend_analytics($period) {
+    private function get_trend_analytics($period)
+    {
         $all_metrics = $this->get_metrics(null, null, $period, 60);
 
         $trends = [
@@ -570,7 +599,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Calcule une tendance
      */
-    private function calculate_trend($current, $previous, $direction = 'asc') {
+    private function calculate_trend($current, $previous, $direction = 'asc')
+    {
         if ($previous == 0) {
             return 'stable';
         }
@@ -587,28 +617,32 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Agrège les métriques horaires
      */
-    public function aggregate_hourly_metrics() {
+    public function aggregate_hourly_metrics()
+    {
         $this->aggregate_metrics('hourly', '-1 hour');
     }
 
     /**
      * Agrège les métriques quotidiennes
      */
-    public function aggregate_daily_metrics() {
+    public function aggregate_daily_metrics()
+    {
         $this->aggregate_metrics('daily', '-1 day');
     }
 
     /**
      * Agrège les métriques hebdomadaires
      */
-    public function aggregate_weekly_metrics() {
+    public function aggregate_weekly_metrics()
+    {
         $this->aggregate_metrics('weekly', '-1 week');
     }
 
     /**
      * Agrège les métriques pour une période
      */
-    private function aggregate_metrics($period, $time_range) {
+    private function aggregate_metrics($period, $time_range)
+    {
         global $wpdb;
 
         $raw_table = $wpdb->prefix . 'pdf_builder_metrics';
@@ -617,7 +651,9 @@ class PDF_Builder_Metrics_Analytics {
         $start_time = date('Y-m-d H:i:s', strtotime($time_range));
 
         // Agréger par type et nom
-        $results = $wpdb->get_results($wpdb->prepare("
+        $results = $wpdb->get_results(
+            $wpdb->prepare(
+                "
             SELECT
                 type,
                 name,
@@ -629,7 +665,9 @@ class PDF_Builder_Metrics_Analytics {
             FROM $raw_table
             WHERE timestamp >= %s
             GROUP BY type, name
-        ", $start_time), ARRAY_A);
+        ", $start_time
+            ), ARRAY_A
+        );
 
         foreach ($results as $result) {
             $aggregated_data = $this->calculate_aggregated_data($result['type'], $start_time);
@@ -653,23 +691,30 @@ class PDF_Builder_Metrics_Analytics {
         }
 
         // Vider les métriques brutes anciennes
-        $wpdb->query($wpdb->prepare("
+        $wpdb->query(
+            $wpdb->prepare(
+                "
             DELETE FROM $raw_table
             WHERE timestamp < %s
-        ", $start_time));
+        ", $start_time
+            )
+        );
     }
 
     /**
      * Calcule les données agrégées spécifiques au type
      */
-    private function calculate_aggregated_data($type, $start_time) {
+    private function calculate_aggregated_data($type, $start_time)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_metrics';
 
         switch ($type) {
-            case self::METRIC_PDF_GENERATION:
-                return $wpdb->get_row($wpdb->prepare("
+        case self::METRIC_PDF_GENERATION:
+            return $wpdb->get_row(
+                $wpdb->prepare(
+                    "
                     SELECT
                         COUNT(CASE WHEN JSON_EXTRACT(metadata, '$.success') = 'true' THEN 1 END) as successful_generations,
                         COUNT(*) as total_generations,
@@ -677,36 +722,47 @@ class PDF_Builder_Metrics_Analytics {
                         AVG(CAST(JSON_EXTRACT(metadata, '$.size') AS DECIMAL)) as avg_file_size
                     FROM $table
                     WHERE type = %s AND timestamp >= %s
-                ", $type, $start_time), ARRAY_A);
+                ", $type, $start_time
+                ), ARRAY_A
+            );
 
-            case self::METRIC_API_CALLS:
-                return $wpdb->get_row($wpdb->prepare("
+        case self::METRIC_API_CALLS:
+            return $wpdb->get_row(
+                $wpdb->prepare(
+                    "
                     SELECT
                         COUNT(CASE WHEN JSON_EXTRACT(metadata, '$.success') = 'true' THEN 1 END) as successful_calls,
                         COUNT(*) as total_calls,
                         AVG(CAST(JSON_EXTRACT(metadata, '$.response_time') AS DECIMAL)) as avg_response_time
                     FROM $table
                     WHERE type = %s AND timestamp >= %s
-                ", $type, $start_time), ARRAY_A);
+                ", $type, $start_time
+                ), ARRAY_A
+            );
 
-            case self::METRIC_USER_ACTIONS:
-                return $wpdb->get_row($wpdb->prepare("
+        case self::METRIC_USER_ACTIONS:
+            return $wpdb->get_row(
+                $wpdb->prepare(
+                    "
                     SELECT
                         COUNT(DISTINCT user_id) as unique_users,
                         COUNT(*) as total_actions
                     FROM $table
                     WHERE type = %s AND timestamp >= %s
-                ", $type, $start_time), ARRAY_A);
+                ", $type, $start_time
+                ), ARRAY_A
+            );
 
-            default:
-                return [];
+        default:
+            return [];
         }
     }
 
     /**
      * Génère le rapport hebdomadaire
      */
-    public function generate_weekly_report() {
+    public function generate_weekly_report()
+    {
         $analytics = $this->get_analytics(self::PERIOD_WEEKLY);
 
         $report = [
@@ -725,7 +781,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Génère le rapport mensuel
      */
-    public function generate_monthly_report() {
+    public function generate_monthly_report()
+    {
         $analytics = $this->get_analytics(self::PERIOD_MONTHLY);
 
         $report = [
@@ -744,22 +801,28 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * Nettoie les anciennes métriques
      */
-    public function cleanup_old_metrics() {
+    public function cleanup_old_metrics()
+    {
         global $wpdb;
 
         $agg_table = $wpdb->prefix . 'pdf_builder_metrics_aggregated';
 
         // Garder seulement 1 an de données agrégées
-        $wpdb->query($wpdb->prepare("
+        $wpdb->query(
+            $wpdb->prepare(
+                "
             DELETE FROM $agg_table
             WHERE date < %s
-        ", date('Y-m-d H:i:s', strtotime('-1 year'))));
+        ", date('Y-m-d H:i:s', strtotime('-1 year'))
+            )
+        );
     }
 
     /**
      * AJAX - Suit une métrique
      */
-    public function track_metric_ajax() {
+    public function track_metric_ajax()
+    {
         try {
             $type = sanitize_text_field($_POST['type'] ?? '');
             $name = sanitize_text_field($_POST['name'] ?? '');
@@ -775,10 +838,12 @@ class PDF_Builder_Metrics_Analytics {
 
             $metric = $this->track_metric($type, $name, $value, $metadata);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Métrique suivie',
                 'metric' => $metric
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -788,7 +853,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * AJAX - Obtient les métriques
      */
-    public function get_metrics_ajax() {
+    public function get_metrics_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -807,10 +873,12 @@ class PDF_Builder_Metrics_Analytics {
 
             $metrics = $this->get_metrics($type, $name, $period, $limit);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Métriques récupérées',
                 'metrics' => $metrics
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -820,7 +888,8 @@ class PDF_Builder_Metrics_Analytics {
     /**
      * AJAX - Obtient les analyses
      */
-    public function get_analytics_ajax() {
+    public function get_analytics_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -836,10 +905,12 @@ class PDF_Builder_Metrics_Analytics {
 
             $analytics = $this->get_analytics($period);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Analyses récupérées',
                 'analytics' => $analytics
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -848,34 +919,43 @@ class PDF_Builder_Metrics_Analytics {
 }
 
 // Fonctions globales
-function pdf_builder_metrics() {
+function pdf_builder_metrics()
+{
     return PDF_Builder_Metrics_Analytics::get_instance();
 }
 
-function pdf_builder_track_metric($type, $name, $value = 1, $metadata = [], $user_id = null) {
+function pdf_builder_track_metric($type, $name, $value = 1, $metadata = [], $user_id = null)
+{
     return PDF_Builder_Metrics_Analytics::get_instance()->track_metric($type, $name, $value, $metadata, $user_id);
 }
 
-function pdf_builder_get_metrics($type = null, $name = null, $period = 'daily', $limit = 30) {
+function pdf_builder_get_metrics($type = null, $name = null, $period = 'daily', $limit = 30)
+{
     return PDF_Builder_Metrics_Analytics::get_instance()->get_metrics($type, $name, $period, $limit);
 }
 
-function pdf_builder_get_metrics_analytics($period = 'monthly') {
+function pdf_builder_get_metrics_analytics($period = 'monthly')
+{
     return PDF_Builder_Metrics_Analytics::get_instance()->get_analytics($period);
 }
 
-function pdf_builder_get_realtime_metrics() {
+function pdf_builder_get_realtime_metrics()
+{
     return PDF_Builder_Metrics_Analytics::get_instance()->get_realtime_metrics();
 }
 
 // Initialiser le système de métriques
-add_action('plugins_loaded', function() {
-    PDF_Builder_Metrics_Analytics::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_Metrics_Analytics::get_instance();
+    }
+);
 
 // Vider le buffer de métriques à la fin de la requête
-add_action('shutdown', function() {
-    if (class_exists('PDF_Builder_Metrics_Analytics')) {
-        PDF_Builder_Metrics_Analytics::get_instance()->flush_metric_buffer();
+add_action(
+    'shutdown', function () {
+        if (class_exists('PDF_Builder_Metrics_Analytics')) {
+            PDF_Builder_Metrics_Analytics::get_instance()->flush_metric_buffer();
+        }
     }
-});
+);

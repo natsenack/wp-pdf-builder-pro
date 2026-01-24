@@ -4,7 +4,8 @@
  * Système structuré et configurable pour le logging
  */
 
-class PDF_Builder_Logger {
+class PDF_Builder_Logger
+{
     private static $instance = null;
     private $log_level;
     private $log_file;
@@ -25,19 +26,22 @@ class PDF_Builder_Logger {
         self::LEVEL_CRITICAL => 'CRITICAL'
     ];
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_settings();
         $this->init_hooks();
     }
 
-    private function init_settings() {
+    private function init_settings()
+    {
         // Récupérer les paramètres de debug depuis les options WordPress
         $settings = get_option('pdf_builder_settings', []);
 
@@ -59,18 +63,26 @@ class PDF_Builder_Logger {
     /**
      * Map les niveaux de log du plugin vers les constantes internes
      */
-    private function map_log_level($plugin_level) {
+    private function map_log_level($plugin_level)
+    {
         switch ($plugin_level) {
-            case 0: return self::LEVEL_CRITICAL; // Aucun log = seulement erreurs critiques
-            case 1: return self::LEVEL_ERROR;     // Erreurs uniquement
-            case 2: return self::LEVEL_WARNING;   // Erreurs + Avertissements
-            case 3: return self::LEVEL_INFO;      // Info complète
-            case 4: return self::LEVEL_DEBUG;     // Détails (Développement)
-            default: return self::LEVEL_INFO;     // Par défaut
+        case 0: 
+            return self::LEVEL_CRITICAL; // Aucun log = seulement erreurs critiques
+        case 1: 
+            return self::LEVEL_ERROR;     // Erreurs uniquement
+        case 2: 
+            return self::LEVEL_WARNING;   // Erreurs + Avertissements
+        case 3: 
+            return self::LEVEL_INFO;      // Info complète
+        case 4: 
+            return self::LEVEL_DEBUG;     // Détails (Développement)
+        default: 
+            return self::LEVEL_INFO;     // Par défaut
         }
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Nettoyer les anciens logs régulièrement
         add_action('pdf_builder_daily_maintenance', [$this, 'cleanup_old_logs']);
 
@@ -81,7 +93,8 @@ class PDF_Builder_Logger {
     /**
      * Log un message avec un niveau spécifique
      */
-    public function log($level, $message, $context = []) {
+    public function log($level, $message, $context = [])
+    {
         if ($level < $this->log_level) {
             return; // Niveau de log trop bas
         }
@@ -98,30 +111,36 @@ class PDF_Builder_Logger {
     /**
      * Méthodes de convenance pour différents niveaux
      */
-    public function debug($message, $context = []) {
+    public function debug($message, $context = [])
+    {
         // $this->log(self::LEVEL_DEBUG, $message, $context);
     }
 
-    public function info($message, $context = []) {
+    public function info($message, $context = [])
+    {
         // $this->log(self::LEVEL_INFO, $message, $context);
     }
 
-    public function warning($message, $context = []) {
+    public function warning($message, $context = [])
+    {
         // $this->log(self::LEVEL_WARNING, $message, $context);
     }
 
-    public function error($message, $context = []) {
+    public function error($message, $context = [])
+    {
         // $this->log(self::LEVEL_ERROR, $message, $context);
     }
 
-    public function critical($message, $context = []) {
+    public function critical($message, $context = [])
+    {
         // $this->log(self::LEVEL_CRITICAL, $message, $context);
     }
 
     /**
      * Log un message de debug seulement si le debug PHP est activé
      */
-    public function debug_log($message) {
+    public function debug_log($message)
+    {
         $settings = get_option('pdf_builder_settings', []);
         $debug_php_errors = isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'];
 
@@ -133,7 +152,8 @@ class PDF_Builder_Logger {
     /**
      * Handler pour les erreurs PHP fatales au shutdown
      */
-    public function log_php_errors() {
+    public function log_php_errors()
+    {
         // Vérifier si le debug PHP errors est activé
         $settings = get_option('pdf_builder_settings', []);
         $debug_php_errors = isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'];
@@ -144,19 +164,22 @@ class PDF_Builder_Logger {
 
         $error = error_get_last();
         if ($error && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
-            $this->critical('PHP Fatal Error', [
+            $this->critical(
+                'PHP Fatal Error', [
                 'message' => $error['message'],
                 'file' => $error['file'],
                 'line' => $error['line'],
                 'type' => $error['type']
-            ]);
+                ]
+            );
         }
     }
 
     /**
      * Formatte une entrée de log
      */
-    private function format_log_entry($level, $message, $context = []) {
+    private function format_log_entry($level, $message, $context = [])
+    {
         $timestamp = current_time('Y-m-d H:i:s');
         $level_name = $this->level_names[$level] ?? 'UNKNOWN';
 
@@ -183,7 +206,8 @@ class PDF_Builder_Logger {
     /**
      * Écrit dans le fichier de log
      */
-    private function write_to_file($entry) {
+    private function write_to_file($entry)
+    {
         // Créer le dossier s'il n'existe pas
         $log_dir = dirname($this->log_file);
         if (!file_exists($log_dir)) {
@@ -202,7 +226,8 @@ class PDF_Builder_Logger {
     /**
      * Fait une rotation du fichier de log
      */
-    private function rotate_log_file() {
+    private function rotate_log_file()
+    {
         $backup_file = $this->log_file . '.' . current_time('Y-m-d_H-i-s') . '.bak';
 
         // Renommer le fichier actuel
@@ -217,7 +242,8 @@ class PDF_Builder_Logger {
     /**
      * Nettoie les anciens fichiers de log
      */
-    public function cleanup_old_logs() {
+    public function cleanup_old_logs()
+    {
         $log_dir = dirname($this->log_file);
         if (!is_dir($log_dir)) {
             return;
@@ -237,15 +263,18 @@ class PDF_Builder_Logger {
     /**
      * Nettoie les anciens fichiers de backup
      */
-    private function cleanup_old_backups() {
+    private function cleanup_old_backups()
+    {
         $log_dir = dirname($this->log_file);
         $backup_files = glob($log_dir . '/pdf-builder.log.*.bak');
 
         // Garder seulement les 5 derniers backups
         if (count($backup_files) > 5) {
-            usort($backup_files, function($a, $b) {
-                return filemtime($b) - filemtime($a);
-            });
+            usort(
+                $backup_files, function ($a, $b) {
+                    return filemtime($b) - filemtime($a);
+                }
+            );
 
             $files_to_delete = array_slice($backup_files, 5);
             foreach ($files_to_delete as $file) {
@@ -257,7 +286,8 @@ class PDF_Builder_Logger {
     /**
      * Récupère les dernières entrées du log
      */
-    public function get_recent_logs($lines = 100) {
+    public function get_recent_logs($lines = 100)
+    {
         if (!file_exists($this->log_file)) {
             return [];
         }
@@ -284,7 +314,8 @@ class PDF_Builder_Logger {
     /**
      * Recherche dans les logs
      */
-    public function search_logs($query, $level = null, $limit = 50) {
+    public function search_logs($query, $level = null, $limit = 50)
+    {
         if (!file_exists($this->log_file)) {
             return [];
         }
@@ -316,7 +347,8 @@ class PDF_Builder_Logger {
     /**
      * Obtient les statistiques des logs
      */
-    public function get_log_stats() {
+    public function get_log_stats()
+    {
         $stats = [
             'file_exists' => file_exists($this->log_file),
             'file_size' => 0,
@@ -357,7 +389,8 @@ class PDF_Builder_Logger {
     /**
      * Vide le fichier de log
      */
-    public function clear_logs() {
+    public function clear_logs()
+    {
         if (file_exists($this->log_file)) {
             // file_put_contents($this->log_file, '');
         }
@@ -365,27 +398,34 @@ class PDF_Builder_Logger {
 }
 
 // Fonctions globales pour faciliter l'utilisation
-function pdf_builder_log_debug($message, $context = []) {
+function pdf_builder_log_debug($message, $context = [])
+{
     PDF_Builder_Logger::get_instance()->debug($message, $context);
 }
 
-function pdf_builder_log_info($message, $context = []) {
+function pdf_builder_log_info($message, $context = [])
+{
     PDF_Builder_Logger::get_instance()->info($message, $context);
 }
 
-function pdf_builder_log_warning($message, $context = []) {
+function pdf_builder_log_warning($message, $context = [])
+{
     PDF_Builder_Logger::get_instance()->warning($message, $context);
 }
 
-function pdf_builder_log_error($message, $context = []) {
+function pdf_builder_log_error($message, $context = [])
+{
     PDF_Builder_Logger::get_instance()->error($message, $context);
 }
 
-function pdf_builder_log_critical($message, $context = []) {
+function pdf_builder_log_critical($message, $context = [])
+{
     PDF_Builder_Logger::get_instance()->critical($message, $context);
 }
 
 // Initialiser le logger
-add_action('plugins_loaded', function() {
-    PDF_Builder_Logger::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_Logger::get_instance();
+    }
+);

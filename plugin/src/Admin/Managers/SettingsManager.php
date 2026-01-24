@@ -269,9 +269,11 @@ class SettingsManager
                 update_option($key, $value);
             }
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Paramètres généraux sauvegardés'
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->get_message());
@@ -309,9 +311,11 @@ class SettingsManager
                 update_option($key, $value);
             }
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Paramètres de performance sauvegardés'
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->get_message());
@@ -623,18 +627,18 @@ class SettingsManager
         foreach ($canvas_fields as $field => $type) {
             if (isset($input[$field])) {
                 switch ($type) {
-                    case 'intval':
-                        $sanitized[$field] = intval($input[$field]);
-                        break;
-                    case 'bool':
-                        $sanitized[$field] = $input[$field] ? '1' : '0';
-                        break;
-                    case 'sanitize_hex_color':
-                        $sanitized[$field] = sanitize_hex_color($input[$field]) ?: $input[$field];
-                        break;
-                    default:
-                        $sanitized[$field] = sanitize_text_field($input[$field]);
-                        break;
+                case 'intval':
+                    $sanitized[$field] = intval($input[$field]);
+                    break;
+                case 'bool':
+                    $sanitized[$field] = $input[$field] ? '1' : '0';
+                    break;
+                case 'sanitize_hex_color':
+                    $sanitized[$field] = sanitize_hex_color($input[$field]) ?: $input[$field];
+                    break;
+                default:
+                    $sanitized[$field] = sanitize_text_field($input[$field]);
+                    break;
                 }
             }
         }

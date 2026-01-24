@@ -51,11 +51,11 @@ class PdfBuilderLicenseManager
      */
     private function init()
     {
-        $this->license_key = get_option('pdf_builder_license_key', '');
-        $this->license_status = get_option('pdf_builder_license_status', 'free');
-        $this->license_data = get_option('pdf_builder_license_data', []);
+        $this->license_key = \get_option('pdf_builder_license_key', '');
+        $this->license_status = \get_option('pdf_builder_license_status', 'free');
+        $this->license_data = \get_option('pdf_builder_license_data', []);
 
-        add_action('admin_init', array($this, 'check_license_status'));
+        \add_action('admin_init', array($this, 'check_license_status'));
     }
 
     /**
@@ -70,10 +70,10 @@ class PdfBuilderLicenseManager
         }
         
         // Vérifier les clés de test (mode développeur)
-        $test_key = get_option('pdf_builder_license_test_key', '');
+        $test_key = \get_option('pdf_builder_license_test_key', '');
         if (!empty($test_key)) {
             // Vérifier si la clé de test n'est pas expirée
-            $test_expires = get_option('pdf_builder_license_test_key_expires', '');
+            $test_expires = \get_option('pdf_builder_license_test_key_expires', '');
             if (!empty($test_expires)) {
                 $expires_date = strtotime($test_expires);
                 if ($expires_date && $expires_date > time()) {
@@ -115,12 +115,12 @@ class PdfBuilderLicenseManager
         }
 
         // Validation de la licence (simulation - à remplacer par appel API réel)
-        $result = $this->validate_license($license_key);
+        $result = $this->validateLicense($license_key);
 
         if ($result['success']) {
-            update_option('pdf_builder_license_key', $license_key);
-            update_option('pdf_builder_license_status', 'active');
-            update_option('pdf_builder_license_data', $result['data']);
+            \update_option('pdf_builder_license_key', $license_key);
+            \update_option('pdf_builder_license_status', 'active');
+            \update_option('pdf_builder_license_data', $result['data']);
 
             $this->license_key = $license_key;
             $this->license_status = 'active';
@@ -137,9 +137,9 @@ class PdfBuilderLicenseManager
      */
     public function deactivateLicense()
     {
-        delete_option('pdf_builder_license_key');
-        delete_option('pdf_builder_license_status');
-        delete_option('pdf_builder_license_data');
+        \delete_option('pdf_builder_license_key');
+        \delete_option('pdf_builder_license_status');
+        \delete_option('pdf_builder_license_data');
 
         $this->license_key = '';
         $this->license_status = 'free';
@@ -204,18 +204,18 @@ class PdfBuilderLicenseManager
         }
 
         // Vérifier une fois par jour
-        $last_check = get_option('pdf_builder_license_last_check', 0);
+        $last_check = \get_option('pdf_builder_license_last_check', 0);
         $now = time();
 
         if ($now - $last_check > 86400) {
-            $result = $this->validate_license($this->license_key);
+            $result = $this->validateLicense($this->license_key);
 
             if (!$result['success']) {
-                update_option('pdf_builder_license_status', 'expired');
+                \update_option('pdf_builder_license_status', 'expired');
                 $this->license_status = 'expired';
             }
 
-            update_option('pdf_builder_license_last_check', $now);
+            \update_option('pdf_builder_license_last_check', $now);
         }
     }
 
@@ -226,7 +226,7 @@ class PdfBuilderLicenseManager
     {
         return [
             'status' => $this->license_status,
-            'is_premium' => $this->is_premium(),
+            'is_premium' => $this->isPremium(),
             'tier' => isset($this->license_data['tier']) ? $this->license_data['tier'] : 'free',
             'expires' => isset($this->license_data['expires']) ? date('d/m/Y', $this->license_data['expires']) : null,
             'features' => isset($this->license_data['features']) ? $this->license_data['features'] : []

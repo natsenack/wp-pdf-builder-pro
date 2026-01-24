@@ -50,7 +50,7 @@ class HTMLRenderer
         $show_taxes = isset($element['showTaxes']) ? (bool)$element['showTaxes'] : true;
         $show_discount = isset($element['showDiscount']) ? (bool)$element['showDiscount'] : true;
         $show_total = isset($element['showTotal']) ? (bool)$element['showTotal'] : true;
-// Récupérer les colonnes à afficher depuis l'élément
+        // Récupérer les colonnes à afficher depuis l'élément
         $columns = isset($element['columns']) && is_array($element['columns']) ? $element['columns'] : [
             'image' => false,
             'name' => true,
@@ -59,7 +59,7 @@ class HTMLRenderer
             'price' => true,
             'total' => true
         ];
-// Définir les styles de tableau disponibles (même que dans pdf-generator.php)
+        // Définir les styles de tableau disponibles (même que dans pdf-generator.php)
         $table_styles = [
             'default' => [
                 'header_bg' => ['r' => 248, 'g' => 249, 'b' => 250], // #f8f9fa
@@ -134,23 +134,23 @@ class HTMLRenderer
                 'rowFontSize' => '10px'
             ]
         ];
-// Utiliser le style demandé ou default si non trouvé
+        // Utiliser le style demandé ou default si non trouvé
         $style = isset($table_styles[$table_style]) ? $table_styles[$table_style] : $table_styles['default'];
-// Fonction helper pour convertir RGB en couleur CSS
+        // Fonction helper pour convertir RGB en couleur CSS
         $rgb_to_css = function ($rgb) {
 
             return sprintf('rgb(%d, %d, %d)', $rgb['r'], $rgb['g'], $rgb['b']);
         };
-// Déterminer la largeur des bordures selon showBorders
+        // Déterminer la largeur des bordures selon showBorders
         $border_width = $show_borders ? $style['border_width'] : 0;
         $row_border_color = $rgb_to_css($style['row_border']);
-// Styles CSS pour le tableau
+        // Styles CSS pour le tableau
         $table_style_css = sprintf('width: 100%%; border-collapse: collapse;%s', $show_borders ? ' border: ' . $border_width . 'px solid ' . $row_border_color . ';' : '');
         $header_style_css = sprintf('background-color: %s; color: %s;%s padding: 6px 8px; font-weight: %s; font-size: %s; text-align: left;', $rgb_to_css($style['header_bg']), $style['headerTextColor'], $show_borders ? ' border: ' . $border_width . 'px solid ' . $rgb_to_css($style['header_border']) . ';' : '', $style['headerFontWeight'], $style['headerFontSize']);
         $cell_style_css = sprintf('%s padding: 6px 8px; font-size: %s; color: %s;', $show_borders ? 'border: ' . $border_width . 'px solid ' . $row_border_color . ';' : '', $style['rowFontSize'], $style['rowTextColor']);
         $alt_row_style_css = $cell_style_css . sprintf(' background-color: %s;', $rgb_to_css($style['alt_row_bg']));
         $html = '<table style="' . $table_style_css . '">';
-// Entête du tableau (si activée)
+        // Entête du tableau (si activée)
         if ($show_headers) {
             $html .= '<thead><tr>';
             if ($columns['image'] ?? false) {
@@ -288,11 +288,11 @@ class HTMLRenderer
         // Préparer les données de la commande
         $billing_address = $this->formatAddress($order, 'billing');
         $shipping_address = $this->formatAddress($order, 'shipping');
-// Détecter le type de document
+        // Détecter le type de document
         $order_status = $order->get_status();
         $document_type = $this->admin->data_utils->detectDocumentType($order_status);
         $document_type_label = $this->admin->data_utils->getDocumentTypeLabel($document_type);
-// Variables avec doubles accolades {{variable}}
+        // Variables avec doubles accolades {{variable}}
         $double_brace_replacements = array(
             '{{order_id}}' => $order->get_id(),
             '{{order_number}}' => $order->get_order_number(),
@@ -334,7 +334,7 @@ class HTMLRenderer
             '{{document_type}}' => $document_type,
             '{{document_type_label}}' => $document_type_label,
         );
-// Variables avec crochets [variable]
+        // Variables avec crochets [variable]
         $bracket_replacements = array(
             '[order_id]' => $order->get_id(),
             '[order_number]' => $order->get_order_number(),
@@ -376,7 +376,7 @@ class HTMLRenderer
             '[document_type]' => $document_type,
             '[document_type_label]' => $document_type_label,
         );
-// Variables avec accolades simples {variable}
+        // Variables avec accolades simples {variable}
         $single_brace_replacements = array(
             '{order_id}' => $order->get_id(),
             '{order_number}' => $order->get_order_number(),
@@ -419,7 +419,7 @@ class HTMLRenderer
             '{document_type}' => $document_type,
             '{document_type_label}' => $document_type_label,
         );
-// Appliquer les remplacements dans l'ordre : simples, doubles, crochets
+        // Appliquer les remplacements dans l'ordre : simples, doubles, crochets
         $content = str_replace(array_keys($single_brace_replacements), array_values($single_brace_replacements), $content);
         $content = str_replace(array_keys($double_brace_replacements), array_values($double_brace_replacements), $content);
         $content = str_replace(array_keys($bracket_replacements), array_values($bracket_replacements), $content);
@@ -432,7 +432,7 @@ class HTMLRenderer
     public function formatCompleteCustomerInfo($order)
     {
         $info = [];
-// Nom complet
+        // Nom complet
         $full_name = trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name());
         if (!empty($full_name)) {
             $info[] = $full_name;
@@ -469,14 +469,14 @@ class HTMLRenderer
     {
         // Essayer d'abord de récupérer depuis l'option personnalisée
         $company_info = get_option('pdf_builder_company_info', '');
-// Si les informations sont configurées manuellement, les utiliser
+        // Si les informations sont configurées manuellement, les utiliser
         if (!empty($company_info)) {
             return $company_info;
         }
 
         // Sinon, récupérer automatiquement depuis WooCommerce/WordPress
         $company_parts = [];
-// Nom de la société (nom du site WordPress)
+        // Nom de la société (nom du site WordPress)
         $company_name = get_bloginfo('name');
         if (!empty($company_name)) {
             $company_parts[] = $company_name;
@@ -508,7 +508,7 @@ class HTMLRenderer
         }
 
         if (!empty($country)) {
-// Convertir le code pays en nom complet si possible
+            // Convertir le code pays en nom complet si possible
             $wc = call_user_func('WC');
             $countries = $wc ? $wc->countries->get_countries() : [];
             $country_name = isset($countries[$country]) ? $countries[$country] : $country;
@@ -546,7 +546,7 @@ class HTMLRenderer
     public function replaceWoocommerceVariables($template_data, $woocommerce_data)
     {
         $processed_data = $template_data;
-// Fonction récursive pour remplacer les variables dans toutes les profondeurs
+        // Fonction récursive pour remplacer les variables dans toutes les profondeurs
         $replace_vars = function ($data) use ($woocommerce_data, &$replace_vars) {
 
             if (is_array($data)) {
@@ -556,7 +556,7 @@ class HTMLRenderer
                 }
                 return $result;
             } elseif (is_string($data)) {
-            // Remplacer les variables du type {order_number}, {customer_name}, etc.
+                // Remplacer les variables du type {order_number}, {customer_name}, etc.
                 $replaced = $data;
                 foreach ($woocommerce_data as $var => $value) {
                     $replaced = str_replace('{' . $var . '}', $value, $replaced);

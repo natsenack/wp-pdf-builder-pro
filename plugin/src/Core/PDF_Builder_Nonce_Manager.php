@@ -4,7 +4,8 @@
  * Système unifié pour la validation et le refresh automatique des nonces
  */
 
-class PDF_Builder_Nonce_Manager {
+class PDF_Builder_Nonce_Manager
+{
 
     private static $instance = null;
     private $nonce_action = 'pdf_builder_ajax';
@@ -31,7 +32,8 @@ class PDF_Builder_Nonce_Manager {
     /**
      * Singleton pattern
      */
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -41,14 +43,16 @@ class PDF_Builder_Nonce_Manager {
     /**
      * Constructeur privé
      */
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_hooks();
     }
 
     /**
      * Initialise les hooks
      */
-    private function init_hooks() {
+    private function init_hooks()
+    {
         add_action('wp_ajax_pdf_builder_get_fresh_nonce', [$this, 'ajax_get_fresh_nonce']);
         add_action('wp_ajax_nopriv_pdf_builder_get_fresh_nonce', [$this, 'ajax_get_fresh_nonce']);
     }
@@ -56,14 +60,16 @@ class PDF_Builder_Nonce_Manager {
     /**
      * Génère un nouveau nonce
      */
-    public function generate_nonce() {
+    public function generate_nonce()
+    {
         return wp_create_nonce($this->nonce_action);
     }
 
     /**
      * Valide un nonce avec gestion d'erreurs détaillée
      */
-    public function validate_nonce($nonce, $context = '') {
+    public function validate_nonce($nonce, $context = '')
+    {
         if (empty($nonce)) {
             $this->log_error('Nonce manquant', $context);
             return false;
@@ -79,10 +85,12 @@ class PDF_Builder_Nonce_Manager {
         // // error_log('[PDF Builder Nonce DEBUG] Validation result: ' . ($is_valid ? 'VALID' : 'INVALID'));
 
         if (!$is_valid) {
-            $this->log_error('Nonce invalide', $context, [
+            $this->log_error(
+                'Nonce invalide', $context, [
                 'provided_nonce' => substr($nonce, 0, 10) . '...',
                 'expected_action' => $this->nonce_action
-            ]);
+                ]
+            );
         }
 
         return $is_valid;
@@ -91,7 +99,8 @@ class PDF_Builder_Nonce_Manager {
     /**
      * Valide une requête AJAX complète
      */
-    public function validate_ajax_request($context = '') {
+    public function validate_ajax_request($context = '')
+    {
         // Vérifier les permissions de base
         if (!current_user_can('manage_options')) {
             $this->log_error('Permissions insuffisantes', $context);
@@ -112,7 +121,8 @@ class PDF_Builder_Nonce_Manager {
     /**
      * Handler AJAX pour obtenir un nonce frais
      */
-    public function ajax_get_fresh_nonce() {
+    public function ajax_get_fresh_nonce()
+    {
         try {
             // Validation légère pour cette action
             if (!current_user_can('manage_options')) {
@@ -122,17 +132,21 @@ class PDF_Builder_Nonce_Manager {
 
             $fresh_nonce = $this->generate_nonce();
 
-            $this->log_info('Nonce frais généré', [
+            $this->log_info(
+                'Nonce frais généré', [
                 'nonce_prefix' => substr($fresh_nonce, 0, 10) . '...',
                 'user_id' => get_current_user_id(),
                 'timestamp' => current_time('timestamp')
-            ]);
+                ]
+            );
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'nonce' => $fresh_nonce,
                 'generated_at' => current_time('timestamp'),
                 'expires_in' => $this->nonce_ttl / 1000 // en secondes
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             $this->log_error('Erreur génération nonce frais: ' . $e->getMessage());
@@ -143,7 +157,8 @@ class PDF_Builder_Nonce_Manager {
     /**
      * Log une erreur
      */
-    private function log_error($message, $context = '', $extra = []) {
+    private function log_error($message, $context = '', $extra = [])
+    {
         $log_data = [
             'message' => $message,
             'context' => $context,
@@ -161,7 +176,8 @@ class PDF_Builder_Nonce_Manager {
     /**
      * Log une information
      */
-    private function log_info($message, $extra = []) {
+    private function log_info($message, $extra = [])
+    {
         if (!defined('WP_DEBUG') || !WP_DEBUG) {
             return;
         }
@@ -182,7 +198,8 @@ class PDF_Builder_Nonce_Manager {
     /**
      * Vérifie si un nonce est proche de l'expiration
      */
-    public function is_nonce_expiring_soon($nonce) {
+    public function is_nonce_expiring_soon($nonce)
+    {
         // Les nonces WordPress n'ont pas de timestamp direct
         // On considère qu'ils sont "proches de l'expiration" après un certain temps
         // Cette méthode pourrait être étendue avec un système de cache

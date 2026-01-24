@@ -16,7 +16,7 @@ class ReactDataTransformer
      * Transforme les éléments pour l'éditeur React
      * Standardise les positions, dimensions, et ajoute les logos manquants
      *
-     * @param array $elements Éléments à transformer
+     * @param  array $elements Éléments à transformer
      * @return array Éléments transformés pour React
      */
     public function transformElementsForReact($elements)
@@ -59,7 +59,7 @@ class ReactDataTransformer
     /**
      * Résout l'URL du logo de l'entreprise
      *
-     * @param array $element Élément courant
+     * @param  array $element Élément courant
      * @return string|null URL du logo ou null
      */
     private function resolveCompanyLogo($element)
@@ -97,8 +97,9 @@ class ReactDataTransformer
     /**
      * Standardise les positions et dimensions d'un élément
      *
-     * @param array $transformed_element Élément transformé
-     * @param array $element Élément original
+     * @param  array $transformed_element Élément transformé
+     * @param  array $element             Élément
+     *                                    original
      * @return array Élément avec positions/dimensions standardisées
      */
     private function standardizePositionAndSize($transformed_element, $element)

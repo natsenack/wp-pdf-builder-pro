@@ -4,7 +4,8 @@
  * Gère les mises à jour automatiques, correctifs de sécurité et maintenance
  */
 
-class PDF_Builder_Auto_Update_Manager {
+class PDF_Builder_Auto_Update_Manager
+{
     private static $instance = null;
 
     // Types de mises à jour
@@ -42,19 +43,22 @@ class PDF_Builder_Auto_Update_Manager {
     private $update_history = [];
     private $security_patches = [];
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_hooks();
         $this->load_update_data();
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Actions AJAX
         add_action('wp_ajax_pdf_builder_check_updates', [$this, 'check_updates_ajax']);
         add_action('wp_ajax_pdf_builder_install_update', [$this, 'install_update_ajax']);
@@ -86,7 +90,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Charge les données de mise à jour
      */
-    private function load_update_data() {
+    private function load_update_data()
+    {
         $this->update_settings = get_option(self::OPTION_UPDATE_SETTINGS, $this->get_default_settings());
         $this->update_status = get_option(self::OPTION_UPDATE_STATUS, []);
         $this->update_history = get_option(self::OPTION_UPDATE_HISTORY, []);
@@ -96,7 +101,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Obtient les paramètres par défaut
      */
-    private function get_default_settings() {
+    private function get_default_settings()
+    {
         return [
             'auto_update_enabled' => false,
             'update_frequency' => self::CHECK_DAILY,
@@ -118,7 +124,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Enregistre les paramètres de mise à jour
      */
-    public function register_update_settings() {
+    public function register_update_settings()
+    {
         register_setting(
             'pdf_builder_update_settings',
             self::OPTION_UPDATE_SETTINGS,
@@ -129,7 +136,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Nettoie les paramètres de mise à jour
      */
-    public function sanitize_update_settings($settings) {
+    public function sanitize_update_settings($settings)
+    {
         $defaults = $this->get_default_settings();
 
         return [
@@ -149,7 +157,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Ajoute le menu de mise à jour
      */
-    public function add_update_menu() {
+    public function add_update_menu()
+    {
         add_submenu_page(
             'pdf-builder-settings',
             pdf_builder_translate('Mises à jour automatiques', 'update'),
@@ -163,7 +172,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Rend la page de mise à jour
      */
-    public function render_update_page() {
+    public function render_update_page()
+    {
         if (!current_user_can('manage_options')) {
             wp_die(pdf_builder_translate('Accès refusé', 'update'));
         }
@@ -179,7 +189,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Vérifie les mises à jour disponibles
      */
-    public function check_for_updates() {
+    public function check_for_updates()
+    {
         try {
             // Vérifier la licence
             if (!function_exists('pdf_builder_is_license_active') || !pdf_builder_is_license_active()) {
@@ -187,13 +198,15 @@ class PDF_Builder_Auto_Update_Manager {
             }
 
             // Appeler l'API de mises à jour
-            $response = $this->call_update_api('check', [
+            $response = $this->call_update_api(
+                'check', [
                 'current_version' => PDF_BUILDER_VERSION,
                 'site_url' => get_site_url(),
                 'license_key' => get_option('pdf_builder_license_key'),
                 'php_version' => PHP_VERSION,
                 'wp_version' => get_bloginfo('version')
-            ]);
+                ]
+            );
 
             if (!$response['success']) {
                 throw new Exception($response['message'] ?? pdf_builder_translate('Erreur lors de la vérification des mises à jour', 'update'));
@@ -218,18 +231,22 @@ class PDF_Builder_Auto_Update_Manager {
 
             // Logger la vérification
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Update check completed', [
+                PDF_Builder_Logger::get_instance()->info(
+                    'Update check completed', [
                     'updates_found' => count($filtered_updates),
                     'security_patches' => count($this->security_patches)
-                ]);
+                    ]
+                );
             }
 
         } catch (Exception $e) {
             // Logger l'erreur
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->error('Update check failed', [
+                PDF_Builder_Logger::get_instance()->error(
+                    'Update check failed', [
                     'error' => $e->getMessage()
-                ]);
+                    ]
+                );
             }
         }
     }
@@ -237,7 +254,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Filtre les mises à jour selon les paramètres
      */
-    private function filter_updates_by_settings($updates) {
+    private function filter_updates_by_settings($updates)
+    {
         $filtered = [];
 
         foreach ($updates as $update) {
@@ -254,13 +272,16 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Vérifie les correctifs de sécurité
      */
-    public function check_security_patches() {
+    public function check_security_patches()
+    {
         try {
-            $response = $this->call_security_api('check', [
+            $response = $this->call_security_api(
+                'check', [
                 'current_version' => PDF_BUILDER_VERSION,
                 'site_url' => get_site_url(),
                 'license_key' => get_option('pdf_builder_license_key')
-            ]);
+                ]
+            );
 
             if ($response['success']) {
                 $this->security_patches = $response['data']['patches'] ?? [];
@@ -270,9 +291,11 @@ class PDF_Builder_Auto_Update_Manager {
         } catch (Exception $e) {
             // Logger l'erreur silencieusement
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->warning('Security patch check failed', [
+                PDF_Builder_Logger::get_instance()->warning(
+                    'Security patch check failed', [
                     'error' => $e->getMessage()
-                ]);
+                    ]
+                );
             }
         }
     }
@@ -280,7 +303,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Installe une mise à jour
      */
-    public function install_update($update_id) {
+    public function install_update($update_id)
+    {
         try {
             if (empty($this->update_status['available_updates'])) {
                 throw new Exception(pdf_builder_translate('Aucune mise à jour disponible', 'update'));
@@ -322,10 +346,12 @@ class PDF_Builder_Auto_Update_Manager {
 
                 // Logger l'installation
                 if (class_exists('PDF_Builder_Logger')) {
-                    PDF_Builder_Logger::get_instance()->info('Update installed successfully', [
+                    PDF_Builder_Logger::get_instance()->info(
+                        'Update installed successfully', [
                         'update_id' => $update_id,
                         'version' => $update['version']
-                    ]);
+                        ]
+                    );
                 }
 
                 return [
@@ -347,10 +373,12 @@ class PDF_Builder_Auto_Update_Manager {
 
             // Logger l'erreur
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->error('Update installation failed', [
+                PDF_Builder_Logger::get_instance()->error(
+                    'Update installation failed', [
                     'update_id' => $update_id,
                     'error' => $e->getMessage()
-                ]);
+                    ]
+                );
             }
 
             return [
@@ -363,7 +391,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Effectue une mise à jour automatique
      */
-    public function perform_auto_update() {
+    public function perform_auto_update()
+    {
         if (!$this->update_settings['auto_update_enabled']) {
             return;
         }
@@ -388,7 +417,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Trouve une mise à jour par ID
      */
-    private function find_update_by_id($update_id) {
+    private function find_update_by_id($update_id)
+    {
         $updates = $this->update_status['available_updates'] ?? [];
 
         foreach ($updates as $update) {
@@ -403,22 +433,27 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Vérifie les prérequis d'une mise à jour
      */
-    private function check_update_prerequisites($update) {
+    private function check_update_prerequisites($update)
+    {
         // Vérifier la version PHP
         if (isset($update['requirements']['php']) && version_compare(PHP_VERSION, $update['requirements']['php'], '<')) {
-            throw new Exception(sprintf(
-                pdf_builder_translate('Version PHP requise : %s (actuelle : %s)', 'update'),
-                $update['requirements']['php'],
-                PHP_VERSION
-            ));
+            throw new Exception(
+                sprintf(
+                    pdf_builder_translate('Version PHP requise : %s (actuelle : %s)', 'update'),
+                    $update['requirements']['php'],
+                    PHP_VERSION
+                )
+            );
         }
 
         // Vérifier la version WordPress
         if (isset($update['requirements']['wp']) && version_compare(get_bloginfo('version'), $update['requirements']['wp'], '<')) {
-            throw new Exception(sprintf(
-                pdf_builder_translate('Version WordPress requise : %s', 'update'),
-                $update['requirements']['wp']
-            ));
+            throw new Exception(
+                sprintf(
+                    pdf_builder_translate('Version WordPress requise : %s', 'update'),
+                    $update['requirements']['wp']
+                )
+            );
         }
 
         // Vérifier l'espace disque
@@ -430,19 +465,22 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Crée une sauvegarde avant mise à jour
      */
-    private function create_update_backup($update) {
+    private function create_update_backup($update)
+    {
         if (!class_exists('PDF_Builder_Backup_Recovery_System')) {
             return;
         }
 
         $backup_system = PDF_Builder_Backup_Recovery_System::get_instance();
 
-        $backup_id = $backup_system->create_backup([
+        $backup_id = $backup_system->create_backup(
+            [
             'type' => 'pre_update',
             'update_id' => $update['id'],
             'update_version' => $update['version'],
             'reason' => 'Sauvegarde automatique avant mise à jour'
-        ]);
+            ]
+        );
 
         return $backup_id;
     }
@@ -450,12 +488,15 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Obtient l'URL de téléchargement d'une mise à jour
      */
-    private function get_update_download_url($update) {
-        $response = $this->call_update_api('download_url', [
+    private function get_update_download_url($update)
+    {
+        $response = $this->call_update_api(
+            'download_url', [
             'update_id' => $update['id'],
             'license_key' => get_option('pdf_builder_license_key'),
             'site_url' => get_site_url()
-        ]);
+            ]
+        );
 
         if (!$response['success']) {
             throw new Exception($response['message'] ?? pdf_builder_translate('URL de téléchargement indisponible', 'update'));
@@ -467,7 +508,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Télécharge et installe une mise à jour
      */
-    private function download_and_install_update($download_url, $update) {
+    private function download_and_install_update($download_url, $update)
+    {
         // Créer un répertoire temporaire
         $temp_dir = $this->create_temp_directory();
 
@@ -515,7 +557,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Marque une mise à jour comme installée
      */
-    private function mark_update_installed($update, $result) {
+    private function mark_update_installed($update, $result)
+    {
         // Ajouter à l'historique
         $this->update_history[] = [
             'id' => $update['id'],
@@ -533,7 +576,7 @@ class PDF_Builder_Auto_Update_Manager {
         if (isset($this->update_status['available_updates'])) {
             $this->update_status['available_updates'] = array_filter(
                 $this->update_status['available_updates'],
-                function($u) use ($update) {
+                function ($u) use ($update) {
                     return $u['id'] !== $update['id'];
                 }
             );
@@ -548,19 +591,23 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Obtient le statut des mises à jour
      */
-    public function get_update_status() {
-        return array_merge([
+    public function get_update_status()
+    {
+        return array_merge(
+            [
             'last_check' => 0,
             'available_updates' => [],
             'current_update' => null,
             'next_check' => $this->get_next_check_time()
-        ], $this->update_status);
+            ], $this->update_status
+        );
     }
 
     /**
      * Obtient l'historique des mises à jour
      */
-    public function get_update_history($limit = null) {
+    public function get_update_history($limit = null)
+    {
         $history = array_reverse($this->update_history);
 
         if ($limit) {
@@ -573,31 +620,34 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Obtient les correctifs de sécurité
      */
-    public function get_security_patches() {
+    public function get_security_patches()
+    {
         return $this->security_patches;
     }
 
     /**
      * Obtient le prochain temps de vérification
      */
-    private function get_next_check_time() {
+    private function get_next_check_time()
+    {
         $frequency = $this->update_settings['update_frequency'];
 
         switch ($frequency) {
-            case self::CHECK_HOURLY:
-                return time() + HOUR_IN_SECONDS;
-            case self::CHECK_WEEKLY:
-                return time() + WEEK_IN_SECONDS;
-            case self::CHECK_DAILY:
-            default:
-                return time() + DAY_IN_SECONDS;
+        case self::CHECK_HOURLY:
+            return time() + HOUR_IN_SECONDS;
+        case self::CHECK_WEEKLY:
+            return time() + WEEK_IN_SECONDS;
+        case self::CHECK_DAILY:
+        default:
+            return time() + DAY_IN_SECONDS;
         }
     }
 
     /**
      * Obtient l'espace disque libre
      */
-    private function get_free_disk_space() {
+    private function get_free_disk_space()
+    {
         $free_space = disk_free_space(PDF_BUILDER_PLUGIN_DIR);
 
         return $free_space ?: 0;
@@ -606,7 +656,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Crée un répertoire temporaire
      */
-    private function create_temp_directory() {
+    private function create_temp_directory()
+    {
         $temp_dir = WP_CONTENT_DIR . '/pdf-builder-updates/' . time() . '_' . wp_generate_password(8, false);
 
         if (!wp_mkdir_p($temp_dir)) {
@@ -619,7 +670,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Nettoie un répertoire temporaire
      */
-    private function cleanup_temp_directory($temp_dir) {
+    private function cleanup_temp_directory($temp_dir)
+    {
         if (is_dir($temp_dir)) {
             $this->delete_directory($temp_dir);
         }
@@ -628,12 +680,15 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Télécharge un fichier
      */
-    private function download_file($url, $destination) {
-        $response = wp_remote_get($url, [
+    private function download_file($url, $destination)
+    {
+        $response = wp_remote_get(
+            $url, [
             'timeout' => 300,
             'stream' => true,
             'filename' => $destination
-        ]);
+            ]
+        );
 
         if (is_wp_error($response)) {
             return [
@@ -657,7 +712,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Extrait une archive ZIP
      */
-    private function extract_zip($zip_file, $destination) {
+    private function extract_zip($zip_file, $destination)
+    {
         if (!class_exists('ZipArchive')) {
             return [
                 'success' => false,
@@ -690,7 +746,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Installe les fichiers de mise à jour
      */
-    private function install_update_files($source_dir, $update) {
+    private function install_update_files($source_dir, $update)
+    {
         $installed_files = [];
         $plugin_dir = PDF_BUILDER_PLUGIN_DIR;
 
@@ -715,10 +772,12 @@ class PDF_Builder_Auto_Update_Manager {
                 if (copy($file->getPathname(), $destination)) {
                     $installed_files[] = $relative_path;
                 } else {
-                    throw new Exception(sprintf(
-                        pdf_builder_translate('Erreur lors de la copie de %s', 'update'),
-                        $relative_path
-                    ));
+                    throw new Exception(
+                        sprintf(
+                            pdf_builder_translate('Erreur lors de la copie de %s', 'update'),
+                            $relative_path
+                        )
+                    );
                 }
             }
         }
@@ -732,7 +791,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Supprime un répertoire récursivement
      */
-    private function delete_directory($dir) {
+    private function delete_directory($dir)
+    {
         if (!is_dir($dir)) {
             return;
         }
@@ -756,21 +816,24 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Appelle l'API de mises à jour
      */
-    private function call_update_api($action, $data = []) {
+    private function call_update_api($action, $data = [])
+    {
         return $this->call_api(self::UPDATE_API_URL . '/' . $action, $data);
     }
 
     /**
      * Appelle l'API de sécurité
      */
-    private function call_security_api($action, $data = []) {
+    private function call_security_api($action, $data = [])
+    {
         return $this->call_api(self::SECURITY_API_URL . '/' . $action, $data);
     }
 
     /**
      * Appelle une API générique
      */
-    private function call_api($url, $data = []) {
+    private function call_api($url, $data = [])
+    {
         $args = [
             'method' => 'POST',
             'timeout' => 30,
@@ -801,7 +864,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Injecte les informations de mise à jour dans WordPress
      */
-    public function inject_plugin_update($transient) {
+    public function inject_plugin_update($transient)
+    {
         if (empty($transient->checked)) {
             return $transient;
         }
@@ -838,17 +902,20 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Injecte les informations du plugin dans l'API WordPress
      */
-    public function inject_plugin_info($result, $action, $args) {
+    public function inject_plugin_info($result, $action, $args)
+    {
         if ($action !== 'plugin_information' || $args->slug !== 'pdf-builder-pro') {
             return $result;
         }
 
         // Retourner les informations du plugin depuis l'API
         try {
-            $response = $this->call_update_api('info', [
+            $response = $this->call_update_api(
+                'info', [
                 'license_key' => get_option('pdf_builder_license_key'),
                 'site_url' => get_site_url()
-            ]);
+                ]
+            );
 
             if ($response['success']) {
                 return (object) $response['data'];
@@ -863,7 +930,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Gère la completion d'une mise à jour
      */
-    public function handle_update_complete($upgrader, $options) {
+    public function handle_update_complete($upgrader, $options)
+    {
         if ($options['action'] !== 'update' || $options['type'] !== 'plugin') {
             return;
         }
@@ -876,9 +944,11 @@ class PDF_Builder_Auto_Update_Manager {
 
             // Logger la mise à jour
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Plugin updated via WordPress', [
+                PDF_Builder_Logger::get_instance()->info(
+                    'Plugin updated via WordPress', [
                     'new_version' => PDF_BUILDER_VERSION
-                ]);
+                    ]
+                );
             }
 
             // Vérifier s'il y a des tâches post-mise à jour
@@ -889,7 +959,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Exécute les tâches post-mise à jour
      */
-    private function run_post_update_tasks() {
+    private function run_post_update_tasks()
+    {
         // Recharger les classes si nécessaire
         // Nettoyer les caches
         if (function_exists('wp_cache_flush')) {
@@ -903,7 +974,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Notifie l'administrateur d'une mise à jour installée
      */
-    private function notify_admin_update_installed($update) {
+    private function notify_admin_update_installed($update)
+    {
         $admin_email = get_option('admin_email');
         $subject = sprintf('PDF Builder Pro - Mise à jour %s installée', $update['version']);
         $message = sprintf(
@@ -923,7 +995,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Nettoie les fichiers de mise à jour
      */
-    public function cleanup_update_files() {
+    public function cleanup_update_files()
+    {
         $update_dir = WP_CONTENT_DIR . '/pdf-builder-updates/';
 
         if (is_dir($update_dir)) {
@@ -934,7 +1007,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Nettoie les anciennes mises à jour
      */
-    public function cleanup_old_updates() {
+    public function cleanup_old_updates()
+    {
         // Garder seulement les 10 dernières mises à jour dans l'historique
         if (count($this->update_history) > 10) {
             $this->update_history = array_slice($this->update_history, -10);
@@ -951,7 +1025,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Affiche les notifications de mise à jour
      */
-    public function display_update_notices() {
+    public function display_update_notices()
+    {
         $status = $this->get_update_status();
 
         // Notifications de mises à jour disponibles
@@ -998,15 +1073,15 @@ class PDF_Builder_Auto_Update_Manager {
             $status_text = '';
 
             switch ($current['status']) {
-                case self::STATUS_DOWNLOADING:
-                    $status_text = pdf_builder_translate('Téléchargement en cours...', 'update');
-                    break;
-                case self::STATUS_INSTALLING:
-                    $status_text = pdf_builder_translate('Installation en cours...', 'update');
-                    break;
-                case self::STATUS_FAILED:
-                    $status_text = pdf_builder_translate('Échec de l\'installation', 'update');
-                    break;
+            case self::STATUS_DOWNLOADING:
+                $status_text = pdf_builder_translate('Téléchargement en cours...', 'update');
+                break;
+            case self::STATUS_INSTALLING:
+                $status_text = pdf_builder_translate('Installation en cours...', 'update');
+                break;
+            case self::STATUS_FAILED:
+                $status_text = pdf_builder_translate('Échec de l\'installation', 'update');
+                break;
             }
 
             if ($status_text) {
@@ -1020,7 +1095,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * AJAX - Vérifie les mises à jour
      */
-    public function check_updates_ajax() {
+    public function check_updates_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1036,10 +1112,12 @@ class PDF_Builder_Auto_Update_Manager {
 
             $status = $this->get_update_status();
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => pdf_builder_translate('Vérification terminée', 'update'),
                 'status' => $status
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -1049,7 +1127,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * AJAX - Installe une mise à jour
      */
-    public function install_update_ajax() {
+    public function install_update_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1071,10 +1150,12 @@ class PDF_Builder_Auto_Update_Manager {
             $result = $this->install_update($update_id);
 
             if ($result['success']) {
-                wp_send_json_success([
+                wp_send_json_success(
+                    [
                     'message' => $result['message'],
                     'update' => $result['update']
-                ]);
+                    ]
+                );
             } else {
                 wp_send_json_error(['message' => $result['message']]);
             }
@@ -1087,7 +1168,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * AJAX - Obtient le statut des mises à jour
      */
-    public function get_update_status_ajax() {
+    public function get_update_status_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1098,11 +1180,13 @@ class PDF_Builder_Auto_Update_Manager {
             $history = $this->get_update_history(5);
             $security_patches = $this->get_security_patches();
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'status' => $status,
                 'history' => $history,
                 'security_patches' => $security_patches
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -1112,7 +1196,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * AJAX - Sauvegarde les paramètres de mise à jour
      */
-    public function save_update_settings_ajax() {
+    public function save_update_settings_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1134,9 +1219,11 @@ class PDF_Builder_Auto_Update_Manager {
             // Reprogrammer les tâches selon la nouvelle fréquence
             $this->schedule_update_checks();
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => pdf_builder_translate('Paramètres sauvegardés', 'update')
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -1146,7 +1233,8 @@ class PDF_Builder_Auto_Update_Manager {
     /**
      * Programme les vérifications de mise à jour
      */
-    private function schedule_update_checks() {
+    private function schedule_update_checks()
+    {
         $frequency = $this->update_settings['update_frequency'];
 
         // Supprimer les anciennes programmations
@@ -1156,52 +1244,60 @@ class PDF_Builder_Auto_Update_Manager {
 
         // Programmer selon la fréquence
         switch ($frequency) {
-            case self::CHECK_HOURLY:
-                wp_schedule_event(time(), 'hourly', 'pdf_builder_check_updates');
-                wp_schedule_event(time(), 'hourly', 'pdf_builder_auto_update');
-                wp_schedule_event(time(), 'hourly', 'pdf_builder_security_check');
-                break;
-            case self::CHECK_WEEKLY:
-                wp_schedule_event(time(), 'weekly', 'pdf_builder_check_updates');
-                wp_schedule_event(time(), 'weekly', 'pdf_builder_auto_update');
-                wp_schedule_event(time(), 'daily', 'pdf_builder_security_check');
-                break;
-            case self::CHECK_DAILY:
-            default:
-                wp_schedule_event(time(), 'daily', 'pdf_builder_check_updates');
-                wp_schedule_event(time(), 'daily', 'pdf_builder_auto_update');
-                wp_schedule_event(time(), 'daily', 'pdf_builder_security_check');
-                break;
+        case self::CHECK_HOURLY:
+            wp_schedule_event(time(), 'hourly', 'pdf_builder_check_updates');
+            wp_schedule_event(time(), 'hourly', 'pdf_builder_auto_update');
+            wp_schedule_event(time(), 'hourly', 'pdf_builder_security_check');
+            break;
+        case self::CHECK_WEEKLY:
+            wp_schedule_event(time(), 'weekly', 'pdf_builder_check_updates');
+            wp_schedule_event(time(), 'weekly', 'pdf_builder_auto_update');
+            wp_schedule_event(time(), 'daily', 'pdf_builder_security_check');
+            break;
+        case self::CHECK_DAILY:
+        default:
+            wp_schedule_event(time(), 'daily', 'pdf_builder_check_updates');
+            wp_schedule_event(time(), 'daily', 'pdf_builder_auto_update');
+            wp_schedule_event(time(), 'daily', 'pdf_builder_security_check');
+            break;
         }
     }
 }
 
 // Fonctions globales
-function pdf_builder_update_manager() {
+function pdf_builder_update_manager()
+{
     return PDF_Builder_Auto_Update_Manager::get_instance();
 }
 
-function pdf_builder_check_updates() {
+function pdf_builder_check_updates()
+{
     return PDF_Builder_Auto_Update_Manager::get_instance()->check_for_updates();
 }
 
-function pdf_builder_install_update($update_id) {
+function pdf_builder_install_update($update_id)
+{
     return PDF_Builder_Auto_Update_Manager::get_instance()->install_update($update_id);
 }
 
-function pdf_builder_get_update_status() {
+function pdf_builder_get_update_status()
+{
     return PDF_Builder_Auto_Update_Manager::get_instance()->get_update_status();
 }
 
-function pdf_builder_get_update_history($limit = null) {
+function pdf_builder_get_update_history($limit = null)
+{
     return PDF_Builder_Auto_Update_Manager::get_instance()->get_update_history($limit);
 }
 
-function pdf_builder_get_security_patches() {
+function pdf_builder_get_security_patches()
+{
     return PDF_Builder_Auto_Update_Manager::get_instance()->get_security_patches();
 }
 
 // Initialiser le système de mise à jour automatique
-add_action('plugins_loaded', function() {
-    PDF_Builder_Auto_Update_Manager::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_Auto_Update_Manager::get_instance();
+    }
+);

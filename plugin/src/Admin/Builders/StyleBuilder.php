@@ -15,8 +15,10 @@ class StyleBuilder
     /**
      * Construit le style CSS pour un élément
      *
-     * @param array $element Données de l'élément
-     * @param string $base_style Style de base à appliquer
+     * @param  array  $element    Données
+     *                            de
+     *                            l'élément
+     * @param  string $base_style Style de base à appliquer
      * @return string Style CSS généré
      */
     public function buildElementStyle($element, $base_style = '')

@@ -7,13 +7,19 @@ namespace PDF_Builder\Canvas;
  * Gère les paramètres du canvas et les applique aux générations PDF/Image
  *
  * @package PDF_Builder
- * @since 1.1.0
+ * @since   1.1.0
  */
 class Canvas_Manager
 {
-    /** @var Canvas_Manager Instance unique */
+    /**
+     * 
+     *
+     * @var Canvas_Manager Instance unique 
+     */
     private static $instance = null;
-/** @var array Paramètres canvas en cache */
+    /**
+     * @var array Paramètres canvas en cache 
+     */
     private $settings = [];
 
     /**
@@ -213,14 +219,14 @@ class Canvas_Manager
     {
         // Filtre pour appliquer les paramètres canvas à React
         add_filter('pdf_builder_react_settings', [$this, 'apply_canvas_settings_to_react'], 10, 1);
-// Action pour initialiser les paramètres canvas côté client
+        // Action pour initialiser les paramètres canvas côté client
         add_action('admin_enqueue_scripts', [$this, 'enqueueCanvasSettingsScript'], 15);
     }
 
     /**
      * Applique les paramètres canvas aux paramètres React
      *
-     * @param array $settings Paramètres React
+     * @param  array $settings Paramètres React
      * @return array Paramètres modifiés
      */
     public function applyCanvasSettingsToReact($settings)
@@ -273,8 +279,10 @@ JS;
     /**
      * Récupère une valeur de paramètre canvas
      *
-     * @param string $key Clé du paramètre
-     * @param mixed $default Valeur par défaut
+     * @param  string $key     Clé du
+     *                         paramètre
+     * @param  mixed  $default Valeur par
+     *                         défaut
      * @return mixed
      */
     public function getSetting($key, $default = null)
@@ -410,7 +418,7 @@ JS;
     /**
      * Vérifie si une fonctionnalité est activée
      *
-     * @param string $feature Nom de la fonctionnalité
+     * @param  string $feature Nom de la fonctionnalité
      * @return bool
      */
     public function isFeatureEnabled($feature)
@@ -430,7 +438,7 @@ JS;
     /**
      * Sauvegarde les paramètres
      *
-     * @param array $settings Paramètres à sauvegarder
+     * @param  array $settings Paramètres à sauvegarder
      * @return bool
      */
     public function saveSettings($settings)
@@ -535,13 +543,13 @@ JS;
     /**
      * Valide les paramètres
      *
-     * @param array $settings Paramètres à valider
+     * @param  array $settings Paramètres à valider
      * @return array Paramètres validés
      */
     private function validateSettings($settings)
     {
         $validated = [];
-// Dimensions
+        // Dimensions
         if (isset($settings['default_canvas_width'])) {
             $validated['default_canvas_width'] = intval($settings['default_canvas_width']);
         }

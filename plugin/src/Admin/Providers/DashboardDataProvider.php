@@ -43,20 +43,24 @@ class DashboardDataProvider
 
                 // Documents générés aujourd'hui
                 $today = date('Y-m-d');
-                $today_count = $wpdb->get_var($wpdb->prepare(
-                    "SELECT COUNT(*) FROM $table_logs WHERE DATE(created_at) = %s AND (log_message LIKE '%PDF généré%' OR log_message LIKE '%Document créé%')",
-                    $today
-                ));
+                $today_count = $wpdb->get_var(
+                    $wpdb->prepare(
+                        "SELECT COUNT(*) FROM $table_logs WHERE DATE(created_at) = %s AND (log_message LIKE '%PDF généré%' OR log_message LIKE '%Document créé%')",
+                        $today
+                    )
+                );
             } else {
                 // Si la colonne n'existe pas, compter tous les logs
                 $documents_count = $wpdb->get_var("SELECT COUNT(*) FROM $table_logs");
 
                 // Documents d'aujourd'hui
                 $today = date('Y-m-d');
-                $today_count = $wpdb->get_var($wpdb->prepare(
-                    "SELECT COUNT(*) FROM $table_logs WHERE DATE(created_at) = %s",
-                    $today
-                ));
+                $today_count = $wpdb->get_var(
+                    $wpdb->prepare(
+                        "SELECT COUNT(*) FROM $table_logs WHERE DATE(created_at) = %s",
+                        $today
+                    )
+                );
             }
         }
 

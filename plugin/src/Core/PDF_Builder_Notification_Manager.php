@@ -13,7 +13,8 @@ if (!defined('ABSPATH')) {
 /**
  * Classe principale pour la gestion des notifications
  */
-class PDF_Builder_Notification_Manager {
+class PDF_Builder_Notification_Manager
+{
 
     /**
      * Instance unique de la classe
@@ -33,7 +34,8 @@ class PDF_Builder_Notification_Manager {
     /**
      * Constructeur privé pour le pattern Singleton
      */
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_settings();
         $this->init_hooks();
     }
@@ -41,7 +43,8 @@ class PDF_Builder_Notification_Manager {
     /**
      * Obtenir l'instance unique
      */
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -51,7 +54,8 @@ class PDF_Builder_Notification_Manager {
     /**
      * Initialiser les paramètres
      */
-    private function init_settings() {
+    private function init_settings()
+    {
         $this->settings = [
             'enabled' => get_option('pdf_builder_notifications_enabled', true),
             'position' => get_option('pdf_builder_notifications_position', 'top-right'),
@@ -71,7 +75,8 @@ class PDF_Builder_Notification_Manager {
     /**
      * Initialiser les hooks WordPress
      */
-    private function init_hooks() {
+    private function init_hooks()
+    {
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_scripts']);
         add_action('wp_ajax_pdf_builder_show_notification', [$this, 'ajax_show_notification']);
@@ -87,7 +92,8 @@ class PDF_Builder_Notification_Manager {
     /**
      * Charger les scripts et styles
      */
-    public function enqueue_scripts() {
+    public function enqueue_scripts()
+    {
         if (!$this->settings['enabled']) {
             return;
         }
@@ -109,7 +115,8 @@ class PDF_Builder_Notification_Manager {
         error_log('PDF_Builder_Notification_Manager: script enqueued');
 
         // Localiser le script avec les paramètres
-        wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
+        wp_localize_script(
+            'pdf-builder-notifications', 'pdfBuilderNotifications', [
             'settings' => $this->settings,
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_notifications'),
@@ -117,25 +124,29 @@ class PDF_Builder_Notification_Manager {
                 'close' => __('Fermer', 'pdf-builder-pro'),
                 'dismiss_all' => __('Tout fermer', 'pdf-builder-pro')
             ]
-        ]);
+            ]
+        );
     }
 
     /**
      * Afficher une notification
      */
-    public function show_notification($message, $type = 'info', $options = []) {
+    public function show_notification($message, $type = 'info', $options = [])
+    {
         if (!$this->settings['enabled']) {
             return;
         }
 
-        $notification = array_merge([
+        $notification = array_merge(
+            [
             'message' => $message,
             'type' => $type,
             'duration' => $this->settings['duration'],
             'dismissible' => true,
             'position' => $this->settings['position'],
             'timestamp' => current_time('timestamp')
-        ], $options);
+            ], $options
+        );
 
         // Ajouter à la file d'attente
         $this->notification_queue[] = $notification;
@@ -158,7 +169,8 @@ class PDF_Builder_Notification_Manager {
     /**
      * Rendre les notifications HTML
      */
-    public function render_notifications() {
+    public function render_notifications()
+    {
         if (empty($this->notification_queue)) {
             return;
         }
@@ -178,7 +190,8 @@ class PDF_Builder_Notification_Manager {
     /**
      * Rendre une notification individuelle
      */
-    private function render_single_notification($notification) {
+    private function render_single_notification($notification)
+    {
         $type_config = isset($this->settings['types'][$notification['type']])
             ? $this->settings['types'][$notification['type']]
             : $this->settings['types']['info'];
@@ -208,14 +221,14 @@ class PDF_Builder_Notification_Manager {
             <div class="notification-content">
                 <span class="notification-icon"><?php echo esc_html($type_config['icon']); ?></span>
                 <span class="notification-message"><?php echo wp_kses_post($notification['message']); ?></span>
-                <?php if ($notification['dismissible']): ?>
+                <?php if ($notification['dismissible']) : ?>
                     <button class="notification-close" aria-label="<?php esc_attr_e('Fermer', 'pdf-builder-pro'); ?>">
                         <span class="dashicons dashicons-no"></span>
                     </button>
                 <?php endif; ?>
             </div>
 
-            <?php if ($notification['duration'] > 0): ?>
+            <?php if ($notification['duration'] > 0) : ?>
                 <div class="notification-progress-bar">
                     <div class="notification-progress" style="background-color: <?php echo esc_attr($type_config['color']); ?>"></div>
                 </div>
@@ -227,7 +240,8 @@ class PDF_Builder_Notification_Manager {
     /**
      * Handler AJAX pour afficher une notification
      */
-    public function ajax_show_notification() {
+    public function ajax_show_notification()
+    {
         check_ajax_referer('pdf_builder_notifications', 'nonce');
 
         $message = sanitize_text_field($_POST['message'] ?? '');
@@ -241,31 +255,37 @@ class PDF_Builder_Notification_Manager {
 
         $notification = $this->show_notification($message, $type, ['duration' => $duration]);
 
-        wp_send_json_success([
+        wp_send_json_success(
+            [
             'notification' => $notification,
             'rendered' => $this->render_single_notification($notification)
-        ]);
+            ]
+        );
     }
 
     /**
      * Notifications automatiques
      */
-    public function notify_template_saved($template_id) {
+    public function notify_template_saved($template_id)
+    {
         $message = __('Template sauvegardé avec succès !', 'pdf-builder-pro');
         $this->show_notification($message, 'success');
     }
 
-    public function notify_template_deleted($template_id) {
+    public function notify_template_deleted($template_id)
+    {
         $message = __('Template supprimé avec succès.', 'pdf-builder-pro');
         $this->show_notification($message, 'info');
     }
 
-    public function notify_backup_created($backup_path) {
+    public function notify_backup_created($backup_path)
+    {
         $message = __('Sauvegarde créée avec succès !', 'pdf-builder-pro');
         $this->show_notification($message, 'success');
     }
 
-    public function notify_settings_saved() {
+    public function notify_settings_saved()
+    {
         $message = __('Paramètres sauvegardés avec succès !', 'pdf-builder-pro');
         $this->show_notification($message, 'success');
     }
@@ -273,33 +293,39 @@ class PDF_Builder_Notification_Manager {
     /**
      * Méthodes utilitaires
      */
-    public function success($message, $options = []) {
+    public function success($message, $options = [])
+    {
         return $this->show_notification($message, 'success', $options);
     }
 
-    public function error($message, $options = []) {
+    public function error($message, $options = [])
+    {
         return $this->show_notification($message, 'error', $options);
     }
 
-    public function warning($message, $options = []) {
+    public function warning($message, $options = [])
+    {
         return $this->show_notification($message, 'warning', $options);
     }
 
-    public function info($message, $options = []) {
+    public function info($message, $options = [])
+    {
         return $this->show_notification($message, 'info', $options);
     }
 
     /**
      * Obtenir les paramètres actuels
      */
-    public function get_settings() {
+    public function get_settings()
+    {
         return $this->settings;
     }
 
     /**
      * Mettre à jour les paramètres
      */
-    public function update_settings($new_settings) {
+    public function update_settings($new_settings)
+    {
         $this->settings = array_merge($this->settings, $new_settings);
 
         // Sauvegarder en base
@@ -311,14 +337,16 @@ class PDF_Builder_Notification_Manager {
     /**
      * Vider toutes les notifications
      */
-    public function clear_all() {
+    public function clear_all()
+    {
         $this->notification_queue = [];
     }
 
     /**
      * Désactiver le système
      */
-    public function disable() {
+    public function disable()
+    {
         $this->settings['enabled'] = false;
         update_option('pdf_builder_notifications_enabled', false);
     }
@@ -326,30 +354,36 @@ class PDF_Builder_Notification_Manager {
     /**
      * Activer le système
      */
-    public function enable() {
+    public function enable()
+    {
         $this->settings['enabled'] = true;
         update_option('pdf_builder_notifications_enabled', true);
     }
 }
 
 // Fonction globale pour accéder facilement au gestionnaire
-function pdf_builder_notifications() {
+function pdf_builder_notifications()
+{
     return PDF_Builder_Notification_Manager::get_instance();
 }
 
 // Fonctions raccourcies
-function pdf_builder_notify_success($message, $options = []) {
+function pdf_builder_notify_success($message, $options = [])
+{
     return pdf_builder_notifications()->success($message, $options);
 }
 
-function pdf_builder_notify_error($message, $options = []) {
+function pdf_builder_notify_error($message, $options = [])
+{
     return pdf_builder_notifications()->error($message, $options);
 }
 
-function pdf_builder_notify_warning($message, $options = []) {
+function pdf_builder_notify_warning($message, $options = [])
+{
     return pdf_builder_notifications()->warning($message, $options);
 }
 
-function pdf_builder_notify_info($message, $options = []) {
+function pdf_builder_notify_info($message, $options = [])
+{
     return pdf_builder_notifications()->info($message, $options);
 }

@@ -355,8 +355,7 @@ class PdfBuilderDatabaseQueryOptimizer
     public function measureQueryPerformance($query)
     {
         // Ne mesurer que les requêtes liées au PDF Builder
-        if (
-            strpos($query, 'pdf_builder') === false
+        if (strpos($query, 'pdf_builder') === false
             && strpos($query, 'woocommerce') === false
         ) {
             return $query;

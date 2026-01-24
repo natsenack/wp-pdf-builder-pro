@@ -73,7 +73,7 @@ class PdfBuilderBackupRestoreManager
     /**
      * Créer une sauvegarde complète
      *
-     * @param array $options Options de sauvegarde
+     * @param  array $options Options de sauvegarde
      * @return array Résultat de l'opération
      */
     public function createBackup($options = [])
@@ -146,8 +146,8 @@ class PdfBuilderBackupRestoreManager
     /**
      * Restaurer une sauvegarde
      *
-     * @param string $filename Nom du fichier de sauvegarde
-     * @param array $options Options de restauration
+     * @param  string $filename Nom du fichier de sauvegarde
+     * @param  array  $options  Options de restauration
      * @return array Résultat de l'opération
      */
     public function restoreBackup($filename, $options = [])
@@ -187,20 +187,23 @@ class PdfBuilderBackupRestoreManager
             $results = [];
 
             // Restaurer les templates
-            if (isset($backup_data['data']['templates']) &&
-                (!isset($options['exclude_templates']) || !$options['exclude_templates'])) {
+            if (isset($backup_data['data']['templates']) 
+                && (!isset($options['exclude_templates']) || !$options['exclude_templates'])
+            ) {
                 $results['templates'] = $this->importTemplatesFromData($backup_data['data']['templates'], $options);
             }
 
             // Restaurer la configuration
-            if (isset($backup_data['data']['settings']) &&
-                (!isset($options['exclude_settings']) || !$options['exclude_settings'])) {
+            if (isset($backup_data['data']['settings']) 
+                && (!isset($options['exclude_settings']) || !$options['exclude_settings'])
+            ) {
                 $results['settings'] = $this->importSettings($backup_data['data']['settings']);
             }
 
             // Restaurer les données utilisateur
-            if (isset($backup_data['data']['user_data']) &&
-                (!isset($options['exclude_user_data']) || !$options['exclude_user_data'])) {
+            if (isset($backup_data['data']['user_data']) 
+                && (!isset($options['exclude_user_data']) || !$options['exclude_user_data'])
+            ) {
                 $results['user_data'] = $this->importUserData($backup_data['data']['user_data']);
             }
 
@@ -338,8 +341,8 @@ class PdfBuilderBackupRestoreManager
     /**
      * Importer des templates depuis les données
      *
-     * @param array $templates_data Données des templates
-     * @param array $options Options d'import
+     * @param  array $templates_data Données des templates
+     * @param  array $options        Options d'import
      * @return array Résultat
      */
     private function importTemplatesFromData($templates_data, $options = [])
@@ -354,10 +357,12 @@ class PdfBuilderBackupRestoreManager
         foreach ($templates_data as $template_data) {
             try {
                 // Vérifier si le template existe déjà
-                $existing = $wpdb->get_var($wpdb->prepare(
-                    "SELECT id FROM $table_name WHERE name = %s",
-                    $template_data['name']
-                ));
+                $existing = $wpdb->get_var(
+                    $wpdb->prepare(
+                        "SELECT id FROM $table_name WHERE name = %s",
+                        $template_data['name']
+                    )
+                );
 
                 if ($existing && (!isset($options['overwrite']) || !$options['overwrite'])) {
                     $skipped++;
@@ -409,7 +414,7 @@ class PdfBuilderBackupRestoreManager
     /**
      * Importer la configuration
      *
-     * @param array $settings Configuration
+     * @param  array $settings Configuration
      * @return bool Succès
      */
     private function importSettings($settings)
@@ -427,7 +432,7 @@ class PdfBuilderBackupRestoreManager
     /**
      * Importer les données utilisateur
      *
-     * @param array $user_data Données utilisateur
+     * @param  array $user_data Données utilisateur
      * @return array Résultat
      */
     private function importUserData($user_data)
@@ -452,7 +457,7 @@ class PdfBuilderBackupRestoreManager
     /**
      * Compresser une sauvegarde
      *
-     * @param string $filepath Chemin du fichier à compresser
+     * @param  string $filepath Chemin du fichier à compresser
      * @return string|null Chemin du fichier compressé
      */
     private function compressBackup($filepath)
@@ -476,7 +481,7 @@ class PdfBuilderBackupRestoreManager
     /**
      * Décompresser une sauvegarde
      *
-     * @param string $zip_filepath Chemin du fichier ZIP
+     * @param  string $zip_filepath Chemin du fichier ZIP
      * @return string|null Chemin du fichier décompressé
      */
     private function decompressBackup($zip_filepath)
@@ -563,9 +568,11 @@ class PdfBuilderBackupRestoreManager
             }
 
             // Trier par date de modification (plus récent en premier)
-            usort($backups, function($a, $b) {
-                return $b['modified'] - $a['modified'];
-            });
+            usort(
+                $backups, function ($a, $b) {
+                    return $b['modified'] - $a['modified'];
+                }
+            );
 
         } catch (\Exception $e) {
             
@@ -578,7 +585,7 @@ class PdfBuilderBackupRestoreManager
     /**
      * Supprimer une sauvegarde
      *
-     * @param string $filename Nom du fichier
+     * @param  string $filename Nom du fichier
      * @return array Résultat de l'opération
      */
     public function deleteBackup($filename)
@@ -612,7 +619,7 @@ class PdfBuilderBackupRestoreManager
     /**
      * Nettoyer les anciennes sauvegardes
      *
-     * @param int $keep_days Nombre de jours à garder
+     * @param  int $keep_days Nombre de jours à garder
      * @return int Nombre de fichiers supprimés
      */
     public function cleanupOldBackups($keep_days = 30)
@@ -644,17 +651,21 @@ class PdfBuilderBackupRestoreManager
             wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
         }
 
-        $result = $this->createBackup([
+        $result = $this->createBackup(
+            [
             'exclude_settings' => true,
             'exclude_user_data' => true,
             'compress' => true
-        ]);
+            ]
+        );
 
         if ($result['success']) {
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => $result['message'],
                 'download_url' => wp_upload_dir()['baseurl'] . '/pdf-builder-backups/' . $result['filename']
-            ]);
+                ]
+            );
         } else {
             wp_send_json_error(['message' => $result['message']]);
         }
@@ -699,19 +710,23 @@ class PdfBuilderBackupRestoreManager
         }
 
         // Restaurer depuis le fichier
-        $result = $this->restoreBackup($temp_filename, [
+        $result = $this->restoreBackup(
+            $temp_filename, [
             'exclude_settings' => true,
             'exclude_user_data' => true
-        ]);
+            ]
+        );
 
         // Supprimer le fichier temporaire
         unlink($temp_filepath);
 
         if ($result['success']) {
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => $result['message'],
                 'results' => $result['results']
-            ]);
+                ]
+            );
         } else {
             wp_send_json_error(['message' => $result['message']]);
         }
@@ -738,11 +753,13 @@ class PdfBuilderBackupRestoreManager
         $result = $this->createBackup($options);
 
         if ($result['success']) {
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => $result['message'],
                 'filename' => $result['filename'],
                 'size_human' => size_format($result['size'])
-            ]);
+                ]
+            );
         } else {
             wp_send_json_error(['message' => $result['message']]);
         }
@@ -776,10 +793,12 @@ class PdfBuilderBackupRestoreManager
         $result = $this->restoreBackup($filename, $options);
 
         if ($result['success']) {
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => $result['message'],
                 'results' => $result['results']
-            ]);
+                ]
+            );
         } else {
             wp_send_json_error(['message' => $result['message']]);
         }
@@ -867,9 +886,11 @@ class PdfBuilderBackupRestoreManager
         $relative_path = str_replace($upload_dir['basedir'], '', $filepath);
         $download_url = $upload_dir['baseurl'] . $relative_path;
 
-        wp_send_json_success([
+        wp_send_json_success(
+            [
             'download_url' => $download_url,
             'filename' => $filename
-        ]);
+            ]
+        );
     }
 }

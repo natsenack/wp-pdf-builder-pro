@@ -12,7 +12,7 @@ interface DataProviderInterface
     /**
      * Récupère la valeur d'une variable
      *
-     * @param string $variable Nom de la variable
+     * @param  string $variable Nom de la variable
      * @return string Valeur de la variable ou valeur par défaut
      */
     public function getVariableValue(string $variable): string;
@@ -20,7 +20,7 @@ interface DataProviderInterface
     /**
      * Vérifie si une variable est disponible
      *
-     * @param string $variable Nom de la variable
+     * @param  string $variable Nom de la variable
      * @return bool True si la variable existe
      */
     public function hasVariable(string $variable): bool;
@@ -49,7 +49,7 @@ interface DataProviderInterface
     /**
      * Valide et sanitise un tableau de données
      *
-     * @param array $data Données à valider
+     * @param  array $data Données à valider
      * @return array Données validées et sanitizées
      */
     public function validateAndSanitizeData(array $data): array;

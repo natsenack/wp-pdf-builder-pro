@@ -4,7 +4,8 @@
  * Centralise la gestion des erreurs et exceptions avec logging structuré
  */
 
-class PDF_Builder_Error_Handler {
+class PDF_Builder_Error_Handler
+{
     private static $instance = null;
     private $error_levels = [
         E_ERROR => 'ERROR',
@@ -24,19 +25,22 @@ class PDF_Builder_Error_Handler {
         E_USER_DEPRECATED => 'USER_DEPRECATED'
     ];
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_error_handling();
         $this->init_hooks();
     }
 
-    private function init_error_handling() {
+    private function init_error_handling()
+    {
         // Définir le gestionnaire d'erreurs personnalisé
         set_error_handler([$this, 'handle_error']);
 
@@ -47,7 +51,8 @@ class PDF_Builder_Error_Handler {
         register_shutdown_function([$this, 'handle_shutdown']);
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Hook pour les erreurs AJAX
         add_action('wp_ajax_pdf_builder_error_report', [$this, 'handle_ajax_error']);
 
@@ -61,7 +66,8 @@ class PDF_Builder_Error_Handler {
     /**
      * Gestionnaire d'erreurs PHP personnalisé
      */
-    public function handle_error($errno, $errstr, $errfile, $errline) {
+    public function handle_error($errno, $errstr, $errfile, $errline)
+    {
         // Ignorer les erreurs supprimées avec @
         if (!(error_reporting() & $errno)) {
             return false;
@@ -92,7 +98,8 @@ class PDF_Builder_Error_Handler {
     /**
      * Gestionnaire d'exceptions non capturées
      */
-    public function handle_exception($exception) {
+    public function handle_exception($exception)
+    {
         $error_data = [
             'level' => 'EXCEPTION',
             'message' => $exception->getMessage(),
@@ -111,7 +118,8 @@ class PDF_Builder_Error_Handler {
     /**
      * Gestionnaire d'arrêt pour les erreurs fatales
      */
-    public function handle_shutdown() {
+    public function handle_shutdown()
+    {
         $error = error_get_last();
 
         if ($error !== null && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING])) {
@@ -132,7 +140,8 @@ class PDF_Builder_Error_Handler {
     /**
      * Gestion des erreurs AJAX
      */
-    public function handle_ajax_error() {
+    public function handle_ajax_error()
+    {
         try {
             // Valider la requête
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
@@ -163,7 +172,8 @@ class PDF_Builder_Error_Handler {
     /**
      * Gestion des erreurs de base de données
      */
-    public function handle_database_error($error) {
+    public function handle_database_error($error)
+    {
         $error_data = [
             'level' => 'DATABASE_ERROR',
             'message' => $error,
@@ -177,7 +187,8 @@ class PDF_Builder_Error_Handler {
     /**
      * Obtient le contexte autour d'une erreur
      */
-    private function get_error_context($file, $line, $context_lines = 5) {
+    private function get_error_context($file, $line, $context_lines = 5)
+    {
         if (!file_exists($file)) {
             return [];
         }
@@ -201,7 +212,8 @@ class PDF_Builder_Error_Handler {
     /**
      * Log une erreur dans le système de logging
      */
-    private function log_error($error_data) {
+    private function log_error($error_data)
+    {
         if (class_exists('PDF_Builder_Logger')) {
             $logger = PDF_Builder_Logger::get_instance();
 
@@ -217,13 +229,15 @@ class PDF_Builder_Error_Handler {
 
             $method = $level_map[$error_data['level']] ?? 'error';
 
-            $logger->$method('Error: ' . $error_data['message'], [
+            $logger->$method(
+                'Error: ' . $error_data['message'], [
                 'file' => $error_data['file'] ?? 'unknown',
                 'line' => $error_data['line'] ?? 'unknown',
                 'context' => $error_data['context'] ?? [],
                 'trace' => $error_data['trace'] ?? '',
                 'source' => $error_data['source'] ?? 'php'
-            ]);
+                ]
+            );
         } else {
             // Fallback vers error_log
             // // error_log('[PDF Builder Error] ' . json_encode($error_data));
@@ -238,7 +252,8 @@ class PDF_Builder_Error_Handler {
     /**
      * Stocke une erreur critique en base de données
      */
-    private function store_error_in_db($error_data) {
+    private function store_error_in_db($error_data)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_errors';
@@ -268,7 +283,8 @@ class PDF_Builder_Error_Handler {
     /**
      * Crée la table des erreurs si elle n'existe pas
      */
-    private function create_errors_table() {
+    private function create_errors_table()
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_errors';
@@ -295,7 +311,7 @@ class PDF_Builder_Error_Handler {
                 KEY created_at (created_at)
             ) $charset_collate;";
 
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            include_once ABSPATH . 'wp-admin/includes/upgrade.php';
             dbDelta($sql);
         }
     }
@@ -303,7 +319,8 @@ class PDF_Builder_Error_Handler {
     /**
      * Gestion des erreurs fatales - affichage d'une page d'erreur
      */
-    private function handle_fatal_error($error_data) {
+    private function handle_fatal_error($error_data)
+    {
         // En mode debug, afficher les détails
         if (defined('WP_DEBUG') && WP_DEBUG) {
             $this->display_error_page($error_data);
@@ -318,7 +335,8 @@ class PDF_Builder_Error_Handler {
     /**
      * Affiche une page d'erreur détaillée (debug)
      */
-    private function display_error_page($error_data) {
+    private function display_error_page($error_data)
+    {
         if (!headers_sent()) {
             header('HTTP/1.1 500 Internal Server Error');
             header('Content-Type: text/html; charset=UTF-8');
@@ -380,7 +398,8 @@ class PDF_Builder_Error_Handler {
     /**
      * Affiche une page d'erreur générique (production)
      */
-    private function display_generic_error_page() {
+    private function display_generic_error_page()
+    {
         if (!headers_sent()) {
             header('HTTP/1.1 500 Internal Server Error');
             header('Content-Type: text/html; charset=UTF-8');
@@ -406,7 +425,8 @@ class PDF_Builder_Error_Handler {
     /**
      * Obtient l'IP du client
      */
-    private function get_client_ip() {
+    private function get_client_ip()
+    {
         $ip_headers = [
             'HTTP_CF_CONNECTING_IP',
             'HTTP_CLIENT_IP',
@@ -436,31 +456,39 @@ class PDF_Builder_Error_Handler {
     /**
      * Nettoie les anciens logs d'erreurs
      */
-    public function cleanup_error_logs() {
+    public function cleanup_error_logs()
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_errors';
 
         // Supprimer les erreurs de plus de 30 jours
-        $wpdb->query($wpdb->prepare(
-            "DELETE FROM $table WHERE created_at < DATE_SUB(NOW(), INTERVAL 30 DAY)"
-        ));
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM $table WHERE created_at < DATE_SUB(NOW(), INTERVAL 30 DAY)"
+            )
+        );
 
         // Supprimer les erreurs de niveau NOTICE de plus de 7 jours
-        $wpdb->query($wpdb->prepare(
-            "DELETE FROM $table WHERE level = 'NOTICE' AND created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)"
-        ));
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM $table WHERE level = 'NOTICE' AND created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)"
+            )
+        );
     }
 
     /**
      * Récupère les statistiques d'erreurs
      */
-    public function get_error_stats($days = 7) {
+    public function get_error_stats($days = 7)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_errors';
 
-        $stats = $wpdb->get_results($wpdb->prepare("
+        $stats = $wpdb->get_results(
+            $wpdb->prepare(
+                "
             SELECT
                 level,
                 COUNT(*) as count,
@@ -469,7 +497,9 @@ class PDF_Builder_Error_Handler {
             WHERE created_at >= DATE_SUB(NOW(), INTERVAL %d DAY)
             GROUP BY level, DATE(created_at)
             ORDER BY date DESC, count DESC
-        ", $days), ARRAY_A);
+        ", $days
+            ), ARRAY_A
+        );
 
         return $stats;
     }
@@ -477,35 +507,46 @@ class PDF_Builder_Error_Handler {
     /**
      * Récupère les erreurs récentes
      */
-    public function get_recent_errors($limit = 50) {
+    public function get_recent_errors($limit = 50)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_errors';
 
-        return $wpdb->get_results($wpdb->prepare("
+        return $wpdb->get_results(
+            $wpdb->prepare(
+                "
             SELECT * FROM $table
             ORDER BY created_at DESC
             LIMIT %d
-        ", $limit), ARRAY_A);
+        ", $limit
+            ), ARRAY_A
+        );
     }
 }
 
 // Fonctions globales pour faciliter l'utilisation
-function pdf_builder_handle_error($message, $context = []) {
-    $error_data = array_merge([
+function pdf_builder_handle_error($message, $context = [])
+{
+    $error_data = array_merge(
+        [
         'level' => 'ERROR',
         'message' => $message,
         'timestamp' => current_time('timestamp')
-    ], $context);
+        ], $context
+    );
 
     PDF_Builder_Error_Handler::get_instance()->log_error($error_data);
 }
 
-function pdf_builder_handle_exception($exception) {
+function pdf_builder_handle_exception($exception)
+{
     PDF_Builder_Error_Handler::get_instance()->handle_exception($exception);
 }
 
 // Initialiser le gestionnaire d'erreurs
-add_action('plugins_loaded', function() {
-    PDF_Builder_Error_Handler::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_Error_Handler::get_instance();
+    }
+);

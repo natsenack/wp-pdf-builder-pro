@@ -8,22 +8,44 @@ namespace PDF_Builder\Elements;
  */
 abstract class BaseElement implements ElementInterface
 {
-    /** @var string ID unique de l'élément */
+    /**
+     * 
+     *
+     * @var string ID unique de l'élément 
+     */
     protected $id;
-    /** @var array Propriétés de position */
+    /**
+     * 
+     *
+     * @var array Propriétés de position 
+     */
     protected $position = [];
-    /** @var array Propriétés de style */
+    /**
+     * 
+     *
+     * @var array Propriétés de style 
+     */
     protected $style = [];
-    /** @var bool Visibilité de l'élément */
+    /**
+     * 
+     *
+     * @var bool Visibilité de l'élément 
+     */
     protected $visible = true;
-    /** @var bool Élément verrouillé */
+    /**
+     * 
+     *
+     * @var bool Élément verrouillé 
+     */
     protected $locked = false;
 
     /**
      * Constructeur de base
      *
-     * @param string $id ID de l'élément
-     * @param array $data Données d'initialisation
+     * @param string $id   ID de
+     *                     l'élément
+     * @param array  $data Données
+     *                     d'initialisation
      */
     public function __construct(string $id, array $data = [])
     {

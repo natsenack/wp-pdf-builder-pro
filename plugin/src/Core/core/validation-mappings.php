@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class PDF_Builder_Validation_Mappings {
+class PDF_Builder_Validation_Mappings
+{
 
     // ==========================================
     // RÈGLES DE VALIDATION GÉNÉRALES
@@ -369,35 +370,40 @@ class PDF_Builder_Validation_Mappings {
     /**
      * Obtenir toutes les règles de validation générales
      */
-    public static function get_validation_rules() {
+    public static function get_validation_rules()
+    {
         return self::$validation_rules;
     }
 
     /**
      * Obtenir une règle de validation spécifique
      */
-    public static function get_validation_rule($field) {
+    public static function get_validation_rule($field)
+    {
         return self::$validation_rules[$field] ?? null;
     }
 
     /**
      * Obtenir les règles de validation pour un type d'élément
      */
-    public static function get_element_validation_rules($element_type) {
+    public static function get_element_validation_rules($element_type)
+    {
         return self::$element_validation_rules[$element_type] ?? [];
     }
 
     /**
      * Obtenir les règles de validation pour un formulaire
      */
-    public static function get_form_validation_rules($form_type) {
+    public static function get_form_validation_rules($form_type)
+    {
         return self::$form_validation_rules[$form_type] ?? [];
     }
 
     /**
      * Valider une valeur selon une règle
      */
-    public static function validate_value($value, $rule) {
+    public static function validate_value($value, $rule)
+    {
         // Vérifier si requis
         if ($rule['required'] && (is_null($value) || $value === '')) {
             return ['valid' => false, 'message' => $rule['message'] ?? 'Ce champ est requis.'];
@@ -410,43 +416,43 @@ class PDF_Builder_Validation_Mappings {
 
         // Validation par type
         switch ($rule['type']) {
-            case 'number':
-                if (!is_numeric($value)) {
-                    return ['valid' => false, 'message' => 'Ce champ doit être un nombre.'];
-                }
+        case 'number':
+            if (!is_numeric($value)) {
+                return ['valid' => false, 'message' => 'Ce champ doit être un nombre.'];
+            }
 
-                $num_value = (float) $value;
+            $num_value = (float) $value;
 
-                if (isset($rule['min']) && $num_value < $rule['min']) {
-                    return ['valid' => false, 'message' => $rule['message'] ?? "La valeur minimale est {$rule['min']}."];
-                }
+            if (isset($rule['min']) && $num_value < $rule['min']) {
+                return ['valid' => false, 'message' => $rule['message'] ?? "La valeur minimale est {$rule['min']}."];
+            }
 
-                if (isset($rule['max']) && $num_value > $rule['max']) {
-                    return ['valid' => false, 'message' => $rule['message'] ?? "La valeur maximale est {$rule['max']}."];
-                }
-                break;
+            if (isset($rule['max']) && $num_value > $rule['max']) {
+                return ['valid' => false, 'message' => $rule['message'] ?? "La valeur maximale est {$rule['max']}."];
+            }
+            break;
 
-            case 'string':
-                if (!is_string($value)) {
-                    return ['valid' => false, 'message' => 'Ce champ doit être une chaîne de caractères.'];
-                }
+        case 'string':
+            if (!is_string($value)) {
+                return ['valid' => false, 'message' => 'Ce champ doit être une chaîne de caractères.'];
+            }
 
-                if (isset($rule['min_length']) && strlen($value) < $rule['min_length']) {
-                    return ['valid' => false, 'message' => $rule['message'] ?? "La longueur minimale est {$rule['min_length']} caractères."];
-                }
+            if (isset($rule['min_length']) && strlen($value) < $rule['min_length']) {
+                return ['valid' => false, 'message' => $rule['message'] ?? "La longueur minimale est {$rule['min_length']} caractères."];
+            }
 
-                if (isset($rule['max_length']) && strlen($value) > $rule['max_length']) {
-                    return ['valid' => false, 'message' => $rule['message'] ?? "La longueur maximale est {$rule['max_length']} caractères."];
-                }
+            if (isset($rule['max_length']) && strlen($value) > $rule['max_length']) {
+                return ['valid' => false, 'message' => $rule['message'] ?? "La longueur maximale est {$rule['max_length']} caractères."];
+            }
 
-                if (isset($rule['pattern']) && !preg_match($rule['pattern'], $value)) {
-                    return ['valid' => false, 'message' => $rule['message'] ?? 'Le format de la valeur est invalide.'];
-                }
+            if (isset($rule['pattern']) && !preg_match($rule['pattern'], $value)) {
+                return ['valid' => false, 'message' => $rule['message'] ?? 'Le format de la valeur est invalide.'];
+            }
 
-                if (isset($rule['enum']) && !in_array($value, $rule['enum'])) {
-                    return ['valid' => false, 'message' => $rule['message'] ?? 'La valeur doit être l\'une des suivantes : ' . implode(', ', $rule['enum']) . '.'];
-                }
-                break;
+            if (isset($rule['enum']) && !in_array($value, $rule['enum'])) {
+                return ['valid' => false, 'message' => $rule['message'] ?? 'La valeur doit être l\'une des suivantes : ' . implode(', ', $rule['enum']) . '.'];
+            }
+            break;
         }
 
         return ['valid' => true];
@@ -455,7 +461,8 @@ class PDF_Builder_Validation_Mappings {
     /**
      * Valider un élément selon son type
      */
-    public static function validate_element($element_data, $element_type) {
+    public static function validate_element($element_data, $element_type)
+    {
         $rules = self::get_element_validation_rules($element_type);
         $errors = [];
 
@@ -477,7 +484,8 @@ class PDF_Builder_Validation_Mappings {
     /**
      * Valider un formulaire
      */
-    public static function validate_form($form_data, $form_type) {
+    public static function validate_form($form_data, $form_type)
+    {
         $rules = self::get_form_validation_rules($form_type);
         $errors = [];
 

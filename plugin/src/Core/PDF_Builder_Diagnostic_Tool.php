@@ -4,21 +4,25 @@
  * Fournit des outils de diagnostic et débogage complets
  */
 
-class PDF_Builder_Diagnostic_Tool {
+class PDF_Builder_Diagnostic_Tool
+{
     private static $instance = null;
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_hooks();
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // AJAX pour les diagnostics
         add_action('wp_ajax_pdf_builder_run_diagnostic', [$this, 'run_diagnostic_ajax']);
         add_action('wp_ajax_pdf_builder_export_diagnostic', [$this, 'export_diagnostic_ajax']);
@@ -28,7 +32,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Exécute un diagnostic complet
      */
-    public function run_full_diagnostic() {
+    public function run_full_diagnostic()
+    {
         $results = [
             'timestamp' => current_time('mysql'),
             'system_info' => $this->get_system_info(),
@@ -51,7 +56,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Obtient les informations système
      */
-    private function get_system_info() {
+    private function get_system_info()
+    {
         global $wpdb;
 
         return [
@@ -93,7 +99,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Vérifie le statut des extensions PHP
      */
-    private function get_php_extensions_status() {
+    private function get_php_extensions_status()
+    {
         $required_extensions = [
             'gd', 'mbstring', 'xml', 'zip', 'json', 'curl'
         ];
@@ -126,7 +133,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Vérifie le statut du plugin
      */
-    private function check_plugin_status() {
+    private function check_plugin_status()
+    {
         $status = [
             'active' => is_plugin_active(plugin_basename(PDF_BUILDER_PLUGIN_FILE)),
             'network_active' => is_plugin_active_for_network(plugin_basename(PDF_BUILDER_PLUGIN_FILE)),
@@ -148,7 +156,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Vérifie la compatibilité WordPress
      */
-    private function check_wordpress_compatibility() {
+    private function check_wordpress_compatibility()
+    {
         global $wp_version;
 
         $min_version = '5.0';
@@ -166,7 +175,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Vérifie les dépendances
      */
-    private function check_dependencies() {
+    private function check_dependencies()
+    {
         $dependencies = [
             'wordpress' => [
                 'name' => 'WordPress',
@@ -198,7 +208,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Vérifie le statut de la base de données
      */
-    private function check_database_status() {
+    private function check_database_status()
+    {
         global $wpdb;
 
         $tables = [
@@ -247,7 +258,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Teste la connexion à la base de données
      */
-    private function test_database_connection() {
+    private function test_database_connection()
+    {
         global $wpdb;
 
         $start_time = microtime(true);
@@ -271,15 +283,18 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Vérifie si l'optimisation de la DB est nécessaire
      */
-    private function check_optimization_needed() {
+    private function check_optimization_needed()
+    {
         global $wpdb;
 
         // Vérifier la fragmentation des tables
-        $fragmented_tables = $wpdb->get_results("
+        $fragmented_tables = $wpdb->get_results(
+            "
             SHOW TABLE STATUS
             WHERE Name LIKE '{$wpdb->prefix}pdf_builder_%'
             AND Data_free > 0
-        ");
+        "
+        );
 
         return !empty($fragmented_tables);
     }
@@ -287,7 +302,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Vérifie les permissions des fichiers
      */
-    private function check_file_permissions() {
+    private function check_file_permissions()
+    {
         $paths = [
             PDF_BUILDER_PLUGIN_DIR => 'Dossier plugin',
             PDF_BUILDER_PLUGIN_DIR . 'resources/assets/' => 'Dossier assets',
@@ -315,7 +331,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Obtient les permissions d'un fichier/dossier
      */
-    private function get_file_permissions($path) {
+    private function get_file_permissions($path)
+    {
         if (!file_exists($path)) {
             return 'N/A';
         }
@@ -326,7 +343,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Obtient les métriques de performance
      */
-    private function get_performance_metrics() {
+    private function get_performance_metrics()
+    {
         if (!class_exists('PDF_Builder_Performance_Monitor')) {
             return ['error' => 'Performance monitor not available'];
         }
@@ -344,7 +362,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Exécute une vérification de sécurité
      */
-    private function run_security_check() {
+    private function run_security_check()
+    {
         if (!class_exists('PDF_Builder_Security_Validator')) {
             return ['error' => 'Security validator not available'];
         }
@@ -362,14 +381,17 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Vérifie les tokens CSRF
      */
-    private function check_csrf_tokens() {
+    private function check_csrf_tokens()
+    {
         global $wpdb;
 
-        $expired_tokens = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value < %s",
-            '_transient_pdf_builder_csrf_%',
-            time() - HOUR_IN_SECONDS
-        ));
+        $expired_tokens = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value < %s",
+                '_transient_pdf_builder_csrf_%',
+                time() - HOUR_IN_SECONDS
+            )
+        );
 
         return [
             'expired_tokens' => $expired_tokens,
@@ -380,7 +402,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Vérifie la sécurité des fichiers
      */
-    private function check_file_security() {
+    private function check_file_security()
+    {
         $issues = [];
 
         // Vérifier les fichiers avec des permissions trop permissives
@@ -405,7 +428,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Vérifie la sécurité de la configuration
      */
-    private function check_configuration_security() {
+    private function check_configuration_security()
+    {
         $issues = [];
 
         // Vérifier les paramètres sensibles
@@ -430,7 +454,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Vérifie la configuration
      */
-    private function check_configuration() {
+    private function check_configuration()
+    {
         $config = pdf_builder_config();
 
         $issues = [];
@@ -460,7 +485,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Analyse les erreurs récentes
      */
-    private function analyze_recent_errors() {
+    private function analyze_recent_errors()
+    {
         if (!class_exists('PDF_Builder_Error_Handler')) {
             return ['error' => 'Error handler not available'];
         }
@@ -477,12 +503,15 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Analyse les tendances d'erreurs
      */
-    private function analyze_error_trends() {
+    private function analyze_error_trends()
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_errors';
 
-        $trends = $wpdb->get_results($wpdb->prepare("
+        $trends = $wpdb->get_results(
+            $wpdb->prepare(
+                "
             SELECT
                 DATE(created_at) as date,
                 type,
@@ -491,7 +520,9 @@ class PDF_Builder_Diagnostic_Tool {
             WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
             GROUP BY DATE(created_at), type
             ORDER BY date DESC
-        ", []), ARRAY_A);
+        ", []
+            ), ARRAY_A
+        );
 
         return $trends;
     }
@@ -499,7 +530,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Génère des recommandations
      */
-    private function generate_recommendations($diagnostic_results) {
+    private function generate_recommendations($diagnostic_results)
+    {
         $recommendations = [];
 
         // Recommandations basées sur les informations système
@@ -528,8 +560,9 @@ class PDF_Builder_Diagnostic_Tool {
 
         // Recommandations de performance
         $performance = $diagnostic_results['performance_metrics'];
-        if (isset($performance['summary']['avg_response_time']) &&
-            $performance['summary']['avg_response_time'] > 2.0) {
+        if (isset($performance['summary']['avg_response_time']) 
+            && $performance['summary']['avg_response_time'] > 2.0
+        ) {
             $recommendations[] = [
                 'type' => 'warning',
                 'category' => 'performance',
@@ -557,7 +590,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Scanne récursivement un répertoire
      */
-    private function scan_directory($dir, $max_depth = 3, $current_depth = 0) {
+    private function scan_directory($dir, $max_depth = 3, $current_depth = 0)
+    {
         $files = [];
 
         if ($current_depth > $max_depth || !is_dir($dir)) {
@@ -584,7 +618,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * Formate des octets en unité lisible
      */
-    private function format_bytes($bytes) {
+    private function format_bytes($bytes)
+    {
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
         $bytes = max($bytes, 0);
         $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
@@ -597,7 +632,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * AJAX - Exécute un diagnostic
      */
-    public function run_diagnostic_ajax() {
+    public function run_diagnostic_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -611,10 +647,12 @@ class PDF_Builder_Diagnostic_Tool {
 
             $diagnostic = $this->run_full_diagnostic();
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Diagnostic terminé',
                 'diagnostic' => $diagnostic
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur lors du diagnostic: ' . $e->getMessage()]);
@@ -624,7 +662,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * AJAX - Exporte le diagnostic
      */
-    public function export_diagnostic_ajax() {
+    public function export_diagnostic_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -639,11 +678,13 @@ class PDF_Builder_Diagnostic_Tool {
             $diagnostic = $this->run_full_diagnostic();
             $export_data = json_encode($diagnostic, JSON_PRETTY_PRINT);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Diagnostic exporté',
                 'data' => $export_data,
                 'filename' => 'pdf-builder-diagnostic-' . date('Y-m-d-H-i-s') . '.json'
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur lors de l\'export: ' . $e->getMessage()]);
@@ -653,7 +694,8 @@ class PDF_Builder_Diagnostic_Tool {
     /**
      * AJAX - Vide le cache de diagnostic
      */
-    public function clear_diagnostic_cache_ajax() {
+    public function clear_diagnostic_cache_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -678,11 +720,14 @@ class PDF_Builder_Diagnostic_Tool {
 }
 
 // Fonctions globales
-function pdf_builder_run_diagnostic() {
+function pdf_builder_run_diagnostic()
+{
     return PDF_Builder_Diagnostic_Tool::get_instance()->run_full_diagnostic();
 }
 
 // Initialiser l'outil de diagnostic
-add_action('plugins_loaded', function() {
-    PDF_Builder_Diagnostic_Tool::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_Diagnostic_Tool::get_instance();
+    }
+);

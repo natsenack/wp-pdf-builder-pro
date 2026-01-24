@@ -24,7 +24,7 @@ class PdfBuilderCanvasManager
      * Instance unique de la classe
      */
     private static $instance = null;
-/**
+    /**
      * Paramètres par défaut du canvas
      */
     private $default_settings = [];
@@ -110,7 +110,7 @@ class PdfBuilderCanvasManager
     {
         // Hook pour l'initialisation du canvas
         add_action('pdf_builder_canvas_init', array($this, 'init_canvas_settings'), 10, 1);
-// Hook pour la validation des paramètres canvas
+        // Hook pour la validation des paramètres canvas
         add_filter('pdf_builder_validate_canvas_settings', array($this, 'validate_settings'), 10, 1);
     }
 
@@ -121,17 +121,17 @@ class PdfBuilderCanvasManager
     {
         // Les paramètres canvas sont sauvegardés dans pdf_builder_settings
         $all_settings = get_option('pdf_builder_settings', []);
-// Extraire seulement les paramètres canvas
+        // Extraire seulement les paramètres canvas
         $canvas_settings = [];
         $canvas_keys = array_keys($this->default_settings);
-// Liste des champs boolean
+        // Liste des champs boolean
         $boolean_fields = ['show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements',
                           'show_guides', 'zoom_with_wheel', 'pan_with_mouse', 'show_resize_handles',
                           'enable_rotation', 'multi_select', 'copy_paste_enabled'];
         foreach ($canvas_keys as $key) {
             if (isset($all_settings[$key])) {
                 $value = $all_settings[$key];
-        // Convertir les valeurs vides en false pour les champs boolean
+                // Convertir les valeurs vides en false pour les champs boolean
                 if (in_array($key, $boolean_fields) && ($value === '' || $value === null)) {
                     $value = false;
                 } elseif (in_array($key, $boolean_fields)) {
@@ -178,15 +178,16 @@ class PdfBuilderCanvasManager
         $filtered = [];
         foreach ($canvas_fields as $field) {
             if (isset($post_data[$field])) {
-            // Convertir les valeurs des checkboxes
-                if (
-                    in_array($field, ['show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements',
+                // Convertir les valeurs des checkboxes
+                if (in_array(
+                    $field, ['show_margins', 'show_grid', 'snap_to_grid', 'snap_to_elements',
                                      'show_guides', 'zoom_with_wheel', 'pan_with_mouse', 'show_resize_handles',
-                                     'enable_rotation', 'multi_select', 'copy_paste_enabled'])
+                    'enable_rotation', 'multi_select', 'copy_paste_enabled']
+                )
                 ) {
                     $filtered[$field] = $post_data[$field] === '1' || $post_data[$field] === 'on';
                 } else {
-        // Pour les autres champs, utiliser la valeur telle quelle
+                    // Pour les autres champs, utiliser la valeur telle quelle
                     $filtered[$field] = $post_data[$field];
                 }
             }
@@ -202,11 +203,11 @@ class PdfBuilderCanvasManager
     {
         // Valider les paramètres
         $validated_settings = $this->validateSettings($settings);
-// Récupérer tous les paramètres existants
+        // Récupérer tous les paramètres existants
         $all_settings = get_option('pdf_builder_settings', []);
-// Mettre à jour seulement les paramètres canvas
+        // Mettre à jour seulement les paramètres canvas
         $updated_settings = array_merge($all_settings, $validated_settings);
-// Sauvegarder
+        // Sauvegarder
         $result = update_option('pdf_builder_settings', $updated_settings);
         return $validated_settings;
     }
@@ -230,7 +231,7 @@ class PdfBuilderCanvasManager
     public function initCanvasSettings($canvas_data)
     {
         $settings = $this->getCanvasSettings();
-// Appliquer les paramètres par défaut si non définis
+        // Appliquer les paramètres par défaut si non définis
         if (!isset($canvas_data['width']) || empty($canvas_data['width'])) {
             $canvas_data['width'] = $settings['default_canvas_width'];
         }
@@ -250,19 +251,19 @@ class PdfBuilderCanvasManager
     public function validateSettings($settings)
     {
         $validated = [];
-// Dimensions
+        // Dimensions
         $validated['default_canvas_width'] = $this->validateNumeric($settings['default_canvas_width'] ?? null, 50, 2000, $this->default_settings['default_canvas_width']);
         $validated['default_canvas_height'] = $this->validateNumeric($settings['default_canvas_height'] ?? null, 50, 2000, $this->default_settings['default_canvas_height']);
-// Couleurs
+        // Couleurs
         $validated['canvas_background_color'] = $this->validateColor($settings['canvas_background_color'] ?? null, $this->default_settings['canvas_background_color']);
         $validated['container_background_color'] = $this->validateColor($settings['container_background_color'] ?? null, $this->default_settings['container_background_color']);
-// Marges
+        // Marges
         $validated['show_margins'] = (isset($settings['show_margins']) && ($settings['show_margins'] === '1' || $settings['show_margins'] === true));
         $validated['margin_top'] = $this->validateNumeric($settings['margin_top'] ?? null, 0, 200, $this->default_settings['margin_top']);
         $validated['margin_right'] = $this->validateNumeric($settings['margin_right'] ?? null, 0, 200, $this->default_settings['margin_right']);
         $validated['margin_bottom'] = $this->validateNumeric($settings['margin_bottom'] ?? null, 0, 200, $this->default_settings['margin_bottom']);
         $validated['margin_left'] = $this->validateNumeric($settings['margin_left'] ?? null, 0, 200, $this->default_settings['margin_left']);
-// Grille
+        // Grille
         $validated['show_grid'] = (isset($settings['show_grid']) && ($settings['show_grid'] === '1' || $settings['show_grid'] === true));
         $validated['grid_size'] = $this->validateNumeric($settings['grid_size'] ?? null, 5, 100, $this->default_settings['grid_size']);
         $validated['grid_color'] = $this->validateColor($settings['grid_color'] ?? null, $this->default_settings['grid_color']);
@@ -270,21 +271,21 @@ class PdfBuilderCanvasManager
         $validated['snap_to_elements'] = (isset($settings['snap_to_elements']) && ($settings['snap_to_elements'] === '1' || $settings['snap_to_elements'] === true));
         $validated['snap_tolerance'] = $this->validateNumeric($settings['snap_tolerance'] ?? null, 1, 50, $this->default_settings['snap_tolerance']);
         $validated['show_guides'] = (isset($settings['show_guides']) && ($settings['show_guides'] === '1' || $settings['show_guides'] === true));
-// Zoom
+        // Zoom
         $validated['default_zoom'] = $this->validateNumeric($settings['default_zoom'] ?? null, 10, 500, $this->default_settings['default_zoom']);
         $validated['zoom_step'] = $this->validateNumeric($settings['zoom_step'] ?? null, 5, 100, $this->default_settings['zoom_step']);
         $validated['min_zoom'] = $this->validateNumeric($settings['min_zoom'] ?? null, 1, 100, $this->default_settings['min_zoom']);
         $validated['max_zoom'] = $this->validateNumeric($settings['max_zoom'] ?? null, 100, 2000, $this->default_settings['max_zoom']);
         $validated['zoom_with_wheel'] = (isset($settings['zoom_with_wheel']) && ($settings['zoom_with_wheel'] === '1' || $settings['zoom_with_wheel'] === true));
         $validated['pan_with_mouse'] = (isset($settings['pan_with_mouse']) && ($settings['pan_with_mouse'] === '1' || $settings['pan_with_mouse'] === true));
-// Manipulation
+        // Manipulation
         $validated['show_resize_handles'] = (isset($settings['show_resize_handles']) && ($settings['show_resize_handles'] === '1' || $settings['show_resize_handles'] === true));
         $validated['handle_size'] = $this->validateNumeric($settings['handle_size'] ?? null, 4, 20, $this->default_settings['handle_size']);
         $validated['enable_rotation'] = (isset($settings['enable_rotation']) && ($settings['enable_rotation'] === '1' || $settings['enable_rotation'] === true));
         $validated['rotation_step'] = $this->validateNumeric($settings['rotation_step'] ?? null, 1, 90, $this->default_settings['rotation_step']);
         $validated['multi_select'] = (isset($settings['multi_select']) && ($settings['multi_select'] === '1' || $settings['multi_select'] === true));
         $validated['copy_paste_enabled'] = (isset($settings['copy_paste_enabled']) && ($settings['copy_paste_enabled'] === '1' || $settings['copy_paste_enabled'] === true));
-// Undo/Redo
+        // Undo/Redo
         $validated['undo_levels'] = $this->validateNumeric($settings['undo_levels'] ?? null, 1, 500, $this->default_settings['undo_levels']);
         $validated['redo_levels'] = $this->validateNumeric($settings['redo_levels'] ?? null, 1, 500, $this->default_settings['redo_levels']);
         $validated['auto_save_versions'] = $this->validateNumeric($settings['auto_save_versions'] ?? null, 1, 100, $this->default_settings['auto_save_versions']);

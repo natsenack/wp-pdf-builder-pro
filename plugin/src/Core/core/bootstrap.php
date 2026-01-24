@@ -14,6 +14,6 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
 if (defined('PHPUNIT_RUNNING')) {
     $main_bootstrap = __DIR__ . '/../bootstrap.php';
     if (file_exists($main_bootstrap)) {
-        require_once $main_bootstrap;
+        include_once $main_bootstrap;
     }
 }

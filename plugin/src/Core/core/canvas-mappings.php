@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class PDF_Builder_Canvas_Mappings {
+class PDF_Builder_Canvas_Mappings
+{
 
     // ==========================================
     // MAPPINGS GÉNÉRAUX
@@ -170,42 +171,48 @@ class PDF_Builder_Canvas_Mappings {
     /**
      * Obtenir tous les mappings généraux
      */
-    public static function get_general_mappings() {
+    public static function get_general_mappings()
+    {
         return self::$general_mappings;
     }
 
     /**
      * Obtenir les mappings pour une catégorie spécifique
      */
-    public static function get_category_mappings($category) {
+    public static function get_category_mappings($category)
+    {
         return self::$category_mappings[$category] ?? [];
     }
 
     /**
      * Obtenir tous les mappings par catégorie
      */
-    public static function get_all_category_mappings() {
+    public static function get_all_category_mappings()
+    {
         return self::$category_mappings;
     }
 
     /**
      * Obtenir les champs numériques pour une catégorie
      */
-    public static function get_numeric_fields($category) {
+    public static function get_numeric_fields($category)
+    {
         return self::$numeric_fields[$category] ?? [];
     }
 
     /**
      * Obtenir les champs checkbox pour une catégorie
      */
-    public static function get_checkbox_fields($category) {
+    public static function get_checkbox_fields($category)
+    {
         return self::$checkbox_fields[$category] ?? [];
     }
 
     /**
      * Vérifier si un champ est numérique dans une catégorie
      */
-    public static function is_numeric_field($category, $field) {
+    public static function is_numeric_field($category, $field)
+    {
         $numeric_fields = self::get_numeric_fields($category);
         return in_array($field, $numeric_fields);
     }
@@ -213,7 +220,8 @@ class PDF_Builder_Canvas_Mappings {
     /**
      * Vérifier si un champ est une checkbox dans une catégorie
      */
-    public static function is_checkbox_field($category, $field) {
+    public static function is_checkbox_field($category, $field)
+    {
         $checkbox_fields = self::get_checkbox_fields($category);
         return in_array($field, $checkbox_fields);
     }
@@ -221,14 +229,16 @@ class PDF_Builder_Canvas_Mappings {
     /**
      * Obtenir l'option WordPress pour un champ de formulaire
      */
-    public static function get_option_name($field_name) {
+    public static function get_option_name($field_name)
+    {
         return self::$general_mappings[$field_name] ?? null;
     }
 
     /**
      * Obtenir l'option WordPress pour un champ dans une catégorie spécifique
      */
-    public static function get_option_name_by_category($category, $field_name) {
+    public static function get_option_name_by_category($category, $field_name)
+    {
         $category_mappings = self::get_category_mappings($category);
         return $category_mappings[$field_name] ?? null;
     }

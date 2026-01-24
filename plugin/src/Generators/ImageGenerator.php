@@ -35,10 +35,10 @@ class ImageGenerator extends BaseGenerator
     {
         try {
             $template_data = $this->template_data['template'] ?? $this->template_data;
-// Dimensions du canvas
+            // Dimensions du canvas
             $width = $template_data['canvasWidth'] ?? 595;
             $height = $template_data['canvasHeight'] ?? 842;
-// Créer l'image
+            // Créer l'image
             $image = imagecreatetruecolor($width, $height);
             if (!$image) {
                 throw new \Exception('Failed to create image');
@@ -47,12 +47,12 @@ class ImageGenerator extends BaseGenerator
             // Fond blanc
             $white = imagecolorallocate($image, 255, 255, 255);
             imagefill($image, 0, 0, $white);
-// Couleur noire pour le texte
+            // Couleur noire pour le texte
             $black = imagecolorallocate($image, 0, 0, 0);
-// Titre du template
+            // Titre du template
             $title = $this->template_data['name'] ?? 'Template Preview';
             imagestring($image, 5, 50, 50, $title, $black);
-// Informations de base
+            // Informations de base
             $info_lines = [
                 "Width: {$width}px",
                 "Height: {$height}px",
@@ -68,7 +68,7 @@ class ImageGenerator extends BaseGenerator
             // Si output_file est spécifié, sauvegarder dans le fichier
             if (isset($this->config['output_file'])) {
                 $output_path = $this->config['output_file'];
-// Créer le répertoire si nécessaire
+                // Créer le répertoire si nécessaire
                 $dir = dirname($output_path);
                 if (!is_dir($dir)) {
                     mkdir($dir, 0755, true);
@@ -76,15 +76,15 @@ class ImageGenerator extends BaseGenerator
 
                 // Sauvegarder selon le format
                 switch (strtolower($output_type)) {
-                    case 'png':
-                        $result = imagepng($image, $output_path);
-                        break;
-                    case 'jpg':
-                    case 'jpeg':
-                        $result = imagejpeg($image, $output_path, $this->options['quality'] ?? 90);
-                        break;
-                    default:
-                        $result = imagepng($image, $output_path);
+                case 'png':
+                    $result = imagepng($image, $output_path);
+                    break;
+                case 'jpg':
+                case 'jpeg':
+                    $result = imagejpeg($image, $output_path, $this->options['quality'] ?? 90);
+                    break;
+                default:
+                    $result = imagepng($image, $output_path);
                 }
 
                 imagedestroy($image);

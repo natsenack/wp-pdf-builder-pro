@@ -4,7 +4,8 @@
  * Contrôle l'activation et la validité des licences
  */
 
-class PDF_Builder_License_Manager {
+class PDF_Builder_License_Manager
+{
     private static $instance = null;
 
     // Statuts de licence
@@ -69,19 +70,22 @@ class PDF_Builder_License_Manager {
     private $license_data = null;
     private $activation_status = null;
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_hooks();
         $this->load_license_data();
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Actions AJAX
         add_action('wp_ajax_pdf_builder_activate_license', [$this, 'activate_license_ajax']);
         add_action('wp_ajax_pdf_builder_deactivate_license', [$this, 'deactivate_license_ajax']);
@@ -108,7 +112,8 @@ class PDF_Builder_License_Manager {
     /**
      * Charge les données de licence
      */
-    private function load_license_data() {
+    private function load_license_data()
+    {
         $this->license_data = get_option(self::OPTION_LICENSE_DATA, []);
         $this->activation_status = get_option(self::OPTION_ACTIVATION_STATUS, self::STATUS_INACTIVE);
     }
@@ -116,7 +121,8 @@ class PDF_Builder_License_Manager {
     /**
      * Ajoute le menu de gestion des licences
      */
-    public function add_license_menu() {
+    public function add_license_menu()
+    {
         add_submenu_page(
             'pdf-builder-settings',
             pdf_builder_translate('Gestion des licences', 'license'),
@@ -130,7 +136,8 @@ class PDF_Builder_License_Manager {
     /**
      * Rend la page de gestion des licences
      */
-    public function render_license_page() {
+    public function render_license_page()
+    {
         if (!current_user_can('manage_options')) {
             wp_die(pdf_builder_translate('Accès refusé', 'license'));
         }
@@ -147,7 +154,8 @@ class PDF_Builder_License_Manager {
     /**
      * Active une licence
      */
-    public function activate_license($license_key) {
+    public function activate_license($license_key)
+    {
         try {
             // Validation de base
             if (empty($license_key)) {
@@ -163,13 +171,15 @@ class PDF_Builder_License_Manager {
             }
 
             // Appeler l'API d'activation
-            $response = $this->call_license_api('activate', [
+            $response = $this->call_license_api(
+                'activate', [
                 'license_key' => $license_key,
                 'site_url' => get_site_url(),
                 'site_name' => get_bloginfo('name'),
                 'wp_version' => get_bloginfo('version'),
                 'plugin_version' => PDF_BUILDER_VERSION
-            ]);
+                ]
+            );
 
             if (!$response['success']) {
                 throw new Exception($response['message'] ?? pdf_builder_translate('Erreur d\'activation', 'license'));
@@ -186,10 +196,12 @@ class PDF_Builder_License_Manager {
 
             // Logger l'activation
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('License activated', [
+                PDF_Builder_Logger::get_instance()->info(
+                    'License activated', [
                     'license_key' => $this->mask_license_key($license_key),
                     'license_type' => $response['data']['type'] ?? 'unknown'
-                ]);
+                    ]
+                );
             }
 
             // Programmer la vérification quotidienne
@@ -206,10 +218,12 @@ class PDF_Builder_License_Manager {
         } catch (Exception $e) {
             // Logger l'erreur
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->error('License activation failed', [
+                PDF_Builder_Logger::get_instance()->error(
+                    'License activation failed', [
                     'error' => $e->getMessage(),
                     'license_key' => $this->mask_license_key($license_key)
-                ]);
+                    ]
+                );
             }
 
             return [
@@ -222,7 +236,8 @@ class PDF_Builder_License_Manager {
     /**
      * Désactive une licence
      */
-    public function deactivate_license() {
+    public function deactivate_license()
+    {
         try {
             $license_key = get_option(self::OPTION_LICENSE_KEY);
 
@@ -231,10 +246,12 @@ class PDF_Builder_License_Manager {
             }
 
             // Appeler l'API de désactivation
-            $response = $this->call_license_api('deactivate', [
+            $response = $this->call_license_api(
+                'deactivate', [
                 'license_key' => $license_key,
                 'site_url' => get_site_url()
-            ]);
+                ]
+            );
 
             // Supprimer les données locales même si l'API échoue
             delete_option(self::OPTION_LICENSE_KEY);
@@ -250,9 +267,11 @@ class PDF_Builder_License_Manager {
 
             // Logger la désactivation
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('License deactivated', [
+                PDF_Builder_Logger::get_instance()->info(
+                    'License deactivated', [
                     'license_key' => $this->mask_license_key($license_key)
-                ]);
+                    ]
+                );
             }
 
             // Supprimer la vérification programmée
@@ -274,7 +293,8 @@ class PDF_Builder_License_Manager {
     /**
      * Vérifie le statut d'une licence
      */
-    public function check_license_status() {
+    public function check_license_status()
+    {
         try {
             $license_key = get_option(self::OPTION_LICENSE_KEY);
 
@@ -286,10 +306,12 @@ class PDF_Builder_License_Manager {
             }
 
             // Appeler l'API de vérification
-            $response = $this->call_license_api('status', [
+            $response = $this->call_license_api(
+                'status', [
                 'license_key' => $license_key,
                 'site_url' => get_site_url()
-            ]);
+                ]
+            );
 
             if (!$response['success']) {
                 $status = self::STATUS_INVALID;
@@ -326,28 +348,32 @@ class PDF_Builder_License_Manager {
     /**
      * Obtient les données de licence
      */
-    public function get_license_data() {
+    public function get_license_data()
+    {
         return $this->license_data ?: [];
     }
 
     /**
      * Obtient le statut d'activation
      */
-    public function get_activation_status() {
+    public function get_activation_status()
+    {
         return $this->activation_status ?: self::STATUS_INACTIVE;
     }
 
     /**
      * Vérifie si la licence est active
      */
-    public function is_license_active() {
+    public function is_license_active()
+    {
         return $this->get_activation_status() === self::STATUS_ACTIVE;
     }
 
     /**
      * Vérifie si la licence est expirée
      */
-    public function is_license_expired() {
+    public function is_license_expired()
+    {
         $data = $this->get_license_data();
 
         if (empty($data['expires_at'])) {
@@ -360,7 +386,8 @@ class PDF_Builder_License_Manager {
     /**
      * Obtient les limites actuelles
      */
-    public function get_current_limits() {
+    public function get_current_limits()
+    {
         $data = $this->get_license_data();
         $license_type = $data['type'] ?? self::TYPE_PERSONAL;
 
@@ -370,7 +397,8 @@ class PDF_Builder_License_Manager {
     /**
      * Obtient l'utilisation actuelle
      */
-    public function get_current_usage() {
+    public function get_current_usage()
+    {
         if (!class_exists('PDF_Builder_Analytics_Manager')) {
             return [];
         }
@@ -389,7 +417,8 @@ class PDF_Builder_License_Manager {
     /**
      * Vérifie la disponibilité d'une fonctionnalité
      */
-    public function check_feature_availability($enabled, $feature) {
+    public function check_feature_availability($enabled, $feature)
+    {
         if (!$this->is_license_active()) {
             // Fonctionnalités de base toujours disponibles
             $basic_features = ['view_pdfs', 'basic_templates'];
@@ -405,27 +434,28 @@ class PDF_Builder_License_Manager {
 
         // Vérifications spécifiques par fonctionnalité
         switch ($feature) {
-            case 'advanced_templates':
-                return $limits['templates'] === -1 || $this->get_current_usage()['templates_used'] < $limits['templates'];
+        case 'advanced_templates':
+            return $limits['templates'] === -1 || $this->get_current_usage()['templates_used'] < $limits['templates'];
 
-            case 'api_access':
-                return $limits['api_calls_per_hour'] === -1 || $this->get_current_usage()['api_calls_today'] < $limits['api_calls_per_hour'];
+        case 'api_access':
+            return $limits['api_calls_per_hour'] === -1 || $this->get_current_usage()['api_calls_today'] < $limits['api_calls_per_hour'];
 
-            case 'multi_user':
-                return $limits['users'] === -1 || $this->get_current_usage()['users_active'] < $limits['users'];
+        case 'multi_user':
+            return $limits['users'] === -1 || $this->get_current_usage()['users_active'] < $limits['users'];
 
-            case 'unlimited_storage':
-                return $limits['storage_gb'] === -1 || $this->get_current_usage()['storage_used_gb'] < $limits['storage_gb'];
+        case 'unlimited_storage':
+            return $limits['storage_gb'] === -1 || $this->get_current_usage()['storage_used_gb'] < $limits['storage_gb'];
 
-            default:
-                return $enabled;
+        default:
+            return $enabled;
         }
     }
 
     /**
      * Vérifie les limites d'utilisation
      */
-    public function check_usage_limits($limit_reached, $type) {
+    public function check_usage_limits($limit_reached, $type)
+    {
         if (!$this->is_license_active()) {
             return true; // Limite atteinte pour les licences inactives
         }
@@ -434,24 +464,25 @@ class PDF_Builder_License_Manager {
         $usage = $this->get_current_usage();
 
         switch ($type) {
-            case 'pdfs_per_month':
-                return $limits['pdfs_per_month'] !== -1 && $usage['pdfs_this_month'] >= $limits['pdfs_per_month'];
+        case 'pdfs_per_month':
+            return $limits['pdfs_per_month'] !== -1 && $usage['pdfs_this_month'] >= $limits['pdfs_per_month'];
 
-            case 'api_calls_per_hour':
-                return $limits['api_calls_per_hour'] !== -1 && $usage['api_calls_today'] >= $limits['api_calls_per_hour'];
+        case 'api_calls_per_hour':
+            return $limits['api_calls_per_hour'] !== -1 && $usage['api_calls_today'] >= $limits['api_calls_per_hour'];
 
-            case 'storage':
-                return $limits['storage_gb'] !== -1 && $usage['storage_used_gb'] >= $limits['storage_gb'];
+        case 'storage':
+            return $limits['storage_gb'] !== -1 && $usage['storage_used_gb'] >= $limits['storage_gb'];
 
-            default:
-                return $limit_reached;
+        default:
+            return $limit_reached;
         }
     }
 
     /**
      * Valide le format d'une clé de licence
      */
-    private function validate_license_format($license_key) {
+    private function validate_license_format($license_key)
+    {
         // Format attendu: XXXX-XXXX-XXXX-XXXX
         $pattern = '/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/';
 
@@ -461,7 +492,8 @@ class PDF_Builder_License_Manager {
     /**
      * Masque une clé de licence pour les logs
      */
-    private function mask_license_key($license_key) {
+    private function mask_license_key($license_key)
+    {
         if (strlen($license_key) < 8) {
             return '****';
         }
@@ -472,7 +504,8 @@ class PDF_Builder_License_Manager {
     /**
      * Appelle l'API de licences
      */
-    private function call_license_api($action, $data = []) {
+    private function call_license_api($action, $data = [])
+    {
         $url = self::API_URL . '/' . $action;
 
         $args = [
@@ -505,7 +538,8 @@ class PDF_Builder_License_Manager {
     /**
      * Désactive les fonctionnalités premium
      */
-    private function disable_premium_features() {
+    private function disable_premium_features()
+    {
         // Supprimer les options premium
         delete_option('pdf_builder_premium_features_enabled');
 
@@ -518,7 +552,8 @@ class PDF_Builder_License_Manager {
     /**
      * Vérifie la validité de la licence
      */
-    public function check_license_validity() {
+    public function check_license_validity()
+    {
         if (!$this->is_license_active()) {
             return;
         }
@@ -539,7 +574,8 @@ class PDF_Builder_License_Manager {
     /**
      * Vérification quotidienne de la licence
      */
-    public function daily_license_check() {
+    public function daily_license_check()
+    {
         $this->check_license_validity();
 
         // Vérifier l'expiration prochaine
@@ -561,7 +597,8 @@ class PDF_Builder_License_Manager {
     /**
      * Gère l'expiration prochaine de la licence
      */
-    public function handle_license_expiring_soon() {
+    public function handle_license_expiring_soon()
+    {
         $data = $this->get_license_data();
         $expires_at = $data['expires_at'] ?? '';
         $days_left = floor((strtotime($expires_at) - time()) / (60 * 60 * 24));
@@ -581,38 +618,39 @@ class PDF_Builder_License_Manager {
     }
 
     /**
-    * Affiche les messages de licence
+     * Affiche les messages de licence
      */
-    public function display_license_notices() {
+    public function display_license_notices()
+    {
         $status = $this->get_activation_status();
 
         switch ($status) {
-            case self::STATUS_INACTIVE:
-                echo '<div class="notice notice-warning is-dismissible">';
-                echo '<p>' . sprintf(
-                    pdf_builder_translate('PDF Builder Pro nécessite une licence active. <a href="%s">Activer maintenant</a>', 'license'),
-                    admin_url('admin.php?page=pdf-builder-license')
-                ) . '</p>';
-                echo '</div>';
-                break;
+        case self::STATUS_INACTIVE:
+            echo '<div class="notice notice-warning is-dismissible">';
+            echo '<p>' . sprintf(
+                pdf_builder_translate('PDF Builder Pro nécessite une licence active. <a href="%s">Activer maintenant</a>', 'license'),
+                admin_url('admin.php?page=pdf-builder-license')
+            ) . '</p>';
+            echo '</div>';
+            break;
 
-            case self::STATUS_EXPIRED:
-                echo '<div class="notice notice-error is-dismissible">';
-                echo '<p>' . sprintf(
-                    pdf_builder_translate('Votre licence PDF Builder Pro a expiré. <a href="%s">Renouveler maintenant</a>', 'license'),
-                    admin_url('admin.php?page=pdf-builder-license')
-                ) . '</p>';
-                echo '</div>';
-                break;
+        case self::STATUS_EXPIRED:
+            echo '<div class="notice notice-error is-dismissible">';
+            echo '<p>' . sprintf(
+                pdf_builder_translate('Votre licence PDF Builder Pro a expiré. <a href="%s">Renouveler maintenant</a>', 'license'),
+                admin_url('admin.php?page=pdf-builder-license')
+            ) . '</p>';
+            echo '</div>';
+            break;
 
-            case self::STATUS_INVALID:
-                echo '<div class="notice notice-error is-dismissible">';
-                echo '<p>' . sprintf(
-                    pdf_builder_translate('Votre licence PDF Builder Pro est invalide. <a href="%s">Vérifier la licence</a>', 'license'),
-                    admin_url('admin.php?page=pdf-builder-license')
-                ) . '</p>';
-                echo '</div>';
-                break;
+        case self::STATUS_INVALID:
+            echo '<div class="notice notice-error is-dismissible">';
+            echo '<p>' . sprintf(
+                pdf_builder_translate('Votre licence PDF Builder Pro est invalide. <a href="%s">Vérifier la licence</a>', 'license'),
+                admin_url('admin.php?page=pdf-builder-license')
+            ) . '</p>';
+            echo '</div>';
+            break;
         }
 
         // Message d'expiration prochaine
@@ -638,14 +676,16 @@ class PDF_Builder_License_Manager {
     /**
      * Désactive la licence lors de la désinstallation
      */
-    public function deactivate_license_on_uninstall() {
+    public function deactivate_license_on_uninstall()
+    {
         $this->deactivate_license();
     }
 
     /**
      * AJAX - Active une licence
      */
-    public function activate_license_ajax() {
+    public function activate_license_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -662,10 +702,12 @@ class PDF_Builder_License_Manager {
             $result = $this->activate_license($license_key);
 
             if ($result['success']) {
-                wp_send_json_success([
+                wp_send_json_success(
+                    [
                     'message' => $result['message'],
                     'data' => $result['data']
-                ]);
+                    ]
+                );
             } else {
                 wp_send_json_error(['message' => $result['message']]);
             }
@@ -678,7 +720,8 @@ class PDF_Builder_License_Manager {
     /**
      * AJAX - Désactive une licence
      */
-    public function deactivate_license_ajax() {
+    public function deactivate_license_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -706,7 +749,8 @@ class PDF_Builder_License_Manager {
     /**
      * AJAX - Vérifie le statut de la licence
      */
-    public function check_license_status_ajax() {
+    public function check_license_status_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -720,11 +764,13 @@ class PDF_Builder_License_Manager {
 
             $result = $this->check_license_status();
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'status' => $result['status'],
                 'message' => $result['message'],
                 'data' => $result['data']
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -734,7 +780,8 @@ class PDF_Builder_License_Manager {
     /**
      * AJAX - Obtient les informations de licence
      */
-    public function get_license_info_ajax() {
+    public function get_license_info_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -746,12 +793,14 @@ class PDF_Builder_License_Manager {
             $limits = $this->get_current_limits();
             $usage = $this->get_current_usage();
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'license_data' => $license_data,
                 'status' => $status,
                 'limits' => $limits,
                 'usage' => $usage
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -760,32 +809,39 @@ class PDF_Builder_License_Manager {
 }
 
 // Fonctions globales
-function pdf_builder_license_manager() {
+function pdf_builder_license_manager()
+{
     return PDF_Builder_License_Manager::get_instance();
 }
 
-function pdf_builder_is_license_active() {
+function pdf_builder_is_license_active()
+{
     return PDF_Builder_License_Manager::get_instance()->is_license_active();
 }
 
-function pdf_builder_get_license_data() {
+function pdf_builder_get_license_data()
+{
     return PDF_Builder_License_Manager::get_instance()->get_license_data();
 }
 
-function pdf_builder_get_license_limits() {
+function pdf_builder_get_license_limits()
+{
     return PDF_Builder_License_Manager::get_instance()->get_current_limits();
 }
 
-function pdf_builder_check_feature_enabled($feature) {
+function pdf_builder_check_feature_enabled($feature)
+{
     return apply_filters('pdf_builder_feature_enabled', true, $feature);
 }
 
-function pdf_builder_check_usage_limit($type) {
+function pdf_builder_check_usage_limit($type)
+{
     return apply_filters('pdf_builder_usage_limit_reached', false, $type);
 }
 
 // Vérifications de licence pour les actions critiques
-function pdf_builder_require_license($feature = null) {
+function pdf_builder_require_license($feature = null)
+{
     if (!pdf_builder_is_license_active()) {
         wp_die(pdf_builder_translate('Cette fonctionnalité nécessite une licence active', 'license'));
     }
@@ -796,6 +852,8 @@ function pdf_builder_require_license($feature = null) {
 }
 
 // Initialiser le système de gestion des licences
-add_action('plugins_loaded', function() {
-    PDF_Builder_License_Manager::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_License_Manager::get_instance();
+    }
+);

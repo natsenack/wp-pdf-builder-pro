@@ -32,13 +32,13 @@ class PdfBuilderPerformanceMonitor
 
         self::$start_time = microtime(true);
         self::$memory_start = memory_get_usage(true);
-// Hook pour mesurer les performances des pages admin
+        // Hook pour mesurer les performances des pages admin
         add_action('admin_footer', [__CLASS__, 'track_admin_page_performance']);
         add_action('wp_footer', [__CLASS__, 'track_frontend_performance']);
-// Hook pour mesurer les performances des AJAX
+        // Hook pour mesurer les performances des AJAX
         add_action('wp_ajax_pdf_builder_action', [__CLASS__, 'start_ajax_tracking'], 1);
         add_action('wp_ajax_nopriv_pdf_builder_action', [__CLASS__, 'start_ajax_tracking'], 1);
-// Hook de fin pour AJAX
+        // Hook de fin pour AJAX
         add_action('wp_ajax_pdf_builder_action', [__CLASS__, 'end_ajax_tracking'], 999);
         add_action('wp_ajax_nopriv_pdf_builder_action', [__CLASS__, 'end_ajax_tracking'], 999);
     }
@@ -60,12 +60,14 @@ class PdfBuilderPerformanceMonitor
         $execution_time = microtime(true) - self::$start_time;
         $memory_used = memory_get_usage(true) - self::$memory_start;
         $peak_memory = memory_get_peak_usage(true);
-        self::logPerformanceMetric('ajax_request', [
+        self::logPerformanceMetric(
+            'ajax_request', [
             'execution_time' => $execution_time,
             'memory_used' => $memory_used,
             'peak_memory' => $peak_memory,
             'action' => $_REQUEST['action'] ?? 'unknown'
-        ]);
+            ]
+        );
     }
 
     /**
@@ -82,15 +84,17 @@ class PdfBuilderPerformanceMonitor
         $peak_memory = memory_get_peak_usage(true);
         $query_count = get_num_queries();
         $query_time = timer_stop(0, 6);
-        self::logPerformanceMetric('admin_page_load', [
+        self::logPerformanceMetric(
+            'admin_page_load', [
             'page' => $_GET['page'],
             'execution_time' => $execution_time,
             'memory_used' => $memory_used,
             'peak_memory' => $peak_memory,
             'query_count' => $query_count,
             'query_time' => $query_time
-        ]);
-// Afficher les métriques en mode debug
+            ]
+        );
+        // Afficher les métriques en mode debug
         if (defined('WP_DEBUG') && WP_DEBUG && current_user_can('manage_options')) {
             echo '<!-- PDF Builder Performance Metrics: ';
             echo 'Time: ' . number_format($execution_time, 4) . 's, ';
@@ -112,10 +116,12 @@ class PdfBuilderPerformanceMonitor
 
         $execution_time = microtime(true) - self::$start_time;
         $memory_used = memory_get_usage(true) - self::$memory_start;
-        self::logPerformanceMetric('frontend_canvas_load', [
+        self::logPerformanceMetric(
+            'frontend_canvas_load', [
             'execution_time' => $execution_time,
             'memory_used' => $memory_used
-        ]);
+            ]
+        );
     }
 
     /**
@@ -132,14 +138,14 @@ class PdfBuilderPerformanceMonitor
             'ip' => $_SERVER['REMOTE_ADDR'] ?? ''
         ];
         self::$metrics[] = $metric;
-// Log dans le fichier de performance
+        // Log dans le fichier de performance
         $log_file = WP_CONTENT_DIR . '/pdf-builder-performance.log';
         $log_entry = date('Y-m-d H:i:s') . ' - ' . json_encode($metric) . "\n";
-// Rotation du log (max 2MB)
+        // Rotation du log (max 2MB)
         if (file_exists($log_file) && filesize($log_file) > 2 * 1024 * 1024) {
             $content = file_get_contents($log_file);
             $lines = explode("\n", $content);
-// Garder seulement les 2000 dernières lignes
+            // Garder seulement les 2000 dernières lignes
             $lines = array_slice($lines, -2000);
             // file_put_contents($log_file, implode("\n", $lines));
         }
@@ -208,7 +214,7 @@ class PdfBuilderPerformanceMonitor
             if (isset($metric['data']['memory_used'])) {
                 $memory_usages[] = $metric['data']['memory_used'];
                 if ($metric['data']['memory_used'] > 50 * 1024 * 1024) {
-                // 50MB
+                    // 50MB
                     $stats['high_memory_requests']++;
                 }
                 if ($metric['data']['memory_used'] > $stats['max_memory_usage']) {
@@ -256,9 +262,8 @@ class PdfBuilderPerformanceMonitor
 }
 
 // Initialiser le monitoring si activé
-if (
-    defined('PDF_BUILDER_ENABLE_PERFORMANCE_MONITORING') &&
-    PDF_BUILDER_ENABLE_PERFORMANCE_MONITORING
+if (defined('PDF_BUILDER_ENABLE_PERFORMANCE_MONITORING') 
+    && PDF_BUILDER_ENABLE_PERFORMANCE_MONITORING
 ) {
     PDF_Builder_Performance_Monitor::init();
 }

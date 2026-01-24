@@ -9,7 +9,7 @@ use PDF_Builder\Canvas\Canvas_Manager;
  * Gère les requêtes AJAX pour les paramètres du canvas
  *
  * @package PDF_Builder
- * @since 1.1.0
+ * @since   1.1.0
  */
 class Canvas_AJAX_Handler
 {
@@ -30,7 +30,7 @@ class Canvas_AJAX_Handler
     public static function getCanvasSettings()
     {
         try {
-// Vérifier les permissions
+            // Vérifier les permissions
             if (!current_user_can('manage_options')) {
                 wp_send_json_error(['message' => __('Permissions insuffisantes', 'pdf-builder-pro')]);
                 return;
@@ -44,14 +44,18 @@ class Canvas_AJAX_Handler
 
             $canvas_manager = Canvas_Manager::get_instance();
             $settings = $canvas_manager->getAllSettings();
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'settings' => $settings,
                 'message' => __('Paramètres du canvas récupérés avec succès', 'pdf-builder-pro')
-            ]);
+                ]
+            );
         } catch (\Exception $e) {
-            wp_send_json_error([
+            wp_send_json_error(
+                [
                 'message' => sprintf(__('Erreur: %s', 'pdf-builder-pro'), $e->getMessage())
-            ]);
+                ]
+            );
         }
     }
 
@@ -61,7 +65,7 @@ class Canvas_AJAX_Handler
     public static function saveCanvasSettings()
     {
         try {
-// Vérifier les permissions
+            // Vérifier les permissions
             if (!current_user_can('manage_options')) {
                 wp_send_json_error(['message' => __('Permissions insuffisantes', 'pdf-builder-pro')]);
                 return;
@@ -83,19 +87,25 @@ class Canvas_AJAX_Handler
             $canvas_manager = Canvas_Manager::get_instance();
             $saved = $canvas_manager->save_settings($settings);
             if ($saved) {
-                wp_send_json_success([
+                wp_send_json_success(
+                    [
                     'message' => __('Paramètres du canvas sauvegardés avec succès', 'pdf-builder-pro'),
                     'settings' => $canvas_manager->getAllSettings()
-                ]);
+                    ]
+                );
             } else {
-                wp_send_json_error([
+                wp_send_json_error(
+                    [
                     'message' => __('Erreur lors de la sauvegarde des paramètres', 'pdf-builder-pro')
-                ]);
+                    ]
+                );
             }
         } catch (\Exception $e) {
-            wp_send_json_error([
+            wp_send_json_error(
+                [
                 'message' => sprintf(__('Erreur: %s', 'pdf-builder-pro'), $e->getMessage())
-            ]);
+                ]
+            );
         }
     }
 
@@ -105,7 +115,7 @@ class Canvas_AJAX_Handler
     public static function resetCanvasSettings()
     {
         try {
-// Vérifier les permissions
+            // Vérifier les permissions
             if (!current_user_can('manage_options')) {
                 wp_send_json_error(['message' => __('Permissions insuffisantes', 'pdf-builder-pro')]);
                 return;
@@ -119,22 +129,28 @@ class Canvas_AJAX_Handler
 
             // Confirmer que l'utilisateur veut réinitialiser
             if (!isset($_POST['confirm']) || $_POST['confirm'] !== 'yes') {
-                wp_send_json_error([
+                wp_send_json_error(
+                    [
                     'message' => __('Action non confirmée', 'pdf-builder-pro')
-                ]);
+                    ]
+                );
                 return;
             }
 
             $canvas_manager = Canvas_Manager::get_instance();
             $canvas_manager->reset_to_defaults();
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => __('Paramètres du canvas réinitialisés aux valeurs par défaut', 'pdf-builder-pro'),
                 'settings' => $canvas_manager->getAllSettings()
-            ]);
+                ]
+            );
         } catch (\Exception $e) {
-            wp_send_json_error([
+            wp_send_json_error(
+                [
                 'message' => sprintf(__('Erreur: %s', 'pdf-builder-pro'), $e->getMessage())
-            ]);
+                ]
+            );
         }
     }
 }

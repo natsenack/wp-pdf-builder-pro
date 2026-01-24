@@ -4,7 +4,8 @@
  * Gère les migrations, schémas et mises à jour de données
  */
 
-class PDF_Builder_Database_Updater {
+class PDF_Builder_Database_Updater
+{
     private static $instance = null;
 
     // Versions de base de données
@@ -25,20 +26,23 @@ class PDF_Builder_Database_Updater {
     private $migrations = [];
     private $current_version;
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->current_version = get_option(self::DB_VERSION_OPTION, '0.0.0');
         $this->init_hooks();
         $this->load_migrations();
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Actions de mise à jour
         add_action('wp_ajax_pdf_builder_run_migration', [$this, 'run_migration_ajax']);
         add_action('wp_ajax_pdf_builder_get_migration_status', [$this, 'get_migration_status_ajax']);
@@ -55,7 +59,8 @@ class PDF_Builder_Database_Updater {
     /**
      * Charge les migrations disponibles
      */
-    private function load_migrations() {
+    private function load_migrations()
+    {
         $this->migrations = [
             '1.0.0' => [
                 'description' => 'Migration initiale - Tables de base',
@@ -83,7 +88,8 @@ class PDF_Builder_Database_Updater {
     /**
      * Vérifie les mises à jour disponibles
      */
-    public function check_for_updates() {
+    public function check_for_updates()
+    {
         if (version_compare($this->current_version, self::DB_VERSION, '<')) {
             add_action('admin_notices', [$this, 'show_update_notice']);
         }
@@ -92,7 +98,8 @@ class PDF_Builder_Database_Updater {
     /**
      * Affiche la notice de mise à jour
      */
-    public function show_update_notice() {
+    public function show_update_notice()
+    {
         if (!current_user_can('manage_options')) {
             return;
         }
@@ -110,7 +117,8 @@ class PDF_Builder_Database_Updater {
     /**
      * Obtient les migrations en attente
      */
-    public function get_pending_migrations() {
+    public function get_pending_migrations()
+    {
         $pending = [];
 
         foreach ($this->migrations as $version => $migration) {
@@ -125,7 +133,8 @@ class PDF_Builder_Database_Updater {
     /**
      * Exécute une migration
      */
-    public function run_migration($target_version, $direction = self::MIGRATION_UP) {
+    public function run_migration($target_version, $direction = self::MIGRATION_UP)
+    {
         try {
             if (!isset($this->migrations[$target_version])) {
                 throw new Exception('Migration introuvable: ' . $target_version);
@@ -166,9 +175,11 @@ class PDF_Builder_Database_Updater {
                 }
 
                 // Marquer comme succès
-                $this->update_migration_status($migration_id, self::STATUS_SUCCESS, [
+                $this->update_migration_status(
+                    $migration_id, self::STATUS_SUCCESS, [
                     'completed_at' => current_time('mysql')
-                ]);
+                    ]
+                );
 
                 // Logger le succès
                 if (class_exists('PDF_Builder_Logger')) {
@@ -182,10 +193,12 @@ class PDF_Builder_Database_Updater {
                 $wpdb->query('ROLLBACK');
 
                 // Marquer comme échoué
-                $this->update_migration_status($migration_id, self::STATUS_FAILED, [
+                $this->update_migration_status(
+                    $migration_id, self::STATUS_FAILED, [
                     'error' => $e->getMessage(),
                     'failed_at' => current_time('mysql')
-                ]);
+                    ]
+                );
 
                 throw $e;
             }
@@ -193,9 +206,11 @@ class PDF_Builder_Database_Updater {
         } catch (Exception $e) {
             // Logger l'erreur
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->error("Database migration failed: $target_version ($direction)", [
+                PDF_Builder_Logger::get_instance()->error(
+                    "Database migration failed: $target_version ($direction)", [
                     'error' => $e->getMessage()
-                ]);
+                    ]
+                );
             }
 
             throw $e;
@@ -205,7 +220,8 @@ class PDF_Builder_Database_Updater {
     /**
      * Exécute toutes les migrations en attente
      */
-    public function run_all_pending_migrations() {
+    public function run_all_pending_migrations()
+    {
         $pending = $this->get_pending_migrations();
         $results = [];
 
@@ -231,7 +247,8 @@ class PDF_Builder_Database_Updater {
     /**
      * Annule une migration
      */
-    public function rollback_migration($migration_id) {
+    public function rollback_migration($migration_id)
+    {
         $migration = $this->get_migration_record($migration_id);
 
         if (!$migration) {
@@ -248,7 +265,8 @@ class PDF_Builder_Database_Updater {
     /**
      * Obtient la version précédente
      */
-    private function get_previous_version($current_version) {
+    private function get_previous_version($current_version)
+    {
         $versions = array_keys($this->migrations);
         sort($versions);
 
@@ -264,7 +282,8 @@ class PDF_Builder_Database_Updater {
     /**
      * Crée un enregistrement de migration
      */
-    private function create_migration_record($version, $direction) {
+    private function create_migration_record($version, $direction)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_migrations';
@@ -287,7 +306,8 @@ class PDF_Builder_Database_Updater {
     /**
      * Met à jour le statut d'une migration
      */
-    private function update_migration_status($migration_id, $status, $additional_data = []) {
+    private function update_migration_status($migration_id, $status, $additional_data = [])
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_migrations';
@@ -306,26 +326,33 @@ class PDF_Builder_Database_Updater {
     /**
      * Obtient un enregistrement de migration
      */
-    private function get_migration_record($migration_id) {
+    private function get_migration_record($migration_id)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_migrations';
 
-        return $wpdb->get_row($wpdb->prepare("
+        return $wpdb->get_row(
+            $wpdb->prepare(
+                "
             SELECT * FROM $table WHERE id = %d
-        ", $migration_id), ARRAY_A);
+        ", $migration_id
+            ), ARRAY_A
+        );
     }
 
     /**
      * Migration vers 1.0.0 - Tables de base
      */
-    public function migrate_to_1_0_0() {
+    public function migrate_to_1_0_0()
+    {
         global $wpdb;
 
         $charset_collate = $wpdb->get_charset_collate();
 
         // Table des configurations
-        $wpdb->query("
+        $wpdb->query(
+            "
             CREATE TABLE {$wpdb->prefix}pdf_builder_config (
                 id int(11) NOT NULL AUTO_INCREMENT,
                 config_key varchar(255) NOT NULL,
@@ -339,10 +366,12 @@ class PDF_Builder_Database_Updater {
                 KEY config_type (config_type),
                 KEY is_public (is_public)
             ) $charset_collate
-        ");
+        "
+        );
 
         // Table des logs
-        $wpdb->query("
+        $wpdb->query(
+            "
             CREATE TABLE {$wpdb->prefix}pdf_builder_logs (
                 id int(11) NOT NULL AUTO_INCREMENT,
                 level varchar(20) NOT NULL,
@@ -358,10 +387,12 @@ class PDF_Builder_Database_Updater {
                 KEY created_at (created_at),
                 KEY level_created (level, created_at)
             ) $charset_collate
-        ");
+        "
+        );
 
         // Table des caches
-        $wpdb->query("
+        $wpdb->query(
+            "
             CREATE TABLE {$wpdb->prefix}pdf_builder_cache (
                 cache_key varchar(255) NOT NULL,
                 cache_value longtext,
@@ -373,10 +404,12 @@ class PDF_Builder_Database_Updater {
                 KEY cache_group (cache_group),
                 KEY expires_at (expires_at)
             ) $charset_collate
-        ");
+        "
+        );
 
         // Table des tâches planifiées
-        $wpdb->query("
+        $wpdb->query(
+            "
             CREATE TABLE {$wpdb->prefix}pdf_builder_tasks (
                 id int(11) NOT NULL AUTO_INCREMENT,
                 task_name varchar(255) NOT NULL,
@@ -395,13 +428,15 @@ class PDF_Builder_Database_Updater {
                 KEY priority (priority),
                 KEY scheduled_at (scheduled_at)
             ) $charset_collate
-        ");
+        "
+        );
     }
 
     /**
      * Rollback de 1.0.0
      */
-    public function rollback_from_1_0_0() {
+    public function rollback_from_1_0_0()
+    {
         global $wpdb;
 
         $tables = [
@@ -419,13 +454,15 @@ class PDF_Builder_Database_Updater {
     /**
      * Migration vers 1.1.0 - Tables de métriques
      */
-    public function migrate_to_1_1_0() {
+    public function migrate_to_1_1_0()
+    {
         global $wpdb;
 
         $charset_collate = $wpdb->get_charset_collate();
 
         // Table des métriques brutes
-        $wpdb->query("
+        $wpdb->query(
+            "
             CREATE TABLE {$wpdb->prefix}pdf_builder_metrics (
                 id int(11) NOT NULL AUTO_INCREMENT,
                 type varchar(50) NOT NULL,
@@ -444,10 +481,12 @@ class PDF_Builder_Database_Updater {
                 KEY timestamp (timestamp),
                 KEY type_timestamp (type, timestamp)
             ) $charset_collate
-        ");
+        "
+        );
 
         // Table des métriques agrégées
-        $wpdb->query("
+        $wpdb->query(
+            "
             CREATE TABLE {$wpdb->prefix}pdf_builder_metrics_aggregated (
                 id int(11) NOT NULL AUTO_INCREMENT,
                 period varchar(20) NOT NULL,
@@ -467,13 +506,15 @@ class PDF_Builder_Database_Updater {
                 KEY name (name),
                 KEY date (date)
             ) $charset_collate
-        ");
+        "
+        );
     }
 
     /**
      * Rollback de 1.1.0
      */
-    public function rollback_from_1_1_0() {
+    public function rollback_from_1_1_0()
+    {
         global $wpdb;
 
         $tables = [
@@ -489,13 +530,15 @@ class PDF_Builder_Database_Updater {
     /**
      * Migration vers 1.2.0 - Tables de déploiement et santé
      */
-    public function migrate_to_1_2_0() {
+    public function migrate_to_1_2_0()
+    {
         global $wpdb;
 
         $charset_collate = $wpdb->get_charset_collate();
 
         // Table des déploiements
-        $wpdb->query("
+        $wpdb->query(
+            "
             CREATE TABLE {$wpdb->prefix}pdf_builder_deployments (
                 id int(11) NOT NULL AUTO_INCREMENT,
                 version varchar(20) NOT NULL,
@@ -516,10 +559,12 @@ class PDF_Builder_Database_Updater {
                 KEY user_id (user_id),
                 KEY created_at (created_at)
             ) $charset_collate
-        ");
+        "
+        );
 
         // Table des migrations
-        $wpdb->query("
+        $wpdb->query(
+            "
             CREATE TABLE {$wpdb->prefix}pdf_builder_migrations (
                 id int(11) NOT NULL AUTO_INCREMENT,
                 version varchar(20) NOT NULL,
@@ -536,10 +581,12 @@ class PDF_Builder_Database_Updater {
                 KEY status (status),
                 KEY user_id (user_id)
             ) $charset_collate
-        ");
+        "
+        );
 
         // Table de surveillance de santé
-        $wpdb->query("
+        $wpdb->query(
+            "
             CREATE TABLE {$wpdb->prefix}pdf_builder_health_metrics (
                 id int(11) NOT NULL AUTO_INCREMENT,
                 timestamp datetime NOT NULL,
@@ -555,13 +602,15 @@ class PDF_Builder_Database_Updater {
                 KEY timestamp (timestamp),
                 KEY overall_status (overall_status)
             ) $charset_collate
-        ");
+        "
+        );
     }
 
     /**
      * Rollback de 1.2.0
      */
-    public function rollback_from_1_2_0() {
+    public function rollback_from_1_2_0()
+    {
         global $wpdb;
 
         $tables = [
@@ -578,7 +627,8 @@ class PDF_Builder_Database_Updater {
     /**
      * Migration vers 1.3.0 - Optimisations
      */
-    public function migrate_to_1_3_0() {
+    public function migrate_to_1_3_0()
+    {
         global $wpdb;
 
         // Ajouter des index pour améliorer les performances
@@ -617,7 +667,8 @@ class PDF_Builder_Database_Updater {
     /**
      * Rollback de 1.3.0
      */
-    public function rollback_from_1_3_0() {
+    public function rollback_from_1_3_0()
+    {
         global $wpdb;
 
         // Les index ne peuvent pas être facilement supprimés dans un rollback
@@ -627,7 +678,8 @@ class PDF_Builder_Database_Updater {
     /**
      * Vérifie l'intégrité de la base de données
      */
-    public function verify_database_integrity() {
+    public function verify_database_integrity()
+    {
         global $wpdb;
 
         $issues = [];
@@ -647,10 +699,14 @@ class PDF_Builder_Database_Updater {
 
         foreach ($required_tables as $table) {
             $table_name = $wpdb->prefix . $table;
-            $exists = $wpdb->get_var($wpdb->prepare("
+            $exists = $wpdb->get_var(
+                $wpdb->prepare(
+                    "
                 SELECT COUNT(*) FROM information_schema.tables
                 WHERE table_schema = %s AND table_name = %s
-            ", DB_NAME, $table_name));
+            ", DB_NAME, $table_name
+                )
+            );
 
             if (!$exists) {
                 $issues[] = "Table manquante: $table_name";
@@ -676,13 +732,15 @@ class PDF_Builder_Database_Updater {
     /**
      * Nettoie l'historique des migrations
      */
-    public function cleanup_migration_history() {
+    public function cleanup_migration_history()
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_migrations';
 
         // Garder seulement les 100 dernières migrations
-        $wpdb->query("
+        $wpdb->query(
+            "
             DELETE FROM $table
             WHERE id NOT IN (
                 SELECT id FROM (
@@ -691,28 +749,35 @@ class PDF_Builder_Database_Updater {
                     LIMIT 100
                 ) tmp
             )
-        ");
+        "
+        );
     }
 
     /**
      * Obtient l'historique des migrations
      */
-    public function get_migration_history($limit = 50) {
+    public function get_migration_history($limit = 50)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_migrations';
 
-        return $wpdb->get_results($wpdb->prepare("
+        return $wpdb->get_results(
+            $wpdb->prepare(
+                "
             SELECT * FROM $table
             ORDER BY started_at DESC
             LIMIT %d
-        ", $limit), ARRAY_A);
+        ", $limit
+            ), ARRAY_A
+        );
     }
 
     /**
      * AJAX - Exécute une migration
      */
-    public function run_migration_ajax() {
+    public function run_migration_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -734,10 +799,12 @@ class PDF_Builder_Database_Updater {
 
             $migration_id = $this->run_migration($version, $direction);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Migration exécutée avec succès',
                 'migration_id' => $migration_id
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur lors de la migration: ' . $e->getMessage()]);
@@ -747,7 +814,8 @@ class PDF_Builder_Database_Updater {
     /**
      * AJAX - Obtient le statut des migrations
      */
-    public function get_migration_status_ajax() {
+    public function get_migration_status_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -762,13 +830,15 @@ class PDF_Builder_Database_Updater {
             $history = $this->get_migration_history(20);
             $pending = $this->get_pending_migrations();
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Historique récupéré',
                 'current_version' => $this->current_version,
                 'latest_version' => self::DB_VERSION,
                 'pending_migrations' => $pending,
                 'migration_history' => $history
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -778,7 +848,8 @@ class PDF_Builder_Database_Updater {
     /**
      * AJAX - Annule une migration
      */
-    public function rollback_migration_ajax() {
+    public function rollback_migration_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -799,10 +870,12 @@ class PDF_Builder_Database_Updater {
 
             $rollback_id = $this->rollback_migration($migration_id);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Migration annulée avec succès',
                 'rollback_id' => $rollback_id
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur lors de l\'annulation: ' . $e->getMessage()]);
@@ -811,27 +884,34 @@ class PDF_Builder_Database_Updater {
 }
 
 // Fonctions globales
-function pdf_builder_db_updater() {
+function pdf_builder_db_updater()
+{
     return PDF_Builder_Database_Updater::get_instance();
 }
 
-function pdf_builder_run_migration($version, $direction = 'up') {
+function pdf_builder_run_migration($version, $direction = 'up')
+{
     return PDF_Builder_Database_Updater::get_instance()->run_migration($version, $direction);
 }
 
-function pdf_builder_run_pending_migrations() {
+function pdf_builder_run_pending_migrations()
+{
     return PDF_Builder_Database_Updater::get_instance()->run_all_pending_migrations();
 }
 
-function pdf_builder_get_migration_history($limit = 50) {
+function pdf_builder_get_migration_history($limit = 50)
+{
     return PDF_Builder_Database_Updater::get_instance()->get_migration_history($limit);
 }
 
-function pdf_builder_get_pending_migrations() {
+function pdf_builder_get_pending_migrations()
+{
     return PDF_Builder_Database_Updater::get_instance()->get_pending_migrations();
 }
 
 // Initialiser le système de mise à jour de base de données
-add_action('plugins_loaded', function() {
-    PDF_Builder_Database_Updater::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_Database_Updater::get_instance();
+    }
+);

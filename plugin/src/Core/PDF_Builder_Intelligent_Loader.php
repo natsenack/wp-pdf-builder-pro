@@ -5,9 +5,9 @@
  * Système de chargement optimisé qui gère le chargement conditionnel
  * des composants selon les besoins et l'état du système.
  *
- * @package PDF_Builder
+ * @package    PDF_Builder
  * @subpackage Core
- * @since 1.1.0
+ * @since      1.1.0
  */
 
 if (!defined('ABSPATH')) {
@@ -17,7 +17,8 @@ if (!defined('ABSPATH')) {
 /**
  * Classe principale du chargeur intelligent
  */
-class PDF_Builder_Intelligent_Loader {
+class PDF_Builder_Intelligent_Loader
+{
 
     /**
      * Instance unique
@@ -42,7 +43,8 @@ class PDF_Builder_Intelligent_Loader {
     /**
      * Constructeur privé
      */
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_dependencies();
         $this->assess_system_state();
         $this->register_hooks();
@@ -51,7 +53,8 @@ class PDF_Builder_Intelligent_Loader {
     /**
      * Obtenir l'instance unique
      */
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -61,7 +64,8 @@ class PDF_Builder_Intelligent_Loader {
     /**
      * Initialiser les dépendances des composants
      */
-    private function init_dependencies() {
+    private function init_dependencies()
+    {
         $this->component_dependencies = array(
             'security' => array(),
             'cache' => array('security'),
@@ -79,7 +83,8 @@ class PDF_Builder_Intelligent_Loader {
     /**
      * Évaluer l'état du système
      */
-    private function assess_system_state() {
+    private function assess_system_state()
+    {
         $this->system_state = array(
             'is_admin' => is_admin(),
             'is_ajax' => defined('DOING_AJAX') && DOING_AJAX,
@@ -97,16 +102,17 @@ class PDF_Builder_Intelligent_Loader {
     /**
      * Vérifier la limite de mémoire
      */
-    private function check_memory_limit() {
+    private function check_memory_limit()
+    {
         $memory_limit = ini_get('memory_limit');
         if (preg_match('/^(\d+)(.)$/', $memory_limit, $matches)) {
             $value = (int) $matches[1];
             $unit = strtolower($matches[2]);
 
             switch ($unit) {
-                case 'g': $value *= 1024;
-                case 'm': $value *= 1024;
-                case 'k': $value *= 1024;
+            case 'g': $value *= 1024;
+            case 'm': $value *= 1024;
+            case 'k': $value *= 1024;
             }
 
             return $value >= 128 * 1024 * 1024; // 128MB minimum
@@ -117,7 +123,8 @@ class PDF_Builder_Intelligent_Loader {
     /**
      * Enregistrer les hooks
      */
-    private function register_hooks() {
+    private function register_hooks()
+    {
         add_action('init', array($this, 'load_essential_components'), 1);
         add_action('wp_loaded', array($this, 'load_frontend_components'), 1);
         add_action('admin_init', array($this, 'load_admin_components'), 1);
@@ -127,7 +134,8 @@ class PDF_Builder_Intelligent_Loader {
     /**
      * Charger les composants essentiels
      */
-    public function load_essential_components() {
+    public function load_essential_components()
+    {
         $components_to_load = array('security', 'database');
 
         if ($this->system_state['cache_enabled']) {
@@ -144,7 +152,8 @@ class PDF_Builder_Intelligent_Loader {
     /**
      * Charger les composants frontend
      */
-    public function load_frontend_components() {
+    public function load_frontend_components()
+    {
         if ($this->system_state['is_admin'] || $this->system_state['is_ajax']) {
             return;
         }
@@ -161,7 +170,8 @@ class PDF_Builder_Intelligent_Loader {
     /**
      * Charger les composants admin
      */
-    public function load_admin_components() {
+    public function load_admin_components()
+    {
         if (!$this->system_state['is_admin']) {
             return;
         }
@@ -174,7 +184,8 @@ class PDF_Builder_Intelligent_Loader {
     /**
      * Charger des composants spécifiques
      */
-    public function load_components($components) {
+    public function load_components($components)
+    {
         foreach ($components as $component) {
             if (!$this->is_component_loaded($component)) {
                 $this->load_component($component);
@@ -185,7 +196,8 @@ class PDF_Builder_Intelligent_Loader {
     /**
      * Charger un composant spécifique
      */
-    private function load_component($component) {
+    private function load_component($component)
+    {
         // Vérifier les dépendances
         if (!$this->check_dependencies($component)) {
             return false;
@@ -194,36 +206,36 @@ class PDF_Builder_Intelligent_Loader {
         // Charger le composant selon son type
         $loaded = false;
         switch ($component) {
-            case 'security':
-                $loaded = $this->load_security_component();
-                break;
-            case 'cache':
-                $loaded = $this->load_cache_component();
-                break;
-            case 'database':
-                $loaded = $this->load_database_component();
-                break;
-            case 'logging':
-                $loaded = $this->load_logging_component();
-                break;
-            case 'api':
-                $loaded = $this->load_api_component();
-                break;
-            case 'analytics':
-                $loaded = $this->load_analytics_component();
-                break;
-            case 'reporting':
-                $loaded = $this->load_reporting_component();
-                break;
-            case 'backup':
-                $loaded = $this->load_backup_component();
-                break;
-            case 'updates':
-                $loaded = $this->load_updates_component();
-                break;
-            case 'ui':
-                $loaded = $this->load_ui_component();
-                break;
+        case 'security':
+            $loaded = $this->load_security_component();
+            break;
+        case 'cache':
+            $loaded = $this->load_cache_component();
+            break;
+        case 'database':
+            $loaded = $this->load_database_component();
+            break;
+        case 'logging':
+            $loaded = $this->load_logging_component();
+            break;
+        case 'api':
+            $loaded = $this->load_api_component();
+            break;
+        case 'analytics':
+            $loaded = $this->load_analytics_component();
+            break;
+        case 'reporting':
+            $loaded = $this->load_reporting_component();
+            break;
+        case 'backup':
+            $loaded = $this->load_backup_component();
+            break;
+        case 'updates':
+            $loaded = $this->load_updates_component();
+            break;
+        case 'ui':
+            $loaded = $this->load_ui_component();
+            break;
         }
 
         if ($loaded) {
@@ -236,14 +248,16 @@ class PDF_Builder_Intelligent_Loader {
     /**
      * Vérifier si un composant est chargé
      */
-    public function is_component_loaded($component) {
+    public function is_component_loaded($component)
+    {
         return in_array($component, $this->loaded_components);
     }
 
     /**
      * Vérifier les dépendances d'un composant
      */
-    private function check_dependencies($component) {
+    private function check_dependencies($component)
+    {
         if (!isset($this->component_dependencies[$component])) {
             return true;
         }
@@ -260,50 +274,61 @@ class PDF_Builder_Intelligent_Loader {
     /**
      * Méthodes de chargement des composants individuels
      */
-    private function load_security_component() {
+    private function load_security_component()
+    {
         return class_exists('PDF_Builder_Security_Validator');
     }
 
-    private function load_cache_component() {
+    private function load_cache_component()
+    {
         return false; // Système de cache supprimé
     }
 
-    private function load_database_component() {
+    private function load_database_component()
+    {
         return class_exists('PDF_Builder_Database_Updater');
     }
 
-    private function load_logging_component() {
+    private function load_logging_component()
+    {
         return class_exists('PDF_Builder_Advanced_Logger');
     }
 
-    private function load_api_component() {
+    private function load_api_component()
+    {
         return class_exists('PDF_Builder_API_Manager');
     }
 
-    private function load_analytics_component() {
+    private function load_analytics_component()
+    {
         return class_exists('PDF_Builder_Analytics_Manager');
     }
 
-    private function load_reporting_component() {
+    private function load_reporting_component()
+    {
         return class_exists('PDF_Builder_Reporting_System');
     }
 
-    private function load_backup_component() {
+    private function load_backup_component()
+    {
         return class_exists('PDF_Builder_Backup_Recovery_System');
     }
 
-    private function load_updates_component() {
+    private function load_updates_component()
+    {
         return class_exists('PDF_Builder_Update_Manager');
     }
 
-    private function load_ui_component() {
+    private function load_ui_component()
+    {
         return class_exists('PDF_Builder_Theme_Customizer');
     }
 
     /**
      * Chargement AJAX d'un composant
      */
-    public function ajax_load_component() {
+    public function ajax_load_component()
+    {
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Permissions insuffisantes');
@@ -316,10 +341,12 @@ class PDF_Builder_Intelligent_Loader {
         }
 
         if ($this->load_component($component)) {
-            wp_send_json_success(array(
+            wp_send_json_success(
+                array(
                 'message' => 'Composant chargé avec succès',
                 'component' => $component
-            ));
+                )
+            );
         } else {
             wp_send_json_error('Erreur lors du chargement du composant');
         }
@@ -328,7 +355,8 @@ class PDF_Builder_Intelligent_Loader {
     /**
      * Obtenir l'état du chargeur
      */
-    public function get_status() {
+    public function get_status()
+    {
         return array(
             'loaded_components' => $this->loaded_components,
             'system_state' => $this->system_state,

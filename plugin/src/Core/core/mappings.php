@@ -25,55 +25,59 @@ require_once __DIR__ . '/config-mappings.php';
 require_once __DIR__ . '/api-mappings.php';
 
 // Classe principale pour accéder à tous les mappings
-class PDF_Builder_Core_Mappings {
+class PDF_Builder_Core_Mappings
+{
 
     /**
      * Obtenir une instance de classe de mappings
      */
-    public static function get($mapping_type) {
+    public static function get($mapping_type)
+    {
         switch ($mapping_type) {
-            case 'defaults':
-                return 'PDF_Builder_Defaults';
-            case 'config_manager':
-                return 'PDF_Builder_Config_Manager';
-            case 'canvas':
-                return 'PDF_Builder_Canvas_Mappings';
-            case 'template':
-                return 'PDF_Builder_Template_Mappings';
-            case 'js':
-                return 'PDF_Builder_JS_Mappings';
-            case 'validation':
-                return 'PDF_Builder_Validation_Mappings';
-            case 'error':
-                return 'PDF_Builder_Error_Mappings';
-            case 'security':
-                return 'PDF_Builder_Security_Mappings';
-            case 'performance':
-                return 'PDF_Builder_Performance_Mappings';
-            case 'compatibility':
-                return 'PDF_Builder_Compatibility_Mappings';
-            case 'i18n':
-                return 'PDF_Builder_I18n_Mappings';
-            case 'config':
-                return 'PDF_Builder_Config_Mappings';
-            case 'api':
-                return 'PDF_Builder_API_Mappings';
-            default:
-                return null;
+        case 'defaults':
+            return 'PDF_Builder_Defaults';
+        case 'config_manager':
+            return 'PDF_Builder_Config_Manager';
+        case 'canvas':
+            return 'PDF_Builder_Canvas_Mappings';
+        case 'template':
+            return 'PDF_Builder_Template_Mappings';
+        case 'js':
+            return 'PDF_Builder_JS_Mappings';
+        case 'validation':
+            return 'PDF_Builder_Validation_Mappings';
+        case 'error':
+            return 'PDF_Builder_Error_Mappings';
+        case 'security':
+            return 'PDF_Builder_Security_Mappings';
+        case 'performance':
+            return 'PDF_Builder_Performance_Mappings';
+        case 'compatibility':
+            return 'PDF_Builder_Compatibility_Mappings';
+        case 'i18n':
+            return 'PDF_Builder_I18n_Mappings';
+        case 'config':
+            return 'PDF_Builder_Config_Mappings';
+        case 'api':
+            return 'PDF_Builder_API_Mappings';
+        default:
+            return null;
         }
     }
 
     /**
      * Vérifier si un type de mapping existe
      */
-    public static function exists($mapping_type) {
+    public static function exists($mapping_type)
+    {
         return self::get($mapping_type) !== null;
     }
 
     /**
      * Obtenir la liste de tous les types de mappings disponibles
      */
-    public static function get_available_mappings() {
+    public static function get_available_mappings()
+    {
         return [
             'defaults',
             'config_manager',
@@ -94,7 +98,8 @@ class PDF_Builder_Core_Mappings {
     /**
      * Appeler une méthode sur une classe de mappings
      */
-    public static function call($mapping_type, $method, ...$args) {
+    public static function call($mapping_type, $method, ...$args)
+    {
         $class_name = self::get($mapping_type);
 
         if (!$class_name || !class_exists($class_name)) {

@@ -4,7 +4,8 @@
  * Tests unitaires, d'intégration et fonctionnels pour valider les fonctionnalités
  */
 
-class PDF_Builder_Test_Suite {
+class PDF_Builder_Test_Suite
+{
     private static $instance = null;
 
     // Types de tests
@@ -23,19 +24,22 @@ class PDF_Builder_Test_Suite {
     // Suites de tests
     private $test_suites = [];
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_hooks();
         $this->register_test_suites();
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Exécution des tests
         add_action('wp_ajax_pdf_builder_run_tests', [$this, 'run_tests_ajax']);
         add_action('wp_ajax_pdf_builder_get_test_results', [$this, 'get_test_results_ajax']);
@@ -52,7 +56,8 @@ class PDF_Builder_Test_Suite {
     /**
      * Enregistre les suites de tests
      */
-    private function register_test_suites() {
+    private function register_test_suites()
+    {
         $this->test_suites = [
             'unit' => [
                 'name' => 'Tests unitaires',
@@ -112,7 +117,8 @@ class PDF_Builder_Test_Suite {
     /**
      * Exécute une suite de tests
      */
-    public function run_test_suite($suite_name, $options = []) {
+    public function run_test_suite($suite_name, $options = [])
+    {
         if (!isset($this->test_suites[$suite_name])) {
             throw new Exception('Suite de tests introuvable: ' . $suite_name);
         }
@@ -143,18 +149,18 @@ class PDF_Builder_Test_Suite {
             $results['summary']['total']++;
 
             switch ($test_result['status']) {
-                case self::STATUS_PASS:
-                    $results['summary']['passed']++;
-                    break;
-                case self::STATUS_FAIL:
-                    $results['summary']['failed']++;
-                    break;
-                case self::STATUS_SKIP:
-                    $results['summary']['skipped']++;
-                    break;
-                case self::STATUS_ERROR:
-                    $results['summary']['errors']++;
-                    break;
+            case self::STATUS_PASS:
+                $results['summary']['passed']++;
+                break;
+            case self::STATUS_FAIL:
+                $results['summary']['failed']++;
+                break;
+            case self::STATUS_SKIP:
+                $results['summary']['skipped']++;
+                break;
+            case self::STATUS_ERROR:
+                $results['summary']['errors']++;
+                break;
             }
         }
 
@@ -175,12 +181,14 @@ class PDF_Builder_Test_Suite {
         }
 
         if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->info('Test suite completed', [
+            PDF_Builder_Logger::get_instance()->info(
+                'Test suite completed', [
                 'suite' => $suite_name,
                 'passed' => $results['summary']['passed'],
                 'failed' => $results['summary']['failed'],
                 'duration' => $results['summary']['duration']
-            ]);
+                ]
+            );
         }
 
         return $results;
@@ -189,7 +197,8 @@ class PDF_Builder_Test_Suite {
     /**
      * Exécute un test individuel
      */
-    private function run_single_test($test_name, $test_callback, $options = []) {
+    private function run_single_test($test_name, $test_callback, $options = [])
+    {
         $result = [
             'name' => $test_name,
             'status' => self::STATUS_ERROR,
@@ -241,7 +250,8 @@ class PDF_Builder_Test_Suite {
     /**
      * Tests unitaires
      */
-    public function test_ajax_handlers($options = []) {
+    public function test_ajax_handlers($options = [])
+    {
         // Tester les gestionnaires AJAX
         $results = [];
 
@@ -265,11 +275,13 @@ class PDF_Builder_Test_Suite {
         return $this->summarize_test_results($results, 'Tests des gestionnaires AJAX');
     }
 
-    public function test_cache_system($options = []) {
+    public function test_cache_system($options = [])
+    {
         return $this->test_info('Système de cache supprimé - Cette fonctionnalité n\'est plus disponible');
     }
 
-    public function test_security_validator($options = []) {
+    public function test_security_validator($options = [])
+    {
         $results = [];
 
         if (!class_exists('PDF_Builder_Security_Validator')) {
@@ -299,7 +311,8 @@ class PDF_Builder_Test_Suite {
         return $this->summarize_test_results($results, 'Tests du validateur de sécurité');
     }
 
-    public function test_error_handler($options = []) {
+    public function test_error_handler($options = [])
+    {
         $results = [];
 
         if (!class_exists('PDF_Builder_Error_Handler')) {
@@ -324,7 +337,8 @@ class PDF_Builder_Test_Suite {
         return $this->summarize_test_results($results, 'Tests du gestionnaire d\'erreurs');
     }
 
-    public function test_config_manager($options = []) {
+    public function test_config_manager($options = [])
+    {
         $results = [];
 
         if (!class_exists('PDF_Builder_Config_Manager')) {
@@ -361,7 +375,8 @@ class PDF_Builder_Test_Suite {
     /**
      * Tests d'intégration
      */
-    public function test_database_operations($options = []) {
+    public function test_database_operations($options = [])
+    {
         $results = [];
 
         global $wpdb;
@@ -401,10 +416,12 @@ class PDF_Builder_Test_Suite {
         );
 
         if ($insert_result) {
-            $retrieved = $wpdb->get_row($wpdb->prepare(
-                "SELECT * FROM $test_table WHERE cache_key = %s",
-                $test_data['cache_key']
-            ));
+            $retrieved = $wpdb->get_row(
+                $wpdb->prepare(
+                    "SELECT * FROM $test_table WHERE cache_key = %s",
+                    $test_data['cache_key']
+                )
+            );
 
             $results['retrieve'] = $this->assert_not_null(
                 $retrieved,
@@ -418,7 +435,8 @@ class PDF_Builder_Test_Suite {
         return $this->summarize_test_results($results, 'Tests des opérations de base de données');
     }
 
-    public function test_file_operations($options = []) {
+    public function test_file_operations($options = [])
+    {
         $results = [];
 
         // Test des permissions d'écriture
@@ -458,7 +476,8 @@ class PDF_Builder_Test_Suite {
         return $this->summarize_test_results($results, 'Tests des opérations de fichiers');
     }
 
-    public function test_api_integrations($options = []) {
+    public function test_api_integrations($options = [])
+    {
         $results = [];
 
         // Test de l'API WordPress
@@ -485,7 +504,8 @@ class PDF_Builder_Test_Suite {
         return $this->summarize_test_results($results, 'Tests des intégrations API');
     }
 
-    public function test_plugin_loading($options = []) {
+    public function test_plugin_loading($options = [])
+    {
         $results = [];
 
         // Test du chargement du plugin
@@ -512,7 +532,8 @@ class PDF_Builder_Test_Suite {
     /**
      * Tests fonctionnels
      */
-    public function test_pdf_generation($options = []) {
+    public function test_pdf_generation($options = [])
+    {
         $results = [];
 
         // Cette méthode nécessiterait une implémentation réelle de génération PDF
@@ -525,7 +546,8 @@ class PDF_Builder_Test_Suite {
         return $this->summarize_test_results($results, 'Tests de génération PDF');
     }
 
-    public function test_template_management($options = []) {
+    public function test_template_management($options = [])
+    {
         $results = [];
 
         // Test de la gestion des templates
@@ -537,7 +559,8 @@ class PDF_Builder_Test_Suite {
         return $this->summarize_test_results($results, 'Tests de gestion des templates');
     }
 
-    public function test_user_permissions($options = []) {
+    public function test_user_permissions($options = [])
+    {
         $results = [];
 
         // Test des permissions utilisateur
@@ -552,7 +575,8 @@ class PDF_Builder_Test_Suite {
         return $this->summarize_test_results($results, 'Tests des permissions utilisateur');
     }
 
-    public function test_admin_interface($options = []) {
+    public function test_admin_interface($options = [])
+    {
         $results = [];
 
         // Test de l'interface d'administration
@@ -567,7 +591,8 @@ class PDF_Builder_Test_Suite {
     /**
      * Tests de performance
      */
-    public function test_response_times($options = []) {
+    public function test_response_times($options = [])
+    {
         $results = [];
 
         // Mesurer le temps de réponse d'une fonction simple
@@ -586,7 +611,8 @@ class PDF_Builder_Test_Suite {
         return $this->summarize_test_results($results, 'Tests des temps de réponse');
     }
 
-    public function test_memory_usage($options = []) {
+    public function test_memory_usage($options = [])
+    {
         $results = [];
 
         $start_memory = memory_get_usage();
@@ -610,7 +636,8 @@ class PDF_Builder_Test_Suite {
         return $this->summarize_test_results($results, 'Tests d\'utilisation mémoire');
     }
 
-    public function test_concurrent_users($options = []) {
+    public function test_concurrent_users($options = [])
+    {
         $results = [];
 
         // Test de charge simulée
@@ -637,7 +664,8 @@ class PDF_Builder_Test_Suite {
         return $this->summarize_test_results($results, 'Tests d\'utilisateurs concurrents');
     }
 
-    public function test_large_datasets($options = []) {
+    public function test_large_datasets($options = [])
+    {
         $results = [];
 
         // Test avec un grand ensemble de données
@@ -660,7 +688,8 @@ class PDF_Builder_Test_Suite {
     /**
      * Tests de sécurité
      */
-    public function test_input_validation($options = []) {
+    public function test_input_validation($options = [])
+    {
         $results = [];
 
         if (!class_exists('PDF_Builder_Security_Validator')) {
@@ -694,7 +723,8 @@ class PDF_Builder_Test_Suite {
         return $this->summarize_test_results($results, 'Tests de validation des entrées');
     }
 
-    public function test_sql_injection($options = []) {
+    public function test_sql_injection($options = [])
+    {
         $results = [];
 
         // Test de protection contre l'injection SQL
@@ -713,7 +743,8 @@ class PDF_Builder_Test_Suite {
         return $this->summarize_test_results($results, 'Tests de protection contre l\'injection SQL');
     }
 
-    public function test_xss_protection($options = []) {
+    public function test_xss_protection($options = [])
+    {
         $results = [];
 
         if (!class_exists('PDF_Builder_Security_Validator')) {
@@ -741,7 +772,8 @@ class PDF_Builder_Test_Suite {
         return $this->summarize_test_results($results, 'Tests de protection XSS');
     }
 
-    public function test_csrf_protection($options = []) {
+    public function test_csrf_protection($options = [])
+    {
         $results = [];
 
         // Test de protection CSRF
@@ -764,7 +796,8 @@ class PDF_Builder_Test_Suite {
         return $this->summarize_test_results($results, 'Tests de protection CSRF');
     }
 
-    public function test_file_upload_security($options = []) {
+    public function test_file_upload_security($options = [])
+    {
         $results = [];
 
         if (!class_exists('PDF_Builder_Security_Validator')) {
@@ -791,7 +824,8 @@ class PDF_Builder_Test_Suite {
     /**
      * Méthodes utilitaires pour les assertions
      */
-    private function assert_true($condition, $message = '') {
+    private function assert_true($condition, $message = '')
+    {
         return [
             'passed' => $condition === true,
             'message' => $message,
@@ -800,7 +834,8 @@ class PDF_Builder_Test_Suite {
         ];
     }
 
-    private function assert_false($condition, $message = '') {
+    private function assert_false($condition, $message = '')
+    {
         return [
             'passed' => $condition === false,
             'message' => $message,
@@ -809,7 +844,8 @@ class PDF_Builder_Test_Suite {
         ];
     }
 
-    private function assert_equals($actual, $expected, $message = '') {
+    private function assert_equals($actual, $expected, $message = '')
+    {
         return [
             'passed' => $actual === $expected,
             'message' => $message,
@@ -818,7 +854,8 @@ class PDF_Builder_Test_Suite {
         ];
     }
 
-    private function assert_not_equals($actual, $expected, $message = '') {
+    private function assert_not_equals($actual, $expected, $message = '')
+    {
         return [
             'passed' => $actual !== $expected,
             'message' => $message,
@@ -827,7 +864,8 @@ class PDF_Builder_Test_Suite {
         ];
     }
 
-    private function assert_null($value, $message = '') {
+    private function assert_null($value, $message = '')
+    {
         return [
             'passed' => $value === null,
             'message' => $message,
@@ -836,7 +874,8 @@ class PDF_Builder_Test_Suite {
         ];
     }
 
-    private function assert_not_null($value, $message = '') {
+    private function assert_not_null($value, $message = '')
+    {
         return [
             'passed' => $value !== null,
             'message' => $message,
@@ -845,7 +884,8 @@ class PDF_Builder_Test_Suite {
         ];
     }
 
-    private function assert_not_empty($value, $message = '') {
+    private function assert_not_empty($value, $message = '')
+    {
         return [
             'passed' => !empty($value),
             'message' => $message,
@@ -854,7 +894,8 @@ class PDF_Builder_Test_Suite {
         ];
     }
 
-    private function assert_less_than($actual, $expected, $message = '') {
+    private function assert_less_than($actual, $expected, $message = '')
+    {
         return [
             'passed' => $actual < $expected,
             'message' => $message,
@@ -863,7 +904,8 @@ class PDF_Builder_Test_Suite {
         ];
     }
 
-    private function assert_contains($needle, $haystack, $message = '') {
+    private function assert_contains($needle, $haystack, $message = '')
+    {
         return [
             'passed' => strpos($haystack, $needle) !== false,
             'message' => $message,
@@ -872,7 +914,8 @@ class PDF_Builder_Test_Suite {
         ];
     }
 
-    private function assert_not_contains($needle, $haystack, $message = '') {
+    private function assert_not_contains($needle, $haystack, $message = '')
+    {
         return [
             'passed' => strpos($haystack, $needle) === false,
             'message' => $message,
@@ -881,7 +924,8 @@ class PDF_Builder_Test_Suite {
         ];
     }
 
-    private function assert_not_wp_error($value, $message = '') {
+    private function assert_not_wp_error($value, $message = '')
+    {
         return [
             'passed' => !is_wp_error($value),
             'message' => $message,
@@ -890,7 +934,8 @@ class PDF_Builder_Test_Suite {
         ];
     }
 
-    private function summarize_test_results($results, $test_name) {
+    private function summarize_test_results($results, $test_name)
+    {
         $passed = 0;
         $failed = 0;
         $details = [];
@@ -913,7 +958,8 @@ class PDF_Builder_Test_Suite {
         ];
     }
 
-    private function test_failed($message) {
+    private function test_failed($message)
+    {
         return [
             'status' => self::STATUS_FAIL,
             'message' => $message,
@@ -921,7 +967,8 @@ class PDF_Builder_Test_Suite {
         ];
     }
 
-    private function table_exists($table) {
+    private function table_exists($table)
+    {
         global $wpdb;
         return $wpdb->get_var("SHOW TABLES LIKE '$table'") === $table;
     }
@@ -929,7 +976,8 @@ class PDF_Builder_Test_Suite {
     /**
      * Sauvegarde les résultats des tests
      */
-    private function save_test_results($results) {
+    private function save_test_results($results)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_test_results';
@@ -952,7 +1000,8 @@ class PDF_Builder_Test_Suite {
     /**
      * Notifie les échecs de tests
      */
-    private function notify_test_failures($results) {
+    private function notify_test_failures($results)
+    {
         $message = "Échecs détectés dans la suite de tests '{$results['name']}'\n";
         $message .= "Tests réussis: {$results['summary']['passed']}\n";
         $message .= "Tests échoués: {$results['summary']['failed']}\n";
@@ -966,7 +1015,8 @@ class PDF_Builder_Test_Suite {
     /**
      * Exécute les tests horaires
      */
-    public function run_hourly_tests() {
+    public function run_hourly_tests()
+    {
         try {
             $this->run_test_suite('unit');
             $this->run_test_suite('security');
@@ -978,7 +1028,8 @@ class PDF_Builder_Test_Suite {
     /**
      * Exécute les tests quotidiens
      */
-    public function run_daily_tests() {
+    public function run_daily_tests()
+    {
         try {
             $this->run_test_suite('integration');
             $this->run_test_suite('functional');
@@ -990,7 +1041,8 @@ class PDF_Builder_Test_Suite {
     /**
      * Exécute les tests hebdomadaires
      */
-    public function run_weekly_tests() {
+    public function run_weekly_tests()
+    {
         try {
             $this->run_test_suite('performance');
         } catch (Exception $e) {
@@ -1001,16 +1053,21 @@ class PDF_Builder_Test_Suite {
     /**
      * Nettoie les anciens résultats de tests
      */
-    public function cleanup_test_results() {
+    public function cleanup_test_results()
+    {
         global $wpdb;
 
         $retention_days = pdf_builder_config('test_results_retention_days', 90);
 
         $table = $wpdb->prefix . 'pdf_builder_test_results';
-        $deleted = $wpdb->query($wpdb->prepare("
+        $deleted = $wpdb->query(
+            $wpdb->prepare(
+                "
             DELETE FROM $table
             WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)
-        ", $retention_days));
+        ", $retention_days
+            )
+        );
 
         if ($deleted > 0 && class_exists('PDF_Builder_Logger')) {
             PDF_Builder_Logger::get_instance()->info("Old test results cleaned up: $deleted records removed");
@@ -1020,12 +1077,15 @@ class PDF_Builder_Test_Suite {
     /**
      * Log une erreur de test
      */
-    private function log_test_error($operation, $exception) {
+    private function log_test_error($operation, $exception)
+    {
         if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->error("Test operation failed: $operation", [
+            PDF_Builder_Logger::get_instance()->error(
+                "Test operation failed: $operation", [
                 'error' => $exception->getMessage(),
                 'trace' => $exception->getTraceAsString()
-            ]);
+                ]
+            );
         } else {
             // // error_log("[PDF Builder Test Error] $operation: " . $exception->getMessage());
         }
@@ -1034,7 +1094,8 @@ class PDF_Builder_Test_Suite {
     /**
      * AJAX - Exécute des tests
      */
-    public function run_tests_ajax() {
+    public function run_tests_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1051,10 +1112,12 @@ class PDF_Builder_Test_Suite {
 
             $results = $this->run_test_suite($suite, $options);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Tests exécutés avec succès',
                 'results' => $results
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur lors de l\'exécution des tests: ' . $e->getMessage()]);
@@ -1064,7 +1127,8 @@ class PDF_Builder_Test_Suite {
     /**
      * AJAX - Obtient les résultats des tests
      */
-    public function get_test_results_ajax() {
+    public function get_test_results_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1080,10 +1144,12 @@ class PDF_Builder_Test_Suite {
 
             $results = $this->get_test_results($limit);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Résultats récupérés',
                 'results' => $results
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -1093,16 +1159,21 @@ class PDF_Builder_Test_Suite {
     /**
      * Obtient les résultats des tests
      */
-    public function get_test_results($limit = 50) {
+    public function get_test_results($limit = 50)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_test_results';
 
-        $results = $wpdb->get_results($wpdb->prepare("
+        $results = $wpdb->get_results(
+            $wpdb->prepare(
+                "
             SELECT * FROM $table
             ORDER BY created_at DESC
             LIMIT %d
-        ", $limit), ARRAY_A);
+        ", $limit
+            ), ARRAY_A
+        );
 
         // Décoder les données JSON
         foreach ($results as &$result) {
@@ -1114,19 +1185,24 @@ class PDF_Builder_Test_Suite {
 }
 
 // Fonctions globales
-function pdf_builder_test_suite() {
+function pdf_builder_test_suite()
+{
     return PDF_Builder_Test_Suite::get_instance();
 }
 
-function pdf_builder_run_tests($suite = 'unit') {
+function pdf_builder_run_tests($suite = 'unit')
+{
     return PDF_Builder_Test_Suite::get_instance()->run_test_suite($suite);
 }
 
-function pdf_builder_get_test_results($limit = 50) {
+function pdf_builder_get_test_results($limit = 50)
+{
     return PDF_Builder_Test_Suite::get_instance()->get_test_results($limit);
 }
 
 // Initialiser le système de tests
-add_action('plugins_loaded', function() {
-    PDF_Builder_Test_Suite::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_Test_Suite::get_instance();
+    }
+);

@@ -12,13 +12,23 @@ use PDF_Builder\Interfaces\DataProviderInterface;
  */
 class PDFGenerator extends BaseGenerator
 {
-    /** @var Dompdf Instance DomPDF */
+    /**
+     * 
+     *
+     * @var Dompdf Instance DomPDF 
+     */
     private $dompdf;
-/** @var bool Indique si DomPDF est disponible */
+    /**
+     * @var bool Indique si DomPDF est disponible 
+     */
     private $dompdf_available;
-/** @var string HTML généré */
+    /**
+     * @var string HTML généré 
+     */
     private $generated_html;
-/** @var array Métriques de performance */
+    /**
+     * @var array Métriques de performance 
+     */
     private $performance_metrics;
 
     /**
@@ -68,7 +78,7 @@ class PDFGenerator extends BaseGenerator
         if (file_exists($vendorPath)) {
             $this->logInfo("Trying to load DomPDF via vendor autoload");
             try {
-                require_once $vendorPath;
+                include_once $vendorPath;
                 if (class_exists('Dompdf\Dompdf')) {
                     $this->logInfo("DomPDF loaded successfully via vendor autoload");
                     return true;
@@ -99,7 +109,7 @@ class PDFGenerator extends BaseGenerator
                 $this->logInfo("Trying to load library from: $path");
                 try {
                     $beforeClasses = get_declared_classes();
-                    require_once $path;
+                    include_once $path;
                     $afterClasses = get_declared_classes();
                     $newClasses = array_diff($afterClasses, $beforeClasses);
                     // Vérifier si c'est DomPDF
@@ -155,27 +165,27 @@ class PDFGenerator extends BaseGenerator
     private function initializeDomPDF(): void
     {
         $options = new Options();
-// Configuration optimisée pour les aperçus
+        // Configuration optimisée pour les aperçus
         $options->set('isRemoteEnabled', $this->config['enable_remote'] ?? false);
         $options->set('isHtml5ParserEnabled', true);
         $options->set('isFontSubsettingEnabled', true);
         $options->set('defaultMediaType', 'screen');
         $options->set('dpi', $this->config['dpi'] ?? 96);
-// Configuration mémoire et performance
+        // Configuration mémoire et performance
         $options->set('tempDir', $this->config['temp_dir'] ?? sys_get_temp_dir());
         $options->set('fontCache', $this->config['temp_dir'] ?? sys_get_temp_dir());
         $options->set('logOutputFile', null);
-// Désactiver logs fichier en mode aperçu
+        // Désactiver logs fichier en mode aperçu
 
         // Configuration format
         $options->set('defaultPaperSize', $this->config['format'] ?? 'A4');
         $options->set('defaultPaperOrientation', $this->config['orientation'] ?? 'portrait');
-// Configuration optimisation pour le web (depuis settings Performance)
+        // Configuration optimisation pour le web (depuis settings Performance)
         if (!empty($this->config['optimize_for_web'])) {
             $options->set('isRemoteEnabled', false);
-// Réduire connexions externes
+            // Réduire connexions externes
             $options->set('isFontSubsettingEnabled', true);
-// Réduire taille polices
+            // Réduire taille polices
             $this->logInfo("PDF optimized for web delivery");
         }
 
@@ -208,7 +218,7 @@ class PDFGenerator extends BaseGenerator
         $html_start = microtime(true);
         $this->generated_html = $this->generateHTML();
         $this->performance_metrics['html_generation_time'] = microtime(true) - $html_start;
-// Si un fichier de sortie est spécifié, sauvegarder directement
+        // Si un fichier de sortie est spécifié, sauvegarder directement
         $output_file = $this->config['output_file'] ?? null;
         if ($output_file) {
             return $this->generateToFile($output_type, $output_file);
@@ -216,7 +226,7 @@ class PDFGenerator extends BaseGenerator
 
         // Tentative génération PDF avec alternatives
         if (!$this->dompdf_available) {
-// Essayer HTML2PDF d'abord (comme dans l'autre plugin)
+            // Essayer HTML2PDF d'abord (comme dans l'autre plugin)
             if (class_exists('Spipu\Html2Pdf\Html2Pdf')) {
                 try {
                     $result = $this->generateWithHTML2PDF($output_type);
@@ -249,7 +259,7 @@ class PDFGenerator extends BaseGenerator
     /**
      * Génère avec Canvas comme fallback (implémentation simplifiée pour jours 3-4)
      *
-     * @param string $output_type Type de sortie
+     * @param  string $output_type Type de sortie
      * @return string|false Contenu généré ou false
      */
     private function generateWithCanvas(string $output_type)
@@ -283,7 +293,7 @@ class PDFGenerator extends BaseGenerator
                 $this->logWarning("DomPDF generation to file failed: " . $e->getMessage());
                 $this->logWarning("Full exception: " . $e->getTraceAsString());
                 $this->performance_metrics['fallback_used'] = true;
-            // Au lieu d'essayer d'autres générateurs, utiliser directement les images PDF simulées
+                // Au lieu d'essayer d'autres générateurs, utiliser directement les images PDF simulées
                 $this->logInfo("Using PDF preview image simulation as fallback");
                 try {
                     $image_data = $this->generatePDFPreviewImage($output_type);
@@ -336,74 +346,74 @@ class PDFGenerator extends BaseGenerator
     /**
      * Génère avec DomPDF
      *
-     * @param string $output_type Type de sortie
+     * @param  string $output_type Type de sortie
      * @return mixed Résultat de la génération
      */
     private function generateWithDomPDF(string $output_type)
     {
         $pdf_start = microtime(true);
-// Chargement du HTML
+        // Chargement du HTML
         $this->dompdf->loadHtml($this->generated_html);
-// Rendu du PDF
+        // Rendu du PDF
         $this->dompdf->render();
         $this->performance_metrics['pdf_generation_time'] = microtime(true) - $pdf_start;
-// Vérification mémoire
+        // Vérification mémoire
         $current_memory = memory_get_usage(true);
         $memory_used = $current_memory - $this->performance_metrics['memory_start'];
         if ($memory_used > 100 * 1024 * 1024) {
-        // 100MB
+            // 100MB
             $this->logWarning("High memory usage detected: " . round($memory_used / 1024 / 1024, 2) . "MB");
         }
 
         // Retour selon le type demandé
         switch ($output_type) {
-            case 'pdf':
-                return $this->dompdf->output();
-            case 'png':
-            case 'jpg':
-                return $this->convertPDFToImage($output_type);
-            default:
-                throw new \Exception("Unsupported output type: {$output_type}");
+        case 'pdf':
+            return $this->dompdf->output();
+        case 'png':
+        case 'jpg':
+            return $this->convertPDFToImage($output_type);
+        default:
+            throw new \Exception("Unsupported output type: {$output_type}");
         }
     }
 
     /**
      * Génère avec HTML2PDF (comme dans l'autre plugin)
      *
-     * @param string $output_type Type de sortie
+     * @param  string $output_type Type de sortie
      * @return mixed Résultat de la génération
      */
     private function generateWithHTML2PDF(string $output_type)
     {
         $this->logInfo("Generating with HTML2PDF (like the other plugin)");
         try {
-        // Créer instance HTML2PDF
+            // Créer instance HTML2PDF
             $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr');
-        // Configuration
+            // Configuration
             $html2pdf->setDefaultFont('Arial');
             $html2pdf->setTestIsImage(false);
             $html2pdf->setTestTdInOnePage(false);
-        // Charger le HTML
+            // Charger le HTML
             $html2pdf->writeHTML($this->generated_html);
-        // Retour selon le type demandé
+            // Retour selon le type demandé
             switch ($output_type) {
-                case 'pdf':
-                    return $html2pdf->output('', 'S');
-// Retourner comme string
+            case 'pdf':
+                return $html2pdf->output('', 'S');
+            // Retourner comme string
 
-                case 'png':
-                case 'jpg':
-                    // HTML2PDF vers image - méthode simplifiée
+            case 'png':
+            case 'jpg':
+                // HTML2PDF vers image - méthode simplifiée
 
-                    $pdfData = $html2pdf->output('', 'S');
+                $pdfData = $html2pdf->output('', 'S');
 
-                    return $this->convertPDFToImageHTML2PDF($pdfData, $output_type);
-                default:
-                    throw new \Exception("Unsupported output type: {$output_type}");
+                return $this->convertPDFToImageHTML2PDF($pdfData, $output_type);
+            default:
+                throw new \Exception("Unsupported output type: {$output_type}");
             }
         } catch (\Exception $e) {
             $this->logError("HTML2PDF generation failed: " . $e->getMessage());
-        // Fallback vers Canvas
+            // Fallback vers Canvas
             return $this->generateWithCanvas($output_type);
         }
     }
@@ -416,43 +426,43 @@ class PDFGenerator extends BaseGenerator
         $this->logInfo("Starting DomPDF generation to file: {$output_file}, type: {$output_type}");
         $pdf_start = microtime(true);
         try {
-        // Chargement du HTML
+            // Chargement du HTML
             $this->logInfo("Loading HTML into DomPDF (" . strlen($this->generated_html) . " chars)");
             $this->dompdf->loadHtml($this->generated_html);
             $this->logInfo("HTML loaded successfully");
-        // Rendu du PDF
+            // Rendu du PDF
             $this->logInfo("Rendering PDF with DomPDF");
             $this->dompdf->render();
             $this->logInfo("PDF rendering completed");
             $this->performance_metrics['pdf_generation_time'] = microtime(true) - $pdf_start;
             $this->logInfo("PDF rendering completed in " . round($this->performance_metrics['pdf_generation_time'], 3) . "s");
-        // Vérification mémoire
+            // Vérification mémoire
             $current_memory = memory_get_usage(true);
             $memory_used = $current_memory - $this->performance_metrics['memory_start'];
             if ($memory_used > 100 * 1024 * 1024) {
-        // 100MB
+                // 100MB
                 $this->logWarning("High memory usage detected: " . round($memory_used / 1024 / 1024, 2) . "MB");
             }
 
             // Sauvegarde selon le type demandé
             $this->logInfo("Saving output as {$output_type} to {$output_file}");
             switch ($output_type) {
-                case 'pdf':
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               $pdf_data = $this->dompdf->output();
-                    $this->logInfo("PDF data size: " . strlen($pdf_data) . " bytes");
-                    file_put_contents($output_file, $pdf_data);
+            case 'pdf':
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           $pdf_data = $this->dompdf->output();
+                $this->logInfo("PDF data size: " . strlen($pdf_data) . " bytes");
+                file_put_contents($output_file, $pdf_data);
 
-                    break;
-                case 'png':
-                case 'jpg':
-                    $this->logInfo("Converting PDF to image format: {$output_type}");
-                    $image_data = $this->convertPDFToImage($output_type);
-                    $this->logInfo("Image data size: " . strlen($image_data) . " bytes");
-                    file_put_contents($output_file, $image_data);
+                break;
+            case 'png':
+            case 'jpg':
+                $this->logInfo("Converting PDF to image format: {$output_type}");
+                $image_data = $this->convertPDFToImage($output_type);
+                $this->logInfo("Image data size: " . strlen($image_data) . " bytes");
+                file_put_contents($output_file, $image_data);
 
-                    break;
-                default:
-                    throw new \Exception("Unsupported output type: {$output_type}");
+                break;
+            default:
+                throw new \Exception("Unsupported output type: {$output_type}");
             }
 
             $this->logInfo("DomPDF generation to file completed successfully: {$output_file}");
@@ -469,7 +479,7 @@ class PDFGenerator extends BaseGenerator
     private function generateWithCanvasToFile(string $output_type, string $output_file)
     {
         $this->logInfo("Generating with Canvas fallback to file");
-// Pour les images, générer un placeholder avec message
+        // Pour les images, générer un placeholder avec message
         if (in_array($output_type, ['png', 'jpg'])) {
             $image_data = $this->generatePlaceholderImage($output_type);
             file_put_contents($output_file, $image_data);
@@ -484,17 +494,17 @@ class PDFGenerator extends BaseGenerator
     /**
      * Convertit le PDF en image
      *
-     * @param string $format Format d'image (png ou jpg)
+     * @param  string $format Format d'image (png ou jpg)
      * @return string Données de l'image
      */
     private function convertPDFToImage(string $format): string
     {
         $this->logInfo("Starting PDF to image conversion, format: {$format}");
-// Vérification des extensions disponibles
+        // Vérification des extensions disponibles
         $imagick_available = extension_loaded('imagick');
         $gd_available = function_exists('imagecreatetruecolor');
         $this->logInfo("Extensions available - Imagick: " . ($imagick_available ? 'YES' : 'NO') . ", GD: " . ($gd_available ? 'YES' : 'NO'));
-// Utilisation de Imagick si disponible pour la conversion
+        // Utilisation de Imagick si disponible pour la conversion
         if ($imagick_available) {
             $this->logInfo("Using Imagick for PDF to image conversion");
             return $this->convertWithImagick($format);
@@ -520,7 +530,7 @@ class PDFGenerator extends BaseGenerator
     /**
      * Convertit avec Imagick
      *
-     * @param string $format Format d'image
+     * @param  string $format Format d'image
      * @return string Données de l'image
      */
     private function convertWithImagick(string $format): string
@@ -536,23 +546,23 @@ class PDFGenerator extends BaseGenerator
             $imagick->readImageBlob($pdf_data);
             $this->logInfo("Setting image format to: {$format}");
             $imagick->setImageFormat($format);
-        // Configuration qualité
+            // Configuration qualité
             if ($format === 'jpg') {
                 $this->logInfo("Configuring JPEG compression");
                 $imagick->setImageCompression(\Imagick::COMPRESSION_JPEG);
-// Utiliser image_quality depuis settings Performance (30-100), ou 90 par défaut
+                // Utiliser image_quality depuis settings Performance (30-100), ou 90 par défaut
                 $quality = isset($this->config['image_quality']) ? intval($this->config['image_quality']) : 90;
                 $quality = max(30, min(100, $quality));
-// Clamp entre 30 et 100
+                // Clamp entre 30 et 100
                 $imagick->setImageCompressionQuality($quality);
                 $this->logInfo("JPEG compression quality set to: {$quality}%");
             } elseif ($format === 'png') {
                 $this->logInfo("Configuring PNG compression");
                 $imagick->setImageCompression(\Imagick::COMPRESSION_ZIP);
-        // Pour PNG, appliquer compression_level (0-9, où 9 = max compression)
+                // Pour PNG, appliquer compression_level (0-9, où 9 = max compression)
                 if (!empty($this->config['compress_images'])) {
                     $imagick->setImageCompressionQuality(90);
-// Max compression
+                    // Max compression
                     $this->logInfo("PNG compression enabled (maximum)");
                 } else {
                     $imagick->setImageCompressionQuality(50);
@@ -598,14 +608,14 @@ class PDFGenerator extends BaseGenerator
     /**
      * Convertit avec une API externe
      *
-     * @param string $format Format d'image
+     * @param  string $format Format d'image
      * @return string Données de l'image
      */
     private function convertWithExternalAPI(string $format): string
     {
         $this->logInfo("Starting external API conversion process");
         try {
-        // Pour cette démo, on utilise un service simple
+            // Pour cette démo, on utilise un service simple
             // En production, il faudrait utiliser un service payant plus fiable
 
             // Option 1: Utiliser un service comme htmlcsstoimage.com (nécessite une clé API)
@@ -623,7 +633,7 @@ class PDFGenerator extends BaseGenerator
     /**
      * Génère une image d'aperçu PDF avec contenu simulé
      *
-     * @param string $format Format d'image
+     * @param  string $format Format d'image
      * @return string Données de l'image
      */
     private function generatePDFPreviewImage(string $format): string
@@ -632,21 +642,21 @@ class PDFGenerator extends BaseGenerator
         $width = 800;
         $height = 600;
         $image = imagecreatetruecolor($width, $height);
-// Couleurs pour simuler un PDF
+        // Couleurs pour simuler un PDF
         $bg_color = imagecolorallocate($image, 255, 255, 255);
-// Blanc
+        // Blanc
         $text_color = imagecolorallocate($image, 0, 0, 0);
-// Noir
+        // Noir
         $border_color = imagecolorallocate($image, 200, 200, 200);
-// Gris clair
+        // Gris clair
 
         // Remplissage fond blanc
         imagefill($image, 0, 0, $bg_color);
-// Bordure
+        // Bordure
         imagerectangle($image, 0, 0, $width - 1, $height - 1, $border_color);
-// Simuler du contenu PDF
+        // Simuler du contenu PDF
         $font_size = 5;
-// En-tête
+        // En-tête
         imagestring($image, $font_size, 50, 50, "PDF INVOICE PREVIEW", $text_color);
         imagestring($image, $font_size, 50, 80, "Generated with DomPDF", $text_color);
 
@@ -659,9 +669,9 @@ class PDFGenerator extends BaseGenerator
 
         // Total
         imagestring($image, $font_size, 450, 350, "TOTAL: $" . rand(500, 1000), $text_color);
-// Pied de page
+        // Pied de page
         imagestring($image, $font_size, 50, 520, "This is a preview image generated from PDF content", $text_color);
-// Capture de l'image
+        // Capture de l'image
         ob_start();
         if ($format === 'png') {
             imagepng($image);
@@ -694,19 +704,19 @@ class PDFGenerator extends BaseGenerator
     /**
      * Convertit avec Ghostscript
      *
-     * @param string $format Format d'image
+     * @param  string $format Format d'image
      * @return string Données de l'image
      */
     private function convertWithGhostscript(string $format): string
     {
 
         try {
-// Sauvegarde temporaire du PDF
+            // Sauvegarde temporaire du PDF
             $tempPdfPath = tempnam(sys_get_temp_dir(), 'pdf_preview_') . '.pdf';
             $tempImagePath = tempnam(sys_get_temp_dir(), 'pdf_preview_') . '.' . $format;
             $this->logInfo("Saving PDF to temporary file: {$tempPdfPath}");
             file_put_contents($tempPdfPath, $this->dompdf->output());
-// Commande Ghostscript pour convertir PDF en image
+            // Commande Ghostscript pour convertir PDF en image
             $gsCommand = "gs -dNOPAUSE -dBATCH -dSAFER -sDEVICE=png16m -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -r150 -dFirstPage=1 -dLastPage=1 -sOutputFile=\"{$tempImagePath}\" \"{$tempPdfPath}\" 2>&1";
             $this->logInfo("Executing Ghostscript command");
             $output = [];
@@ -726,7 +736,7 @@ class PDFGenerator extends BaseGenerator
 
             $this->logInfo("Reading generated image file");
             $imageData = file_get_contents($tempImagePath);
-// Nettoyage
+            // Nettoyage
             @unlink($tempPdfPath);
             @unlink($tempImagePath);
             $this->logInfo("Ghostscript conversion completed successfully, result size: " . strlen($imageData) . " bytes");
@@ -740,13 +750,13 @@ class PDFGenerator extends BaseGenerator
     /**
      * Génère une image placeholder avec message d'erreur
      *
-     * @param string $format Format d'image
+     * @param  string $format Format d'image
      * @return string Données de l'image placeholder
      */
     private function generatePlaceholderImage(string $format): string
     {
         $this->logWarning("Generating placeholder image for format: {$format} - this indicates PDF to image conversion failed");
-// Création d'une image simple avec GD si disponible
+        // Création d'une image simple avec GD si disponible
         if (function_exists('imagecreatetruecolor')) {
             $this->logInfo("Using GD to generate placeholder image");
             return $this->generatePlaceholderWithGD($format);
@@ -754,17 +764,19 @@ class PDFGenerator extends BaseGenerator
 
         // Retour d'une réponse JSON avec les informations d'erreur
         $this->logError("GD not available, returning JSON error response");
-        return json_encode([
+        return json_encode(
+            [
             'error' => true,
             'message' => 'Image conversion not available. Please use PDF output.',
             'fallback_html' => $this->generated_html
-        ]);
+            ]
+        );
     }
 
     /**
      * Génère un placeholder avec GD
      *
-     * @param string $format Format d'image
+     * @param  string $format Format d'image
      * @return string Données de l'image
      */
     private function generatePlaceholderWithGD(string $format): string
@@ -773,31 +785,31 @@ class PDFGenerator extends BaseGenerator
         $width = 800;
         $height = 600;
         $image = imagecreatetruecolor($width, $height);
-// Couleurs
+        // Couleurs
         $bg_color = imagecolorallocate($image, 240, 240, 240);
         $text_color = imagecolorallocate($image, 100, 100, 100);
         $border_color = imagecolorallocate($image, 200, 200, 200);
-// Remplissage fond
+        // Remplissage fond
         imagefill($image, 0, 0, $bg_color);
-// Bordure
+        // Bordure
         imagerectangle($image, 0, 0, $width - 1, $height - 1, $border_color);
-// Texte
+        // Texte
         $font_size = 5;
-// Taille par défaut GD
+        // Taille par défaut GD
         $text = "PDF Preview - Image conversion not available";
         $text_width = imagefontwidth($font_size) * strlen($text);
         $text_height = imagefontheight($font_size);
         $x = ($width - $text_width) / 2;
         $y = ($height - $text_height) / 2;
         imagestring($image, $font_size, $x, $y, $text, $text_color);
-// Capture de l'image
+        // Capture de l'image
         ob_start();
         $function = 'image' . $format;
         if (function_exists($function)) {
             $function($image);
         } else {
             imagepng($image);
-        // Fallback PNG
+            // Fallback PNG
         }
         $image_data = ob_get_clean();
         imagedestroy($image);
@@ -820,13 +832,13 @@ class PDFGenerator extends BaseGenerator
             'template_elements' => count($this->template_data['template']['elements'] ?? [])
         ];
         $this->logInfo("PDF Generation Metrics: " . json_encode($metrics));
-// Vérification des seuils de performance
+        // Vérification des seuils de performance
         if ($total_time > 2.0) {
             $this->logWarning("Slow generation detected: {$total_time}s");
         }
 
         if ($memory_used > 50 * 1024 * 1024) {
-// 50MB
+            // 50MB
             $this->logWarning("High memory usage: " . round($memory_used / 1024 / 1024, 2) . "MB");
         }
     }
@@ -874,21 +886,22 @@ class PDFGenerator extends BaseGenerator
     /**
      * Génère un aperçu image (PNG/JPG) du PDF
      *
-     * @param int $quality Qualité de l'image (50-300 DPI)
-     * @param string $format Format de l'image ('png', 'jpg')
+     * @param  int    $quality Qualité de l'image (50-300
+     *                         DPI)
+     * @param  string $format  Format de l'image ('png', 'jpg')
      * @return string Chemin vers le fichier image généré
      * @throws \Exception En cas d'erreur de génération
      */
     public function generatePreviewImage(int $quality = 150, string $format = 'png'): string
     {
         $this->logInfo("Starting preview image generation - Quality: {$quality}, Format: {$format}");
-// Générer d'abord le PDF/HTML
+        // Générer d'abord le PDF/HTML
         $result = $this->generate('pdf');
         if (is_string($result)) {
-        // PDF généré avec DomPDF - convertir en image
+            // PDF généré avec DomPDF - convertir en image
             return $this->convertPdfFileToImage($result, $quality, $format);
         } elseif (is_array($result) && isset($result['fallback'])) {
-        // Fallback Canvas - convertir HTML en image
+            // Fallback Canvas - convertir HTML en image
             return $this->convertHtmlToImage($result['html'], $quality, $format);
         } else {
             throw new \Exception('Invalid generation result for preview image');
@@ -904,7 +917,7 @@ class PDFGenerator extends BaseGenerator
         if (extension_loaded('imagick')) {
             return $this->convertPdfWithImagick($pdf_path, $quality, $format);
         } else {
-        // Fallback: générer image depuis HTML si PDF disponible
+            // Fallback: générer image depuis HTML si PDF disponible
             $this->logWarning("ImageMagick not available, using HTML conversion fallback");
             return $this->convertHtmlToImage($this->generated_html, $quality, $format);
         }
@@ -919,9 +932,9 @@ class PDFGenerator extends BaseGenerator
             $imagick = new \Imagick();
             $imagick->setResolution($quality, $quality);
             $imagick->readImage($pdf_path . '[0]');
-// Première page seulement
+            // Première page seulement
             $imagick->setImageFormat($format);
-// Optimisations selon format
+            // Optimisations selon format
             if ($format === 'jpg' || $format === 'jpeg') {
                 $imagick->setImageCompression(\Imagick::COMPRESSION_JPEG);
                 $imagick->setImageCompressionQuality(90);
@@ -954,7 +967,7 @@ class PDFGenerator extends BaseGenerator
         $temp_dir = sys_get_temp_dir();
         $filename = 'html_preview_' . uniqid() . '.' . $format;
         $output_path = $temp_dir . DIRECTORY_SEPARATOR . $filename;
-// Créer une image placeholder simple
+        // Créer une image placeholder simple
         if ($format === 'png') {
             $image = imagecreatetruecolor(800, 600);
             $bg_color = imagecolorallocate($image, 255, 255, 255);
@@ -967,7 +980,7 @@ class PDFGenerator extends BaseGenerator
             imagepng($image, $output_path);
             imagedestroy($image);
         } else {
-        // JPG
+            // JPG
             $image = imagecreatetruecolor(800, 600);
             $bg_color = imagecolorallocate($image, 255, 255, 255);
             $text_color = imagecolorallocate($image, 0, 0, 0);

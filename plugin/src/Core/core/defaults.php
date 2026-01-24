@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class PDF_Builder_Defaults {
+class PDF_Builder_Defaults
+{
 
     // ==========================================
     // COULEURS PAR DÉFAUT
@@ -156,49 +157,56 @@ class PDF_Builder_Defaults {
     /**
      * Obtenir une couleur par clé
      */
-    public static function get_color($key) {
+    public static function get_color($key)
+    {
         return self::COLORS[$key] ?? self::COLORS['white'];
     }
 
     /**
      * Obtenir une dimension par clé
      */
-    public static function get_dimension($key) {
+    public static function get_dimension($key)
+    {
         return self::DIMENSIONS[$key] ?? 0;
     }
 
     /**
      * Obtenir une valeur technique par clé
      */
-    public static function get_technical($key) {
+    public static function get_technical($key)
+    {
         return self::TECHNICAL[$key] ?? null;
     }
 
     /**
      * Obtenir un format de papier
      */
-    public static function get_paper_format($format) {
+    public static function get_paper_format($format)
+    {
         return self::PAPER_FORMATS[$format] ?? self::PAPER_FORMATS['A4'];
     }
 
     /**
      * Obtenir une police par clé
      */
-    public static function get_font($key) {
+    public static function get_font($key)
+    {
         return self::FONTS[$key] ?? self::FONTS['arial'];
     }
 
     /**
      * Obtenir un message par clé
      */
-    public static function get_message($key) {
+    public static function get_message($key)
+    {
         return self::MESSAGES[$key] ?? '';
     }
 
     /**
      * Obtenir un statut par clé
      */
-    public static function get_status($key) {
+    public static function get_status($key)
+    {
         return self::STATUSES[$key] ?? self::STATUSES['inactive'];
     }
 }

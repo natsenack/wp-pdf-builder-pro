@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
  * Gestion des interactions de redimensionnement des éléments
  *
  * @version 1.0.0
- * @fix Corrigé les caractères nuls causant des erreurs de syntaxe
+ * @fix     Corrigé les caractères nuls causant des erreurs de syntaxe
  */
 
 
@@ -262,8 +262,7 @@ class PdfBuilderResizeManager
             $errors[] = 'Invalid resize handle';
         }
 
-        if (
-            !is_array($initial_size)
+        if (!is_array($initial_size)
             || !isset($initial_size['width'])
             || !isset($initial_size['height'])
         ) {

@@ -28,7 +28,8 @@ if (!defined('PDF_BUILDER_PRO_VERSION')) {
  * Get the plugin version from header
  * This ensures version consistency across the plugin
  */
-function pdf_builder_get_version() {
+function pdf_builder_get_version()
+{
     static $version = null;
 
     if ($version === null) {
@@ -47,7 +48,8 @@ function pdf_builder_get_version() {
  * Get the current version based on license status
  * Returns PRO version if license is active, FREE version otherwise
  */
-function pdf_builder_get_current_version() {
+function pdf_builder_get_current_version()
+{
     if (pdf_builder_is_pro_license_active()) {
         return PDF_BUILDER_PRO_VERSION;
     } else {
@@ -58,7 +60,8 @@ function pdf_builder_get_current_version() {
 /**
  * Check if PRO license is active
  */
-function pdf_builder_is_pro_license_active() {
+function pdf_builder_is_pro_license_active()
+{
     // Check for license activation option
     $license_active = get_option('pdf_builder_pro_license_active', false);
 
@@ -177,39 +180,39 @@ if (!defined('PDF_BUILDER_ORDER_ACTIONS_NONCE')) {
 // Timeouts de sécurité (en secondes)
 if (!defined('PDF_BUILDER_NONCE_LIFETIME')) {
     define('PDF_BUILDER_NONCE_LIFETIME', 24 * 60 * 60);
-// 24 heures
+    // 24 heures
 }
 
 if (!defined('PDF_BUILDER_SESSION_TIMEOUT')) {
     define('PDF_BUILDER_SESSION_TIMEOUT', 30 * 60);
-// 30 minutes
+    // 30 minutes
 }
 
 if (!defined('PDF_BUILDER_CACHE_LIFETIME')) {
     define('PDF_BUILDER_CACHE_LIFETIME', 60 * 60);
-// 1 heure
+    // 1 heure
 }
 
 // Limites de taux (requêtes par minute)
 if (!defined('PDF_BUILDER_RATE_LIMIT_CANVAS')) {
     define('PDF_BUILDER_RATE_LIMIT_CANVAS', 60);
-// 60 actions canvas/minute
+    // 60 actions canvas/minute
 }
 
 if (!defined('PDF_BUILDER_RATE_LIMIT_GENERATE')) {
     define('PDF_BUILDER_RATE_LIMIT_GENERATE', 10);
-// 10 générations/minute
+    // 10 générations/minute
 }
 
 // Limites de données
 if (!defined('PDF_BUILDER_MAX_CANVAS_ELEMENTS')) {
     define('PDF_BUILDER_MAX_CANVAS_ELEMENTS', 100);
-// Maximum 100 éléments par canvas
+    // Maximum 100 éléments par canvas
 }
 
 if (!defined('PDF_BUILDER_MAX_ELEMENT_SIZE')) {
     define('PDF_BUILDER_MAX_ELEMENT_SIZE', 50 * 1024 * 1024);
-// 50MB max par élément
+    // 50MB max par élément
 }
 
 // Sanitisation et validation
@@ -228,7 +231,7 @@ if (!defined('PDF_BUILDER_SECURITY_LOG_ENABLED')) {
 
 if (!defined('PDF_BUILDER_SECURITY_LOG_LEVEL')) {
     define('PDF_BUILDER_SECURITY_LOG_LEVEL', 'warning');
-// error, warning, info
+    // error, warning, info
 }
 
 // Meta keys sécurisées pour le stockage

@@ -4,7 +4,8 @@
  * Fournit des rapports détaillés et des analyses d'utilisation
  */
 
-class PDF_Builder_Advanced_Reporting {
+class PDF_Builder_Advanced_Reporting
+{
     private static $instance = null;
 
     // Types de rapports
@@ -40,19 +41,22 @@ class PDF_Builder_Advanced_Reporting {
     private $report_data = [];
     private $report_schedule = [];
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_hooks();
         $this->load_report_data();
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Actions AJAX
         add_action('wp_ajax_pdf_builder_generate_report', [$this, 'generate_report_ajax']);
         add_action('wp_ajax_pdf_builder_export_report', [$this, 'export_report_ajax']);
@@ -80,7 +84,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Charge les données de rapport
      */
-    private function load_report_data() {
+    private function load_report_data()
+    {
         $this->report_settings = get_option(self::OPTION_REPORT_SETTINGS, $this->get_default_settings());
         $this->report_data = get_option(self::OPTION_REPORT_DATA, []);
         $this->report_schedule = get_option(self::OPTION_REPORT_SCHEDULE, []);
@@ -89,7 +94,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Obtient les paramètres par défaut
      */
-    private function get_default_settings() {
+    private function get_default_settings()
+    {
         return [
             'auto_generate_reports' => true,
             'report_frequency' => self::PERIOD_WEEKLY,
@@ -114,7 +120,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Enregistre les paramètres de rapport
      */
-    public function register_report_settings() {
+    public function register_report_settings()
+    {
         register_setting(
             'pdf_builder_report_settings',
             self::OPTION_REPORT_SETTINGS,
@@ -125,19 +132,24 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Nettoie les paramètres de rapport
      */
-    public function sanitize_report_settings($settings) {
+    public function sanitize_report_settings($settings)
+    {
         $defaults = $this->get_default_settings();
 
         return [
             'auto_generate_reports' => isset($settings['auto_generate_reports']),
-            'report_frequency' => in_array($settings['report_frequency'], [
+            'report_frequency' => in_array(
+                $settings['report_frequency'], [
                 self::PERIOD_DAILY, self::PERIOD_WEEKLY, self::PERIOD_MONTHLY,
                 self::PERIOD_QUARTERLY, self::PERIOD_YEARLY
-            ]) ? $settings['report_frequency'] : $defaults['report_frequency'],
-            'default_format' => in_array($settings['default_format'], [
+                ]
+            ) ? $settings['report_frequency'] : $defaults['report_frequency'],
+            'default_format' => in_array(
+                $settings['default_format'], [
                 self::FORMAT_PDF, self::FORMAT_CSV, self::FORMAT_JSON,
                 self::FORMAT_HTML, self::FORMAT_EXCEL
-            ]) ? $settings['default_format'] : $defaults['default_format'],
+                ]
+            ) ? $settings['default_format'] : $defaults['default_format'],
             'email_reports' => isset($settings['email_reports']),
             'report_types' => array_map('boolval', $settings['report_types'] ?? []),
             'data_retention_days' => intval($settings['data_retention_days'] ?? $defaults['data_retention_days']),
@@ -151,7 +163,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Ajoute le menu de reporting
      */
-    public function add_reporting_menu() {
+    public function add_reporting_menu()
+    {
         add_submenu_page(
             'pdf-builder-settings',
             pdf_builder_translate('Rapports et analyses', 'reporting'),
@@ -165,7 +178,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Rend la page de reporting
      */
-    public function render_reporting_page() {
+    public function render_reporting_page()
+    {
         if (!current_user_can('manage_options')) {
             wp_die(pdf_builder_translate('Accès refusé', 'reporting'));
         }
@@ -181,7 +195,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Génère un rapport
      */
-    public function generate_report($type, $period = null, $format = null, $filters = []) {
+    public function generate_report($type, $period = null, $format = null, $filters = [])
+    {
         try {
             $period = $period ?: $this->report_settings['report_frequency'];
             $format = $format ?: $this->report_settings['default_format'];
@@ -221,12 +236,14 @@ class PDF_Builder_Advanced_Reporting {
 
             // Logger la génération
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Report generated', [
+                PDF_Builder_Logger::get_instance()->info(
+                    'Report generated', [
                     'report_id' => $report['id'],
                     'type' => $type,
                     'period' => $period,
                     'format' => $format
-                ]);
+                    ]
+                );
             }
 
             return $report;
@@ -234,11 +251,13 @@ class PDF_Builder_Advanced_Reporting {
         } catch (Exception $e) {
             // Logger l'erreur
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->error('Report generation failed', [
+                PDF_Builder_Logger::get_instance()->error(
+                    'Report generation failed', [
                     'type' => $type,
                     'period' => $period,
                     'error' => $e->getMessage()
-                ]);
+                    ]
+                );
             }
 
             throw $e;
@@ -248,37 +267,39 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Collecte les données pour un rapport
      */
-    private function collect_report_data($type, $period, $filters = []) {
+    private function collect_report_data($type, $period, $filters = [])
+    {
         $date_range = $this->get_date_range($period, $filters);
 
         switch ($type) {
-            case self::REPORT_TYPE_USAGE:
-                return $this->collect_usage_data($date_range, $filters);
+        case self::REPORT_TYPE_USAGE:
+            return $this->collect_usage_data($date_range, $filters);
 
-            case self::REPORT_TYPE_PERFORMANCE:
-                return $this->collect_performance_data($date_range, $filters);
+        case self::REPORT_TYPE_PERFORMANCE:
+            return $this->collect_performance_data($date_range, $filters);
 
-            case self::REPORT_TYPE_SECURITY:
-                return $this->collect_security_data($date_range, $filters);
+        case self::REPORT_TYPE_SECURITY:
+            return $this->collect_security_data($date_range, $filters);
 
-            case self::REPORT_TYPE_FINANCIAL:
-                return $this->collect_financial_data($date_range, $filters);
+        case self::REPORT_TYPE_FINANCIAL:
+            return $this->collect_financial_data($date_range, $filters);
 
-            case self::REPORT_TYPE_USER_ACTIVITY:
-                return $this->collect_user_activity_data($date_range, $filters);
+        case self::REPORT_TYPE_USER_ACTIVITY:
+            return $this->collect_user_activity_data($date_range, $filters);
 
-            case self::REPORT_TYPE_SYSTEM_HEALTH:
-                return $this->collect_system_health_data($date_range, $filters);
+        case self::REPORT_TYPE_SYSTEM_HEALTH:
+            return $this->collect_system_health_data($date_range, $filters);
 
-            default:
-                throw new Exception(pdf_builder_translate('Type de rapport inconnu', 'reporting'));
+        default:
+            throw new Exception(pdf_builder_translate('Type de rapport inconnu', 'reporting'));
         }
     }
 
     /**
      * Collecte les données d'utilisation
      */
-    private function collect_usage_data($date_range, $filters) {
+    private function collect_usage_data($date_range, $filters)
+    {
         if (!class_exists('PDF_Builder_Analytics_Manager')) {
             return [];
         }
@@ -299,7 +320,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Collecte les données de performance
      */
-    private function collect_performance_data($date_range, $filters) {
+    private function collect_performance_data($date_range, $filters)
+    {
         if (!class_exists('PDF_Builder_Performance_Monitor')) {
             return [];
         }
@@ -320,7 +342,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Collecte les données de sécurité
      */
-    private function collect_security_data($date_range, $filters) {
+    private function collect_security_data($date_range, $filters)
+    {
         if (!class_exists('PDF_Builder_Security_Monitor')) {
             return [];
         }
@@ -340,7 +363,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Collecte les données financières
      */
-    private function collect_financial_data($date_range, $filters) {
+    private function collect_financial_data($date_range, $filters)
+    {
         // Données financières basées sur l'utilisation et les licences
         $usage_data = $this->collect_usage_data($date_range, $filters);
 
@@ -356,7 +380,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Collecte les données d'activité utilisateur
      */
-    private function collect_user_activity_data($date_range, $filters) {
+    private function collect_user_activity_data($date_range, $filters)
+    {
         if (!class_exists('PDF_Builder_Analytics_Manager')) {
             return [];
         }
@@ -376,7 +401,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Collecte les données de santé système
      */
-    private function collect_system_health_data($date_range, $filters) {
+    private function collect_system_health_data($date_range, $filters)
+    {
         if (!class_exists('PDF_Builder_Health_Monitor')) {
             return [];
         }
@@ -397,36 +423,37 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Calcule les métriques du rapport
      */
-    private function calculate_report_metrics($data, $type) {
+    private function calculate_report_metrics($data, $type)
+    {
         $metrics = [];
 
         switch ($type) {
-            case self::REPORT_TYPE_USAGE:
-                $metrics = [
-                    'total_pdfs' => $data['total_pdfs_generated'] ?? 0,
-                    'avg_daily_pdfs' => isset($data['total_pdfs_generated']) ? round(($data['total_pdfs_generated'] ?? 0) / 30) : 0,
-                    'most_used_template' => $this->find_most_used($data['pdfs_by_template'] ?? []),
-                    'growth_rate' => $this->calculate_growth_rate($data['generation_trends'] ?? [])
-                ];
-                break;
+        case self::REPORT_TYPE_USAGE:
+            $metrics = [
+                'total_pdfs' => $data['total_pdfs_generated'] ?? 0,
+                'avg_daily_pdfs' => isset($data['total_pdfs_generated']) ? round(($data['total_pdfs_generated'] ?? 0) / 30) : 0,
+                'most_used_template' => $this->find_most_used($data['pdfs_by_template'] ?? []),
+                'growth_rate' => $this->calculate_growth_rate($data['generation_trends'] ?? [])
+            ];
+            break;
 
-            case self::REPORT_TYPE_PERFORMANCE:
-                $metrics = [
-                    'avg_response_time' => $data['average_generation_time'] ?? 0,
-                    'error_rate' => $this->calculate_error_rate($data['error_rates'] ?? []),
-                    'cache_efficiency' => $data['cache_hit_rates']['average'] ?? 0,
-                    'uptime_percentage' => $data['uptime_stats']['percentage'] ?? 100
-                ];
-                break;
+        case self::REPORT_TYPE_PERFORMANCE:
+            $metrics = [
+                'avg_response_time' => $data['average_generation_time'] ?? 0,
+                'error_rate' => $this->calculate_error_rate($data['error_rates'] ?? []),
+                'cache_efficiency' => $data['cache_hit_rates']['average'] ?? 0,
+                'uptime_percentage' => $data['uptime_stats']['percentage'] ?? 100
+            ];
+            break;
 
-            case self::REPORT_TYPE_SECURITY:
-                $metrics = [
-                    'total_incidents' => count($data['security_incidents'] ?? []),
-                    'blocked_attempts' => array_sum(array_column($data['failed_login_attempts'] ?? [], 'count')),
-                    'security_score' => $this->calculate_security_score($data),
-                    'risk_level' => $this->assess_risk_level($data)
-                ];
-                break;
+        case self::REPORT_TYPE_SECURITY:
+            $metrics = [
+                'total_incidents' => count($data['security_incidents'] ?? []),
+                'blocked_attempts' => array_sum(array_column($data['failed_login_attempts'] ?? [], 'count')),
+                'security_score' => $this->calculate_security_score($data),
+                'risk_level' => $this->assess_risk_level($data)
+            ];
+            break;
         }
 
         return $metrics;
@@ -435,32 +462,34 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Génère le contenu du rapport selon le format
      */
-    private function generate_report_content($report, $format) {
+    private function generate_report_content($report, $format)
+    {
         switch ($format) {
-            case self::FORMAT_PDF:
-                return $this->generate_pdf_report($report);
+        case self::FORMAT_PDF:
+            return $this->generate_pdf_report($report);
 
-            case self::FORMAT_CSV:
-                return $this->generate_csv_report($report);
+        case self::FORMAT_CSV:
+            return $this->generate_csv_report($report);
 
-            case self::FORMAT_JSON:
-                return wp_json_encode($report);
+        case self::FORMAT_JSON:
+            return wp_json_encode($report);
 
-            case self::FORMAT_HTML:
-                return $this->generate_html_report($report);
+        case self::FORMAT_HTML:
+            return $this->generate_html_report($report);
 
-            case self::FORMAT_EXCEL:
-                return $this->generate_excel_report($report);
+        case self::FORMAT_EXCEL:
+            return $this->generate_excel_report($report);
 
-            default:
-                throw new Exception(pdf_builder_translate('Format non supporté', 'reporting'));
+        default:
+            throw new Exception(pdf_builder_translate('Format non supporté', 'reporting'));
         }
     }
 
     /**
      * Génère un rapport PDF
      */
-    private function generate_pdf_report($report) {
+    private function generate_pdf_report($report)
+    {
         if (!class_exists('TCPDF')) {
             throw new Exception(pdf_builder_translate('TCPDF non disponible', 'reporting'));
         }
@@ -504,7 +533,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Génère un rapport CSV
      */
-    private function generate_csv_report($report) {
+    private function generate_csv_report($report)
+    {
         $output = fopen('php://temp', 'r+');
 
         // En-tête
@@ -531,7 +561,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Génère un rapport HTML
      */
-    private function generate_html_report($report) {
+    private function generate_html_report($report)
+    {
         ob_start();
         ?>
         <!DOCTYPE html>
@@ -556,7 +587,7 @@ class PDF_Builder_Advanced_Reporting {
                 <p><?php printf(pdf_builder_translate('Généré le : %s', 'reporting'), esc_html(date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $report['generated_at']))); ?></p>
             </div>
 
-            <?php if (!empty($report['metrics'])): ?>
+            <?php if (!empty($report['metrics'])) : ?>
             <div class="metrics">
                 <h2><?php echo pdf_builder_translate('Métriques principales', 'reporting'); ?></h2>
                 <?php foreach ($report['metrics'] as $key => $value): ?>
@@ -572,7 +603,7 @@ class PDF_Builder_Advanced_Reporting {
                 <?php $this->render_data_tables($report['data']); ?>
             </div>
 
-            <?php if ($this->report_settings['include_charts']): ?>
+            <?php if ($this->report_settings['include_charts']) : ?>
             <div class="charts">
                 <h2><?php echo pdf_builder_translate('Graphiques', 'reporting'); ?></h2>
                 <!-- Graphiques seraient générés ici avec une bibliothèque comme Chart.js -->
@@ -588,7 +619,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Sauvegarde un rapport
      */
-    private function save_report($report) {
+    private function save_report($report)
+    {
         $report_id = $report['id'];
 
         if (!isset($this->report_data[$report_id])) {
@@ -602,7 +634,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Obtient les rapports disponibles
      */
-    public function get_available_reports() {
+    public function get_available_reports()
+    {
         return [
             self::REPORT_TYPE_USAGE => [
                 'name' => pdf_builder_translate('Rapport d\'utilisation', 'reporting'),
@@ -640,7 +673,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Obtient les rapports récents
      */
-    public function get_recent_reports($limit = 10) {
+    public function get_recent_reports($limit = 10)
+    {
         $reports = [];
 
         foreach ($this->report_data as $report_id => $report) {
@@ -648,9 +682,11 @@ class PDF_Builder_Advanced_Reporting {
         }
 
         // Trier par date de génération (plus récent en premier)
-        usort($reports, function($a, $b) {
-            return $b['generated_at'] - $a['generated_at'];
-        });
+        usort(
+            $reports, function ($a, $b) {
+                return $b['generated_at'] - $a['generated_at'];
+            }
+        );
 
         return array_slice($reports, 0, $limit);
     }
@@ -658,7 +694,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Programme un rapport
      */
-    public function schedule_report($type, $frequency, $recipients = [], $format = null) {
+    public function schedule_report($type, $frequency, $recipients = [], $format = null)
+    {
         $schedule_id = wp_generate_password(12, false);
 
         $schedule = [
@@ -684,7 +721,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Génère les rapports programmés
      */
-    public function generate_scheduled_reports() {
+    public function generate_scheduled_reports()
+    {
         foreach ($this->report_schedule as $schedule_id => $schedule) {
             if (!$schedule['active']) {
                 continue;
@@ -710,10 +748,12 @@ class PDF_Builder_Advanced_Reporting {
                 } catch (Exception $e) {
                     // Logger l'erreur
                     if (class_exists('PDF_Builder_Logger')) {
-                        PDF_Builder_Logger::get_instance()->error('Scheduled report generation failed', [
+                        PDF_Builder_Logger::get_instance()->error(
+                            'Scheduled report generation failed', [
                             'schedule_id' => $schedule_id,
                             'error' => $e->getMessage()
-                        ]);
+                            ]
+                        );
                     }
                 }
             }
@@ -725,7 +765,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Met à jour les données de rapport
      */
-    public function update_report_data() {
+    public function update_report_data()
+    {
         // Mettre à jour les métriques en temps réel
         if (class_exists('PDF_Builder_Analytics_Manager')) {
             $analytics = PDF_Builder_Analytics_Manager::get_instance();
@@ -741,7 +782,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Exporte un rapport
      */
-    public function export_report($report_id, $format = null) {
+    public function export_report($report_id, $format = null)
+    {
         if (!isset($this->report_data[$report_id])) {
             throw new Exception(pdf_builder_translate('Rapport introuvable', 'reporting'));
         }
@@ -762,14 +804,16 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Obtient les rapports programmés
      */
-    public function get_scheduled_reports() {
+    public function get_scheduled_reports()
+    {
         return array_values($this->report_schedule);
     }
 
     /**
      * Nettoie les anciens rapports
      */
-    public function cleanup_old_reports() {
+    public function cleanup_old_reports()
+    {
         $retention_days = $this->report_settings['data_retention_days'];
         $cutoff_time = time() - ($retention_days * DAY_IN_SECONDS);
 
@@ -785,7 +829,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Vérifie si un rapport est périmé
      */
-    private function is_report_stale($report) {
+    private function is_report_stale($report)
+    {
         if (!$this->report_settings['cache_reports']) {
             return true;
         }
@@ -796,7 +841,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Obtient la plage de dates
      */
-    private function get_date_range($period, $filters = []) {
+    private function get_date_range($period, $filters = [])
+    {
         if (isset($filters['start_date']) && isset($filters['end_date'])) {
             return [
                 'start' => strtotime($filters['start_date']),
@@ -808,21 +854,21 @@ class PDF_Builder_Advanced_Reporting {
         $start = $end;
 
         switch ($period) {
-            case self::PERIOD_DAILY:
-                $start = strtotime('-1 day', $end);
-                break;
-            case self::PERIOD_WEEKLY:
-                $start = strtotime('-1 week', $end);
-                break;
-            case self::PERIOD_MONTHLY:
-                $start = strtotime('-1 month', $end);
-                break;
-            case self::PERIOD_QUARTERLY:
-                $start = strtotime('-3 months', $end);
-                break;
-            case self::PERIOD_YEARLY:
-                $start = strtotime('-1 year', $end);
-                break;
+        case self::PERIOD_DAILY:
+            $start = strtotime('-1 day', $end);
+            break;
+        case self::PERIOD_WEEKLY:
+            $start = strtotime('-1 week', $end);
+            break;
+        case self::PERIOD_MONTHLY:
+            $start = strtotime('-1 month', $end);
+            break;
+        case self::PERIOD_QUARTERLY:
+            $start = strtotime('-3 months', $end);
+            break;
+        case self::PERIOD_YEARLY:
+            $start = strtotime('-1 year', $end);
+            break;
         }
 
         return ['start' => $start, 'end' => $end];
@@ -831,42 +877,47 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Calcule la prochaine exécution
      */
-    private function calculate_next_run($frequency) {
+    private function calculate_next_run($frequency)
+    {
         switch ($frequency) {
-            case self::PERIOD_DAILY:
-                return strtotime('+1 day');
-            case self::PERIOD_WEEKLY:
-                return strtotime('+1 week');
-            case self::PERIOD_MONTHLY:
-                return strtotime('+1 month');
-            case self::PERIOD_QUARTERLY:
-                return strtotime('+3 months');
-            case self::PERIOD_YEARLY:
-                return strtotime('+1 year');
-            default:
-                return strtotime('+1 week');
+        case self::PERIOD_DAILY:
+            return strtotime('+1 day');
+        case self::PERIOD_WEEKLY:
+            return strtotime('+1 week');
+        case self::PERIOD_MONTHLY:
+            return strtotime('+1 month');
+        case self::PERIOD_QUARTERLY:
+            return strtotime('+3 months');
+        case self::PERIOD_YEARLY:
+            return strtotime('+1 year');
+        default:
+            return strtotime('+1 week');
         }
     }
 
     /**
      * Programmes la génération d'un rapport
      */
-    private function schedule_report_generation($schedule) {
+    private function schedule_report_generation($schedule)
+    {
         $hook = 'pdf_builder_generate_scheduled_report_' . $schedule['id'];
 
         if (!wp_next_scheduled($hook)) {
             wp_schedule_single_event($schedule['next_run'], $hook, [$schedule['id']]);
         }
 
-        add_action($hook, function($schedule_id) {
-            $this->generate_scheduled_report($schedule_id);
-        });
+        add_action(
+            $hook, function ($schedule_id) {
+                $this->generate_scheduled_report($schedule_id);
+            }
+        );
     }
 
     /**
      * Génère un rapport programmé
      */
-    private function generate_scheduled_report($schedule_id) {
+    private function generate_scheduled_report($schedule_id)
+    {
         if (!isset($this->report_schedule[$schedule_id])) {
             return;
         }
@@ -888,10 +939,12 @@ class PDF_Builder_Advanced_Reporting {
         } catch (Exception $e) {
             // Logger l'erreur
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->error('Scheduled report failed', [
+                PDF_Builder_Logger::get_instance()->error(
+                    'Scheduled report failed', [
                     'schedule_id' => $schedule_id,
                     'error' => $e->getMessage()
-                ]);
+                    ]
+                );
             }
         }
     }
@@ -899,7 +952,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Envoie un rapport par email
      */
-    private function email_report($report, $recipients) {
+    private function email_report($report, $recipients)
+    {
         $subject = sprintf(
             pdf_builder_translate('Rapport PDF Builder Pro : %s', 'reporting'),
             $this->get_report_title($report['type'])
@@ -935,7 +989,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Méthodes utilitaires
      */
-    private function get_report_title($type) {
+    private function get_report_title($type)
+    {
         $titles = [
             self::REPORT_TYPE_USAGE => pdf_builder_translate('Rapport d\'utilisation', 'reporting'),
             self::REPORT_TYPE_PERFORMANCE => pdf_builder_translate('Rapport de performance', 'reporting'),
@@ -948,7 +1003,8 @@ class PDF_Builder_Advanced_Reporting {
         return $titles[$type] ?? pdf_builder_translate('Rapport', 'reporting');
     }
 
-    private function format_period($period) {
+    private function format_period($period)
+    {
         $periods = [
             self::PERIOD_DAILY => pdf_builder_translate('Quotidien', 'reporting'),
             self::PERIOD_WEEKLY => pdf_builder_translate('Hebdomadaire', 'reporting'),
@@ -960,7 +1016,8 @@ class PDF_Builder_Advanced_Reporting {
         return $periods[$period] ?? $period;
     }
 
-    private function get_metric_label($key) {
+    private function get_metric_label($key)
+    {
         $labels = [
             'total_pdfs' => pdf_builder_translate('Total PDFs', 'reporting'),
             'avg_daily_pdfs' => pdf_builder_translate('Moyenne quotidienne', 'reporting'),
@@ -979,7 +1036,8 @@ class PDF_Builder_Advanced_Reporting {
         return $labels[$key] ?? $key;
     }
 
-    private function get_file_extension($format) {
+    private function get_file_extension($format)
+    {
         $extensions = [
             self::FORMAT_PDF => 'pdf',
             self::FORMAT_CSV => 'csv',
@@ -994,8 +1052,10 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Méthodes de calcul des métriques
      */
-    private function find_most_used($data) {
-        if (empty($data)) return 'N/A';
+    private function find_most_used($data)
+    {
+        if (empty($data)) { return 'N/A';
+        }
 
         $max_count = 0;
         $most_used = '';
@@ -1010,30 +1070,37 @@ class PDF_Builder_Advanced_Reporting {
         return $most_used;
     }
 
-    private function calculate_growth_rate($trends) {
-        if (count($trends) < 2) return '0%';
+    private function calculate_growth_rate($trends)
+    {
+        if (count($trends) < 2) { return '0%';
+        }
 
         $first = reset($trends);
         $last = end($trends);
 
-        if ($first == 0) return 'N/A';
+        if ($first == 0) { return 'N/A';
+        }
 
         $rate = (($last - $first) / $first) * 100;
         return round($rate, 1) . '%';
     }
 
-    private function calculate_error_rate($error_data) {
-        if (empty($error_data)) return '0%';
+    private function calculate_error_rate($error_data)
+    {
+        if (empty($error_data)) { return '0%';
+        }
 
         $total_errors = array_sum(array_column($error_data, 'count'));
         $total_requests = array_sum(array_column($error_data, 'total'));
 
-        if ($total_requests == 0) return '0%';
+        if ($total_requests == 0) { return '0%';
+        }
 
         return round(($total_errors / $total_requests) * 100, 2) . '%';
     }
 
-    private function calculate_security_score($data) {
+    private function calculate_security_score($data)
+    {
         $score = 100;
 
         // Réduire le score selon les incidents
@@ -1047,19 +1114,24 @@ class PDF_Builder_Advanced_Reporting {
         return max(0, round($score));
     }
 
-    private function assess_risk_level($data) {
+    private function assess_risk_level($data)
+    {
         $score = $this->calculate_security_score($data);
 
-        if ($score >= 80) return pdf_builder_translate('Faible', 'reporting');
-        if ($score >= 60) return pdf_builder_translate('Moyen', 'reporting');
-        if ($score >= 40) return pdf_builder_translate('Élevé', 'reporting');
+        if ($score >= 80) { return pdf_builder_translate('Faible', 'reporting');
+        }
+        if ($score >= 60) { return pdf_builder_translate('Moyen', 'reporting');
+        }
+        if ($score >= 40) { return pdf_builder_translate('Élevé', 'reporting');
+        }
         return pdf_builder_translate('Critique', 'reporting');
     }
 
     /**
      * Ajoute des widgets au tableau de bord
      */
-    public function add_dashboard_widgets($widgets) {
+    public function add_dashboard_widgets($widgets)
+    {
         $widgets['pdf_builder_reports'] = [
             'title' => pdf_builder_translate('Rapports PDF Builder', 'reporting'),
             'callback' => [$this, 'render_dashboard_widget'],
@@ -1073,7 +1145,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Rend le widget du tableau de bord
      */
-    public function render_dashboard_widget() {
+    public function render_dashboard_widget()
+    {
         $recent_reports = $this->get_recent_reports(5);
         $available_reports = $this->get_available_reports();
 
@@ -1083,7 +1156,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Affiche les messages de rapport (succès/erreur)
      */
-    public function display_report_notices() {
+    public function display_report_notices()
+    {
         // Message de génération de rapport
         if (isset($_GET['report_generated'])) {
             echo '<div class="notice notice-success is-dismissible">';
@@ -1102,7 +1176,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * AJAX - Génère un rapport
      */
-    public function generate_report_ajax() {
+    public function generate_report_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1125,10 +1200,12 @@ class PDF_Builder_Advanced_Reporting {
 
             $report = $this->generate_report($type, $period, $format);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => pdf_builder_translate('Rapport généré avec succès', 'reporting'),
                 'report' => $report
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -1138,7 +1215,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * AJAX - Exporte un rapport
      */
-    public function export_report_ajax() {
+    public function export_report_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1155,10 +1233,12 @@ class PDF_Builder_Advanced_Reporting {
 
             $report = $this->export_report($report_id, $format);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'report' => $report,
                 'download_url' => $this->generate_download_url($report)
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -1168,7 +1248,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * AJAX - Programmes un rapport
      */
-    public function schedule_report_ajax() {
+    public function schedule_report_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1192,10 +1273,12 @@ class PDF_Builder_Advanced_Reporting {
 
             $schedule = $this->schedule_report($type, $frequency, $recipients, $format);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => pdf_builder_translate('Rapport programmé avec succès', 'reporting'),
                 'schedule' => $schedule
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -1205,7 +1288,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * AJAX - Obtient les données de rapport
      */
-    public function get_report_data_ajax() {
+    public function get_report_data_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1221,9 +1305,11 @@ class PDF_Builder_Advanced_Reporting {
 
             $report = $this->report_data[$report_id];
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'report' => $report
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -1233,7 +1319,8 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * AJAX - Sauvegarde les paramètres de rapport
      */
-    public function save_report_settings_ajax() {
+    public function save_report_settings_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1252,9 +1339,11 @@ class PDF_Builder_Advanced_Reporting {
 
             $this->report_settings = $sanitized_settings;
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => pdf_builder_translate('Paramètres sauvegardés', 'reporting')
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -1264,20 +1353,24 @@ class PDF_Builder_Advanced_Reporting {
     /**
      * Génère une URL de téléchargement
      */
-    private function generate_download_url($report) {
+    private function generate_download_url($report)
+    {
         $token = wp_create_nonce('pdf_builder_download_report_' . $report['id']);
 
-        return add_query_arg([
+        return add_query_arg(
+            [
             'pdf_builder_download' => 'report',
             'report_id' => $report['id'],
             'token' => $token
-        ], admin_url('admin-ajax.php'));
+            ], admin_url('admin-ajax.php')
+        );
     }
 
     /**
      * Méthodes privées supplémentaires pour les rapports
      */
-    private function get_report_metadata($type) {
+    private function get_report_metadata($type)
+    {
         $metadata = [
             self::REPORT_TYPE_USAGE => [
                 'description' => 'Analyse détaillée de l\'utilisation du plugin',
@@ -1299,7 +1392,8 @@ class PDF_Builder_Advanced_Reporting {
         return $metadata[$type] ?? [];
     }
 
-    private function calculate_estimated_savings($usage_data) {
+    private function calculate_estimated_savings($usage_data)
+    {
         // Calcul simplifié des économies (exemple)
         $pdfs_generated = $usage_data['total_pdfs_generated'] ?? 0;
         $avg_cost_per_pdf_external = 0.50; // Coût estimé pour un service externe
@@ -1307,7 +1401,8 @@ class PDF_Builder_Advanced_Reporting {
         return $pdfs_generated * $avg_cost_per_pdf_external;
     }
 
-    private function get_license_utilization($date_range) {
+    private function get_license_utilization($date_range)
+    {
         // Utilisation de la licence (simplifié)
         return [
             'pdfs_used' => 1250,
@@ -1317,16 +1412,19 @@ class PDF_Builder_Advanced_Reporting {
         ];
     }
 
-    private function calculate_cost_per_pdf($usage_data) {
+    private function calculate_cost_per_pdf($usage_data)
+    {
         $total_pdfs = $usage_data['total_pdfs_generated'] ?? 0;
-        if ($total_pdfs === 0) return 0;
+        if ($total_pdfs === 0) { return 0;
+        }
 
         // Coût basé sur la licence
         $license_cost = 99; // Coût mensuel de la licence
         return round($license_cost / $total_pdfs, 4);
     }
 
-    private function calculate_roi_metrics($usage_data) {
+    private function calculate_roi_metrics($usage_data)
+    {
         $savings = $this->calculate_estimated_savings($usage_data);
         $investment = 99; // Coût de la licence
 
@@ -1338,7 +1436,8 @@ class PDF_Builder_Advanced_Reporting {
         ];
     }
 
-    private function forecast_usage($usage_data) {
+    private function forecast_usage($usage_data)
+    {
         // Prévision simple basée sur les tendances
         $current_usage = $usage_data['total_pdfs_generated'] ?? 0;
         $growth_rate = 0.1; // 10% de croissance mensuelle estimée
@@ -1350,7 +1449,8 @@ class PDF_Builder_Advanced_Reporting {
         ];
     }
 
-    private function add_charts_to_pdf($pdf, $report) {
+    private function add_charts_to_pdf($pdf, $report)
+    {
         // Cette méthode ajouterait des graphiques au PDF
         // Nécessiterait une bibliothèque de graphiques comme TCPDF Charts
         $pdf->Ln(10);
@@ -1358,7 +1458,8 @@ class PDF_Builder_Advanced_Reporting {
         $pdf->Cell(0, 10, pdf_builder_translate('Graphiques disponibles dans la version complète', 'reporting'), 0, 1, 'C');
     }
 
-    private function add_data_to_csv($output, $data) {
+    private function add_data_to_csv($output, $data)
+    {
         // Ajouter les données détaillées au CSV
         foreach ($data as $section => $section_data) {
             fputcsv($output, [$section]);
@@ -1377,9 +1478,11 @@ class PDF_Builder_Advanced_Reporting {
         }
     }
 
-    private function render_data_tables($data) {
+    private function render_data_tables($data)
+    {
         foreach ($data as $section => $section_data) {
-            if (!is_array($section_data) || empty($section_data)) continue;
+            if (!is_array($section_data) || empty($section_data)) { continue;
+            }
 
             echo '<h3>' . esc_html(ucfirst(str_replace('_', ' ', $section))) . '</h3>';
             echo '<table>';
@@ -1399,31 +1502,39 @@ class PDF_Builder_Advanced_Reporting {
 }
 
 // Fonctions globales
-function pdf_builder_reporting() {
+function pdf_builder_reporting()
+{
     return PDF_Builder_Advanced_Reporting::get_instance();
 }
 
-function pdf_builder_generate_report($type, $period = null, $format = null, $filters = []) {
+function pdf_builder_generate_report($type, $period = null, $format = null, $filters = [])
+{
     return PDF_Builder_Advanced_Reporting::get_instance()->generate_report($type, $period, $format, $filters);
 }
 
-function pdf_builder_get_available_reports() {
+function pdf_builder_get_available_reports()
+{
     return PDF_Builder_Advanced_Reporting::get_instance()->get_available_reports();
 }
 
-function pdf_builder_get_recent_reports($limit = 10) {
+function pdf_builder_get_recent_reports($limit = 10)
+{
     return PDF_Builder_Advanced_Reporting::get_instance()->get_recent_reports($limit);
 }
 
-function pdf_builder_schedule_report($type, $frequency, $recipients = [], $format = null) {
+function pdf_builder_schedule_report($type, $frequency, $recipients = [], $format = null)
+{
     return PDF_Builder_Advanced_Reporting::get_instance()->schedule_report($type, $frequency, $recipients, $format);
 }
 
-function pdf_builder_export_report($report_id, $format = null) {
+function pdf_builder_export_report($report_id, $format = null)
+{
     return PDF_Builder_Advanced_Reporting::get_instance()->export_report($report_id, $format);
 }
 
 // Initialiser le système de reporting avancé
-add_action('plugins_loaded', function() {
-    PDF_Builder_Advanced_Reporting::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_Advanced_Reporting::get_instance();
+    }
+);

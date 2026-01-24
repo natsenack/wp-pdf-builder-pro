@@ -163,31 +163,32 @@ class PdfBuilderThumbnailManager
             // Quelques éléments
             $displayed_elements = 0;
             foreach ($template_data['elements'] as $element) {
-                if ($displayed_elements >= 3) break; // Limiter à 3 éléments
+                if ($displayed_elements >= 3) { break; // Limiter à 3 éléments
+                }
 
                 if (isset($element['type'])) {
                     $element_type = $element['type'];
                     $element_text = '';
 
                     switch ($element_type) {
-                        case 'text':
-                        case 'dynamic-text':
-                            $element_text = isset($element['content']) ? substr($element['content'], 0, 20) : 'Texte';
-                            break;
-                        case 'company_logo':
-                            $element_text = '[Logo]';
-                            break;
-                        case 'order_number':
-                            $element_text = 'N° Commande: 12345';
-                            break;
-                        case 'invoice_number':
-                            $element_text = 'Facture N° 001';
-                            break;
-                        case 'product_table':
-                            $element_text = '[Tableau produits]';
-                            break;
-                        default:
-                            $element_text = ucfirst(str_replace('_', ' ', $element_type));
+                    case 'text':
+                    case 'dynamic-text':
+                        $element_text = isset($element['content']) ? substr($element['content'], 0, 20) : 'Texte';
+                        break;
+                    case 'company_logo':
+                        $element_text = '[Logo]';
+                        break;
+                    case 'order_number':
+                        $element_text = 'N° Commande: 12345';
+                        break;
+                    case 'invoice_number':
+                        $element_text = 'Facture N° 001';
+                        break;
+                    case 'product_table':
+                        $element_text = '[Tableau produits]';
+                        break;
+                    default:
+                        $element_text = ucfirst(str_replace('_', ' ', $element_type));
                     }
 
                     if (!empty($element_text)) {

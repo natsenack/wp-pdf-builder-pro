@@ -5,19 +5,20 @@
  * Instead of loading a separate JS file, we inline the style injector script
  */
 
-add_action('wp_footer', function () {
+add_action(
+    'wp_footer', function () {
 
-    if (!current_user_can('manage_options')) {
-        return;
-    }
+        if (!current_user_can('manage_options')) {
+            return;
+        }
 
-    // Check if we're on the React editor page
-    $page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
-    if ($page !== 'pdf-builder-react-editor') {
-        return;
-    }
+        // Check if we're on the React editor page
+        $page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+        if ($page !== 'pdf-builder-react-editor') {
+            return;
+        }
 
-    ?>
+        ?>
     <script type="text/javascript">
     /* PDF Builder Pro - Canvas Template Style Helper */
     (function() {
@@ -36,5 +37,6 @@ add_action('wp_footer', function () {
 
     })();
     </script>
-    <?php
-}, 10);
+        <?php
+    }, 10
+);

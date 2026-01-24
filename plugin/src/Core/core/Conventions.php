@@ -238,9 +238,10 @@ const STATE_TRANSITIONS = [
 /**
  * Génère un nom de classe selon les conventions
  *
- * @param string $type Type d'élément (interface, provider, etc.)
- * @param string $name Nom de base
- * @param string $suffix Suffix optionnel
+ * @param  string $type   Type d'élément (interface, provider,
+ *                        etc.)
+ * @param  string $name   Nom de base
+ * @param  string $suffix Suffix optionnel
  * @return string Nom de classe formaté
  */
 function generateClassName(string $type, string $name, string $suffix = ''): string
@@ -254,8 +255,9 @@ function generateClassName(string $type, string $name, string $suffix = ''): str
 /**
  * Génère un nom de méthode selon les conventions
  *
- * @param string $convention Type de méthode (getter, setter, etc.)
- * @param string $property Propriété concernée
+ * @param  string $convention Type de méthode (getter, setter, etc.)
+ * @param  string $property   Propriété
+ *                            concernée
  * @return string Nom de méthode formaté
  */
 function generateMethodName(string $convention, string $property): string
@@ -268,7 +270,7 @@ function generateMethodName(string $convention, string $property): string
 /**
  * Valide un format de papier
  *
- * @param string $format Format à valider
+ * @param  string $format Format à valider
  * @return bool true si valide
  */
 function isValidPaperFormat(string $format): bool
@@ -280,7 +282,7 @@ function isValidPaperFormat(string $format): bool
 /**
  * Valide une orientation
  *
- * @param string $orientation Orientation à valider
+ * @param  string $orientation Orientation à valider
  * @return bool true si valide
  */
 function isValidOrientation(string $orientation): bool
@@ -292,7 +294,7 @@ function isValidOrientation(string $orientation): bool
 /**
  * Valide un format d'export
  *
- * @param string $format Format à valider
+ * @param  string $format Format à valider
  * @return bool true si valide
  */
 function isValidExportFormat(string $format): bool
@@ -304,7 +306,7 @@ function isValidExportFormat(string $format): bool
 /**
  * Valide un type d'élément
  *
- * @param string $type Type à valider
+ * @param  string $type Type à valider
  * @return bool true si valide
  */
 function isValidElementType(string $type): bool

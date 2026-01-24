@@ -76,8 +76,10 @@ class PdfBuilderSettingsManager
     /**
      * Récupérer un paramètre
      *
-     * @param string $option Clé du paramètre
-     * @param mixed $default Valeur par défaut
+     * @param  string $option  Clé du
+     *                         paramètre
+     * @param  mixed  $default Valeur par
+     *                         défaut
      * @return mixed Valeur du paramètre
      */
     public function getSetting($option, $default = false)

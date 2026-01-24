@@ -14,74 +14,74 @@ function pdf_builder_get_element_inline_styles($element)
 {
 
     $styles = [];
-// Récupérer les propriétés de l'élément
+    // Récupérer les propriétés de l'élément
     $type = $element['type'] ?? '';
     $properties = $element['properties'] ?? [];
-// Appliquer les styles selon le type
+    // Appliquer les styles selon le type
     switch ($type) {
-        case 'rectangle':
-        case 'shape':
-            if (isset($properties['fillColor'])) {
-                $styles['background-color'] = $properties['fillColor'];
-            }
-            if (isset($properties['strokeColor']) && isset($properties['strokeWidth'])) {
-                                                                                                                                                                                                             $styles['border'] = $properties['strokeWidth'] . 'px solid ' . $properties['strokeColor'];
-            }
+    case 'rectangle':
+    case 'shape':
+        if (isset($properties['fillColor'])) {
+            $styles['background-color'] = $properties['fillColor'];
+        }
+        if (isset($properties['strokeColor']) && isset($properties['strokeWidth'])) {
+                                                                                                                                                                                                         $styles['border'] = $properties['strokeWidth'] . 'px solid ' . $properties['strokeColor'];
+        }
 
-            break;
-        case 'circle':
-            if (isset($properties['fillColor'])) {
-                $styles['background-color'] = $properties['fillColor'];
-            }
-            if (isset($properties['strokeColor']) && isset($properties['strokeWidth'])) {
-                $styles['border'] = $properties['strokeWidth'] . 'px solid ' . $properties['strokeColor'];
-            }
-            $styles['border-radius'] = '50%';
+        break;
+    case 'circle':
+        if (isset($properties['fillColor'])) {
+            $styles['background-color'] = $properties['fillColor'];
+        }
+        if (isset($properties['strokeColor']) && isset($properties['strokeWidth'])) {
+            $styles['border'] = $properties['strokeWidth'] . 'px solid ' . $properties['strokeColor'];
+        }
+        $styles['border-radius'] = '50%';
 
-            break;
-        case 'line':
-            if (isset($properties['strokeColor'])) {
-                $styles['border-top'] = ($properties['strokeWidth'] ?? 1) . 'px solid ' . $properties['strokeColor'];
-            }
+        break;
+    case 'line':
+        if (isset($properties['strokeColor'])) {
+            $styles['border-top'] = ($properties['strokeWidth'] ?? 1) . 'px solid ' . $properties['strokeColor'];
+        }
 
-            break;
-        case 'text':
-        case 'document_type':
-        case 'order_number':
-        case 'dynamic-text':
-            if (isset($properties['color']) || isset($properties['textColor'])) {
-                $color = $properties['color'] ?? $properties['textColor'] ?? '#000000';
-                $styles['color'] = $color;
-            }
-            if (isset($properties['fontSize'])) {
-                $styles['font-size'] = $properties['fontSize'] . 'px';
-            }
-            if (isset($properties['fontFamily'])) {
-                $styles['font-family'] = $properties['fontFamily'];
-            }
-            if (isset($properties['fontWeight'])) {
-                $styles['font-weight'] = $properties['fontWeight'];
-            }
-            if (isset($properties['textAlign'])) {
-                $styles['text-align'] = $properties['textAlign'];
-            }
-            if (isset($properties['backgroundColor'])) {
-                $styles['background-color'] = $properties['backgroundColor'];
-            }
+        break;
+    case 'text':
+    case 'document_type':
+    case 'order_number':
+    case 'dynamic-text':
+        if (isset($properties['color']) || isset($properties['textColor'])) {
+            $color = $properties['color'] ?? $properties['textColor'] ?? '#000000';
+            $styles['color'] = $color;
+        }
+        if (isset($properties['fontSize'])) {
+            $styles['font-size'] = $properties['fontSize'] . 'px';
+        }
+        if (isset($properties['fontFamily'])) {
+            $styles['font-family'] = $properties['fontFamily'];
+        }
+        if (isset($properties['fontWeight'])) {
+            $styles['font-weight'] = $properties['fontWeight'];
+        }
+        if (isset($properties['textAlign'])) {
+            $styles['text-align'] = $properties['textAlign'];
+        }
+        if (isset($properties['backgroundColor'])) {
+            $styles['background-color'] = $properties['backgroundColor'];
+        }
 
-            break;
-        case 'product_table':
-        case 'company_info':
-        case 'customer_info':
-            // Vérifier si l'affichage du fond est activé
-            if (isset($properties['showBackground']) && $properties['showBackground'] && isset($properties['backgroundColor'])) {
-                $styles['background-color'] = $properties['backgroundColor'];
-            }
-            if (isset($properties['borderColor']) && isset($properties['borderWidth'])) {
-                $styles['border'] = $properties['borderWidth'] . 'px solid ' . $properties['borderColor'];
-            }
+        break;
+    case 'product_table':
+    case 'company_info':
+    case 'customer_info':
+        // Vérifier si l'affichage du fond est activé
+        if (isset($properties['showBackground']) && $properties['showBackground'] && isset($properties['backgroundColor'])) {
+            $styles['background-color'] = $properties['backgroundColor'];
+        }
+        if (isset($properties['borderColor']) && isset($properties['borderWidth'])) {
+            $styles['border'] = $properties['borderWidth'] . 'px solid ' . $properties['borderColor'];
+        }
 
-            break;
+        break;
     }
 
     return $styles;
@@ -117,7 +117,7 @@ function pdf_builder_ajax_get_element_styles()
         }
 
         $element_styles = [];
-// Générer les styles pour chaque élément
+        // Générer les styles pour chaque élément
         foreach ($elements as $element) {
             $element_id = $element['id'] ?? '';
             if (empty($element_id)) {
@@ -128,9 +128,11 @@ function pdf_builder_ajax_get_element_styles()
             $element_styles[$element_id] = $styles;
         }
 
-        wp_send_json_success([
+        wp_send_json_success(
+            [
             'styles' => $element_styles
-        ]);
+            ]
+        );
     } catch (Exception $e) {
         wp_send_json_error('Erreur: ' . $e->getMessage());
     }

@@ -102,11 +102,13 @@ class AjaxHandler
                 return;
             }
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'pdf_url' => $pdf_file['url'],
                 'pdf_path' => $pdf_file['path'],
                 'message' => 'PDF généré avec succès'
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
@@ -191,10 +193,12 @@ class AjaxHandler
             wp_send_json_error('Erreur: Template manager non disponible pour la sauvegarde');
 
             if ($result) {
-                wp_send_json_success([
+                wp_send_json_success(
+                    [
                     'template_id' => $result,
                     'message' => 'Template sauvegardé avec succès'
-                ]);
+                    ]
+                );
             } else {
                 wp_send_json_error('Erreur lors de la sauvegarde du template');
             }
@@ -246,10 +250,12 @@ class AjaxHandler
             $template = $this->admin->loadTemplate($template_id);
 
             if ($template) {
-                wp_send_json_success([
+                wp_send_json_success(
+                    [
                     'template' => $template,
                     'message' => 'Template chargé avec succès'
-                ]);
+                    ]
+                );
             } else {
                 wp_send_json_error('Template introuvable');
             }
@@ -323,11 +329,13 @@ class AjaxHandler
                 // error_log('[PDF Builder] ajaxGetTemplate - DB template name: ' . ($db_template && isset($db_template['name']) ? $db_template['name'] : 'NO DB RECORD'));
                 // error_log('[PDF Builder] ajaxGetTemplate - Final template_name: ' . $template_name);
 
-                wp_send_json_success([
+                wp_send_json_success(
+                    [
                     'template' => $template,
                     'template_name' => $template_name,
                     'message' => 'Template chargé avec succès'
-                ]);
+                    ]
+                );
             } else {
                 wp_send_json_error('Template introuvable');
             }
@@ -367,10 +375,12 @@ class AjaxHandler
             $result = $this->admin->generateOrderPdf($order_id, $template_id);
 
             if ($result && isset($result['url'])) {
-                wp_send_json_success([
+                wp_send_json_success(
+                    [
                     'pdf_url' => $result['url'],
                     'message' => 'PDF de commande généré avec succès'
-                ]);
+                    ]
+                );
             } else {
                 wp_send_json_error('Erreur lors de la génération du PDF de commande');
             }
@@ -413,11 +423,13 @@ class AjaxHandler
                 }
             }
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'checks' => $checks,
                 'issues' => $issues,
                 'message' => empty($issues) ? 'Base de données OK' : 'Problèmes détectés'
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors de la vérification: ' . $e->getMessage());
@@ -445,10 +457,12 @@ class AjaxHandler
             // Réparations de base de données
             $result = $this->admin->repairDatabase();
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'result' => $result,
                 'message' => 'Base de données réparée'
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors de la réparation: ' . $e->getMessage());
@@ -484,10 +498,12 @@ class AjaxHandler
             global $wpdb;
             $result = $wpdb->query($sql);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'result' => $result,
                 'message' => 'Requête exécutée avec succès'
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors de l\'exécution SQL: ' . $e->getMessage());
@@ -522,9 +538,11 @@ class AjaxHandler
                 update_option($key, $value);
             }
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Paramètres sauvegardés avec succès'
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
@@ -563,39 +581,39 @@ class AjaxHandler
 
             // Router vers la bonne méthode selon l'action
             switch ($action) {
-                case 'save_all_settings':
-                case 'save_settings':
-                    $this->handleSaveAllSettings();
-                    break;
+            case 'save_all_settings':
+            case 'save_settings':
+                $this->handleSaveAllSettings();
+                break;
 
-                case 'save_settings_page':
-                    $this->handleSaveSettingsPage();
-                    break;
+            case 'save_settings_page':
+                $this->handleSaveSettingsPage();
+                break;
 
-                case 'save_general_settings':
-                    $this->handleSaveGeneralSettings();
-                    break;
+            case 'save_general_settings':
+                $this->handleSaveGeneralSettings();
+                break;
 
-                case 'save_performance_settings':
-                    $this->handleSavePerformanceSettings();
-                    break;
+            case 'save_performance_settings':
+                $this->handleSavePerformanceSettings();
+                break;
 
-                case 'get_settings':
-                    $this->handleGetSettings();
-                    break;
+            case 'get_settings':
+                $this->handleGetSettings();
+                break;
 
-                case 'get_template_mappings':
-                    $this->handleGetTemplateMappings();
-                    break;
+            case 'get_template_mappings':
+                $this->handleGetTemplateMappings();
+                break;
 
-                case 'validate_settings':
-                    $this->handleValidateSettings();
-                    break;
+            case 'validate_settings':
+                $this->handleValidateSettings();
+                break;
 
-                default:
-                    // Action non reconnue - essayer l'ancien système de compatibilité
-                    $this->handleLegacyAction($action);
-                    break;
+            default:
+                // Action non reconnue - essayer l'ancien système de compatibilité
+                $this->handleLegacyAction($action);
+                break;
             }
 
         } catch (Exception $e) {
@@ -681,13 +699,15 @@ class AjaxHandler
             // Supprimer le backup si succès
             delete_option($backup_key);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Paramètres sauvegardés avec succès',
                 'saved_settings' => $settings_to_save,
                 'saved_templates' => $templates_data,
                 'action' => 'save_all_settings',
                 'backup_cleaned' => true
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             // Rollback en cas d'exception
@@ -738,11 +758,13 @@ class AjaxHandler
         $saved = update_option('pdf_builder_settings', $updated_settings);
 
         if ($saved) {
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Paramètres généraux sauvegardés',
                 'saved_settings' => $general_settings,
                 'action' => 'save_general_settings'
-            ]);
+                ]
+            );
         } else {
             wp_send_json_error(['message' => 'Erreur lors de la sauvegarde']);
         }
@@ -776,11 +798,13 @@ class AjaxHandler
         $saved = update_option('pdf_builder_settings', $updated_settings);
 
         if ($saved) {
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Paramètres de performance sauvegardés',
                 'saved_settings' => $performance_settings,
                 'action' => 'save_performance_settings'
-            ]);
+                ]
+            );
         } else {
             wp_send_json_error(['message' => 'Erreur lors de la sauvegarde']);
         }
@@ -792,10 +816,12 @@ class AjaxHandler
     private function handleGetSettings()
     {
         $settings = get_option('pdf_builder_settings', []);
-        wp_send_json_success([
+        wp_send_json_success(
+            [
             'settings' => $settings,
             'action' => 'get_settings'
-        ]);
+            ]
+        );
     }
 
     /**
@@ -821,19 +847,23 @@ class AjaxHandler
         }
 
         if (empty($errors)) {
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'valid' => true,
                 'message' => 'Paramètres valides',
                 'warnings' => $warnings,
                 'action' => 'validate_settings'
-            ]);
+                ]
+            );
         } else {
-            wp_send_json_error([
+            wp_send_json_error(
+                [
                 'valid' => false,
                 'errors' => $errors,
                 'warnings' => $warnings,
                 'action' => 'validate_settings'
-            ]);
+                ]
+            );
         }
     }
 
@@ -851,13 +881,15 @@ class AjaxHandler
             // Récupérer tous les types de templates disponibles (comme dans PDF_Template_Status_Manager)
 
             // Templates WordPress
-            $templates_wp = $wpdb->get_results("
+            $templates_wp = $wpdb->get_results(
+                "
                 SELECT ID, post_title
                 FROM {$wpdb->posts}
                 WHERE post_type = 'pdf_template'
                 AND post_status = 'publish'
                 ORDER BY post_title ASC
-            ", ARRAY_A);
+            ", ARRAY_A
+            );
 
             $wp_templates = [];
             if ($templates_wp) {
@@ -868,11 +900,13 @@ class AjaxHandler
 
             // Templates personnalisés
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-            $templates_custom = $wpdb->get_results("
+            $templates_custom = $wpdb->get_results(
+                "
                 SELECT id, name
                 FROM {$table_templates}
                 ORDER BY name ASC
-            ", ARRAY_A);
+            ", ARRAY_A
+            );
 
             $custom_templates = [];
             if ($templates_custom) {
@@ -884,11 +918,13 @@ class AjaxHandler
             // Fusionner tous les templates
             $templates = array_merge($wp_templates, $custom_templates);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'mappings' => $mappings,
                 'templates' => $templates,
                 'action' => 'get_template_mappings'
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors de la récupération des mappings: ' . $e->getMessage());
@@ -941,9 +977,11 @@ class AjaxHandler
                 update_option($key, $value);
             }
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Paramètres généraux sauvegardés'
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
@@ -979,9 +1017,11 @@ class AjaxHandler
                 update_option($key, $value);
             }
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Paramètres de performance sauvegardés'
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
@@ -1007,11 +1047,13 @@ class AjaxHandler
 
         $can_create = $this->admin->can_create_template();
 
-        wp_send_json_success([
+        wp_send_json_success(
+            [
             'can_create' => $can_create,
             'current_count' => $this->admin->count_user_templates(get_current_user_id()),
             'limit' => 1
-        ]);
+            ]
+        );
     }
 
     /**
@@ -1038,14 +1080,18 @@ class AjaxHandler
                 $checks[$table] = $result ? $result->Msg_text : 'OK';
             }
             $checks['options_accessible'] = is_array(get_option('pdf_builder_settings', []));
-            $all_ok = array_filter($checks, function($v) {
-                return $v === true || $v === 'OK' || strpos($v, 'OK') === 0;
-            });
-            wp_send_json([
+            $all_ok = array_filter(
+                $checks, function ($v) {
+                    return $v === true || $v === 'OK' || strpos($v, 'OK') === 0;
+                }
+            );
+            wp_send_json(
+                [
                 'success' => true,
                 'message' => count($all_ok) === count($checks) ? __('Intégrité vérifiée - OK.', 'pdf-builder-pro') : __('Problèmes détectés.', 'pdf-builder-pro'),
                 'checks' => $checks
-            ]);
+                ]
+            );
         } catch (Exception $e) {
             wp_send_json(['success' => false, 'message' => $e->getMessage()]);
         }
@@ -1155,11 +1201,13 @@ class AjaxHandler
             $template_name = 'Template ' . (isset($template_info['id']) ? $template_info['id'] : 'inconnu');
         }
 
-        wp_send_json_success([
+        wp_send_json_success(
+            [
             'template' => $template_data,
             'template_name' => $template_name,
             'message' => 'Template chargé avec succès'
-        ]);
+            ]
+        );
     }
 
     /**
@@ -1292,10 +1340,12 @@ class AjaxHandler
             $saved = update_option('pdf_builder_settings', $updated_settings);
 
             if ($saved) {
-                wp_send_json_success([
+                wp_send_json_success(
+                    [
                     'message' => 'Paramètres sauvegardés avec succès',
                     'saved_settings' => $settings_to_save
-                ]);
+                    ]
+                );
             } else {
                 wp_send_json_error(['message' => 'Erreur lors de la sauvegarde en base de données']);
             }
@@ -1443,10 +1493,12 @@ class AjaxHandler
             error_log('PHP: Saved to DB in ajaxSaveOrderStatusTemplates: ' . print_r($clean_templates, true));
             error_log('PHP: DB content after save: ' . print_r(get_option('pdf_builder_order_status_templates', []), true));
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Mappings de templates sauvegardés avec succès',
                 'saved_count' => count($clean_templates)
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());

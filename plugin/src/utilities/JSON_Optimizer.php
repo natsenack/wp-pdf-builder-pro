@@ -6,9 +6,9 @@
  * Utilitaire pour optimiser la taille des données JSON
  * et améliorer les performances de sérialisation.
  *
- * @package PDF_Builder
+ * @package    PDF_Builder
  * @subpackage Utilities
- * @version 1.0.0
+ * @version    1.0.0
  */
 
 namespace PDF_Builder\Src\Utilities;
@@ -40,7 +40,7 @@ class PdfBuilderJsonOptimizer
     /**
      * Minifie un string JSON en supprimant les espaces inutiles
      *
-     * @param string|array $data Données JSON ou array à minifier
+     * @param  string|array $data Données JSON ou array à minifier
      * @return string JSON minifié
      *
      * @since 1.0.0
@@ -60,7 +60,7 @@ class PdfBuilderJsonOptimizer
         $decoded = json_decode($data, true);
         if ($decoded === null) {
             return $data;
-        // Retourner original si erreur
+            // Retourner original si erreur
         }
 
         // wp_json_encode ne génère pas d'espaces inutiles de toute façon
@@ -70,7 +70,7 @@ class PdfBuilderJsonOptimizer
     /**
      * Compresse les données JSON avec GZIP
      *
-     * @param string $json_data String JSON à compresser
+     * @param  string $json_data String JSON à compresser
      * @return string Base64-encoded compressed data
      *
      * @since 1.0.0
@@ -83,18 +83,18 @@ class PdfBuilderJsonOptimizer
 
         if (strlen($json_data) < self::$compression_threshold) {
             return $json_data;
-// Pas assez gros pour compresser
+            // Pas assez gros pour compresser
         }
 
         if (!function_exists('gzcompress')) {
             return $json_data;
-// GZIP non disponible
+            // GZIP non disponible
         }
 
         $compressed = gzcompress($json_data, 9);
         if ($compressed === false) {
             return $json_data;
-        // Erreur compression
+            // Erreur compression
         }
 
         // Encoder en base64 pour stockage sûr
@@ -104,7 +104,7 @@ class PdfBuilderJsonOptimizer
     /**
      * Décompresse les données JSON
      *
-     * @param string $compressed_data Base64-encoded compressed data
+     * @param  string $compressed_data Base64-encoded compressed data
      * @return array|string Données décodées
      *
      * @since 1.0.0
@@ -114,7 +114,7 @@ class PdfBuilderJsonOptimizer
         // Essayer de décoder base64
         $decoded_base64 = base64_decode($compressed_data, true);
         if ($decoded_base64 === false) {
-        // Pas en base64, probablement données normales
+            // Pas en base64, probablement données normales
             return json_decode($compressed_data, true);
         }
 
@@ -134,7 +134,7 @@ class PdfBuilderJsonOptimizer
      * Deduplique les valeurs répétées dans un array
      * Pour réduire la taille en stockant les références
      *
-     * @param array $data Array à dédupliquer
+     * @param  array $data Array à dédupliquer
      * @return array Array optimisé
      *
      * @since 1.0.0
@@ -147,7 +147,7 @@ class PdfBuilderJsonOptimizer
 
         $value_map = [];
         $next_ref_id = 0;
-// Parcourir et collecter valeurs répétées
+        // Parcourir et collecter valeurs répétées
         $result = self::deduplicateRecursive($data, $value_map, $next_ref_id);
         return $result;
     }
@@ -180,8 +180,10 @@ class PdfBuilderJsonOptimizer
     /**
      * Obtient les statistiques de compression
      *
-     * @param string|array $original_data Données originales
-     * @param string $compressed_data Données compressées
+     * @param  string|array $original_data   Données
+     *                                       originales
+     * @param  string       $compressed_data Données
+     *                                       compressées
      * @return array Statistiques {original_size, compressed_size, ratio, ...}
      *
      * @since 1.0.0
@@ -210,7 +212,7 @@ class PdfBuilderJsonOptimizer
      * Optimise complètement un array de templates
      * (minification + compression si bénéfique)
      *
-     * @param array $template_data Données du template
+     * @param  array $template_data Données du template
      * @return array Données optimisées avec métadonnées
      *
      * @since 1.0.0
@@ -219,9 +221,9 @@ class PdfBuilderJsonOptimizer
     {
         // Minifier le JSON
         $json_minified = self::minifyJson($template_data);
-// Compresser si bénéfique
+        // Compresser si bénéfique
         $json_compressed = self::compress($json_minified);
-// Calculer stats
+        // Calculer stats
         $stats = self::getCompressionStats($template_data, $json_compressed);
         return [
             'data' => $stats['compression_worth_it'] ? $json_compressed : $json_minified,

@@ -67,7 +67,7 @@ class PdfBuilderCore
         foreach ($managers as $manager) {
             $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
             if (file_exists($manager_path)) {
-                require_once $manager_path;
+                include_once $manager_path;
             }
         }
 
@@ -76,7 +76,7 @@ class PdfBuilderCore
             foreach ($woocommerce_managers as $manager) {
                 $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
                 if (file_exists($manager_path)) {
-                    require_once $manager_path;
+                    include_once $manager_path;
                 }
             }
         }
@@ -89,13 +89,13 @@ class PdfBuilderCore
         foreach ($core_classes as $core_class) {
             $core_path = PDF_BUILDER_PLUGIN_DIR . 'src/Core/' . $core_class;
             if (file_exists($core_path)) {
-                require_once $core_path;
+                include_once $core_path;
             }
         }
 
         // Charger la classe d'administration
         if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php')) {
-            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
+            include_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
         }
 
         // Charger le contrôleur PDF - différé si WooCommerce n'est pas disponible
@@ -104,20 +104,22 @@ class PdfBuilderCore
             $load_pdf_controller_now = true;
         } elseif (!function_exists('pdf_builder_is_woocommerce_active') || !pdf_builder_is_woocommerce_active()) {
             $load_pdf_controller_now = false;
-            add_action('plugins_loaded', function() {
-                if (function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active() && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
-                    require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
-                }
-            }, 5);
+            add_action(
+                'plugins_loaded', function () {
+                    if (function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active() && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
+                        include_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
+                    }
+                }, 5
+            );
         }
 
         if ($load_pdf_controller_now && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
-            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
+            include_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
         }
 
         // Charger le handler AJAX d'image de prévisualisation
         if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php')) {
-            require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
+            include_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
         }
     }
 
@@ -166,7 +168,7 @@ class PdfBuilderCore
                 return;
             }
 
-        // Dossiers à créer
+            // Dossiers à créer
             $directories = array(
             $base_dir . '/pdf-builder',
             $base_dir . '/pdf-builder/templates',
@@ -177,7 +179,7 @@ class PdfBuilderCore
             $base_dir . '/pdf-builder/logs'
             );
 
-        // Créer chaque dossier s'il n'existe pas
+            // Créer chaque dossier s'il n'existe pas
             foreach ($directories as $directory) {
                 if (!file_exists($directory)) {
                     wp_mkdir_p($directory);
@@ -408,7 +410,7 @@ class PdfBuilderCore
             <h1><?php _e('📄 Documents Récents', 'pdf-builder-pro'); ?></h1>
             <p><?php _e('Consultez les logs de génération PDF récents.', 'pdf-builder-pro'); ?></p>
 
-            <?php if (empty($recent_logs)): ?>
+            <?php if (empty($recent_logs)) : ?>
                 <div class="notice notice-info">
                     <p><?php _e('Aucun log récent trouvé. Commencez par créer et générer des PDF avec vos templates.', 'pdf-builder-pro'); ?></p>
                 </div>
@@ -810,9 +812,10 @@ class PdfBuilderCore
      * Phase 3.4.3 - Optimisation des balises script
      * Ajoute des attributs de performance aux scripts
      *
-     * @param string $tag Balise script générée
-     * @param string $handle Handle du script
-     * @param string $src URL du script
+     * @param  string $tag    Balise script
+     *                        générée
+     * @param  string $handle Handle du script
+     * @param  string $src    URL du script
      * @return string Balise script optimisée
      */
     public function optimizeScriptTags($tag, $handle, $src)
@@ -853,9 +856,10 @@ class PdfBuilderCore
      * Phase 3.4.3 - Optimisation des balises style
      * Ajoute des attributs de performance aux styles
      *
-     * @param string $tag Balise style générée
-     * @param string $handle Handle du style
-     * @param string $href URL du style
+     * @param  string $tag    Balise style
+     *                        générée
+     * @param  string $handle Handle du style
+     * @param  string $href   URL du style
      * @return string Balise style optimisée
      */
     public function optimizeStyleTags($tag, $handle, $href)

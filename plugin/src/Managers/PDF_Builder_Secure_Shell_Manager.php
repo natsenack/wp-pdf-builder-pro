@@ -30,7 +30,7 @@ class PdfBuilderSecureShellManager
             'allowed_args' => [] // which est sûr
         ]
     ];
-/**
+    /**
      * Cache des chemins validés
      */
     private static $path_cache = [];
@@ -41,7 +41,7 @@ class PdfBuilderSecureShellManager
     private static function logExecution($command, $output, $success = true, $security_level = 'info')
     {
         $log_message = sprintf("[SECURE_SHELL] %s - Command: %s - Output: %s - Level: %s", $success ? 'SUCCESS' : 'FAILED', $command, is_string($output) ? substr($output, 0, 200) : 'N/A', $security_level);
-// Log aussi dans le logger du plugin si disponible
+        // Log aussi dans le logger du plugin si disponible
         if (class_exists('PDF_Builder_Logger')) {
             $method = $success ? 'log' : 'error';
             PDF_Builder_Logger::$method($log_message);
@@ -59,14 +59,14 @@ class PdfBuilderSecureShellManager
     private static function logSecurityEvent($command, $output, $success)
     {
         $security_log = sprintf("[SECURITY] Shell command executed - Time: %s - Command: %s - Success: %s - IP: %s - User: %s", date('Y-m-d H:i:s'), $command, $success ? 'YES' : 'NO', $_SERVER['REMOTE_ADDR'] ?? 'CLI', get_current_user_id());
-// Log dans un fichier séparé pour la sécurité
+        // Log dans un fichier séparé pour la sécurité
         $security_log_file = WP_CONTENT_DIR . '/pdf-builder-security.log';
         $log_entry = date('Y-m-d H:i:s') . ' - ' . $security_log . "\n";
-// Limiter la taille du fichier de log (max 1MB)
+        // Limiter la taille du fichier de log (max 1MB)
         if (file_exists($security_log_file) && filesize($security_log_file) > 1024 * 1024) {
             $content = file_get_contents($security_log_file);
             $lines = explode("\n", $content);
-// Garder seulement les 1000 dernières lignes
+            // Garder seulement les 1000 dernières lignes
             $lines = array_slice($lines, -1000);
             // file_put_contents($security_log_file, implode("\n", $lines));
         }
@@ -86,7 +86,7 @@ class PdfBuilderSecureShellManager
         }
 
         $command_config = self::$allowed_commands[$command_name];
-// Valider les arguments si nécessaire
+        // Valider les arguments si nécessaire
         if (!empty($command_config['allowed_args']) && !empty($args)) {
             foreach ($args as $arg) {
                 if (!in_array($arg, $command_config['allowed_args'])) {
@@ -117,7 +117,7 @@ class PdfBuilderSecureShellManager
         try {
             $old_timeout = ini_get('max_execution_time');
             set_time_limit(30);
-// 30 secondes max pour les commandes shell
+            // 30 secondes max pour les commandes shell
 
             $output = shell_exec($command . ' 2>&1');
             set_time_limit($old_timeout);
@@ -146,7 +146,7 @@ class PdfBuilderSecureShellManager
         }
 
         $path = trim($which_output);
-// Valider que le chemin est absolu et dans un répertoire système sûr
+        // Valider que le chemin est absolu et dans un répertoire système sûr
         if (!self::isSecurePath($path)) {
             self::logExecution($command_name, "Insecure path detected: $path", false, 'high');
             return false;
@@ -192,7 +192,7 @@ class PdfBuilderSecureShellManager
             'C:/Windows/System32/', // Windows
             'C:/Windows/SysWOW64/', // Windows
         ];
-// Vérifier si le chemin commence par un répertoire autorisé
+        // Vérifier si le chemin commence par un répertoire autorisé
         $is_allowed = false;
         foreach ($allowed_dirs as $allowed_dir) {
             if (stripos($path, $allowed_dir) === 0) {
@@ -202,7 +202,7 @@ class PdfBuilderSecureShellManager
         }
 
         if (!$is_allowed) {
-// Log de sécurité pour les chemins non autorisés
+            // Log de sécurité pour les chemins non autorisés
             self::logSecurityEvent("Unauthorized path access: $path", '', false);
         }
 

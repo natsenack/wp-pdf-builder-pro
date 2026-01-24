@@ -15,8 +15,8 @@ class LoggerService
     /**
      * Log un changement de rôles/permissions
      *
-     * @param array $old_roles Anciens rôles
-     * @param array $new_roles Nouveaux rôles
+     * @param  array $old_roles Anciens rôles
+     * @param  array $new_roles Nouveaux rôles
      * @return void
      */
     public function logRolePermissionsChange($old_roles, $new_roles)
@@ -63,7 +63,7 @@ class LoggerService
     /**
      * Récupère l'historique des changements de rôles
      *
-     * @param int $limit Nombre d'entrées à retourner
+     * @param  int $limit Nombre d'entrées à retourner
      * @return array Historique des changements
      */
     public function getRoleChangeHistory($limit = 50)

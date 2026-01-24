@@ -4,7 +4,8 @@
  * Surveille la santé du système en temps réel et détecte les problèmes
  */
 
-class PDF_Builder_Health_Monitor {
+class PDF_Builder_Health_Monitor
+{
     private static $instance = null;
 
     // Seuils de surveillance
@@ -22,19 +23,22 @@ class PDF_Builder_Health_Monitor {
     private $health_metrics = [];
     private $alerts_sent = [];
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_hooks();
         $this->init_health_checks();
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Surveillance périodique
         add_action('wp_ajax_pdf_builder_health_check', [$this, 'health_check_ajax']);
         add_action('wp_ajax_pdf_builder_get_health_status', [$this, 'get_health_status_ajax']);
@@ -54,7 +58,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Initialise les vérifications de santé
      */
-    private function init_health_checks() {
+    private function init_health_checks()
+    {
         // Planifier les vérifications périodiques
         if (!wp_next_scheduled('pdf_builder_health_monitor')) {
             wp_schedule_event(time(), 'five_minutes', 'pdf_builder_health_monitor');
@@ -76,7 +81,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Effectue les vérifications de santé complètes
      */
-    public function perform_health_checks() {
+    public function perform_health_checks()
+    {
         $health_status = [
             'timestamp' => current_time('mysql'),
             'overall_status' => 'healthy',
@@ -126,7 +132,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Vérifie la santé du système
      */
-    private function check_system_health() {
+    private function check_system_health()
+    {
         $issues = [];
 
         // CPU
@@ -170,7 +177,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Vérifie la santé de la base de données
      */
-    private function check_database_health() {
+    private function check_database_health()
+    {
         global $wpdb;
 
         $issues = [];
@@ -221,7 +229,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Vérifie la santé du système de fichiers
      */
-    private function check_filesystem_health() {
+    private function check_filesystem_health()
+    {
         $issues = [];
 
         $upload_dir = wp_upload_dir();
@@ -270,7 +279,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Vérifie la santé de WordPress
      */
-    private function check_wordpress_health() {
+    private function check_wordpress_health()
+    {
         $issues = [];
 
         // Version de WordPress
@@ -314,7 +324,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Vérifie la santé du plugin
      */
-    private function check_plugin_health() {
+    private function check_plugin_health()
+    {
         $issues = [];
 
         // Version du plugin
@@ -354,7 +365,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Obtient les métriques de performance
      */
-    private function get_performance_metrics() {
+    private function get_performance_metrics()
+    {
         if (!class_exists('PDF_Builder_Performance_Monitor')) {
             return [];
         }
@@ -372,7 +384,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Obtient les métriques de ressources
      */
-    private function get_resource_metrics() {
+    private function get_resource_metrics()
+    {
         return [
             'cpu_usage' => $this->get_cpu_usage(),
             'memory_usage' => $this->get_memory_usage(),
@@ -384,7 +397,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Obtient les métriques d'erreurs
      */
-    private function get_error_metrics() {
+    private function get_error_metrics()
+    {
         if (!class_exists('PDF_Builder_Logger')) {
             return [];
         }
@@ -402,7 +416,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Obtient l'utilisation CPU
      */
-    private function get_cpu_usage() {
+    private function get_cpu_usage()
+    {
         if (function_exists('sys_getloadavg')) {
             $load = sys_getloadavg();
             return min(100, ($load[0] / $this->get_cpu_cores()) * 100);
@@ -415,7 +430,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Obtient le nombre de cœurs CPU
      */
-    private function get_cpu_cores() {
+    private function get_cpu_cores()
+    {
         if (is_readable('/proc/cpuinfo')) {
             $cpuinfo = file_get_contents('/proc/cpuinfo');
             return substr_count($cpuinfo, 'processor');
@@ -427,7 +443,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Obtient l'utilisation mémoire
      */
-    private function get_memory_usage() {
+    private function get_memory_usage()
+    {
         $memory_limit = ini_get('memory_limit');
         $memory_limit_bytes = $this->convert_to_bytes($memory_limit);
 
@@ -441,7 +458,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Obtient l'utilisation disque
      */
-    private function get_disk_usage() {
+    private function get_disk_usage()
+    {
         $total_space = disk_total_space(ABSPATH);
         $free_space = disk_free_space(ABSPATH);
 
@@ -456,14 +474,16 @@ class PDF_Builder_Health_Monitor {
     /**
      * Obtient le temps de réponse
      */
-    private function get_response_time() {
+    private function get_response_time()
+    {
         return microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
     }
 
     /**
      * Teste la connexion à la base de données
      */
-    private function test_database_connection() {
+    private function test_database_connection()
+    {
         global $wpdb;
 
         $result = $wpdb->get_var("SELECT 1");
@@ -473,15 +493,18 @@ class PDF_Builder_Health_Monitor {
     /**
      * Obtient les tailles des tables
      */
-    private function get_table_sizes() {
+    private function get_table_sizes()
+    {
         global $wpdb;
 
-        $tables = $wpdb->get_results("
+        $tables = $wpdb->get_results(
+            "
             SELECT table_name, data_length + index_length as size
             FROM information_schema.tables
             WHERE table_schema = DATABASE()
             AND table_name LIKE '{$wpdb->prefix}pdf_builder_%'
-        ", ARRAY_A);
+        ", ARRAY_A
+        );
 
         $sizes = [];
         foreach ($tables as $table) {
@@ -494,7 +517,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Obtient le nombre de requêtes lentes
      */
-    private function get_slow_queries_count() {
+    private function get_slow_queries_count()
+    {
         global $wpdb;
 
         // Simuler - en production, utiliser les logs MySQL ou un profiler
@@ -504,7 +528,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Vérifie les tables corrompues
      */
-    private function check_corrupted_tables() {
+    private function check_corrupted_tables()
+    {
         global $wpdb;
 
         $corrupted = [];
@@ -524,7 +549,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Obtient le nombre de connexions actives
      */
-    private function get_active_connections() {
+    private function get_active_connections()
+    {
         global $wpdb;
 
         $connections = $wpdb->get_var("SHOW PROCESSLIST");
@@ -534,7 +560,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Obtient la dernière version de WordPress
      */
-    private function get_latest_wp_version() {
+    private function get_latest_wp_version()
+    {
         $response = wp_remote_get('https://api.wordpress.org/core/version-check/1.7/');
 
         if (!is_wp_error($response)) {
@@ -550,7 +577,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Obtient la dernière version du plugin
      */
-    private function get_latest_plugin_version() {
+    private function get_latest_plugin_version()
+    {
         // Simuler - en production, vérifier depuis un endpoint API
         return PDF_BUILDER_VERSION;
     }
@@ -558,7 +586,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Vérifie l'intégrité des fichiers du plugin
      */
-    private function check_plugin_file_integrity() {
+    private function check_plugin_file_integrity()
+    {
         $corrupted = [];
 
         $plugin_files = $this->get_plugin_files_list();
@@ -586,7 +615,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Obtient la liste des fichiers du plugin
      */
-    private function get_plugin_files_list() {
+    private function get_plugin_files_list()
+    {
         $files = [];
 
         $iterator = new RecursiveIteratorIterator(
@@ -605,7 +635,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Vérifie la syntaxe PHP
      */
-    private function check_php_syntax($file_path) {
+    private function check_php_syntax($file_path)
+    {
         $output = shell_exec("php -l \"$file_path\" 2>&1");
         return strpos($output, 'No syntax errors detected') !== false;
     }
@@ -613,20 +644,21 @@ class PDF_Builder_Health_Monitor {
     /**
      * Convertit une valeur en octets
      */
-    private function convert_to_bytes($value) {
+    private function convert_to_bytes($value)
+    {
         $value = trim($value);
         $last = strtolower($value[strlen($value) - 1]);
 
         switch ($last) {
-            case 'g':
-                $value *= 1024 * 1024 * 1024;
-                break;
-            case 'm':
-                $value *= 1024 * 1024;
-                break;
-            case 'k':
-                $value *= 1024;
-                break;
+        case 'g':
+            $value *= 1024 * 1024 * 1024;
+            break;
+        case 'm':
+            $value *= 1024 * 1024;
+            break;
+        case 'k':
+            $value *= 1024;
+            break;
         }
 
         return (int) $value;
@@ -635,7 +667,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Stocke les métriques de santé
      */
-    private function store_health_metrics($health_status) {
+    private function store_health_metrics($health_status)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_health_metrics';
@@ -651,19 +684,22 @@ class PDF_Builder_Health_Monitor {
                 'wordpress_status' => $health_status['checks']['wordpress']['status'],
                 'plugin_status' => $health_status['checks']['plugin']['status'],
                 'metrics' => json_encode($health_status['metrics']),
-                'issues' => json_encode(array_merge(
-                    $health_status['checks']['system']['issues'],
-                    $health_status['checks']['database']['issues'],
-                    $health_status['checks']['filesystem']['issues'],
-                    $health_status['checks']['wordpress']['issues'],
-                    $health_status['checks']['plugin']['issues']
-                ))
+                'issues' => json_encode(
+                    array_merge(
+                        $health_status['checks']['system']['issues'],
+                        $health_status['checks']['database']['issues'],
+                        $health_status['checks']['filesystem']['issues'],
+                        $health_status['checks']['wordpress']['issues'],
+                        $health_status['checks']['plugin']['issues']
+                    )
+                )
             ],
             ['%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s']
         );
 
         // Garder seulement les 1000 dernières entrées
-        $wpdb->query("
+        $wpdb->query(
+            "
             DELETE FROM $table
             WHERE id NOT IN (
                 SELECT id FROM (
@@ -672,13 +708,15 @@ class PDF_Builder_Health_Monitor {
                     LIMIT 1000
                 ) tmp
             )
-        ");
+        "
+        );
     }
 
     /**
      * Vérifie les alertes à envoyer
      */
-    private function check_for_alerts($health_status) {
+    private function check_for_alerts($health_status)
+    {
         $alerts = [];
 
         // Alertes critiques
@@ -716,7 +754,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * Envoie une alerte de santé
      */
-    public function send_health_alert($level, $message, $details = []) {
+    public function send_health_alert($level, $message, $details = [])
+    {
         $alert_key = md5($message . $level);
 
         // Vérifier le cooldown
@@ -733,19 +772,19 @@ class PDF_Builder_Health_Monitor {
         if (class_exists('PDF_Builder_Logger')) {
             $logger = PDF_Builder_Logger::get_instance();
             switch ($level) {
-                case 'critical':
-                    $logger->critical("Alerte de santé système: $message", $details);
-                    break;
-                case 'high':
-                case 'error':
-                    $logger->error("Alerte de santé système: $message", $details);
-                    break;
-                case 'warning':
-                case 'medium':
-                    $logger->warning("Alerte de santé système: $message", $details);
-                    break;
-                default:
-                    $logger->info("Alerte de santé système: $message", $details);
+            case 'critical':
+                $logger->critical("Alerte de santé système: $message", $details);
+                break;
+            case 'high':
+            case 'error':
+                $logger->error("Alerte de santé système: $message", $details);
+                break;
+            case 'warning':
+            case 'medium':
+                $logger->warning("Alerte de santé système: $message", $details);
+                break;
+            default:
+                $logger->info("Alerte de santé système: $message", $details);
             }
         } else {
             // // error_log("[PDF Builder Health] $level: $message");
@@ -755,22 +794,28 @@ class PDF_Builder_Health_Monitor {
     /**
      * Nettoie les anciennes métriques
      */
-    public function cleanup_old_metrics() {
+    public function cleanup_old_metrics()
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_health_metrics';
 
         // Supprimer les métriques de plus de 30 jours
-        $wpdb->query($wpdb->prepare("
+        $wpdb->query(
+            $wpdb->prepare(
+                "
             DELETE FROM $table
             WHERE timestamp < DATE_SUB(NOW(), INTERVAL 30 DAY)
-        "));
+        "
+            )
+        );
     }
 
     /**
      * Surveille les performances
      */
-    public function monitor_performance() {
+    public function monitor_performance()
+    {
         if (!class_exists('PDF_Builder_Performance_Monitor')) {
             return;
         }
@@ -780,20 +825,25 @@ class PDF_Builder_Health_Monitor {
 
         // Vérifier les seuils
         if ($metrics['avg_response_time'] > self::RESPONSE_TIME_THRESHOLD) {
-            $this->send_health_alert('warning', 'Temps de réponse élevé détecté',
-                ['avg_response_time' => $metrics['avg_response_time']]);
+            $this->send_health_alert(
+                'warning', 'Temps de réponse élevé détecté',
+                ['avg_response_time' => $metrics['avg_response_time']]
+            );
         }
 
         if ($metrics['slow_queries_count'] > 10) {
-            $this->send_health_alert('warning', 'Nombre élevé de requêtes lentes',
-                ['slow_queries_count' => $metrics['slow_queries_count']]);
+            $this->send_health_alert(
+                'warning', 'Nombre élevé de requêtes lentes',
+                ['slow_queries_count' => $metrics['slow_queries_count']]
+            );
         }
     }
 
     /**
      * Surveille les erreurs
      */
-    public function monitor_errors() {
+    public function monitor_errors()
+    {
         if (!class_exists('PDF_Builder_Logger')) {
             return;
         }
@@ -802,15 +852,18 @@ class PDF_Builder_Health_Monitor {
         $error_rate = $logger->get_error_rate();
 
         if ($error_rate > self::ERROR_RATE_THRESHOLD) {
-            $this->send_health_alert('critical', 'Taux d\'erreur élevé détecté',
-                ['error_rate' => $error_rate]);
+            $this->send_health_alert(
+                'critical', 'Taux d\'erreur élevé détecté',
+                ['error_rate' => $error_rate]
+            );
         }
     }
 
     /**
      * AJAX - Vérification de santé
      */
-    public function health_check_ajax() {
+    public function health_check_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 // Essayer aussi le nonce WordPress standard
@@ -827,10 +880,12 @@ class PDF_Builder_Health_Monitor {
 
             $health_status = $this->perform_health_checks();
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Vérification de santé terminée',
                 'health_status' => $health_status
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur lors de la vérification: ' . $e->getMessage()]);
@@ -840,7 +895,8 @@ class PDF_Builder_Health_Monitor {
     /**
      * AJAX - Obtient le statut de santé
      */
-    public function get_health_status_ajax() {
+    public function get_health_status_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -855,11 +911,13 @@ class PDF_Builder_Health_Monitor {
             $latest_health = $this->get_latest_health_status();
             $health_history = $this->get_health_history(24); // 24 dernières heures
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Statut de santé récupéré',
                 'latest_health' => $latest_health,
                 'health_history' => $health_history
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -869,48 +927,63 @@ class PDF_Builder_Health_Monitor {
     /**
      * Obtient le dernier statut de santé
      */
-    public function get_latest_health_status() {
+    public function get_latest_health_status()
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_health_metrics';
 
-        return $wpdb->get_row($wpdb->prepare("
+        return $wpdb->get_row(
+            $wpdb->prepare(
+                "
             SELECT * FROM $table
             ORDER BY timestamp DESC
             LIMIT 1
-        "), ARRAY_A);
+        "
+            ), ARRAY_A
+        );
     }
 
     /**
      * Obtient l'historique de santé
      */
-    public function get_health_history($hours = 24) {
+    public function get_health_history($hours = 24)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_health_metrics';
 
-        return $wpdb->get_results($wpdb->prepare("
+        return $wpdb->get_results(
+            $wpdb->prepare(
+                "
             SELECT * FROM $table
             WHERE timestamp >= DATE_SUB(NOW(), INTERVAL %d HOUR)
             ORDER BY timestamp DESC
-        ", $hours), ARRAY_A);
+        ", $hours
+            ), ARRAY_A
+        );
     }
 }
 
 // Fonctions globales
-function pdf_builder_health_monitor() {
+function pdf_builder_health_monitor()
+{
     return PDF_Builder_Health_Monitor::get_instance();
 }
 
-function pdf_builder_get_health_status() {
+function pdf_builder_get_health_status()
+{
     return PDF_Builder_Health_Monitor::get_instance()->get_latest_health_status();
 }
 
-function pdf_builder_perform_health_check() {
+function pdf_builder_perform_health_check()
+{
     return PDF_Builder_Health_Monitor::get_instance()->perform_health_checks();
 }
 
 // Initialiser le système de surveillance de santé
-add_action('plugins_loaded', function() {
-    PDF_Builder_Health_Monitor::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_Health_Monitor::get_instance();
+    }
+);

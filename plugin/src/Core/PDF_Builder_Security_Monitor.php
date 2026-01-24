@@ -4,7 +4,8 @@
  * Détecte les menaces, vulnérabilités et activités suspectes
  */
 
-class PDF_Builder_Security_Monitor {
+class PDF_Builder_Security_Monitor
+{
     private static $instance = null;
 
     // Niveaux de menace
@@ -31,19 +32,22 @@ class PDF_Builder_Security_Monitor {
         'xss_attempts_per_hour' => 10
     ];
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_hooks();
         $this->load_thresholds();
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Surveillance des requêtes AJAX
         add_action('wp_ajax_pdf_builder_security_scan', [$this, 'security_scan_ajax']);
         add_action('wp_ajax_pdf_builder_get_security_status', [$this, 'get_security_status_ajax']);
@@ -68,7 +72,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Charge les seuils de détection depuis la configuration
      */
-    private function load_thresholds() {
+    private function load_thresholds()
+    {
         $config_thresholds = pdf_builder_config('security_thresholds', []);
 
         if (!empty($config_thresholds)) {
@@ -79,7 +84,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Surveille toutes les requêtes entrantes
      */
-    public function monitor_requests() {
+    public function monitor_requests()
+    {
         if (!is_admin() && !wp_doing_ajax()) {
             return;
         }
@@ -108,7 +114,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Détecte les menaces dans une requête
      */
-    private function detect_threats($request_data) {
+    private function detect_threats($request_data)
+    {
         $threats = [];
 
         // Détection d'injection SQL
@@ -151,7 +158,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Détecte les tentatives d'injection SQL
      */
-    private function detect_sql_injection($request_data) {
+    private function detect_sql_injection($request_data)
+    {
         $patterns = [
             '/\bUNION\b.*\bSELECT\b/i',
             '/\bDROP\b.*\bTABLE\b/i',
@@ -182,7 +190,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Détecte les tentatives XSS
      */
-    private function detect_xss($request_data) {
+    private function detect_xss($request_data)
+    {
         $patterns = [
             '/<script[^>]*>.*?<\/script>/i',
             '/javascript:/i',
@@ -210,7 +219,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Détecte les activités suspectes
      */
-    private function detect_suspicious_activity($request_data) {
+    private function detect_suspicious_activity($request_data)
+    {
         // Vérifier les User-Agent suspects
         $suspicious_user_agents = [
             'sqlmap',
@@ -252,7 +262,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Vérifie les seuils de fréquence
      */
-    private function check_frequency_thresholds($request_data) {
+    private function check_frequency_thresholds($request_data)
+    {
         $threats = [];
         $ip = $request_data['ip'];
 
@@ -284,28 +295,29 @@ class PDF_Builder_Security_Monitor {
     /**
      * Gère les menaces détectées
      */
-    private function handle_threats($threats, $request_data) {
+    private function handle_threats($threats, $request_data)
+    {
         foreach ($threats as $threat) {
             // Enregistrer la menace
             $this->log_threat($threat);
 
             // Prendre des mesures selon le niveau
             switch ($threat['level']) {
-                case self::THREAT_LEVEL_CRITICAL:
-                    $this->handle_critical_threat($threat);
-                    break;
+            case self::THREAT_LEVEL_CRITICAL:
+                $this->handle_critical_threat($threat);
+                break;
 
-                case self::THREAT_LEVEL_HIGH:
-                    $this->handle_high_threat($threat);
-                    break;
+            case self::THREAT_LEVEL_HIGH:
+                $this->handle_high_threat($threat);
+                break;
 
-                case self::THREAT_LEVEL_MEDIUM:
-                    $this->handle_medium_threat($threat);
-                    break;
+            case self::THREAT_LEVEL_MEDIUM:
+                $this->handle_medium_threat($threat);
+                break;
 
-                case self::THREAT_LEVEL_LOW:
-                    $this->handle_low_threat($threat);
-                    break;
+            case self::THREAT_LEVEL_LOW:
+                $this->handle_low_threat($threat);
+                break;
             }
         }
     }
@@ -313,7 +325,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Gère les menaces critiques
      */
-    private function handle_critical_threat($threat) {
+    private function handle_critical_threat($threat)
+    {
         $ip = $threat['data']['ip'];
 
         // Bloquer immédiatement l'IP
@@ -331,7 +344,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Gère les menaces élevées
      */
-    private function handle_high_threat($threat) {
+    private function handle_high_threat($threat)
+    {
         $ip = $threat['data']['ip'];
 
         // Journaliser (ancienne UI) — log as error
@@ -346,7 +360,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Gère les menaces moyennes
      */
-    private function handle_medium_threat($threat) {
+    private function handle_medium_threat($threat)
+    {
         // Journaliser (ancienne UI) — log warning
         PDF_Builder_Logger::get_instance()->warning('Menace de sécurité moyenne détectée: ' . $threat['description'], ['threat' => $threat]);
     }
@@ -354,7 +369,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Gère les menaces faibles
      */
-    private function handle_low_threat($threat) {
+    private function handle_low_threat($threat)
+    {
         // Juste journaliser
         if (class_exists('PDF_Builder_Logger')) {
             PDF_Builder_Logger::get_instance()->warning('Low security threat detected', $threat);
@@ -364,48 +380,57 @@ class PDF_Builder_Security_Monitor {
     /**
      * Surveille les échecs de connexion
      */
-    public function monitor_failed_login($username) {
+    public function monitor_failed_login($username)
+    {
         $ip = $this->get_client_ip();
 
-        $this->log_security_event('failed_login', [
+        $this->log_security_event(
+            'failed_login', [
             'username' => $username,
             'ip' => $ip,
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
             'timestamp' => current_time('mysql')
-        ]);
+            ]
+        );
 
         // Vérifier si c'est une attaque par force brute
         $failed_logins = $this->get_recent_failed_logins($ip, HOUR_IN_SECONDS);
         if ($failed_logins >= $this->thresholds['failed_logins_per_hour']) {
-            $this->handle_threats([[
+            $this->handle_threats(
+                [[
                 'type' => self::THREAT_TYPE_BRUTE_FORCE,
                 'level' => self::THREAT_LEVEL_HIGH,
                 'description' => 'Attaque par force brute détectée',
                 'data' => ['ip' => $ip, 'failed_logins' => $failed_logins]
-            ]], []);
+                ]], []
+            );
         }
     }
 
     /**
      * Surveille les connexions réussies
      */
-    public function monitor_successful_login($user_login) {
+    public function monitor_successful_login($user_login)
+    {
         $user = get_user_by('login', $user_login);
         $ip = $this->get_client_ip();
 
-        $this->log_security_event('successful_login', [
+        $this->log_security_event(
+            'successful_login', [
             'user_id' => $user->ID,
             'username' => $user_login,
             'ip' => $ip,
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
             'timestamp' => current_time('mysql')
-        ]);
+            ]
+        );
     }
 
     /**
      * Surveille les téléchargements de fichiers
      */
-    public function monitor_file_upload($file) {
+    public function monitor_file_upload($file)
+    {
         $ip = $this->get_client_ip();
 
         // Vérifier le type de fichier
@@ -431,19 +456,22 @@ class PDF_Builder_Security_Monitor {
         }
 
         // Enregistrer l'activité normale
-        $this->log_security_event('file_upload', [
+        $this->log_security_event(
+            'file_upload', [
             'ip' => $ip,
             'file' => $file['file'],
             'extension' => $extension,
             'size' => $file['size'],
             'timestamp' => current_time('mysql')
-        ]);
+            ]
+        );
     }
 
     /**
      * Effectue un scan de sécurité horaire
      */
-    public function perform_hourly_security_scan() {
+    public function perform_hourly_security_scan()
+    {
         $issues = [];
 
         // Vérifier les vulnérabilités connues
@@ -467,7 +495,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Effectue un scan de sécurité quotidien
      */
-    public function perform_daily_security_scan() {
+    public function perform_daily_security_scan()
+    {
         $issues = [];
 
         // Analyse approfondie des logs
@@ -487,7 +516,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Vérifie les vulnérabilités connues
      */
-    private function check_known_vulnerabilities() {
+    private function check_known_vulnerabilities()
+    {
         $issues = [];
 
         // Vérifier les versions des composants
@@ -508,7 +538,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Vérifie les permissions des fichiers
      */
-    private function check_file_permissions() {
+    private function check_file_permissions()
+    {
         $issues = [];
 
         $critical_files = [
@@ -539,7 +570,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Vérifie les comptes suspects
      */
-    private function check_suspicious_accounts() {
+    private function check_suspicious_accounts()
+    {
         $issues = [];
 
         // Comptes administrateur avec mots de passe faibles
@@ -562,7 +594,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Analyse les logs de sécurité
      */
-    private function analyze_security_logs() {
+    private function analyze_security_logs()
+    {
         $issues = [];
 
         // Analyser les tendances des menaces
@@ -586,7 +619,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Obtient l'adresse IP du client
      */
-    private function get_client_ip() {
+    private function get_client_ip()
+    {
         $ip_headers = [
             'HTTP_CF_CONNECTING_IP',
             'HTTP_CLIENT_IP',
@@ -620,39 +654,50 @@ class PDF_Builder_Security_Monitor {
     /**
      * Obtient les échecs de connexion récents
      */
-    private function get_recent_failed_logins($ip, $timeframe) {
+    private function get_recent_failed_logins($ip, $timeframe)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_security_events';
 
-        return $wpdb->get_var($wpdb->prepare("
+        return $wpdb->get_var(
+            $wpdb->prepare(
+                "
             SELECT COUNT(*) FROM $table
             WHERE event_type = 'failed_login'
             AND ip_address = %s
             AND created_at > DATE_SUB(NOW(), INTERVAL %d SECOND)
-        ", $ip, $timeframe));
+        ", $ip, $timeframe
+            )
+        );
     }
 
     /**
      * Obtient les requêtes suspectes récentes
      */
-    private function get_recent_suspicious_requests($ip, $timeframe) {
+    private function get_recent_suspicious_requests($ip, $timeframe)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_security_events';
 
-        return $wpdb->get_var($wpdb->prepare("
+        return $wpdb->get_var(
+            $wpdb->prepare(
+                "
             SELECT COUNT(*) FROM $table
             WHERE event_type IN ('sql_injection', 'xss', 'suspicious_activity')
             AND ip_address = %s
             AND created_at > DATE_SUB(NOW(), INTERVAL %d SECOND)
-        ", $ip, $timeframe));
+        ", $ip, $timeframe
+            )
+        );
     }
 
     /**
      * Enregistre un événement de sécurité
      */
-    private function log_security_event($event_type, $data) {
+    private function log_security_event($event_type, $data)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_security_events';
@@ -673,7 +718,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Enregistre une menace
      */
-    private function log_threat($threat) {
+    private function log_threat($threat)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_security_threats';
@@ -701,7 +747,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Enregistre l'activité des requêtes
      */
-    private function log_request_activity($request_data) {
+    private function log_request_activity($request_data)
+    {
         // Échantillonnage pour éviter de surcharger la base
         if (rand(1, 100) <= 10) { // 10% des requêtes
             global $wpdb;
@@ -725,7 +772,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Bloque une IP
      */
-    private function block_ip($ip, $reason) {
+    private function block_ip($ip, $reason)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_blocked_ips';
@@ -748,7 +796,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Bloque temporairement une IP
      */
-    private function temporarily_block_ip($ip, $duration) {
+    private function temporarily_block_ip($ip, $duration)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_temp_blocks';
@@ -768,7 +817,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * Ajoute une règle de blocage au niveau serveur
      */
-    private function add_server_block_rule($ip) {
+    private function add_server_block_rule($ip)
+    {
         // Pour Apache
         if (function_exists('apache_get_version')) {
             $htaccess_file = ABSPATH . '.htaccess';
@@ -787,14 +837,19 @@ class PDF_Builder_Security_Monitor {
     /**
      * Vérifie si une IP est bloquée
      */
-    public function is_ip_blocked($ip) {
+    public function is_ip_blocked($ip)
+    {
         global $wpdb;
 
         // Vérifier les blocages permanents
         $blocked_table = $wpdb->prefix . 'pdf_builder_blocked_ips';
-        $blocked = $wpdb->get_var($wpdb->prepare("
+        $blocked = $wpdb->get_var(
+            $wpdb->prepare(
+                "
             SELECT COUNT(*) FROM $blocked_table WHERE ip_address = %s
-        ", $ip));
+        ", $ip
+            )
+        );
 
         if ($blocked > 0) {
             return true;
@@ -802,10 +857,14 @@ class PDF_Builder_Security_Monitor {
 
         // Vérifier les blocages temporaires
         $temp_table = $wpdb->prefix . 'pdf_builder_temp_blocks';
-        $temp_blocked = $wpdb->get_var($wpdb->prepare("
+        $temp_blocked = $wpdb->get_var(
+            $wpdb->prepare(
+                "
             SELECT COUNT(*) FROM $temp_table
             WHERE ip_address = %s AND blocked_until > NOW()
-        ", $ip));
+        ", $ip
+            )
+        );
 
         return $temp_blocked > 0;
     }
@@ -813,63 +872,82 @@ class PDF_Builder_Security_Monitor {
     /**
      * Nettoie les logs de sécurité
      */
-    public function cleanup_security_logs() {
+    public function cleanup_security_logs()
+    {
         global $wpdb;
 
         $retention_days = pdf_builder_config('security_log_retention_days', 90);
 
         // Nettoyer les événements de sécurité
         $events_table = $wpdb->prefix . 'pdf_builder_security_events';
-        $wpdb->query($wpdb->prepare("
+        $wpdb->query(
+            $wpdb->prepare(
+                "
             DELETE FROM $events_table
             WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)
-        ", $retention_days));
+        ", $retention_days
+            )
+        );
 
         // Nettoyer les menaces
         $threats_table = $wpdb->prefix . 'pdf_builder_security_threats';
-        $wpdb->query($wpdb->prepare("
+        $wpdb->query(
+            $wpdb->prepare(
+                "
             DELETE FROM $threats_table
             WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)
-        ", $retention_days));
+        ", $retention_days
+            )
+        );
 
         // Nettoyer les logs de requêtes
         $requests_table = $wpdb->prefix . 'pdf_builder_request_logs';
-        $wpdb->query($wpdb->prepare("
+        $wpdb->query(
+            $wpdb->prepare(
+                "
             DELETE FROM $requests_table
             WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)
-        ", $retention_days));
+        ", $retention_days
+            )
+        );
 
         // Nettoyer les blocages temporaires expirés
         $temp_blocks_table = $wpdb->prefix . 'pdf_builder_temp_blocks';
-        $wpdb->query("
+        $wpdb->query(
+            "
             DELETE FROM $temp_blocks_table
             WHERE blocked_until < NOW()
-        ");
+        "
+        );
     }
 
     /**
      * Méthodes utilitaires pour les vérifications de sécurité
      */
-    private function get_vulnerable_plugins() {
+    private function get_vulnerable_plugins()
+    {
         // Cette méthode nécessiterait une base de données de vulnérabilités
         // Pour l'instant, retourner un tableau vide
         return [];
     }
 
-    private function is_weak_password($username) {
+    private function is_weak_password($username)
+    {
         // Vérifier si le nom d'utilisateur est dans une liste de mots de passe faibles
         $weak_usernames = ['admin', 'administrator', 'root', 'user', 'test'];
 
         return in_array(strtolower($username), $weak_usernames);
     }
 
-    private function get_inactive_users($days) {
+    private function get_inactive_users($days)
+    {
         // Cette méthode nécessiterait un suivi des dernières activités
         // Pour l'instant, retourner un tableau vide
         return [];
     }
 
-    private function analyze_threat_trends() {
+    private function analyze_threat_trends()
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_security_threats';
@@ -879,12 +957,14 @@ class PDF_Builder_Security_Monitor {
         return ['total_threats' => $total_threats];
     }
 
-    private function get_most_active_suspicious_ips() {
+    private function get_most_active_suspicious_ips()
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_security_threats';
 
-        $results = $wpdb->get_results("
+        $results = $wpdb->get_results(
+            "
             SELECT ip_address, COUNT(*) as threat_count
             FROM $table
             WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)
@@ -892,7 +972,8 @@ class PDF_Builder_Security_Monitor {
             HAVING threat_count > 10
             ORDER BY threat_count DESC
             LIMIT 10
-        ", ARRAY_A);
+        ", ARRAY_A
+        );
 
         $ips = [];
         foreach ($results as $result) {
@@ -902,7 +983,8 @@ class PDF_Builder_Security_Monitor {
         return $ips;
     }
 
-    private function check_security_updates() {
+    private function check_security_updates()
+    {
         // Vérifier les mises à jour disponibles pour WordPress et les plugins
         $issues = [];
 
@@ -926,7 +1008,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * AJAX - Effectue un scan de sécurité
      */
-    public function security_scan_ajax() {
+    public function security_scan_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -943,33 +1026,35 @@ class PDF_Builder_Security_Monitor {
             $results = [];
 
             switch ($scan_type) {
-                case 'vulnerabilities':
-                    $results['vulnerabilities'] = $this->check_known_vulnerabilities();
-                    break;
+            case 'vulnerabilities':
+                $results['vulnerabilities'] = $this->check_known_vulnerabilities();
+                break;
 
-                case 'permissions':
-                    $results['permissions'] = $this->check_file_permissions();
-                    break;
+            case 'permissions':
+                $results['permissions'] = $this->check_file_permissions();
+                break;
 
-                case 'accounts':
-                    $results['accounts'] = $this->check_suspicious_accounts();
-                    break;
+            case 'accounts':
+                $results['accounts'] = $this->check_suspicious_accounts();
+                break;
 
-                case 'full':
-                default:
-                    $results = [
-                        'vulnerabilities' => $this->check_known_vulnerabilities(),
-                        'permissions' => $this->check_file_permissions(),
-                        'accounts' => $this->check_suspicious_accounts(),
-                        'threats' => $this->analyze_threat_trends()
-                    ];
-                    break;
+            case 'full':
+            default:
+                $results = [
+                    'vulnerabilities' => $this->check_known_vulnerabilities(),
+                    'permissions' => $this->check_file_permissions(),
+                    'accounts' => $this->check_suspicious_accounts(),
+                    'threats' => $this->analyze_threat_trends()
+                ];
+                break;
             }
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Scan de sécurité terminé',
                 'results' => $results
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur lors du scan: ' . $e->getMessage()]);
@@ -979,7 +1064,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * AJAX - Obtient le statut de sécurité
      */
-    public function get_security_status_ajax() {
+    public function get_security_status_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -999,10 +1085,12 @@ class PDF_Builder_Security_Monitor {
                 'active_threats' => $this->get_active_threats()
             ];
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Statut de sécurité récupéré',
                 'status' => $status
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -1012,7 +1100,8 @@ class PDF_Builder_Security_Monitor {
     /**
      * AJAX - Bloque une IP
      */
-    public function block_ip_ajax() {
+    public function block_ip_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1044,18 +1133,24 @@ class PDF_Builder_Security_Monitor {
     /**
      * Méthodes utilitaires pour AJAX
      */
-    private function get_threats_count_today() {
+    private function get_threats_count_today()
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_security_threats';
 
-        return $wpdb->get_var($wpdb->prepare("
+        return $wpdb->get_var(
+            $wpdb->prepare(
+                "
             SELECT COUNT(*) FROM $table
             WHERE DATE(created_at) = CURDATE()
-        "));
+        "
+            )
+        );
     }
 
-    private function get_blocked_ips_count() {
+    private function get_blocked_ips_count()
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_blocked_ips';
@@ -1063,7 +1158,8 @@ class PDF_Builder_Security_Monitor {
         return $wpdb->get_var("SELECT COUNT(*) FROM $table");
     }
 
-    private function calculate_security_score() {
+    private function calculate_security_score()
+    {
         // Calcul d'un score de sécurité basé sur différents facteurs
         $score = 100;
 
@@ -1082,35 +1178,45 @@ class PDF_Builder_Security_Monitor {
         return max($score, 0);
     }
 
-    private function get_last_scan_time() {
+    private function get_last_scan_time()
+    {
         // Cette méthode nécessiterait un suivi des scans
         return current_time('mysql');
     }
 
-    private function get_active_threats() {
+    private function get_active_threats()
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_security_threats';
 
-        return $wpdb->get_results($wpdb->prepare("
+        return $wpdb->get_results(
+            $wpdb->prepare(
+                "
             SELECT * FROM $table
             WHERE status = 'detected'
             ORDER BY created_at DESC
             LIMIT 10
-        "), ARRAY_A);
+        "
+            ), ARRAY_A
+        );
     }
 }
 
 // Fonctions globales
-function pdf_builder_security_monitor() {
+function pdf_builder_security_monitor()
+{
     return PDF_Builder_Security_Monitor::get_instance();
 }
 
-function pdf_builder_is_ip_blocked($ip) {
+function pdf_builder_is_ip_blocked($ip)
+{
     return PDF_Builder_Security_Monitor::get_instance()->is_ip_blocked($ip);
 }
 
 // Initialiser le système de surveillance de sécurité
-add_action('plugins_loaded', function() {
-    PDF_Builder_Security_Monitor::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_Security_Monitor::get_instance();
+    }
+);

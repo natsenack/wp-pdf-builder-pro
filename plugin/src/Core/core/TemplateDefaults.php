@@ -19,14 +19,16 @@ class TemplateDefaults
     /**
      * Obtenir tous les templates par défaut
      */
-    public static function get_free_templates() {
+    public static function get_free_templates()
+    {
         return self::$default_templates;
     }
 
     /**
      * Créer les templates par défaut pour un utilisateur gratuit
      */
-    public static function create_default_templates_for_user($user_id) {
+    public static function create_default_templates_for_user($user_id)
+    {
         if (!$user_id) {
             return false;
         }
@@ -40,22 +42,26 @@ class TemplateDefaults
 
         foreach (self::$default_templates as $template_key => $template_data) {
             // Vérifier si le template existe déjà pour cet utilisateur
-            $existing_template = get_posts([
+            $existing_template = get_posts(
+                [
                 'post_type' => 'pdf_template',
                 'author' => $user_id,
                 'title' => $template_data['name'],
                 'posts_per_page' => 1
-            ]);
+                ]
+            );
 
             if (empty($existing_template)) {
                 // Créer le template
-                $template_id = wp_insert_post([
+                $template_id = wp_insert_post(
+                    [
                     'post_title' => $template_data['name'],
                     'post_content' => $template_data['description'],
                     'post_type' => 'pdf_template',
                     'post_author' => $user_id,
                     'post_status' => 'publish'
-                ]);
+                    ]
+                );
 
                 if ($template_id) {
                     // Sauvegarder les éléments du template
@@ -92,14 +98,16 @@ class TemplateDefaults
     /**
      * Obtenir un template par défaut spécifique
      */
-    public static function get_template($template_key) {
+    public static function get_template($template_key)
+    {
         return self::$default_templates[$template_key] ?? null;
     }
 
     /**
      * Vérifier si un template est un template par défaut
      */
-    public static function is_default_template($template_id) {
+    public static function is_default_template($template_id)
+    {
         $template_type = get_post_meta($template_id, '_pdf_template_type', true);
         return $template_type === 'default';
     }

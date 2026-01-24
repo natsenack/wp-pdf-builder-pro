@@ -4,7 +4,8 @@
  * Connecte le plugin avec des services externes (Google Drive, Dropbox, etc.)
  */
 
-class PDF_Builder_Integration_Manager {
+class PDF_Builder_Integration_Manager
+{
     private static $instance = null;
 
     // Services supportés
@@ -112,19 +113,22 @@ class PDF_Builder_Integration_Manager {
     private $integrations_cache = [];
     private $connections_cache = [];
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_hooks();
         $this->load_integrations_cache();
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Actions AJAX
         add_action('wp_ajax_pdf_builder_connect_service', [$this, 'connect_service_ajax']);
         add_action('wp_ajax_pdf_builder_disconnect_service', [$this, 'disconnect_service_ajax']);
@@ -152,7 +156,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Charge le cache des intégrations
      */
-    private function load_integrations_cache() {
+    private function load_integrations_cache()
+    {
         $this->integrations_cache = get_option('pdf_builder_integrations', []);
         $this->connections_cache = get_option('pdf_builder_integration_connections', []);
     }
@@ -160,7 +165,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Ajoute le menu des intégrations
      */
-    public function add_integrations_menu() {
+    public function add_integrations_menu()
+    {
         add_submenu_page(
             'pdf-builder-settings',
             pdf_builder_translate('Intégrations externes', 'integration'),
@@ -174,7 +180,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Rend la page des intégrations
      */
-    public function render_integrations_page() {
+    public function render_integrations_page()
+    {
         if (!current_user_can('manage_options')) {
             wp_die(pdf_builder_translate('Accès refusé', 'integration'));
         }
@@ -188,7 +195,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Obtient les services disponibles
      */
-    public function get_available_services() {
+    public function get_available_services()
+    {
         $services = [];
 
         foreach (self::SERVICES_CONFIG as $service_id => $config) {
@@ -209,7 +217,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Obtient le statut des connexions
      */
-    public function get_connections_status() {
+    public function get_connections_status()
+    {
         $connections = [];
 
         foreach (array_keys(self::SERVICES_CONFIG) as $service_id) {
@@ -222,7 +231,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Obtient le statut d'une connexion
      */
-    public function get_connection_status($service_id) {
+    public function get_connection_status($service_id)
+    {
         if (!isset($this->connections_cache[$service_id])) {
             return self::STATUS_DISCONNECTED;
         }
@@ -240,14 +250,16 @@ class PDF_Builder_Integration_Manager {
     /**
      * Obtient la configuration d'un service
      */
-    public function get_service_config($service_id) {
+    public function get_service_config($service_id)
+    {
         return $this->integrations_cache[$service_id] ?? [];
     }
 
     /**
      * Obtient la dernière synchronisation
      */
-    public function get_last_sync_time($service_id) {
+    public function get_last_sync_time($service_id)
+    {
         $connection = $this->connections_cache[$service_id] ?? [];
 
         return $connection['last_sync'] ?? null;
@@ -256,7 +268,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Connecte un service
      */
-    public function connect_service($service_id, $config = []) {
+    public function connect_service($service_id, $config = [])
+    {
         try {
             if (!isset(self::SERVICES_CONFIG[$service_id])) {
                 throw new Exception(pdf_builder_translate('Service non supporté', 'integration'));
@@ -269,29 +282,31 @@ class PDF_Builder_Integration_Manager {
 
             // Connexion selon le type d'authentification
             switch ($service_config['auth_type']) {
-                case 'oauth2':
-                    return $this->connect_oauth2_service($service_id, $config);
+            case 'oauth2':
+                return $this->connect_oauth2_service($service_id, $config);
 
-                case 'api_key':
-                    return $this->connect_api_key_service($service_id, $config);
+            case 'api_key':
+                return $this->connect_api_key_service($service_id, $config);
 
-                case 'webhook':
-                    return $this->connect_webhook_service($service_id, $config);
+            case 'webhook':
+                return $this->connect_webhook_service($service_id, $config);
 
-                case 'none':
-                    return $this->connect_no_auth_service($service_id, $config);
+            case 'none':
+                return $this->connect_no_auth_service($service_id, $config);
 
-                default:
-                    throw new Exception(pdf_builder_translate('Type d\'authentification non supporté', 'integration'));
+            default:
+                throw new Exception(pdf_builder_translate('Type d\'authentification non supporté', 'integration'));
             }
 
         } catch (Exception $e) {
             // Logger l'erreur
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->error('Service connection failed', [
+                PDF_Builder_Logger::get_instance()->error(
+                    'Service connection failed', [
                     'service' => $service_id,
                     'error' => $e->getMessage()
-                ]);
+                    ]
+                );
             }
 
             return [
@@ -304,7 +319,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Déconnecte un service
      */
-    public function disconnect_service($service_id) {
+    public function disconnect_service($service_id)
+    {
         try {
             if (!isset($this->connections_cache[$service_id])) {
                 throw new Exception(pdf_builder_translate('Service non connecté', 'integration'));
@@ -320,9 +336,11 @@ class PDF_Builder_Integration_Manager {
 
             // Logger la déconnexion
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Service disconnected', [
+                PDF_Builder_Logger::get_instance()->info(
+                    'Service disconnected', [
                     'service' => $service_id
-                ]);
+                    ]
+                );
             }
 
             return [
@@ -341,7 +359,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Teste une connexion
      */
-    public function test_connection($service_id) {
+    public function test_connection($service_id)
+    {
         try {
             if ($this->get_connection_status($service_id) !== self::STATUS_CONNECTED) {
                 throw new Exception(pdf_builder_translate('Service non connecté', 'integration'));
@@ -352,21 +371,21 @@ class PDF_Builder_Integration_Manager {
 
             // Test selon le service
             switch ($service_id) {
-                case self::SERVICE_GOOGLE_DRIVE:
-                    return $this->test_google_drive_connection($config, $connection);
+            case self::SERVICE_GOOGLE_DRIVE:
+                return $this->test_google_drive_connection($config, $connection);
 
-                case self::SERVICE_DROPBOX:
-                    return $this->test_dropbox_connection($config, $connection);
+            case self::SERVICE_DROPBOX:
+                return $this->test_dropbox_connection($config, $connection);
 
-                case self::SERVICE_SLACK:
-                    return $this->test_slack_connection($config, $connection);
+            case self::SERVICE_SLACK:
+                return $this->test_slack_connection($config, $connection);
 
-                case self::SERVICE_WEBHOOK:
-                    return $this->test_webhook_connection($config);
+            case self::SERVICE_WEBHOOK:
+                return $this->test_webhook_connection($config);
 
-                default:
-                    // Test générique
-                    return $this->test_generic_connection($service_id, $config, $connection);
+            default:
+                // Test générique
+                return $this->test_generic_connection($service_id, $config, $connection);
             }
 
         } catch (Exception $e) {
@@ -380,15 +399,18 @@ class PDF_Builder_Integration_Manager {
     /**
      * Connecte un service OAuth2
      */
-    private function connect_oauth2_service($service_id, $config) {
+    private function connect_oauth2_service($service_id, $config)
+    {
         // Générer l'URL d'autorisation
         $auth_url = $this->generate_oauth2_auth_url($service_id, $config);
 
         // Stocker temporairement la configuration
-        $temp_config = array_merge($config, [
+        $temp_config = array_merge(
+            $config, [
             'service_id' => $service_id,
             'timestamp' => time()
-        ]);
+            ]
+        );
 
         update_option('pdf_builder_oauth_temp_config', $temp_config);
 
@@ -402,7 +424,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Connecte un service avec clé API
      */
-    private function connect_api_key_service($service_id, $config) {
+    private function connect_api_key_service($service_id, $config)
+    {
         // Sauvegarder la configuration
         $this->integrations_cache[$service_id] = $config;
         update_option('pdf_builder_integrations', $this->integrations_cache);
@@ -424,7 +447,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Connecte un service webhook
      */
-    private function connect_webhook_service($service_id, $config) {
+    private function connect_webhook_service($service_id, $config)
+    {
         // Valider l'URL du webhook
         if (!filter_var($config['webhook_url'], FILTER_VALIDATE_URL)) {
             throw new Exception(pdf_builder_translate('URL du webhook invalide', 'integration'));
@@ -451,7 +475,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Connecte un service sans authentification
      */
-    private function connect_no_auth_service($service_id, $config) {
+    private function connect_no_auth_service($service_id, $config)
+    {
         // Sauvegarder la configuration
         $this->integrations_cache[$service_id] = $config;
         update_option('pdf_builder_integrations', $this->integrations_cache);
@@ -473,7 +498,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Génère l'URL d'autorisation OAuth2
      */
-    private function generate_oauth2_auth_url($service_id, $config) {
+    private function generate_oauth2_auth_url($service_id, $config)
+    {
         $base_urls = [
             self::SERVICE_GOOGLE_DRIVE => 'https://accounts.google.com/o/oauth2/v2/auth',
             self::SERVICE_DROPBOX => 'https://www.dropbox.com/oauth2/authorize',
@@ -504,7 +530,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Gère le callback OAuth2
      */
-    public function handle_oauth_callback() {
+    public function handle_oauth_callback()
+    {
         if (!isset($_GET['oauth_callback']) || !isset($_GET['service'])) {
             return;
         }
@@ -551,10 +578,12 @@ class PDF_Builder_Integration_Manager {
         } catch (Exception $e) {
             // Logger l'erreur
             if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->error('OAuth callback failed', [
+                PDF_Builder_Logger::get_instance()->error(
+                    'OAuth callback failed', [
                     'service' => $service_id,
                     'error' => $e->getMessage()
-                ]);
+                    ]
+                );
             }
 
             // Rediriger avec erreur
@@ -566,7 +595,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Échange un code OAuth contre un token
      */
-    private function exchange_oauth_code($service_id, $code, $config) {
+    private function exchange_oauth_code($service_id, $code, $config)
+    {
         $token_urls = [
             self::SERVICE_GOOGLE_DRIVE => 'https://oauth2.googleapis.com/token',
             self::SERVICE_DROPBOX => 'https://api.dropboxapi.com/oauth2/token',
@@ -590,10 +620,12 @@ class PDF_Builder_Integration_Manager {
             'redirect_uri' => $redirect_uri
         ];
 
-        $response = wp_remote_post($token_urls[$service_id], [
+        $response = wp_remote_post(
+            $token_urls[$service_id], [
             'body' => $post_data,
             'timeout' => 30
-        ]);
+            ]
+        );
 
         if (is_wp_error($response)) {
             throw new Exception(pdf_builder_translate('Erreur lors de l\'échange du code OAuth', 'integration'));
@@ -617,7 +649,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Vérifie si un token OAuth est expiré
      */
-    private function is_oauth_token_expired($service_id) {
+    private function is_oauth_token_expired($service_id)
+    {
         $connection = $this->connections_cache[$service_id] ?? [];
 
         if (empty($connection['tokens']['expires_at'])) {
@@ -630,7 +663,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Rafraîchit les tokens OAuth
      */
-    public function refresh_oauth_tokens() {
+    public function refresh_oauth_tokens()
+    {
         foreach ($this->connections_cache as $service_id => $connection) {
             if ($this->is_oauth_token_expired($service_id) && !empty($connection['tokens']['refresh_token'])) {
                 try {
@@ -638,10 +672,12 @@ class PDF_Builder_Integration_Manager {
                 } catch (Exception $e) {
                     // Logger l'erreur mais continuer
                     if (class_exists('PDF_Builder_Logger')) {
-                        PDF_Builder_Logger::get_instance()->error('Token refresh failed', [
+                        PDF_Builder_Logger::get_instance()->error(
+                            'Token refresh failed', [
                             'service' => $service_id,
                             'error' => $e->getMessage()
-                        ]);
+                            ]
+                        );
                     }
                 }
             }
@@ -651,7 +687,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Rafraîchit un token OAuth spécifique
      */
-    private function refresh_oauth_token($service_id) {
+    private function refresh_oauth_token($service_id)
+    {
         $connection = $this->connections_cache[$service_id];
         $config = $this->get_service_config($service_id);
 
@@ -675,10 +712,12 @@ class PDF_Builder_Integration_Manager {
             'grant_type' => 'refresh_token'
         ];
 
-        $response = wp_remote_post($refresh_urls[$service_id], [
+        $response = wp_remote_post(
+            $refresh_urls[$service_id], [
             'body' => $post_data,
             'timeout' => 30
-        ]);
+            ]
+        );
 
         if (is_wp_error($response)) {
             throw new Exception(pdf_builder_translate('Erreur lors du rafraîchissement du token', 'integration'));
@@ -705,7 +744,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Valide la configuration d'un service
      */
-    private function validate_service_config($service_id, $config) {
+    private function validate_service_config($service_id, $config)
+    {
         $service_config = self::SERVICES_CONFIG[$service_id];
 
         $required_fields = [];
@@ -745,13 +785,16 @@ class PDF_Builder_Integration_Manager {
     /**
      * Teste la connexion Google Drive
      */
-    private function test_google_drive_connection($config, $connection) {
-        $response = wp_remote_get('https://www.googleapis.com/drive/v3/files?pageSize=1', [
+    private function test_google_drive_connection($config, $connection)
+    {
+        $response = wp_remote_get(
+            'https://www.googleapis.com/drive/v3/files?pageSize=1', [
             'headers' => [
                 'Authorization' => 'Bearer ' . $connection['tokens']['access_token']
             ],
             'timeout' => 30
-        ]);
+            ]
+        );
 
         if (is_wp_error($response)) {
             throw new Exception(pdf_builder_translate('Erreur de connexion Google Drive', 'integration'));
@@ -772,14 +815,17 @@ class PDF_Builder_Integration_Manager {
     /**
      * Teste la connexion Dropbox
      */
-    private function test_dropbox_connection($config, $connection) {
-        $response = wp_remote_post('https://api.dropboxapi.com/2/users/get_current_account', [
+    private function test_dropbox_connection($config, $connection)
+    {
+        $response = wp_remote_post(
+            'https://api.dropboxapi.com/2/users/get_current_account', [
             'headers' => [
                 'Authorization' => 'Bearer ' . $connection['tokens']['access_token'],
                 'Content-Type' => 'application/json'
             ],
             'timeout' => 30
-        ]);
+            ]
+        );
 
         if (is_wp_error($response)) {
             throw new Exception(pdf_builder_translate('Erreur de connexion Dropbox', 'integration'));
@@ -800,13 +846,16 @@ class PDF_Builder_Integration_Manager {
     /**
      * Teste la connexion Slack
      */
-    private function test_slack_connection($config, $connection) {
-        $response = wp_remote_post('https://slack.com/api/auth.test', [
+    private function test_slack_connection($config, $connection)
+    {
+        $response = wp_remote_post(
+            'https://slack.com/api/auth.test', [
             'headers' => [
                 'Authorization' => 'Bearer ' . $connection['tokens']['access_token']
             ],
             'timeout' => 30
-        ]);
+            ]
+        );
 
         if (is_wp_error($response)) {
             throw new Exception(pdf_builder_translate('Erreur de connexion Slack', 'integration'));
@@ -828,18 +877,23 @@ class PDF_Builder_Integration_Manager {
     /**
      * Teste la connexion webhook
      */
-    private function test_webhook_connection($config) {
-        $response = wp_remote_post($config['webhook_url'], [
-            'body' => wp_json_encode([
+    private function test_webhook_connection($config)
+    {
+        $response = wp_remote_post(
+            $config['webhook_url'], [
+            'body' => wp_json_encode(
+                [
                 'test' => true,
                 'timestamp' => time()
-            ]),
+                ]
+            ),
             'headers' => [
                 'Content-Type' => 'application/json',
                 'User-Agent' => 'PDF Builder Pro Webhook Test'
             ],
             'timeout' => 30
-        ]);
+            ]
+        );
 
         if (is_wp_error($response)) {
             throw new Exception(pdf_builder_translate('Erreur de connexion webhook', 'integration'));
@@ -854,7 +908,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Test générique de connexion
      */
-    private function test_generic_connection($service_id, $config, $connection) {
+    private function test_generic_connection($service_id, $config, $connection)
+    {
         // Test de base - vérifier que la configuration est présente
         if (empty($config)) {
             throw new Exception(pdf_builder_translate('Configuration manquante', 'integration'));
@@ -869,7 +924,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Vérifie la santé des intégrations
      */
-    public function check_integration_health() {
+    public function check_integration_health()
+    {
         foreach ($this->connections_cache as $service_id => $connection) {
             if ($connection['status'] === self::STATUS_CONNECTED) {
                 try {
@@ -884,10 +940,12 @@ class PDF_Builder_Integration_Manager {
 
                     // Logger l'erreur
                     if (class_exists('PDF_Builder_Logger')) {
-                        PDF_Builder_Logger::get_instance()->warning('Integration health check failed', [
+                        PDF_Builder_Logger::get_instance()->warning(
+                            'Integration health check failed', [
                             'service' => $service_id,
                             'error' => $e->getMessage()
-                        ]);
+                            ]
+                        );
                     }
                 }
             }
@@ -897,7 +955,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Ajoute les backends de stockage cloud
      */
-    public function add_cloud_storage_backends($backends) {
+    public function add_cloud_storage_backends($backends)
+    {
         $cloud_services = [
             self::SERVICE_GOOGLE_DRIVE => 'Google Drive',
             self::SERVICE_DROPBOX => 'Dropbox',
@@ -922,7 +981,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Nettoie les données d'intégration
      */
-    public function cleanup_integration_data() {
+    public function cleanup_integration_data()
+    {
         // Supprimer les configurations temporaires expirées
         $temp_config = get_option('pdf_builder_oauth_temp_config', []);
 
@@ -944,7 +1004,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * Affiche les notifications d'intégration
      */
-    public function display_integration_notices() {
+    public function display_integration_notices()
+    {
         // Succès OAuth
         if (isset($_GET['oauth_success']) && isset($_GET['service'])) {
             $service_name = self::SERVICES_CONFIG[$_GET['service']]['name'] ?? $_GET['service'];
@@ -979,7 +1040,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * AJAX - Connecte un service
      */
-    public function connect_service_ajax() {
+    public function connect_service_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1005,10 +1067,12 @@ class PDF_Builder_Integration_Manager {
             $result = $this->connect_service($service_id, $config);
 
             if ($result['success']) {
-                wp_send_json_success([
+                wp_send_json_success(
+                    [
                     'message' => $result['message'],
                     'auth_url' => $result['auth_url'] ?? null
-                ]);
+                    ]
+                );
             } else {
                 wp_send_json_error(['message' => $result['message']]);
             }
@@ -1021,7 +1085,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * AJAX - Déconnecte un service
      */
-    public function disconnect_service_ajax() {
+    public function disconnect_service_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1056,7 +1121,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * AJAX - Teste une connexion
      */
-    public function test_connection_ajax() {
+    public function test_connection_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1091,7 +1157,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * AJAX - Obtient le statut d'intégration
      */
-    public function get_integration_status_ajax() {
+    public function get_integration_status_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1101,10 +1168,12 @@ class PDF_Builder_Integration_Manager {
             $services = $this->get_available_services();
             $connections = $this->get_connections_status();
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'services' => $services,
                 'connections' => $connections
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -1114,7 +1183,8 @@ class PDF_Builder_Integration_Manager {
     /**
      * AJAX - Sauvegarde les paramètres d'intégration
      */
-    public function save_integration_settings_ajax() {
+    public function save_integration_settings_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -1141,9 +1211,11 @@ class PDF_Builder_Integration_Manager {
             );
             update_option('pdf_builder_integrations', $this->integrations_cache);
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => pdf_builder_translate('Paramètres sauvegardés avec succès', 'integration')
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -1152,35 +1224,44 @@ class PDF_Builder_Integration_Manager {
 }
 
 // Fonctions globales
-function pdf_builder_integration_manager() {
+function pdf_builder_integration_manager()
+{
     return PDF_Builder_Integration_Manager::get_instance();
 }
 
-function pdf_builder_connect_service($service_id, $config = []) {
+function pdf_builder_connect_service($service_id, $config = [])
+{
     return PDF_Builder_Integration_Manager::get_instance()->connect_service($service_id, $config);
 }
 
-function pdf_builder_disconnect_service($service_id) {
+function pdf_builder_disconnect_service($service_id)
+{
     return PDF_Builder_Integration_Manager::get_instance()->disconnect_service($service_id);
 }
 
-function pdf_builder_test_connection($service_id) {
+function pdf_builder_test_connection($service_id)
+{
     return PDF_Builder_Integration_Manager::get_instance()->test_connection($service_id);
 }
 
-function pdf_builder_get_integration_status($service_id) {
+function pdf_builder_get_integration_status($service_id)
+{
     return PDF_Builder_Integration_Manager::get_instance()->get_connection_status($service_id);
 }
 
-function pdf_builder_get_integration_config($service_id) {
+function pdf_builder_get_integration_config($service_id)
+{
     return PDF_Builder_Integration_Manager::get_instance()->get_service_config($service_id);
 }
 
-function pdf_builder_get_available_integrations() {
+function pdf_builder_get_available_integrations()
+{
     return PDF_Builder_Integration_Manager::get_instance()->get_available_services();
 }
 
 // Initialiser le système d'intégrations
-add_action('plugins_loaded', function() {
-    PDF_Builder_Integration_Manager::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_Integration_Manager::get_instance();
+    }
+);

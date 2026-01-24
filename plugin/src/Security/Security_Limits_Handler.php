@@ -16,9 +16,9 @@ class Security_Limits_Handler
     {
         // Appliquer les limites au chargement du plugin
         add_action('plugins_loaded', [__CLASS__, 'applySecurityLimits'], 5);
-// Valider la taille des fichiers uploadés
+        // Valider la taille des fichiers uploadés
         add_filter('upload_size_limit', [__CLASS__, 'validateUploadSize']);
-// Ajouter un hook pour vérifier la taille des templates avant génération
+        // Ajouter un hook pour vérifier la taille des templates avant génération
         add_action('pdf_builder_before_generate', [__CLASS__, 'validateTemplateSize']);
     }
 
@@ -31,7 +31,7 @@ class Security_Limits_Handler
         $max_execution_time = isset($settings['max_execution_time'])
             ? intval($settings['max_execution_time'])
             : 300;
-// 5 minutes par défaut
+        // 5 minutes par défaut
 
         if ($max_execution_time > 0 && $max_execution_time <= 3600) {
             set_time_limit($max_execution_time);
@@ -57,7 +57,7 @@ class Security_Limits_Handler
         $max_template_size = isset($settings['max_template_size'])
             ? intval($settings['max_template_size'])
             : 52428800;
-// 50MB par défaut
+        // 50MB par défaut
 
         // Retourner la limite plus petite
         return min($size, $max_template_size);
@@ -66,8 +66,8 @@ class Security_Limits_Handler
     /**
      * Valide la taille du template avant génération
      *
-     * @hook pdf_builder_before_generate
-     * @param array $template_data Données du template
+     * @hook   pdf_builder_before_generate
+     * @param  array $template_data Données du template
      * @throws \Exception Si le template est trop gros
      */
     public static function validateTemplateSize($template_data)
@@ -76,7 +76,7 @@ class Security_Limits_Handler
         $max_template_size = isset($settings['max_template_size'])
             ? intval($settings['max_template_size'])
             : 52428800;
-// 50MB par défaut
+        // 50MB par défaut
 
         // Sérialiser le template pour estimer sa taille
         $serialized = serialize($template_data);

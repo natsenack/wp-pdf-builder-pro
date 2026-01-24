@@ -4,28 +4,34 @@
  * Centralise la gestion de tous les paramètres et options du plugin
  */
 
-class PDF_Builder_Global_Config_Manager {
+class PDF_Builder_Global_Config_Manager
+{
     private static $instance = null;
     private $config = [];
     private $defaults = [];
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         // Différer l'initialisation jusqu'à ce que WordPress soit prêt
-        add_action('init', function() {
-            $this->init_defaults();
-            $this->load_config();
-            $this->init_hooks();
-        }, 1);
+        add_action(
+            'init', function () {
+                $this->init_defaults();
+                $this->load_config();
+                $this->init_hooks();
+            }, 1
+        );
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // AJAX pour la gestion de la configuration
         add_action('wp_ajax_pdf_builder_save_config', [$this, 'save_config_ajax']);
         add_action('wp_ajax_pdf_builder_reset_config', [$this, 'reset_config_ajax']);
@@ -39,7 +45,8 @@ class PDF_Builder_Global_Config_Manager {
     /**
      * Initialise les valeurs par défaut de la configuration
      */
-    private function init_defaults() {
+    private function init_defaults()
+    {
         $this->defaults = [
             // Paramètres généraux
             'company_name' => '',
@@ -130,7 +137,8 @@ class PDF_Builder_Global_Config_Manager {
     /**
      * Charge la configuration depuis la base de données
      */
-    private function load_config() {
+    private function load_config()
+    {
         $saved_config = get_option('pdf_builder_config', []);
 
         // Fusionner avec les valeurs par défaut
@@ -145,7 +153,8 @@ class PDF_Builder_Global_Config_Manager {
     /**
      * Sauvegarde la configuration
      */
-    public function save_config($new_config) {
+    public function save_config($new_config)
+    {
         // Valider la configuration
         $validated_config = $this->validate_config($new_config);
 
@@ -157,10 +166,12 @@ class PDF_Builder_Global_Config_Manager {
 
         // Logger la modification
         if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->info('Configuration updated', [
+            PDF_Builder_Logger::get_instance()->info(
+                'Configuration updated', [
                 'user_id' => get_current_user_id(),
                 'changes' => array_keys($validated_config)
-            ]);
+                ]
+            );
         }
 
         // Déclencher un hook pour les autres composants (seulement si WordPress est chargé)
@@ -174,15 +185,18 @@ class PDF_Builder_Global_Config_Manager {
     /**
      * Réinitialise la configuration aux valeurs par défaut
      */
-    public function reset_config() {
+    public function reset_config()
+    {
         $this->config = $this->defaults;
         update_option('pdf_builder_config', $this->config);
 
         // Logger la réinitialisation
         if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->warning('Configuration reset to defaults', [
+            PDF_Builder_Logger::get_instance()->warning(
+                'Configuration reset to defaults', [
                 'user_id' => get_current_user_id()
-            ]);
+                ]
+            );
         }
 
         // Déclencher un hook (seulement si WordPress est chargé)
@@ -196,14 +210,16 @@ class PDF_Builder_Global_Config_Manager {
     /**
      * Obtient une valeur de configuration
      */
-    public function get($key, $default = null) {
+    public function get($key, $default = null)
+    {
         return $this->config[$key] ?? $default;
     }
 
     /**
      * Définit une valeur de configuration
      */
-    public function set($key, $value) {
+    public function set($key, $value)
+    {
         $this->config[$key] = $value;
         $this->save_config([$key => $value]);
     }
@@ -211,14 +227,16 @@ class PDF_Builder_Global_Config_Manager {
     /**
      * Obtient toute la configuration
      */
-    public function get_all() {
+    public function get_all()
+    {
         return $this->config;
     }
 
     /**
      * Valide la configuration
      */
-    public function validate_config($config) {
+    public function validate_config($config)
+    {
         $validated = [];
 
         foreach ($config as $key => $value) {
@@ -231,88 +249,90 @@ class PDF_Builder_Global_Config_Manager {
     /**
      * Valide une valeur de configuration spécifique
      */
-    private function validate_config_value($key, $value) {
+    private function validate_config_value($key, $value)
+    {
         switch ($key) {
             // Booléens
-            case 'cache_enabled':
-            case 'enable_nonce_check':
-            case 'rate_limiting_enabled':
-            case 'enable_ip_filtering':
-            case 'enable_cors':
-            case 'logging_enabled':
-            case 'log_rotation_enabled':
-            case 'auto_backup_enabled':
-            case 'backup_compression':
-            case 'enable_drag_drop':
-            case 'enable_keyboard_shortcuts':
-            case 'debug_mode':
-            case 'performance_monitoring':
-            case 'error_reporting':
-            case 'maintenance_mode':
-            case 'db_optimization_enabled':
-            case 'db_query_cache_enabled':
-            case 'db_connection_pooling':
+        case 'cache_enabled':
+        case 'enable_nonce_check':
+        case 'rate_limiting_enabled':
+        case 'enable_ip_filtering':
+        case 'enable_cors':
+        case 'logging_enabled':
+        case 'log_rotation_enabled':
+        case 'auto_backup_enabled':
+        case 'backup_compression':
+        case 'enable_drag_drop':
+        case 'enable_keyboard_shortcuts':
+        case 'debug_mode':
+        case 'performance_monitoring':
+        case 'error_reporting':
+        case 'maintenance_mode':
+        case 'db_optimization_enabled':
+        case 'db_query_cache_enabled':
+        case 'db_connection_pooling':
             // Notification options removed - ignore these cases
-            case 'auto_update_enabled':
-                return (bool) $value;
+        case 'auto_update_enabled':
+            return (bool) $value;
 
             // Entiers
-            case 'cache_ttl':
-            case 'cache_cleanup_interval':
-            case 'memory_limit':
-            case 'max_execution_time':
-            case 'max_requests_per_minute':
-            case 'log_retention_days':
-            case 'log_max_file_size':
-            case 'backup_interval':
-            case 'backup_retention_count':
-            case 'default_template_width':
-            case 'default_template_height':
-            case 'default_dpi':
-            case 'max_upload_size':
-                return max(0, intval($value));
+        case 'cache_ttl':
+        case 'cache_cleanup_interval':
+        case 'memory_limit':
+        case 'max_execution_time':
+        case 'max_requests_per_minute':
+        case 'log_retention_days':
+        case 'log_max_file_size':
+        case 'backup_interval':
+        case 'backup_retention_count':
+        case 'default_template_width':
+        case 'default_template_height':
+        case 'default_dpi':
+        case 'max_upload_size':
+            return max(0, intval($value));
 
             // Chaînes avec validation
-            case 'company_email':
-                return is_email($value) ? sanitize_email($value) : $this->defaults[$key];
+        case 'company_email':
+            return is_email($value) ? sanitize_email($value) : $this->defaults[$key];
 
-            case 'company_website':
-                return esc_url_raw($value);
+        case 'company_website':
+            return esc_url_raw($value);
 
-            case 'log_level':
-                $valid_levels = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'];
-                return in_array(strtoupper($value), $valid_levels) ? strtoupper($value) : $this->defaults[$key];
+        case 'log_level':
+            $valid_levels = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'];
+            return in_array(strtoupper($value), $valid_levels) ? strtoupper($value) : $this->defaults[$key];
 
-            case 'default_language':
-                return sanitize_key($value);
+        case 'default_language':
+            return sanitize_key($value);
 
-            case 'license_key':
-                return sanitize_key($value);
+        case 'license_key':
+            return sanitize_key($value);
 
             // Tableaux
-            case 'allowed_ips':
-            case 'cors_origins':
-                if (!is_array($value)) {
-                    return [];
-                }
-                return array_map('sanitize_text_field', $value);
+        case 'allowed_ips':
+        case 'cors_origins':
+            if (!is_array($value)) {
+                return [];
+            }
+            return array_map('sanitize_text_field', $value);
 
-            case 'allowed_file_types':
-                if (!is_array($value)) {
-                    return $this->defaults[$key];
-                }
-                return array_map('strtolower', array_map('sanitize_key', $value));
+        case 'allowed_file_types':
+            if (!is_array($value)) {
+                return $this->defaults[$key];
+            }
+            return array_map('strtolower', array_map('sanitize_key', $value));
 
             // Chaînes simples
-            default:
-                return sanitize_text_field($value);
+        default:
+            return sanitize_text_field($value);
         }
     }
 
     /**
      * Exporte la configuration
      */
-    public function export_config() {
+    public function export_config()
+    {
         $export_data = [
             'version' => PDF_BUILDER_VERSION,
             'export_date' => current_time('mysql'),
@@ -325,7 +345,8 @@ class PDF_Builder_Global_Config_Manager {
     /**
      * Importe une configuration
      */
-    public function import_config($json_data) {
+    public function import_config($json_data)
+    {
         $import_data = json_decode($json_data, true);
 
         if (!$import_data || !isset($import_data['config'])) {
@@ -341,7 +362,8 @@ class PDF_Builder_Global_Config_Manager {
     /**
      * AJAX - Sauvegarde la configuration
      */
-    public function save_config_ajax() {
+    public function save_config_ajax()
+    {
         try {
             // Valider la requête
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
@@ -373,7 +395,8 @@ class PDF_Builder_Global_Config_Manager {
     /**
      * AJAX - Réinitialise la configuration
      */
-    public function reset_config_ajax() {
+    public function reset_config_ajax()
+    {
         try {
             // Valider la requête
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
@@ -398,7 +421,8 @@ class PDF_Builder_Global_Config_Manager {
     /**
      * AJAX - Exporte la configuration
      */
-    public function export_config_ajax() {
+    public function export_config_ajax()
+    {
         try {
             // Valider la requête
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
@@ -413,10 +437,12 @@ class PDF_Builder_Global_Config_Manager {
 
             $config_json = $this->export_config();
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Configuration exportée avec succès',
                 'config' => $config_json
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur lors de l\'export: ' . $e->getMessage()]);
@@ -426,7 +452,8 @@ class PDF_Builder_Global_Config_Manager {
     /**
      * AJAX - Importe la configuration
      */
-    public function import_config_ajax() {
+    public function import_config_ajax()
+    {
         try {
             // Valider la requête
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
@@ -458,7 +485,8 @@ class PDF_Builder_Global_Config_Manager {
     /**
      * Obtient les informations système pour le diagnostic
      */
-    public function get_system_info() {
+    public function get_system_info()
+    {
         global $wpdb;
 
         return [
@@ -482,7 +510,8 @@ class PDF_Builder_Global_Config_Manager {
     /**
      * Vérifie la santé de la configuration
      */
-    public function health_check() {
+    public function health_check()
+    {
         $issues = [];
 
         // Vérifier les permissions des dossiers
@@ -517,24 +546,29 @@ class PDF_Builder_Global_Config_Manager {
     }
 }
 
-function pdf_builder_config($key = null, $default = null) {
+function pdf_builder_config($key = null, $default = null)
+{
     $config = PDF_Builder_Global_Config_Manager::get_instance();
     return $key ? $config->get($key, $default) : $config->get_all();
 }
 
-function pdf_builder_set_config($key, $value) {
+function pdf_builder_set_config($key, $value)
+{
     PDF_Builder_Global_Config_Manager::get_instance()->set($key, $value);
 }
 
-function pdf_builder_save_config($config) {
+function pdf_builder_save_config($config)
+{
     return PDF_Builder_Global_Config_Manager::get_instance()->save_config($config);
 }
 
-function pdf_builder_get_system_info() {
+function pdf_builder_get_system_info()
+{
     return PDF_Builder_Global_Config_Manager::get_instance()->get_system_info();
 }
 
-function pdf_builder_health_check() {
+function pdf_builder_health_check()
+{
     return PDF_Builder_Global_Config_Manager::get_instance()->health_check();
 }
 

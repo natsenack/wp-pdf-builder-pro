@@ -11,22 +11,34 @@ use PDF_Builder\Managers\PDF_Builder_Logger;
  */
 abstract class BaseGenerator
 {
-    /** @var array Données du template */
+    /**
+     * 
+     *
+     * @var array Données du template 
+     */
     protected $template_data;
-/** @var DataProviderInterface Fournisseur de données */
+    /**
+     * @var DataProviderInterface Fournisseur de données 
+     */
     protected $data_provider;
-/** @var bool Indique si c'est un aperçu ou une génération finale */
+    /**
+     * @var bool Indique si c'est un aperçu ou une génération finale 
+     */
     protected $is_preview;
-/** @var array Configuration du générateur */
+    /**
+     * @var array Configuration du générateur 
+     */
     protected $config;
 
     /**
      * Constructeur de base
      *
-     * @param array $template_data Données du template
+     * @param array                 $template_data Données du
+     *                                             template
      * @param DataProviderInterface $data_provider Fournisseur de données
-     * @param bool $is_preview Mode aperçu ou génération finale
-     * @param array $config Configuration optionnelle
+     * @param bool                  $is_preview    Mode aperçu ou
+     *                                             génération finale
+     * @param array                 $config        Configuration optionnelle
      */
     public function __construct(
         array $template_data,
@@ -62,10 +74,10 @@ abstract class BaseGenerator
      * Initialisation du générateur (à implémenter dans les classes enfants)
      */
     abstract protected function initialize(): void;
-/**
+    /**
      * Génère l'aperçu selon le type demandé
      *
-     * @param string $output_type Type de sortie ('pdf', 'png', 'jpg')
+     * @param  string $output_type Type de sortie ('pdf', 'png', 'jpg')
      * @return mixed Résultat de la génération
      */
     abstract public function generate(string $output_type = 'pdf');
@@ -82,9 +94,8 @@ abstract class BaseGenerator
             return false;
         }
 
-        if (
-            !isset($this->template_data['template']['elements']) ||
-            !is_array($this->template_data['template']['elements'])
+        if (!isset($this->template_data['template']['elements']) 
+            || !is_array($this->template_data['template']['elements'])
         ) {
             $this->logError('Template elements missing or not an array');
             return false;
@@ -101,9 +112,9 @@ abstract class BaseGenerator
     protected function generateHTML(): string
     {
         $html = $this->getBaseHTML();
-// Injection des styles CSS
+        // Injection des styles CSS
         $html = str_replace('{{CSS_STYLES}}', $this->generateCSS(), $html);
-// Injection du contenu
+        // Injection du contenu
         $html = str_replace('{{CONTENT}}', $this->generateContent(), $html);
         return $html;
     }
@@ -141,7 +152,7 @@ abstract class BaseGenerator
             .text-element { white-space: pre-wrap; }
             .image-element { max-width: 100%; height: auto; }
         ';
-// Styles personnalisés du template si présents
+        // Styles personnalisés du template si présents
         if (isset($this->template_data['template']['styles'])) {
             $css .= $this->template_data['template']['styles'];
         }
@@ -191,7 +202,7 @@ abstract class BaseGenerator
     /**
      * Rend un élément individuel
      *
-     * @param array $element Données de l'élément
+     * @param  array $element Données de l'élément
      * @return string HTML de l'élément
      */
     protected function renderElement(array $element): string
@@ -221,7 +232,7 @@ abstract class BaseGenerator
     /**
      * Rend un élément texte
      *
-     * @param array $element Données de l'élément texte
+     * @param  array $element Données de l'élément texte
      * @return string HTML de l'élément texte
      */
     protected function renderTextElement(array $element): string
@@ -235,7 +246,7 @@ abstract class BaseGenerator
     /**
      * Rend un élément image
      *
-     * @param array $element Données de l'élément image
+     * @param  array $element Données de l'élément image
      * @return string HTML de l'élément image
      */
     protected function renderImageElement(array $element): string
@@ -253,7 +264,7 @@ abstract class BaseGenerator
     /**
      * Rend un élément rectangle
      *
-     * @param array $element Données de l'élément rectangle
+     * @param  array $element Données de l'élément rectangle
      * @return string HTML de l'élément rectangle
      */
     protected function renderRectangleElement(array $element): string
@@ -266,7 +277,7 @@ abstract class BaseGenerator
     /**
      * Construit le style CSS d'un élément
      *
-     * @param array $element Données de l'élément
+     * @param  array $element Données de l'élément
      * @return string Style CSS
      */
     protected function buildElementStyle(array $element): string
@@ -303,7 +314,7 @@ abstract class BaseGenerator
     /**
      * Injecte les variables dynamiques dans le texte
      *
-     * @param string $text Texte avec variables
+     * @param  string $text Texte avec variables
      * @return string Texte avec variables remplacées
      */
     protected function injectVariables(string $text): string

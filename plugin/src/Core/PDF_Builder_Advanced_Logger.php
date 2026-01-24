@@ -4,9 +4,9 @@
  *
  * Logger intelligent avec rotation, niveaux de log, et archivage automatique.
  *
- * @package PDF_Builder
+ * @package    PDF_Builder
  * @subpackage Core
- * @since 1.1.0
+ * @since      1.1.0
  */
 
 if (!defined('ABSPATH')) {
@@ -16,7 +16,8 @@ if (!defined('ABSPATH')) {
 /**
  * Classe principale du système de logging avancé
  */
-class PDF_Builder_Advanced_Logger {
+class PDF_Builder_Advanced_Logger
+{
 
     /**
      * Instance unique
@@ -56,7 +57,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Constructeur privé
      */
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_config();
         $this->init_log_file();
         $this->register_hooks();
@@ -65,7 +67,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Obtenir l'instance unique
      */
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -75,7 +78,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Initialiser la configuration
      */
-    private function init_config() {
+    private function init_config()
+    {
         $this->config = array(
             'enabled' => get_option('pdf_builder_enable_logging', '1') === '1',
             'level' => self::LEVEL_INFO,
@@ -90,7 +94,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Initialiser le fichier de log
      */
-    private function init_log_file() {
+    private function init_log_file()
+    {
         $upload_dir = wp_upload_dir();
         $log_dir = $upload_dir['basedir'] . '/pdf-builder-logs/';
 
@@ -109,7 +114,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Enregistrer les hooks
      */
-    private function register_hooks() {
+    private function register_hooks()
+    {
         add_action('pdf_builder_daily_maintenance', array($this, 'cleanup_old_logs'));
         add_action('wp_ajax_pdf_builder_view_logs', array($this, 'ajax_view_logs'));
 
@@ -123,7 +129,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Logger un message
      */
-    public function log($message, $level = self::LEVEL_INFO, $context = array()) {
+    public function log($message, $level = self::LEVEL_INFO, $context = array())
+    {
         if (!$this->config['enabled'] || $level < $this->config['level']) {
             return;
         }
@@ -140,30 +147,36 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Méthodes de logging par niveau
      */
-    public function debug($message, $context = array()) {
+    public function debug($message, $context = array())
+    {
         // $this->log($message, self::LEVEL_DEBUG, $context);
     }
 
-    public function info($message, $context = array()) {
+    public function info($message, $context = array())
+    {
         // $this->log($message, self::LEVEL_INFO, $context);
     }
 
-    public function warning($message, $context = array()) {
+    public function warning($message, $context = array())
+    {
         // $this->log($message, self::LEVEL_WARNING, $context);
     }
 
-    public function error($message, $context = array()) {
+    public function error($message, $context = array())
+    {
         // $this->log($message, self::LEVEL_ERROR, $context);
     }
 
-    public function critical($message, $context = array()) {
+    public function critical($message, $context = array())
+    {
         // $this->log($message, self::LEVEL_CRITICAL, $context);
     }
 
     /**
      * Logger une erreur
      */
-    public function log_error($error, $context = array()) {
+    public function log_error($error, $context = array())
+    {
         $context['error_type'] = 'error';
         $this->error($error, $context);
     }
@@ -171,7 +184,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Logger un avertissement
      */
-    public function log_warning($warning, $context = array()) {
+    public function log_warning($warning, $context = array())
+    {
         $context['warning_type'] = 'warning';
         $this->warning($warning, $context);
     }
@@ -179,7 +193,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Logger une activité utilisateur
      */
-    public function log_user_activity($action, $user_id = null, $context = array()) {
+    public function log_user_activity($action, $user_id = null, $context = array())
+    {
         if ($user_id === null) {
             $user_id = get_current_user_id();
         }
@@ -194,7 +209,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Logger une activité système
      */
-    public function log_system_activity($component, $action, $context = array()) {
+    public function log_system_activity($component, $action, $context = array())
+    {
         $context['component'] = $component;
         $context['system_info'] = $this->get_system_info();
 
@@ -204,7 +220,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Obtenir les logs récents
      */
-    public function get_recent_logs($limit = 100, $level = null) {
+    public function get_recent_logs($limit = 100, $level = null)
+    {
         if (!file_exists($this->current_log_file)) {
             return array();
         }
@@ -244,7 +261,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Obtenir tous les fichiers de log
      */
-    public function get_log_files() {
+    public function get_log_files()
+    {
         $upload_dir = wp_upload_dir();
         $log_dir = $upload_dir['basedir'] . '/pdf-builder-logs/';
 
@@ -266,9 +284,11 @@ class PDF_Builder_Advanced_Logger {
         }
 
         // Trier par date de modification (plus récent en premier)
-        usort($log_files, function($a, $b) {
-            return $b['modified'] - $a['modified'];
-        });
+        usort(
+            $log_files, function ($a, $b) {
+                return $b['modified'] - $a['modified'];
+            }
+        );
 
         return $log_files;
     }
@@ -276,7 +296,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Nettoyer les anciens logs
      */
-    public function cleanup_old_logs() {
+    public function cleanup_old_logs()
+    {
         $files = $this->get_log_files();
         $now = time();
         $retention_seconds = $this->config['retention_days'] * 24 * 60 * 60;
@@ -300,7 +321,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Handler pour les erreurs PHP
      */
-    public function handle_php_error($errno, $errstr, $errfile, $errline) {
+    public function handle_php_error($errno, $errstr, $errfile, $errline)
+    {
         $levels = array(
             E_ERROR => self::LEVEL_CRITICAL,
             E_WARNING => self::LEVEL_WARNING,
@@ -325,7 +347,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Handler pour les exceptions PHP
      */
-    public function handle_php_exception($exception) {
+    public function handle_php_exception($exception)
+    {
         $context = array(
             'file' => $exception->getFile(),
             'line' => $exception->getLine(),
@@ -339,7 +362,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Formatter une entrée de log
      */
-    private function format_log_entry($message, $level, $context) {
+    private function format_log_entry($message, $level, $context)
+    {
         $timestamp = current_time('Y-m-d H:i:s');
         $level_name = $this->level_names[$level] ?? 'UNKNOWN';
 
@@ -360,7 +384,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Écrire dans le fichier de log
      */
-    private function write_to_file($entry) {
+    private function write_to_file($entry)
+    {
         // Rotation si nécessaire avant d'écrire
         $this->rotate_if_needed();
 
@@ -374,7 +399,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Rotation du fichier de log si nécessaire
      */
-    private function rotate_if_needed() {
+    private function rotate_if_needed()
+    {
         if (!file_exists($this->current_log_file)) {
             return;
         }
@@ -387,7 +413,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Effectuer la rotation du fichier de log
      */
-    private function rotate_log_file() {
+    private function rotate_log_file()
+    {
         $upload_dir = wp_upload_dir();
         $log_dir = $upload_dir['basedir'] . '/pdf-builder-logs/';
 
@@ -402,7 +429,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Parser une ligne de log
      */
-    private function parse_log_line($line) {
+    private function parse_log_line($line)
+    {
         $pattern = '/^\[([^\]]+)\]\s*\[([^\]]+)\]\s*(.+?)(?:\s*\|\s*(.+))?$/';
         if (preg_match($pattern, trim($line), $matches)) {
             $context = array();
@@ -428,7 +456,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Envoyer vers un système de logging distant
      */
-    private function send_to_remote($entry) {
+    private function send_to_remote($entry)
+    {
         // Implémentation pour logging distant (par exemple vers un service externe)
         // Pour l'instant, juste logger localement
         $this->debug('Remote logging not implemented yet', array('entry' => $entry));
@@ -437,7 +466,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Obtenir l'IP de l'utilisateur
      */
-    private function get_user_ip() {
+    private function get_user_ip()
+    {
         $ip_headers = array(
             'HTTP_CF_CONNECTING_IP',
             'HTTP_CLIENT_IP',
@@ -467,7 +497,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Obtenir les informations système
      */
-    private function get_system_info() {
+    private function get_system_info()
+    {
         return array(
             'php_version' => PHP_VERSION,
             'wp_version' => get_bloginfo('version'),
@@ -479,7 +510,8 @@ class PDF_Builder_Advanced_Logger {
     /**
      * Handler AJAX pour voir les logs
      */
-    public function ajax_view_logs() {
+    public function ajax_view_logs()
+    {
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Permissions insuffisantes');
         }
@@ -490,10 +522,12 @@ class PDF_Builder_Advanced_Logger {
         $logs = $this->get_recent_logs($limit, $level);
         $files = $this->get_log_files();
 
-        wp_send_json_success(array(
+        wp_send_json_success(
+            array(
             'logs' => $logs,
             'files' => $files,
             'current_file' => basename($this->current_log_file),
-        ));
+            )
+        );
     }
 }

@@ -23,9 +23,9 @@ class TableRenderer
      * Types d'éléments supportés par ce renderer
      */
     const SUPPORTED_TYPES = ['product_table'];
-/**
-     * Styles CSS par défaut pour les tableaux
-     */
+    /**
+         * Styles CSS par défaut pour les tableaux
+         */
     const DEFAULT_STYLES = [
         'border-collapse' => 'collapse',
         'border-spacing' => '0',
@@ -34,9 +34,9 @@ class TableRenderer
         'font-size' => '12px',
         'color' => '#000000'
     ];
-/**
-     * Colonnes par défaut pour les tableaux de produits
-     */
+    /**
+         * Colonnes par défaut pour les tableaux de produits
+         */
     const DEFAULT_COLUMNS = [
         'product' => ['label' => 'Produit', 'width' => '40%', 'align' => 'left'],
         'quantity' => ['label' => 'Qté', 'width' => '15%', 'align' => 'center'],
@@ -47,8 +47,9 @@ class TableRenderer
     /**
      * Rend un élément tableau
      *
-     * @param array $elementData Données de l'élément
-     * @param array $context Contexte de rendu (données du provider)
+     * @param  array $elementData Données de l'élément
+     * @param  array $context     Contexte de rendu (données du
+     *                            provider)
      * @return array Résultat du rendu HTML/CSS
      */
     public function render(array $elementData, array $context = []): array
@@ -64,12 +65,12 @@ class TableRenderer
 
         $type = $elementData['type'] ?? 'product_table';
         $properties = $elementData['properties'] ?? [];
-// Rendu selon le type d'élément
+        // Rendu selon le type d'élément
         switch ($type) {
-            case 'product_table':
-                return $this->renderProductTable($properties, $context);
-            default:
-                return [
+        case 'product_table':
+            return $this->renderProductTable($properties, $context);
+        default:
+            return [
                     'html' => '<!-- Erreur: Type d\'élément non supporté -->',
                     'css' => '',
                     'error' => 'Type d\'élément non supporté: ' . $type
@@ -80,8 +81,9 @@ class TableRenderer
     /**
      * Rend un tableau de produits WooCommerce
      *
-     * @param array $properties Propriétés du tableau
-     * @param array $context Données du contexte
+     * @param  array $properties Propriétés du tableau
+     * @param  array $context    Données du
+     *                           contexte
      * @return array Résultat du rendu
      */
     private function renderProductTable(array $properties, array $context): array
@@ -98,9 +100,9 @@ class TableRenderer
 
         // Configuration des colonnes
         $columns = $this->getTableColumns($properties);
-// Génération du HTML du tableau
+        // Génération du HTML du tableau
         $html = $this->generateTableHTML($products, $columns, $properties);
-// Génération des styles CSS (sans cache - génération directe)
+        // Génération des styles CSS (sans cache - génération directe)
         $css = $this->generateTableStyles($properties, $columns);
 
         return [
@@ -113,7 +115,7 @@ class TableRenderer
     /**
      * Valide les données de l'élément
      *
-     * @param array $elementData Données à valider
+     * @param  array $elementData Données à valider
      * @return bool True si valide
      */
     private function validateElementData(array $elementData): bool
@@ -125,7 +127,7 @@ class TableRenderer
     /**
      * Récupère les données des produits depuis le contexte
      *
-     * @param array $context Données du contexte
+     * @param  array $context Données du contexte
      * @return array Liste des produits
      */
     private function getProductData(array $context): array
@@ -154,13 +156,13 @@ class TableRenderer
     /**
      * Récupère la configuration des colonnes
      *
-     * @param array $properties Propriétés du tableau
+     * @param  array $properties Propriétés du tableau
      * @return array Configuration des colonnes
      */
     private function getTableColumns(array $properties): array
     {
         $columnsConfig = $properties['columns'] ?? self::DEFAULT_COLUMNS;
-// Validation et normalisation des colonnes
+        // Validation et normalisation des colonnes
         $columns = [];
         foreach ($columnsConfig as $key => $config) {
             $columns[$key] = [
@@ -177,15 +179,16 @@ class TableRenderer
     /**
      * Génère le HTML du tableau
      *
-     * @param array $products Données des produits
-     * @param array $columns Configuration des colonnes
-     * @param array $properties Propriétés du tableau
+     * @param  array $products   Données des
+     *                           produits
+     * @param  array $columns    Configuration des colonnes
+     * @param  array $properties Propriétés du tableau
      * @return string HTML généré
      */
     private function generateTableHTML(array $products, array $columns, array $properties): string
     {
         $html = '<table class="pdf-product-table">';
-// En-tête du tableau
+        // En-tête du tableau
         $html .= '<thead><tr>';
         foreach ($columns as $key => $column) {
             if (!$column['visible']) {
@@ -205,7 +208,7 @@ class TableRenderer
                     );
         }
         $html .= '</tr></thead>';
-// Corps du tableau
+        // Corps du tableau
         $html .= '<tbody>';
         foreach ($products as $product) {
             $html .= '<tr>';
@@ -226,7 +229,7 @@ class TableRenderer
             $html .= '</tr>';
         }
         $html .= '</tbody>';
-// Pied du tableau avec totaux
+        // Pied du tableau avec totaux
         $totals = $this->calculateTotals($products, $properties);
         if (!empty($totals)) {
             $html .= '<tfoot>';
@@ -258,52 +261,56 @@ class TableRenderer
     /**
      * Formate la valeur d'une cellule selon son type
      *
-     * @param string $columnKey Clé de la colonne
-     * @param array $product Données du produit
-     * @param array $properties Propriétés du tableau
+     * @param  string $columnKey  Clé de la
+     *                            colonne
+     * @param  array  $product    Données
+     *                            du produit
+     * @param  array  $properties Propriétés du
+     *                            tableau
      * @return string Valeur formatée
      */
     private function formatCellValue(string $columnKey, array $product, array $properties): string
     {
         switch ($columnKey) {
-            case 'product':
-                  $name = htmlspecialchars($product['name']);
-                if (!empty($product['sku'])) {
-                    $name .= '<br><small style="color: #666;">SKU: ' . htmlspecialchars($product['sku']) . '</small>';
-                }
+        case 'product':
+              $name = htmlspecialchars($product['name']);
+            if (!empty($product['sku'])) {
+                $name .= '<br><small style="color: #666;">SKU: ' . htmlspecialchars($product['sku']) . '</small>';
+            }
 
-                return $name;
-            case 'quantity':
-                return (int)$product['quantity'];
-            case 'price':
-                return $this->formatCurrency($product['price'], $properties);
-            case 'total':
-                return $this->formatCurrency($product['total'], $properties);
-            default:
-                return htmlspecialchars($product[$columnKey] ?? '');
+            return $name;
+        case 'quantity':
+            return (int)$product['quantity'];
+        case 'price':
+            return $this->formatCurrency($product['price'], $properties);
+        case 'total':
+            return $this->formatCurrency($product['total'], $properties);
+        default:
+            return htmlspecialchars($product[$columnKey] ?? '');
         }
     }
 
     /**
      * Formate une valeur monétaire
      *
-     * @param float $amount Montant
-     * @param array $properties Propriétés du tableau
+     * @param  float $amount     Montant
+     * @param  array $properties Propriétés du tableau
      * @return string Montant formaté
      */
     private function formatCurrency(float $amount, array $properties): string
     {
         $currency = $properties['currency'] ?? 'EUR';
         $locale = $properties['locale'] ?? 'fr_FR';
-// Formatage simple pour l'instant
+        // Formatage simple pour l'instant
         return number_format($amount, 2, ',', ' ') . ' ' . $currency;
     }
 
     /**
      * Calcule les totaux du tableau
      *
-     * @param array $products Données des produits
-     * @param array $properties Propriétés du tableau
+     * @param  array $products   Données des
+     *                           produits
+     * @param  array $properties Propriétés du tableau
      * @return array Lignes de totaux
      */
     private function calculateTotals(array $products, array $properties): array
@@ -325,7 +332,7 @@ class TableRenderer
         // Calcul de la TVA si demandé
         if ($showTax) {
             $taxRate = $properties['tax_rate'] ?? 20.0;
-// 20% par défaut
+            // 20% par défaut
             $subtotal = array_sum(array_column($products, 'total'));
             $taxAmount = $subtotal * ($taxRate / 100);
             $totals[] = [
@@ -357,33 +364,33 @@ class TableRenderer
     /**
      * Génère les styles CSS du tableau
      *
-     * @param array $properties Propriétés du tableau
-     * @param array $columns Configuration des colonnes
+     * @param  array $properties Propriétés du tableau
+     * @param  array $columns    Configuration des colonnes
      * @return string CSS généré
      */
     private function generateTableStyles(array $properties, array $columns): string
     {
         $css = [];
-// Styles de base du tableau
+        // Styles de base du tableau
         $css[] = '.pdf-product-table {';
         $css[] = '  border-collapse: collapse;';
         $css[] = '  width: 100%;';
         $css[] = '  margin: 10px 0;';
         $css[] = '}';
-// Styles des cellules
+        // Styles des cellules
         $css[] = '.pdf-product-table th, .pdf-product-table td {';
         $css[] = '  padding: 8px 12px;';
         $css[] = '  border: 1px solid #ddd;';
         $css[] = '  vertical-align: top;';
         $css[] = '}';
-// Styles de l'en-tête
+        // Styles de l'en-tête
         $css[] = '.pdf-product-table th {';
         $css[] = '  background-color: #f5f5f5;';
         $css[] = '  font-weight: bold;';
         $css[] = '  text-transform: uppercase;';
         $css[] = '  font-size: 11px;';
         $css[] = '}';
-// Styles des lignes alternées avec couleurs personnalisées
+        // Styles des lignes alternées avec couleurs personnalisées
         $evenRowBg = $properties['evenRowBg'] ?? '#f9f9f9';
         $evenRowTextColor = $properties['evenRowTextColor'] ?? '#000000';
         $oddRowBg = $properties['oddRowBg'] ?? '#ffffff';
@@ -396,7 +403,7 @@ class TableRenderer
         $css[] = '  background-color: ' . $this->sanitizeColor($oddRowBg) . ';';
         $css[] = '  color: ' . $this->sanitizeColor($oddRowTextColor) . ';';
         $css[] = '}';
-// Styles conditionnels pour les en-têtes
+        // Styles conditionnels pour les en-têtes
         if (($properties['showHeaders'] ?? true) === false) {
             $css[] = '.pdf-product-table th {';
             $css[] = '  display: none;';
@@ -408,7 +415,7 @@ class TableRenderer
         $css[] = '  background-color: #e8f4f8;';
         $css[] = '  border-top: 2px solid #007cba;';
         $css[] = '}';
-// Styles des lignes de total td
+        // Styles des lignes de total td
         $css[] = '.pdf-product-table .table-total-row td {';
         $css[] = '  font-weight: bold;';
         $css[] = '  padding: 10px 12px;';
@@ -419,7 +426,7 @@ class TableRenderer
     /**
      * Nettoie et valide une valeur de couleur CSS
      *
-     * @param string $color Valeur de couleur
+     * @param  string $color Valeur de couleur
      * @return string Couleur validée
      */
     private function sanitizeColor(string $color): string

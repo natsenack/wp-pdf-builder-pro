@@ -227,323 +227,326 @@ class PdfBuilderProGenerator
     private function renderElementContent($element, $style, $type)
     {
         switch ($type) {
-            case 'text':
-            case 'dynamic-text':
-            case 'multiline_text':
-                // LOG DES PROPRIÉTÉS TEXT
+        case 'text':
+        case 'dynamic-text':
+        case 'multiline_text':
+            // LOG DES PROPRIÉTÉS TEXT
 
 
 
-                // Pour dynamic-text, prioriser customContent, sinon content/text
-                if ($type === 'dynamic-text') {
-                    $content = $element['customContent'] ?? $element['content'] ?? $element['text'] ?? '';
-                } else {
-                    $content = $element['content'] ?? $element['text'] ?? '';
-                }
+            // Pour dynamic-text, prioriser customContent, sinon content/text
+            if ($type === 'dynamic-text') {
+                $content = $element['customContent'] ?? $element['content'] ?? $element['text'] ?? '';
+            } else {
+                $content = $element['content'] ?? $element['text'] ?? '';
+            }
 
 
 
-                // Pour dynamic-text, remplacer les variables si un ordre est défini
-                if ($type === 'dynamic-text' && $this->order) {
-                    $original_content = $content;
-                    $content = $this->replaceOrderVariables($content, $this->order);
-                }
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; white-space: pre-wrap; word-wrap: break-word;'>" . wp_kses_post($content) . "</div>";
+            // Pour dynamic-text, remplacer les variables si un ordre est défini
+            if ($type === 'dynamic-text' && $this->order) {
+                $original_content = $content;
+                $content = $this->replaceOrderVariables($content, $this->order);
+            }
+            return "<div class='canvas-element' style='" . esc_attr($style) . "; white-space: pre-wrap; word-wrap: break-word;'>" . wp_kses_post($content) . "</div>";
 
-            case 'image':
-            case 'company_logo':
-                // LOG DES PROPRIÉTÉS IMAGE
-
-
-
-                $src = $element['imageUrl'] ?? $element['src'] ?? '';
-                if (!$src && $type === 'company_logo') {
-                    $custom_logo_id = get_theme_mod('custom_logo');
-                    $src = $custom_logo_id ? wp_get_attachment_image_url($custom_logo_id, 'full') : '';
-                }
+        case 'image':
+        case 'company_logo':
+            // LOG DES PROPRIÉTÉS IMAGE
 
 
 
-                if ($src) {
-                    return "<img class='canvas-element' src='" . esc_url($src) . "' style='" . esc_attr($style) . "; object-fit: contain;' />";
-                }
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;'>Logo</div>";
-
-            case 'rectangle':
-                // LOG DES PROPRIÉTÉS RECTANGLE
-
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; border: 1px solid #ccc;'></div>";
-
-            case 'divider':
-            case 'line':
-                // LOG DES PROPRIÉTÉS LINE
-
-
-                $line_color = $element['lineColor'] ?? '#64748b';
-                $line_width = $element['lineWidth'] ?? 2;
-                $style .= "border-bottom: {$line_width}px solid {$line_color}; height: {$line_width}px;";
+            $src = $element['imageUrl'] ?? $element['src'] ?? '';
+            if (!$src && $type === 'company_logo') {
+                $custom_logo_id = get_theme_mod('custom_logo');
+                $src = $custom_logo_id ? wp_get_attachment_image_url($custom_logo_id, 'full') : '';
+            }
 
 
 
-                return "<div class='canvas-element' style='" . esc_attr($style) . ";'></div>";
+            if ($src) {
+                return "<img class='canvas-element' src='" . esc_url($src) . "' style='" . esc_attr($style) . "; object-fit: contain;' />";
+            }
+            return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;'>Logo</div>";
 
-            case 'product_table':
-                $table_html = '';
-                $table_html = $this->generateTableHtmlFromCanvasTemplate($element);
+        case 'rectangle':
+            // LOG DES PROPRIÉTÉS RECTANGLE
 
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; overflow: auto;'>" . $table_html . "</div>";
+            return "<div class='canvas-element' style='" . esc_attr($style) . "; border: 1px solid #ccc;'></div>";
 
-            case 'customer_info':
-                // LOG DES PROPRIÉTÉS CUSTOMER INFO
-
-
-
-
-                $customer_info = '';
-                if ($this->order) {
-                    $fields = $element['fields'] ?? ['name', 'company', 'address', 'email', 'phone', 'payment_method', 'transaction_id'];
-                    $show_labels = $element['showLabels'] ?? true;
-                    $label_style = $element['labelStyle'] ?? 'normal';
+        case 'divider':
+        case 'line':
+            // LOG DES PROPRIÉTÉS LINE
 
 
+            $line_color = $element['lineColor'] ?? '#64748b';
+            $line_width = $element['lineWidth'] ?? 2;
+            $style .= "border-bottom: {$line_width}px solid {$line_color}; height: {$line_width}px;";
 
-                    $customer_parts = [];
 
-                    if (in_array('name', $fields)) {
-                        $name = trim($this->order->get_billing_first_name() . ' ' . $this->order->get_billing_last_name());
-                        if ($name) {
-                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>Nom:</strong> ' : 'Nom: ') : '';
-                            $customer_parts[] = $label . $name;
-                        }
-                    }
 
-                    if (in_array('company', $fields)) {
-                        $company = $this->order->get_billing_company();
-                        if ($company) {
-                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>Entreprise:</strong> ' : 'Entreprise: ') : '';
-                            $customer_parts[] = $label . $company;
-                        }
-                    }
+            return "<div class='canvas-element' style='" . esc_attr($style) . ";'></div>";
 
-                    if (in_array('address', $fields)) {
-                        $address_parts = [];
-                        $address_1 = $this->order->get_billing_address_1();
-                        $address_2 = $this->order->get_billing_address_2();
-                        $city = $this->order->get_billing_city();
-                        $postcode = $this->order->get_billing_postcode();
-                        $state = $this->order->get_billing_state();
-                        $country = $this->order->get_billing_country();
+        case 'product_table':
+            $table_html = '';
+            $table_html = $this->generateTableHtmlFromCanvasTemplate($element);
 
-                        if ($address_1) $address_parts[] = $address_1;
-                        if ($address_2) $address_parts[] = $address_2;
-                        if ($postcode || $city) $address_parts[] = trim($postcode . ' ' . $city);
-                        if ($state || $country) {
-                            $country_line = $state ? $state . ', ' . $country : $country;
-                            $address_parts[] = $country_line;
-                        }
+            return "<div class='canvas-element' style='" . esc_attr($style) . "; overflow: auto;'>" . $table_html . "</div>";
 
-                        if (!empty($address_parts)) {
-                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>Adresse:</strong><br>' : 'Adresse:<br>') : '';
-                            $customer_parts[] = $label . implode('<br>', $address_parts);
-                        }
-                    }
+        case 'customer_info':
+            // LOG DES PROPRIÉTÉS CUSTOMER INFO
 
-                    if (in_array('email', $fields)) {
-                        $email = $this->order->get_billing_email();
-                        if ($email) {
-                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>Email:</strong> ' : 'Email: ') : '';
-                            $customer_parts[] = $label . $email;
-                        }
-                    }
 
-                    if (in_array('phone', $fields)) {
-                        $phone = $this->order->get_billing_phone();
-                        if ($phone) {
-                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>Téléphone:</strong> ' : 'Téléphone: ') : '';
-                            $customer_parts[] = $label . $phone;
-                        }
-                    }
 
-                    if (in_array('payment_method', $fields)) {
-                        $payment_method = $this->order->get_payment_method_title();
-                        if ($payment_method) {
-                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>Moyen de paiement:</strong> ' : 'Moyen de paiement: ') : '';
-                            $customer_parts[] = $label . $payment_method;
-                        }
-                    }
 
-                    if (in_array('transaction_id', $fields)) {
-                        $transaction_id = $this->order->get_transaction_id();
-                        if ($transaction_id) {
-                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>ID transaction:</strong> ' : 'ID transaction: ') : '';
-                            $customer_parts[] = $label . $transaction_id;
-                        }
-                    }
+            $customer_info = '';
+            if ($this->order) {
+                $fields = $element['fields'] ?? ['name', 'company', 'address', 'email', 'phone', 'payment_method', 'transaction_id'];
+                $show_labels = $element['showLabels'] ?? true;
+                $label_style = $element['labelStyle'] ?? 'normal';
 
-                    $customer_info = implode('<br>', $customer_parts);
-                } else {
-                    // Données fictives pour l'éditeur
-                    $fields = $element['fields'] ?? ['name', 'company', 'address', 'email', 'phone', 'payment_method', 'transaction_id'];
-                    $show_labels = $element['showLabels'] ?? true;
-                    $label_style = $element['labelStyle'] ?? 'normal';
 
-                    $customer_parts = [];
 
-                    if (in_array('name', $fields)) {
+                $customer_parts = [];
+
+                if (in_array('name', $fields)) {
+                    $name = trim($this->order->get_billing_first_name() . ' ' . $this->order->get_billing_last_name());
+                    if ($name) {
                         $label = $show_labels ? ($label_style === 'bold' ? '<strong>Nom:</strong> ' : 'Nom: ') : '';
-                        $customer_parts[] = $label . 'Jean Dupont';
+                        $customer_parts[] = $label . $name;
                     }
+                }
 
-                    if (in_array('company', $fields)) {
+                if (in_array('company', $fields)) {
+                    $company = $this->order->get_billing_company();
+                    if ($company) {
                         $label = $show_labels ? ($label_style === 'bold' ? '<strong>Entreprise:</strong> ' : 'Entreprise: ') : '';
-                        $customer_parts[] = $label . 'Entreprise Exemple';
+                        $customer_parts[] = $label . $company;
+                    }
+                }
+
+                if (in_array('address', $fields)) {
+                    $address_parts = [];
+                    $address_1 = $this->order->get_billing_address_1();
+                    $address_2 = $this->order->get_billing_address_2();
+                    $city = $this->order->get_billing_city();
+                    $postcode = $this->order->get_billing_postcode();
+                    $state = $this->order->get_billing_state();
+                    $country = $this->order->get_billing_country();
+
+                    if ($address_1) { $address_parts[] = $address_1;
+                    }
+                    if ($address_2) { $address_parts[] = $address_2;
+                    }
+                    if ($postcode || $city) { $address_parts[] = trim($postcode . ' ' . $city);
+                    }
+                    if ($state || $country) {
+                        $country_line = $state ? $state . ', ' . $country : $country;
+                        $address_parts[] = $country_line;
                     }
 
-                    if (in_array('address', $fields)) {
+                    if (!empty($address_parts)) {
                         $label = $show_labels ? ($label_style === 'bold' ? '<strong>Adresse:</strong><br>' : 'Adresse:<br>') : '';
-                        $customer_parts[] = $label . '123 Rue de la Paix<br>Appartement 4B<br>75001 Paris<br>Île-de-France, France';
+                        $customer_parts[] = $label . implode('<br>', $address_parts);
                     }
+                }
 
-                    if (in_array('email', $fields)) {
+                if (in_array('email', $fields)) {
+                    $email = $this->order->get_billing_email();
+                    if ($email) {
                         $label = $show_labels ? ($label_style === 'bold' ? '<strong>Email:</strong> ' : 'Email: ') : '';
-                        $customer_parts[] = $label . 'jean.dupont@example.com';
+                        $customer_parts[] = $label . $email;
                     }
+                }
 
-                    if (in_array('phone', $fields)) {
+                if (in_array('phone', $fields)) {
+                    $phone = $this->order->get_billing_phone();
+                    if ($phone) {
                         $label = $show_labels ? ($label_style === 'bold' ? '<strong>Téléphone:</strong> ' : 'Téléphone: ') : '';
-                        $customer_parts[] = $label . '+33 1 23 45 67 89';
+                        $customer_parts[] = $label . $phone;
                     }
+                }
 
-                    if (in_array('payment_method', $fields)) {
+                if (in_array('payment_method', $fields)) {
+                    $payment_method = $this->order->get_payment_method_title();
+                    if ($payment_method) {
                         $label = $show_labels ? ($label_style === 'bold' ? '<strong>Moyen de paiement:</strong> ' : 'Moyen de paiement: ') : '';
-                        $customer_parts[] = $label . 'Carte de crédit';
+                        $customer_parts[] = $label . $payment_method;
                     }
+                }
 
-                    if (in_array('transaction_id', $fields)) {
+                if (in_array('transaction_id', $fields)) {
+                    $transaction_id = $this->order->get_transaction_id();
+                    if ($transaction_id) {
                         $label = $show_labels ? ($label_style === 'bold' ? '<strong>ID transaction:</strong> ' : 'ID transaction: ') : '';
-                        $customer_parts[] = $label . 'TXN123456789';
-                    }
-
-                    $customer_info = implode('<br>', $customer_parts);
-                }
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($customer_info ?: 'Informations client') . "</div>";
-
-            case 'company_info':
-                // Récupération des données d'entreprise
-                $company_data = $this->getCompanyData();
-
-                // Formatage selon le template choisi
-                $company_info = $this->formatCompanyInfoByTemplate($element, $company_data);
-
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($company_info ?: '[company_info]') . "</div>";
-
-            case 'order_number':
-                // LOG DES PROPRIÉTÉS ORDER NUMBER
-
-
-
-
-                $order_number = '';
-                if ($this->order) {
-                    $format = $element['format'] ?? 'Commande #{order_number}';
-                    $show_label = $element['showLabel'] ?? true;
-                    $label_text = $element['labelText'] ?? 'N° de commande:';
-
-                    // Replace variables in format
-                    $order_number = $this->replaceOrderVariables($format, $this->order);
-
-                    if ($show_label && $label_text) {
-                        $order_number = '<strong>' . esc_html($label_text) . '</strong><br>' . $order_number;
+                        $customer_parts[] = $label . $transaction_id;
                     }
                 }
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 14px; font-weight: bold; text-align: right;'>" . wp_kses_post($order_number ?: 'Texte') . "</div>";
 
-            case 'document_type':
-                // LOG DES PROPRIÉTÉS DOCUMENT TYPE
+                $customer_info = implode('<br>', $customer_parts);
+            } else {
+                // Données fictives pour l'éditeur
+                $fields = $element['fields'] ?? ['name', 'company', 'address', 'email', 'phone', 'payment_method', 'transaction_id'];
+                $show_labels = $element['showLabels'] ?? true;
+                $label_style = $element['labelStyle'] ?? 'normal';
 
+                $customer_parts = [];
 
-                $doc_type = $element['documentType'] ?? 'invoice';
-                $doc_label = $doc_type === 'invoice' ? 'FACTURE' : ($doc_type === 'quote' ? 'DEVIS' : strtoupper($doc_type));
-
-
-
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 18px; font-weight: bold; text-align: center;'>" . esc_html($doc_label) . "</div>";
-
-            case 'mentions':
-                // LOG DES PROPRIÉTÉS MENTIONS
-
-
-
-
-
-
-
-
-
-
-                $mentions = '';
-                if ($this->order) {
-                    $show_email = $element['showEmail'] ?? true;
-                    $show_phone = $element['showPhone'] ?? true;
-                    $show_siret = $element['showSiret'] ?? true;
-                    $show_vat = $element['showVat'] ?? false;
-                    $show_address = $element['showAddress'] ?? false;
-                    $show_website = $element['showWebsite'] ?? false;
-                    $show_custom_text = $element['showCustomText'] ?? false;
-                    $custom_text = $element['customText'] ?? '';
-                    $separator = $element['separator'] ?? ' • ';
-
-                    $mention_parts = [];
-
-                    if ($show_email) {
-                        $email = get_option('pdf_builder_company_email', '');
-                        if ($email) {
-                            $mention_parts[] = esc_html($email);
-                        }
-                    }
-
-                    if ($show_phone) {
-                        $phone = get_option('pdf_builder_company_phone', '');
-                        if ($phone) {
-                            $mention_parts[] = esc_html($phone);
-                        }
-                    }
-
-                    if ($show_siret) {
-                        $siret = get_option('pdf_builder_company_siret', '');
-                        if ($siret) {
-                            $mention_parts[] = 'SIRET ' . esc_html($siret);
-                        }
-                    }
-
-                    if ($show_vat) {
-                        $vat = get_option('pdf_builder_company_vat', '');
-                        if ($vat) {
-                            $mention_parts[] = 'TVA ' . esc_html($vat);
-                        }
-                    }
-
-                    if ($show_address) {
-                        $address = get_option('pdf_builder_company_address', '');
-                        if ($address) {
-                            $mention_parts[] = esc_html($address);
-                        }
-                    }
-
-                    if ($show_website) {
-                        $website = get_option('home');
-                        if ($website) {
-                            $mention_parts[] = esc_html($website);
-                        }
-                    }
-
-                    if ($show_custom_text && $custom_text) {
-                        $mention_parts[] = esc_html($custom_text);
-                    }
-
-                    $mentions = implode($separator, $mention_parts);
+                if (in_array('name', $fields)) {
+                    $label = $show_labels ? ($label_style === 'bold' ? '<strong>Nom:</strong> ' : 'Nom: ') : '';
+                    $customer_parts[] = $label . 'Jean Dupont';
                 }
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 8px; text-align: center;'>" . esc_html($mentions ?: 'Texte') . "</div>";
+
+                if (in_array('company', $fields)) {
+                    $label = $show_labels ? ($label_style === 'bold' ? '<strong>Entreprise:</strong> ' : 'Entreprise: ') : '';
+                    $customer_parts[] = $label . 'Entreprise Exemple';
+                }
+
+                if (in_array('address', $fields)) {
+                    $label = $show_labels ? ($label_style === 'bold' ? '<strong>Adresse:</strong><br>' : 'Adresse:<br>') : '';
+                    $customer_parts[] = $label . '123 Rue de la Paix<br>Appartement 4B<br>75001 Paris<br>Île-de-France, France';
+                }
+
+                if (in_array('email', $fields)) {
+                    $label = $show_labels ? ($label_style === 'bold' ? '<strong>Email:</strong> ' : 'Email: ') : '';
+                    $customer_parts[] = $label . 'jean.dupont@example.com';
+                }
+
+                if (in_array('phone', $fields)) {
+                    $label = $show_labels ? ($label_style === 'bold' ? '<strong>Téléphone:</strong> ' : 'Téléphone: ') : '';
+                    $customer_parts[] = $label . '+33 1 23 45 67 89';
+                }
+
+                if (in_array('payment_method', $fields)) {
+                    $label = $show_labels ? ($label_style === 'bold' ? '<strong>Moyen de paiement:</strong> ' : 'Moyen de paiement: ') : '';
+                    $customer_parts[] = $label . 'Carte de crédit';
+                }
+
+                if (in_array('transaction_id', $fields)) {
+                    $label = $show_labels ? ($label_style === 'bold' ? '<strong>ID transaction:</strong> ' : 'ID transaction: ') : '';
+                    $customer_parts[] = $label . 'TXN123456789';
+                }
+
+                $customer_info = implode('<br>', $customer_parts);
+            }
+            return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($customer_info ?: 'Informations client') . "</div>";
+
+        case 'company_info':
+            // Récupération des données d'entreprise
+            $company_data = $this->getCompanyData();
+
+            // Formatage selon le template choisi
+            $company_info = $this->formatCompanyInfoByTemplate($element, $company_data);
+
+            return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($company_info ?: '[company_info]') . "</div>";
+
+        case 'order_number':
+            // LOG DES PROPRIÉTÉS ORDER NUMBER
+
+
+
+
+            $order_number = '';
+            if ($this->order) {
+                $format = $element['format'] ?? 'Commande #{order_number}';
+                $show_label = $element['showLabel'] ?? true;
+                $label_text = $element['labelText'] ?? 'N° de commande:';
+
+                // Replace variables in format
+                $order_number = $this->replaceOrderVariables($format, $this->order);
+
+                if ($show_label && $label_text) {
+                    $order_number = '<strong>' . esc_html($label_text) . '</strong><br>' . $order_number;
+                }
+            }
+            return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 14px; font-weight: bold; text-align: right;'>" . wp_kses_post($order_number ?: 'Texte') . "</div>";
+
+        case 'document_type':
+            // LOG DES PROPRIÉTÉS DOCUMENT TYPE
+
+
+            $doc_type = $element['documentType'] ?? 'invoice';
+            $doc_label = $doc_type === 'invoice' ? 'FACTURE' : ($doc_type === 'quote' ? 'DEVIS' : strtoupper($doc_type));
+
+
+
+            return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 18px; font-weight: bold; text-align: center;'>" . esc_html($doc_label) . "</div>";
+
+        case 'mentions':
+            // LOG DES PROPRIÉTÉS MENTIONS
+
+
+
+
+
+
+
+
+
+
+            $mentions = '';
+            if ($this->order) {
+                $show_email = $element['showEmail'] ?? true;
+                $show_phone = $element['showPhone'] ?? true;
+                $show_siret = $element['showSiret'] ?? true;
+                $show_vat = $element['showVat'] ?? false;
+                $show_address = $element['showAddress'] ?? false;
+                $show_website = $element['showWebsite'] ?? false;
+                $show_custom_text = $element['showCustomText'] ?? false;
+                $custom_text = $element['customText'] ?? '';
+                $separator = $element['separator'] ?? ' • ';
+
+                $mention_parts = [];
+
+                if ($show_email) {
+                    $email = get_option('pdf_builder_company_email', '');
+                    if ($email) {
+                        $mention_parts[] = esc_html($email);
+                    }
+                }
+
+                if ($show_phone) {
+                    $phone = get_option('pdf_builder_company_phone', '');
+                    if ($phone) {
+                        $mention_parts[] = esc_html($phone);
+                    }
+                }
+
+                if ($show_siret) {
+                    $siret = get_option('pdf_builder_company_siret', '');
+                    if ($siret) {
+                        $mention_parts[] = 'SIRET ' . esc_html($siret);
+                    }
+                }
+
+                if ($show_vat) {
+                    $vat = get_option('pdf_builder_company_vat', '');
+                    if ($vat) {
+                        $mention_parts[] = 'TVA ' . esc_html($vat);
+                    }
+                }
+
+                if ($show_address) {
+                    $address = get_option('pdf_builder_company_address', '');
+                    if ($address) {
+                        $mention_parts[] = esc_html($address);
+                    }
+                }
+
+                if ($show_website) {
+                    $website = get_option('home');
+                    if ($website) {
+                        $mention_parts[] = esc_html($website);
+                    }
+                }
+
+                if ($show_custom_text && $custom_text) {
+                    $mention_parts[] = esc_html($custom_text);
+                }
+
+                $mentions = implode($separator, $mention_parts);
+            }
+            return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 8px; text-align: center;'>" . esc_html($mentions ?: 'Texte') . "</div>";
         }
     }
 
@@ -681,59 +684,59 @@ class PdfBuilderProGenerator
     private function convertPropertyToCss($property, $value, $element = null)
     {
         switch ($property) {
-            case 'color':
-                return 'color: ' . esc_attr($value);
-            case 'backgroundColor':
-                return 'background-color: ' . esc_attr($value);
-            case 'fontSize':
-                return 'font-size: ' . intval($value) . 'px';
-            case 'fontWeight':
-                return 'font-weight: ' . esc_attr($value);
-            case 'fontStyle':
-                return 'font-style: ' . esc_attr($value);
-            case 'textAlign':
-                return 'text-align: ' . esc_attr($value);
-            case 'fontFamily':
-                return 'font-family: ' . esc_attr($value);
-            case 'textDecoration':
-                return 'text-decoration: ' . esc_attr($value);
-            case 'opacity':
-                return 'opacity: ' . floatval($value);
-            case 'border':
-            case 'borderColor':
-            case 'borderWidth':
-            case 'borderStyle':
-            case 'borderRadius':
-                // Les propriétés de bordure sont gérées ensemble dans extract_element_styles
-                return null;
-            case 'rotation':
-            case 'scale':
-                // Les transformations sont gérées ensemble dans extract_element_styles
-                return null;
-            case 'brightness':
-                return $value != 100 ? "filter: brightness({$value}%)" : null;
-            case 'contrast':
-                return $value != 100 ? "filter: contrast({$value}%)" : null;
-            case 'saturate':
-                return $value != 100 ? "filter: saturate({$value}%)" : null;
-            case 'blur':
-                return $value > 0 ? "filter: blur({$value}px)" : null;
-            case 'hueRotate':
-                return $value != 0 ? "filter: hue-rotate({$value}deg)" : null;
-            case 'sepia':
-                return $value > 0 ? "filter: sepia({$value}%)" : null;
-            case 'grayscale':
-                return $value > 0 ? "filter: grayscale({$value}%)" : null;
-            case 'invert':
-                return $value > 0 ? "filter: invert({$value}%)" : null;
-            case 'shadowColor':
-            case 'shadowOffsetX':
-            case 'shadowOffsetY':
-            case 'shadowBlur':
-                // Les propriétés shadow sont gérées ensemble dans extract_element_styles
-                return null;
-            default:
-                return null;
+        case 'color':
+            return 'color: ' . esc_attr($value);
+        case 'backgroundColor':
+            return 'background-color: ' . esc_attr($value);
+        case 'fontSize':
+            return 'font-size: ' . intval($value) . 'px';
+        case 'fontWeight':
+            return 'font-weight: ' . esc_attr($value);
+        case 'fontStyle':
+            return 'font-style: ' . esc_attr($value);
+        case 'textAlign':
+            return 'text-align: ' . esc_attr($value);
+        case 'fontFamily':
+            return 'font-family: ' . esc_attr($value);
+        case 'textDecoration':
+            return 'text-decoration: ' . esc_attr($value);
+        case 'opacity':
+            return 'opacity: ' . floatval($value);
+        case 'border':
+        case 'borderColor':
+        case 'borderWidth':
+        case 'borderStyle':
+        case 'borderRadius':
+            // Les propriétés de bordure sont gérées ensemble dans extract_element_styles
+            return null;
+        case 'rotation':
+        case 'scale':
+            // Les transformations sont gérées ensemble dans extract_element_styles
+            return null;
+        case 'brightness':
+            return $value != 100 ? "filter: brightness({$value}%)" : null;
+        case 'contrast':
+            return $value != 100 ? "filter: contrast({$value}%)" : null;
+        case 'saturate':
+            return $value != 100 ? "filter: saturate({$value}%)" : null;
+        case 'blur':
+            return $value > 0 ? "filter: blur({$value}px)" : null;
+        case 'hueRotate':
+            return $value != 0 ? "filter: hue-rotate({$value}deg)" : null;
+        case 'sepia':
+            return $value > 0 ? "filter: sepia({$value}%)" : null;
+        case 'grayscale':
+            return $value > 0 ? "filter: grayscale({$value}%)" : null;
+        case 'invert':
+            return $value > 0 ? "filter: invert({$value}%)" : null;
+        case 'shadowColor':
+        case 'shadowOffsetX':
+        case 'shadowOffsetY':
+        case 'shadowBlur':
+            // Les propriétés shadow sont gérées ensemble dans extract_element_styles
+            return null;
+        default:
+            return null;
         }
     }
 
@@ -995,91 +998,91 @@ class PdfBuilderProGenerator
         $parts = [];
 
         switch ($template) {
-            case 'commercial':
-                // Template commercial : focus sur contact et présentation
-                if (in_array('name', $fields) && !empty($company_data['name'])) {
-                    $parts[] = '<strong>' . esc_html($company_data['name']) . '</strong>';
-                }
-                if (in_array('address', $fields) && $this->hasAddressData($company_data)) {
-                    $parts[] = $this->formatAddress($company_data);
-                }
-                if (in_array('phone', $fields) && !empty($company_data['phone'])) {
-                    $parts[] = '📞 ' . esc_html($company_data['phone']);
-                }
-                if (in_array('email', $fields) && !empty($company_data['email'])) {
-                    $parts[] = '✉️ ' . esc_html($company_data['email']);
-                }
-                if (in_array('website', $fields) && !empty($company_data['website'])) {
-                    $parts[] = '🌐 ' . esc_html($company_data['website']);
-                }
-                break;
+        case 'commercial':
+            // Template commercial : focus sur contact et présentation
+            if (in_array('name', $fields) && !empty($company_data['name'])) {
+                $parts[] = '<strong>' . esc_html($company_data['name']) . '</strong>';
+            }
+            if (in_array('address', $fields) && $this->hasAddressData($company_data)) {
+                $parts[] = $this->formatAddress($company_data);
+            }
+            if (in_array('phone', $fields) && !empty($company_data['phone'])) {
+                $parts[] = '📞 ' . esc_html($company_data['phone']);
+            }
+            if (in_array('email', $fields) && !empty($company_data['email'])) {
+                $parts[] = '✉️ ' . esc_html($company_data['email']);
+            }
+            if (in_array('website', $fields) && !empty($company_data['website'])) {
+                $parts[] = '🌐 ' . esc_html($company_data['website']);
+            }
+            break;
 
-            case 'legal':
-                // Template juridique : focus sur informations légales
-                if (in_array('name', $fields) && !empty($company_data['name'])) {
-                    $parts[] = '<strong>' . esc_html($company_data['name']) . '</strong>';
-                }
-                if (in_array('address', $fields) && $this->hasAddressData($company_data)) {
-                    $parts[] = $this->formatAddress($company_data);
-                }
-                if (in_array('siret', $fields) && !empty($company_data['siret'])) {
-                    $parts[] = 'SIRET: ' . esc_html($company_data['siret']);
-                }
-                if (in_array('vat', $fields) && !empty($company_data['vat'])) {
-                    $parts[] = 'N° TVA: ' . esc_html($company_data['vat']);
-                }
-                if (in_array('rcs', $fields) && !empty($company_data['rcs'])) {
-                    $parts[] = 'RCS: ' . esc_html($company_data['rcs']);
-                }
-                if (in_array('capital', $fields) && !empty($company_data['capital'])) {
-                    $parts[] = 'Capital: ' . esc_html($company_data['capital']) . ' €';
-                }
-                break;
+        case 'legal':
+            // Template juridique : focus sur informations légales
+            if (in_array('name', $fields) && !empty($company_data['name'])) {
+                $parts[] = '<strong>' . esc_html($company_data['name']) . '</strong>';
+            }
+            if (in_array('address', $fields) && $this->hasAddressData($company_data)) {
+                $parts[] = $this->formatAddress($company_data);
+            }
+            if (in_array('siret', $fields) && !empty($company_data['siret'])) {
+                $parts[] = 'SIRET: ' . esc_html($company_data['siret']);
+            }
+            if (in_array('vat', $fields) && !empty($company_data['vat'])) {
+                $parts[] = 'N° TVA: ' . esc_html($company_data['vat']);
+            }
+            if (in_array('rcs', $fields) && !empty($company_data['rcs'])) {
+                $parts[] = 'RCS: ' . esc_html($company_data['rcs']);
+            }
+            if (in_array('capital', $fields) && !empty($company_data['capital'])) {
+                $parts[] = 'Capital: ' . esc_html($company_data['capital']) . ' €';
+            }
+            break;
 
-            case 'minimal':
-                // Template minimal : nom et contact essentiel
-                if (in_array('name', $fields) && !empty($company_data['name'])) {
-                    $parts[] = esc_html($company_data['name']);
-                }
-                $contact_parts = [];
-                if (in_array('phone', $fields) && !empty($company_data['phone'])) {
-                    $contact_parts[] = esc_html($company_data['phone']);
-                }
-                if (in_array('email', $fields) && !empty($company_data['email'])) {
-                    $contact_parts[] = esc_html($company_data['email']);
-                }
-                if (!empty($contact_parts)) {
-                    $parts[] = implode(' • ', $contact_parts);
-                }
-                break;
+        case 'minimal':
+            // Template minimal : nom et contact essentiel
+            if (in_array('name', $fields) && !empty($company_data['name'])) {
+                $parts[] = esc_html($company_data['name']);
+            }
+            $contact_parts = [];
+            if (in_array('phone', $fields) && !empty($company_data['phone'])) {
+                $contact_parts[] = esc_html($company_data['phone']);
+            }
+            if (in_array('email', $fields) && !empty($company_data['email'])) {
+                $contact_parts[] = esc_html($company_data['email']);
+            }
+            if (!empty($contact_parts)) {
+                $parts[] = implode(' • ', $contact_parts);
+            }
+            break;
 
-            default: // 'default'
-                // Template par défaut : tous les champs demandés
-                if (in_array('name', $fields) && !empty($company_data['name'])) {
-                    $parts[] = '<strong>' . esc_html($company_data['name']) . '</strong>';
-                }
-                if (in_array('address', $fields) && $this->hasAddressData($company_data)) {
-                    $parts[] = $this->formatAddress($company_data);
-                }
-                if (in_array('phone', $fields) && !empty($company_data['phone'])) {
-                    $parts[] = 'Téléphone: ' . esc_html($company_data['phone']);
-                }
-                if (in_array('email', $fields) && !empty($company_data['email'])) {
-                    $parts[] = 'Email: ' . esc_html($company_data['email']);
-                }
-                if (in_array('website', $fields) && !empty($company_data['website'])) {
-                    $parts[] = 'Site web: ' . esc_html($company_data['website']);
-                }
-                if (in_array('vat', $fields) && !empty($company_data['vat'])) {
-                    $parts[] = 'N° TVA: ' . esc_html($company_data['vat']);
-                }
-                if (in_array('siret', $fields) && !empty($company_data['siret'])) {
-                    $parts[] = 'SIRET: ' . esc_html($company_data['siret']);
-                }
-                if (in_array('rcs', $fields) && !empty($company_data['rcs'])) {
-                    $parts[] = 'RCS: ' . esc_html($company_data['rcs']);
-                }
-                break;
+        default: // 'default'
+            // Template par défaut : tous les champs demandés
+            if (in_array('name', $fields) && !empty($company_data['name'])) {
+                $parts[] = '<strong>' . esc_html($company_data['name']) . '</strong>';
+            }
+            if (in_array('address', $fields) && $this->hasAddressData($company_data)) {
+                $parts[] = $this->formatAddress($company_data);
+            }
+            if (in_array('phone', $fields) && !empty($company_data['phone'])) {
+                $parts[] = 'Téléphone: ' . esc_html($company_data['phone']);
+            }
+            if (in_array('email', $fields) && !empty($company_data['email'])) {
+                $parts[] = 'Email: ' . esc_html($company_data['email']);
+            }
+            if (in_array('website', $fields) && !empty($company_data['website'])) {
+                $parts[] = 'Site web: ' . esc_html($company_data['website']);
+            }
+            if (in_array('vat', $fields) && !empty($company_data['vat'])) {
+                $parts[] = 'N° TVA: ' . esc_html($company_data['vat']);
+            }
+            if (in_array('siret', $fields) && !empty($company_data['siret'])) {
+                $parts[] = 'SIRET: ' . esc_html($company_data['siret']);
+            }
+            if (in_array('rcs', $fields) && !empty($company_data['rcs'])) {
+                $parts[] = 'RCS: ' . esc_html($company_data['rcs']);
+            }
+            break;
         }
 
         return implode('<br>', array_filter($parts));

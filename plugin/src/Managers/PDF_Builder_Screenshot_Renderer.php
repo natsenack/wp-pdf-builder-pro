@@ -154,27 +154,27 @@ class PdfBuilderScreenshotRenderer
         $html = '<div class="canvas-element ' . esc_attr($element['type']) . '-element" style="' . $style . '">';
 
         switch ($element['type']) {
-            case 'text':
-                $html .= '<div class="text-element">' . esc_html($props['text'] ?? '') . '</div>';
-                break;
+        case 'text':
+            $html .= '<div class="text-element">' . esc_html($props['text'] ?? '') . '</div>';
+            break;
 
-            case 'image':
-                if (!empty($props['src'])) {
-                    $html .= '<img src="' . esc_url($props['src']) . '" alt="' . esc_attr($props['alt'] ?? '') . '">';
-                }
-                break;
+        case 'image':
+            if (!empty($props['src'])) {
+                $html .= '<img src="' . esc_url($props['src']) . '" alt="' . esc_attr($props['alt'] ?? '') . '">';
+            }
+            break;
 
-            case 'shape':
-                // Formes géométriques simples
-                $shape_type = $props['shape'] ?? 'rectangle';
-                if ($shape_type === 'rectangle') {
-                    $html .= '<div class="shape-element" style="width: 100%; height: 100%; background: ' . esc_attr($props['fill'] ?? '#fff') . '; border: ' . esc_attr($props['strokeWidth'] ?? 1) . 'px solid ' . esc_attr($props['stroke'] ?? '#000') . ';"></div>';
-                }
-                break;
+        case 'shape':
+            // Formes géométriques simples
+            $shape_type = $props['shape'] ?? 'rectangle';
+            if ($shape_type === 'rectangle') {
+                $html .= '<div class="shape-element" style="width: 100%; height: 100%; background: ' . esc_attr($props['fill'] ?? '#fff') . '; border: ' . esc_attr($props['strokeWidth'] ?? 1) . 'px solid ' . esc_attr($props['stroke'] ?? '#000') . ';"></div>';
+            }
+            break;
 
-            case 'line':
-                $html .= '<hr style="border: none; border-top: ' . esc_attr($props['strokeWidth'] ?? 1) . 'px solid ' . esc_attr($props['stroke'] ?? '#000') . '; margin: 0;">';
-                break;
+        case 'line':
+            $html .= '<hr style="border: none; border-top: ' . esc_attr($props['strokeWidth'] ?? 1) . 'px solid ' . esc_attr($props['stroke'] ?? '#000') . '; margin: 0;">';
+            break;
         }
 
         $html .= '</div>';
@@ -246,7 +246,7 @@ class PdfBuilderScreenshotRenderer
      */
     private function isWkhtmltopdfAvailable()
     {
-        require_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
+        include_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
         return PDF_Builder_Secure_Shell_Manager::is_command_available('wkhtmltopdf');
     }
 
@@ -255,7 +255,7 @@ class PdfBuilderScreenshotRenderer
      */
     private function generateWithWkhtmltopdf($html_file, $pdf_path)
     {
-        require_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
+        include_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
         return PDF_Builder_Secure_Shell_Manager::execute_wkhtmltopdf($html_file, $pdf_path);
     }
 
@@ -265,7 +265,7 @@ class PdfBuilderScreenshotRenderer
     private function isPuppeteerAvailable()
     {
         // Vérifier si Node.js est disponible via le gestionnaire sécurisé
-        require_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
+        include_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
         $node_available = PDF_Builder_Secure_Shell_Manager::is_command_available('node');
         if (!$node_available) {
             return false;
@@ -283,7 +283,7 @@ class PdfBuilderScreenshotRenderer
     {
         $script_path = plugin_dir_path(__FILE__) . '../../tools/pdf-screenshot.js';
 
-        require_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
+        include_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
         $output = PDF_Builder_Secure_Shell_Manager::execute_node($script_path, [$html_file, $pdf_path]);
 
         return $output !== false && file_exists($pdf_path) && filesize($pdf_path) > 0;
@@ -295,7 +295,7 @@ class PdfBuilderScreenshotRenderer
     private function generateWithDompdfFallback($html_file, $pdf_path)
     {
         try {
-            require_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
+            include_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
 
             // Récupérer les paramètres PDF depuis les options
             $pdf_page_size = get_option('pdf_builder_pdf_page_size', 'A4');

@@ -293,16 +293,16 @@ class PdfBuilderAssetOptimizer
         $optimized_size = $original_size;
 
         switch ($extension) {
-            case 'jpg':
-            case 'jpeg':
-                $success = $this->optimizeJpeg($file_path, $optimized_path);
-                break;
-            case 'png':
-                $success = $this->optimizePng($file_path, $optimized_path);
-                break;
-            case 'gif':
-                $success = $this->optimizeGif($file_path, $optimized_path);
-                break;
+        case 'jpg':
+        case 'jpeg':
+            $success = $this->optimizeJpeg($file_path, $optimized_path);
+            break;
+        case 'png':
+            $success = $this->optimizePng($file_path, $optimized_path);
+            break;
+        case 'gif':
+            $success = $this->optimizeGif($file_path, $optimized_path);
+            break;
         }
 
         if ($success && file_exists($optimized_path)) {

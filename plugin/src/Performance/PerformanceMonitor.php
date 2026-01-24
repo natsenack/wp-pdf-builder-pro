@@ -44,9 +44,10 @@ class PerformanceMonitor
     /**
      * Mesure le temps d'exécution d'une fonction
      *
-     * @param callable $callback Fonction à mesurer
-     * @param array $args Arguments de la fonction
-     * @param string $label Label pour les métriques
+     * @param  callable $callback Fonction à mesurer
+     * @param  array    $args     Arguments de la fonction
+     * @param  string   $label    Label pour les
+     *                            métriques
      * @return mixed Résultat de la fonction
      */
     public static function measure(callable $callback, array $args = [], string $label = 'unnamed')
@@ -57,7 +58,7 @@ class PerformanceMonitor
         $endTime = microtime(true);
         $endMemory = memory_get_usage(true);
         $executionTime = ($endTime - $startTime) * 1000;
-// en millisecondes
+        // en millisecondes
         $memoryUsed = $endMemory - $startMemory;
         self::$metrics['render_times'][] = [
             'label' => $label,
@@ -65,7 +66,7 @@ class PerformanceMonitor
             'memory' => self::formatBytes($memoryUsed),
             'timestamp' => time()
         ];
-// Mise à jour du pic mémoire
+        // Mise à jour du pic mémoire
         if ($endMemory > self::$metrics['peak_memory']) {
             self::$metrics['peak_memory'] = $endMemory;
         }
@@ -76,9 +77,11 @@ class PerformanceMonitor
     /**
      * Enregistre un appel de renderer
      *
-     * @param string $renderer Nom du renderer
+     * @param string $renderer    Nom du renderer
      * @param string $elementType Type d'élément
-     * @param float $duration Durée en millisecondes
+     * @param float  $duration    Durée
+     *                            en
+     *                            millisecondes
      */
     public static function recordRendererCall(string $renderer, string $elementType, float $duration): void
     {
@@ -108,9 +111,11 @@ class PerformanceMonitor
      */
     public static function recordCacheStats(array $cacheMetrics): void
     {
-        self::$metrics['cache_stats'][] = array_merge($cacheMetrics, [
+        self::$metrics['cache_stats'][] = array_merge(
+            $cacheMetrics, [
             'timestamp' => time()
-        ]);
+            ]
+        );
     }
 
     /**
@@ -168,21 +173,21 @@ class PerformanceMonitor
     /**
      * Exporte les métriques pour analyse
      *
-     * @param string $format Format d'export ('json', 'csv', 'log')
+     * @param  string $format Format d'export ('json', 'csv', 'log')
      * @return string Données exportées
      */
     public static function exportMetrics(string $format = 'json'): string
     {
         $data = self::getReport();
         switch ($format) {
-            case 'json':
-                return json_encode($data, JSON_PRETTY_PRINT);
-            case 'csv':
-                return self::exportToCSV($data);
-            case 'log':
-                return self::exportToLog($data);
-            default:
-                return json_encode($data);
+        case 'json':
+            return json_encode($data, JSON_PRETTY_PRINT);
+        case 'csv':
+            return self::exportToCSV($data);
+        case 'log':
+            return self::exportToLog($data);
+        default:
+            return json_encode($data);
         }
     }
 
@@ -204,7 +209,7 @@ class PerformanceMonitor
     /**
      * Calcule les statistiques de base pour un tableau de valeurs
      *
-     * @param array $values Valeurs numériques
+     * @param  array $values Valeurs numériques
      * @return array Statistiques
      */
     private static function calculateStats(array $values): array
@@ -227,7 +232,7 @@ class PerformanceMonitor
     /**
      * Formate les octets en unités lisibles
      *
-     * @param int $bytes Nombre d'octets
+     * @param  int $bytes Nombre d'octets
      * @return string Chaîne formatée
      */
     private static function formatBytes(int $bytes): string
@@ -245,7 +250,7 @@ class PerformanceMonitor
     /**
      * Détermine le statut global des performances
      *
-     * @param array $report Rapport de performance
+     * @param  array $report Rapport de performance
      * @return string Statut ('excellent', 'good', 'warning', 'critical')
      */
     private static function getOverallStatus(array $report): string
@@ -269,13 +274,13 @@ class PerformanceMonitor
     /**
      * Exporte les données au format CSV
      *
-     * @param array $data Données à exporter
+     * @param  array $data Données à exporter
      * @return string CSV
      */
     private static function exportToCSV(array $data): string
     {
         $csv = "Metric,Value\n";
-// Summary
+        // Summary
         foreach ($data['summary'] as $key => $value) {
             $csv .= "summary_{$key},{$value}\n";
         }
@@ -291,7 +296,7 @@ class PerformanceMonitor
     /**
      * Exporte les données au format log
      *
-     * @param array $data Données à exporter
+     * @param  array $data Données à exporter
      * @return string Log
      */
     private static function exportToLog(array $data): string

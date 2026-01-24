@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class PDF_Builder_Compatibility_Mappings {
+class PDF_Builder_Compatibility_Mappings
+{
 
     // ==========================================
     // COMPATIBILITÉ NAVIGATEUR
@@ -326,21 +327,24 @@ class PDF_Builder_Compatibility_Mappings {
     /**
      * Obtenir la compatibilité navigateur
      */
-    public static function get_browser_compatibility() {
+    public static function get_browser_compatibility()
+    {
         return self::$browser_compatibility;
     }
 
     /**
      * Obtenir la compatibilité pour un navigateur spécifique
      */
-    public static function get_browser_compatibility_info($browser) {
+    public static function get_browser_compatibility_info($browser)
+    {
         return self::$browser_compatibility[$browser] ?? null;
     }
 
     /**
      * Vérifier si un navigateur est supporté
      */
-    public static function is_browser_supported($browser, $version = null) {
+    public static function is_browser_supported($browser, $version = null)
+    {
         $info = self::get_browser_compatibility_info($browser);
 
         if (!$info || !$info['supported']) {
@@ -357,14 +361,16 @@ class PDF_Builder_Compatibility_Mappings {
     /**
      * Obtenir la compatibilité WordPress
      */
-    public static function get_wordpress_compatibility() {
+    public static function get_wordpress_compatibility()
+    {
         return self::$wordpress_compatibility;
     }
 
     /**
      * Vérifier la compatibilité WordPress
      */
-    public static function check_wordpress_compatibility() {
+    public static function check_wordpress_compatibility()
+    {
         global $wp_version;
 
         $compat = self::$wordpress_compatibility;
@@ -399,35 +405,40 @@ class PDF_Builder_Compatibility_Mappings {
     /**
      * Obtenir les polyfills
      */
-    public static function get_polyfills() {
+    public static function get_polyfills()
+    {
         return self::$polyfills;
     }
 
     /**
      * Obtenir les fallbacks de fonctionnalités
      */
-    public static function get_fallback_features() {
+    public static function get_fallback_features()
+    {
         return self::$fallback_features;
     }
 
     /**
      * Obtenir la détection de fonctionnalités
      */
-    public static function get_feature_detection() {
+    public static function get_feature_detection()
+    {
         return self::$feature_detection;
     }
 
     /**
      * Obtenir les messages de compatibilité
      */
-    public static function get_compatibility_messages() {
+    public static function get_compatibility_messages()
+    {
         return self::$compatibility_messages;
     }
 
     /**
      * Générer le code JavaScript de détection de fonctionnalités
      */
-    public static function generate_feature_detection_js() {
+    public static function generate_feature_detection_js()
+    {
         $js = "<script>\n";
         $js .= "window.PDF_BUILDER_FEATURES = {\n";
 
@@ -446,7 +457,8 @@ class PDF_Builder_Compatibility_Mappings {
     /**
      * Générer le code JavaScript des polyfills
      */
-    public static function generate_polyfills_js() {
+    public static function generate_polyfills_js()
+    {
         $js = "<script>\n";
         $js .= "(function() {\n";
         $js .= "    var polyfills = [\n";
@@ -477,7 +489,8 @@ class PDF_Builder_Compatibility_Mappings {
     /**
      * Détecter le navigateur et sa version
      */
-    public static function detect_browser() {
+    public static function detect_browser()
+    {
         $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
         $browsers = [
@@ -508,7 +521,8 @@ class PDF_Builder_Compatibility_Mappings {
     /**
      * Générer un rapport de compatibilité
      */
-    public static function generate_compatibility_report() {
+    public static function generate_compatibility_report()
+    {
         $browser = self::detect_browser();
         $wp_compat = self::check_wordpress_compatibility();
 

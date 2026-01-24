@@ -23,11 +23,11 @@ class PdfBuilderCanvasSaveLogger
      * Instance unique du logger
      */
     private static $instance = null;
-/**
+    /**
      * Fichier de log dédié
      */
     private $log_file;
-/**
+    /**
      * Niveaux de log
      */
     private $log_levels = [
@@ -36,7 +36,7 @@ class PdfBuilderCanvasSaveLogger
         'WARNING' => 2,
         'ERROR' => 3,
     ];
-/**
+    /**
      * Niveau minimum de log à enregistrer
      */
     private $min_level = 'DEBUG';
@@ -54,7 +54,7 @@ class PdfBuilderCanvasSaveLogger
         }
 
         $this->log_file = $cache_dir . '/canvas-save.log';
-// Déterminer le niveau minimum à partir des options
+        // Déterminer le niveau minimum à partir des options
         $level = get_option('pdf_builder_canvas_log_level', 'DEBUG');
         if (isset($this->log_levels[$level])) {
             $this->min_level = $level;
@@ -122,7 +122,7 @@ class PdfBuilderCanvasSaveLogger
     public function logValidation($elements, $canvas)
     {
         $validation_errors = [];
-// Valider les éléments
+        // Valider les éléments
         if (!is_array($elements)) {
             $validation_errors[] = 'Elements is not an array';
         } else {
@@ -202,14 +202,14 @@ class PdfBuilderCanvasSaveLogger
         $cutoff_date = strtotime("-$days days");
         $new_lines = [];
         foreach ($lines as $line) {
-        // Vérifier si la ligne commence par un timestamp
+            // Vérifier si la ligne commence par un timestamp
             if (preg_match('/\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\]/', $line, $matches)) {
                 $log_time = strtotime($matches[1]);
                 if ($log_time > $cutoff_date) {
                     $new_lines[] = $line;
                 }
             } elseif (!empty($line)) {
-        // Conserver les lignes qui font partie d'une entrée récente
+                // Conserver les lignes qui font partie d'une entrée récente
                 $new_lines[] = $line;
             }
         }

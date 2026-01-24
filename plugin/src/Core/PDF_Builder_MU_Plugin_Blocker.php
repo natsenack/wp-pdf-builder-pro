@@ -12,7 +12,8 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
-class PDFBuilderMuPluginBlocker {
+class PDFBuilderMuPluginBlocker
+{
     
     /**
      * Liste blanche des MU-plugins autorisés
@@ -22,7 +23,8 @@ class PDFBuilderMuPluginBlocker {
     /**
      * Initialiser le bloqueur
      */
-    public static function init() {
+    public static function init()
+    {
         // Bloquer les MU-plugins non autorisés
         add_action('init', [self::class, 'block_unauthorized_mu_plugins'], 1);
         
@@ -36,7 +38,8 @@ class PDFBuilderMuPluginBlocker {
     /**
      * Bloquer les MU-plugins non autorisés
      */
-    public static function block_unauthorized_mu_plugins() {
+    public static function block_unauthorized_mu_plugins()
+    {
         $mu_plugins_dir = WP_CONTENT_DIR . '/mu-plugins/';
         
         // Fichiers MU-plugin à bloquer

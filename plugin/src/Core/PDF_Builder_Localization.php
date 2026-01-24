@@ -4,7 +4,8 @@
  * Gère les traductions, langues et localisation du contenu
  */
 
-class PDF_Builder_Localization {
+class PDF_Builder_Localization
+{
     private static $instance = null;
 
     // Domaine de texte
@@ -30,20 +31,23 @@ class PDF_Builder_Localization {
     // Cache des traductions
     private $translation_cache = [];
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->current_locale = get_locale();
         $this->init_hooks();
         // $this->load_textdomain(); // REMOVED: Ne pas charger trop tôt
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Chargement des langues
         add_action('plugins_loaded', [$this, 'load_textdomain']);
         add_action('wp_ajax_pdf_builder_change_locale', [$this, 'change_locale_ajax']);
@@ -61,7 +65,8 @@ class PDF_Builder_Localization {
     /**
      * Charge le domaine de texte
      */
-    public function load_textdomain() {
+    public function load_textdomain()
+    {
         $locale = apply_filters('plugin_locale', $this->current_locale, self::TEXT_DOMAIN);
 
         $mofile = PDF_BUILDER_PLUGIN_DIR . 'resources/languages/' . self::TEXT_DOMAIN . '-' . $locale . '.mo';
@@ -77,38 +82,50 @@ class PDF_Builder_Localization {
     /**
      * Enregistre les paramètres de localisation
      */
-    public function register_settings() {
-        register_setting('pdf_builder_settings', 'pdf_builder_default_locale', [
+    public function register_settings()
+    {
+        register_setting(
+            'pdf_builder_settings', 'pdf_builder_default_locale', [
             'type' => 'string',
             'default' => 'en_US',
             'sanitize_callback' => [$this, 'sanitize_locale']
-        ]);
+            ]
+        );
 
-        register_setting('pdf_builder_settings', 'pdf_builder_rtl_support', [
+        register_setting(
+            'pdf_builder_settings', 'pdf_builder_rtl_support', [
             'type' => 'boolean',
             'default' => true
-        ]);
+            ]
+        );
 
-        register_setting('pdf_builder_settings', 'pdf_builder_date_format', [
+        register_setting(
+            'pdf_builder_settings', 'pdf_builder_date_format', [
             'type' => 'string',
             'default' => 'Y-m-d'
-        ]);
+            ]
+        );
 
-        register_setting('pdf_builder_settings', 'pdf_builder_time_format', [
+        register_setting(
+            'pdf_builder_settings', 'pdf_builder_time_format', [
             'type' => 'string',
             'default' => 'H:i:s'
-        ]);
+            ]
+        );
 
-        register_setting('pdf_builder_settings', 'pdf_builder_number_format', [
+        register_setting(
+            'pdf_builder_settings', 'pdf_builder_number_format', [
             'type' => 'string',
             'default' => 'en_US'
-        ]);
+            ]
+        );
     }
 
     /**
      * Filtre la locale
      */
-    public function filter_locale($locale) {
+    public function filter_locale($locale)
+    {
         $user_locale = get_user_meta(get_current_user_id(), 'pdf_builder_locale', true);
 
         if ($user_locale && isset($this->supported_languages[$user_locale])) {
@@ -123,7 +140,8 @@ class PDF_Builder_Localization {
     /**
      * Traduit un texte
      */
-    public function translate_text($text, $context = '', $domain = null) {
+    public function translate_text($text, $context = '', $domain = null)
+    {
         $domain = $domain ?: self::TEXT_DOMAIN;
 
         // Vérifier le cache
@@ -149,7 +167,8 @@ class PDF_Builder_Localization {
     /**
      * Traduit un texte au pluriel
      */
-    public function translate_plural($single, $plural, $number, $context = '', $domain = null) {
+    public function translate_plural($single, $plural, $number, $context = '', $domain = null)
+    {
         $domain = $domain ?: self::TEXT_DOMAIN;
 
         if ($context) {
@@ -162,28 +181,32 @@ class PDF_Builder_Localization {
     /**
      * Obtient les langues supportées
      */
-    public function get_supported_languages() {
+    public function get_supported_languages()
+    {
         return $this->supported_languages;
     }
 
     /**
      * Vérifie si une langue est supportée
      */
-    public function is_language_supported($locale) {
+    public function is_language_supported($locale)
+    {
         return isset($this->supported_languages[$locale]);
     }
 
     /**
      * Obtient le nom d'une langue
      */
-    public function get_language_name($locale) {
+    public function get_language_name($locale)
+    {
         return $this->supported_languages[$locale] ?? $locale;
     }
 
     /**
      * Change la locale pour l'utilisateur actuel
      */
-    public function change_user_locale($locale) {
+    public function change_user_locale($locale)
+    {
         if (!$this->is_language_supported($locale)) {
             return false;
         }
@@ -203,7 +226,8 @@ class PDF_Builder_Localization {
     /**
      * Formate une date selon la locale
      */
-    public function format_date($timestamp, $format = null) {
+    public function format_date($timestamp, $format = null)
+    {
         $format = $format ?: get_option('pdf_builder_date_format', 'Y-m-d');
 
         // Utiliser date_i18n de WordPress pour la localisation
@@ -213,7 +237,8 @@ class PDF_Builder_Localization {
     /**
      * Formate une heure selon la locale
      */
-    public function format_time($timestamp, $format = null) {
+    public function format_time($timestamp, $format = null)
+    {
         $format = $format ?: get_option('pdf_builder_time_format', 'H:i:s');
 
         return date_i18n($format, $timestamp);
@@ -222,7 +247,8 @@ class PDF_Builder_Localization {
     /**
      * Formate un nombre selon la locale
      */
-    public function format_number($number, $decimals = 0) {
+    public function format_number($number, $decimals = 0)
+    {
         $locale = get_option('pdf_builder_number_format', 'en_US');
 
         // Utiliser number_format_i18n de WordPress
@@ -232,7 +258,8 @@ class PDF_Builder_Localization {
     /**
      * Formate une monnaie selon la locale
      */
-    public function format_currency($amount, $currency = 'USD') {
+    public function format_currency($amount, $currency = 'USD')
+    {
         $formatted = $this->format_number($amount, 2);
 
         // Ajouter le symbole de devise selon la locale
@@ -258,7 +285,8 @@ class PDF_Builder_Localization {
     /**
      * Obtient la direction du texte (RTL/LTR)
      */
-    public function get_text_direction() {
+    public function get_text_direction()
+    {
         $rtl_languages = ['ar_AR', 'he_IL', 'fa_IR', 'ur_PK'];
 
         if (in_array($this->current_locale, $rtl_languages)) {
@@ -271,14 +299,16 @@ class PDF_Builder_Localization {
     /**
      * Vérifie si le support RTL est activé
      */
-    public function is_rtl_enabled() {
+    public function is_rtl_enabled()
+    {
         return get_option('pdf_builder_rtl_support', true);
     }
 
     /**
      * Obtient les traductions pour JavaScript
      */
-    public function get_js_translations() {
+    public function get_js_translations()
+    {
         return [
             // Messages d'interface
             'confirm_delete' => $this->translate_text('Êtes-vous sûr de vouloir supprimer cet élément ?', 'confirmation'),
@@ -325,7 +355,8 @@ class PDF_Builder_Localization {
     /**
      * Exporte les traductions pour un thème enfant ou un plugin
      */
-    public function export_translations($locale = null) {
+    public function export_translations($locale = null)
+    {
         $locale = $locale ?: $this->current_locale;
 
         $translations = [];
@@ -342,7 +373,8 @@ class PDF_Builder_Localization {
     /**
      * Analyse le code pour trouver les chaînes traduisibles
      */
-    private function scan_for_translatable_strings() {
+    private function scan_for_translatable_strings()
+    {
         $strings = [];
 
         // Analyser les fichiers PHP du plugin
@@ -380,7 +412,8 @@ class PDF_Builder_Localization {
     /**
      * Obtient la liste des fichiers PHP du plugin
      */
-    private function get_plugin_php_files() {
+    private function get_plugin_php_files()
+    {
         $files = [];
 
         $iterator = new RecursiveIteratorIterator(
@@ -399,7 +432,8 @@ class PDF_Builder_Localization {
     /**
      * Génère un fichier .po
      */
-    private function generate_po_file($translations, $locale) {
+    private function generate_po_file($translations, $locale)
+    {
         $po_content = "# PDF Builder Pro translations for {$locale}\n";
         $po_content .= "# Generated on " . date('Y-m-d H:i:s') . "\n";
         $po_content .= "\"Language: {$locale}\\n\"\n";
@@ -422,7 +456,8 @@ class PDF_Builder_Localization {
     /**
      * Nettoie le cache de traductions
      */
-    public function cleanup_translation_cache() {
+    public function cleanup_translation_cache()
+    {
         $this->translation_cache = [];
 
         // Nettoyer les fichiers de cache de traduction si nécessaire
@@ -436,7 +471,8 @@ class PDF_Builder_Localization {
     /**
      * Supprime un dossier récursivement
      */
-    private function delete_directory_recursive($dir) {
+    private function delete_directory_recursive($dir)
+    {
         if (!is_dir($dir)) {
             return;
         }
@@ -463,7 +499,8 @@ class PDF_Builder_Localization {
     /**
      * Sanitise une locale
      */
-    public function sanitize_locale($locale) {
+    public function sanitize_locale($locale)
+    {
         if ($this->is_language_supported($locale)) {
             return $locale;
         }
@@ -474,7 +511,8 @@ class PDF_Builder_Localization {
     /**
      * AJAX - Change la locale
      */
-    public function change_locale_ajax() {
+    public function change_locale_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -496,11 +534,13 @@ class PDF_Builder_Localization {
             $success = $this->change_user_locale($locale);
 
             if ($success) {
-                wp_send_json_success([
+                wp_send_json_success(
+                    [
                     'message' => 'Locale changée avec succès',
                     'locale' => $locale,
                     'language_name' => $this->get_language_name($locale)
-                ]);
+                    ]
+                );
             } else {
                 wp_send_json_error(['message' => 'Locale non supportée']);
             }
@@ -513,7 +553,8 @@ class PDF_Builder_Localization {
     /**
      * AJAX - Obtient les traductions
      */
-    public function get_translations_ajax() {
+    public function get_translations_ajax()
+    {
         try {
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
@@ -528,11 +569,13 @@ class PDF_Builder_Localization {
                 'is_rtl' => $this->get_text_direction() === 'rtl'
             ];
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Traductions récupérées',
                 'translations' => $translations,
                 'locale' => $locale_info
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
@@ -541,60 +584,75 @@ class PDF_Builder_Localization {
 }
 
 // Fonctions globales de traduction
-function pdf_builder_translate($text, $context = '', $domain = null) {
+function pdf_builder_translate($text, $context = '', $domain = null)
+{
     return PDF_Builder_Localization::get_instance()->translate_text($text, $context, $domain);
 }
 
-function pdf_builder_translate_plural($single, $plural, $number, $context = '', $domain = null) {
+function pdf_builder_translate_plural($single, $plural, $number, $context = '', $domain = null)
+{
     return PDF_Builder_Localization::get_instance()->translate_plural($single, $plural, $number, $context, $domain);
 }
 
-function pdf_builder_get_supported_languages() {
+function pdf_builder_get_supported_languages()
+{
     return PDF_Builder_Localization::get_instance()->get_supported_languages();
 }
 
-function pdf_builder_format_date($timestamp, $format = null) {
+function pdf_builder_format_date($timestamp, $format = null)
+{
     return PDF_Builder_Localization::get_instance()->format_date($timestamp, $format);
 }
 
-function pdf_builder_format_time($timestamp, $format = null) {
+function pdf_builder_format_time($timestamp, $format = null)
+{
     return PDF_Builder_Localization::get_instance()->format_time($timestamp, $format);
 }
 
-function pdf_builder_format_number($number, $decimals = 0) {
+function pdf_builder_format_number($number, $decimals = 0)
+{
     return PDF_Builder_Localization::get_instance()->format_number($number, $decimals);
 }
 
-function pdf_builder_format_currency($amount, $currency = 'USD') {
+function pdf_builder_format_currency($amount, $currency = 'USD')
+{
     return PDF_Builder_Localization::get_instance()->format_currency($amount, $currency);
 }
 
-function pdf_builder_get_text_direction() {
+function pdf_builder_get_text_direction()
+{
     return PDF_Builder_Localization::get_instance()->get_text_direction();
 }
 
-function pdf_builder_get_js_translations() {
+function pdf_builder_get_js_translations()
+{
     return PDF_Builder_Localization::get_instance()->get_js_translations();
 }
 
-function pdf_builder_change_locale($locale) {
+function pdf_builder_change_locale($locale)
+{
     return PDF_Builder_Localization::get_instance()->change_user_locale($locale);
 }
 
 // Alias pour la compatibilité
-function __pdf_builder($text, $context = '') {
+function __pdf_builder($text, $context = '')
+{
     return pdf_builder_translate($text, $context);
 }
 
-function _e_pdf_builder($text, $context = '') {
+function _e_pdf_builder($text, $context = '')
+{
     echo pdf_builder_translate($text, $context);
 }
 
-function _n_pdf_builder($single, $plural, $number, $context = '') {
+function _n_pdf_builder($single, $plural, $number, $context = '')
+{
     return pdf_builder_translate_plural($single, $plural, $number, $context);
 }
 
 // Initialiser le système de localisation
-add_action('plugins_loaded', function() {
-    PDF_Builder_Localization::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_Localization::get_instance();
+    }
+);

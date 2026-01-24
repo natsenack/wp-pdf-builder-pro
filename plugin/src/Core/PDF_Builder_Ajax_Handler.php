@@ -5,9 +5,9 @@
  * Ce système remplace tous les anciens handlers AJAX procéduraux
  * par un système orienté objet moderne et maintenable.
  *
- * @package PDF_Builder
+ * @package    PDF_Builder
  * @subpackage Core
- * @since 1.1.0
+ * @since      1.1.0
  */
 
 if (!defined('ABSPATH')) {
@@ -17,7 +17,8 @@ if (!defined('ABSPATH')) {
 /**
  * Classe principale pour la gestion des requêtes AJAX
  */
-class PDF_Builder_Ajax_Handler {
+class PDF_Builder_Ajax_Handler
+{
 
     /**
      * Instance unique de la classe
@@ -32,7 +33,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Constructeur privé pour le pattern Singleton
      */
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_systems();
         $this->register_hooks();
     }
@@ -40,7 +42,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Obtenir l'instance unique
      */
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -50,7 +53,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Initialiser les systèmes de gestion
      */
-    private function init_systems() {
+    private function init_systems()
+    {
         $this->systems = array(
             'logger' => PDF_Builder_Advanced_Logger::get_instance(),
             'security' => PDF_Builder_Security_Validator::get_instance(),
@@ -65,7 +69,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Enregistrer les hooks WordPress
      */
-    private function register_hooks() {
+    private function register_hooks()
+    {
         // Hook pour les requêtes AJAX authentifiées
         add_action('wp_ajax_pdf_builder_ajax_dispatch', array($this, 'handle_authenticated_request'));
 
@@ -76,7 +81,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Dispatcher principal pour toutes les actions AJAX
      */
-    public function dispatch($action) {
+    public function dispatch($action)
+    {
         try {
             // Validation de sécurité de base
             $this->validate_request();
@@ -95,7 +101,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Valider la requête AJAX
      */
-    private function validate_request() {
+    private function validate_request()
+    {
         // Vérifier le nonce
         if (!isset($_REQUEST['nonce']) || !wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_ajax')) {
             throw new Exception('Nonce de sécurité invalide');
@@ -115,7 +122,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Router les actions vers les gestionnaires appropriés
      */
-    private function route_action($action) {
+    private function route_action($action)
+    {
         $method = $this->get_method_from_action($action);
 
         if (!method_exists($this, $method)) {
@@ -128,7 +136,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Convertir une action en nom de méthode
      */
-    private function get_method_from_action($action) {
+    private function get_method_from_action($action)
+    {
         // Supprimer le préfixe pdf_builder_
         $clean_action = str_replace('pdf_builder_', '', $action);
 
@@ -145,7 +154,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour les paramètres
      */
-    private function handle_save_settings() {
+    private function handle_save_settings()
+    {
         $current_tab = sanitize_text_field($_POST['current_tab'] ?? 'all');
         $saved_count = 0;
 
@@ -165,7 +175,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Sauvegarder tous les paramètres
      */
-    private function save_all_settings() {
+    private function save_all_settings()
+    {
         $settings_map = array(
             // Cache
             'cache_enabled' => 'pdf_builder_cache_enabled',
@@ -202,7 +213,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Sauvegarder les paramètres d'un onglet spécifique
      */
-    private function save_tab_settings($tab) {
+    private function save_tab_settings($tab)
+    {
         $handlers = array(
             'cache' => 'save_cache_settings',
             'maintenance' => 'save_maintenance_settings',
@@ -220,7 +232,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Sanitiser une valeur de paramètre
      */
-    private function sanitize_setting($key, $value) {
+    private function sanitize_setting($key, $value)
+    {
         $sanitizers = array(
             'cache_enabled' => 'intval',
             'cache_ttl' => 'intval',
@@ -246,14 +259,16 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour sauvegarder tous les paramètres
      */
-    private function handle_save_all_settings() {
+    private function handle_save_all_settings()
+    {
         return $this->handle_save_settings();
     }
 
     /**
      * Gestionnaire pour obtenir un nouveau nonce
      */
-    private function handle_get_fresh_nonce() {
+    private function handle_get_fresh_nonce()
+    {
         return array(
             'nonce' => wp_create_nonce('pdf_builder_ajax'),
             'generated_at' => current_time('timestamp')
@@ -263,7 +278,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour l'état du cache
      */
-    private function handle_get_cache_status() {
+    private function handle_get_cache_status()
+    {
         if (!isset($this->systems['cache'])) {
             throw new Exception('Système de cache non disponible');
         }
@@ -274,7 +290,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour tester le cache
      */
-    private function handle_test_cache() {
+    private function handle_test_cache()
+    {
         if (!isset($this->systems['cache'])) {
             throw new Exception('Système de cache non disponible');
         }
@@ -285,7 +302,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour tester l'intégration du cache
      */
-    private function handle_test_cache_integration() {
+    private function handle_test_cache_integration()
+    {
         if (!isset($this->systems['cache'])) {
             throw new Exception('Système de cache non disponible');
         }
@@ -296,7 +314,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour vider tout le cache
      */
-    private function handle_clear_all_cache() {
+    private function handle_clear_all_cache()
+    {
         if (!isset($this->systems['cache'])) {
             throw new Exception('Système de cache non disponible');
         }
@@ -307,7 +326,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour obtenir les métriques du cache
      */
-    private function handle_get_cache_metrics() {
+    private function handle_get_cache_metrics()
+    {
         if (!isset($this->systems['cache'])) {
             throw new Exception('Système de cache non disponible');
         }
@@ -318,7 +338,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour mettre à jour les métriques du cache
      */
-    private function handle_update_cache_metrics() {
+    private function handle_update_cache_metrics()
+    {
         if (!isset($this->systems['cache'])) {
             throw new Exception('Système de cache non disponible');
         }
@@ -329,7 +350,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour optimiser la base de données
      */
-    private function handle_optimize_database() {
+    private function handle_optimize_database()
+    {
         if (!isset($this->systems['diagnostic'])) {
             throw new Exception('Système de diagnostic non disponible');
         }
@@ -340,7 +362,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour réparer les templates
      */
-    private function handle_repair_templates() {
+    private function handle_repair_templates()
+    {
         if (!isset($this->systems['diagnostic'])) {
             throw new Exception('Système de diagnostic non disponible');
         }
@@ -351,7 +374,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour supprimer les fichiers temporaires
      */
-    private function handle_remove_temp_files() {
+    private function handle_remove_temp_files()
+    {
         if (!isset($this->systems['diagnostic'])) {
             throw new Exception('Système de diagnostic non disponible');
         }
@@ -362,7 +386,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour créer une sauvegarde
      */
-    private function handle_create_backup() {
+    private function handle_create_backup()
+    {
         if (!isset($this->systems['backup'])) {
             throw new Exception('Système de sauvegarde non disponible');
         }
@@ -373,7 +398,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour lister les sauvegardes
      */
-    private function handle_list_backups() {
+    private function handle_list_backups()
+    {
         if (!isset($this->systems['backup'])) {
             throw new Exception('Système de sauvegarde non disponible');
         }
@@ -384,7 +410,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour restaurer une sauvegarde
      */
-    private function handle_restore_backup() {
+    private function handle_restore_backup()
+    {
         if (!isset($this->systems['backup'])) {
             throw new Exception('Système de sauvegarde non disponible');
         }
@@ -396,7 +423,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour supprimer une sauvegarde
      */
-    private function handle_delete_backup() {
+    private function handle_delete_backup()
+    {
         if (!isset($this->systems['backup'])) {
             throw new Exception('Système de sauvegarde non disponible');
         }
@@ -408,7 +436,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour tester la licence
      */
-    private function handle_test_license() {
+    private function handle_test_license()
+    {
         if (!isset($this->systems['license'])) {
             throw new Exception('Système de licence non disponible');
         }
@@ -419,7 +448,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour tester les routes
      */
-    private function handle_test_routes() {
+    private function handle_test_routes()
+    {
         if (!isset($this->systems['diagnostic'])) {
             throw new Exception('Système de diagnostic non disponible');
         }
@@ -430,7 +460,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour exporter le diagnostic
      */
-    private function handle_export_diagnostic() {
+    private function handle_export_diagnostic()
+    {
         if (!isset($this->systems['diagnostic'])) {
             throw new Exception('Système de diagnostic non disponible');
         }
@@ -441,7 +472,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour voir les logs
      */
-    private function handle_view_logs() {
+    private function handle_view_logs()
+    {
         if (!isset($this->systems['logger'])) {
             throw new Exception('Système de logging non disponible');
         }
@@ -452,7 +484,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour sauvegarder un template
      */
-    private function handle_save_template() {
+    private function handle_save_template()
+    {
         // Utiliser la logique existante pour la compatibilité
         return pdf_builder_save_template_handler();
     }
@@ -460,7 +493,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour charger un template
      */
-    private function handle_load_template() {
+    private function handle_load_template()
+    {
         // Utiliser la logique existante pour la compatibilité
         return pdf_builder_load_template_handler();
     }
@@ -468,7 +502,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour la sauvegarde automatique de template
      */
-    private function handle_auto_save_template() {
+    private function handle_auto_save_template()
+    {
         // Utiliser la logique existante pour la compatibilité
         return pdf_builder_auto_save_template_handler();
     }
@@ -476,7 +511,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour charger les paramètres de template
      */
-    private function handle_load_template_settings() {
+    private function handle_load_template_settings()
+    {
         // Utiliser la logique existante pour la compatibilité
         return pdf_builder_load_template_settings_handler();
     }
@@ -484,7 +520,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour sauvegarder les paramètres de template
      */
-    private function handle_save_template_settings() {
+    private function handle_save_template_settings()
+    {
         // Utiliser la logique existante pour la compatibilité
         return pdf_builder_save_template_settings_handler();
     }
@@ -492,7 +529,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour supprimer un template
      */
-    private function handle_delete_template() {
+    private function handle_delete_template()
+    {
         // Utiliser la logique existante pour la compatibilité
         return pdf_builder_delete_template_handler();
     }
@@ -500,7 +538,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour définir un template par défaut
      */
-    private function handle_set_default_template() {
+    private function handle_set_default_template()
+    {
         // Utiliser la logique existante pour la compatibilité
         return pdf_builder_set_default_template_handler();
     }
@@ -508,7 +547,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour dupliquer un template
      */
-    private function handle_duplicate_template() {
+    private function handle_duplicate_template()
+    {
         // Utiliser la logique existante pour la compatibilité
         return pdf_builder_duplicate_template_handler();
     }
@@ -516,7 +556,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour charger un modèle prédéfini
      */
-    private function handle_load_predefined_into_editor() {
+    private function handle_load_predefined_into_editor()
+    {
         // Utiliser la logique existante pour la compatibilité
         return pdf_builder_load_predefined_into_editor_handler();
     }
@@ -524,7 +565,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour vérifier la limite de templates
      */
-    private function handle_check_template_limit() {
+    private function handle_check_template_limit()
+    {
         // Utiliser la logique existante pour la compatibilité
         return pdf_builder_check_template_limit_handler();
     }
@@ -532,23 +574,27 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire d'erreurs
      */
-    private function handle_error(Exception $e) {
+    private function handle_error(Exception $e)
+    {
         // Logger l'erreur
         if (isset($this->systems['logger'])) {
             $this->systems['logger']->log_error('AJAX Error: ' . $e->getMessage());
         }
 
         // Envoyer une réponse d'erreur
-        wp_send_json_error(array(
+        wp_send_json_error(
+            array(
             'message' => $e->getMessage(),
             'code' => $e->getCode()
-        ));
+            )
+        );
     }
 
     /**
      * Gestionnaire pour les requêtes authentifiées
      */
-    public function handle_authenticated_request() {
+    public function handle_authenticated_request()
+    {
         $action = isset($_REQUEST['action']) ? sanitize_text_field($_REQUEST['action']) : '';
         $this->dispatch($action);
     }
@@ -556,7 +602,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Gestionnaire pour les requêtes publiques
      */
-    public function handle_public_request() {
+    public function handle_public_request()
+    {
         // Pour les requêtes publiques, implémenter une logique spécifique si nécessaire
         $action = isset($_REQUEST['action']) ? sanitize_text_field($_REQUEST['action']) : '';
 
@@ -576,7 +623,8 @@ class PDF_Builder_Ajax_Handler {
     /**
      * Méthodes privées pour les sauvegardes de paramètres par onglet
      */
-    private function save_cache_settings() {
+    private function save_cache_settings()
+    {
         $settings = array(
             'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
             'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
@@ -592,7 +640,8 @@ class PDF_Builder_Ajax_Handler {
         return count($settings);
     }
 
-    private function save_maintenance_settings() {
+    private function save_maintenance_settings()
+    {
         $settings = array(
             'auto_maintenance' => isset($_POST['auto_maintenance']) ? '1' : '0',
         );
@@ -604,7 +653,8 @@ class PDF_Builder_Ajax_Handler {
         return count($settings);
     }
 
-    private function save_backup_settings() {
+    private function save_backup_settings()
+    {
         $settings = array(
             'auto_backup' => isset($_POST['auto_backup']) ? '1' : '0',
             'auto_backup_frequency' => sanitize_text_field($_POST['auto_backup_frequency'] ?? 'daily'),
@@ -618,7 +668,8 @@ class PDF_Builder_Ajax_Handler {
         return count($settings);
     }
 
-    private function save_security_settings() {
+    private function save_security_settings()
+    {
         $settings = array(
             'security_level' => sanitize_text_field($_POST['security_level'] ?? 'medium'),
             'enable_logging' => isset($_POST['enable_logging']) ? '1' : '0',

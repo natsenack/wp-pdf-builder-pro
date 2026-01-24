@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class PDF_Builder_Config_Mappings {
+class PDF_Builder_Config_Mappings
+{
 
     // ==========================================
     // CONFIGURATIONS GÉNÉRALES
@@ -271,28 +272,32 @@ class PDF_Builder_Config_Mappings {
     /**
      * Obtenir la configuration générale
      */
-    public static function get_general_config() {
+    public static function get_general_config()
+    {
         return self::$general_config;
     }
 
     /**
      * Obtenir une valeur de configuration générale
      */
-    public static function get_general_config_value($key) {
+    public static function get_general_config_value($key)
+    {
         return self::$general_config[$key] ?? null;
     }
 
     /**
      * Obtenir les chemins et URLs
      */
-    public static function get_paths_config() {
+    public static function get_paths_config()
+    {
         return self::$paths_config;
     }
 
     /**
      * Obtenir un chemin ou URL spécifique (avec résolution des chemins absolus)
      */
-    public static function get_path($key) {
+    public static function get_path($key)
+    {
         $path = self::$paths_config[$key] ?? null;
 
         if (!$path) {
@@ -301,116 +306,128 @@ class PDF_Builder_Config_Mappings {
 
         // Résoudre les chemins absolus
         switch ($key) {
-            case 'plugin_dir':
-                return plugin_dir_path(dirname(__FILE__) . '/../');
-            case 'plugin_url':
-                return plugin_dir_url(dirname(__FILE__) . '/../');
-            default:
-                return $path;
+        case 'plugin_dir':
+            return plugin_dir_path(dirname(__FILE__) . '/../');
+        case 'plugin_url':
+            return plugin_dir_url(dirname(__FILE__) . '/../');
+        default:
+            return $path;
         }
     }
 
     /**
      * Obtenir la configuration de base de données
      */
-    public static function get_database_config() {
+    public static function get_database_config()
+    {
         return self::$database_config;
     }
 
     /**
      * Obtenir le nom d'une table
      */
-    public static function get_table_name($table) {
+    public static function get_table_name($table)
+    {
         return self::$database_config['tables'][$table] ?? null;
     }
 
     /**
      * Obtenir la configuration AJAX
      */
-    public static function get_ajax_config() {
+    public static function get_ajax_config()
+    {
         return self::$ajax_config;
     }
 
     /**
      * Obtenir une action AJAX
      */
-    public static function get_ajax_action($action) {
+    public static function get_ajax_action($action)
+    {
         return self::$ajax_config['actions'][$action] ?? null;
     }
 
     /**
      * Obtenir un nonce AJAX
      */
-    public static function get_ajax_nonce($action) {
+    public static function get_ajax_nonce($action)
+    {
         return self::$ajax_config['nonces'][$action] ?? null;
     }
 
     /**
      * Obtenir la configuration de cache
      */
-    public static function get_cache_config() {
+    public static function get_cache_config()
+    {
         return self::$cache_config;
     }
 
     /**
      * Obtenir le TTL de cache pour un type
      */
-    public static function get_cache_ttl($type) {
+    public static function get_cache_ttl($type)
+    {
         return self::$cache_config['ttl'][$type] ?? self::$cache_config['ttl']['default'] ?? 3600;
     }
 
     /**
      * Obtenir la configuration de sécurité
      */
-    public static function get_security_config() {
+    public static function get_security_config()
+    {
         return self::$security_config;
     }
 
     /**
      * Obtenir la configuration de performance
      */
-    public static function get_performance_config() {
+    public static function get_performance_config()
+    {
         return self::$performance_config;
     }
 
     /**
      * Obtenir la configuration de logging
      */
-    public static function get_logging_config() {
+    public static function get_logging_config()
+    {
         return self::$logging_config;
     }
 
     /**
      * Obtenir la configuration de mise à jour
      */
-    public static function get_update_config() {
+    public static function get_update_config()
+    {
         return self::$update_config;
     }
 
     /**
      * Vérifier si une fonctionnalité est activée
      */
-    public static function is_feature_enabled($feature, $config_type = 'general') {
+    public static function is_feature_enabled($feature, $config_type = 'general')
+    {
         $config = null;
 
         switch ($config_type) {
-            case 'cache':
-                $config = self::$cache_config;
-                break;
-            case 'security':
-                $config = self::$security_config;
-                break;
-            case 'performance':
-                $config = self::$performance_config;
-                break;
-            case 'logging':
-                $config = self::$logging_config;
-                break;
-            case 'update':
-                $config = self::$update_config;
-                break;
-            default:
-                return false;
+        case 'cache':
+            $config = self::$cache_config;
+            break;
+        case 'security':
+            $config = self::$security_config;
+            break;
+        case 'performance':
+            $config = self::$performance_config;
+            break;
+        case 'logging':
+            $config = self::$logging_config;
+            break;
+        case 'update':
+            $config = self::$update_config;
+            break;
+        default:
+            return false;
         }
 
         return isset($config[$feature]['enabled']) ? $config[$feature]['enabled'] : false;
@@ -419,37 +436,38 @@ class PDF_Builder_Config_Mappings {
     /**
      * Obtenir une valeur de configuration imbriquée
      */
-    public static function get_nested_config_value($path, $config_type = 'general') {
+    public static function get_nested_config_value($path, $config_type = 'general')
+    {
         $config = null;
 
         switch ($config_type) {
-            case 'general':
-                $config = self::$general_config;
-                break;
-            case 'paths':
-                $config = self::$paths_config;
-                break;
-            case 'database':
-                $config = self::$database_config;
-                break;
-            case 'ajax':
-                $config = self::$ajax_config;
-                break;
-            case 'cache':
-                $config = self::$cache_config;
-                break;
-            case 'security':
-                $config = self::$security_config;
-                break;
-            case 'performance':
-                $config = self::$performance_config;
-                break;
-            case 'logging':
-                $config = self::$logging_config;
-                break;
-            case 'update':
-                $config = self::$update_config;
-                break;
+        case 'general':
+            $config = self::$general_config;
+            break;
+        case 'paths':
+            $config = self::$paths_config;
+            break;
+        case 'database':
+            $config = self::$database_config;
+            break;
+        case 'ajax':
+            $config = self::$ajax_config;
+            break;
+        case 'cache':
+            $config = self::$cache_config;
+            break;
+        case 'security':
+            $config = self::$security_config;
+            break;
+        case 'performance':
+            $config = self::$performance_config;
+            break;
+        case 'logging':
+            $config = self::$logging_config;
+            break;
+        case 'update':
+            $config = self::$update_config;
+            break;
         }
 
         if (!$config) {
@@ -472,7 +490,8 @@ class PDF_Builder_Config_Mappings {
     /**
      * Générer un tableau de configuration pour l'export
      */
-    public static function export_config() {
+    public static function export_config()
+    {
         return [
             'general' => self::$general_config,
             'paths' => self::$paths_config,
@@ -489,30 +508,31 @@ class PDF_Builder_Config_Mappings {
     /**
      * Valider une configuration
      */
-    public static function validate_config($config, $type = 'general') {
+    public static function validate_config($config, $type = 'general')
+    {
         $errors = [];
 
         switch ($type) {
-            case 'database':
-                if (empty($config['tables'])) {
-                    $errors[] = 'Database tables configuration is missing';
-                }
-                break;
+        case 'database':
+            if (empty($config['tables'])) {
+                $errors[] = 'Database tables configuration is missing';
+            }
+            break;
 
-            case 'ajax':
-                if (empty($config['actions'])) {
-                    $errors[] = 'AJAX actions configuration is missing';
-                }
-                if (empty($config['nonces'])) {
-                    $errors[] = 'AJAX nonces configuration is missing';
-                }
-                break;
+        case 'ajax':
+            if (empty($config['actions'])) {
+                $errors[] = 'AJAX actions configuration is missing';
+            }
+            if (empty($config['nonces'])) {
+                $errors[] = 'AJAX nonces configuration is missing';
+            }
+            break;
 
-            case 'cache':
-                if (!isset($config['enabled'])) {
-                    $errors[] = 'Cache enabled flag is missing';
-                }
-                break;
+        case 'cache':
+            if (!isset($config['enabled'])) {
+                $errors[] = 'Cache enabled flag is missing';
+            }
+            break;
         }
 
         return [

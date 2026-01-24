@@ -92,7 +92,7 @@
     "wordpress"
   ],
   "intelephense.scanFiles": [
-    "${workspaceFolder}/stubs.php",
+    "${workspaceFolder}/plugin/src/stubs.php",
     "${workspaceFolder}/vendor/phpunit/phpunit/src/Framework/**/*.php"
   ],
   "intelephense.completion.insertUseDeclaration": true,

@@ -40,18 +40,18 @@ class License_Expiration_Handler
         if (!empty($license_expires) && $license_status !== 'free') {
             $expires_date = new \DateTime($license_expires);
             $now = new \DateTime();
-        // If license has expired, update status
+            // If license has expired, update status
             if ($now > $expires_date) {
                 update_option('pdf_builder_license_status', 'expired');
                 update_option('pdf_builder_license_key', '');
-// Clear the key
+                // Clear the key
 
                 // Log the expiration
                 
             } else {
-        // Check if we should send a notification (30 days or 7 days before expiration)
+                // Check if we should send a notification (30 days or 7 days before expiration)
                 $diff_days = $expires_date->diff($now)->days;
-        // Send notification if 30 days or 7 days remaining
+                // Send notification if 30 days or 7 days remaining
                 if (in_array($diff_days, [30, 7])) {
                     self::sendExpirationNotification($license_expires, $diff_days);
                 }
@@ -64,13 +64,13 @@ class License_Expiration_Handler
         if (!empty($test_key_expires) && !empty($test_key)) {
             $expires_date = new \DateTime($test_key_expires);
             $now = new \DateTime();
-        // If test key has expired, remove it
+            // If test key has expired, remove it
             if ($now > $expires_date) {
                 delete_option('pdf_builder_license_test_key');
                 delete_option('pdf_builder_license_test_key_expires');
                 delete_option('pdf_builder_license_test_mode_enabled');
                 update_option('pdf_builder_license_status', 'free');
-// Log the expiration
+                // Log the expiration
                 
             }
         }

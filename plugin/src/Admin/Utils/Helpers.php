@@ -77,26 +77,26 @@ class Validation
             if (isset($rules[$key])) {
                 $rule = $rules[$key];
                 switch ($rule) {
-                    case 'text':
-                        $sanitized[$key] = sanitize_text_field($value);
-                        break;
-                    case 'textarea':
-                        $sanitized[$key] = sanitize_textarea_field($value);
-                        break;
-                    case 'email':
-                        $sanitized[$key] = sanitize_email($value);
-                        break;
-                    case 'int':
-                        $sanitized[$key] = intval($value);
-                        break;
-                    case 'float':
-                        $sanitized[$key] = floatval($value);
-                        break;
-                    case 'boolean':
-                        $sanitized[$key] = $value ? '1' : '0';
-                        break;
-                    default:
-                        $sanitized[$key] = sanitize_text_field($value);
+                case 'text':
+                    $sanitized[$key] = sanitize_text_field($value);
+                    break;
+                case 'textarea':
+                    $sanitized[$key] = sanitize_textarea_field($value);
+                    break;
+                case 'email':
+                    $sanitized[$key] = sanitize_email($value);
+                    break;
+                case 'int':
+                    $sanitized[$key] = intval($value);
+                    break;
+                case 'float':
+                    $sanitized[$key] = floatval($value);
+                    break;
+                case 'boolean':
+                    $sanitized[$key] = $value ? '1' : '0';
+                    break;
+                default:
+                    $sanitized[$key] = sanitize_text_field($value);
                 }
             } else {
                 $sanitized[$key] = sanitize_text_field($value);

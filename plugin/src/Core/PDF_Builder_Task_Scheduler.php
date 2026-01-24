@@ -6,7 +6,8 @@
 
 // // error_log('PDF Builder: Task Scheduler file loaded');
 
-class PDF_Builder_Task_Scheduler {
+class PDF_Builder_Task_Scheduler
+{
     private static $instance = null;
 
     // Définition des tâches
@@ -38,14 +39,16 @@ class PDF_Builder_Task_Scheduler {
         ]
     ];
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         // // error_log('PDF Builder: Task Scheduler constructor called');
         // init_hooks() will be called later when WordPress is loaded
         // // error_log('PDF Builder: Task Scheduler instance created');
@@ -54,7 +57,8 @@ class PDF_Builder_Task_Scheduler {
     /**
      * Initialize the task scheduler when WordPress is ready
      */
-    public function init() {
+    public function init()
+    {
         $this->init_hooks();
         $this->schedule_tasks();
         // // error_log('PDF Builder: Task Scheduler initialized');
@@ -63,7 +67,8 @@ class PDF_Builder_Task_Scheduler {
     /**
      * Programme toutes les tâches définies
      */
-    private function schedule_tasks() {
+    private function schedule_tasks()
+    {
         foreach (self::TASKS as $task_name => $task_config) {
             if (!wp_next_scheduled($task_name)) {
                 $interval = $task_config['interval'];
@@ -72,7 +77,8 @@ class PDF_Builder_Task_Scheduler {
         }
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Activation/désactivation des tâches
         add_action('wp_ajax_pdf_builder_schedule_task', [$this, 'schedule_task_ajax']);
         add_action('wp_ajax_pdf_builder_unschedule_task', [$this, 'unschedule_task_ajax']);
@@ -102,7 +108,8 @@ class PDF_Builder_Task_Scheduler {
     /**
      * Enregistre les actions AJAX pour le diagnostic cron
      */
-    public function register_ajax_actions() {
+    public function register_ajax_actions()
+    {
         // // error_log('PDF Builder: [TASK SCHEDULER] Registering AJAX actions at ' . current_time('Y-m-d H:i:s'));
         add_action('wp_ajax_pdf_builder_get_backup_stats', [$this, 'ajax_get_backup_stats']);
         add_action('wp_ajax_pdf_builder_create_backup', [$this, 'ajax_create_backup']);
@@ -112,7 +119,8 @@ class PDF_Builder_Task_Scheduler {
     /**
      * Ajoute des intervalles de cron personnalisés
      */
-    public function add_custom_cron_schedules($schedules) {
+    public function add_custom_cron_schedules($schedules)
+    {
         $schedules['twicedaily'] = [
             'interval' => 43200, // 12 heures
             'display' => 'Deux fois par jour'
@@ -139,7 +147,8 @@ class PDF_Builder_Task_Scheduler {
     /**
      * Mappe la fréquence utilisateur à un intervalle cron
      */
-    private function map_frequency_to_interval($frequency) {
+    private function map_frequency_to_interval($frequency)
+    {
         $mapping = [
             'every_minute' => 'every_minute',
             'daily' => 'daily',
@@ -153,7 +162,8 @@ class PDF_Builder_Task_Scheduler {
     /**
      * Annule la planification de toutes les tâches
      */
-    public function unschedule_all_tasks() {
+    public function unschedule_all_tasks()
+    {
         foreach (self::TASKS as $task_name => $task_config) {
             wp_clear_scheduled_hook($task_name);
         }
@@ -162,7 +172,8 @@ class PDF_Builder_Task_Scheduler {
     /**
      * Diagnostique l'état du système cron
      */
-    public function diagnose_cron_system() {
+    public function diagnose_cron_system()
+    {
         $issues = [];
         $recommendations = [];
 
@@ -214,7 +225,8 @@ class PDF_Builder_Task_Scheduler {
             'fallback_active' => true // Notre système de fallback
         ];
     }
-    public function repair_cron_system() {
+    public function repair_cron_system()
+    {
         $results = [];
 
         // Forcer la reprogrammation de toutes les tâches
@@ -239,7 +251,8 @@ class PDF_Builder_Task_Scheduler {
     /**
      * Tester le système de fallback
      */
-    private function test_fallback_system() {
+    private function test_fallback_system()
+    {
         // Créer un transient de test
         $test_key = 'pdf_builder_fallback_test_' . time();
         set_transient($test_key, time(), 300); // 5 minutes
@@ -272,7 +285,8 @@ class PDF_Builder_Task_Scheduler {
     /**
      * Obtient la taille de la base de données
      */
-    private function get_database_size() {
+    private function get_database_size()
+    {
         global $wpdb;
 
         $tables = [
@@ -287,12 +301,14 @@ class PDF_Builder_Task_Scheduler {
         $total_size = 0;
 
         foreach ($tables as $table) {
-            $size = $wpdb->get_var("
+            $size = $wpdb->get_var(
+                "
                 SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) as size_mb
                 FROM information_schema.tables
                 WHERE table_name = '$table'
                 AND table_schema = DATABASE()
-            ");
+            "
+            );
 
             if ($size) {
                 $total_size += $size;
@@ -305,12 +321,15 @@ class PDF_Builder_Task_Scheduler {
     /**
      * Log une erreur de tâche
      */
-    private function log_task_error($task_name, $exception) {
+    private function log_task_error($task_name, $exception)
+    {
         if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->error("Task $task_name failed", [
+            PDF_Builder_Logger::get_instance()->error(
+                "Task $task_name failed", [
                 'error' => $exception->getMessage(),
                 'trace' => $exception->getTraceAsString()
-            ]);
+                ]
+            );
         } else {
             // // error_log("[PDF Builder Task Error] $task_name: " . $exception->getMessage());
         }
@@ -325,7 +344,8 @@ class PDF_Builder_Task_Scheduler {
     /**
      * AJAX - Planifie une tâche
      */
-    public function schedule_task_ajax() {
+    public function schedule_task_ajax()
+    {
         try {
             // Valider la requête
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
@@ -360,7 +380,8 @@ class PDF_Builder_Task_Scheduler {
     /**
      * AJAX - Annule la planification d'une tâche
      */
-    public function unschedule_task_ajax() {
+    public function unschedule_task_ajax()
+    {
         try {
             // Valider la requête
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
@@ -391,7 +412,8 @@ class PDF_Builder_Task_Scheduler {
     /**
      * AJAX - Exécute une tâche immédiatement
      */
-    public function run_task_now_ajax() {
+    public function run_task_now_ajax()
+    {
         try {
             // Valider la requête
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
@@ -420,10 +442,12 @@ class PDF_Builder_Task_Scheduler {
             // Obtenir les métriques de performance
             $metrics = pdf_builder_end_timer("task_$task_name");
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Tâche exécutée avec succès',
                 'execution_time' => $metrics ? round($metrics['duration'], 2) : null
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error(['message' => 'Erreur lors de l\'exécution: ' . $e->getMessage()]);
@@ -433,7 +457,8 @@ class PDF_Builder_Task_Scheduler {
     /**
      * Obtient le statut de toutes les tâches
      */
-    public function get_tasks_status() {
+    public function get_tasks_status()
+    {
         $status = [];
 
         foreach (self::TASKS as $task_name => $task_config) {
@@ -454,7 +479,8 @@ class PDF_Builder_Task_Scheduler {
     /**
      * AJAX handler pour vérifier la configuration WP Cron
      */
-    public function ajax_check_wp_cron_config() {
+    public function ajax_check_wp_cron_config()
+    {
         // Vérifier le nonce
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
             wp_send_json_error(['message' => 'Nonce invalide']);
@@ -469,16 +495,19 @@ class PDF_Builder_Task_Scheduler {
 
         $cron_disabled = defined('DISABLE_WP_CRON') && DISABLE_WP_CRON;
 
-        wp_send_json_success([
+        wp_send_json_success(
+            [
             'cron_disabled' => $cron_disabled,
             'cron_constant_defined' => defined('DISABLE_WP_CRON')
-        ]);
+            ]
+        );
     }
 
     /**
      * AJAX handler pour vérifier les tâches planifiées
      */
-    public function ajax_check_scheduled_tasks() {
+    public function ajax_check_scheduled_tasks()
+    {
         // Vérifier le nonce
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
             wp_send_json_error(['message' => 'Nonce invalide']);
@@ -498,16 +527,19 @@ class PDF_Builder_Task_Scheduler {
             }
         }
 
-        wp_send_json_success([
+        wp_send_json_success(
+            [
             'scheduled_tasks' => $scheduled_tasks,
             'total_tasks' => count(self::TASKS)
-        ]);
+            ]
+        );
     }
 
     /**
      * AJAX handler pour tester la réponse du système cron
      */
-    public function ajax_cron_test() {
+    public function ajax_cron_test()
+    {
         // // error_log('PDF Builder: [CRON TEST] ajax_cron_test method called');
         
         // Vérifier le nonce
@@ -520,17 +552,20 @@ class PDF_Builder_Task_Scheduler {
         // // error_log('PDF Builder: [CRON TEST] Nonce verified, sending success response');
 
         // Test simple de réponse
-        wp_send_json_success([
+        wp_send_json_success(
+            [
             'test' => 'ok',
             'timestamp' => time(),
             'message' => 'WP Cron system is responding'
-        ]);
+            ]
+        );
     }
 
     /**
      * AJAX handler pour obtenir les statistiques de sauvegarde
      */
-    public function ajax_get_backup_stats() {
+    public function ajax_get_backup_stats()
+    {
         // Vérifier le nonce
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
             wp_send_json_error(['message' => 'Nonce invalide']);
@@ -556,9 +591,11 @@ class PDF_Builder_Task_Scheduler {
                 }
 
                 // Trier par date (le plus récent en premier)
-                usort($files, function($a, $b) {
-                    return filemtime($b) - filemtime($a);
-                });
+                usort(
+                    $files, function ($a, $b) {
+                        return filemtime($b) - filemtime($a);
+                    }
+                );
 
                 if (!empty($files)) {
                     $stats['last_backup'] = basename($files[0]);
@@ -572,7 +609,8 @@ class PDF_Builder_Task_Scheduler {
     /**
      * AJAX handler pour créer une sauvegarde manuelle
      */
-    public function ajax_create_backup() {
+    public function ajax_create_backup()
+    {
         // Vérifier le nonce
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
             wp_send_json_error(['message' => 'Nonce invalide']);
@@ -587,10 +625,12 @@ class PDF_Builder_Task_Scheduler {
                 if (is_wp_error($result)) {
                     wp_send_json_error(['message' => $result->get_error_message()]);
                 } else {
-                    wp_send_json_success([
+                    wp_send_json_success(
+                        [
                         'message' => 'Sauvegarde créée avec succès',
                         'file' => $result['filename'] ?? null
-                    ]);
+                        ]
+                    );
                 }
             } else {
                 wp_send_json_error(['message' => 'Gestionnaire de sauvegarde non disponible']);
@@ -603,7 +643,8 @@ class PDF_Builder_Task_Scheduler {
     /**
      * Nettoyer le cache expiré (fonction supprimée - système de cache retiré)
      */
-    public function cleanup_expired_cache() {
+    public function cleanup_expired_cache()
+    {
         // Système de cache supprimé - cette méthode ne fait plus rien
         return;
     }
@@ -626,11 +667,13 @@ class PDF_Builder_Task_Scheduler {
 }
 
 // Fonctions globales
-function pdf_builder_get_tasks_status() {
+function pdf_builder_get_tasks_status()
+{
     return PDF_Builder_Task_Scheduler::get_instance()->get_tasks_status();
 }
 
-function pdf_builder_schedule_task($task_name) {
+function pdf_builder_schedule_task($task_name)
+{
     if (isset(PDF_Builder_Task_Scheduler::TASKS[$task_name])) {
         wp_schedule_event(time(), PDF_Builder_Task_Scheduler::TASKS[$task_name]['interval'], $task_name);
         return true;
@@ -638,7 +681,8 @@ function pdf_builder_schedule_task($task_name) {
     return false;
 }
 
-function pdf_builder_unschedule_task($task_name) {
+function pdf_builder_unschedule_task($task_name)
+{
     wp_clear_scheduled_hook($task_name);
     return true;
 }

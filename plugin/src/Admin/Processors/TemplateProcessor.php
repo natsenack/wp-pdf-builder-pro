@@ -195,7 +195,7 @@ class TemplateProcessor
     {
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-// Ajouter un flag de corruption (on peut utiliser un champ meta ou modifier le nom)
+        // Ajouter un flag de corruption (on peut utiliser un champ meta ou modifier le nom)
         $current_name = $wpdb->get_var($wpdb->prepare("SELECT name FROM $table_templates WHERE id = %d", $template_id));
         if ($current_name && strpos($current_name, '[CORROMPU]') !== 0) {
             $wpdb->update($table_templates, ['name' => '[CORROMPU] ' . $current_name], ['id' => $template_id]);
@@ -239,12 +239,12 @@ class TemplateProcessor
         }
 
         $template = json_decode($template_data, true);
-// MIGRATION: Corriger les valeurs par défaut obsolètes dans les templates
+        // MIGRATION: Corriger les valeurs par défaut obsolètes dans les templates
         // Les templates créés avant cette correction peuvent avoir des valeurs par défaut incorrectes
         if (is_array($template) && isset($template['elements']) && is_array($template['elements'])) {
             foreach ($template['elements'] as &$element) {
                 if ($element['type'] === 'product_table') {
-        // Valeurs par défaut correctes du Canvas Elements Manager
+                    // Valeurs par défaut correctes du Canvas Elements Manager
                     // showSubtotal, showDiscount, showTotal doivent être false par défaut
                     // showShipping et showTaxes doivent être true par défaut
 

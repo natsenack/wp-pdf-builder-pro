@@ -3,7 +3,7 @@
 /**
  * Dependency Injection Container - Conteneur d'injection de dépendances
  *
- * @package PDF_Builder
+ * @package    PDF_Builder
  * @subpackage Core
  */
 
@@ -23,24 +23,25 @@ class DIContainer
      * @var array
      */
     private array $instances = [];
-/**
+    /**
      * Définitions des services
      *
      * @var array
      */
     private array $definitions = [];
-/**
+    /**
      * Instances partagées (singletons)
      *
      * @var array
      */
     private array $shared = [];
-/**
+    /**
      * Enregistre une définition de service
      *
-     * @param string $name Nom du service
-     * @param callable $definition Fonction de création du service
-     * @param bool $shared Si true, instance partagée (singleton)
+     * @param  string   $name       Nom du service
+     * @param  callable $definition Fonction de création du service
+     * @param  bool     $shared     Si true, instance
+     *                              partagée (singleton)
      * @return self
      */
     public function set(string $name, callable $definition, bool $shared = false): self
@@ -56,8 +57,9 @@ class DIContainer
     /**
      * Enregistre une instance directe
      *
-     * @param string $name Nom du service
-     * @param mixed $instance Instance à enregistrer
+     * @param  string $name     Nom du service
+     * @param  mixed  $instance Instance à
+     *                          enregistrer
      * @return self
      */
     public function setInstance(string $name, $instance): self
@@ -69,7 +71,7 @@ class DIContainer
     /**
      * Obtient une instance de service
      *
-     * @param string $name Nom du service
+     * @param  string $name Nom du service
      * @return mixed Instance du service
      * @throws \Exception Si le service n'existe pas
      */
@@ -92,7 +94,7 @@ class DIContainer
 
         // Créer l'instance
         $instance = call_user_func($this->definitions[$name], $this);
-// Stocker si c'est un singleton
+        // Stocker si c'est un singleton
         if (isset($this->shared[$name])) {
             $this->instances[$name] = $instance;
         }
@@ -103,7 +105,7 @@ class DIContainer
     /**
      * Vérifie si un service existe
      *
-     * @param string $name Nom du service
+     * @param  string $name Nom du service
      * @return bool True si le service existe
      */
     public function has(string $name): bool
@@ -114,7 +116,7 @@ class DIContainer
     /**
      * Supprime un service
      *
-     * @param string $name Nom du service
+     * @param  string $name Nom du service
      * @return self
      */
     public function remove(string $name): self
@@ -169,33 +171,37 @@ class DIContainer
     /**
      * Enregistre le ModeSwitcher
      *
-     * @param string $initialMode Mode initial
+     * @param  string $initialMode Mode initial
      * @return self
      */
     public function registerModeSwitcher(string $initialMode = 'canvas'): self
     {
-        return $this->set('mode_switcher', function () use ($initialMode) {
+        return $this->set(
+            'mode_switcher', function () use ($initialMode) {
 
-            return new \PDF_Builder\Managers\ModeSwitcher($initialMode);
-        }, true);
-// Singleton
+                return new \PDF_Builder\Managers\ModeSwitcher($initialMode);
+            }, true
+        );
+        // Singleton
     }
 
     /**
      * Enregistre le PreviewRenderer
      *
-     * @param array $options Options du renderer
+     * @param  array $options Options du renderer
      * @return self
      */
     public function registerPreviewRenderer(array $options = []): self
     {
-        return $this->set('preview_renderer', function ($container) use ($options) {
+        return $this->set(
+            'preview_renderer', function ($container) use ($options) {
 
-            // Note: PreviewRenderer sera injecté plus tard quand disponible
-            // Pour l'instant, retourner null ou une implémentation mock
-            return null;
-        }, true);
-// Singleton
+                // Note: PreviewRenderer sera injecté plus tard quand disponible
+                // Pour l'instant, retourner null ou une implémentation mock
+                return null;
+            }, true
+        );
+        // Singleton
     }
 
     /**
@@ -206,25 +212,29 @@ class DIContainer
     public function registerDataProviders(): self
     {
         // CanvasModeProvider
-        $this->set('canvas_provider', function () {
+        $this->set(
+            'canvas_provider', function () {
 
-            return new \PDF_Builder_Pro\Providers\CanvasModeProvider();
-        });
-// MetaboxModeProvider (factory pour permettre l'injection d'ordre)
-        $this->set('metabox_provider_factory', function () {
+                return new \PDF_Builder_Pro\Providers\CanvasModeProvider();
+            }
+        );
+        // MetaboxModeProvider (factory pour permettre l'injection d'ordre)
+        $this->set(
+            'metabox_provider_factory', function () {
 
-            return function ($order = null) {
+                return function ($order = null) {
 
-                return new \PDF_Builder_Pro\Providers\MetaboxModeProvider($order);
-            };
-        });
+                    return new \PDF_Builder_Pro\Providers\MetaboxModeProvider($order);
+                };
+            }
+        );
         return $this;
     }
 
     /**
      * Configure tous les services par défaut
      *
-     * @param string $initialMode Mode initial
+     * @param  string $initialMode Mode initial
      * @return self
      */
     public function configureDefaults(string $initialMode = 'canvas'): self

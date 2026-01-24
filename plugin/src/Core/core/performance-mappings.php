@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class PDF_Builder_Performance_Mappings {
+class PDF_Builder_Performance_Mappings
+{
 
     // ==========================================
     // CONFIGURATIONS DE PERFORMANCE
@@ -284,77 +285,88 @@ class PDF_Builder_Performance_Mappings {
     /**
      * Obtenir toutes les configurations de performance
      */
-    public static function get_performance_configs() {
+    public static function get_performance_configs()
+    {
         return self::$performance_configs;
     }
 
     /**
      * Obtenir une configuration de performance spécifique
      */
-    public static function get_performance_config($key) {
+    public static function get_performance_config($key)
+    {
         return self::$performance_configs[$key] ?? null;
     }
 
     /**
      * Obtenir les seuils de performance
      */
-    public static function get_performance_thresholds() {
+    public static function get_performance_thresholds()
+    {
         return self::$performance_thresholds;
     }
 
     /**
      * Obtenir les seuils pour un niveau spécifique
      */
-    public static function get_thresholds_by_level($level) {
+    public static function get_thresholds_by_level($level)
+    {
         return self::$performance_thresholds[$level] ?? [];
     }
 
     /**
      * Obtenir les stratégies d'optimisation
      */
-    public static function get_optimization_strategies() {
+    public static function get_optimization_strategies()
+    {
         return self::$optimization_strategies;
     }
 
     /**
      * Obtenir une stratégie d'optimisation spécifique
      */
-    public static function get_optimization_strategy($key) {
+    public static function get_optimization_strategy($key)
+    {
         return self::$optimization_strategies[$key] ?? null;
     }
 
     /**
      * Obtenir les métriques de performance
      */
-    public static function get_performance_metrics() {
+    public static function get_performance_metrics()
+    {
         return self::$performance_metrics;
     }
 
     /**
      * Obtenir une métrique de performance spécifique
      */
-    public static function get_performance_metric($key) {
+    public static function get_performance_metric($key)
+    {
         return self::$performance_metrics[$key] ?? null;
     }
 
     /**
      * Obtenir les recommandations de performance
      */
-    public static function get_performance_recommendations() {
+    public static function get_performance_recommendations()
+    {
         return self::$performance_recommendations;
     }
 
     /**
      * Obtenir une recommandation de performance spécifique
      */
-    public static function get_performance_recommendation($key) {
+    public static function get_performance_recommendation($key)
+    {
         return self::$performance_recommendations[$key] ?? null;
     }
 
     /**
      * Vérifier si une valeur dépasse un seuil
      */
-    public static function check_threshold($metric, $value, $level = 'warning') {
+    public static function check_threshold($metric, $value, $level = 'warning')
+    {
         $thresholds = self::get_thresholds_by_level($level);
         $threshold = $thresholds[$metric] ?? null;
 
@@ -368,7 +380,8 @@ class PDF_Builder_Performance_Mappings {
     /**
      * Obtenir le niveau de performance pour une métrique
      */
-    public static function get_performance_level($metric, $value) {
+    public static function get_performance_level($metric, $value)
+    {
         if (self::check_threshold($metric, $value, 'critical')) {
             return 'critical';
         }
@@ -383,7 +396,8 @@ class PDF_Builder_Performance_Mappings {
     /**
      * Générer des recommandations basées sur les métriques
      */
-    public static function generate_recommendations($metrics) {
+    public static function generate_recommendations($metrics)
+    {
         $recommendations = [];
 
         foreach ($metrics as $metric => $value) {
@@ -405,7 +419,8 @@ class PDF_Builder_Performance_Mappings {
     /**
      * Vérifier si l'optimisation doit être activée
      */
-    public static function should_enable_optimization($optimization_type, $current_metrics) {
+    public static function should_enable_optimization($optimization_type, $current_metrics)
+    {
         $strategy = self::get_optimization_strategy($optimization_type);
 
         if (!$strategy || !isset($strategy['enabled']) || !$strategy['enabled']) {
@@ -414,27 +429,28 @@ class PDF_Builder_Performance_Mappings {
 
         // Vérifier les conditions d'activation basées sur les métriques
         switch ($optimization_type) {
-            case 'lazy_loading':
-                return isset($current_metrics['elements_count']) &&
+        case 'lazy_loading':
+            return isset($current_metrics['elements_count']) &&
                        $current_metrics['elements_count'] > ($strategy['threshold'] ?? 50);
 
-            case 'virtualization':
-                return isset($current_metrics['dom_nodes']) &&
+        case 'virtualization':
+            return isset($current_metrics['dom_nodes']) &&
                        $current_metrics['dom_nodes'] > ($strategy['container_height'] ?? 600) / ($strategy['item_height'] ?? 40);
 
-            case 'compression':
-                return isset($current_metrics['image_size']) &&
+        case 'compression':
+            return isset($current_metrics['image_size']) &&
                        $current_metrics['image_size'] > 1; // MB
 
-            default:
-                return true;
+        default:
+            return true;
         }
     }
 
     /**
      * Obtenir les paramètres d'optimisation adaptés
      */
-    public static function get_adaptive_settings($current_metrics) {
+    public static function get_adaptive_settings($current_metrics)
+    {
         $settings = [];
 
         // Ajuster la qualité de rendu basée sur les performances

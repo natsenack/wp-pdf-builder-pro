@@ -15,11 +15,12 @@ class TableRenderer
     /**
      * Rend le HTML d'un tableau de produits pour une commande
      *
-     * @param object $order Objet WooCommerce Order
-     * @param array $element Données de l'élément tableau
-     * @param string|null $text_color Couleur du texte (optionnel)
-     * @param string|null $font_family Famille de police (optionnel)
-     * @param string|null $font_size Taille de police (optionnel)
+     * @param  object      $order       Objet WooCommerce Order
+     * @param  array       $element     Données de
+     *                                  l'élément tableau
+     * @param  string|null $text_color  Couleur du texte (optionnel)
+     * @param  string|null $font_family Famille de police (optionnel)
+     * @param  string|null $font_size   Taille de police (optionnel)
      * @return string HTML du tableau
      */
     public function renderProductTableHtml($order, $element, $text_color = null, $font_family = null, $font_size = null)
@@ -49,9 +50,11 @@ class TableRenderer
         }
 
         // Filtrer pour ne garder que les colonnes visibles
-        $visible_columns = is_array($columns) ? array_filter($columns, function ($v) {
-            return (bool) $v;
-        }) : [];
+        $visible_columns = is_array($columns) ? array_filter(
+            $columns, function ($v) {
+                return (bool) $v;
+            }
+        ) : [];
 
         // Récupérer les headers
         $headers = $element['headers'] ?? [];
@@ -137,14 +140,16 @@ class TableRenderer
     /**
      * Rend l'en-tête du tableau
      *
-     * @param array $visible_columns Colonnes visibles
-     * @param array $headers En-têtes personnalisés
-     * @param array $default_headers En-têtes par défaut
-     * @param array $style_config Configuration de style
-     * @param bool $show_borders Afficher les bordures
-     * @param int $border_width Largeur de la bordure
-     * @param string $border_style Style de la bordure
-     * @param string $text_align Alignement du texte
+     * @param  array  $visible_columns Colonnes visibles
+     * @param  array  $headers         En-têtes
+     *                                 personnalisés
+     * @param  array  $default_headers En-têtes par
+     *                                 défaut
+     * @param  array  $style_config    Configuration de style
+     * @param  bool   $show_borders    Afficher les bordures
+     * @param  int    $border_width    Largeur de la bordure
+     * @param  string $border_style    Style de la bordure
+     * @param  string $text_align      Alignement du texte
      * @return string HTML de l'en-tête
      */
     private function renderTableHeader($visible_columns, $headers, $default_headers, $style_config, $show_borders, $border_width, $border_style, $text_align)
@@ -169,13 +174,14 @@ class TableRenderer
     /**
      * Rend une ligne du tableau
      *
-     * @param object $item Élément WooCommerce
-     * @param array $visible_columns Colonnes visibles
-     * @param array $style_config Configuration de style
-     * @param int $row_index Index de la ligne
-     * @param bool $show_borders Afficher les bordures
-     * @param int $border_width Largeur de la bordure
-     * @param string $border_style Style de la bordure
+     * @param  object $item            Élément
+     *                                 WooCommerce
+     * @param  array  $visible_columns Colonnes visibles
+     * @param  array  $style_config    Configuration de style
+     * @param  int    $row_index       Index de la ligne
+     * @param  bool   $show_borders    Afficher les bordures
+     * @param  int    $border_width    Largeur de la bordure
+     * @param  string $border_style    Style de la bordure
      * @return string HTML de la ligne
      */
     private function renderTableRow($item, $visible_columns, $style_config, $row_index, $show_borders, $border_width, $border_style)
@@ -199,36 +205,37 @@ class TableRenderer
     /**
      * Retourne le contenu d'une cellule
      *
-     * @param object $item Élément WooCommerce
-     * @param string $column_key Clé de la colonne
+     * @param  object $item       Élément
+     *                            WooCommerce
+     * @param  string $column_key Clé de la colonne
      * @return string Contenu de la cellule
      */
     private function getCellContent($item, $column_key)
     {
         switch ($column_key) {
-            case 'image':
-                $product = $item->get_product();
-                $image_url = get_the_post_thumbnail_url($product->get_id(), 'thumbnail');
-                return $image_url ? '<img src="' . esc_attr($image_url) . '" style="max-width: 50px; height: auto;" />' : '—';
+        case 'image':
+            $product = $item->get_product();
+            $image_url = get_the_post_thumbnail_url($product->get_id(), 'thumbnail');
+            return $image_url ? '<img src="' . esc_attr($image_url) . '" style="max-width: 50px; height: auto;" />' : '—';
 
-            case 'name':
-                return esc_html($item->get_name());
+        case 'name':
+            return esc_html($item->get_name());
 
-            case 'sku':
-                $product = $item->get_product();
-                return $product ? esc_html($product->get_sku()) : '—';
+        case 'sku':
+            $product = $item->get_product();
+            return $product ? esc_html($product->get_sku()) : '—';
 
-            case 'quantity':
-                return (int) $item->get_quantity();
+        case 'quantity':
+            return (int) $item->get_quantity();
 
-            case 'price':
-                return wc_price($item->get_subtotal());
+        case 'price':
+            return wc_price($item->get_subtotal());
 
-            case 'total':
-                return wc_price($item->get_total());
+        case 'total':
+            return wc_price($item->get_total());
 
-            default:
-                return '—';
+        default:
+            return '—';
         }
     }
 }

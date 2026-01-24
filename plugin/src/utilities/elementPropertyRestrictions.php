@@ -168,11 +168,11 @@ function isPropertyAllowed(string $elementType, string $propertyName): bool
 
     global $ELEMENT_TYPE_MAPPING, $ELEMENT_PROPERTY_RESTRICTIONS;
     $category = $ELEMENT_TYPE_MAPPING[$elementType] ?? 'text';
-// défaut texte
+    // défaut texte
     $restrictions = $ELEMENT_PROPERTY_RESTRICTIONS[$category] ?? null;
     if (!$restrictions || !isset($restrictions[$propertyName])) {
         return true;
-    // propriété autorisée par défaut
+        // propriété autorisée par défaut
     }
 
     return !$restrictions[$propertyName]['disabled'];
@@ -217,34 +217,34 @@ function validateProperty(string $elementType, string $propertyName, $value): ar
 
     // Validations spécifiques selon le type de propriété
     switch ($propertyName) {
-        case 'backgroundColor':
-            if (!is_string($value)) {
-                return ['valid' => false, 'reason' => 'La couleur doit être une chaîne'];
-            }
-            // Plus de restriction pour les éléments spéciaux - ils peuvent maintenant avoir un fond
+    case 'backgroundColor':
+        if (!is_string($value)) {
+            return ['valid' => false, 'reason' => 'La couleur doit être une chaîne'];
+        }
+        // Plus de restriction pour les éléments spéciaux - ils peuvent maintenant avoir un fond
 
-            break;
-        case 'borderWidth':
-            if (!is_numeric($value) || $value < 0) {
-                return ['valid' => false, 'reason' => 'La largeur de bordure doit être un nombre positif'];
-            }
+        break;
+    case 'borderWidth':
+        if (!is_numeric($value) || $value < 0) {
+            return ['valid' => false, 'reason' => 'La largeur de bordure doit être un nombre positif'];
+        }
 
-            break;
-        case 'fontSize':
-            if (!is_numeric($value) || $value <= 0) {
-                return ['valid' => false, 'reason' => 'La taille de police doit être un nombre positif'];
-            }
+        break;
+    case 'fontSize':
+        if (!is_numeric($value) || $value <= 0) {
+            return ['valid' => false, 'reason' => 'La taille de police doit être un nombre positif'];
+        }
 
-            break;
-        case 'width':
-        case 'height':
-            if (!is_numeric($value) || $value <= 0) {
-                return ['valid' => false, 'reason' => 'Les dimensions doivent être positives'];
-            }
+        break;
+    case 'width':
+    case 'height':
+        if (!is_numeric($value) || $value <= 0) {
+            return ['valid' => false, 'reason' => 'Les dimensions doivent être positives'];
+        }
 
-            break;
-        default:
-            break;
+        break;
+    default:
+        break;
     }
 
     return ['valid' => true];

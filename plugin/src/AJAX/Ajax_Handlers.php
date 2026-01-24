@@ -8,10 +8,12 @@
 
 /**
  * Fonction utilitaire pour sauvegarder les rôles autorisés
- * @param mixed $value Valeur brute des rôles
+ *
+ * @param  mixed $value Valeur brute des rôles
  * @return array Tableau des rôles traités
  */
-function pdf_builder_save_allowed_roles($value) {
+function pdf_builder_save_allowed_roles($value)
+{
     // error_log("[PDF_BUILDER_SAVE_ALLOWED_ROLES] Processing value: " . print_r($value, true));
 
     $roles = array();
@@ -48,14 +50,16 @@ function pdf_builder_save_allowed_roles($value) {
     return $valid_roles;
 }
 
-abstract class PDF_Builder_Ajax_Base {
+abstract class PDF_Builder_Ajax_Base
+{
     protected $required_capability = 'manage_options';
     protected $nonce_action = 'pdf_builder_ajax';
 
     /**
      * Valide la requête AJAX de base
      */
-    protected function validate_request() {
+    protected function validate_request()
+    {
         // Vérifier le nonce (temporarily disabled for debugging)
         // if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], $this->nonce_action)) {
         //     $this->send_error('Nonce invalide', 403);
@@ -75,7 +79,8 @@ abstract class PDF_Builder_Ajax_Base {
     /**
      * Valide et nettoie un paramètre requis
      */
-    protected function validate_required_param($param_name, $type = 'string') {
+    protected function validate_required_param($param_name, $type = 'string')
+    {
         if (!isset($_POST[$param_name])) {
             $this->send_error("Paramètre manquant: {$param_name}", 400);
         }
@@ -83,25 +88,25 @@ abstract class PDF_Builder_Ajax_Base {
         $value = $_POST[$param_name];
 
         switch ($type) {
-            case 'int':
-                $value = intval($value);
-                if ($value <= 0) {
-                    $this->send_error("Paramètre invalide: {$param_name}", 400);
-                }
-                break;
-            case 'string':
-                $value = sanitize_text_field($value);
-                if (empty($value)) {
-                    $this->send_error("Paramètre vide: {$param_name}", 400);
-                }
-                break;
-            case 'json':
-                $decoded = json_decode($value, true);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    $this->send_error("JSON invalide pour: {$param_name}", 400);
-                }
-                $value = $decoded;
-                break;
+        case 'int':
+            $value = intval($value);
+            if ($value <= 0) {
+                $this->send_error("Paramètre invalide: {$param_name}", 400);
+            }
+            break;
+        case 'string':
+            $value = sanitize_text_field($value);
+            if (empty($value)) {
+                $this->send_error("Paramètre vide: {$param_name}", 400);
+            }
+            break;
+        case 'json':
+            $decoded = json_decode($value, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $this->send_error("JSON invalide pour: {$param_name}", 400);
+            }
+            $value = $decoded;
+            break;
         }
 
         return $value;
@@ -110,30 +115,39 @@ abstract class PDF_Builder_Ajax_Base {
     /**
      * Envoie une réponse d'erreur standardisée
      */
-    protected function send_error($message, $code = 400) {
-        wp_send_json_error([
+    protected function send_error($message, $code = 400)
+    {
+        wp_send_json_error(
+            [
             'message' => $message,
             'code' => $code,
             'timestamp' => current_time('timestamp')
-        ]);
+            ]
+        );
         exit;
     }
 
     /**
      * Envoie une réponse de succès standardisée
      */
-    protected function send_success($data = [], $message = 'Opération réussie') {
-        wp_send_json_success(array_merge([
-            'message' => $message,
-            'timestamp' => current_time('timestamp')
-        ], $data));
+    protected function send_success($data = [], $message = 'Opération réussie')
+    {
+        wp_send_json_success(
+            array_merge(
+                [
+                'message' => $message,
+                'timestamp' => current_time('timestamp')
+                ], $data
+            )
+        );
         exit;
     }
 
     /**
      * Log une erreur pour le debugging
      */
-    protected function log_error($message, $context = []) {
+    protected function log_error($message, $context = [])
+    {
         if (defined('WP_DEBUG') && WP_DEBUG) {
             $context_str = !empty($context) ? ' | Context: ' . json_encode($context) : '';
             // error_log('[PDF Builder AJAX] ' . $message . $context_str);
@@ -149,8 +163,10 @@ abstract class PDF_Builder_Ajax_Base {
 /**
  * Handler AJAX pour les paramètres
  */
-class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
-    public function handle() {
+class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base
+{
+    public function handle()
+    {
         try {
             $this->validate_request();
 
@@ -160,13 +176,19 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
             if ($result['saved_count'] > 0) {
                 // LOGS ACTIFS POUR DIAGNOSTIC RÉPONSE AJAX
                 // Send updated settings
-        error_log("[DEBUG AJAX] About to send success response with saved_settings");
+                error_log("[DEBUG AJAX] About to send success response with saved_settings");
                 // Send updated settings
-        error_log("[DEBUG AJAX] saved_settings count: " . count($result['saved_settings']));
+                error_log("[DEBUG AJAX] saved_settings count: " . count($result['saved_settings']));
                 // Send updated settings
-        error_log("[DEBUG AJAX] Canvas fields in response: " . json_encode(array_filter($result['saved_settings'], function($key) {
-                    return strpos($key, 'pdf_builder_canvas_') === 0;
-                }, ARRAY_FILTER_USE_KEY)));
+                error_log(
+                    "[DEBUG AJAX] Canvas fields in response: " . json_encode(
+                        array_filter(
+                            $result['saved_settings'], function ($key) {
+                                return strpos($key, 'pdf_builder_canvas_') === 0;
+                            }, ARRAY_FILTER_USE_KEY
+                        )
+                    )
+                );
 
                 $response_data = [
                     'saved_count' => $result['saved_count'],
@@ -176,9 +198,13 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     'debug_info' => [
                         'saved_settings_count' => count($result['saved_settings']),
                         'has_saved_settings' => isset($result['saved_settings']) && is_array($result['saved_settings']),
-                        'canvas_fields_count' => count(array_filter($result['saved_settings'], function($key) {
-                            return strpos($key, 'pdf_builder_canvas_') === 0;
-                        }, ARRAY_FILTER_USE_KEY)),
+                        'canvas_fields_count' => count(
+                            array_filter(
+                                $result['saved_settings'], function ($key) {
+                                    return strpos($key, 'pdf_builder_canvas_') === 0;
+                                }, ARRAY_FILTER_USE_KEY
+                            )
+                        ),
                         'all_keys' => array_keys($result['saved_settings'])
                     ]
                 ];
@@ -194,7 +220,8 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         }
     }
 
-    private function process_all_settings() {
+    private function process_all_settings()
+    {
         $saved_count = 0;
         $saved_settings = [];
 
@@ -237,9 +264,11 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         // error_log("debug_javascript in flattened_data: " . (isset($flattened_data['debug_javascript']) ? $flattened_data['debug_javascript'] : 'NOT_SET'));
 
         // DEBUG: Log all debug-related fields
-        $debug_fields = array_filter($flattened_data, function($key) {
-            return strpos($key, 'debug') !== false;
-        }, ARRAY_FILTER_USE_KEY);
+        $debug_fields = array_filter(
+            $flattened_data, function ($key) {
+                return strpos($key, 'debug') !== false;
+            }, ARRAY_FILTER_USE_KEY
+        );
         // error_log("All debug fields in request: " . json_encode($debug_fields));
 
         // Définir les règles de validation des champs (même que dans settings-main.php)
@@ -490,20 +519,34 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
         }
 
         // DEBUG: Log all saved debug fields
-        $saved_debug_fields = array_filter($saved_settings_check, function($key) {
-            return strpos($key, 'debug') !== false;
-        }, ARRAY_FILTER_USE_KEY);
+        $saved_debug_fields = array_filter(
+            $saved_settings_check, function ($key) {
+                return strpos($key, 'debug') !== false;
+            }, ARRAY_FILTER_USE_KEY
+        );
         // error_log("All saved debug fields: " . json_encode($saved_debug_fields));
 
         // LOGS ACTIFS POUR DIAGNOSTIC CANVAS
         // Send updated settings
-        error_log("[DEBUG AJAX] Canvas fields in response: " . json_encode(array_filter($saved_settings, function($key) {
-            return strpos($key, 'pdf_builder_canvas_') === 0;
-        }, ARRAY_FILTER_USE_KEY)));
+        error_log(
+            "[DEBUG AJAX] Canvas fields in response: " . json_encode(
+                array_filter(
+                    $saved_settings, function ($key) {
+                        return strpos($key, 'pdf_builder_canvas_') === 0;
+                    }, ARRAY_FILTER_USE_KEY
+                )
+            )
+        );
         // Send updated settings
-        error_log("[DEBUG AJAX] Total canvas fields in saved_settings: " . count(array_filter($saved_settings, function($key) {
-            return strpos($key, 'pdf_builder_canvas_') === 0;
-        }, ARRAY_FILTER_USE_KEY)));
+        error_log(
+            "[DEBUG AJAX] Total canvas fields in saved_settings: " . count(
+                array_filter(
+                    $saved_settings, function ($key) {
+                        return strpos($key, 'pdf_builder_canvas_') === 0;
+                    }, ARRAY_FILTER_USE_KEY
+                )
+            )
+        );
         // Send updated settings
         error_log("[DEBUG AJAX] Total saved_settings count: " . count($saved_settings));
         // Send updated settings
@@ -520,17 +563,25 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 'all_post_fields' => array_keys($_POST),
                 'handler_executed' => true,
                 // LOGS SPÉCIFIQUES POUR DEBUG
-                'debug_fields_in_saved_settings' => array_filter($saved_settings, function($key) {
-                    return strpos($key, 'debug') !== false;
-                }, ARRAY_FILTER_USE_KEY),
+                'debug_fields_in_saved_settings' => array_filter(
+                    $saved_settings, function ($key) {
+                        return strpos($key, 'debug') !== false;
+                    }, ARRAY_FILTER_USE_KEY
+                ),
                 'debug_javascript_value' => $saved_settings['pdf_builder_debug_javascript'] ?? 'NOT_IN_SAVED_SETTINGS',
                 // LOGS POUR LES CHAMPS CANVAS
-                'canvas_fields_in_saved_settings' => array_filter($saved_settings, function($key) {
-                    return strpos($key, 'pdf_builder_canvas_') === 0;
-                }, ARRAY_FILTER_USE_KEY),
-                'total_canvas_fields' => count(array_filter($saved_settings, function($key) {
-                    return strpos($key, 'pdf_builder_canvas_') === 0;
-                }, ARRAY_FILTER_USE_KEY))
+                'canvas_fields_in_saved_settings' => array_filter(
+                    $saved_settings, function ($key) {
+                        return strpos($key, 'pdf_builder_canvas_') === 0;
+                    }, ARRAY_FILTER_USE_KEY
+                ),
+                'total_canvas_fields' => count(
+                    array_filter(
+                        $saved_settings, function ($key) {
+                            return strpos($key, 'pdf_builder_canvas_') === 0;
+                        }, ARRAY_FILTER_USE_KEY
+                    )
+                )
             ]
         ];
     }
@@ -538,7 +589,8 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
     /**
      * Formate les paramètres sauvegardés pour le JavaScript (clés courtes)
      */
-    private function format_saved_settings_for_js($saved_settings) {
+    private function format_saved_settings_for_js($saved_settings)
+    {
         $formatted = [];
 
         // Mapping des clés pour le JavaScript
@@ -597,25 +649,27 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
 /**
  * Handler AJAX pour les templates
  */
-class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
-    public function handle() {
+class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base
+{
+    public function handle()
+    {
         try {
             $this->validate_request();
 
             $action = $this->validate_required_param('template_action');
 
             switch ($action) {
-                case 'save':
-                    $this->handle_save_template();
-                    break;
-                case 'load':
-                    $this->handle_load_template();
-                    break;
-                case 'delete':
-                    $this->handle_delete_template();
-                    break;
-                default:
-                    $this->send_error('Action template inconnue', 400);
+            case 'save':
+                $this->handle_save_template();
+                break;
+            case 'load':
+                $this->handle_load_template();
+                break;
+            case 'delete':
+                $this->handle_delete_template();
+                break;
+            default:
+                $this->send_error('Action template inconnue', 400);
             }
 
         } catch (Exception $e) {
@@ -624,7 +678,8 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
         }
     }
 
-    private function handle_save_template() {
+    private function handle_save_template()
+    {
         $template_id = $this->validate_required_param('template_id', 'int');
         $template_data = $this->validate_required_param('template_data', 'json');
 
@@ -649,7 +704,8 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
         $this->send_success(['template_id' => $template_id], 'Template sauvegardé avec succès');
     }
 
-    private function handle_load_template() {
+    private function handle_load_template()
+    {
         $template_id = $this->validate_required_param('template_id', 'int');
 
         global $wpdb;
@@ -669,14 +725,17 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
             $this->send_error('Erreur de décodage JSON', 500);
         }
 
-        $this->send_success([
+        $this->send_success(
+            [
             'template' => $template_data,
             'id' => $template['id'],
             'name' => $template['name']
-        ]);
+            ]
+        );
     }
 
-    private function handle_delete_template() {
+    private function handle_delete_template()
+    {
         $template_id = $this->validate_required_param('template_id', 'int');
 
         global $wpdb;
@@ -714,7 +773,8 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
  *    - Gèrent leurs domaines spécifiques (cache, maintenance, etc.)
  *    - Stockage: Leurs propres options WordPress
  */
-function pdf_builder_init_ajax_handlers() {
+function pdf_builder_init_ajax_handlers()
+{
     // Settings handler - Système unifié principal
     $settings_handler = new PDF_Builder_Settings_Ajax_Handler();
     add_action('wp_ajax_pdf_builder_save_all_settings', [$settings_handler, 'handle']);
@@ -732,7 +792,8 @@ add_action('init', 'pdf_builder_init_ajax_handlers');
 /**
  * AJAX Handler pour récupérer les rôles autorisés
  */
-function pdf_builder_test_roles_handler() {
+function pdf_builder_test_roles_handler()
+{
     // error_log('PDF Builder: [TEST ROLES HANDLER] ===== DÉBUT DU HANDLER =====');
     // error_log('PDF Builder: [TEST ROLES HANDLER] Timestamp: ' . current_time('Y-m-d H:i:s'));
     // error_log('PDF Builder: [TEST ROLES HANDLER] POST data: ' . print_r($_POST, true));
@@ -791,7 +852,8 @@ function pdf_builder_test_roles_handler() {
 /**
  * Handler AJAX pour réinitialiser les paramètres canvas par défaut
  */
-function pdf_builder_reset_canvas_defaults_handler() {
+function pdf_builder_reset_canvas_defaults_handler()
+{
     error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] ===== DÉBUT DU HANDLER =====');
 
     // Vérifier le nonce
@@ -887,11 +949,13 @@ function pdf_builder_reset_canvas_defaults_handler() {
 
         if ($success_count > 0) {
             // error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Paramètres réinitialisés avec succès');
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'message' => 'Paramètres canvas réinitialisés avec succès',
                 'reset_count' => $success_count,
                 'timestamp' => current_time('timestamp')
-            ]);
+                ]
+            );
         } else {
             error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Échec de la sauvegarde - aucun paramètre n\'a pu être sauvegardé');
             wp_send_json_error(['message' => 'Échec de la sauvegarde des paramètres'], 500);
@@ -908,7 +972,8 @@ function pdf_builder_reset_canvas_defaults_handler() {
 /**
  * Handler AJAX pour récupérer les paramètres de debug actuels
  */
-function pdf_builder_get_debug_settings_handler() {
+function pdf_builder_get_debug_settings_handler()
+{
     // error_log('PDF Builder: [GET DEBUG SETTINGS HANDLER] ===== DÉBUT DU HANDLER =====');
     // error_log('PDF Builder: [GET DEBUG SETTINGS HANDLER] Timestamp: ' . current_time('Y-m-d H:i:s'));
     
@@ -949,7 +1014,8 @@ function pdf_builder_get_debug_settings_handler() {
 /**
  * Handler AJAX pour vérifier la cohérence des paramètres canvas avec la base de données
  */
-function pdf_builder_verify_canvas_settings_consistency_handler() {
+function pdf_builder_verify_canvas_settings_consistency_handler()
+{
     try {
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {

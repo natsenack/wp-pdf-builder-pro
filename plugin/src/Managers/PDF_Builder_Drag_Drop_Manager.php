@@ -224,8 +224,7 @@ class PdfBuilderDragDropManager
         foreach ($element_ids as $element_id) {
             if (!isset($initial_positions[$element_id])) {
                 $errors[] = "Missing initial position for element {$element_id}";
-            } elseif (
-                !is_array($initial_positions[$element_id])
+            } elseif (!is_array($initial_positions[$element_id])
                 || !isset($initial_positions[$element_id]['x'])
                 || !isset($initial_positions[$element_id]['y'])
             ) {

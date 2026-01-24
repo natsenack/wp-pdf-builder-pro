@@ -15,7 +15,7 @@ class FileSystemHelper
     /**
      * Calcule la taille d'un répertoire récursivement
      *
-     * @param string $directory Chemin du répertoire
+     * @param  string $directory Chemin du répertoire
      * @return int Taille en octets
      */
     public function getDirectorySize($directory)
@@ -50,8 +50,8 @@ class FileSystemHelper
     /**
      * Formate une taille en octets en format lisible
      *
-     * @param int $bytes Taille en octets
-     * @param int $precision Nombre de décimales
+     * @param  int $bytes     Taille en octets
+     * @param  int $precision Nombre de décimales
      * @return string Taille formatée
      */
     public function formatBytes($bytes, $precision = 2)
@@ -69,7 +69,7 @@ class FileSystemHelper
     /**
      * Supprime un répertoire récursivement
      *
-     * @param string $directory Chemin du répertoire
+     * @param  string $directory Chemin du répertoire
      * @return bool Succès de la suppression
      */
     public function deleteDirectory($directory)
@@ -102,8 +102,10 @@ class FileSystemHelper
     /**
      * Nettoie les fichiers temporaires d'un répertoire
      *
-     * @param string $directory Chemin du répertoire
-     * @param int $age_seconds Âge minimum des fichiers à supprimer (en secondes)
+     * @param  string $directory   Chemin du
+     *                             répertoire
+     * @param  int    $age_seconds Âge minimum des fichiers à supprimer (en
+     *                             secondes)
      * @return array Résumé du nettoyage (fichiers supprimés, octets libérés)
      */
     public function cleanOldFiles($directory, $age_seconds = 86400)

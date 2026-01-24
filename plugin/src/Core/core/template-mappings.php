@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class PDF_Builder_Template_Mappings {
+class PDF_Builder_Template_Mappings
+{
 
     // ==========================================
     // MAPPINGS DES ÉLÉMENTS DE BASE
@@ -255,35 +256,40 @@ class PDF_Builder_Template_Mappings {
     /**
      * Obtenir tous les mappings d'éléments
      */
-    public static function get_element_mappings() {
+    public static function get_element_mappings()
+    {
         return self::$element_mappings;
     }
 
     /**
      * Obtenir les mappings pour un type d'élément spécifique
      */
-    public static function get_element_type_mappings($element_type) {
+    public static function get_element_type_mappings($element_type)
+    {
         return self::$element_type_mappings[$element_type] ?? [];
     }
 
     /**
      * Obtenir toutes les propriétés par type d'élément
      */
-    public static function get_element_properties() {
+    public static function get_element_properties()
+    {
         return self::$element_properties;
     }
 
     /**
      * Obtenir les propriétés pour un type d'élément spécifique
      */
-    public static function get_element_type_properties($element_type) {
+    public static function get_element_type_properties($element_type)
+    {
         return self::$element_properties[$element_type] ?? [];
     }
 
     /**
      * Obtenir les propriétés requises pour un type d'élément
      */
-    public static function get_required_properties($element_type) {
+    public static function get_required_properties($element_type)
+    {
         $properties = self::get_element_type_properties($element_type);
         return $properties['required'] ?? [];
     }
@@ -291,7 +297,8 @@ class PDF_Builder_Template_Mappings {
     /**
      * Obtenir les propriétés optionnelles pour un type d'élément
      */
-    public static function get_optional_properties($element_type) {
+    public static function get_optional_properties($element_type)
+    {
         $properties = self::get_element_type_properties($element_type);
         return $properties['optional'] ?? [];
     }
@@ -299,7 +306,8 @@ class PDF_Builder_Template_Mappings {
     /**
      * Vérifier si une propriété est requise pour un type d'élément
      */
-    public static function is_required_property($element_type, $property) {
+    public static function is_required_property($element_type, $property)
+    {
         $required = self::get_required_properties($element_type);
         return in_array($property, $required);
     }
@@ -307,14 +315,16 @@ class PDF_Builder_Template_Mappings {
     /**
      * Obtenir l'option WordPress pour une propriété d'élément
      */
-    public static function get_option_name($property_name) {
+    public static function get_option_name($property_name)
+    {
         return self::$element_mappings[$property_name] ?? null;
     }
 
     /**
      * Obtenir l'option WordPress pour une propriété d'un type d'élément spécifique
      */
-    public static function get_option_name_by_type($element_type, $property_name) {
+    public static function get_option_name_by_type($element_type, $property_name)
+    {
         $type_mappings = self::get_element_type_mappings($element_type);
         return $type_mappings[$property_name] ?? null;
     }

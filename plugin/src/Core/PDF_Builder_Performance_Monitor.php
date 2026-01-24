@@ -4,7 +4,8 @@
  * Surveille les performances du plugin et identifie les optimisations possibles
  */
 
-class PDF_Builder_Performance_Monitor {
+class PDF_Builder_Performance_Monitor
+{
     private static $instance = null;
     private $timers = [];
     private $memory_usage = [];
@@ -17,19 +18,22 @@ class PDF_Builder_Performance_Monitor {
     const HIGH_MEMORY_THRESHOLD = 50 * 1024 * 1024; // 50MB
     const SLOW_PAGE_THRESHOLD = 2.0; // 2 secondes
 
-    public static function get_instance() {
+    public static function get_instance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_hooks();
         $this->start_global_timer();
     }
 
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Démarrer le monitoring au début des requêtes AJAX
         add_action('wp_ajax_pdf_builder_*', [$this, 'start_ajax_monitoring'], 1);
         add_action('wp_ajax_nopriv_pdf_builder_*', [$this, 'start_ajax_monitoring'], 1);
@@ -54,7 +58,8 @@ class PDF_Builder_Performance_Monitor {
     /**
      * Démarre le timer global pour la requête
      */
-    private function start_global_timer() {
+    private function start_global_timer()
+    {
         $this->timers['global'] = [
             'start' => microtime(true),
             'memory_start' => memory_get_usage(true)
@@ -64,7 +69,8 @@ class PDF_Builder_Performance_Monitor {
     /**
      * Démarre le monitoring AJAX
      */
-    public function start_ajax_monitoring() {
+    public function start_ajax_monitoring()
+    {
         $this->timers['ajax'] = [
             'start' => microtime(true),
             'memory_start' => memory_get_usage(true),
@@ -80,7 +86,8 @@ class PDF_Builder_Performance_Monitor {
     /**
      * Démarre le monitoring des pages admin
      */
-    public function start_admin_monitoring() {
+    public function start_admin_monitoring()
+    {
         if (!$this->is_pdf_builder_admin_page()) {
             return;
         }
@@ -95,7 +102,8 @@ class PDF_Builder_Performance_Monitor {
     /**
      * Termine le monitoring des pages admin
      */
-    public function end_admin_monitoring() {
+    public function end_admin_monitoring()
+    {
         if (!isset($this->timers['admin'])) {
             return;
         }
@@ -106,13 +114,15 @@ class PDF_Builder_Performance_Monitor {
 
         // Logger si c'est lent
         if ($duration > self::SLOW_PAGE_THRESHOLD) {
-            $this->log_performance_issue('slow_admin_page', [
+            $this->log_performance_issue(
+                'slow_admin_page', [
                 'page' => $timer['page'],
                 'duration' => $duration,
                 'memory_used' => $memory_used,
                 'query_count' => $this->query_count,
                 'query_time' => $this->query_time
-            ]);
+                ]
+            );
         }
 
         // Stocker les métriques
@@ -122,7 +132,8 @@ class PDF_Builder_Performance_Monitor {
     /**
      * Surveille les requêtes de base de données
      */
-    public function monitor_database_query($query) {
+    public function monitor_database_query($query)
+    {
         if (!isset($this->timers['query_start'])) {
             $this->timers['query_start'] = microtime(true);
         }
@@ -150,7 +161,8 @@ class PDF_Builder_Performance_Monitor {
     /**
      * Démarre un timer personnalisé
      */
-    public function start_timer($name) {
+    public function start_timer($name)
+    {
         $this->timers[$name] = [
             'start' => microtime(true),
             'memory_start' => memory_get_usage(true)
@@ -160,7 +172,8 @@ class PDF_Builder_Performance_Monitor {
     /**
      * Arrête un timer personnalisé et retourne les métriques
      */
-    public function end_timer($name) {
+    public function end_timer($name)
+    {
         if (!isset($this->timers[$name])) {
             return null;
         }
@@ -180,7 +193,8 @@ class PDF_Builder_Performance_Monitor {
     /**
      * Mesure les performances d'une fonction
      */
-    public function measure_function($function_name, $callable, ...$args) {
+    public function measure_function($function_name, $callable, ...$args)
+    {
         $this->start_timer($function_name);
 
         try {
@@ -189,11 +203,13 @@ class PDF_Builder_Performance_Monitor {
 
             // Logger si lent
             if ($metrics && $metrics['duration'] > 1.0) { // Plus d'1 seconde
-                $this->log_performance_issue('slow_function', [
+                $this->log_performance_issue(
+                    'slow_function', [
                     'function' => $function_name,
                     'duration' => $metrics['duration'],
                     'memory_used' => $metrics['memory_used']
-                ]);
+                    ]
+                );
             }
 
             return $result;
@@ -207,7 +223,8 @@ class PDF_Builder_Performance_Monitor {
     /**
      * Vérifie si on est sur une page admin du PDF Builder
      */
-    private function is_pdf_builder_admin_page() {
+    private function is_pdf_builder_admin_page()
+    {
         if (!is_admin()) {
             return false;
         }
@@ -219,7 +236,8 @@ class PDF_Builder_Performance_Monitor {
     /**
      * Log un problème de performance
      */
-    private function log_performance_issue($type, $data) {
+    private function log_performance_issue($type, $data)
+    {
         if (class_exists('PDF_Builder_Logger')) {
             PDF_Builder_Logger::get_instance()->warning("Performance issue: $type", $data);
         } else {
@@ -233,7 +251,8 @@ class PDF_Builder_Performance_Monitor {
     /**
      * Stocke un problème de performance en base
      */
-    private function store_performance_issue($type, $data) {
+    private function store_performance_issue($type, $data)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_performance_issues';
@@ -258,7 +277,8 @@ class PDF_Builder_Performance_Monitor {
     /**
      * Stocke une métrique de performance
      */
-    private function store_performance_metric($type, $identifier, $duration, $memory_used) {
+    private function store_performance_metric($type, $identifier, $duration, $memory_used)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_performance_metrics';
@@ -284,7 +304,8 @@ class PDF_Builder_Performance_Monitor {
     /**
      * Crée les tables de performance si elles n'existent pas
      */
-    private function create_performance_tables() {
+    private function create_performance_tables()
+    {
         global $wpdb;
 
         $issues_table = $wpdb->prefix . 'pdf_builder_performance_issues';
@@ -307,7 +328,7 @@ class PDF_Builder_Performance_Monitor {
                 KEY created_at (created_at)
             ) $charset_collate;";
 
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            include_once ABSPATH . 'wp-admin/includes/upgrade.php';
             dbDelta($sql);
         }
 
@@ -335,7 +356,8 @@ class PDF_Builder_Performance_Monitor {
     /**
      * Génère un rapport de performance
      */
-    public function generate_performance_report() {
+    public function generate_performance_report()
+    {
         try {
             // Valider la requête
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
@@ -368,12 +390,15 @@ class PDF_Builder_Performance_Monitor {
     /**
      * Obtient un résumé des performances
      */
-    private function get_performance_summary($days) {
+    private function get_performance_summary($days)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_performance_metrics';
 
-        return $wpdb->get_row($wpdb->prepare("
+        return $wpdb->get_row(
+            $wpdb->prepare(
+                "
             SELECT
                 COUNT(*) as total_requests,
                 AVG(duration) as avg_response_time,
@@ -384,18 +409,23 @@ class PDF_Builder_Performance_Monitor {
                 AVG(query_time) as avg_query_time
             FROM $table
             WHERE created_at >= DATE_SUB(NOW(), INTERVAL %d DAY)
-        ", $days), ARRAY_A);
+        ", $days
+            ), ARRAY_A
+        );
     }
 
     /**
      * Obtient les pages les plus lentes
      */
-    private function get_slow_pages($days) {
+    private function get_slow_pages($days)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_performance_metrics';
 
-        return $wpdb->get_results($wpdb->prepare("
+        return $wpdb->get_results(
+            $wpdb->prepare(
+                "
             SELECT
                 identifier,
                 AVG(duration) as avg_duration,
@@ -408,18 +438,23 @@ class PDF_Builder_Performance_Monitor {
             HAVING avg_duration > %f
             ORDER BY avg_duration DESC
             LIMIT 10
-        ", $days, self::SLOW_PAGE_THRESHOLD), ARRAY_A);
+        ", $days, self::SLOW_PAGE_THRESHOLD
+            ), ARRAY_A
+        );
     }
 
     /**
      * Obtient les statistiques d'utilisation mémoire
      */
-    private function get_memory_usage_stats($days) {
+    private function get_memory_usage_stats($days)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_performance_metrics';
 
-        return $wpdb->get_results($wpdb->prepare("
+        return $wpdb->get_results(
+            $wpdb->prepare(
+                "
             SELECT
                 DATE(created_at) as date,
                 AVG(memory_used) as avg_memory,
@@ -428,46 +463,59 @@ class PDF_Builder_Performance_Monitor {
             WHERE created_at >= DATE_SUB(NOW(), INTERVAL %d DAY)
             GROUP BY DATE(created_at)
             ORDER BY date DESC
-        ", $days), ARRAY_A);
+        ", $days
+            ), ARRAY_A
+        );
     }
 
     /**
      * Obtient les performances de la base de données
      */
-    private function get_database_performance($days) {
+    private function get_database_performance($days)
+    {
         global $wpdb;
 
         $issues_table = $wpdb->prefix . 'pdf_builder_performance_issues';
 
-        return $wpdb->get_results($wpdb->prepare("
+        return $wpdb->get_results(
+            $wpdb->prepare(
+                "
             SELECT
                 COUNT(*) as slow_query_count,
                 AVG(JSON_EXTRACT(data, '$.time')) as avg_query_time
             FROM $issues_table
             WHERE type = 'slow_query'
             AND created_at >= DATE_SUB(NOW(), INTERVAL %d DAY)
-        ", $days), ARRAY_A);
+        ", $days
+            ), ARRAY_A
+        );
     }
 
     /**
      * Obtient les problèmes de performance récents
      */
-    private function get_recent_performance_issues($limit) {
+    private function get_recent_performance_issues($limit)
+    {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_performance_issues';
 
-        return $wpdb->get_results($wpdb->prepare("
+        return $wpdb->get_results(
+            $wpdb->prepare(
+                "
             SELECT * FROM $table
             ORDER BY created_at DESC
             LIMIT %d
-        ", $limit), ARRAY_A);
+        ", $limit
+            ), ARRAY_A
+        );
     }
 
     /**
      * Obtient l'IP du client
      */
-    private function get_client_ip() {
+    private function get_client_ip()
+    {
         $ip_headers = [
             'HTTP_CF_CONNECTING_IP',
             'HTTP_CLIENT_IP',
@@ -497,27 +545,33 @@ class PDF_Builder_Performance_Monitor {
     /**
      * Nettoie les anciens logs de performance
      */
-    public function cleanup_performance_logs() {
+    public function cleanup_performance_logs()
+    {
         global $wpdb;
 
         $issues_table = $wpdb->prefix . 'pdf_builder_performance_issues';
         $metrics_table = $wpdb->prefix . 'pdf_builder_performance_metrics';
 
         // Supprimer les métriques de plus de 30 jours
-        $wpdb->query($wpdb->prepare(
-            "DELETE FROM $metrics_table WHERE created_at < DATE_SUB(NOW(), INTERVAL 30 DAY)"
-        ));
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM $metrics_table WHERE created_at < DATE_SUB(NOW(), INTERVAL 30 DAY)"
+            )
+        );
 
         // Supprimer les problèmes de plus de 60 jours
-        $wpdb->query($wpdb->prepare(
-            "DELETE FROM $issues_table WHERE created_at < DATE_SUB(NOW(), INTERVAL 60 DAY)"
-        ));
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM $issues_table WHERE created_at < DATE_SUB(NOW(), INTERVAL 60 DAY)"
+            )
+        );
     }
 
     /**
      * Obtient les métriques actuelles
      */
-    public function get_current_metrics() {
+    public function get_current_metrics()
+    {
         return [
             'memory_usage' => memory_get_usage(true),
             'peak_memory' => memory_get_peak_usage(true),
@@ -531,23 +585,29 @@ class PDF_Builder_Performance_Monitor {
 }
 
 // Fonctions globales pour faciliter l'utilisation
-function pdf_builder_start_timer($name) {
+function pdf_builder_start_timer($name)
+{
     PDF_Builder_Performance_Monitor::get_instance()->start_timer($name);
 }
 
-function pdf_builder_end_timer($name) {
+function pdf_builder_end_timer($name)
+{
     return PDF_Builder_Performance_Monitor::get_instance()->end_timer($name);
 }
 
-function pdf_builder_measure_function($function_name, $callable, ...$args) {
+function pdf_builder_measure_function($function_name, $callable, ...$args)
+{
     return PDF_Builder_Performance_Monitor::get_instance()->measure_function($function_name, $callable, ...$args);
 }
 
-function pdf_builder_get_performance_metrics() {
+function pdf_builder_get_performance_metrics()
+{
     return PDF_Builder_Performance_Monitor::get_instance()->get_current_metrics();
 }
 
 // Initialiser le moniteur de performance
-add_action('plugins_loaded', function() {
-    PDF_Builder_Performance_Monitor::get_instance();
-});
+add_action(
+    'plugins_loaded', function () {
+        PDF_Builder_Performance_Monitor::get_instance();
+    }
+);

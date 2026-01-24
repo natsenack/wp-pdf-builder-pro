@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class PDF_Builder_Error_Mappings {
+class PDF_Builder_Error_Mappings
+{
 
     // ==========================================
     // CODES D'ERREUR
@@ -224,35 +225,40 @@ class PDF_Builder_Error_Mappings {
     /**
      * Obtenir tous les codes d'erreur
      */
-    public static function get_error_codes() {
+    public static function get_error_codes()
+    {
         return self::$error_codes;
     }
 
     /**
      * Obtenir un code d'erreur spécifique
      */
-    public static function get_error_code($key) {
+    public static function get_error_code($key)
+    {
         return self::$error_codes[$key] ?? null;
     }
 
     /**
      * Obtenir tous les messages d'erreur
      */
-    public static function get_error_messages() {
+    public static function get_error_messages()
+    {
         return self::$error_messages;
     }
 
     /**
      * Obtenir un message d'erreur spécifique
      */
-    public static function get_error_message($code) {
+    public static function get_error_message($code)
+    {
         return self::$error_messages[$code] ?? 'Une erreur inconnue s\'est produite.';
     }
 
     /**
      * Obtenir les détails d'une erreur
      */
-    public static function get_detailed_error($code) {
+    public static function get_detailed_error($code)
+    {
         return self::$detailed_error_messages[$code] ?? [
             'title' => 'Erreur',
             'description' => self::get_error_message($code),
@@ -263,66 +269,79 @@ class PDF_Builder_Error_Mappings {
     /**
      * Obtenir tous les messages de succès
      */
-    public static function get_success_messages() {
+    public static function get_success_messages()
+    {
         return self::$success_messages;
     }
 
     /**
      * Obtenir un message de succès spécifique
      */
-    public static function get_success_message($key) {
+    public static function get_success_message($key)
+    {
         return self::$success_messages[$key] ?? 'Opération réussie.';
     }
 
     /**
      * Obtenir tous les messages d'avertissement
      */
-    public static function get_warning_messages() {
+    public static function get_warning_messages()
+    {
         return self::$warning_messages;
     }
 
     /**
      * Obtenir un message d'avertissement spécifique
      */
-    public static function get_warning_message($key) {
+    public static function get_warning_message($key)
+    {
         return self::$warning_messages[$key] ?? 'Avertissement.';
     }
 
     /**
      * Créer une réponse d'erreur standardisée
      */
-    public static function create_error_response($code, $additional_data = []) {
+    public static function create_error_response($code, $additional_data = [])
+    {
         $details = self::get_detailed_error($code);
 
-        return array_merge([
+        return array_merge(
+            [
             'success' => false,
             'error' => true,
             'code' => $code,
             'message' => $details['description'],
             'title' => $details['title'],
             'suggestions' => $details['suggestions']
-        ], $additional_data);
+            ], $additional_data
+        );
     }
 
     /**
      * Créer une réponse de succès standardisée
      */
-    public static function create_success_response($message_key, $additional_data = []) {
-        return array_merge([
+    public static function create_success_response($message_key, $additional_data = [])
+    {
+        return array_merge(
+            [
             'success' => true,
             'error' => false,
             'message' => self::get_success_message($message_key)
-        ], $additional_data);
+            ], $additional_data
+        );
     }
 
     /**
      * Créer une réponse d'avertissement standardisée
      */
-    public static function create_warning_response($message_key, $additional_data = []) {
-        return array_merge([
+    public static function create_warning_response($message_key, $additional_data = [])
+    {
+        return array_merge(
+            [
             'success' => true,
             'warning' => true,
             'message' => self::get_warning_message($message_key)
-        ], $additional_data);
+            ], $additional_data
+        );
     }
 }

@@ -10,34 +10,46 @@ use PDF_Builder\Interfaces\DataProviderInterface;
  */
 class GeneratorManager
 {
-    /** @var array Configuration des générateurs */
+    /**
+     * 
+     *
+     * @var array Configuration des générateurs 
+     */
     private $generators_config;
-/** @var string Générateur primaire */
+    /**
+     * @var string Générateur primaire 
+     */
     private $primary_generator;
-/** @var string Générateur secondaire (fallback) */
+    /**
+     * @var string Générateur secondaire (fallback) 
+     */
     private $secondary_generator;
-/** @var string Générateur tertiaire (fallback final) */
+    /**
+     * @var string Générateur tertiaire (fallback final) 
+     */
     private $tertiary_generator;
-/** @var array Historique des tentatives */
+    /**
+     * @var array Historique des tentatives 
+     */
     private $attempt_history = [];
 
     /**
      * Constructeur
      */
-public function __construct()
-{
-    $this->initializeGeneratorsConfig();
-    $this->primary_generator = 'dompdf';
-    $this->secondary_generator = 'canvas';
-    $this->tertiary_generator = 'image'; // Nouveau fallback
-}
+    public function __construct()
+    {
+        $this->initializeGeneratorsConfig();
+        $this->primary_generator = 'dompdf';
+        $this->secondary_generator = 'canvas';
+        $this->tertiary_generator = 'image'; // Nouveau fallback
+    }
 
     /**
      * Initialise la configuration des générateurs
      */
-private function initializeGeneratorsConfig(): void
-{
-    $this->generators_config = [
+    private function initializeGeneratorsConfig(): void
+    {
+        $this->generators_config = [
         'dompdf' => [
             'class' => 'PDF_Builder\\Generators\\PDFGenerator',
             'priority' => 1,
@@ -65,185 +77,200 @@ private function initializeGeneratorsConfig(): void
             'supported_formats' => ['png', 'jpg'],
             'capabilities' => ['basic', 'fast', 'always_works']
         ]
-    ];
-}
+        ];
+    }
 
     /**
      * Génère un aperçu avec fallback automatique
      *
-     * @param array $template_data Données du template
-     * @param DataProviderInterface $data_provider Fournisseur de données
-     * @param string $output_format Format de sortie souhaité
-     * @param array $options Options supplémentaires
+     * @param  array                 $template_data Données du
+     *                                              template
+     * @param  DataProviderInterface $data_provider Fournisseur de données
+     * @param  string                $output_format Format de sortie
+     *                                              souhaité
+     * @param  array                 $options       Options
+     *                                              supplémentaires
      * @return mixed Résultat de la génération ou false en cas d'échec total
      */
-public function generatePreview(
-    array $template_data,
-    DataProviderInterface $data_provider,
-    string $output_format = 'pdf',
-    array $options = []
-) {
-    $this->attempt_history = [];
-    $result = false;
-// Tentative avec le générateur primaire
-    $result = $this->attemptGeneration(
-        $this->primary_generator,
-        $template_data,
-        $data_provider,
-        $output_format,
-        $options
-    );
-// Si échec, tentative avec le générateur secondaire
-    if ($result === false) {
-        $this->logInfo("Primary generator failed, trying secondary generator");
+    public function generatePreview(
+        array $template_data,
+        DataProviderInterface $data_provider,
+        string $output_format = 'pdf',
+        array $options = []
+    ) {
+        $this->attempt_history = [];
+        $result = false;
+        // Tentative avec le générateur primaire
         $result = $this->attemptGeneration(
-            $this->secondary_generator,
+            $this->primary_generator,
             $template_data,
             $data_provider,
             $output_format,
             $options
         );
-    }
+        // Si échec, tentative avec le générateur secondaire
+        if ($result === false) {
+            $this->logInfo("Primary generator failed, trying secondary generator");
+            $result = $this->attemptGeneration(
+                $this->secondary_generator,
+                $template_data,
+                $data_provider,
+                $output_format,
+                $options
+            );
+        }
 
-    // Si échec, tentative avec le générateur tertiaire (fallback final)
-    if ($result === false) {
-        $this->logInfo("Secondary generator failed, trying tertiary generator");
-        $result = $this->attemptGeneration(
-            $this->tertiary_generator,
-            $template_data,
-            $data_provider,
-            $output_format,
-            $options
-        );
-    }
+        // Si échec, tentative avec le générateur tertiaire (fallback final)
+        if ($result === false) {
+            $this->logInfo("Secondary generator failed, trying tertiary generator");
+            $result = $this->attemptGeneration(
+                $this->tertiary_generator,
+                $template_data,
+                $data_provider,
+                $output_format,
+                $options
+            );
+        }
 
-    // Log du résultat final
-    if ($result === false) {
-        $this->logError("All generators failed for format: {$output_format}");
-    } else {
-        $this->logInfo("Generation successful with format: {$output_format}");
-    }
+        // Log du résultat final
+        if ($result === false) {
+            $this->logError("All generators failed for format: {$output_format}");
+        } else {
+            $this->logInfo("Generation successful with format: {$output_format}");
+        }
 
-    return $result;
-}
+        return $result;
+    }
 
     /**
      * Tente la génération avec un générateur spécifique
      *
-     * @param string $generator_type Type de générateur
-     * @param array $template_data Données du template
-     * @param DataProviderInterface $data_provider Fournisseur de données
-     * @param string $output_format Format de sortie
-     * @param array $options Options supplémentaires
+     * @param  string                $generator_type Type de
+     *                                               générateur
+     * @param  array                 $template_data  Données
+     *                                               du
+     *                                               template
+     * @param  DataProviderInterface $data_provider  Fournisseur de
+     *                                               données
+     * @param  string                $output_format  Format de sortie
+     * @param  array                 $options        Options
+     *                                               supplémentaires
      * @return mixed Résultat ou false en cas d'échec
      */
-private function attemptGeneration(
-    string $generator_type,
-    array $template_data,
-    DataProviderInterface $data_provider,
-    string $output_format,
-    array $options = []
-) {
-    if (!isset($this->generators_config[$generator_type])) {
-        $this->logError("Unknown generator type: {$generator_type}");
-        return false;
-    }
+    private function attemptGeneration(
+        string $generator_type,
+        array $template_data,
+        DataProviderInterface $data_provider,
+        string $output_format,
+        array $options = []
+    ) {
+        if (!isset($this->generators_config[$generator_type])) {
+            $this->logError("Unknown generator type: {$generator_type}");
+            return false;
+        }
 
-    $config = $this->generators_config[$generator_type];
-    if (!$config['enabled']) {
-        $this->logInfo("Generator {$generator_type} is disabled");
-        return false;
-    }
+        $config = $this->generators_config[$generator_type];
+        if (!$config['enabled']) {
+            $this->logInfo("Generator {$generator_type} is disabled");
+            return false;
+        }
 
-    if (!in_array($output_format, $config['supported_formats'])) {
-        $this->logInfo("Generator {$generator_type} does not support format: {$output_format}");
-        return false;
-    }
+        if (!in_array($output_format, $config['supported_formats'])) {
+            $this->logInfo("Generator {$generator_type} does not support format: {$output_format}");
+            return false;
+        }
 
-    $this->attempt_history[] = [
+        $this->attempt_history[] = [
         'generator' => $generator_type,
         'format' => $output_format,
         'timestamp' => time(),
         'status' => 'attempting'
-    ];
-    try {
-        $generator = $this->createGenerator($generator_type, $template_data, $data_provider, $options);
-        if (!$generator) {
-            throw new \Exception("Failed to create generator: {$generator_type}");
-        }
+        ];
+        try {
+            $generator = $this->createGenerator($generator_type, $template_data, $data_provider, $options);
+            if (!$generator) {
+                throw new \Exception("Failed to create generator: {$generator_type}");
+            }
 
-        $this->logInfo("Generator {$generator_type} created successfully");
-        // Validation du template
-        $this->logInfo("Validating template for generator: {$generator_type}");
-        if (!$generator->validateTemplate()) {
-            throw new \Exception("Template validation failed for generator: {$generator_type}");
-        }
-        $this->logInfo("Template validation passed for generator: {$generator_type}");
-// Génération avec timeout
-        $this->logInfo("Starting generation with generator: {$generator_type}, format: {$output_format}");
-        $result = $this->executeWithTimeout(function () use ($generator, $output_format) {
+            $this->logInfo("Generator {$generator_type} created successfully");
+            // Validation du template
+            $this->logInfo("Validating template for generator: {$generator_type}");
+            if (!$generator->validateTemplate()) {
+                throw new \Exception("Template validation failed for generator: {$generator_type}");
+            }
+            $this->logInfo("Template validation passed for generator: {$generator_type}");
+            // Génération avec timeout
+            $this->logInfo("Starting generation with generator: {$generator_type}, format: {$output_format}");
+            $result = $this->executeWithTimeout(
+                function () use ($generator, $output_format) {
 
-                return $generator->generate($output_format);
-        }, $config['timeout']);
-        $this->logInfo("Generation completed for generator: {$generator_type}, result type: " . gettype($result));
-    // Mise à jour de l'historique
+                    return $generator->generate($output_format);
+                }, $config['timeout']
+            );
+            $this->logInfo("Generation completed for generator: {$generator_type}, result type: " . gettype($result));
+            // Mise à jour de l'historique
                 $this->attempt_history[count($this->attempt_history) - 1]['status'] = 'success';
-        return $result;
-    } catch (\Throwable $e) {
-        $this->logError("Generator {$generator_type} failed: " . $e->getMessage());
-        // Mise à jour de l'historique
-        $this->attempt_history[count($this->attempt_history) - 1]['status'] = 'failed';
-        $this->attempt_history[count($this->attempt_history) - 1]['error'] = $e->getMessage();
-        return false;
+            return $result;
+        } catch (\Throwable $e) {
+            $this->logError("Generator {$generator_type} failed: " . $e->getMessage());
+            // Mise à jour de l'historique
+            $this->attempt_history[count($this->attempt_history) - 1]['status'] = 'failed';
+            $this->attempt_history[count($this->attempt_history) - 1]['error'] = $e->getMessage();
+            return false;
+        }
     }
-}
 
     /**
      * Crée une instance de générateur
      *
-     * @param string $generator_type Type de générateur
-     * @param array $template_data Données du template
-     * @param DataProviderInterface $data_provider Fournisseur de données
-     * @param array $options Options supplémentaires
+     * @param  string                $generator_type Type de
+     *                                               générateur
+     * @param  array                 $template_data  Données
+     *                                               du
+     *                                               template
+     * @param  DataProviderInterface $data_provider  Fournisseur de
+     *                                               données
+     * @param  array                 $options        Options
+     *                                               supplémentaires
      * @return BaseGenerator|null Instance du générateur ou null
      */
-private function createGenerator(
-    string $generator_type,
-    array $template_data,
-    DataProviderInterface $data_provider,
-    array $options = []
-): ?BaseGenerator {
-    $config = $this->generators_config[$generator_type];
-    $class_name = $config['class'];
-    $this->logInfo("Creating generator: {$generator_type}, class: {$class_name}");
-    if (!class_exists($class_name)) {
-        $this->logError("Generator class not found: {$class_name}");
-        return null;
-    }
+    private function createGenerator(
+        string $generator_type,
+        array $template_data,
+        DataProviderInterface $data_provider,
+        array $options = []
+    ): ?BaseGenerator {
+        $config = $this->generators_config[$generator_type];
+        $class_name = $config['class'];
+        $this->logInfo("Creating generator: {$generator_type}, class: {$class_name}");
+        if (!class_exists($class_name)) {
+            $this->logError("Generator class not found: {$class_name}");
+            return null;
+        }
 
-    $this->logInfo("Class {$class_name} exists, attempting instantiation");
-    try {
-        $generator = new $class_name($template_data, $data_provider, true, $options);
-        $this->logInfo("Generator {$generator_type} instantiated successfully");
-        return $generator;
-    } catch (\Throwable $e) {
-        $this->logError("Failed to instantiate generator {$generator_type}: " . $e->getMessage());
-        return null;
-    }
+        $this->logInfo("Class {$class_name} exists, attempting instantiation");
+        try {
+            $generator = new $class_name($template_data, $data_provider, true, $options);
+            $this->logInfo("Generator {$generator_type} instantiated successfully");
+            return $generator;
+        } catch (\Throwable $e) {
+            $this->logError("Failed to instantiate generator {$generator_type}: " . $e->getMessage());
+            return null;
+        }
     }
 
     /**
      * Exécute une fonction avec timeout
      *
-     * @param callable $callback Fonction à exécuter
-     * @param int $timeout Timeout en secondes
+     * @param  callable $callback Fonction à exécuter
+     * @param  int      $timeout  Timeout en secondes
      * @return mixed Résultat de la fonction
      * @throws \Exception En cas de timeout
      */
     private function executeWithTimeout(callable $callback, int $timeout)
     {
         $start_time = time();
-// Utilisation de pcntl si disponible (Linux/Unix)
+        // Utilisation de pcntl si disponible (Linux/Unix)
         if (function_exists('pcntl_fork')) {
             return $this->executeWithPcntl($callback, $timeout);
         }
@@ -260,8 +287,8 @@ private function createGenerator(
     /**
      * Exécute avec pcntl pour timeout réel
      *
-     * @param callable $callback Fonction à exécuter
-     * @param int $timeout Timeout en secondes
+     * @param  callable $callback Fonction à exécuter
+     * @param  int      $timeout  Timeout en secondes
      * @return mixed Résultat de la fonction
      * @throws \Exception En cas de timeout ou d'erreur
      */
@@ -273,7 +300,7 @@ private function createGenerator(
         }
 
         if ($pid) {
-// Process parent
+            // Process parent
             $status = 0;
             $result = pcntl_waitpid($pid, $status, WNOHANG);
             $elapsed = 0;
@@ -284,20 +311,20 @@ private function createGenerator(
             }
 
             if ($result === 0) {
-// Timeout - tuer le processus enfant
+                // Timeout - tuer le processus enfant
                 posix_kill($pid, SIGKILL);
                 pcntl_waitpid($pid, $status);
                 throw new \Exception("Process timed out after {$timeout} seconds");
             }
 
             if (pcntl_wifexited($status) && pcntl_wexitstatus($status) === 0) {
-// Succès - récupérer le résultat depuis un fichier temporaire ou pipe
+                // Succès - récupérer le résultat depuis un fichier temporaire ou pipe
                 return $this->getResultFromChildProcess($pid);
             } else {
                 throw new \Exception("Child process failed");
             }
         } else {
-        // Process enfant
+            // Process enfant
             try {
                 $result = $callback();
                 $this->saveResultForParent($result);
@@ -311,7 +338,7 @@ private function createGenerator(
     /**
      * Récupère le résultat depuis le processus enfant
      *
-     * @param int $pid PID du processus enfant
+     * @param  int $pid PID du processus enfant
      * @return mixed Résultat
      */
     private function getResultFromChildProcess(int $pid)
@@ -340,7 +367,7 @@ private function createGenerator(
     /**
      * Vérifie si un générateur est disponible
      *
-     * @param string $generator_type Type de générateur
+     * @param  string $generator_type Type de générateur
      * @return bool true si disponible
      */
     public function isGeneratorAvailable(string $generator_type): bool
@@ -356,7 +383,7 @@ private function createGenerator(
     /**
      * Récupère les capacités d'un générateur
      *
-     * @param string $generator_type Type de générateur
+     * @param  string $generator_type Type de générateur
      * @return array Capacités du générateur
      */
     public function getGeneratorCapabilities(string $generator_type): array
@@ -378,7 +405,8 @@ private function createGenerator(
      * Active/désactive un générateur
      *
      * @param string $generator_type Type de générateur
-     * @param bool $enabled État souhaité
+     * @param bool   $enabled        État
+     *                               souhaité
      */
     public function setGeneratorEnabled(string $generator_type, bool $enabled): void
     {

@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class PDF_Builder_Security_Mappings {
+class PDF_Builder_Security_Mappings
+{
 
     // ==========================================
     // RÈGLES DE SÉCURITÉ GÉNÉRALES
@@ -224,56 +225,64 @@ class PDF_Builder_Security_Mappings {
     /**
      * Obtenir toutes les règles de sécurité
      */
-    public static function get_security_rules() {
+    public static function get_security_rules()
+    {
         return self::$security_rules;
     }
 
     /**
      * Obtenir une règle de sécurité spécifique
      */
-    public static function get_security_rule($key) {
+    public static function get_security_rule($key)
+    {
         return self::$security_rules[$key] ?? null;
     }
 
     /**
      * Obtenir les règles de sécurité pour un contexte
      */
-    public static function get_context_security_rules($context) {
+    public static function get_context_security_rules($context)
+    {
         return self::$context_security_rules[$context] ?? [];
     }
 
     /**
      * Obtenir les règles de sanitisation
      */
-    public static function get_sanitization_rules() {
+    public static function get_sanitization_rules()
+    {
         return self::$sanitization_rules;
     }
 
     /**
      * Obtenir une règle de sanitisation spécifique
      */
-    public static function get_sanitization_rule($type) {
+    public static function get_sanitization_rule($type)
+    {
         return self::$sanitization_rules[$type] ?? null;
     }
 
     /**
      * Obtenir les patterns de sécurité
      */
-    public static function get_security_patterns() {
+    public static function get_security_patterns()
+    {
         return self::$security_patterns;
     }
 
     /**
      * Vérifier si une action AJAX est autorisée
      */
-    public static function is_ajax_action_allowed($action) {
+    public static function is_ajax_action_allowed($action)
+    {
         return in_array($action, self::$security_rules['allowed_ajax_actions']);
     }
 
     /**
      * Vérifier si un type de fichier est autorisé
      */
-    public static function is_file_type_allowed($filename, $category = 'images') {
+    public static function is_file_type_allowed($filename, $category = 'images')
+    {
         $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         $allowed_types = self::$security_rules['allowed_file_types'][$category] ?? [];
 
@@ -283,7 +292,8 @@ class PDF_Builder_Security_Mappings {
     /**
      * Vérifier la taille d'un fichier
      */
-    public static function is_file_size_allowed($size, $category = 'image') {
+    public static function is_file_size_allowed($size, $category = 'image')
+    {
         $max_size = self::$security_rules['max_file_sizes'][$category] ?? 0;
 
         return $size <= $max_size;
@@ -292,14 +302,16 @@ class PDF_Builder_Security_Mappings {
     /**
      * Obtenir la taille maximale pour un type de fichier
      */
-    public static function get_max_file_size($category = 'image') {
+    public static function get_max_file_size($category = 'image')
+    {
         return self::$security_rules['max_file_sizes'][$category] ?? 0;
     }
 
     /**
      * Sanitiser une valeur selon son type
      */
-    public static function sanitize_value($value, $type) {
+    public static function sanitize_value($value, $type)
+    {
         $rule = self::get_sanitization_rule($type);
 
         if (!$rule) {
@@ -340,7 +352,8 @@ class PDF_Builder_Security_Mappings {
     /**
      * Vérifier la sécurité d'une chaîne
      */
-    public static function check_security_patterns($string) {
+    public static function check_security_patterns($string)
+    {
         $threats = [];
 
         foreach (self::$security_patterns as $type => $config) {
@@ -361,7 +374,8 @@ class PDF_Builder_Security_Mappings {
     /**
      * Générer un nonce pour une action
      */
-    public static function generate_nonce($action) {
+    public static function generate_nonce($action)
+    {
         $nonce_key = self::$security_rules['nonces'][$action] ?? 'pdf_builder_general_nonce';
         return wp_create_nonce($nonce_key);
     }
@@ -369,7 +383,8 @@ class PDF_Builder_Security_Mappings {
     /**
      * Vérifier un nonce
      */
-    public static function verify_nonce($nonce, $action) {
+    public static function verify_nonce($nonce, $action)
+    {
         $nonce_key = self::$security_rules['nonces'][$action] ?? 'pdf_builder_general_nonce';
         return wp_verify_nonce($nonce, $nonce_key);
     }
@@ -377,7 +392,8 @@ class PDF_Builder_Security_Mappings {
     /**
      * Vérifier les permissions pour un contexte
      */
-    public static function check_context_permissions($context) {
+    public static function check_context_permissions($context)
+    {
         $rules = self::get_context_security_rules($context);
 
         if (empty($rules)) {

@@ -15,7 +15,7 @@ class ParameterValidator
     /**
      * Filtre et valide les paramètres du canvas depuis POST
      *
-     * @param array $post_data Données POST à valider
+     * @param  array $post_data Données POST à valider
      * @return array Paramètres validés et filtrés
      */
     public function filterCanvasParameters($post_data)
@@ -67,7 +67,7 @@ class ParameterValidator
     /**
      * Valide et nettoie les propriétés d'un élément
      *
-     * @param array $element Élément à valider
+     * @param  array $element Élément à valider
      * @return array Élément validé
      */
     public function validateElement($element)
@@ -125,7 +125,7 @@ class ParameterValidator
     /**
      * Valide les propriétés de style
      *
-     * @param array $styles Propriétés de style
+     * @param  array $styles Propriétés de style
      * @return array Styles validés
      */
     private function validateStyles($styles)
