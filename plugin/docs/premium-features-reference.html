@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Référence Fonctionnalités Premium - PDF Builder Pro</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 5px; line-height: 1.4; width: 100%; box-sizing: border-box; max-width: 100%; }
+        h1 { text-align: center; margin-bottom: 10px; }
+
+        /* Styles des onglets */
+        .tab-container { margin: 15px 0; }
+        .tab-buttons { display: flex; flex-wrap: wrap; gap: 2px; margin-bottom: 10px; border-bottom: 1px solid #ddd; }
+        .tab-button {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.2s;
+            border-radius: 4px 4px 0 0;
+        }
+        .tab-button:hover { background: #e9ecef; color: #333; }
+        .tab-button.active {
+            background: #fff;
+            color: #2e7d32;
+            border-bottom: 2px solid #2e7d32;
+            margin-bottom: -1px;
+        }
+
+        /* Contenu des onglets */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .feature { margin: 8px 0; padding: 5px; border: 1px solid #ddd; border-radius: 4px; }
+        .feature h3 { margin: 0 0 5px 0; font-size: 16px; }
+        .free { color: #c62828; font-weight: 500; }
+        .premium { color: #2e7d32; font-weight: 500; }
+        .impact { color: #e65100; font-style: italic; }
+
+        .warning { background: #fff3cd; padding: 5px; margin-bottom: 10px; border-radius: 4px; }
+        .stats { background: #f8f9fa; padding: 5px; text-align: center; margin-top: 10px; border-radius: 4px; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tab-buttons { flex-direction: column; }
+            .tab-button { width: 100%; text-align: left; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Référence Fonctionnalités Premium - PDF Builder Pro</h1>
+
+    <div class="warning">
+        <strong>Document de travail - sera supprimé après utilisation</strong>
+    </div>
+
+    <div class="tab-container">
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="openTab('generation')">🎯 Génération & Performance</button>
+            <button class="tab-button" onclick="openTab('design')">🎨 Design & Personnalisation</button>
+        </div>
+
+        <!-- Onglet Génération & Performance -->
+        <div id="generation" class="tab-content active">
+            <div class="feature">
+                <h3>1. Génération PDF Illimitée</h3>
+                <p><span class="free">Gratuit: 50 PDFs/mois maximum</span></p>
+                <p><span class="premium">Premium: Génération illimitée sans restriction mensuelle</span></p>
+                <p><span class="impact">Impact: Utile pour les sites à fort trafic ou e-commerce</span></p>
+            </div>
+
+            <div class="feature">
+                <h3>2. Qualité d'Impression Professionnelle</h3>
+                <p><span class="free">Gratuit: 72 DPI (qualité écran)</span></p>
+                <p><span class="premium">Premium: 300 DPI haute résolution</span></p>
+                <p><span class="impact">Impact: Documents prêts pour l'impression professionnelle</span></p>
+            </div>
+
+            <div class="feature">
+                <h3>3. Génération Multi-Format</h3>
+                <p><span class="free">Gratuit: PDF uniquement</span></p>
+                <p><span class="premium">Premium: PDF, PNG, JPG</span></p>
+                <p><span class="impact">Impact: Flexibilité pour différents usages (web, print, mobile)</span></p>
+            </div>
+
+            <div class="feature">
+                <h3>4. Templates Illimités</h3>
+                <p><span class="free">Gratuit: 1 template maximum</span></p>
+                <p><span class="premium">Premium: Templates illimités</span></p>
+                <p><span class="impact">Impact: Flexibilité totale pour différents besoins</span></p>
+            </div>
+        </div>
+
+        <!-- Onglet Design & Personnalisation -->
+        <div id="design" class="tab-content">
+            <div class="feature">
+                <h3>5. Éléments Avancés</h3>
+                <p><span class="free">Gratuit: Texte, image, formes basiques</span></p>
+                <p><span class="premium">Premium: Codes-barres, QR codes, graphiques, tableaux dynamiques</span></p>
+                <p><span class="impact">Impact: Documents plus riches et professionnels</span></p>
+            </div>
+
+            <div class="feature">
+                <h3>6. Variables WooCommerce Complètes</h3>
+                <p><span class="free">Gratuit: Variables basiques (nom, email, total)</span></p>
+                <p><span class="premium">Premium: Toutes les métadonnées (attributs, variations, taxes, etc.)</span></p>
+                <p><span class="impact">Impact: Documents ultra-personnalisés</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats">
+        <h3>Total: 6 fonctionnalités premium</h3>
+        <p>2 catégories - Fonctionnalités existantes uniquement</p>
+    </div>
+
+    <script>
+        function openTab(tabName) {
+            // Masquer tous les contenus d'onglets
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Désactiver tous les boutons d'onglets
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => button.classList.remove('active'));
+
+            // Afficher l'onglet sélectionné
+            document.getElementById(tabName).classList.add('active');
+
+            // Activer le bouton correspondant
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

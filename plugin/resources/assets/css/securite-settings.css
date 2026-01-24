@@ -1,0 +1,277 @@
+/* Security Settings Tab Styles */
+/* Styles simplifiés pour l'onglet Sécurité */
+
+.security-section,
+.rgpd-section {
+    margin-bottom: 20px;
+    background: #fff;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+}
+
+.security-section h3,
+.rgpd-section h3 {
+    margin: 0;
+    padding: 12px 16px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e1e5e9;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e1e1e;
+}
+
+.security-section h3:before {
+    content: "🔒 ";
+    margin-right: 4px;
+}
+
+.rgpd-section h3:before {
+    content: "🛡️ ";
+    margin-right: 4px;
+}
+
+/* Status Indicators */
+.security-status,
+.rgpd-status {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.security-status {
+    background: #d63638;
+}
+
+.security-status.active {
+    background: #00a32a;
+}
+
+.rgpd-status {
+    background: #d63638;
+}
+
+.rgpd-status.active {
+    background: #00a32a;
+}
+
+/* Form Tables */
+.security-section .form-table,
+.rgpd-section .form-table {
+    margin: 0;
+    padding: 16px;
+    background: #fff;
+}
+
+.security-section .form-table th,
+.rgpd-section .form-table th {
+    padding: 12px 8px 12px 0;
+    font-weight: 500;
+    color: #1e1e1e;
+    vertical-align: top;
+    width: 220px;
+    font-size: 14px;
+}
+
+.security-section .form-table td,
+.rgpd-section .form-table td {
+    padding: 12px 8px;
+    vertical-align: top;
+}
+
+/* Security Level Selector */
+.security-section select[name="pdf_security_level"] {
+    min-width: 140px;
+    padding: 6px 10px;
+    border: 1px solid #c7c7cc;
+    border-radius: 4px;
+    background: #fff;
+    font-size: 14px;
+    color: #1e1e1e;
+}
+
+.security-section select[name="pdf_security_level"]:focus {
+    border-color: #007cba;
+    outline: none;
+}
+
+/* Toggle Switches */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #dcdcde;
+    border-radius: 24px;
+    border: 1px solid #c7c7cc;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: #007cba;
+    border-color: #007cba;
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+}
+
+/* Descriptions */
+.security-section .description,
+.rgpd-section .description {
+    color: #646970;
+    font-size: 12px;
+    margin-top: 4px;
+    line-height: 1.4;
+    max-width: 400px;
+}
+
+/* GDPR Specific Styles */
+.rgpd-section input[type="number"] {
+    width: 80px;
+    padding: 6px 10px;
+    border: 1px solid #c7c7cc;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.rgpd-section input[type="number"]:focus {
+    border-color: #007cba;
+    outline: none;
+}
+
+.rgpd-section .gdpr-consent-settings {
+    margin-top: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border: 1px solid #e1e5e9;
+    border-radius: 4px;
+}
+
+.rgpd-section .gdpr-consent-settings .description {
+    color: #004085;
+    margin: 0 0 8px 0;
+}
+
+/* Security Warnings */
+.security-section .security-warning {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #fef9e6;
+    border: 1px solid #f5e6ab;
+    border-radius: 4px;
+    color: #dba617;
+    font-size: 13px;
+}
+
+.security-section .security-warning:before {
+    content: "⚠️ ";
+    margin-right: 4px;
+}
+
+/* Encryption Status */
+.rgpd-section .encryption-status {
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: #e6f7e6;
+    border: 1px solid #b8e6b8;
+    border-radius: 4px;
+    color: #1e8cbe;
+    font-size: 12px;
+    display: inline-block;
+}
+
+.rgpd-section .encryption-status:before {
+    content: "🔐 ";
+    margin-right: 4px;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 782px) {
+    .security-section .form-table th,
+    .security-section .form-table td,
+    .rgpd-section .form-table th,
+    .rgpd-section .form-table td {
+        display: block;
+        width: 100%;
+        padding: 8px 0;
+    }
+
+    .security-section .form-table th,
+    .rgpd-section .form-table th {
+        padding-bottom: 4px;
+    }
+
+    .security-section .form-table td,
+    .rgpd-section .form-table td {
+        padding-top: 4px;
+    }
+
+    .security-section h3,
+    .rgpd-section h3 {
+        padding: 10px 12px;
+        font-size: 15px;
+    }
+
+    .toggle-switch {
+        margin-bottom: 8px;
+    }
+
+    .security-status,
+    .rgpd-status {
+        display: block;
+        margin: 8px 0;
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .security-section .form-table,
+    .rgpd-section .form-table {
+        padding: 12px;
+    }
+
+    .security-section select[name="pdf_security_level"] {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+
+    .rgpd-section input[type="number"] {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+}

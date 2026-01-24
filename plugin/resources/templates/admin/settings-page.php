@@ -1,0 +1,20 @@
+<?php
+/**
+ * PDF Builder Pro - Settings Page (Simplified)
+ * Main settings dispatcher - includes modular parts
+ */
+
+if (!defined('ABSPATH')) {
+    exit('Direct access forbidden');
+}
+
+// Include settings loader (loads JavaScript and CSS assets)
+require_once plugin_dir_path(__FILE__) . 'settings-loader.php';
+
+// Include main settings logic (contains all navigation and tabs)
+require_once plugin_dir_path(__FILE__) . 'settings-parts/settings-main.php';
+
+// Add floating save button and JavaScript here for better execution context
+echo '<!-- PDF BUILDER SETTINGS PAGE LOADED - DEBUG MARKER -->';
+
+// All JavaScript moved to settings-main.php to avoid conflicts

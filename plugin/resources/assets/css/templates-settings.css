@@ -1,0 +1,219 @@
+/* Templates Settings Tab Styles */
+/* Styles simplifiés pour l'onglet Templates */
+
+.templates-status-wrapper {
+    margin: 16px 0;
+}
+
+.templates-status-wrapper .notice {
+    margin: 0 0 16px 0;
+    padding: 10px 14px;
+    border-left: 4px solid #dba617;
+    background: #fef9e6;
+    color: #dba617;
+    border-radius: 4px;
+}
+
+.templates-status-wrapper .notice p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Templates Status Grid */
+.templates-status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.template-status-card {
+    background: #fff;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+    padding: 16px;
+}
+
+.custom-status-card {
+    border-color: #00a32a;
+    background: #f8fff9;
+}
+
+.custom-status-card .custom-status-indicator {
+    display: inline-block;
+    margin-bottom: 8px;
+    padding: 3px 6px;
+    background: #00a32a;
+    color: white;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 3px;
+}
+
+/* Template Selector */
+.template-selector {
+    margin-top: 12px;
+}
+
+.template-selector label {
+    display: block;
+    font-weight: 500;
+    color: #1e1e1e;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.template-select {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #c7c7cc;
+    border-radius: 4px;
+    background: #fff;
+    font-size: 14px;
+    color: #1e1e1e;
+}
+
+.template-select:focus {
+    border-color: #007cba;
+    outline: none;
+}
+
+/* Template Preview */
+.template-preview {
+    margin-top: 12px;
+    padding: 10px;
+    background: #f8f9fa;
+    border: 1px solid #e1e5e9;
+    border-radius: 4px;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+}
+
+.current-template {
+    margin: 0;
+    color: #00a32a;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.current-template:before {
+    content: "📄 ";
+    margin-right: 4px;
+}
+
+.no-template {
+    margin: 0;
+    color: #d63638;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.no-template:before {
+    content: "❌ ";
+    margin-right: 4px;
+}
+
+/* Templates Status Actions */
+.templates-status-actions {
+    margin-top: 24px;
+    padding: 16px;
+    background: #f8f9fa;
+    border: 1px solid #e1e5e9;
+    border-radius: 4px;
+}
+
+.templates-status-actions .button {
+    margin-right: 8px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.templates-status-actions .button-secondary {
+    background: #f8f9fa;
+    border: 1px solid #c7c7cc;
+    color: #1e1e1e;
+}
+
+.templates-status-actions .button-secondary:hover {
+    background: #e9ecef;
+}
+
+.templates-status-actions .description {
+    margin: 8px 0 0 0;
+    color: #646970;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* Status Card Header */
+.template-status-card h4 {
+    margin: 0 0 12px 0;
+    color: #1e1e1e;
+    font-size: 16px;
+    font-weight: 600;
+    border-bottom: 1px solid #e1e5e9;
+    padding-bottom: 8px;
+}
+
+.template-status-card h4:before {
+    content: "📋 ";
+    margin-right: 4px;
+}
+
+/* Error States */
+.template-status-card.error {
+    border-color: #d63638;
+    background: #fff5f5;
+}
+
+/* Success States */
+.template-status-card.success {
+    border-color: #00a32a;
+    background: #f8fff9;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 782px) {
+    .templates-status-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .template-status-card {
+        padding: 12px;
+    }
+
+    .templates-status-actions {
+        padding: 12px;
+    }
+
+    .templates-status-actions .button {
+        display: block;
+        width: 100%;
+        margin-bottom: 8px;
+        margin-right: 0;
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .template-status-card h4 {
+        font-size: 14px;
+    }
+
+    .template-select {
+        font-size: 16px;
+    }
+
+    .current-template,
+    .no-template {
+        font-size: 13px;
+    }
+}

@@ -1,0 +1,313 @@
+/* Cron Settings Tab Styles */
+/* Styles simplifiés pour l'onglet Cron */
+
+.pdf-builder-cron-diagnostics {
+    margin: 16px 0;
+}
+
+/* WP Cron Status Indicator */
+.wp-cron-status-indicator {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #f8f9fa;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.wp-cron-status-indicator .dashicons-clock {
+    color: #007cba;
+    font-size: 18px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.wp-cron-status-indicator h4 {
+    margin: 0 12px 0 0;
+    color: #1e1e1e;
+    font-size: 16px;
+    font-weight: 600;
+    flex: 1;
+    min-width: 180px;
+}
+
+/* Status Items */
+.wp-cron-status-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    margin-right: 16px;
+    font-size: 14px;
+    color: #1e1e1e;
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.status-indicator.success {
+    background: #00a32a;
+}
+
+.status-indicator.warning {
+    background: #dba617;
+}
+
+.status-indicator.error {
+    background: #d63638;
+}
+
+.status-indicator.info {
+    background: #007cba;
+}
+
+/* Check Status Button */
+#check-wp-cron-status-btn {
+    margin-left: 12px;
+    padding: 6px 12px;
+    background: #007cba;
+    color: white;
+    border: 1px solid #007cba;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+#check-wp-cron-status-btn:hover {
+    background: #005a87;
+}
+
+#check-wp-cron-status-btn:disabled {
+    background: #646970;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+#check-wp-cron-status-btn .dashicons {
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+/* Cron Sections */
+.cron-status-section,
+.cron-actions-section,
+.cron-results-section {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: #fff;
+    border: 1px solid #e1e5e9;
+    border-radius: 6px;
+}
+
+.cron-status-section h3,
+.cron-actions-section h3,
+.cron-results-section h3 {
+    margin: 0 0 12px 0;
+    color: #1e1e1e;
+    font-size: 16px;
+    font-weight: 600;
+    border-bottom: 1px solid #e1e5e9;
+    padding-bottom: 8px;
+}
+
+.cron-status-section h3:before {
+    content: "📊 ";
+    margin-right: 4px;
+}
+
+.cron-actions-section h3:before {
+    content: "⚙️ ";
+    margin-right: 4px;
+}
+
+.cron-results-section h3:before {
+    content: "📋 ";
+    margin-right: 4px;
+}
+
+/* Cron Actions Buttons */
+.cron-actions-section .button {
+    margin-right: 8px;
+    margin-bottom: 8px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.cron-actions-section .button-secondary {
+    background: #f8f9fa;
+    border: 1px solid #c7c7cc;
+    color: #1e1e1e;
+}
+
+.cron-actions-section .button-secondary:hover {
+    background: #e9ecef;
+}
+
+.cron-actions-section .button-primary {
+    background: #007cba;
+    border: 1px solid #007cba;
+    color: white;
+}
+
+.cron-actions-section .button-primary:hover {
+    background: #005a87;
+}
+
+.cron-actions-section .button:disabled {
+    background: #646970;
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.cron-actions-section .button .dashicons {
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+/* Cron Results */
+.cron-results-section {
+    background: #f8f9fa;
+}
+
+.hidden-element {
+    display: none;
+}
+
+.cron-results-section.show {
+    display: block;
+}
+
+.cron-results-section .result-item {
+    margin-bottom: 8px;
+    padding: 8px;
+    background: white;
+    border: 1px solid #e1e5e9;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 13px;
+    color: #1e1e1e;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.cron-results-section .result-item.success {
+    border-color: #00a32a;
+    background: #e6f7e6;
+    color: #1e8cbe;
+}
+
+.cron-results-section .result-item.error {
+    border-color: #d63638;
+    background: #fff5f5;
+    color: #d63638;
+}
+
+.cron-results-section .result-item.warning {
+    border-color: #dba617;
+    background: #fef9e6;
+    color: #dba617;
+}
+
+.cron-results-section .result-item.info {
+    border-color: #007cba;
+    background: #f0f8ff;
+    color: #007cba;
+}
+
+/* Loading States */
+.cron-loading {
+    text-align: center;
+    padding: 16px;
+    color: #646970;
+}
+
+/* Progress Indicators */
+.cron-progress {
+    margin: 12px 0;
+    padding: 8px;
+    background: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+}
+
+.cron-progress .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #dee2e6;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.cron-progress .progress-fill {
+    height: 100%;
+    background: #007cba;
+    width: 0%;
+    border-radius: 4px;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 782px) {
+    .wp-cron-status-indicator {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .wp-cron-status-indicator h4 {
+        margin-bottom: 8px;
+        min-width: auto;
+    }
+
+    #check-wp-cron-status-btn {
+        margin-left: 0;
+        margin-top: 8px;
+    }
+
+    .wp-cron-status-item {
+        margin-right: 0;
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    .cron-actions-section .button {
+        display: block;
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 8px;
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .cron-status-section,
+    .cron-actions-section,
+    .cron-results-section {
+        padding: 12px;
+    }
+
+    .cron-status-section h3,
+    .cron-actions-section h3,
+    .cron-results-section h3 {
+        font-size: 15px;
+    }
+
+    .wp-cron-status-indicator {
+        padding: 10px;
+    }
+
+    .wp-cron-status-indicator .dashicons-clock {
+        font-size: 16px;
+    }
+}

@@ -1,0 +1,678 @@
+/**
+ * PDF Builder Developer Settings CSS
+ *
+ * Modern, responsive styles for developer settings interface
+ */
+
+/* Base Styles */
+.pdf-builder-developer {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Status Banner */
+.dev-banner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    transition: all 0.3s ease;
+}
+
+.dev-banner.active {
+    background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+    box-shadow: 0 4px 12px rgba(74, 222, 128, 0.15);
+}
+
+.dev-banner.inactive {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+}
+
+.dev-banner-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dev-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+}
+
+.dev-status {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.875rem;
+}
+
+.dev-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.dev-quick-enable {
+    padding: 8px 16px;
+    background: white !important;
+    color: #374151 !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.dev-quick-enable:hover {
+    background: #f9fafb !important;
+    border-color: #9ca3af !important;
+}
+
+/* Controls Grid */
+.dev-controls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.dev-control-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.2s ease;
+}
+
+.dev-control-card:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+
+.dev-card-icon {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+}
+
+.dev-card-title {
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 16px 0;
+    font-size: 1rem;
+}
+
+.dev-card-description {
+    margin: 12px 0 0 0;
+    font-size: 0.875rem;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+/* Toggle Styles */
+.dev-toggle-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.dev-toggle {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.dev-toggle input {
+    display: none;
+}
+
+.dev-toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: #e5e7eb;
+    border-radius: 24px;
+    transition: 0.3s ease;
+}
+
+.dev-toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.dev-toggle.active .dev-toggle-slider {
+    background: #3b82f6;
+}
+
+.dev-toggle.active .dev-toggle-slider:before {
+    transform: translateX(20px);
+}
+
+.dev-toggle-label {
+    font-weight: 500;
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+/* Password Field */
+.dev-password-field {
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.dev-password-field input {
+    width: 100%;
+    padding: 8px 40px 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: border-color 0.2s ease;
+}
+
+.dev-password-field input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.dev-password-toggle {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    color: #6b7280;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+}
+
+.dev-password-toggle:hover {
+    color: #374151;
+}
+
+/* Developer Tools Section */
+.dev-tools-section {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.dev-tools-header {
+    background: #f9fafb;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dev-tools-title {
+    margin: 0;
+    font-weight: 600;
+    color: #111827;
+    font-size: 1rem;
+}
+
+.dev-tools-info {
+    display: flex;
+    gap: 8px;
+}
+
+.dev-info-badge {
+    background: #10b981;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.dev-tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
+    padding: 20px;
+}
+
+.dev-tool-btn {
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 12px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+}
+
+.dev-tool-btn:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    color: #1e40af;
+    transform: translateY(-1px);
+}
+
+.dev-tool-icon {
+    font-size: 1.25rem;
+}
+
+.dev-tool-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* System Status */
+.dev-system-status {
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+    padding: 20px;
+}
+
+.dev-system-status h4 {
+    margin: 0 0 16px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.dev-status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.dev-status-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.dev-status-item:last-child {
+    border-bottom: none;
+}
+
+.dev-status-label {
+    font-weight: 500;
+    color: #374151;
+}
+
+.dev-status-value {
+    font-weight: 600;
+    color: #111827;
+}
+
+.dev-status-value.active {
+    color: #10b981;
+}
+
+.dev-status-value.inactive {
+    color: #ef4444;
+}
+
+/* Modal Styles */
+.dev-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dev-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.dev-modal-content {
+    position: relative;
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 900px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 64px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.dev-modal-large {
+    max-width: 1200px;
+}
+
+.dev-modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f9fafb;
+}
+
+.dev-modal-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dev-modal-icon {
+    font-size: 1.5rem;
+}
+
+.dev-modal-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.dev-modal-btn {
+    background: #f9fafb;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dev-modal-btn:hover {
+    border-color: #3b82f6;
+    background: #eff6ff;
+}
+
+.dev-modal-close {
+    background: #dc2626;
+    color: white;
+    border-color: #dc2626;
+    padding: 8px;
+    width: 36px;
+    height: 36px;
+}
+
+.dev-modal-close:hover {
+    background: #b91c1c;
+    border-color: #b91c1c;
+}
+
+.dev-btn-icon {
+    font-size: 1rem;
+}
+
+.dev-modal-body {
+    flex: 1;
+    padding: 20px;
+    overflow: auto;
+}
+
+.dev-modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+/* Logs Styles */
+.dev-logs-container {
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    background: #1f2937;
+    color: #f9fafb;
+    border-radius: 6px;
+    min-height: 400px;
+    max-height: 500px;
+    overflow: auto;
+}
+
+.dev-logs-loading {
+    text-align: center;
+    color: #6b7280;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.dev-loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e5e7eb;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    animation: dev-spin 1s linear infinite;
+}
+
+@keyframes dev-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.dev-log-entry {
+    margin-bottom: 4px;
+    padding: 2px 4px;
+    border-radius: 3px;
+    border-left: 3px solid transparent;
+}
+
+.dev-log-info {
+    border-left-color: #60a5fa;
+    color: #60a5fa;
+}
+
+.dev-log-warn {
+    border-left-color: #fbbf24;
+    color: #fbbf24;
+}
+
+.dev-log-error {
+    border-left-color: #ef4444;
+    color: #ef4444;
+}
+
+.dev-log-log {
+    border-left-color: #f9fafb;
+    color: #f9fafb;
+}
+
+.dev-log-timestamp {
+    color: #6b7280;
+    margin-right: 8px;
+    font-size: 0.8em;
+}
+
+.dev-log-source {
+    color: #c084fc;
+    opacity: 0.8;
+    margin-right: 8px;
+}
+
+.dev-log-prefix {
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.dev-logs-stats {
+    display: flex;
+    gap: 16px;
+    font-size: 0.875rem;
+    color: #374151;
+}
+
+.dev-stat-item strong {
+    color: #111827;
+}
+
+/* System Info Styles */
+.dev-system-info-content {
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 20px;
+    min-height: 400px;
+}
+
+.dev-system-info-section {
+    margin-bottom: 24px;
+}
+
+.dev-system-info-section h4 {
+    margin: 0 0 12px 0;
+    color: #111827;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.dev-system-info-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dev-system-info-table th,
+.dev-system-info-table td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.dev-system-info-table th {
+    background: #f3f4f6;
+    font-weight: 600;
+    color: #374151;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.dev-system-info-table td {
+    color: #111827;
+}
+
+/* Notifications */
+.dev-notifications {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10001;
+    pointer-events: none;
+}
+
+.dev-notification {
+    background: #10b981;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    margin-bottom: 8px;
+    transform: translateX(400px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: auto;
+    max-width: 400px;
+}
+
+.dev-notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.dev-notification.success {
+    background: #10b981;
+}
+
+.dev-notification.error {
+    background: #ef4444;
+}
+
+.dev-notification.warning {
+    background: #f59e0b;
+}
+
+.dev-notification.info {
+    background: #3b82f6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dev-controls-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dev-banner-content {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+    }
+
+    .dev-tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .dev-modal-content {
+        width: 95%;
+        max-height: 90vh;
+    }
+
+    .dev-system-status {
+        padding: 16px;
+    }
+
+    .dev-status-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .dev-tools-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dev-modal-title {
+        font-size: 1rem;
+    }
+
+    .dev-modal-actions {
+        gap: 4px;
+    }
+
+    .dev-modal-btn {
+        padding: 6px 8px;
+    }
+}

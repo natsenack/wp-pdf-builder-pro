@@ -1,0 +1,397 @@
+/* License Settings Tab Styles */
+/* Styles spécifiques à l'onglet Licence du plugin WP PDF Builder Pro */
+
+.settings-page-title {
+    margin: 0 0 30px 0;
+    color: #23282d;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 123, 186, 0.3);
+}
+
+.settings-page-title:before {
+    content: "🔐 ";
+    margin-right: 5px;
+}
+
+/* License Section */
+.licence-section {
+    margin-bottom: 30px;
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.settings-section-title {
+    margin: 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e1e1e1;
+    font-size: 18px;
+    font-weight: 600;
+    color: #23282d;
+}
+
+.settings-section-title:before {
+    content: "📊 ";
+    margin-right: 8px;
+}
+
+/* Status Cards Grid */
+.status-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Status Cards */
+.status-card {
+    background: #fff;
+    border: 2px solid #e1e1e1;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.status-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.status-card.premium {
+    border-color: #28a745;
+    background: linear-gradient(135deg, #f8fff9 0%, #fff 100%);
+}
+
+.status-card.test {
+    border-color: #ffc107;
+    background: linear-gradient(135deg, #fffbf0 0%, #fff 100%);
+}
+
+.status-card.expiry {
+    border-color: #dc3545;
+    background: linear-gradient(135deg, #fff5f5 0%, #fff 100%);
+}
+
+.status-card-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.status-card-value {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #23282d;
+    word-break: break-all;
+}
+
+.status-card-value.premium {
+    color: #28a745;
+}
+
+.status-card-value.test {
+    color: #856404;
+}
+
+.status-card-value.expiry {
+    color: #721c24;
+}
+
+.status-card-description {
+    margin: 0;
+    font-size: 13px;
+    color: #6c757d;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+.status-card-description.premium {
+    color: #155724;
+}
+
+.status-card-description.test {
+    color: #856404;
+}
+
+.status-card-description.expiry {
+    color: #721c24;
+}
+
+/* License Alert */
+.license-alert {
+    margin: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.license-alert-content {
+    flex: 1;
+}
+
+.alert-icon {
+    font-size: 24px;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #856404;
+    color: white;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.license-alert h4 {
+    margin: 0 0 8px 0;
+    color: #856404;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.license-alert p {
+    margin: 0;
+    color: #856404;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* License Actions */
+.license-actions {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-top: 1px solid #e1e1e1;
+}
+
+.license-actions h3 {
+    margin: 0 0 15px 0;
+    color: #23282d;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.license-actions h3:before {
+    content: "⚙️ ";
+    margin-right: 5px;
+}
+
+.license-action-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.license-action-buttons .button {
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.license-action-buttons .button-primary {
+    background: #007cba;
+    border: 1px solid #007cba;
+    color: white;
+}
+
+.license-action-buttons .button-primary:hover {
+    background: #005a87;
+    border-color: #005a87;
+}
+
+.license-action-buttons .button-secondary {
+    background: #f8f9fa;
+    border: 1px solid #ccc;
+    color: #23282d;
+}
+
+.license-action-buttons .button-secondary:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+/* License Form */
+.license-form-section {
+    margin-top: 30px;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+}
+
+.license-form-section h3 {
+    margin: 0 0 20px 0;
+    color: #23282d;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.license-form-section h3:before {
+    content: "🔑 ";
+    margin-right: 5px;
+}
+
+.license-form .form-table {
+    margin: 0;
+}
+
+.license-form .form-table th {
+    padding: 15px 10px 15px 0;
+    font-weight: 600;
+    color: #23282d;
+    vertical-align: top;
+    width: 150px;
+    font-size: 14px;
+}
+
+.license-form .form-table td {
+    padding: 15px 10px;
+    vertical-align: top;
+}
+
+.license-form input[type="text"],
+.license-form input[type="password"] {
+    width: 100%;
+    max-width: 400px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #23282d;
+    transition: border-color 0.2s ease;
+}
+
+.license-form input:focus {
+    border-color: #007cba;
+    outline: none;
+    box-shadow: 0 0 0 1px #007cba;
+}
+
+.license-form .description {
+    color: #6c757d;
+    font-size: 13px;
+    font-style: italic;
+    margin-top: 5px;
+    line-height: 1.4;
+}
+
+/* License Status Messages */
+.license-status-message {
+    margin: 15px 0;
+    padding: 12px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.license-status-message.success {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.license-status-message.error {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.license-status-message.warning {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 782px) {
+    .status-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .status-card {
+        padding: 15px;
+    }
+
+    .license-alert {
+        margin: 15px;
+        padding: 15px;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .alert-icon {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .license-action-buttons {
+        justify-content: center;
+    }
+
+    .license-form .form-table th,
+    .license-form .form-table td {
+        display: block;
+        width: 100%;
+        padding: 10px 0;
+    }
+
+    .license-form .form-table th {
+        padding-bottom: 5px;
+    }
+
+    .license-form .form-table td {
+        padding-top: 5px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .settings-page-title {
+        font-size: 20px;
+        padding: 15px;
+    }
+
+    .settings-section-title {
+        padding: 15px;
+        font-size: 16px;
+    }
+
+    .license-form-section {
+        padding: 15px;
+    }
+
+    .license-form input[type="text"],
+    .license-form input[type="password"] {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+
+    .license-action-buttons .button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}

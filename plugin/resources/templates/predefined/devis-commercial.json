@@ -1,0 +1,336 @@
+{
+  "name": "Devis Commercial",
+  "category": "devis",
+  "description": "Template de devis professionnel avec présentation entreprise et conditions",
+  "icon": "📋",
+  "version": "1.0",
+  "elements": [
+    {
+      "id": "header-logo",
+      "type": "text",
+      "content": "🏢",
+      "style": {
+        "fontSize": "48px",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "50px",
+        "top": "30px",
+        "width": "100px"
+      }
+    },
+    {
+      "id": "header-company",
+      "type": "text",
+      "content": "[COMPANY_NAME]\n[COMPANY_SLOGAN]",
+      "style": {
+        "fontSize": "20px",
+        "fontWeight": "bold",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "120px",
+        "top": "40px",
+        "width": "250px",
+        "lineHeight": "1.3"
+      }
+    },
+    {
+      "id": "header-contact",
+      "type": "text",
+      "content": "[COMPANY_ADDRESS]\nTél: [COMPANY_PHONE]\nEmail: [COMPANY_EMAIL]",
+      "style": {
+        "fontSize": "11px",
+        "color": "#666",
+        "textAlign": "right",
+        "position": "absolute",
+        "right": "50px",
+        "top": "40px",
+        "width": "200px",
+        "lineHeight": "1.4"
+      }
+    },
+    {
+      "id": "quote-title",
+      "type": "text",
+      "content": "DEVIS",
+      "style": {
+        "fontSize": "42px",
+        "fontWeight": "bold",
+        "color": "#27ae60",
+        "textAlign": "center",
+        "position": "absolute",
+        "left": "50px",
+        "top": "120px",
+        "width": "500px"
+      }
+    },
+    {
+      "id": "quote-number",
+      "type": "text",
+      "content": "N° [QUOTE_NUMBER]",
+      "style": {
+        "fontSize": "16px",
+        "fontWeight": "bold",
+        "color": "#2c3e50",
+        "textAlign": "center",
+        "position": "absolute",
+        "left": "50px",
+        "top": "170px",
+        "width": "500px"
+      }
+    },
+    {
+      "id": "quote-date",
+      "type": "text",
+      "content": "Date: [QUOTE_DATE]\nValable jusqu'au: [VALIDITY_DATE]",
+      "style": {
+        "fontSize": "12px",
+        "color": "#666",
+        "textAlign": "center",
+        "position": "absolute",
+        "left": "50px",
+        "top": "195px",
+        "width": "500px",
+        "lineHeight": "1.4"
+      }
+    },
+    {
+      "id": "client-section-title",
+      "type": "text",
+      "content": "Destinataire",
+      "style": {
+        "fontSize": "14px",
+        "fontWeight": "bold",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "50px",
+        "top": "240px",
+        "width": "200px"
+      }
+    },
+    {
+      "id": "client-info",
+      "type": "text",
+      "content": "[CLIENT_NAME]\n[CLIENT_COMPANY]\n[CLIENT_ADDRESS]\n[CLIENT_EMAIL]",
+      "style": {
+        "fontSize": "12px",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "50px",
+        "top": "260px",
+        "width": "250px",
+        "lineHeight": "1.4"
+      }
+    },
+    {
+      "id": "project-title",
+      "type": "text",
+      "content": "Objet du devis",
+      "style": {
+        "fontSize": "16px",
+        "fontWeight": "bold",
+        "color": "#3498db",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "50px",
+        "top": "320px",
+        "width": "500px"
+      }
+    },
+    {
+      "id": "project-description",
+      "type": "text",
+      "content": "[PROJECT_DESCRIPTION]",
+      "style": {
+        "fontSize": "12px",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "50px",
+        "top": "345px",
+        "width": "500px",
+        "lineHeight": "1.4"
+      }
+    },
+    {
+      "id": "services-title",
+      "type": "text",
+      "content": "Prestations proposées",
+      "style": {
+        "fontSize": "14px",
+        "fontWeight": "bold",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "50px",
+        "top": "400px",
+        "width": "500px"
+      }
+    },
+    {
+      "id": "service-1",
+      "type": "text",
+      "content": "• [SERVICE_1_DESCRIPTION] - [SERVICE_1_PRICE]",
+      "style": {
+        "fontSize": "12px",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "50px",
+        "top": "425px",
+        "width": "500px"
+      }
+    },
+    {
+      "id": "service-2",
+      "type": "text",
+      "content": "• [SERVICE_2_DESCRIPTION] - [SERVICE_2_PRICE]",
+      "style": {
+        "fontSize": "12px",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "50px",
+        "top": "445px",
+        "width": "500px"
+      }
+    },
+    {
+      "id": "total-section",
+      "type": "rectangle",
+      "style": {
+        "position": "absolute",
+        "left": "350px",
+        "top": "480px",
+        "width": "200px",
+        "height": "60px",
+        "backgroundColor": "#ecf0f1",
+        "border": "1px solid #bdc3c7"
+      }
+    },
+    {
+      "id": "total-label",
+      "type": "text",
+      "content": "Total HT:",
+      "style": {
+        "fontSize": "14px",
+        "fontWeight": "bold",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "360px",
+        "top": "485px",
+        "width": "80px"
+      }
+    },
+    {
+      "id": "total-amount",
+      "type": "text",
+      "content": "[TOTAL_AMOUNT]",
+      "style": {
+        "fontSize": "16px",
+        "fontWeight": "bold",
+        "color": "#27ae60",
+        "textAlign": "right",
+        "position": "absolute",
+        "right": "60px",
+        "top": "485px",
+        "width": "120px"
+      }
+    },
+    {
+      "id": "conditions-title",
+      "type": "text",
+      "content": "Conditions générales",
+      "style": {
+        "fontSize": "12px",
+        "fontWeight": "bold",
+        "color": "#2c3e50",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "50px",
+        "top": "560px",
+        "width": "500px"
+      }
+    },
+    {
+      "id": "conditions",
+      "type": "text",
+      "content": "• Délai de réalisation: [DELIVERY_TIME]\n• Modalités de paiement: [PAYMENT_TERMS]\n• Validité du devis: [VALIDITY_PERIOD]",
+      "style": {
+        "fontSize": "10px",
+        "color": "#666",
+        "textAlign": "left",
+        "position": "absolute",
+        "left": "50px",
+        "top": "575px",
+        "width": "500px",
+        "lineHeight": "1.4"
+      }
+    },
+    {
+      "id": "signature-section",
+      "type": "text",
+      "content": "Bon pour accord,\n\n__________________________\n[CLIENT_NAME]\nDate: _______________",
+      "style": {
+        "fontSize": "12px",
+        "color": "#2c3e50",
+        "textAlign": "right",
+        "position": "absolute",
+        "right": "50px",
+        "bottom": "80px",
+        "width": "200px",
+        "lineHeight": "1.5"
+      }
+    },
+    {
+      "id": "footer",
+      "type": "text",
+      "content": "Ce devis est établi selon nos conditions générales disponibles sur demande.",
+      "style": {
+        "fontSize": "10px",
+        "color": "#999",
+        "textAlign": "center",
+        "position": "absolute",
+        "left": "50px",
+        "bottom": "30px",
+        "width": "500px"
+      }
+    }
+  ],
+  "pageSettings": {
+    "size": "A4",
+    "orientation": "portrait",
+    "margins": {
+      "top": 20,
+      "right": 20,
+      "bottom": 20,
+      "left": 20
+    }
+  },
+  "variables": {
+    "COMPANY_NAME": "Ma Société",
+    "COMPANY_SLOGAN": "Excellence & Innovation",
+    "COMPANY_ADDRESS": "123 Rue de l'Entreprise, 75000 Paris",
+    "COMPANY_PHONE": "01 23 45 67 89",
+    "COMPANY_EMAIL": "contact@masociete.com",
+    "QUOTE_NUMBER": "DEV-2024-001",
+    "QUOTE_DATE": "15/01/2024",
+    "VALIDITY_DATE": "15/02/2024",
+    "CLIENT_NAME": "M. Dupont",
+    "CLIENT_COMPANY": "Entreprise Dupont",
+    "CLIENT_ADDRESS": "456 Avenue du Client, 69000 Lyon",
+    "CLIENT_EMAIL": "contact@dupont.com",
+    "PROJECT_DESCRIPTION": "Développement d'un site web e-commerce complet avec intégration WooCommerce",
+    "SERVICE_1_DESCRIPTION": "Conception et développement du site web",
+    "SERVICE_1_PRICE": "2500.00 €",
+    "SERVICE_2_DESCRIPTION": "Intégration et configuration WooCommerce",
+    "SERVICE_2_PRICE": "800.00 €",
+    "TOTAL_AMOUNT": "3300.00 € HT",
+    "DELIVERY_TIME": "4 semaines",
+    "PAYMENT_TERMS": "50% à la commande, 50% à la livraison",
+    "VALIDITY_PERIOD": "30 jours"
+  }
+}

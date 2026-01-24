@@ -1,0 +1,141 @@
+import { useState, useCallback } from 'react';
+
+export interface PreviewOptions {
+  format?: 'png' | 'jpg' | 'pdf';
+  quality?: number;
+}
+
+export interface PreviewResult {
+  success: boolean;
+  image_url?: string;
+  error?: string;
+}
+
+export interface UsePreviewReturn {
+  // État de la modale
+  isModalOpen: boolean;
+  openModal: () => void;
+  closeModal: () => void;
+
+  // État de génération
+  isGenerating: boolean;
+  previewUrl: string | null;
+  error: string | null;
+
+  // Options
+  format: 'png' | 'jpg' | 'pdf';
+  setFormat: (format: 'png' | 'jpg' | 'pdf') => void;
+
+  // Actions
+  generatePreview: (templateData: Record<string, unknown>, options?: PreviewOptions) => Promise<void>;
+  clearPreview: () => void;
+}
+
+/**
+ * Hook React usePreview pour gérer l'aperçu PDF
+ * Implémente les exigences de l'étape 1.5 du roadmap
+ */
+export function usePreview(): UsePreviewReturn {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [format, setFormat] = useState<'png' | 'jpg' | 'pdf'>('png');
+
+  const openModal = useCallback(() => {
+
+    setIsModalOpen(true);
+    setError(null);
+    setPreviewUrl(null);
+  }, []);
+
+  const closeModal = useCallback(() => {
+
+    setIsModalOpen(false);
+    setIsGenerating(false);
+    setPreviewUrl(null);
+    setError(null);
+  }, []);
+
+  const clearPreview = useCallback(() => {
+    setPreviewUrl(null);
+    setError(null);
+  }, []);
+
+  const generatePreview = useCallback(async (
+    templateData: Record<string, unknown>,
+    options: PreviewOptions = {}
+  ) => {
+    const finalFormat = options.format || format;
+    const quality = options.quality || 150;
+
+
+
+    setIsGenerating(true);
+    setError(null);
+    setPreviewUrl(null);
+
+    try {
+      // Vérifier s'il y a du contenu dans le template
+      const hasContent = (templateData.elements as unknown[]) && (templateData.elements as unknown[]).length > 0;
+
+      if (!hasContent) {
+        throw new Error('Aucun contenu dans le template. Ajoutez des éléments avant de générer un aperçu.');
+      }
+
+      // Vérifier la disponibilité de l'API Preview
+      if (typeof window.pdfPreviewAPI === 'undefined') {
+        throw new Error('API Preview non disponible. Vérifiez que les scripts sont chargés.');
+      }
+
+      // Générer l'aperçu
+      const result = await window.pdfPreviewAPI.generateEditorPreview(
+        templateData,
+        { format: finalFormat, quality }
+      );
+
+      if (result && typeof result === 'object' && 'success' in result && result.success && 'image_url' in result && typeof result.image_url === 'string') {
+        if (finalFormat === 'pdf') {
+          // Pour PDF, ouvrir dans un nouvel onglet
+          window.open(result.image_url, '_blank');
+          setPreviewUrl(null); // Ne pas afficher dans la modale
+        } else {
+          // Pour PNG/JPG, afficher dans la modale
+          setPreviewUrl(result.image_url);
+        }
+      } else {
+        const errorMsg = (result && typeof result === 'object' && 'error' in result && typeof result.error === 'string') ? result.error : 'Erreur lors de la génération de l\'aperçu';
+        throw new Error(errorMsg);
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Erreur inconnue lors de la génération';
+
+      setError(errorMessage);
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [format]);
+
+  return {
+    // État de la modale
+    isModalOpen,
+    openModal,
+    closeModal,
+
+    // État de génération
+    isGenerating,
+    previewUrl,
+    error,
+
+    // Options
+    format,
+    setFormat,
+
+    // Actions
+    generatePreview,
+    clearPreview
+  };
+}
+
+export default usePreview;
+

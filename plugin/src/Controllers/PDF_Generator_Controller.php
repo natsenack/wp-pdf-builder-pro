@@ -1,0 +1,2037 @@
+<?php
+
+/**
+ * PDF Builder Pro - Generateur PDF Ultra-Performant avec Dompdf
+ * Version: 3.0 - Migration complète vers approche moderne
+ * Auteur: PDF Builder Pro Team
+ * Description: Systeme plug-and-play pour generation PDF haute performance avec Dompdf
+ * Updated: 2025-10-19 - Force deployment v2
+ */
+
+namespace PDF_Builder\Controllers;
+
+// Importer les classes nécessaires
+use Exception;
+
+// Sécurité WordPress - Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
+
+class PdfBuilderProGenerator
+{
+    private $html_content = '';
+    private $cache = [];
+    private $errors = [];
+    private $performance_metrics = [];
+    private $order = null;
+
+    // Configuration par defaut
+    private $config = [
+        'orientation' => 'P',
+        'unit' => 'mm',
+        'format' => 'A4',
+        'font_size' => 12,
+        'font_family' => 'helvetica',
+        'margin_left' => 15,
+        'margin_top' => 20,
+        'margin_right' => 15,
+        'margin_bottom' => 20,
+        'auto_page_break' => true,
+        'page_break_margin' => 15,
+        // Paramètres canvas
+        'canvas_background_color' => '#ffffff',
+        'canvas_border_color' => '#cccccc',
+        'canvas_border_width' => 1,
+        'canvas_shadow_enabled' => false
+    ];
+
+    public function __construct($config = [])
+    {
+        $this->config = array_merge($this->config, $config);
+        $this->performance_metrics['start_time'] = microtime(true);
+    }
+
+    /**
+     * Extrait les coordonnées d'un élément avec support des deux formats
+     */
+    private function extractElementCoordinates($element, $px_to_mm = 1)
+    {
+        $element_x = isset($element['position']['x']) ? $element['position']['x']
+                    : (isset($element['x']) ? $element['x'] : 0);
+        $element_y = isset($element['position']['y']) ? $element['position']['y']
+                    : (isset($element['y']) ? $element['y'] : 0);
+        $element_width = isset($element['size']['width']) ? $element['size']['width']
+                      : (isset($element['width']) ? $element['width'] : 0);
+        $element_height = isset($element['size']['height']) ? $element['size']['height']
+                       : (isset($element['height']) ? $element['height'] : 0);
+
+        return [
+            'x' => $element_x * $px_to_mm,
+            'y' => $element_y * $px_to_mm,
+            'width' => $element_width * $px_to_mm,
+            'height' => $element_height * $px_to_mm
+        ];
+    }
+
+    /**
+     * Définit l'ordre pour la génération du PDF
+     */
+    public function setOrder($order)
+    {
+        $this->order = $order;
+    }
+
+    /**
+     * Generateur principal - Interface unifiee avec Dompdf
+     */
+    public function generate($elements, $options = [])
+    {
+        try {
+            $this->reset();
+            $this->validateElements($elements);
+
+            // Générer le HTML au lieu du PDF
+            $this->html_content = $this->generateHtmlFromElements($elements);
+
+            // Pour l'instant, retourner le HTML directement
+            // TODO: Convertir HTML vers PDF avec une vraie bibliothèque
+            return $this->html_content;
+        } catch (Exception $e) {
+            $this->logError('Generation PDF echouee: ' . $e->getMessage());
+            return $this->generateFallbackHtml($elements);
+        }
+    }
+
+    /**
+     * Générer du HTML à partir des éléments Canvas
+     */
+    private function generateHtmlFromElements($elements)
+    {
+        // Récupérer les paramètres canvas
+        $canvas_bg_color = $this->config['canvas_background_color'] ?? '#ffffff';
+        $canvas_border_color = $this->config['canvas_border_color'] ?? '#cccccc';
+        $canvas_border_width = $this->config['canvas_border_width'] ?? 1;
+        $canvas_shadow_enabled = $this->config['canvas_shadow_enabled'] ?? false;
+
+        // Construire les styles du conteneur
+        $container_styles = "background: {$canvas_bg_color};";
+        if ($canvas_border_width > 0) {
+            $container_styles .= " border: {$canvas_border_width}px solid {$canvas_border_color};";
+        }
+        if ($canvas_shadow_enabled) {
+            $container_styles .= " box-shadow: 2px 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2);";
+        } else {
+            $container_styles .= " box-shadow: none;";
+        }
+
+        $html = '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Document</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+        .pdf-container { 
+            position: relative;
+            width: 595px; 
+            height: 842px; 
+            ' . $container_styles . '
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        .canvas-element { position: absolute; overflow: hidden; }
+    </style>
+</head>
+<body>
+    <div class="pdf-container">';
+
+        foreach ($elements as $element) {
+            $html .= $this->renderElementToHtml($element);
+        }
+
+        $html .= '
+    </div>
+</body>
+</html>';
+
+        return $html;
+    }
+
+    private function renderElementToHtml($element)
+    {
+        $type = $element['type'] ?? 'text';
+        $coords = $this->extractElementCoordinates($element, 1); // Garder en pixels pour HTML
+
+
+
+        // Donner des dimensions par défaut si manquantes
+        if (empty($coords['width']) || $coords['width'] <= 0) {
+            $coords['width'] = 100; // Largeur par défaut
+        }
+        if (empty($coords['height']) || $coords['height'] <= 0) {
+            $coords['height'] = 50; // Hauteur par défaut
+        }
+
+        // CONTRAINTE: S'assurer que l'élément reste dans les limites A4 (595x842 pixels)
+        $canvas_width = 595;
+        $canvas_height = 842;
+        $coords['x'] = max(0, min($canvas_width - $coords['width'], $coords['x']));
+        $coords['y'] = max(0, min($canvas_height - $coords['height'], $coords['y']));
+
+        $style = sprintf(
+            'position: absolute; left: %dpx; top: %dpx; width: %dpx; height: %dpx;',
+            $coords['x'],
+            $coords['y'],
+            $coords['width'],
+            $coords['height']
+        );
+
+        // Appliquer les styles CSS des propriétés
+        $style .= 'box-sizing: border-box; ';
+
+        // Utiliser la fonction centralisée pour extraire tous les styles
+        if (isset($element['properties'])) {
+            $additional_styles = $this->extractElementStyles($element['properties']);
+            if (!empty($additional_styles)) {
+                $style .= $additional_styles . '; ';
+            }
+        }
+
+        // Propriétés directes de l'élément (fallback si pas dans properties)
+        $direct_properties = [
+            'color', 'backgroundColor', 'fontSize', 'fontWeight', 'fontStyle', 'fontFamily',
+            'textAlign', 'textDecoration', 'lineHeight', 'border', 'borderColor', 'borderWidth',
+            'borderStyle', 'borderRadius', 'opacity', 'rotation', 'scale', 'shadow',
+            'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'shadowBlur', 'visible',
+            'brightness', 'contrast', 'saturate', 'blur', 'hueRotate', 'sepia', 'grayscale', 'invert'
+        ];
+
+        foreach ($direct_properties as $prop) {
+            if (isset($element[$prop]) && !isset($element['properties'][$prop])) {
+                $css_prop = $this->convertPropertyToCss($prop, $element[$prop], $element);
+                if ($css_prop) {
+                    $style .= $css_prop . '; ';
+                }
+            }
+        }
+
+        try {
+            return $this->renderElementContent($element, $style, $type);
+        } catch (Exception $e) {
+            return "<div class='canvas-element' style='" . \esc_attr($style) . "; background: #ffe6e6; border: 1px solid #ff0000; display: flex; align-items: center; justify-content: center; color: #ff0000;'>Erreur: {$type}</div>";
+        }
+    }
+
+    private function renderElementContent($element, $style, $type)
+    {
+        switch ($type) {
+        case 'text':
+        case 'dynamic-text':
+        case 'multiline_text':
+            // LOG DES PROPRIÉTÉS TEXT
+
+
+
+            // Pour dynamic-text, prioriser customContent, sinon content/text
+            if ($type === 'dynamic-text') {
+                $content = $element['customContent'] ?? $element['content'] ?? $element['text'] ?? '';
+            } else {
+                $content = $element['content'] ?? $element['text'] ?? '';
+            }
+
+
+
+            // Pour dynamic-text, remplacer les variables si un ordre est défini
+            if ($type === 'dynamic-text' && $this->order) {
+                $original_content = $content;
+                $content = $this->replaceOrderVariables($content, $this->order);
+            }
+            return "<div class='canvas-element' style='" . \esc_attr($style) . "; white-space: pre-wrap; word-wrap: break-word;'>" . wp_kses_post($content) . "</div>";
+
+        case 'image':
+        case 'company_logo':
+            // LOG DES PROPRIÉTÉS IMAGE
+
+
+
+            $src = $element['imageUrl'] ?? $element['src'] ?? '';
+            if (!$src && $type === 'company_logo') {
+                $custom_logo_id = get_theme_mod('custom_logo');
+                $src = $custom_logo_id ? wp_get_attachment_image_url($custom_logo_id, 'full') : '';
+            }
+
+
+
+            if ($src) {
+                return "<img class='canvas-element' src='" . \esc_url($src) . "' style='" . \esc_attr($style) . "; object-fit: contain;' />";
+            }
+            return "<div class='canvas-element' style='" . \esc_attr($style) . "; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;'>Logo</div>";
+
+        case 'rectangle':
+            // LOG DES PROPRIÉTÉS RECTANGLE
+
+            return "<div class='canvas-element' style='" . \esc_attr($style) . "; border: 1px solid #ccc;'></div>";
+
+        case 'divider':
+        case 'line':
+            // LOG DES PROPRIÉTÉS LINE
+
+
+            $line_color = $element['lineColor'] ?? '#64748b';
+            $line_width = $element['lineWidth'] ?? 2;
+            $style .= "border-bottom: {$line_width}px solid {$line_color}; height: {$line_width}px;";
+
+
+
+            return "<div class='canvas-element' style='" . \esc_attr($style) . ";'></div>";
+
+        case 'product_table':
+            $table_html = '';
+            $table_html = $this->generateTableHtmlFromCanvasTemplate($element);
+
+            return "<div class='canvas-element' style='" . \esc_attr($style) . "; overflow: auto;'>" . $table_html . "</div>";
+
+        case 'customer_info':
+            // LOG DES PROPRIÉTÉS CUSTOMER INFO
+
+
+
+
+            $customer_info = '';
+            if ($this->order) {
+                $fields = $element['fields'] ?? ['name', 'company', 'address', 'email', 'phone', 'payment_method', 'transaction_id'];
+                $show_labels = $element['showLabels'] ?? true;
+                $label_style = $element['labelStyle'] ?? 'normal';
+
+
+
+                $customer_parts = [];
+
+                if (in_array('name', $fields)) {
+                    $name = trim($this->order->get_billing_first_name() . ' ' . $this->order->get_billing_last_name());
+                    if ($name) {
+                        $label = $show_labels ? ($label_style === 'bold' ? '<strong>Nom:</strong> ' : 'Nom: ') : '';
+                        $customer_parts[] = $label . $name;
+                    }
+                }
+
+                if (in_array('company', $fields)) {
+                    $company = $this->order->get_billing_company();
+                    if ($company) {
+                        $label = $show_labels ? ($label_style === 'bold' ? '<strong>Entreprise:</strong> ' : 'Entreprise: ') : '';
+                        $customer_parts[] = $label . $company;
+                    }
+                }
+
+                if (in_array('address', $fields)) {
+                    $address_parts = [];
+                    $address_1 = $this->order->get_billing_address_1();
+                    $address_2 = $this->order->get_billing_address_2();
+                    $city = $this->order->get_billing_city();
+                    $postcode = $this->order->get_billing_postcode();
+                    $state = $this->order->get_billing_state();
+                    $country = $this->order->get_billing_country();
+
+                    if ($address_1) { $address_parts[] = $address_1;
+                    }
+                    if ($address_2) { $address_parts[] = $address_2;
+                    }
+                    if ($postcode || $city) { $address_parts[] = trim($postcode . ' ' . $city);
+                    }
+                    if ($state || $country) {
+                        $country_line = $state ? $state . ', ' . $country : $country;
+                        $address_parts[] = $country_line;
+                    }
+
+                    if (!empty($address_parts)) {
+                        $label = $show_labels ? ($label_style === 'bold' ? '<strong>Adresse:</strong><br>' : 'Adresse:<br>') : '';
+                        $customer_parts[] = $label . implode('<br>', $address_parts);
+                    }
+                }
+
+                if (in_array('email', $fields)) {
+                    $email = $this->order->get_billing_email();
+                    if ($email) {
+                        $label = $show_labels ? ($label_style === 'bold' ? '<strong>Email:</strong> ' : 'Email: ') : '';
+                        $customer_parts[] = $label . $email;
+                    }
+                }
+
+                if (in_array('phone', $fields)) {
+                    $phone = $this->order->get_billing_phone();
+                    if ($phone) {
+                        $label = $show_labels ? ($label_style === 'bold' ? '<strong>Téléphone:</strong> ' : 'Téléphone: ') : '';
+                        $customer_parts[] = $label . $phone;
+                    }
+                }
+
+                if (in_array('payment_method', $fields)) {
+                    $payment_method = $this->order->get_payment_method_title();
+                    if ($payment_method) {
+                        $label = $show_labels ? ($label_style === 'bold' ? '<strong>Moyen de paiement:</strong> ' : 'Moyen de paiement: ') : '';
+                        $customer_parts[] = $label . $payment_method;
+                    }
+                }
+
+                if (in_array('transaction_id', $fields)) {
+                    $transaction_id = $this->order->get_transaction_id();
+                    if ($transaction_id) {
+                        $label = $show_labels ? ($label_style === 'bold' ? '<strong>ID transaction:</strong> ' : 'ID transaction: ') : '';
+                        $customer_parts[] = $label . $transaction_id;
+                    }
+                }
+
+                $customer_info = implode('<br>', $customer_parts);
+            } else {
+                // Données fictives pour l'éditeur
+                $fields = $element['fields'] ?? ['name', 'company', 'address', 'email', 'phone', 'payment_method', 'transaction_id'];
+                $show_labels = $element['showLabels'] ?? true;
+                $label_style = $element['labelStyle'] ?? 'normal';
+
+                $customer_parts = [];
+
+                if (in_array('name', $fields)) {
+                    $label = $show_labels ? ($label_style === 'bold' ? '<strong>Nom:</strong> ' : 'Nom: ') : '';
+                    $customer_parts[] = $label . 'Jean Dupont';
+                }
+
+                if (in_array('company', $fields)) {
+                    $label = $show_labels ? ($label_style === 'bold' ? '<strong>Entreprise:</strong> ' : 'Entreprise: ') : '';
+                    $customer_parts[] = $label . 'Entreprise Exemple';
+                }
+
+                if (in_array('address', $fields)) {
+                    $label = $show_labels ? ($label_style === 'bold' ? '<strong>Adresse:</strong><br>' : 'Adresse:<br>') : '';
+                    $customer_parts[] = $label . '123 Rue de la Paix<br>Appartement 4B<br>75001 Paris<br>Île-de-France, France';
+                }
+
+                if (in_array('email', $fields)) {
+                    $label = $show_labels ? ($label_style === 'bold' ? '<strong>Email:</strong> ' : 'Email: ') : '';
+                    $customer_parts[] = $label . 'jean.dupont@example.com';
+                }
+
+                if (in_array('phone', $fields)) {
+                    $label = $show_labels ? ($label_style === 'bold' ? '<strong>Téléphone:</strong> ' : 'Téléphone: ') : '';
+                    $customer_parts[] = $label . '+33 1 23 45 67 89';
+                }
+
+                if (in_array('payment_method', $fields)) {
+                    $label = $show_labels ? ($label_style === 'bold' ? '<strong>Moyen de paiement:</strong> ' : 'Moyen de paiement: ') : '';
+                    $customer_parts[] = $label . 'Carte de crédit';
+                }
+
+                if (in_array('transaction_id', $fields)) {
+                    $label = $show_labels ? ($label_style === 'bold' ? '<strong>ID transaction:</strong> ' : 'ID transaction: ') : '';
+                    $customer_parts[] = $label . 'TXN123456789';
+                }
+
+                $customer_info = implode('<br>', $customer_parts);
+            }
+            return "<div class='canvas-element' style='" . \esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($customer_info ?: 'Informations client') . "</div>";
+
+        case 'company_info':
+            // Récupération des données d'entreprise
+            $company_data = $this->getCompanyData();
+
+            // Formatage selon le template choisi
+            $company_info = $this->formatCompanyInfoByTemplate($element, $company_data);
+
+            return "<div class='canvas-element' style='" . \esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($company_info ?: '[company_info]') . "</div>";
+
+        case 'order_number':
+            // LOG DES PROPRIÉTÉS ORDER NUMBER
+
+
+
+
+            $order_number = '';
+            if ($this->order) {
+                $format = $element['format'] ?? 'Commande #{order_number}';
+                $show_label = $element['showLabel'] ?? true;
+                $label_text = $element['labelText'] ?? 'N° de commande:';
+
+                // Replace variables in format
+                $order_number = $this->replaceOrderVariables($format, $this->order);
+
+                if ($show_label && $label_text) {
+                    $order_number = '<strong>' . \esc_html($label_text) . '</strong><br>' . $order_number;
+                }
+            }
+            return "<div class='canvas-element' style='" . \esc_attr($style) . "; font-size: 14px; font-weight: bold; text-align: right;'>" . wp_kses_post($order_number ?: 'Texte') . "</div>";
+
+        case 'document_type':
+            // LOG DES PROPRIÉTÉS DOCUMENT TYPE
+
+
+            $doc_type = $element['documentType'] ?? 'invoice';
+            $doc_label = $doc_type === 'invoice' ? 'FACTURE' : ($doc_type === 'quote' ? 'DEVIS' : strtoupper($doc_type));
+
+
+
+            return "<div class='canvas-element' style='" . \esc_attr($style) . "; font-size: 18px; font-weight: bold; text-align: center;'>" . \esc_html($doc_label) . "</div>";
+
+        case 'mentions':
+            // LOG DES PROPRIÉTÉS MENTIONS
+
+
+
+
+
+
+
+
+
+
+            $mentions = '';
+            if ($this->order) {
+                $show_email = $element['showEmail'] ?? true;
+                $show_phone = $element['showPhone'] ?? true;
+                $show_siret = $element['showSiret'] ?? true;
+                $show_vat = $element['showVat'] ?? false;
+                $show_address = $element['showAddress'] ?? false;
+                $show_website = $element['showWebsite'] ?? false;
+                $show_custom_text = $element['showCustomText'] ?? false;
+                $custom_text = $element['customText'] ?? '';
+                $separator = $element['separator'] ?? ' • ';
+
+                $mention_parts = [];
+
+                if ($show_email) {
+                    $email = get_option('pdf_builder_company_email', '');
+                    if ($email) {
+                        $mention_parts[] = \esc_html($email);
+                    }
+                }
+
+                if ($show_phone) {
+                    $phone = get_option('pdf_builder_company_phone', '');
+                    if ($phone) {
+                        $mention_parts[] = \esc_html($phone);
+                    }
+                }
+
+                if ($show_siret) {
+                    $siret = get_option('pdf_builder_company_siret', '');
+                    if ($siret) {
+                        $mention_parts[] = 'SIRET ' . \esc_html($siret);
+                    }
+                }
+
+                if ($show_vat) {
+                    $vat = get_option('pdf_builder_company_vat', '');
+                    if ($vat) {
+                        $mention_parts[] = 'TVA ' . \esc_html($vat);
+                    }
+                }
+
+                if ($show_address) {
+                    $address = get_option('pdf_builder_company_address', '');
+                    if ($address) {
+                        $mention_parts[] = \esc_html($address);
+                    }
+                }
+
+                if ($show_website) {
+                    $website = get_option('home');
+                    if ($website) {
+                        $mention_parts[] = \esc_html($website);
+                    }
+                }
+
+                if ($show_custom_text && $custom_text) {
+                    $mention_parts[] = \esc_html($custom_text);
+                }
+
+                $mentions = implode($separator, $mention_parts);
+            }
+            return "<div class='canvas-element' style='" . \esc_attr($style) . "; font-size: 8px; text-align: center;'>" . \esc_html($mentions ?: 'Texte') . "</div>";
+        }
+    }
+
+    /**
+     * Extraire les styles CSS des propriétés de l'élément
+     */
+    private function extractElementStyles($properties)
+    {
+        $styles = [];
+
+        // Couleur de fond
+        if (isset($properties['backgroundColor'])) {
+            $styles[] = 'background-color: ' . \esc_attr($properties['backgroundColor']);
+        }
+
+        // Couleur du texte
+        if (isset($properties['color'])) {
+            $styles[] = 'color: ' . \esc_attr($properties['color']);
+        }
+
+        // Taille de police
+        if (isset($properties['fontSize'])) {
+            $styles[] = 'font-size: ' . intval($properties['fontSize']) . 'px';
+        }
+
+        // Poids de la police
+        if (isset($properties['fontWeight'])) {
+            $styles[] = 'font-weight: ' . \esc_attr($properties['fontWeight']);
+        }
+
+        // Style de la police
+        if (isset($properties['fontStyle'])) {
+            $styles[] = 'font-style: ' . \esc_attr($properties['fontStyle']);
+        }
+
+        // Famille de police
+        if (isset($properties['fontFamily'])) {
+            $styles[] = 'font-family: ' . \esc_attr($properties['fontFamily']);
+        }
+
+        // Alignement du texte
+        if (isset($properties['textAlign'])) {
+            $styles[] = 'text-align: ' . \esc_attr($properties['textAlign']);
+        }
+
+        // Décoration du texte
+        if (isset($properties['textDecoration'])) {
+            $styles[] = 'text-decoration: ' . \esc_attr($properties['textDecoration']);
+        }
+
+        // Hauteur de ligne
+        if (isset($properties['lineHeight'])) {
+            $styles[] = 'line-height: ' . \esc_attr($properties['lineHeight']);
+        }
+
+        // Opacité
+        if (isset($properties['opacity'])) {
+            $styles[] = 'opacity: ' . floatval($properties['opacity']);
+        }
+
+        // Bordures
+        $border_width = $properties['borderWidth'] ?? 0;
+        $border_style = $properties['borderStyle'] ?? 'solid';
+        $border_color = $properties['borderColor'] ?? '#000000';
+        $border_radius = $properties['borderRadius'] ?? 0;
+
+        if ($border_width > 0) {
+            $styles[] = "border: {$border_width}px {$border_style} {$border_color}";
+        }
+
+        if ($border_radius > 0) {
+            $styles[] = "border-radius: {$border_radius}px";
+        }
+
+        // Ombre
+        if (isset($properties['shadow']) && $properties['shadow']) {
+            $shadow_color = $properties['shadowColor'] ?? '#000000';
+            $shadow_offset_x = $properties['shadowOffsetX'] ?? 2;
+            $shadow_offset_y = $properties['shadowOffsetY'] ?? 2;
+            $shadow_blur = $properties['shadowBlur'] ?? 1;
+            $styles[] = "box-shadow: {$shadow_offset_x}px {$shadow_offset_y}px {$shadow_blur}px {$shadow_color}";
+        }
+
+        // Transformations
+        $transforms = [];
+        if (isset($properties['rotation']) && $properties['rotation'] != 0) {
+            $transforms[] = 'rotate(' . intval($properties['rotation']) . 'deg)';
+        }
+        if (isset($properties['scale']) && $properties['scale'] != 1) {
+            $transforms[] = 'scale(' . floatval($properties['scale']) . ')';
+        }
+        if (!empty($transforms)) {
+            $styles[] = 'transform: ' . implode(' ', $transforms);
+        }
+
+        // Filtres CSS
+        $filters = [];
+        if (isset($properties['brightness']) && $properties['brightness'] != 100) {
+            $filters[] = "brightness({$properties['brightness']}%)";
+        }
+        if (isset($properties['contrast']) && $properties['contrast'] != 100) {
+            $filters[] = "contrast({$properties['contrast']}%)";
+        }
+        if (isset($properties['saturate']) && $properties['saturate'] != 100) {
+            $filters[] = "saturate({$properties['saturate']}%)";
+        }
+        if (isset($properties['blur']) && $properties['blur'] > 0) {
+            $filters[] = "blur({$properties['blur']}px)";
+        }
+        if (isset($properties['hueRotate']) && $properties['hueRotate'] != 0) {
+            $filters[] = "hue-rotate({$properties['hueRotate']}deg)";
+        }
+        if (isset($properties['sepia']) && $properties['sepia'] > 0) {
+            $filters[] = "sepia({$properties['sepia']}%)";
+        }
+        if (isset($properties['grayscale']) && $properties['grayscale'] > 0) {
+            $filters[] = "grayscale({$properties['grayscale']}%)";
+        }
+        if (isset($properties['invert']) && $properties['invert'] > 0) {
+            $filters[] = "invert({$properties['invert']}%)";
+        }
+        if (!empty($filters)) {
+            $styles[] = 'filter: ' . implode(' ', $filters);
+        }
+
+        // Visibilité
+        if (isset($properties['visible']) && !$properties['visible']) {
+            $styles[] = 'display: none';
+        }
+    }
+
+    /**
+     * Convertir une propriété d'élément en propriété CSS
+     */
+    private function convertPropertyToCss($property, $value, $element = null)
+    {
+        switch ($property) {
+        case 'color':
+            return 'color: ' . \esc_attr($value);
+        case 'backgroundColor':
+            return 'background-color: ' . \esc_attr($value);
+        case 'fontSize':
+            return 'font-size: ' . intval($value) . 'px';
+        case 'fontWeight':
+            return 'font-weight: ' . \esc_attr($value);
+        case 'fontStyle':
+            return 'font-style: ' . \esc_attr($value);
+        case 'textAlign':
+            return 'text-align: ' . \esc_attr($value);
+        case 'fontFamily':
+            return 'font-family: ' . \esc_attr($value);
+        case 'textDecoration':
+            return 'text-decoration: ' . \esc_attr($value);
+        case 'opacity':
+            return 'opacity: ' . floatval($value);
+        case 'border':
+        case 'borderColor':
+        case 'borderWidth':
+        case 'borderStyle':
+        case 'borderRadius':
+            // Les propriétés de bordure sont gérées ensemble dans extract_element_styles
+            return null;
+        case 'rotation':
+        case 'scale':
+            // Les transformations sont gérées ensemble dans extract_element_styles
+            return null;
+        case 'brightness':
+            return $value != 100 ? "filter: brightness({$value}%)" : null;
+        case 'contrast':
+            return $value != 100 ? "filter: contrast({$value}%)" : null;
+        case 'saturate':
+            return $value != 100 ? "filter: saturate({$value}%)" : null;
+        case 'blur':
+            return $value > 0 ? "filter: blur({$value}px)" : null;
+        case 'hueRotate':
+            return $value != 0 ? "filter: hue-rotate({$value}deg)" : null;
+        case 'sepia':
+            return $value > 0 ? "filter: sepia({$value}%)" : null;
+        case 'grayscale':
+            return $value > 0 ? "filter: grayscale({$value}%)" : null;
+        case 'invert':
+            return $value > 0 ? "filter: invert({$value}%)" : null;
+        case 'shadowColor':
+        case 'shadowOffsetX':
+        case 'shadowOffsetY':
+        case 'shadowBlur':
+            // Les propriétés shadow sont gérées ensemble dans extract_element_styles
+            return null;
+        default:
+            return null;
+        }
+    }
+
+    /**
+     * Alias pour la compatibilite descendante
+     */
+    public function generateFromElements($elements)
+    {
+        return $this->generate($elements);
+    }
+
+    /**
+     * Stub method to fix compilation error
+     */
+    public function generateFromHtml($html, $filename)
+    {
+        return false; // Stub implementation
+    }
+
+    /**
+     * Reinitialisation complete
+     */
+    private function reset()
+    {
+        $this->html_content = '';
+        $this->cache = [];
+        $this->errors = [];
+        $this->performance_metrics = ['start_time' => microtime(true)];
+    }
+
+    /**
+     * Validation des elements d'entree
+     */
+    private function validateElements($elements)
+    {
+        if (!is_array($elements) || empty($elements)) {
+            throw new Exception('Elements invalides ou vides');
+        }
+
+        foreach ($elements as $index => $element) {
+            if (!is_array($element) || !isset($element['type'])) {
+                throw new Exception("Element $index invalide: type manquant");
+            }
+        }
+    }
+
+    /**
+     * Génération de fallback HTML
+     */
+    private function generateFallbackHtml($elements)
+    {
+        return '<!DOCTYPE html>
+<html>
+<head><title>PDF Error</title></head>
+<body>
+    <h1>Erreur de génération PDF</h1>
+    <p>Une erreur s\'est produite lors de la génération du PDF.</p>
+    <pre>' . implode("\n", $this->errors) . '</pre>
+</body>
+</html>';
+    }
+
+    /**
+     * Log d'erreur
+     */
+    private function logError($message)
+    {
+        $this->errors[] = $message;
+    }
+
+    /**
+     * Remplace les variables de commande et compagnie dans le contenu
+     */
+    private function replaceOrderVariables($content, $order = null)
+    {
+        // Variables de compagnie (toujours disponibles)
+        $company_replacements = array(
+            '{{company_name}}' => get_bloginfo('name'),
+            '{{company_email}}' => get_option('pdf_builder_company_email', ''),
+            '{{company_phone}}' => get_option('pdf_builder_company_phone', ''),
+            '{{company_siret}}' => get_option('pdf_builder_company_siret', ''),
+            '{{company_vat}}' => get_option('pdf_builder_company_vat', ''),
+            '{{company_address}}' => get_option('pdf_builder_company_address', ''),
+            '{{company_info}}' => $this->formatCompleteCompanyInfo(),
+        );
+
+        // Variables de commande (seulement si ordre existe)
+        $order_replacements = array();
+        if ($order) {
+            $billing_address = self::formatOrderAddress($order, 'billing');
+            $shipping_address = self::formatOrderAddress($order, 'shipping');
+
+            $order_replacements = array(
+                '{{order_id}}' => $order->get_id(),
+                '{{order_number}}' => $order->get_order_number(),
+            '{{order_date}}' => $order->get_date_created() ? $order->get_date_created()->format('d/m/Y') : date('d/m/Y'),
+            '{{order_date_time}}' => $order->get_date_created() ? $order->get_date_created()->format('d/m/Y H:i:s') : date('d/m/Y H:i:s'),
+                '{{customer_name}}' => trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()),
+                '{{customer_first_name}}' => $order->get_billing_first_name(),
+                '{{customer_last_name}}' => $order->get_billing_last_name(),
+                '{{customer_email}}' => $order->get_billing_email(),
+                '{{customer_phone}}' => $order->get_billing_phone(),
+                '{{billing_company}}' => $order->get_billing_company(),
+                '{{billing_address_1}}' => $order->get_billing_address_1(),
+                '{{billing_address_2}}' => $order->get_billing_address_2(),
+                '{{billing_city}}' => $order->get_billing_city(),
+                '{{billing_state}}' => $order->get_billing_state(),
+                '{{billing_postcode}}' => $order->get_billing_postcode(),
+                '{{billing_country}}' => $order->get_billing_country(),
+                '{{billing_address}}' => $billing_address ?: 'Adresse de facturation non disponible',
+                '{{shipping_first_name}}' => $order->get_shipping_first_name(),
+                '{{shipping_last_name}}' => $order->get_shipping_last_name(),
+                '{{shipping_company}}' => $order->get_shipping_company(),
+                '{{shipping_address_1}}' => $order->get_shipping_address_1(),
+                '{{shipping_address_2}}' => $order->get_shipping_address_2(),
+                '{{shipping_city}}' => $order->get_shipping_city(),
+                '{{shipping_state}}' => $order->get_shipping_state(),
+                '{{shipping_postcode}}' => $order->get_shipping_postcode(),
+                '{{shipping_country}}' => $order->get_shipping_country(),
+                '{{shipping_address}}' => $shipping_address ?: 'Adresse de livraison non disponible',
+                '{{total}}' => function_exists('wc_price') ? wc_price($order->get_total()) : $order->get_total(),
+                '{{order_total}}' => function_exists('wc_price') ? wc_price($order->get_total()) : $order->get_total(),
+                '{{subtotal}}' => function_exists('wc_price') ? wc_price($order->get_subtotal()) : $order->get_subtotal(),
+                '{{order_subtotal}}' => function_exists('wc_price') ? wc_price($order->get_subtotal()) : $order->get_subtotal(),
+                '{{tax}}' => function_exists('wc_price') ? wc_price($order->get_total_tax()) : $order->get_total_tax(),
+                '{{order_tax}}' => function_exists('wc_price') ? wc_price($order->get_total_tax()) : $order->get_total_tax(),
+                '{{shipping_total}}' => function_exists('wc_price') ? wc_price($order->get_shipping_total()) : $order->get_shipping_total(),
+                '{{order_shipping}}' => function_exists('wc_price') ? wc_price($order->get_shipping_total()) : $order->get_shipping_total(),
+                '{{discount_total}}' => function_exists('wc_price') ? wc_price($order->get_discount_total()) : $order->get_discount_total(),
+                '{{payment_method}}' => $order->get_payment_method_title(),
+                '{{order_status}}' => function_exists('wc_get_order_status_name') ? call_user_func('wc_get_order_status_name', $order->get_status()) : $order->get_status(),
+                '{{currency}}' => $order->get_currency(),
+                '{{date}}' => date('d/m/Y'),
+                '{{due_date}}' => date('d/m/Y', strtotime('+30 days')),
+            );
+        }
+
+        // Fusionner les remplacements
+        $all_replacements = array_merge($order_replacements, $company_replacements);
+
+        // Créer les arrays pour les différents formats de variables
+        $double_brace_replacements = $all_replacements;
+
+        // Variables avec crochets [variable]
+        $bracket_replacements = array();
+        foreach ($all_replacements as $key => $value) {
+            $bracket_key = str_replace(['{{', '}}'], ['[', ']'], $key);
+            $bracket_replacements[$bracket_key] = $value;
+        }
+
+        // Variables avec accolades simples {variable}
+        $single_brace_replacements = array();
+        foreach ($all_replacements as $key => $value) {
+            $single_key = str_replace(['{{', '}}'], ['{', '}'], $key);
+            $single_brace_replacements[$single_key] = $value;
+        }
+
+        // Appliquer les remplacements dans l'ordre : doubles, simples, crochets
+        $original_content = $content;
+        $content = str_replace(array_keys($double_brace_replacements), array_values($double_brace_replacements), $content);
+
+        $content = str_replace(array_keys($single_brace_replacements), array_values($single_brace_replacements), $content);
+
+        $content = str_replace(array_keys($bracket_replacements), array_values($bracket_replacements), $content);
+
+
+        return $content;
+    }
+
+    /**
+     * Formate les informations complètes de la compagnie
+     */
+    private function formatCompleteCompanyInfo()
+    {
+        $company_info = get_option('pdf_builder_company_info', '');
+        if (!empty($company_info)) {
+            return $company_info;
+        }
+
+        $company_parts = [];
+        $company_name = get_bloginfo('name');
+        if (!empty($company_name)) {
+            $company_parts[] = $company_name;
+        }
+
+        $address_parts = [];
+        $company_address = get_option('pdf_builder_company_address', '');
+        if (!empty($company_address)) {
+            $address_parts[] = $company_address;
+        }
+
+        $company_city = get_option('pdf_builder_company_city', '');
+        if (!empty($company_city)) {
+            $address_parts[] = $company_city;
+        }
+
+        $company_postcode = get_option('pdf_builder_company_postcode', '');
+        if (!empty($company_postcode)) {
+            $address_parts[] = $company_postcode;
+        }
+
+        if (!empty($address_parts)) {
+            $company_parts = array_merge($company_parts, $address_parts);
+        }
+
+        $company_email = get_option('pdf_builder_company_email', '');
+        if (!empty($company_email)) {
+            $company_parts[] = $company_email;
+        }
+
+        $company_phone = get_option('pdf_builder_company_phone', '');
+        if (!empty($company_phone)) {
+            $company_parts[] = $company_phone;
+        }
+
+        $company_siret = get_option('pdf_builder_company_siret', '');
+        if (!empty($company_siret)) {
+            $company_parts[] = 'SIRET: ' . $company_siret;
+        }
+
+        $company_vat = get_option('pdf_builder_company_vat', '');
+        if (!empty($company_vat)) {
+            $company_parts[] = 'TVA: ' . $company_vat;
+        }
+
+        return implode("\n", $company_parts);
+    }
+
+    /**
+     * Récupère les données complètes de l'entreprise depuis WooCommerce/WordPress
+     */
+    private function getCompanyData()
+    {
+        return [
+            'name' => get_bloginfo('name') ?: '',
+            'address' => get_option('pdf_builder_company_address', ''),
+            'city' => get_option('pdf_builder_company_city', ''),
+            'postcode' => get_option('pdf_builder_company_postcode', ''),
+            'country' => get_option('pdf_builder_company_country', ''),
+            'phone' => get_option('pdf_builder_company_phone', ''),
+            'email' => get_option('pdf_builder_company_email', ''),
+            'website' => get_option('pdf_builder_company_website', ''),
+            'vat' => get_option('pdf_builder_company_vat', ''),
+            'siret' => get_option('pdf_builder_company_siret', ''),
+            'rcs' => get_option('pdf_builder_company_rcs', ''),
+            'capital' => get_option('pdf_builder_company_capital', ''),
+            'legal_form' => get_option('pdf_builder_company_legal_form', ''),
+            'registration_city' => get_option('pdf_builder_company_registration_city', ''),
+            // Données WooCommerce si disponibles
+            'woocommerce_store_address' => get_option('woocommerce_store_address', ''),
+            'woocommerce_store_city' => get_option('woocommerce_store_city', ''),
+            'woocommerce_store_postcode' => get_option('woocommerce_store_postcode', ''),
+            'woocommerce_store_country' => get_option('woocommerce_store_country', ''),
+            'woocommerce_store_email' => get_option('woocommerce_store_email', ''),
+            'woocommerce_store_phone' => get_option('woocommerce_store_phone', '')
+        ];
+    }
+
+    /**
+     * Formate les informations d'entreprise selon le template choisi
+     */
+    private function formatCompanyInfoByTemplate($element, $company_data)
+    {
+        $template = $element['template'] ?? 'default';
+        $fields = $element['fields'] ?? ['name', 'address', 'phone', 'email', 'vat', 'siret'];
+
+        $parts = [];
+
+        switch ($template) {
+        case 'commercial':
+            // Template commercial : focus sur contact et présentation
+            if (in_array('name', $fields) && !empty($company_data['name'])) {
+                $parts[] = '<strong>' . \esc_html($company_data['name']) . '</strong>';
+            }
+            if (in_array('address', $fields) && $this->hasAddressData($company_data)) {
+                $parts[] = $this->formatAddress($company_data);
+            }
+            if (in_array('phone', $fields) && !empty($company_data['phone'])) {
+                $parts[] = '📞 ' . \esc_html($company_data['phone']);
+            }
+            if (in_array('email', $fields) && !empty($company_data['email'])) {
+                $parts[] = '✉️ ' . \esc_html($company_data['email']);
+            }
+            if (in_array('website', $fields) && !empty($company_data['website'])) {
+                $parts[] = '🌐 ' . \esc_html($company_data['website']);
+            }
+            break;
+
+        case 'legal':
+            // Template juridique : focus sur informations légales
+            if (in_array('name', $fields) && !empty($company_data['name'])) {
+                $parts[] = '<strong>' . \esc_html($company_data['name']) . '</strong>';
+            }
+            if (in_array('address', $fields) && $this->hasAddressData($company_data)) {
+                $parts[] = $this->formatAddress($company_data);
+            }
+            if (in_array('siret', $fields) && !empty($company_data['siret'])) {
+                $parts[] = 'SIRET: ' . \esc_html($company_data['siret']);
+            }
+            if (in_array('vat', $fields) && !empty($company_data['vat'])) {
+                $parts[] = 'N° TVA: ' . \esc_html($company_data['vat']);
+            }
+            if (in_array('rcs', $fields) && !empty($company_data['rcs'])) {
+                $parts[] = 'RCS: ' . \esc_html($company_data['rcs']);
+            }
+            if (in_array('capital', $fields) && !empty($company_data['capital'])) {
+                $parts[] = 'Capital: ' . \esc_html($company_data['capital']) . ' €';
+            }
+            break;
+
+        case 'minimal':
+            // Template minimal : nom et contact essentiel
+            if (in_array('name', $fields) && !empty($company_data['name'])) {
+                $parts[] = \esc_html($company_data['name']);
+            }
+            $contact_parts = [];
+            if (in_array('phone', $fields) && !empty($company_data['phone'])) {
+                $contact_parts[] = \esc_html($company_data['phone']);
+            }
+            if (in_array('email', $fields) && !empty($company_data['email'])) {
+                $contact_parts[] = \esc_html($company_data['email']);
+            }
+            if (!empty($contact_parts)) {
+                $parts[] = implode(' • ', $contact_parts);
+            }
+            break;
+
+        default: // 'default'
+            // Template par défaut : tous les champs demandés
+            if (in_array('name', $fields) && !empty($company_data['name'])) {
+                $parts[] = '<strong>' . \esc_html($company_data['name']) . '</strong>';
+            }
+            if (in_array('address', $fields) && $this->hasAddressData($company_data)) {
+                $parts[] = $this->formatAddress($company_data);
+            }
+            if (in_array('phone', $fields) && !empty($company_data['phone'])) {
+                $parts[] = 'Téléphone: ' . \esc_html($company_data['phone']);
+            }
+            if (in_array('email', $fields) && !empty($company_data['email'])) {
+                $parts[] = 'Email: ' . \esc_html($company_data['email']);
+            }
+            if (in_array('website', $fields) && !empty($company_data['website'])) {
+                $parts[] = 'Site web: ' . \esc_html($company_data['website']);
+            }
+            if (in_array('vat', $fields) && !empty($company_data['vat'])) {
+                $parts[] = 'N° TVA: ' . \esc_html($company_data['vat']);
+            }
+            if (in_array('siret', $fields) && !empty($company_data['siret'])) {
+                $parts[] = 'SIRET: ' . \esc_html($company_data['siret']);
+            }
+            if (in_array('rcs', $fields) && !empty($company_data['rcs'])) {
+                $parts[] = 'RCS: ' . \esc_html($company_data['rcs']);
+            }
+            break;
+        }
+
+        return implode('<br>', array_filter($parts));
+    }
+
+    /**
+     * Vérifie si des données d'adresse sont disponibles
+     */
+    private function hasAddressData($company_data)
+    {
+        return !empty($company_data['address']) ||
+               !empty($company_data['city']) ||
+               !empty($company_data['postcode']) ||
+               !empty($company_data['country']);
+    }
+
+    /**
+     * Formate l'adresse complète
+     */
+    private function formatAddress($company_data)
+    {
+        $address_parts = [];
+
+        if (!empty($company_data['address'])) {
+            $address_parts[] = \esc_html($company_data['address']);
+        }
+
+        $city_parts = [];
+        if (!empty($company_data['postcode'])) {
+            $city_parts[] = $company_data['postcode'];
+        }
+        if (!empty($company_data['city'])) {
+            $city_parts[] = $company_data['city'];
+        }
+        if (!empty($city_parts)) {
+            $address_parts[] = implode(' ', $city_parts);
+        }
+
+        if (!empty($company_data['country'])) {
+            $address_parts[] = \esc_html($company_data['country']);
+        }
+
+        return nl2br(implode("\n", $address_parts));
+    }
+
+    /**
+     * Retourne les styles prédéfinis pour les tableaux selon le style choisi
+     */
+
+    /**
+     * Retourne les styles prédéfinis pour les tableaux selon le style choisi
+     */
+    private function getTableStyles($style)
+    {
+        $styles = [
+            'default' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f9f9f9',
+                'odd_row_text_color' => '#333333',
+                'header_bg' => '#f5f5f5',
+                'header_text_color' => '#333333',
+                'border_color' => '#ddd',
+                'name_color' => 'inherit',
+                'quantity_color' => '#2563eb',
+                'price_color' => '#16a34a',
+                'total_color' => '#dc2626'
+            ],
+            'classic' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#ebebeb',
+                'odd_row_text_color' => '#666666',
+                'header_bg' => '#f5f5f5',
+                'header_text_color' => '#333333',
+                'border_color' => '#ddd',
+                'name_color' => 'inherit',
+                'quantity_color' => '#2563eb',
+                'price_color' => '#16a34a',
+                'total_color' => '#dc2626'
+            ],
+            'striped' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f8f9fa',
+                'odd_row_text_color' => '#495057',
+                'header_bg' => '#e9ecef',
+                'header_text_color' => '#212529',
+                'border_color' => '#dee2e6',
+                'name_color' => 'inherit',
+                'quantity_color' => '#007bff',
+                'price_color' => '#28a745',
+                'total_color' => '#dc3545'
+            ],
+            'bordered' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#ffffff',
+                'odd_row_text_color' => '#333333',
+                'header_bg' => '#f8f9fa',
+                'header_text_color' => '#495057',
+                'border_color' => '#dee2e6',
+                'name_color' => 'inherit',
+                'quantity_color' => '#6c757d',
+                'price_color' => '#28a745',
+                'total_color' => '#dc3545'
+            ],
+            'minimal' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#ffffff',
+                'odd_row_text_color' => '#333333',
+                'header_bg' => '#ffffff',
+                'header_text_color' => '#666666',
+                'border_color' => '#f0f0f0',
+                'name_color' => 'inherit',
+                'quantity_color' => '#999999',
+                'price_color' => '#666666',
+                'total_color' => '#333333'
+            ],
+            'modern' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f8f9ff',
+                'odd_row_text_color' => '#2d3748',
+                'header_bg' => '#2d3748',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#e2e8f0',
+                'name_color' => 'inherit',
+                'quantity_color' => '#3182ce',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'blue_ocean' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f0f8ff',
+                'odd_row_text_color' => '#2c5282',
+                'header_bg' => '#2c5282',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#90cdf4',
+                'name_color' => 'inherit',
+                'quantity_color' => '#3182ce',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'emerald_forest' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f0fff4',
+                'odd_row_text_color' => '#22543d',
+                'header_bg' => '#22543d',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#9ae6b4',
+                'name_color' => 'inherit',
+                'quantity_color' => '#38a169',
+                'price_color' => '#3182ce',
+                'total_color' => '#e53e3e'
+            ],
+            'sunset_orange' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#fffaf0',
+                'odd_row_text_color' => '#9c4221',
+                'header_bg' => '#9c4221',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#fbb6ce',
+                'name_color' => 'inherit',
+                'quantity_color' => '#dd6b20',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'royal_purple' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#faf5ff',
+                'odd_row_text_color' => '#553c9a',
+                'header_bg' => '#553c9a',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#d6bcfa',
+                'name_color' => 'inherit',
+                'quantity_color' => '#805ad5',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'rose_pink' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#fff5f5',
+                'odd_row_text_color' => '#97266d',
+                'header_bg' => '#97266d',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#fed7d7',
+                'name_color' => 'inherit',
+                'quantity_color' => '#d53f8c',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'teal_aqua' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#e6fffa',
+                'odd_row_text_color' => '#234e52',
+                'header_bg' => '#234e52',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#81e6d9',
+                'name_color' => 'inherit',
+                'quantity_color' => '#319795',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'crimson_red' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#fff5f5',
+                'odd_row_text_color' => '#9b2c2c',
+                'header_bg' => '#9b2c2c',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#feb2b2',
+                'name_color' => 'inherit',
+                'quantity_color' => '#e53e3e',
+                'price_color' => '#38a169',
+                'total_color' => '#c53030'
+            ],
+            'amber_gold' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#fffff0',
+                'odd_row_text_color' => '#744210',
+                'header_bg' => '#744210',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#fbd38d',
+                'name_color' => 'inherit',
+                'quantity_color' => '#d69e2e',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'indigo_night' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f7fafc',
+                'odd_row_text_color' => '#2a4365',
+                'header_bg' => '#2a4365',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#a0aec0',
+                'name_color' => 'inherit',
+                'quantity_color' => '#4c51bf',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'slate_gray' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f7fafc',
+                'odd_row_text_color' => '#2d3748',
+                'header_bg' => '#2d3748',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#a0aec0',
+                'name_color' => 'inherit',
+                'quantity_color' => '#4a5568',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'coral_sunset' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#fff5f5',
+                'odd_row_text_color' => '#c05621',
+                'header_bg' => '#c05621',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#fed7cc',
+                'name_color' => 'inherit',
+                'quantity_color' => '#ed8936',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'mint_green' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f0fff4',
+                'odd_row_text_color' => '#276749',
+                'header_bg' => '#276749',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#9ae6b4',
+                'name_color' => 'inherit',
+                'quantity_color' => '#38a169',
+                'price_color' => '#319795',
+                'total_color' => '#e53e3e'
+            ],
+            'violet_dream' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#faf5ff',
+                'odd_row_text_color' => '#6b46c1',
+                'header_bg' => '#6b46c1',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#d6bcfa',
+                'name_color' => 'inherit',
+                'quantity_color' => '#805ad5',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'sky_blue' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#ebf8ff',
+                'odd_row_text_color' => '#2a69ac',
+                'header_bg' => '#2a69ac',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#90cdf4',
+                'name_color' => 'inherit',
+                'quantity_color' => '#4299e1',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'forest_green' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f0fff4',
+                'odd_row_text_color' => '#22543d',
+                'header_bg' => '#22543d',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#9ae6b4',
+                'name_color' => 'inherit',
+                'quantity_color' => '#38a169',
+                'price_color' => '#3182ce',
+                'total_color' => '#e53e3e'
+            ],
+            'ruby_red' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#fff5f5',
+                'odd_row_text_color' => '#9b2c2c',
+                'header_bg' => '#9b2c2c',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#feb2b2',
+                'name_color' => 'inherit',
+                'quantity_color' => '#e53e3e',
+                'price_color' => '#38a169',
+                'total_color' => '#c53030'
+            ]
+        ];
+
+        return $styles[$style] ?? $styles['default'];
+    }
+
+    /**
+     * Génère le HTML du tableau en utilisant d'abord un template avec données fictives du canvas, puis remplace par les vraies données
+     */
+    private function generateTableHtmlFromCanvasTemplate($element)
+    {
+        // Créer des données fictives pour générer le template HTML du canvas
+        $fake_data = $this->createFakeOrderDataForTemplate();
+
+        // Générer le HTML du tableau avec les données fictives (mais préserve tous les styles du canvas)
+        $fake_html = $this->generateFakeTableHtml($element, $fake_data);
+
+        // Remplacer les données fictives par les vraies données de la commande
+        $real_data = $this->createRealOrderData();
+        $real_html = $this->replaceFakeDataWithRealData($fake_html, $fake_data, $real_data);
+
+        return $real_html;
+    }
+
+    /**
+     * Crée des données fictives pour générer le template HTML du canvas
+     */
+    private function createFakeOrderDataForTemplate()
+    {
+        return [
+            'items' => [
+                $this->createFakeItemData(1),
+                $this->createFakeItemData(2),
+                $this->createFakeFeeData(1), // Ajouter un frais fictif
+            ],
+            'subtotal' => 50.00,
+            'shipping' => 5.00,
+            'tax' => 10.00,
+            'discount' => 0.00,
+            'total' => 65.00
+        ];
+    }
+
+    /**
+     * Crée des données fictives complètes pour un item
+     */
+    private function createFakeItemData($index)
+    {
+        return [
+            // Propriétés de base
+            'name' => 'FAKE_PRODUCT_' . $index,
+            'quantity' => $index,
+            'quantity_raw' => $index,
+            'price' => $index * 10.00,
+            'price_raw' => $index * 10.00,
+            'total' => $index * $index * 10.00,
+            'total_raw' => $index * $index * 10.00,
+            'subtotal' => $index * $index * 10.00,
+            'subtotal_raw' => $index * $index * 10.00,
+            'tax' => $index * 2.00,
+            'tax_raw' => $index * 2.00,
+
+            // Propriétés du produit
+            'product_id' => 100 + $index,
+            'sku' => 'FAKE-SKU-' . $index,
+            'product_url' => 'https://example.com/product-' . $index,
+            'product_type' => 'simple',
+            'is_virtual' => false,
+            'is_downloadable' => false,
+            'is_taxable' => true,
+            'tax_class' => 'standard',
+            'tax_status' => 'taxable',
+
+            // Prix du produit
+            'regular_price' => $index * 10.00,
+            'regular_price_raw' => $index * 10.00,
+            'sale_price' => null,
+            'sale_price_raw' => null,
+            'price_html' => '$' . ($index * 10.00),
+
+            // Poids et dimensions
+            'weight' => $index * 0.5,
+            'weight_unit' => 'kg',
+            'dimensions' => $index . ' x ' . ($index + 1) . ' x ' . ($index + 2),
+            'length' => $index * 10,
+            'width' => ($index + 1) * 10,
+            'height' => ($index + 2) * 10,
+            'dimension_unit' => 'cm',
+
+            // Descriptions
+            'description' => 'Fake product ' . $index . ' description',
+            'short_description' => 'Fake product ' . $index . ' short description',
+
+            // Stock
+            'stock_quantity' => $index * 10,
+            'stock_status' => 'instock',
+            'manage_stock' => true,
+            'backorders' => 'no',
+
+            // Visibilité et statut
+            'status' => 'publish',
+            'catalog_visibility' => 'visible',
+            'featured' => false,
+
+            // Images
+            'image_id' => 200 + $index,
+            'image_url' => 'https://example.com/image-' . $index . '.jpg',
+            'gallery_image_ids' => [],
+
+            // Catégories et tags
+            'categories' => ['Fake Category ' . $index],
+            'category_ids' => [300 + $index],
+            'tags' => ['fake', 'product', 'tag' . $index],
+            'tag_ids' => [400 + $index],
+
+            // Attributs
+            'attributes' => [],
+            'variation_attributes' => [],
+
+            // Pour les variations
+            'variation_id' => null,
+            'parent_id' => null,
+            'variation_attributes_formatted' => '',
+
+            // Métadonnées
+            'meta_data' => [],
+            'item_meta_data' => [],
+
+            // Propriétés spécifiques à l'item
+            'item_id' => 500 + $index,
+            'order_id' => 999,
+
+            // Données calculées
+            'line_total_formatted' => '$' . ($index * $index * 10.00),
+            'line_subtotal_formatted' => '$' . ($index * $index * 10.00),
+            'line_tax_formatted' => '$' . ($index * 2.00),
+
+            // Données pour compatibilité
+            'formatted_price' => '$' . ($index * 10.00),
+            'formatted_total' => '$' . ($index * $index * 10.00),
+        ];
+    }
+
+    /**
+     * Crée des données fictives pour un frais
+     */
+    private function createFakeFeeData($index)
+    {
+        return [
+            // Propriétés de base
+            'name' => 'FAKE_FEE_' . $index,
+            'quantity' => 1,
+            'quantity_raw' => 1,
+            'price' => 5.00,
+            'price_raw' => 5.00,
+            'total' => 5.00,
+            'total_raw' => 5.00,
+            'subtotal' => 5.00,
+            'subtotal_raw' => 5.00,
+            'tax' => 0.00,
+            'tax_raw' => 0.00,
+
+            // Propriétés spécifiques aux frais
+            'item_type' => 'fee',
+            'fee_id' => 600 + $index,
+            'order_id' => 999,
+
+            // Données pour compatibilité
+            'formatted_price' => '$5.00',
+            'formatted_total' => '$5.00',
+            'line_total_formatted' => '$5.00',
+            'line_subtotal_formatted' => '$5.00',
+            'line_tax_formatted' => '$0.00',
+
+            // Métadonnées
+            'meta_data' => [],
+        ];
+    }
+
+    /**
+     * Crée les vraies données de la commande
+     */
+    private function createRealOrderData()
+    {
+        if (!$this->order) {
+            return $this->createFakeOrderDataForTemplate(); // Fallback
+        }
+
+        $items = [];
+
+        // Récupérer les items de produits (line_items)
+        foreach ($this->order->get_items() as $item) {
+            $product = $item->get_product();
+
+            // Récupérer TOUTES les propriétés disponibles de l'item et du produit
+            $item_data = $this->extractCompleteItemData($item, $product);
+            $item_data['item_type'] = 'line_item'; // Marquer comme item de produit
+
+            $items[] = $item_data;
+        }
+
+        // Récupérer les frais (fees) et les ajouter au tableau
+        foreach ($this->order->get_items('fee') as $fee) {
+            $fee_data = $this->extractFeeItemData($fee);
+            $fee_data['item_type'] = 'fee'; // Marquer comme frais
+
+            $items[] = $fee_data;
+        }
+
+        // Récupérer les totaux de la commande
+        $subtotal = function_exists('wc_price') ? wc_price($this->order->get_subtotal()) : $this->order->get_subtotal();
+        $shipping = function_exists('wc_price') ? wc_price($this->order->get_shipping_total()) : $this->order->get_shipping_total();
+        $tax = function_exists('wc_price') ? wc_price($this->order->get_total_tax()) : $this->order->get_total_tax();
+        $discount = function_exists('wc_price') ? wc_price($this->order->get_total_discount()) : $this->order->get_total_discount();
+        $total = function_exists('wc_price') ? wc_price($this->order->get_total()) : $this->order->get_total();
+
+        return [
+            'items' => $items,
+            'subtotal' => $subtotal,
+            'shipping' => $shipping,
+            'tax' => $tax,
+            'discount' => $discount,
+            'total' => $total
+        ];
+    }
+
+    /**
+     * Extrait toutes les propriétés disponibles d'un item de commande WooCommerce
+     */
+    private function extractCompleteItemData($item, $product = null)
+    {
+        // Version simplifiée et robuste avec vérifications de sécurité
+        $data = [
+            'name' => 'Produit',
+            'quantity' => 1,
+            'price' => '0.00',
+            'total' => '0.00'
+        ];
+
+        if ($item) {
+            $data['name'] = method_exists($item, 'get_name') ? $item->get_name() : 'Produit sans nom';
+            $data['quantity'] = method_exists($item, 'get_quantity') ? $item->get_quantity() : 1;
+
+            if (method_exists($item, 'get_total')) {
+                $data['total'] = function_exists('wc_price') ? wc_price($item->get_total()) : number_format($item->get_total(), 2);
+            }
+
+            if (method_exists($item, 'get_subtotal') && method_exists($item, 'get_quantity')) {
+                $quantity = max(1, $item->get_quantity());
+                $unit_price = $item->get_subtotal() / $quantity;
+                $data['price'] = function_exists('wc_price') ? wc_price($unit_price) : number_format($unit_price, 2);
+            }
+        }
+
+        // Ajouter quelques propriétés supplémentaires si disponibles
+        if ($product) {
+            if (method_exists($product, 'get_sku')) {
+                $data['sku'] = $product->get_sku();
+            }
+            if (method_exists($product, 'get_description')) {
+                $data['description'] = $product->get_description();
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Extrait les données d'un frais (fee) de commande WooCommerce
+     */
+    private function extractFeeItemData($fee)
+    {
+        $data = [
+            'name' => 'Frais',
+            'quantity' => 1,
+            'price' => '0.00',
+            'total' => '0.00',
+            'sku' => '' // Les frais n'ont pas de SKU
+        ];
+
+        if ($fee) {
+            $data['name'] = method_exists($fee, 'get_name') ? $fee->get_name() : 'Frais sans nom';
+            $data['quantity'] = 1; // Les frais ont généralement une quantité de 1
+
+            if (method_exists($fee, 'get_total')) {
+                $data['total'] = function_exists('wc_price') ? wc_price($fee->get_total()) : number_format($fee->get_total(), 2);
+                $data['price'] = $data['total']; // Pour les frais, prix unitaire = total
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Génère le HTML du tableau avec des données fictives pour le template du canvas
+     */
+    private function generateFakeTableHtml($element, $fake_data)
+    {
+        $headers = $element['headers'] ?? ['Produit', 'Qté', 'Prix', 'Total'];
+        $columns = $element['columns'] ?? ['image' => false, 'name' => true, 'sku' => false, 'quantity' => true, 'price' => true, 'total' => true];
+        $table_style = $element['tableStyle'] ?? 'classic';
+        $show_borders = $element['showBorders'] ?? true;
+        $show_headers = $element['showHeaders'] ?? true;        // Appliquer les styles prédéfinis selon tableStyle
+        $table_styles = $this->getTableStyles($table_style);
+        $even_row_bg = $element['evenRowBg'] ?? $table_styles['even_row_bg'];
+        $odd_row_bg = $element['oddRowBg'] ?? $table_styles['odd_row_bg'];
+        $odd_row_text_color = $element['oddRowTextColor'] ?? $table_styles['odd_row_text_color'];
+        $header_bg = $element['headerBg'] ?? $table_styles['header_bg'];
+        $header_text_color = $element['headerTextColor'] ?? $table_styles['header_text_color'];
+        $border_color = $element['borderColor'] ?? $table_styles['border_color'];
+        $name_color = $element['nameColor'] ?? $table_styles['name_color'];
+        $quantity_color = $element['quantityColor'] ?? $table_styles['quantity_color'];
+        $price_color = $element['priceColor'] ?? $table_styles['price_color'];
+        $total_color = $element['totalColor'] ?? $table_styles['total_color'];
+
+        // Styles spécifiques pour les colonnes
+        $name_style = $element['nameStyle'] ?? 'font-weight: 500;';
+        $quantity_style = $element['quantityStyle'] ?? 'text-align: center;';
+        $price_style = $element['priceStyle'] ?? 'text-align: right;';
+        $total_style = $element['totalStyle'] ?? 'text-align: right; font-weight: bold;';
+
+        // Appliquer les propriétés CSS générales au tableau
+        $table_css = 'width: 100%;';
+
+        // Couleur de fond générale du tableau
+        if (isset($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
+            $table_css .= ' background-color: ' . \esc_attr($element['backgroundColor']) . ';';
+        }
+
+        // Couleur du texte générale
+        if (isset($element['color'])) {
+            $table_css .= ' color: ' . \esc_attr($element['color']) . ';';
+        }
+
+        // Taille de police
+        if (isset($element['fontSize'])) {
+            $table_css .= ' font-size: ' . intval($element['fontSize']) . 'px;';
+        } else {
+            $table_css .= ' font-size: 12px;'; // Valeur par défaut
+        }
+
+        // Famille de police
+        if (isset($element['fontFamily'])) {
+            $table_css .= ' font-family: ' . \esc_attr($element['fontFamily']) . ';';
+        }
+
+        // Poids de la police
+        if (isset($element['fontWeight'])) {
+            $table_css .= ' font-weight: ' . \esc_attr($element['fontWeight']) . ';';
+        }
+
+        // Style de la police
+        if (isset($element['fontStyle'])) {
+            $table_css .= ' font-style: ' . \esc_attr($element['fontStyle']) . ';';
+        }
+
+        // Bordures générales - ajouter une bordure par défaut si aucune n'est spécifiée
+        $border_width = $element['borderWidth'] ?? 1; // Bordure de 1px par défaut
+        $border_style = $element['borderStyle'] ?? 'solid';
+        $border_color = $element['borderColor'] ?? '#cccccc'; // Gris clair par défaut
+        if ($border_width > 0) {
+            $table_css .= " border: {$border_width}px {$border_style} {$border_color};";
+        }
+
+        // Rayon des bordures
+        $border_radius = $element['borderRadius'] ?? 0;
+        if ($border_radius > 0) {
+            $table_css .= " border-radius: {$border_radius}px;";
+        }
+
+        // Ombres
+        if (isset($element['shadow']) && $element['shadow']) {
+            $shadow_color = $element['shadowColor'] ?? '#000000';
+            $shadow_offset_x = $element['shadowOffsetX'] ?? 2;
+            $shadow_offset_y = $element['shadowOffsetY'] ?? 2;
+            $shadow_blur = $element['shadowBlur'] ?? 1;
+            $table_css .= " box-shadow: {$shadow_offset_x}px {$shadow_offset_y}px {$shadow_blur}px {$shadow_color};";
+        }
+
+        // Ajouter le border-collapse pour les bordures de cellules
+        if ($show_borders) {
+            $table_css .= ' border-collapse: collapse;';
+        }
+
+        // Style des bordures pour les cellules
+        $cell_border_style = $show_borders ? "border: 1px solid {$border_color};" : '';
+
+        $table_html = "<table style='{$table_css}'>";
+
+        // Headers
+        if ($show_headers) {
+            $table_html .= "<thead><tr style='background-color: {$header_bg}; color: {$header_text_color};'>";
+            foreach ($headers as $header) {
+                $table_html .= "<th style='padding: 8px; text-align: left; {$cell_border_style} font-weight: bold;'>{$header}</th>";
+            }
+            $table_html .= "</tr></thead>";
+        }
+
+        $table_html .= "<tbody>";
+
+        // Utiliser les données fictives pour générer les lignes
+        $row_count = 0;
+        foreach ($fake_data['items'] as $item) {
+            $row_count++;
+            $is_even = ($row_count % 2 === 0);
+            $bg_color = $is_even ? $even_row_bg : $odd_row_bg;
+            $text_color = $is_even ? ($odd_row_text_color ?? 'inherit') : $odd_row_text_color;
+
+            $table_html .= "<tr style='background-color: {$bg_color}; color: {$text_color};'>";
+
+            // Générer TOUTES les colonnes possibles, même celles non activées
+            // Cela permet au système de remplacer toutes les propriétés disponibles
+
+            // Image column (même si non activée)
+            $table_html .= "<td style='padding: 8px; {$cell_border_style}; display: " . ($columns['image'] ? 'table-cell' : 'none') . ";'>";
+            if ($columns['image'] && isset($item['image_url']) && $item['image_url']) {
+                $table_html .= "<img src='{$item['image_url']}' style='max-width: 50px; max-height: 50px;' alt='{$item['name']}'>";
+            } elseif ($columns['image']) {
+                $table_html .= "<div style='width: 50px; height: 50px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999;'>Img</div>";
+            }
+            $table_html .= "</td>";
+
+            // Name column
+            $table_html .= "<td style='padding: 8px; {$cell_border_style} {$name_style} color: {$name_color}; display: " . ($columns['name'] ? 'table-cell' : 'none') . ";'>{$item['name']}</td>";
+
+            // SKU column (même si non activée)
+            $table_html .= "<td style='padding: 8px; {$cell_border_style}; display: " . ($columns['sku'] ? 'table-cell' : 'none') . ";'>{$item['sku']}</td>";
+
+            // Quantity column
+            $table_html .= "<td style='padding: 8px; {$cell_border_style} {$quantity_style} color: {$quantity_color}; display: " . ($columns['quantity'] ? 'table-cell' : 'none') . ";'>{$item['quantity']}</td>";
+
+            // Price column
+            $table_html .= "<td style='padding: 8px; {$cell_border_style} {$price_style} color: {$price_color}; display: " . ($columns['price'] ? 'table-cell' : 'none') . ";'>{$item['price']}</td>";
+
+            // Total column
+            $table_html .= "<td style='padding: 8px; {$cell_border_style} {$total_style} color: {$total_color}; display: " . ($columns['total'] ? 'table-cell' : 'none') . ";'>{$item['total']}</td>";
+
+            // === AJOUTER TOUTES LES AUTRES COLONNES POSSIBLES ===
+            // Ces colonnes seront masquées par défaut mais leurs valeurs seront disponibles pour le remplacement
+
+            // Description (toujours cachée mais disponible pour remplacement)
+            $table_html .= "<td style='display: none;'>{$item['description']}</td>";
+            $table_html .= "<td style='display: none;'>{$item['short_description']}</td>";
+
+            // Prix du produit
+            $table_html .= "<td style='display: none;'>{$item['regular_price']}</td>";
+            $table_html .= "<td style='display: none;'>{$item['sale_price']}</td>";
+
+            // Poids et dimensions
+            $table_html .= "<td style='display: none;'>{$item['weight']}</td>";
+            $table_html .= "<td style='display: none;'>{$item['dimensions']}</td>";
+
+            // Stock
+            $table_html .= "<td style='display: none;'>{$item['stock_quantity']}</td>";
+            $table_html .= "<td style='display: none;'>{$item['stock_status']}</td>";
+
+            // Catégories et tags (sérialiser les arrays pour le remplacement)
+            $table_html .= "<td style='display: none;'>" . (is_array($item['categories']) ? implode(', ', $item['categories']) : $item['categories']) . "</td>";
+            $table_html .= "<td style='display: none;'>" . (is_array($item['tags']) ? implode(', ', $item['tags']) : $item['tags']) . "</td>";
+
+            // Attributs de variation
+            $table_html .= "<td style='display: none;'>{$item['variation_attributes_formatted']}</td>";
+
+            // Toutes les autres propriétés scalaires disponibles
+            $hidden_properties = [
+                'product_id', 'product_url', 'product_type', 'tax_class', 'tax_status',
+                'length', 'width', 'height', 'dimension_unit', 'weight_unit',
+                'manage_stock', 'backorders', 'status', 'catalog_visibility', 'featured',
+                'is_virtual', 'is_downloadable', 'is_taxable', 'item_id', 'order_id'
+            ];
+
+            foreach ($hidden_properties as $prop) {
+                $value = isset($item[$prop]) ? $item[$prop] : '';
+                $table_html .= "<td style='display: none;'>{$value}</td>";
+            }
+
+            $table_html .= "</tr>";
+        }
+
+        // Subtotal, Shipping, Taxes, Total
+        $show_subtotal = $element['showSubtotal'] ?? true;
+        $show_shipping = $element['showShipping'] ?? true;
+        $show_taxes = $element['showTaxes'] ?? true;
+        $show_discount = $element['showDiscount'] ?? true;
+        $show_total = $element['showTotal'] ?? true;
+
+        if ($show_subtotal || $show_shipping || $show_taxes || $show_discount || $show_total) {
+            $table_html .= "<tr style='background-color: #f9f9f9; font-weight: bold;'><td colspan='" . count(array_filter($columns)) . "' style='padding: 8px; {$cell_border_style} text-align: right;'>";
+
+            $summary_lines = [];
+
+            if ($show_subtotal) {
+                $summary_lines[] = "Sous-total: {$fake_data['subtotal']}";
+            }
+
+            if ($show_shipping && $fake_data['shipping'] > 0) {
+                $summary_lines[] = "Livraison: {$fake_data['shipping']}";
+            }
+
+            if ($show_taxes && $fake_data['tax'] > 0) {
+                $summary_lines[] = "TVA: {$fake_data['tax']}";
+            }
+
+            if ($show_discount && $fake_data['discount'] > 0) {
+                $summary_lines[] = "Remise: -{$fake_data['discount']}";
+            }
+
+            if ($show_total) {
+                $summary_lines[] = "TOTAL: {$fake_data['total']}";
+            }
+
+            $table_html .= implode('<br>', $summary_lines);
+            $table_html .= "</td></tr>";
+        }
+
+        $table_html .= "</tbody></table>";
+
+        return $table_html;
+    }
+
+    /**
+     * Remplace les données fictives par les vraies données dans le HTML généré
+     */
+    private function replaceFakeDataWithRealData($html, $fake_data, $real_data)
+    {
+        // Remplacer les données des items - toutes les propriétés disponibles
+        foreach ($fake_data['items'] as $index => $fake_item) {
+            if (isset($real_data['items'][$index])) {
+                $real_item = $real_data['items'][$index];
+
+                // Remplacer toutes les propriétés disponibles de l'item
+                foreach ($fake_item as $key => $fake_value) {
+                    if (isset($real_item[$key])) {
+                        $real_value = $real_item[$key];
+
+                        // Gérer les arrays (comme categories, tags, etc.)
+                        if (is_array($fake_value)) {
+                            // Pour les arrays, remplacer chaque élément
+                            if (is_array($real_value)) {
+                                foreach ($fake_value as $i => $fake_array_item) {
+                                    if (isset($real_value[$i])) {
+                                        $html = str_replace((string)$fake_array_item, (string)$real_value[$i], $html);
+                                    }
+                                }
+                            }
+                        } else {
+                            // Remplacement simple pour les valeurs scalaires
+                            $html = str_replace((string)$fake_value, (string)$real_value, $html);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Remplacer les totaux de la commande
+        $totals_to_replace = ['subtotal', 'shipping', 'tax', 'discount', 'total'];
+        foreach ($totals_to_replace as $total_key) {
+            if (isset($fake_data[$total_key]) && isset($real_data[$total_key])) {
+                $html = str_replace((string)$fake_data[$total_key], (string)$real_data[$total_key], $html);
+            }
+        }
+
+
+        return $html;
+    }
+
+    /**
+     * Formate une adresse de commande manuellement pour éviter l'autoloading WooCommerce
+     */
+    private static function formatOrderAddress($order, $type = 'billing')
+    {
+        $address_parts = array();
+
+        $company = $type === 'billing' ? $order->get_billing_company() : $order->get_shipping_company();
+        if (!empty($company)) {
+            $address_parts[] = $company;
+        }
+
+        $first_name = $type === 'billing' ? $order->get_billing_first_name() : $order->get_shipping_first_name();
+        $last_name = $type === 'billing' ? $order->get_billing_last_name() : $order->get_shipping_last_name();
+        if (!empty($first_name) || !empty($last_name)) {
+            $address_parts[] = trim($first_name . ' ' . $last_name);
+        }
+
+        $address_1 = $type === 'billing' ? $order->get_billing_address_1() : $order->get_shipping_address_1();
+        if (!empty($address_1)) {
+            $address_parts[] = $address_1;
+        }
+
+        $address_2 = $type === 'billing' ? $order->get_billing_address_2() : $order->get_shipping_address_2();
+        if (!empty($address_2)) {
+            $address_parts[] = $address_2;
+        }
+
+        $city = $type === 'billing' ? $order->get_billing_city() : $order->get_shipping_city();
+        $postcode = $type === 'billing' ? $order->get_billing_postcode() : $order->get_shipping_postcode();
+        $city_line = trim($city . ' ' . $postcode);
+        if (!empty($city_line)) {
+            $address_parts[] = $city_line;
+        }
+
+        $country = $type === 'billing' ? self::getCountryName($order->get_billing_country()) : self::getCountryName($order->get_shipping_country());
+        if (!empty($country)) {
+            $address_parts[] = $country;
+        }
+
+        return implode("\n", $address_parts);
+    }
+
+    /**
+     * Get country name from country code
+     */
+    private static function getCountryName($country_code)
+    {
+        if ((!function_exists('pdf_builder_is_woocommerce_active') || !pdf_builder_is_woocommerce_active()) || !$country_code) {
+            return $country_code;
+        }
+
+        // Use get_option instead of WC()->countries to avoid autoloading
+        $countries = get_option('woocommerce_countries', []);
+        if (empty($countries)) {
+            $countries = get_option('woocommerce_allowed_countries', []);
+        }
+        return isset($countries[$country_code]) ? $countries[$country_code] : $country_code;
+    }
+}
