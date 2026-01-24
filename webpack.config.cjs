@@ -76,13 +76,17 @@ const baseConfig = {
           from: 'src/js/pdf-builder-init.js',
           to: 'pdf-builder-init.js',
         },
+        {
+          from: 'src/js/pdf-builder-wrap.js',
+          to: 'pdf-builder-wrap.js',
+        },
       ],
     }),
   ],
   optimization: {
     minimizer: [
       new TerserPlugin({
-        exclude: /tabs-force\.js$|settings-tabs-improved\.js$|settings-global-save\.js$|tabs-root-monitor\.js$|ajax-throttle\.js$|pdf-builder-utils\.js$|notifications\.js$|developer-tools\.js$|pdf-builder-init\.js$/,
+        exclude: /tabs-force\.js$|settings-tabs-improved\.js$|settings-global-save\.js$|tabs-root-monitor\.js$|ajax-throttle\.js$|pdf-builder-utils\.js$|notifications\.js$|developer-tools\.js$|pdf-builder-init\.js$|pdf-builder-wrap\.js$/,
         terserOptions: {
           compress: {
             drop_console: false,  // KEEP console logs
