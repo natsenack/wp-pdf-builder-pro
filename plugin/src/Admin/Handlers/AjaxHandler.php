@@ -190,6 +190,7 @@ class AjaxHandler
 
             // Sauvegarder le template
             // Note: Template manager should be available, this fallback shouldn't be reached
+            $result = false; // Stub
             wp_send_json_error('Erreur: Template manager non disponible pour la sauvegarde');
 
             if ($result) {
@@ -487,7 +488,7 @@ class AjaxHandler
                 return;
             }
 
-            $sql = isset($_POST['sql']) ? sanitize_textarea_field($_POST['sql']) : '';
+            $sql = isset($_POST['sql']) ? \sanitize_textarea_field($_POST['sql']) : '';
 
             if (empty($sql)) {
                 wp_send_json_error('Requête SQL manquante');
@@ -836,7 +837,7 @@ class AjaxHandler
         foreach ($_POST as $key => $value) {
             if (strpos($key, 'pdf_builder_') === 0) {
                 // Validation spécifique selon le type de champ
-                if (strpos($key, '_email') !== false && !is_email($value)) {
+                if (strpos($key, '_email') !== false && !\is_email($value)) {
                     $errors[] = "Email invalide: $key";
                 }
                 if (strpos($key, '_url') !== false && !filter_var($value, FILTER_VALIDATE_URL)) {
@@ -967,9 +968,9 @@ class AjaxHandler
             // Paramètres généraux
             $settings = [
                 'pdf_builder_company_name' => sanitize_text_field($_POST['company_name'] ?? ''),
-                'pdf_builder_company_address' => sanitize_textarea_field($_POST['company_address'] ?? ''),
+                'pdf_builder_company_address' => \sanitize_textarea_field($_POST['company_address'] ?? ''),
                 'pdf_builder_company_phone' => sanitize_text_field($_POST['company_phone'] ?? ''),
-                'pdf_builder_company_email' => sanitize_email($_POST['company_email'] ?? ''),
+                'pdf_builder_company_email' => \sanitize_email($_POST['company_email'] ?? ''),
                 'pdf_builder_default_language' => sanitize_text_field($_POST['default_language'] ?? 'fr'),
             ];
 
@@ -1553,9 +1554,9 @@ class AjaxHandler
 
         // Déterminer le type de champ d'après le nom
         if (strpos($key, '_email') !== false) {
-            return sanitize_email($value);
+            return \sanitize_email($value);
         } elseif (strpos($key, '_url') !== false) {
-            return esc_url_raw($value);
+            return \esc_url_raw($value);
         } elseif (strpos($key, '_number') !== false || strpos($key, '_size') !== false || strpos($key, '_ttl') !== false) {
             return is_numeric($value) ? (int)$value : 0;
         } elseif (strpos($key, '_boolean') !== false || strpos($key, '_enabled') !== false) {
@@ -1564,7 +1565,7 @@ class AjaxHandler
             // Pour les arrays JSON, valider que c'est du JSON valide
             $decoded = json_decode($value, true);
             if (json_last_error() === JSON_ERROR_NONE) {
-                return wp_json_encode($decoded); // Re-encoder pour uniformité
+                return \wp_json_encode($decoded); // Re-encoder pour uniformité
             }
             return '';
         } else {

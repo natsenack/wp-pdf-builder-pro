@@ -51,7 +51,7 @@ class PdfBuilderPreviewGenerator
             $this->renderPdf($preview_data);
             // Sauvegarde et retourne l'URL
             return $this->saveAndGetUrl();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -99,16 +99,16 @@ class PdfBuilderPreviewGenerator
         }
 
         // Charger l'autoloader de Composer pour Dompdf
-        $composer_autoload = WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
+        $composer_autoload = \WP_PLUGIN_DIR . '/wp-pdf-builder-pro/plugin/vendor/autoload.php';
         if (file_exists($composer_autoload)) {
             include_once $composer_autoload;
         } else {
-            throw new Exception('Autoloader de Composer introuvable. Vérifiez que les dépendances sont installées.');
+            throw new \Exception('Autoloader de Composer introuvable. Vérifiez que les dépendances sont installées.');
         }
 
         // Vérifier que Dompdf est disponible
         if (!class_exists('\Dompdf\Dompdf')) {
-            throw new Exception('Impossible de charger Dompdf via Composer. Vérifiez que le package est installé.');
+            throw new \Exception('Impossible de charger Dompdf via Composer. Vérifiez que le package est installé.');
         }
 
         // Récupérer les paramètres PDF depuis les options pour la prévisualisation

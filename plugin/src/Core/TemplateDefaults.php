@@ -78,6 +78,27 @@ class TemplateDefaults
     }
 
     /**
+     * Retourne un template par son slug
+     *
+     * @param string $slug
+     * @return array|null
+     */
+    public static function get_template_by_slug($slug)
+    {
+        $free_templates = self::get_free_templates();
+        if (isset($free_templates[$slug])) {
+            return $free_templates[$slug];
+        }
+
+        $premium_templates = self::get_premium_templates();
+        if (isset($premium_templates[$slug])) {
+            return $premium_templates[$slug];
+        }
+
+        return null;
+    }
+
+    /**
      * Crée les templates par défaut pour un utilisateur
      *
      * @param int $user_id

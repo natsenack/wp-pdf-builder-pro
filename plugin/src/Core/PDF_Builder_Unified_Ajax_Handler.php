@@ -601,6 +601,14 @@ class PDF_Builder_Unified_Ajax_Handler
     }
 
     /**
+     * Public method to save all settings
+     */
+    public function save_all_settings()
+    {
+        return $this->save_all_settings_from_flattened_data();
+    }
+
+    /**
      * Sauvegarde tous les paramètres depuis les données POST aplaties
      */
     private function save_all_settings_from_flattened_data()
@@ -1175,8 +1183,8 @@ class PDF_Builder_Unified_Ajax_Handler
 
                 // Sanitiser selon le type de paramètre
                 if (strpos($key, '_color') !== false || strpos($key, '_bg_color') !== false || strpos($key, '_border_color') !== false) {
-                    // Couleurs - utiliser sanitize_hex_color
-                    $sanitized_value = sanitize_hex_color($value);
+                    // Couleurs - utiliser \sanitize_hex_color
+                    $sanitized_value = \sanitize_hex_color($value);
                 } elseif (strpos($key, '_enabled') !== false || strpos($key, '_activated') !== false 
                     || strpos($key, '_visible') !== false || strpos($key, '_active') !== false
                 ) {
@@ -1191,7 +1199,7 @@ class PDF_Builder_Unified_Ajax_Handler
                 }
 
                 update_option($key, $sanitized_value);
-                wp_cache_delete('alloptions', 'options'); // Invalider le cache des options
+                \wp_cache_delete('alloptions', 'options'); // Invalider le cache des options
                 $saved_count++;
 
                 if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -1316,13 +1324,13 @@ class PDF_Builder_Unified_Ajax_Handler
             $test_key = 'pdf_builder_cache_test_' . time();
             $test_value = 'test_value_' . rand(1000, 9999);
 
-            wp_cache_set($test_key, $test_value, 'pdf_builder', 300);
-            $retrieved_value = wp_cache_get($test_key, 'pdf_builder');
+            \wp_cache_set($test_key, $test_value, 'pdf_builder', 300);
+            $retrieved_value = \wp_cache_get($test_key, 'pdf_builder');
 
             $cache_wp_ok = ($retrieved_value === $test_value);
 
             // Nettoyer le test
-            wp_cache_delete($test_key, 'pdf_builder');
+            \wp_cache_delete($test_key, 'pdf_builder');
 
             // Test 2: Vérifier les transients
             $transient_key = 'pdf_builder_test_transient';
@@ -1397,7 +1405,7 @@ class PDF_Builder_Unified_Ajax_Handler
             $size_before = $this->get_database_size();
 
             // Optimiser toutes les tables du plugin
-            $tables = $wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}pdf_builder%'", ARRAY_N);
+            $tables = $wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}pdf_builder%'", \ARRAY_N);
             $optimized_tables = 0;
             $errors = [];
 
@@ -1930,7 +1938,7 @@ class PDF_Builder_Unified_Ajax_Handler
         }
 
         try {
-            $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(wp_rand(), true)), 0, 16));
+            $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(\wp_rand(), true)), 0, 16));
             update_option('pdf_builder_license_test_key', $test_key);
             // set an expiry date (30 days)
             $expires_in_30_days = date('Y-m-d', strtotime('+30 days'));
@@ -2029,7 +2037,7 @@ class PDF_Builder_Unified_Ajax_Handler
         try {
             $temp_dirs = [
                 WP_CONTENT_DIR . '/pdf-builder-temp/',
-                get_temp_dir() . '/pdf-builder/'
+                \get_temp_dir() . '/pdf-builder/'
             ];
 
             $cleared_files = 0;
@@ -2096,9 +2104,9 @@ class PDF_Builder_Unified_Ajax_Handler
 
         foreach ($admin_routes as $route => $description) {
             $url = admin_url($route);
-            $response = wp_remote_head($url, ['timeout' => 5]);
+            $response = \wp_remote_head($url, ['timeout' => 5]);
 
-            if (is_wp_error($response)) {
+            if (\is_wp_error($response)) {
                 $failed_routes[] = $route . ' (' . $response->get_error_message() . ')';
             } else {
                 $routes_tested[] = $route . ' (OK)';
@@ -2253,10 +2261,10 @@ class PDF_Builder_Unified_Ajax_Handler
             $system_info = [
                 'wordpress' => [
                     'version' => $wp_version,
-                    'site_url' => get_site_url(),
+                    'site_url' => \get_site_url(),
                     'admin_email' => get_option('admin_email'),
                     'debug_mode' => defined('WP_DEBUG') && WP_DEBUG,
-                    'multisite' => is_multisite()
+                    'multisite' => \is_multisite()
                 ],
                 'server' => [
                     'php_version' => PHP_VERSION,

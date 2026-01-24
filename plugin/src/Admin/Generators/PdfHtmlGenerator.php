@@ -243,7 +243,7 @@ class PdfHtmlGenerator
         }
 
         $style = $base_style;
-        $safe_style = esc_attr($style);
+        $safe_style = \esc_attr($style);
         $content = $element['content'] ?? '';
 
         $html = '';
@@ -252,64 +252,64 @@ class PdfHtmlGenerator
         case 'text':
         case 'dynamic-text':
             $final_content = $order ? $this->admin->getHtmlRenderer()->replaceOrderVariables($content, $order) : $content;
-            $html = sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $safe_style, esc_html($final_content));
+            $html = sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $safe_style, \esc_html($final_content));
             break;
 
         case 'multiline_text':
             $final_content = $order ? $this->admin->getHtmlRenderer()->replaceOrderVariables($content, $order) : $content;
-            $html = sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $safe_style, nl2br(esc_html($final_content)));
+            $html = sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $safe_style, nl2br(\esc_html($final_content)));
             break;
 
         case 'mentions':
             $mentions = $this->buildMentions($element);
             $separator = isset($element['separator']) ? $element['separator'] : ' • ';
             $mentions_text = implode($separator, $mentions);
-            $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($mentions_text));
+            $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, \esc_html($mentions_text));
             break;
 
         case 'order_date':
         case 'invoice_date':
             if ($order) {
                 $date = $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y');
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($date));
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, \esc_html($date));
             } else {
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Date'));
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, \esc_html($content ?: 'Date'));
             }
             break;
 
         case 'invoice_number':
             if ($order) {
                 $invoice_number = $order->get_id() . '-' . time();
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($invoice_number));
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, \esc_html($invoice_number));
             } else {
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'N° de facture'));
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, \esc_html($content ?: 'N° de facture'));
             }
             break;
 
         case 'order_number':
             if ($order) {
                 $order_number = $order->get_order_number();
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($order_number));
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, \esc_html($order_number));
             } else {
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'N° de commande'));
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, \esc_html($content ?: 'N° de commande'));
             }
             break;
 
         case 'customer_name':
             if ($order) {
                 $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($customer_name));
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, \esc_html($customer_name));
             } else {
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Nom du client'));
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, \esc_html($content ?: 'Nom du client'));
             }
             break;
 
         case 'customer_address':
             if ($order) {
                 $address = $this->formatAddress($order, 'billing');
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, nl2br(esc_html($address)));
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, nl2br(\esc_html($address)));
             } else {
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Adresse du client'));
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, \esc_html($content ?: 'Adresse du client'));
             }
             break;
 
@@ -318,7 +318,7 @@ class PdfHtmlGenerator
                 $subtotal = $order->get_subtotal();
                 $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, wc_price($subtotal));
             } else {
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Sous-total'));
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, \esc_html($content ?: 'Sous-total'));
             }
             break;
 
@@ -327,7 +327,7 @@ class PdfHtmlGenerator
                 $tax = $order->get_total_tax();
                 $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, wc_price($tax));
             } else {
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Taxes'));
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, \esc_html($content ?: 'Taxes'));
             }
             break;
 
@@ -336,7 +336,7 @@ class PdfHtmlGenerator
                 $total = $order->get_total();
                 $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, wc_price($total));
             } else {
-                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Total'));
+                $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, \esc_html($content ?: 'Total'));
             }
             break;
 
@@ -360,7 +360,7 @@ class PdfHtmlGenerator
                 }
             }
             if ($logo_url) {
-                $html = sprintf('<div class="pdf-element image-element" style="%s"><img src="%s" style="width: 100%%; height: 100%%; object-fit: contain;" alt="Logo" /></div>', $style, esc_url($logo_url));
+                $html = sprintf('<div class="pdf-element image-element" style="%s"><img src="%s" style="width: 100%%; height: 100%%; object-fit: contain;" alt="Logo" /></div>', $style, \esc_url($logo_url));
             } else {
                 $html = sprintf('<div class="pdf-element image-element" style="%s"><div style="width: 100%%; height: 100%%; background-color: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #666; font-size: 12px;">🏢 Logo</div></div>', $style);
             }
@@ -378,7 +378,7 @@ class PdfHtmlGenerator
 
         case 'company_info':
             $company_info = $this->admin->getHtmlRenderer()->formatCompleteCompanyInfo();
-            $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($company_info)));
+            $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(\esc_html($company_info)));
             break;
 
         case 'document_type':
@@ -389,7 +389,7 @@ class PdfHtmlGenerator
             } else {
                 $docType = $content ?: 'Document';
             }
-            $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($docType));
+            $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $style, \esc_html($docType));
             break;
 
         case 'divider':
@@ -404,7 +404,7 @@ class PdfHtmlGenerator
             $watermark_text = $element['content'] ?? 'CONFIDENTIEL';
             $opacity = isset($element['opacity']) ? $element['opacity'] / 100 : 0.1;
             $style .= sprintf('opacity: %s; color: rgba(0,0,0,%s); font-size: 48px; text-align: center; transform: rotate(-45deg); pointer-events: none;', $opacity, $opacity);
-            $html = sprintf('<div class="pdf-element watermark" style="%s">%s</div>', $style, esc_html($watermark_text));
+            $html = sprintf('<div class="pdf-element watermark" style="%s">%s</div>', $style, \esc_html($watermark_text));
             break;
 
         case 'progress-bar':
@@ -417,7 +417,7 @@ class PdfHtmlGenerator
         case 'barcode':
             if ($order) {
                 $barcode_data = $order->get_order_number();
-                $html = sprintf('<div class="pdf-element barcode" style="%s">*%s*</div>', $style, esc_html($barcode_data));
+                $html = sprintf('<div class="pdf-element barcode" style="%s">*%s*</div>', $style, \esc_html($barcode_data));
             } else {
                 $html = sprintf('<div class="pdf-element barcode" style="%s">*BARCODE*</div>', $style);
             }
@@ -426,7 +426,7 @@ class PdfHtmlGenerator
         case 'qrcode':
             if ($order) {
                 $qr_data = 'Order: ' . $order->get_order_number();
-                $html = sprintf('<div class="pdf-element qrcode" style="%s">[QR:%s]</div>', $style, esc_html($qr_data));
+                $html = sprintf('<div class="pdf-element qrcode" style="%s">[QR:%s]</div>', $style, \esc_html($qr_data));
             } else {
                 $html = sprintf('<div class="pdf-element qrcode" style="%s">[QR:CODE]</div>', $style);
             }
@@ -456,7 +456,7 @@ class PdfHtmlGenerator
 
         default:
             $final_content = $order ? $this->admin->getHtmlRenderer()->replaceOrderVariables($content, $order) : $content;
-            $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($final_content ?: $element['type']));
+            $html = sprintf('<div class="pdf-element" style="%s">%s</div>', $style, \esc_html($final_content ?: $element['type']));
             break;
         }
 
@@ -515,20 +515,20 @@ class PdfHtmlGenerator
             $full_name = trim($billing_data['first_name'] . ' ' . $billing_data['last_name']);
             $full_address = '';
             if (!empty($full_name)) {
-                $full_address .= '<div style="font-weight: bold; margin-bottom: 4px;">' . esc_html($full_name) . '</div>';
+                $full_address .= '<div style="font-weight: bold; margin-bottom: 4px;">' . \esc_html($full_name) . '</div>';
             }
             if (!empty($billing_data['company'])) {
-                $full_address .= '<div>' . esc_html($billing_data['company']) . '</div>';
+                $full_address .= '<div>' . \esc_html($billing_data['company']) . '</div>';
             }
             if (!empty($billing_data['address_1'])) {
-                $full_address .= '<div>' . esc_html($billing_data['address_1']) . '</div>';
+                $full_address .= '<div>' . \esc_html($billing_data['address_1']) . '</div>';
             }
             if (!empty($billing_data['address_2'])) {
-                $full_address .= '<div>' . esc_html($billing_data['address_2']) . '</div>';
+                $full_address .= '<div>' . \esc_html($billing_data['address_2']) . '</div>';
             }
             $city_line = trim($billing_data['postcode'] . ' ' . $billing_data['city']);
             if (!empty($city_line)) {
-                $full_address .= '<div>' . esc_html($city_line) . '</div>';
+                $full_address .= '<div>' . \esc_html($city_line) . '</div>';
             }
             $country_line = '';
             if (!empty($billing_data['state'])) {
@@ -536,23 +536,23 @@ class PdfHtmlGenerator
             }
             $country_line .= $billing_data['country'];
             if (!empty($country_line)) {
-                $full_address .= '<div>' . esc_html($country_line) . '</div>';
+                $full_address .= '<div>' . \esc_html($country_line) . '</div>';
             }
 
             $customer_html = '<div style="padding: 8px; font-size: 12px; line-height: 1.4;">';
             $customer_html .= $full_address;
 
             if (!empty($billing_data['email'])) {
-                $customer_html .= '<div style="margin-top: 4px;">' . esc_html($billing_data['email']) . '</div>';
+                $customer_html .= '<div style="margin-top: 4px;">' . \esc_html($billing_data['email']) . '</div>';
             }
             if (!empty($billing_data['phone'])) {
-                $customer_html .= '<div>' . esc_html($billing_data['phone']) . '</div>';
+                $customer_html .= '<div>' . \esc_html($billing_data['phone']) . '</div>';
             }
             if (!empty($billing_data['payment_method'])) {
-                $customer_html .= '<div style="margin-top: 4px; font-style: italic;">Paiement: ' . esc_html($billing_data['payment_method']) . '</div>';
+                $customer_html .= '<div style="margin-top: 4px; font-style: italic;">Paiement: ' . \esc_html($billing_data['payment_method']) . '</div>';
             }
             if (!empty($billing_data['transaction_id'])) {
-                $customer_html .= '<div style="font-size: 11px; color: #666;">ID: ' . esc_html($billing_data['transaction_id']) . '</div>';
+                $customer_html .= '<div style="font-size: 11px; color: #666;">ID: ' . \esc_html($billing_data['transaction_id']) . '</div>';
             }
 
             $customer_html .= '</div>';
