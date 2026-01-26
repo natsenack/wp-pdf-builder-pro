@@ -25,6 +25,7 @@ import {
   OrderNumberElementProperties,
   MentionsElementProperties,
   DocumentTypeElementProperties,
+  DynamicTextElement,
   BuilderState,
 } from "../../types/elements";
 import { wooCommerceManager } from "../../utils/WooCommerceElementsManager";

@@ -370,10 +370,15 @@ class PreviewAjaxHandler {
             </table>';
         }
         
-        // Signature
+        // Signature/Dynamic Text
         if ($dynamic_text_element) {
+            $text_content = $dynamic_text_element['text'] ??
+                           $dynamic_text_element['content'] ??
+                           $dynamic_text_element['value'] ??
+                           'Texte dynamique non défini';
+
             $html .= '<div class="signature-section">
-                <div class="signature-text">' . htmlspecialchars($dynamic_text_element['text'] ?? '') . '</div>
+                <div class="signature-text">' . htmlspecialchars($text_content) . '</div>
             </div>';
         }
         
