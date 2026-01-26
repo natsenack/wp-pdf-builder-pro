@@ -177,7 +177,9 @@ abstract class BaseGenerator
         }
 
         foreach ($this->template_data['template']['elements'] as $element) {
-            $content .= $this->renderElement($element);
+            // Convert stdClass to array if necessary
+            $elementArray = is_array($element) ? $element : (array) $element;
+            $content .= $this->renderElement($elementArray);
         }
 
         if (defined('WP_DEBUG') && WP_DEBUG) {
