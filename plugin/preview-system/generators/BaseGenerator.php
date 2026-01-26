@@ -409,6 +409,14 @@ abstract class BaseGenerator
     {
         $style = 'position: absolute; ';
 
+        // Debug log for font-weight specifically
+        if (isset($element['fontWeight'])) {
+            error_log("[PDF] Element fontWeight: " . json_encode($element['fontWeight']));
+        }
+        if (isset($element['properties']['fontWeight'])) {
+            error_log("[PDF] Properties fontWeight: " . json_encode($element['properties']['fontWeight']));
+        }
+
         // Helper function to normalize CSS values
         $normalizeCssValue = function($value, $unit = '') {
             if (is_numeric($value) && !empty($unit)) {
@@ -448,38 +456,38 @@ abstract class BaseGenerator
         if (isset($element['color']) && !empty($element['color'])) {
             $style .= "color: {$element['color']}; ";
         }
-        if (isset($element['textColor']) && !empty($element['textColor'])) {
+        if (isset($element['textColor']) && $element['textColor'] !== null && $element['textColor'] !== '') {
             $style .= "color: {$element['textColor']}; ";
         }
         // Fallback for hyphenated property names
-        if (!isset($element['color']) && !isset($element['textColor']) && isset($element['text-color']) && !empty($element['text-color'])) {
+        if (!isset($element['color']) && !isset($element['textColor']) && isset($element['text-color']) && $element['text-color'] !== null && $element['text-color'] !== '') {
             $style .= "color: {$element['text-color']}; ";
         }
-        if (isset($element['fontSize']) && !empty($element['fontSize'])) {
+        if (isset($element['fontSize']) && $element['fontSize'] !== null && $element['fontSize'] !== '') {
             $style .= "font-size: " . $normalizeCssValue($element['fontSize'], 'px') . "; ";
         }
         // Fallback for hyphenated property names
-        if (!isset($element['fontSize']) && isset($element['font-size']) && !empty($element['font-size'])) {
+        if (!isset($element['fontSize']) && isset($element['font-size']) && $element['font-size'] !== null && $element['font-size'] !== '') {
             $style .= "font-size: " . $normalizeCssValue($element['font-size'], 'px') . "; ";
         }
-        if (isset($element['fontWeight']) && !empty($element['fontWeight'])) {
+        if (isset($element['fontWeight']) && $element['fontWeight'] !== null && $element['fontWeight'] !== '') {
             $style .= "font-weight: {$element['fontWeight']}; ";
         }
         // Fallback for hyphenated property names
-        if (!isset($element['fontWeight']) && isset($element['font-weight']) && !empty($element['font-weight'])) {
+        if (!isset($element['fontWeight']) && isset($element['font-weight']) && $element['font-weight'] !== null && $element['font-weight'] !== '') {
             $style .= "font-weight: {$element['font-weight']}; ";
         }
-        if (isset($element['fontFamily']) && !empty($element['fontFamily'])) {
+        if (isset($element['fontFamily']) && $element['fontFamily'] !== null && $element['fontFamily'] !== '') {
             $style .= "font-family: {$element['fontFamily']}; ";
         }
         // Fallback for hyphenated property names
-        if (!isset($element['fontFamily']) && isset($element['font-family']) && !empty($element['font-family'])) {
+        if (!isset($element['fontFamily']) && isset($element['font-family']) && $element['font-family'] !== null && $element['font-family'] !== '') {
             $style .= "font-family: {$element['font-family']}; ";
         }
-        if (isset($element['textAlign'])) {
+        if (isset($element['textAlign']) && $element['textAlign'] !== null && $element['textAlign'] !== '') {
             $style .= "text-align: {$element['textAlign']}; ";
         }
-        if (isset($element['backgroundColor'])) {
+        if (isset($element['backgroundColor']) && $element['backgroundColor'] !== null && $element['backgroundColor'] !== '') {
             $style .= "background-color: {$element['backgroundColor']}; ";
         }
         if (isset($element['borderColor'])) {
@@ -983,20 +991,20 @@ abstract class BaseGenerator
             }
 
             // Autres propriétés depuis properties si pas déjà définis
-            if (!isset($element['color']) && !isset($element['textColor']) && isset($props['color']) && !empty($props['color'])) {
+            if (!isset($element['color']) && !isset($element['textColor']) && isset($props['color']) && $props['color'] !== null && $props['color'] !== '') {
                 $style .= "color: {$props['color']}; ";
             }
-            if (!isset($element['color']) && !isset($element['textColor']) && isset($props['textColor']) && !empty($props['textColor'])) {
+            if (!isset($element['color']) && !isset($element['textColor']) && isset($props['textColor']) && $props['textColor'] !== null && $props['textColor'] !== '') {
                 $style .= "color: {$props['textColor']}; ";
             }
-            if (!isset($element['fontSize']) && isset($props['fontSize']) && !empty($props['fontSize'])) {
+            if (!isset($element['fontSize']) && isset($props['fontSize']) && $props['fontSize'] !== null && $props['fontSize'] !== '') {
                 $style .= "font-size: " . $normalizeCssValue($props['fontSize'], 'px') . "; ";
             }
-            if (!isset($element['fontWeight']) && isset($props['fontWeight']) && !empty($props['fontWeight'])) {
+            if (!isset($element['fontWeight']) && isset($props['fontWeight']) && $props['fontWeight'] !== null && $props['fontWeight'] !== '') {
                 $style .= "font-weight: {$props['fontWeight']}; ";
             }
             // Fallback for hyphenated property names in properties
-            if (!isset($element['fontWeight']) && !isset($props['fontWeight']) && isset($props['font-weight']) && !empty($props['font-weight'])) {
+            if (!isset($element['fontWeight']) && !isset($props['fontWeight']) && isset($props['font-weight']) && $props['font-weight'] !== null && $props['font-weight'] !== '') {
                 $style .= "font-weight: {$props['font-weight']}; ";
             }
             if (!isset($element['fontFamily']) && isset($props['fontFamily']) && !empty($props['fontFamily'])) {
