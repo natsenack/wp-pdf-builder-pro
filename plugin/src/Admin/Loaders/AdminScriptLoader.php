@@ -746,6 +746,45 @@ class AdminScriptLoader
             })();
         ');
 
+        // Add footer DOM check
+        add_action('admin_footer-pdf-builder_page_pdf-builder-react-editor', function() {
+            ?>
+            <script>
+            console.log('🔍 [FOOTER DOM CHECK] Starting DOM script check...');
+            let scripts = document.querySelectorAll('script[src*="pdf-builder-react"]');
+            console.log('🔍 [FOOTER DOM CHECK] Scripts pdf-builder-react trouvés dans DOM: ' + scripts.length);
+            scripts.forEach((script, index) => {
+                console.log('🔍 [FOOTER DOM CHECK] Script ' + index + ': ' + script.src);
+            });
+            let initScript = document.querySelector('script[src*="pdf-builder-react-init.min.js"]');
+            console.log('🔍 [FOOTER DOM CHECK] Script pdf-builder-react-init.min.js found in DOM: ' + (initScript ? 'YES' : 'NO'));
+            let mainScript = document.querySelector('script[src*="pdf-builder-react.min.js"]');
+            console.log('🔍 [FOOTER DOM CHECK] Script pdf-builder-react.min.js found in DOM: ' + (mainScript ? 'YES' : 'NO'));
+            let wrapperScript = document.querySelector('script[src*="pdf-builder-react-wrapper.min.js"]');
+            console.log('🔍 [FOOTER DOM CHECK] Script pdf-builder-react-wrapper.min.js found in DOM: ' + (wrapperScript ? 'YES' : 'NO'));
+
+            // Manual init if not done
+            setTimeout(function() {
+                console.log('🔍 [FOOTER INIT CHECK] Checking if React app is initialized...');
+                const root = document.getElementById('pdf-builder-react-root');
+                if (root && root.children.length === 0) {
+                    console.log('🔍 [FOOTER INIT CHECK] Root is empty, trying manual init...');
+                    if (window.pdfBuilderReact && window.pdfBuilderReact.initPDFBuilderReact) {
+                        console.log('🔍 [FOOTER INIT CHECK] Calling manual init...');
+                        window.pdfBuilderReact.initPDFBuilderReact('pdf-builder-react-root');
+                    } else {
+                        console.log('🔍 [FOOTER INIT CHECK] pdfBuilderReact not available for manual init');
+                    }
+                } else if (root && root.children.length > 0) {
+                    console.log('🔍 [FOOTER INIT CHECK] Root has children, app seems initialized');
+                } else {
+                    console.log('🔍 [FOOTER INIT CHECK] Root not found or no children');
+                }
+            }, 1000);
+            </script>
+            <?php
+        });
+
         error_log('[DEBUG] PDF Builder AdminScriptLoader: loadReactEditorScripts COMPLETED - all React scripts should be enqueued now');
     }
 
