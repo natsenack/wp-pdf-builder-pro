@@ -132,16 +132,17 @@ class PdfBuilderProGenerator
     <title>PDF Document</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
-        .pdf-container { 
+        body { font-family: Arial, sans-serif; background: white; margin: 0; padding: 0; }
+        .pdf-container {
             position: relative;
-            width: 595px; 
-            height: 842px; 
+            width: 100%;
+            height: 100%;
             ' . $container_styles . '
-            margin: 0 auto;
-            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            overflow: visible;
         }
-        .canvas-element { position: absolute; overflow: hidden; }
+        .canvas-element { position: absolute; }
     </style>
 </head>
 <body>
