@@ -409,14 +409,6 @@ abstract class BaseGenerator
     {
         $style = 'position: absolute; ';
 
-        // Debug log for font-weight specifically
-        if (isset($element['fontWeight'])) {
-            error_log("[PDF] Element fontWeight: " . json_encode($element['fontWeight']));
-        }
-        if (isset($element['properties']['fontWeight'])) {
-            error_log("[PDF] Properties fontWeight: " . json_encode($element['properties']['fontWeight']));
-        }
-
         // Helper function to normalize CSS values
         $normalizeCssValue = function($value, $unit = '') {
             if (is_numeric($value) && !empty($unit)) {
@@ -444,16 +436,16 @@ abstract class BaseGenerator
         $style .= "top: {$y}px; ";
 
         // Debug log for positioning
-        if (isset($element['x']) || isset($element['y'])) {
+        if ((isset($element['x']) && $element['x'] !== null && $element['x'] !== '') || (isset($element['y']) && $element['y'] !== null && $element['y'] !== '')) {
             error_log("[PDF] Element positioning - original x: " . ($element['x'] ?? 'not set') . ", y: " . ($element['y'] ?? 'not set') . " | adjusted x: {$x}, y: {$y} | is_preview: " . ($this->is_preview ? 'true' : 'false'));
         }
-        if (isset($element['width'])) {
+        if (isset($element['width']) && $element['width'] !== null && $element['width'] !== '') {
             $style .= "width: " . $normalizeCssValue($element['width'], 'px') . "; ";
         }
-        if (isset($element['height'])) {
+        if (isset($element['height']) && $element['height'] !== null && $element['height'] !== '') {
             $style .= "height: " . $normalizeCssValue($element['height'], 'px') . "; ";
         }
-        if (isset($element['color']) && !empty($element['color'])) {
+        if (isset($element['color']) && $element['color'] !== null && $element['color'] !== '') {
             $style .= "color: {$element['color']}; ";
         }
         if (isset($element['textColor']) && $element['textColor'] !== null && $element['textColor'] !== '') {
@@ -490,72 +482,72 @@ abstract class BaseGenerator
         if (isset($element['backgroundColor']) && $element['backgroundColor'] !== null && $element['backgroundColor'] !== '') {
             $style .= "background-color: {$element['backgroundColor']}; ";
         }
-        if (isset($element['borderColor'])) {
+        if (isset($element['borderColor']) && $element['borderColor'] !== null && $element['borderColor'] !== '') {
             $style .= "border-color: {$element['borderColor']}; ";
         }
-        if (isset($element['borderWidth'])) {
+        if (isset($element['borderWidth']) && $element['borderWidth'] !== null && $element['borderWidth'] !== '') {
             $style .= "border-width: " . $normalizeCssValue($element['borderWidth'], 'px') . "; ";
         }
-        if (isset($element['borderRadius'])) {
+        if (isset($element['borderRadius']) && $element['borderRadius'] !== null && $element['borderRadius'] !== '') {
             $style .= "border-radius: " . $normalizeCssValue($element['borderRadius'], 'px') . "; ";
         }
 
         // Build combined transform property
         $transforms = [];
-        if (isset($element['rotation'])) {
+        if (isset($element['rotation']) && $element['rotation'] !== null && $element['rotation'] !== '') {
             $transforms[] = "rotate({$element['rotation']}deg)";
         }
-        if (isset($element['scale'])) {
+        if (isset($element['scale']) && $element['scale'] !== null && $element['scale'] !== '') {
             $transforms[] = "scale({$element['scale']})";
         }
-        if (isset($element['translateX']) || isset($element['translateY'])) {
-            $translateX = $element['translateX'] ?? 0;
-            $translateY = $element['translateY'] ?? 0;
+        if ((isset($element['translateX']) && $element['translateX'] !== null && $element['translateX'] !== '') || (isset($element['translateY']) && $element['translateY'] !== null && $element['translateY'] !== '')) {
+            $translateX = (isset($element['translateX']) && $element['translateX'] !== null && $element['translateX'] !== '') ? $element['translateX'] : 0;
+            $translateY = (isset($element['translateY']) && $element['translateY'] !== null && $element['translateY'] !== '') ? $element['translateY'] : 0;
             $transforms[] = "translate({$translateX}px, {$translateY}px)";
         }
-        if (isset($element['skew'])) {
+        if (isset($element['skew']) && $element['skew'] !== null && $element['skew'] !== '') {
             $transforms[] = "skew({$element['skew']}deg)";
         }
         if (!empty($transforms)) {
             $style .= "transform: " . implode(' ', $transforms) . "; ";
         }
-        if (isset($element['lineHeight'])) {
+        if (isset($element['lineHeight']) && $element['lineHeight'] !== null && $element['lineHeight'] !== '') {
             $style .= "line-height: {$element['lineHeight']}; ";
         }
-        if (isset($element['textDecoration'])) {
+        if (isset($element['textDecoration']) && $element['textDecoration'] !== null && $element['textDecoration'] !== '') {
             $style .= "text-decoration: {$element['textDecoration']}; ";
         }
-        if (isset($element['fontStyle'])) {
+        if (isset($element['fontStyle']) && $element['fontStyle'] !== null && $element['fontStyle'] !== '') {
             $style .= "font-style: {$element['fontStyle']}; ";
         }
-        if (isset($element['fontStretch'])) {
+        if (isset($element['fontStretch']) && $element['fontStretch'] !== null && $element['fontStretch'] !== '') {
             $style .= "font-stretch: {$element['fontStretch']}; ";
         }
-        if (isset($element['fontVariant'])) {
+        if (isset($element['fontVariant']) && $element['fontVariant'] !== null && $element['fontVariant'] !== '') {
             $style .= "font-variant: {$element['fontVariant']}; ";
         }
-        if (isset($element['padding'])) {
+        if (isset($element['padding']) && $element['padding'] !== null && $element['padding'] !== '') {
             $style .= "padding: {$element['padding']}px; ";
         }
-        if (isset($element['margin'])) {
+        if (isset($element['margin']) && $element['margin'] !== null && $element['margin'] !== '') {
             $style .= "margin: {$element['margin']}px; ";
         }
-        if (isset($element['borderStyle'])) {
+        if (isset($element['borderStyle']) && $element['borderStyle'] !== null && $element['borderStyle'] !== '') {
             $style .= "border-style: {$element['borderStyle']}; ";
         }
-        if (isset($element['opacity'])) {
+        if (isset($element['opacity']) && $element['opacity'] !== null && $element['opacity'] !== '') {
             $style .= "opacity: {$element['opacity']}; ";
         }
-        if (isset($element['zIndex'])) {
+        if (isset($element['zIndex']) && $element['zIndex'] !== null && $element['zIndex'] !== '') {
             $style .= "z-index: {$element['zIndex']}; ";
         }
-        if (isset($element['boxShadow'])) {
+        if (isset($element['boxShadow']) && $element['boxShadow'] !== null && $element['boxShadow'] !== '') {
             $style .= "box-shadow: {$element['boxShadow']}; ";
         }
-        if (isset($element['textShadow'])) {
+        if (isset($element['textShadow']) && $element['textShadow'] !== null && $element['textShadow'] !== '') {
             $style .= "text-shadow: {$element['textShadow']}; ";
         }
-        if (isset($element['letterSpacing'])) {
+        if (isset($element['letterSpacing']) && $element['letterSpacing'] !== null && $element['letterSpacing'] !== '') {
             $style .= "letter-spacing: {$element['letterSpacing']}px; ";
         }
         if (isset($element['wordSpacing'])) {
@@ -1007,22 +999,22 @@ abstract class BaseGenerator
             if (!isset($element['fontWeight']) && !isset($props['fontWeight']) && isset($props['font-weight']) && $props['font-weight'] !== null && $props['font-weight'] !== '') {
                 $style .= "font-weight: {$props['font-weight']}; ";
             }
-            if (!isset($element['fontFamily']) && isset($props['fontFamily']) && !empty($props['fontFamily'])) {
+            if (!isset($element['fontFamily']) && isset($props['fontFamily']) && $props['fontFamily'] !== null && $props['fontFamily'] !== '') {
                 $style .= "font-family: {$props['fontFamily']}; ";
             }
-            if (!isset($element['textAlign']) && isset($props['textAlign'])) {
+            if (!isset($element['textAlign']) && isset($props['textAlign']) && $props['textAlign'] !== null && $props['textAlign'] !== '') {
                 $style .= "text-align: {$props['textAlign']}; ";
             }
-            if (!isset($element['backgroundColor']) && isset($props['backgroundColor'])) {
+            if (!isset($element['backgroundColor']) && isset($props['backgroundColor']) && $props['backgroundColor'] !== null && $props['backgroundColor'] !== '') {
                 $style .= "background-color: {$props['backgroundColor']}; ";
             }
-            if (!isset($element['borderColor']) && isset($props['borderColor'])) {
+            if (!isset($element['borderColor']) && isset($props['borderColor']) && $props['borderColor'] !== null && $props['borderColor'] !== '') {
                 $style .= "border-color: {$props['borderColor']}; ";
             }
-            if (!isset($element['borderWidth']) && isset($props['borderWidth'])) {
+            if (!isset($element['borderWidth']) && isset($props['borderWidth']) && $props['borderWidth'] !== null && $props['borderWidth'] !== '') {
                 $style .= "border-width: " . $normalizeCssValue($props['borderWidth'], 'px') . "; ";
             }
-            if (!isset($element['borderRadius']) && isset($props['borderRadius'])) {
+            if (!isset($element['borderRadius']) && isset($props['borderRadius']) && $props['borderRadius'] !== null && $props['borderRadius'] !== '') {
                 $style .= "border-radius: " . $normalizeCssValue($props['borderRadius'], 'px') . "; ";
             }
 
@@ -1045,25 +1037,25 @@ abstract class BaseGenerator
             if (!empty($propTransforms)) {
                 $style .= "transform: " . implode(' ', $propTransforms) . "; ";
             }
-            if (!isset($element['lineHeight']) && isset($props['lineHeight'])) {
+            if (!isset($element['lineHeight']) && isset($props['lineHeight']) && $props['lineHeight'] !== null && $props['lineHeight'] !== '') {
                 $style .= "line-height: {$props['lineHeight']}; ";
             }
-            if (!isset($element['textDecoration']) && isset($props['textDecoration'])) {
+            if (!isset($element['textDecoration']) && isset($props['textDecoration']) && $props['textDecoration'] !== null && $props['textDecoration'] !== '') {
                 $style .= "text-decoration: {$props['textDecoration']}; ";
             }
-            if (!isset($element['fontStyle']) && isset($props['fontStyle'])) {
+            if (!isset($element['fontStyle']) && isset($props['fontStyle']) && $props['fontStyle'] !== null && $props['fontStyle'] !== '') {
                 $style .= "font-style: {$props['fontStyle']}; ";
             }
-            if (!isset($element['fontStretch']) && isset($props['fontStretch'])) {
+            if (!isset($element['fontStretch']) && isset($props['fontStretch']) && $props['fontStretch'] !== null && $props['fontStretch'] !== '') {
                 $style .= "font-stretch: {$props['fontStretch']}; ";
             }
-            if (!isset($element['fontVariant']) && isset($props['fontVariant'])) {
+            if (!isset($element['fontVariant']) && isset($props['fontVariant']) && $props['fontVariant'] !== null && $props['fontVariant'] !== '') {
                 $style .= "font-variant: {$props['fontVariant']}; ";
             }
-            if (!isset($element['padding']) && isset($props['padding'])) {
+            if (!isset($element['padding']) && isset($props['padding']) && $props['padding'] !== null && $props['padding'] !== '') {
                 $style .= "padding: {$props['padding']}px; ";
             }
-            if (!isset($element['margin']) && isset($props['margin'])) {
+            if (!isset($element['margin']) && isset($props['margin']) && $props['margin'] !== null && $props['margin'] !== '') {
                 $style .= "margin: {$props['margin']}px; ";
             }
             if (!isset($element['borderStyle']) && isset($props['borderStyle'])) {
