@@ -910,7 +910,7 @@ abstract class BaseGenerator
 </head>
 <body>
     <div class="canvas-info">
-        Canvas: {$canvasWidth}x{$canvasHeight}px | Éléments: {$elementCount}
+        Canvas: {$canvasWidth}x{$canvasHeight}px | Éléments: {count($elements)}
     </div>
     <div class="canvas-container">
         {$htmlContent}
