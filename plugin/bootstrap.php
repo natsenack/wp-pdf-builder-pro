@@ -1027,6 +1027,13 @@ function pdf_builder_load_bootstrap()
         PDF_Builder_Notification_Manager::get_instance();
     }
 
+    // CHARGER LE GESTIONNAIRE DE PRÉFÉRENCES DE L'ÉDITEUR PDF
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDFEditorPreferences.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDFEditorPreferences.php';
+        // Initialiser l'instance
+        PDFEditorPreferences::get_instance();
+    }
+
     // CHARGER LES STYLES ET SCRIPTS DES NOTIFICATIONS - DESACTIVE TEMPORAIREMENT
     /*
     add_action('admin_enqueue_scripts', function() {
