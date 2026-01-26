@@ -1149,7 +1149,8 @@ class PdfBuilderAdminNew
         $template_type = isset($_GET['template_type']) ? sanitize_text_field($_GET['template_type']) : 'custom';
 
         // Enqueue des scripts et styles React
-        wp_enqueue_script('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react.min.js', [], PDF_BUILDER_PRO_VERSION, true);
+        wp_enqueue_script('react-vendor', PDF_BUILDER_PRO_ASSETS_URL . 'js/react-vendor.min.js', [], PDF_BUILDER_PRO_VERSION, true);
+        wp_enqueue_script('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react.min.js', ['react-vendor'], PDF_BUILDER_PRO_VERSION, true);
         wp_enqueue_script('pdf-builder-react-init', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react-init.min.js', ['pdf-builder-react'], PDF_BUILDER_PRO_VERSION, true);
         wp_enqueue_style('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.min.css', [], PDF_BUILDER_PRO_VERSION);
 
