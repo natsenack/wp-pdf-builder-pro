@@ -131,18 +131,8 @@ class PdfBuilderProGenerator
     <meta charset="UTF-8">
     <title>PDF Document</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: white; margin: 0; padding: 0; }
-        .pdf-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            ' . $container_styles . '
-            margin: 0;
-            padding: 0;
-            overflow: visible;
-        }
-        .canvas-element { position: absolute; }
+        body { margin: 0; padding: 0; background: white; }
+        .pdf-container { position: relative; width: 100%; height: 100%; margin: 0; padding: 0; }
     </style>
 </head>
 <body>
@@ -189,32 +179,19 @@ class PdfBuilderProGenerator
             $coords['height']
         );
 
-        // Appliquer les styles CSS des propriétés
-        $style .= 'box-sizing: border-box; ';
-
-        // Utiliser la fonction centralisée pour extraire tous les styles
+        // Appliquer seulement les styles essentiels pour la couleur du texte et la taille de police
         if (isset($element['properties'])) {
-            $additional_styles = $this->extractElementStyles($element['properties']);
-            if (!empty($additional_styles)) {
-                $style .= $additional_styles . '; ';
+            if (isset($element['properties']['color'])) {
+                $style .= ' color: ' . esc_attr($element['properties']['color']) . ';';
             }
-        }
-
-        // Propriétés directes de l'élément (fallback si pas dans properties)
-        $direct_properties = [
-            'color', 'backgroundColor', 'fontSize', 'fontWeight', 'fontStyle', 'fontFamily',
-            'textAlign', 'textDecoration', 'lineHeight', 'border', 'borderColor', 'borderWidth',
-            'borderStyle', 'borderRadius', 'opacity', 'rotation', 'scale', 'shadow',
-            'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'shadowBlur', 'visible',
-            'brightness', 'contrast', 'saturate', 'blur', 'hueRotate', 'sepia', 'grayscale', 'invert'
-        ];
-
-        foreach ($direct_properties as $prop) {
-            if (isset($element[$prop]) && !isset($element['properties'][$prop])) {
-                $css_prop = $this->convertPropertyToCss($prop, $element[$prop], $element);
-                if ($css_prop) {
-                    $style .= $css_prop . '; ';
-                }
+            if (isset($element['properties']['fontSize'])) {
+                $style .= ' font-size: ' . intval($element['properties']['fontSize']) . 'px;';
+            }
+            if (isset($element['properties']['fontFamily'])) {
+                $style .= ' font-family: ' . esc_attr($element['properties']['fontFamily']) . ';';
+            }
+            if (isset($element['properties']['fontWeight'])) {
+                $style .= ' font-weight: ' . esc_attr($element['properties']['fontWeight']) . ';';
             }
         }
 
@@ -249,7 +226,7 @@ class PdfBuilderProGenerator
                     $original_content = $content;
                     $content = $this->replaceOrderVariables($content, $this->order);
                 }
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; white-space: pre-wrap; word-wrap: break-word;'>" . wp_kses_post($content) . "</div>";
+                return "<div class='canvas-element' style='" . esc_attr($style) . "'>" . wp_kses_post($content) . "</div>";
 
             case 'image':
             case 'company_logo':
@@ -266,33 +243,22 @@ class PdfBuilderProGenerator
 
 
                 if ($src) {
-                    return "<img class='canvas-element' src='" . esc_url($src) . "' style='" . esc_attr($style) . "; object-fit: contain;' />";
+                    return "<img class='canvas-element' src='" . esc_url($src) . "' style='" . esc_attr($style) . "' />";
                 }
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;'>Logo</div>";
 
             case 'rectangle':
-                // LOG DES PROPRIÉTÉS RECTANGLE
-
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; border: 1px solid #ccc;'></div>";
+                return "<div class='canvas-element' style='" . esc_attr($style) . "'></div>";
 
             case 'divider':
             case 'line':
-                // LOG DES PROPRIÉTÉS LINE
-
-
-                $line_color = $element['lineColor'] ?? '#64748b';
-                $line_width = $element['lineWidth'] ?? 2;
-                $style .= "border-bottom: {$line_width}px solid {$line_color}; height: {$line_width}px;";
-
-
-
-                return "<div class='canvas-element' style='" . esc_attr($style) . ";'></div>";
+                return "<div class='canvas-element' style='" . esc_attr($style) . "'></div>";
 
             case 'product_table':
                 $table_html = '';
                 $table_html = $this->generateTableHtmlFromCanvasTemplate($element);
 
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; overflow: auto;'>" . $table_html . "</div>";
+                return "<div class='canvas-element' style='" . esc_attr($style) . "'>" . $table_html . "</div>";
 
             case 'customer_info':
                 // LOG DES PROPRIÉTÉS CUSTOMER INFO
