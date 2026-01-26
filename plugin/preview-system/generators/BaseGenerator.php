@@ -409,6 +409,31 @@ abstract class BaseGenerator
     {
         $style = 'position: absolute; ';
 
+        // Helper function to get CSS property value from element or properties array
+        $getCssProperty = function($propertyName, $element) {
+            // First check in properties array if it exists
+            if (isset($element['properties']) && is_array($element['properties'])) {
+                if (isset($element['properties'][$propertyName]) && $element['properties'][$propertyName] !== null && $element['properties'][$propertyName] !== '') {
+                    return $element['properties'][$propertyName];
+                }
+                // Also check for hyphenated version in properties
+                $hyphenated = str_replace('_', '-', $propertyName);
+                if (isset($element['properties'][$hyphenated]) && $element['properties'][$hyphenated] !== null && $element['properties'][$hyphenated] !== '') {
+                    return $element['properties'][$hyphenated];
+                }
+            }
+            // Then check directly in element
+            if (isset($element[$propertyName]) && $element[$propertyName] !== null && $element[$propertyName] !== '') {
+                return $element[$propertyName];
+            }
+            // Also check for hyphenated version in element
+            $hyphenated = str_replace('_', '-', $propertyName);
+            if (isset($element[$hyphenated]) && $element[$hyphenated] !== null && $element[$hyphenated] !== '') {
+                return $element[$hyphenated];
+            }
+            return null;
+        };
+
         // Helper function to normalize CSS values
         $normalizeCssValue = function($value, $unit = '') {
             if (is_numeric($value) && !empty($unit)) {
@@ -439,199 +464,196 @@ abstract class BaseGenerator
         if ((isset($element['x']) && $element['x'] !== null && $element['x'] !== '') || (isset($element['y']) && $element['y'] !== null && $element['y'] !== '')) {
             error_log("[PDF] Element positioning - original x: " . ($element['x'] ?? 'not set') . ", y: " . ($element['y'] ?? 'not set') . " | adjusted x: {$x}, y: {$y} | is_preview: " . ($this->is_preview ? 'true' : 'false'));
         }
-        if (isset($element['width']) && $element['width'] !== null && $element['width'] !== '') {
-            $style .= "width: " . $normalizeCssValue($element['width'], 'px') . "; ";
+
+        // Apply CSS properties using the helper function
+        if (($value = $getCssProperty('width', $element)) !== null) {
+            $style .= "width: " . $normalizeCssValue($value, 'px') . "; ";
         }
-        if (isset($element['height']) && $element['height'] !== null && $element['height'] !== '') {
-            $style .= "height: " . $normalizeCssValue($element['height'], 'px') . "; ";
+        if (($value = $getCssProperty('height', $element)) !== null) {
+            $style .= "height: " . $normalizeCssValue($value, 'px') . "; ";
         }
-        if (isset($element['color']) && $element['color'] !== null && $element['color'] !== '') {
-            $style .= "color: {$element['color']}; ";
+        if (($value = $getCssProperty('color', $element)) !== null) {
+            $style .= "color: {$value}; ";
         }
-        if (isset($element['textColor']) && $element['textColor'] !== null && $element['textColor'] !== '') {
-            $style .= "color: {$element['textColor']}; ";
+        if (($value = $getCssProperty('textColor', $element)) !== null) {
+            $style .= "color: {$value}; ";
         }
-        // Fallback for hyphenated property names
-        if (!isset($element['color']) && !isset($element['textColor']) && isset($element['text-color']) && $element['text-color'] !== null && $element['text-color'] !== '') {
-            $style .= "color: {$element['text-color']}; ";
+        if (($value = $getCssProperty('fontSize', $element)) !== null) {
+            $style .= "font-size: " . $normalizeCssValue($value, 'px') . "; ";
         }
-        if (isset($element['fontSize']) && $element['fontSize'] !== null && $element['fontSize'] !== '') {
-            $style .= "font-size: " . $normalizeCssValue($element['fontSize'], 'px') . "; ";
+        if (($value = $getCssProperty('fontWeight', $element)) !== null) {
+            $style .= "font-weight: {$value}; ";
         }
-        // Fallback for hyphenated property names
-        if (!isset($element['fontSize']) && isset($element['font-size']) && $element['font-size'] !== null && $element['font-size'] !== '') {
-            $style .= "font-size: " . $normalizeCssValue($element['font-size'], 'px') . "; ";
+        if (($value = $getCssProperty('fontFamily', $element)) !== null) {
+            $style .= "font-family: {$value}; ";
         }
-        if (isset($element['fontWeight']) && $element['fontWeight'] !== null && $element['fontWeight'] !== '') {
-            $style .= "font-weight: {$element['fontWeight']}; ";
+        if (($value = $getCssProperty('textAlign', $element)) !== null) {
+            $style .= "text-align: {$value}; ";
         }
-        // Fallback for hyphenated property names
-        if (!isset($element['fontWeight']) && isset($element['font-weight']) && $element['font-weight'] !== null && $element['font-weight'] !== '') {
-            $style .= "font-weight: {$element['font-weight']}; ";
+        if (($value = $getCssProperty('backgroundColor', $element)) !== null) {
+            $style .= "background-color: {$value}; ";
         }
-        if (isset($element['fontFamily']) && $element['fontFamily'] !== null && $element['fontFamily'] !== '') {
-            $style .= "font-family: {$element['fontFamily']}; ";
+        if (($value = $getCssProperty('borderColor', $element)) !== null) {
+            $style .= "border-color: {$value}; ";
         }
-        // Fallback for hyphenated property names
-        if (!isset($element['fontFamily']) && isset($element['font-family']) && $element['font-family'] !== null && $element['font-family'] !== '') {
-            $style .= "font-family: {$element['font-family']}; ";
+        if (($value = $getCssProperty('borderWidth', $element)) !== null) {
+            $style .= "border-width: " . $normalizeCssValue($value, 'px') . "; ";
         }
-        if (isset($element['textAlign']) && $element['textAlign'] !== null && $element['textAlign'] !== '') {
-            $style .= "text-align: {$element['textAlign']}; ";
+        if (($value = $getCssProperty('borderRadius', $element)) !== null) {
+            $style .= "border-radius: " . $normalizeCssValue($value, 'px') . "; ";
         }
-        if (isset($element['backgroundColor']) && $element['backgroundColor'] !== null && $element['backgroundColor'] !== '') {
-            $style .= "background-color: {$element['backgroundColor']}; ";
+        if (($value = $getCssProperty('borderStyle', $element)) !== null) {
+            $style .= "border-style: {$value}; ";
         }
-        if (isset($element['borderColor']) && $element['borderColor'] !== null && $element['borderColor'] !== '') {
-            $style .= "border-color: {$element['borderColor']}; ";
+        if (($value = $getCssProperty('padding', $element)) !== null) {
+            $style .= "padding: {$value}px; ";
         }
-        if (isset($element['borderWidth']) && $element['borderWidth'] !== null && $element['borderWidth'] !== '') {
-            $style .= "border-width: " . $normalizeCssValue($element['borderWidth'], 'px') . "; ";
+        if (($value = $getCssProperty('margin', $element)) !== null) {
+            $style .= "margin: {$value}px; ";
         }
-        if (isset($element['borderRadius']) && $element['borderRadius'] !== null && $element['borderRadius'] !== '') {
-            $style .= "border-radius: " . $normalizeCssValue($element['borderRadius'], 'px') . "; ";
+        if (($value = $getCssProperty('opacity', $element)) !== null) {
+            $style .= "opacity: {$value}; ";
+        }
+        if (($value = $getCssProperty('zIndex', $element)) !== null) {
+            $style .= "z-index: {$value}; ";
+        }
+        if (($value = $getCssProperty('boxShadow', $element)) !== null) {
+            $style .= "box-shadow: {$value}; ";
+        }
+        if (($value = $getCssProperty('textShadow', $element)) !== null) {
+            $style .= "text-shadow: {$value}; ";
+        }
+        if (($value = $getCssProperty('letterSpacing', $element)) !== null) {
+            $style .= "letter-spacing: {$value}; ";
+        }
+        if (($value = $getCssProperty('lineHeight', $element)) !== null) {
+            $style .= "line-height: {$value}; ";
+        }
+        if (($value = $getCssProperty('textDecoration', $element)) !== null) {
+            $style .= "text-decoration: {$value}; ";
+        }
+        if (($value = $getCssProperty('fontStyle', $element)) !== null) {
+            $style .= "font-style: {$value}; ";
+        }
+        if (($value = $getCssProperty('fontStretch', $element)) !== null) {
+            $style .= "font-stretch: {$value}; ";
+        }
+        if (($value = $getCssProperty('fontVariant', $element)) !== null) {
+            $style .= "font-variant: {$value}; ";
         }
 
         // Build combined transform property
         $transforms = [];
-        if (isset($element['rotation']) && $element['rotation'] !== null && $element['rotation'] !== '') {
-            $transforms[] = "rotate({$element['rotation']}deg)";
+        if (($value = $getCssProperty('rotation', $element)) !== null) {
+            $transforms[] = "rotate({$value}deg)";
         }
-        if (isset($element['scale']) && $element['scale'] !== null && $element['scale'] !== '') {
-            $transforms[] = "scale({$element['scale']})";
+        if (($value = $getCssProperty('scale', $element)) !== null) {
+            $transforms[] = "scale({$value})";
         }
-        if ((isset($element['translateX']) && $element['translateX'] !== null && $element['translateX'] !== '') || (isset($element['translateY']) && $element['translateY'] !== null && $element['translateY'] !== '')) {
-            $translateX = (isset($element['translateX']) && $element['translateX'] !== null && $element['translateX'] !== '') ? $element['translateX'] : 0;
-            $translateY = (isset($element['translateY']) && $element['translateY'] !== null && $element['translateY'] !== '') ? $element['translateY'] : 0;
+        $translateX = $getCssProperty('translateX', $element) ?? 0;
+        $translateY = $getCssProperty('translateY', $element) ?? 0;
+        if ($translateX !== 0 || $translateY !== 0) {
             $transforms[] = "translate({$translateX}px, {$translateY}px)";
         }
-        if (isset($element['skew']) && $element['skew'] !== null && $element['skew'] !== '') {
-            $transforms[] = "skew({$element['skew']}deg)";
+        if (($value = $getCssProperty('skew', $element)) !== null) {
+            $transforms[] = "skew({$value}deg)";
         }
-        if (!empty($transforms)) {
-            $style .= "transform: " . implode(' ', $transforms) . "; ";
+        if (($value = $getCssProperty('wordSpacing', $element)) !== null) {
+            $style .= "word-spacing: {$value}px; ";
         }
-        if (isset($element['lineHeight']) && $element['lineHeight'] !== null && $element['lineHeight'] !== '') {
-            $style .= "line-height: {$element['lineHeight']}; ";
+        if (($value = $getCssProperty('verticalAlign', $element)) !== null) {
+            $style .= "vertical-align: {$value}; ";
         }
-        if (isset($element['textDecoration']) && $element['textDecoration'] !== null && $element['textDecoration'] !== '') {
-            $style .= "text-decoration: {$element['textDecoration']}; ";
+        if (($value = $getCssProperty('display', $element)) !== null) {
+            $style .= "display: {$value}; ";
         }
-        if (isset($element['fontStyle']) && $element['fontStyle'] !== null && $element['fontStyle'] !== '') {
-            $style .= "font-style: {$element['fontStyle']}; ";
+        if (($value = $getCssProperty('overflow', $element)) !== null) {
+            $style .= "overflow: {$value}; ";
         }
-        if (isset($element['fontStretch']) && $element['fontStretch'] !== null && $element['fontStretch'] !== '') {
-            $style .= "font-stretch: {$element['fontStretch']}; ";
+        if (($value = $getCssProperty('whiteSpace', $element)) !== null) {
+            $style .= "white-space: {$value}; ";
         }
-        if (isset($element['fontVariant']) && $element['fontVariant'] !== null && $element['fontVariant'] !== '') {
-            $style .= "font-variant: {$element['fontVariant']}; ";
+        if (($value = $getCssProperty('backgroundImage', $element)) !== null) {
+            $style .= "background-image: {$value}; ";
         }
-        if (isset($element['padding']) && $element['padding'] !== null && $element['padding'] !== '') {
-            $style .= "padding: {$element['padding']}px; ";
+        if (($value = $getCssProperty('backgroundSize', $element)) !== null) {
+            $style .= "background-size: {$value}; ";
         }
-        if (isset($element['margin']) && $element['margin'] !== null && $element['margin'] !== '') {
-            $style .= "margin: {$element['margin']}px; ";
+        if (($value = $getCssProperty('backgroundPosition', $element)) !== null) {
+            $style .= "background-position: {$value}; ";
         }
-        if (isset($element['borderStyle']) && $element['borderStyle'] !== null && $element['borderStyle'] !== '') {
-            $style .= "border-style: {$element['borderStyle']}; ";
+        if (($value = $getCssProperty('backgroundRepeat', $element)) !== null) {
+            $style .= "background-repeat: {$value}; ";
         }
-        if (isset($element['opacity']) && $element['opacity'] !== null && $element['opacity'] !== '') {
-            $style .= "opacity: {$element['opacity']}; ";
+        if (($value = $getCssProperty('borderTop', $element)) !== null) {
+            $style .= "border-top: {$value}; ";
         }
-        if (isset($element['zIndex']) && $element['zIndex'] !== null && $element['zIndex'] !== '') {
-            $style .= "z-index: {$element['zIndex']}; ";
+        if (($value = $getCssProperty('borderRight', $element)) !== null) {
+            $style .= "border-right: {$value}; ";
         }
-        if (isset($element['boxShadow']) && $element['boxShadow'] !== null && $element['boxShadow'] !== '') {
-            $style .= "box-shadow: {$element['boxShadow']}; ";
+        if (($value = $getCssProperty('borderBottom', $element)) !== null) {
+            $style .= "border-bottom: {$value}; ";
         }
-        if (isset($element['textShadow']) && $element['textShadow'] !== null && $element['textShadow'] !== '') {
-            $style .= "text-shadow: {$element['textShadow']}; ";
+        if (($value = $getCssProperty('borderLeft', $element)) !== null) {
+            $style .= "border-left: {$value}; ";
         }
-        if (isset($element['letterSpacing']) && $element['letterSpacing'] !== null && $element['letterSpacing'] !== '') {
-            $style .= "letter-spacing: {$element['letterSpacing']}px; ";
+        if (($value = $getCssProperty('outline', $element)) !== null) {
+            $style .= "outline: {$value}; ";
         }
-        if (isset($element['wordSpacing'])) {
-            $style .= "word-spacing: {$element['wordSpacing']}px; ";
+        if (($value = $getCssProperty('cursor', $element)) !== null) {
+            $style .= "cursor: {$value}; ";
         }
-        if (isset($element['verticalAlign'])) {
-            $style .= "vertical-align: {$element['verticalAlign']}; ";
+        if (($value = $getCssProperty('visibility', $element)) !== null) {
+            $style .= "visibility: {$value}; ";
         }
-        if (isset($element['display'])) {
-            $style .= "display: {$element['display']}; ";
+        if (($value = $getCssProperty('clipPath', $element)) !== null) {
+            $style .= "clip-path: {$value}; ";
         }
-        if (isset($element['overflow'])) {
-            $style .= "overflow: {$element['overflow']}; ";
+        if (($value = $getCssProperty('filter', $element)) !== null) {
+            $style .= "filter: {$value}; ";
         }
-        if (isset($element['whiteSpace'])) {
-            $style .= "white-space: {$element['whiteSpace']}; ";
+        if (($value = $getCssProperty('backdropFilter', $element)) !== null) {
+            $style .= "backdrop-filter: {$value}; ";
         }
-        if (isset($element['backgroundImage'])) {
-            $style .= "background-image: {$element['backgroundImage']}; ";
+        if (($value = $getCssProperty('transformOrigin', $element)) !== null) {
+            $style .= "transform-origin: {$value}; ";
         }
-        if (isset($element['backgroundSize'])) {
-            $style .= "background-size: {$element['backgroundSize']}; ";
+        if (($value = $getCssProperty('perspective', $element)) !== null) {
+            $style .= "perspective: {$value}; ";
         }
-        if (isset($element['backgroundPosition'])) {
-            $style .= "background-position: {$element['backgroundPosition']}; ";
+        if (($value = $getCssProperty('transition', $element)) !== null) {
+            $style .= "transition: {$value}; ";
         }
-        if (isset($element['backgroundRepeat'])) {
-            $style .= "background-repeat: {$element['backgroundRepeat']}; ";
+        if (($value = $getCssProperty('animation', $element)) !== null) {
+            $style .= "animation: {$value}; ";
         }
-        if (isset($element['borderTop'])) {
-            $style .= "border-top: {$element['borderTop']}; ";
+        if (($value = $getCssProperty('minWidth', $element)) !== null) {
+            $style .= "min-width: {$value}px; ";
         }
-        if (isset($element['borderRight'])) {
-            $style .= "border-right: {$element['borderRight']}; ";
+        if (($value = $getCssProperty('maxWidth', $element)) !== null) {
+            $style .= "max-width: {$value}px; ";
         }
-        if (isset($element['borderBottom'])) {
-            $style .= "border-bottom: {$element['borderBottom']}; ";
+        if (($value = $getCssProperty('minHeight', $element)) !== null) {
+            $style .= "min-height: {$value}px; ";
         }
-        if (isset($element['borderLeft'])) {
-            $style .= "border-left: {$element['borderLeft']}; ";
+        if (($value = $getCssProperty('flexDirection', $element)) !== null) {
+            $style .= "flex-direction: {$value}; ";
         }
-        if (isset($element['outline'])) {
-            $style .= "outline: {$element['outline']}; ";
+        if (($value = $getCssProperty('flexWrap', $element)) !== null) {
+            $style .= "flex-wrap: {$value}; ";
         }
-        if (isset($element['cursor'])) {
-            $style .= "cursor: {$element['cursor']}; ";
+        if (($value = $getCssProperty('justifyContent', $element)) !== null) {
+            $style .= "justify-content: {$value}; ";
         }
-        if (isset($element['visibility'])) {
-            $style .= "visibility: {$element['visibility']}; ";
+        if (($value = $getCssProperty('alignItems', $element)) !== null) {
+            $style .= "align-items: {$value}; ";
         }
-        if (isset($element['clipPath'])) {
-            $style .= "clip-path: {$element['clipPath']}; ";
+        if (($value = $getCssProperty('alignContent', $element)) !== null) {
+            $style .= "align-content: {$value}; ";
         }
-        if (isset($element['filter'])) {
-            $style .= "filter: {$element['filter']}; ";
-        }
-        if (isset($element['backdropFilter'])) {
-            $style .= "backdrop-filter: {$element['backdropFilter']}; ";
-        }
-        if (isset($element['transformOrigin'])) {
-            $style .= "transform-origin: {$element['transformOrigin']}; ";
-        }
-        if (isset($element['perspective'])) {
-            $style .= "perspective: {$element['perspective']}; ";
-        }
-        if (isset($element['transition'])) {
-            $style .= "transition: {$element['transition']}; ";
-        }
-        if (isset($element['animation'])) {
-            $style .= "animation: {$element['animation']}; ";
-        }
-        if (isset($element['minWidth'])) {
-            $style .= "min-width: {$element['minWidth']}px; ";
-        }
-        if (isset($element['maxWidth'])) {
-            $style .= "max-width: {$element['maxWidth']}px; ";
-        }
-        if (isset($element['minHeight'])) {
-            $style .= "min-height: {$element['minHeight']}px; ";
-        }
-        if (isset($element['maxHeight'])) {
-            $style .= "max-height: {$element['maxHeight']}px; ";
-        }
-        if (isset($element['flexDirection'])) {
+
+        return $style;
+    }
             $style .= "flex-direction: {$element['flexDirection']}; ";
         }
         if (isset($element['justifyContent'])) {
