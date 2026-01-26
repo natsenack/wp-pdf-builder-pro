@@ -84,10 +84,10 @@ class PreviewAjaxHandler {
     }
 
     public static function generateHtmlPreviewAjax() {
-        // Vérification temporairement désactivée pour debug
-        // if (!is_user_logged_in()) {
-        //     wp_send_json_error('Utilisateur non connecté', 403);
-        // }
+        // Vérification de base - permission de lecture
+        if (!current_user_can('read')) {
+            wp_send_json_error('Permissions insuffisantes', 403);
+        }
 
         $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
         if (!wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
