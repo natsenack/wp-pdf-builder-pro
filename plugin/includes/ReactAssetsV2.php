@@ -12,6 +12,15 @@ class ReactAssets {
     
     public static function register() {
         add_action('admin_enqueue_scripts', [self::class, 'enqueue_scripts'], 1);
+        // Désactiver wp-preferences sur la page de l'éditeur AVANT tout chargement
+        add_action('admin_enqueue_scripts', function($page) {
+            if ($page === 'admin.php?page=pdf-builder-react-editor') {
+                wp_deregister_script('wp-preferences');
+                wp_deregister_script('wp-preferences-persistence');
+                wp_dequeue_script('wp-preferences');
+                wp_dequeue_script('wp-preferences-persistence');
+            }
+        }, 0); // Priorité 0 pour s'exécuter en premier
         add_action('admin_print_scripts', function() {
             global $wp_scripts;
             if (isset($wp_scripts->registered['general_script'])) {
@@ -27,14 +36,6 @@ class ReactAssets {
         // Assurer que wp-util et wp-api sont chargés sur toutes les pages admin
         wp_enqueue_script('wp-util');
         wp_enqueue_script('wp-api');
-
-        // Désactiver wp-preferences AVANT tout chargement sur cette page
-        if ($page === 'admin.php?page=pdf-builder-react-editor') {
-            wp_deregister_script('wp-preferences');
-            wp_deregister_script('wp-preferences-persistence');
-            wp_dequeue_script('wp-preferences');
-            wp_dequeue_script('wp-preferences-persistence');
-        }
 
         // S'assurer que l'objet wp global est disponible
         add_action('admin_enqueue_scripts', function() {
