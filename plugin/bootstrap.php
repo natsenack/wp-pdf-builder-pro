@@ -45,7 +45,7 @@ function pdf_builder_inject_nonce() {
     }
     
     // Créer le nonce
-    $nonce = wp_create_nonce('pdf_builder_nonce');
+    $nonce = wp_create_nonce('pdf_builder_ajax');
     
     // Injecter directement
     $ajax_url = admin_url('admin-ajax.php');
