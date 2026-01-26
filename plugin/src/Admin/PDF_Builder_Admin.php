@@ -1063,11 +1063,7 @@ class PdfBuilderAdminNew
         // Debug: Log du hook actuel
         error_log("PDF Builder Debug - Hook: $hook, Page: " . (isset($_GET['page']) ? $_GET['page'] : 'none'));
 
-        // Vérifier si on est sur la page de l'éditeur React
-        if ($hook !== 'pdf-builder_page_pdf-builder-react-editor') {
-            return;
-        }
-
+        // Pour le debug, charger toujours et voir si ça fonctionne
         $version = time(); // Force reload pour éviter le cache
 
         // Enqueue des scripts React
