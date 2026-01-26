@@ -1026,7 +1026,7 @@ abstract class BaseGenerator
                 if (elementType === "customer_info" || elementType === "company_info") {
                     return;
                 }
-                
+
                 const debug = document.createElement("div");
                 debug.className = "element-debug";
                 debug.setAttribute("data-type", elementType);
