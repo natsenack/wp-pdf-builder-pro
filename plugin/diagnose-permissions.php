@@ -98,6 +98,16 @@ echo "<p><strong>URL de l'éditeur :</strong> <a href='$page_url' target='_blank
 // Vérifier si les pages admin sont enregistrées
 echo "<h2>Test d'enregistrement des pages admin</h2>";
 
+// Vérifier l'état du flag menu_added avant la simulation
+if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
+    $reflection = new ReflectionClass('PDF_Builder\Admin\PdfBuilderAdminNew');
+    $menu_added_property = $reflection->getProperty('menu_added');
+    $menu_added_property->setAccessible(true);
+
+    $menu_added_before = $menu_added_property->getValue();
+    echo "<p>Flag menu_added avant do_action('admin_menu'): " . ($menu_added_before ? 'true' : 'false') . "</p>";
+}
+
 // Simuler l'appel au hook admin_menu pour voir si les pages s'enregistrent
 global $menu, $submenu;
 
@@ -107,6 +117,12 @@ $submenu_backup = $submenu;
 
 // Simuler l'exécution du hook admin_menu
 do_action('admin_menu');
+
+// Vérifier l'état du flag menu_added après la simulation
+if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
+    $menu_added_after = $menu_added_property->getValue();
+    echo "<p>Flag menu_added après do_action('admin_menu'): " . ($menu_added_after ? 'true' : 'false') . "</p>";
+}
 
 // Vérifier si notre menu existe maintenant
 $menu_found = false;
