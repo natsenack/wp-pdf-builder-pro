@@ -88,8 +88,27 @@
             if (format === 'pdf') {
                 // For PDF, expect binary content and create a blob URL
                 const pdfBlob = await response.blob();
+                console.log('[PDF PREVIEW API] PDF blob created, size:', pdfBlob.size, 'type:', pdfBlob.type);
+
+                // Check if blob has content
+                if (pdfBlob.size === 0) {
+                    console.error('[PDF PREVIEW API] PDF blob is empty!');
+                    throw new Error('Le PDF généré est vide');
+                }
+
+                // Check if it's actually a PDF
+                if (!pdfBlob.type.includes('pdf') && !pdfBlob.type.includes('application/octet-stream')) {
+                    console.warn('[PDF PREVIEW API] Blob type is not PDF:', pdfBlob.type);
+                }
+
                 const pdfUrl = URL.createObjectURL(pdfBlob);
-                console.log('[PDF PREVIEW API] PDF blob created, URL:', pdfUrl);
+                console.log('[PDF PREVIEW API] PDF blob URL created:', pdfUrl);
+
+                // Verify URL is valid
+                if (!pdfUrl || pdfUrl === 'blob:') {
+                    console.error('[PDF PREVIEW API] Invalid blob URL created');
+                    throw new Error('URL blob invalide créée');
+                }
 
                 return {
                     success: true,

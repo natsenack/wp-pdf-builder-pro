@@ -26,6 +26,12 @@ class PDFGenerator extends BaseGenerator
      */
     protected function initialize(): void
     {
+        // Charger l'autoload pour s'assurer que DomPDF est disponible
+        $vendorPath = dirname(__DIR__) . '/vendor/autoload.php';
+        if (file_exists($vendorPath)) {
+            require_once $vendorPath;
+        }
+
         $this->dompdf_available = $this->checkDomPDFAvailability();
         $this->performance_metrics = [
             'start_time' => microtime(true),
@@ -223,7 +229,19 @@ class PDFGenerator extends BaseGenerator
             return $this->generateToFile($output_type, $output_file);
         }
 
-        // Tentative génération PDF avec alternatives
+// Tentative génération PDF avec DomPDF si disponible
+        if ($this->dompdf_available) {
+            try {
+                $result = $this->generateWithDomPDF($output_type);
+                $this->logPerformanceMetrics();
+                return $result;
+            } catch (\Exception $e) {
+                $this->logWarning("DomPDF generation failed: " . $e->getMessage());
+                $this->performance_metrics['fallback_used'] = true;
+            }
+        }
+
+        // Tentative génération PDF avec alternatives si DomPDF n'est pas disponible
         if (!$this->dompdf_available) {
 // Essayer HTML2PDF d'abord (comme dans l'autre plugin)
             if (class_exists('Spipu\Html2Pdf\Html2Pdf')) {
@@ -801,7 +819,7 @@ class PDFGenerator extends BaseGenerator
      */
     public function generatePreview($saveToDatabase = false) {
         // Générer le PDF d'abord
-        $this->generate('pdf');
+        $pdfContent = $this->generate('pdf');
         
         // Vérifier si on a du debug activé
         if (get_option('pdf_builder_enable_page_debug', false) == true) {
@@ -811,8 +829,35 @@ class PDFGenerator extends BaseGenerator
             die();
         }
         
-        // Streamer le PDF directement dans le navigateur
-        $this->dompdf->stream($this->getFileName(), array("Attachment" => false));
+        // Vérifier que le contenu PDF est valide
+        if (empty($pdfContent) || !is_string($pdfContent)) {
+            error_log('[PDF PREVIEW] PDF content is empty or invalid');
+            echo 'Erreur: Impossible de générer le PDF. Le contenu est vide.';
+            die();
+        }
+        
+        // Vérifier que c'est bien du contenu PDF
+        if (!preg_match('/^%PDF-/', $pdfContent)) {
+            error_log('[PDF PREVIEW] Generated content does not appear to be a valid PDF');
+            echo 'Erreur: Le contenu généré n\'est pas un PDF valide.';
+            die();
+        }
+        
+        // Définir les headers pour le PDF
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="' . $this->getFileName() . '"');
+        header('Content-Length: ' . strlen($pdfContent));
+        header('Cache-Control: private, max-age=0, must-revalidate');
+        header('Pragma: public');
+        
+        // Désactiver la compression de sortie si activée
+        if (function_exists('apache_setenv')) {
+            apache_setenv('no-gzip', '1');
+        }
+        ini_set('zlib.output_compression', '0');
+        
+        // Streamer le contenu PDF directement
+        echo $pdfContent;
         exit; // Terminer l'exécution après le stream
     }
 
