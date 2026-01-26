@@ -77,16 +77,20 @@ abstract class BaseGenerator
      */
     public function validateTemplate(): bool
     {
-        if (!isset($this->template_data['template'])) {
-            $this->logError('Template data missing template key');
+        // Vérifier si les éléments sont directement dans template_data (nouvelle structure)
+        // ou dans template_data['template'] (ancienne structure)
+        $elements = null;
+        if (isset($this->template_data['elements']) && is_array($this->template_data['elements'])) {
+            $elements = $this->template_data['elements'];
+        } elseif (isset($this->template_data['template']['elements']) && is_array($this->template_data['template']['elements'])) {
+            $elements = $this->template_data['template']['elements'];
+        } else {
+            $this->logError('Template elements missing or not an array');
             return false;
         }
 
-        if (
-            !isset($this->template_data['template']['elements']) ||
-            !is_array($this->template_data['template']['elements'])
-        ) {
-            $this->logError('Template elements missing or not an array');
+        if (empty($elements)) {
+            $this->logError('Template elements array is empty');
             return false;
         }
 
@@ -141,9 +145,17 @@ abstract class BaseGenerator
             .text-element { white-space: pre-wrap; }
             .image-element { max-width: 100%; height: auto; }
         ';
-// Styles personnalisés du template si présents
-        if (isset($this->template_data['template']['styles'])) {
-            $css .= $this->template_data['template']['styles'];
+        // Styles personnalisés du template si présents (nouvelle ou ancienne structure)
+        $styles = '';
+        if (isset($this->template_data['styles'])) {
+            $styles = $this->template_data['styles'];
+        } elseif (isset($this->template_data['template']['styles'])) {
+            $styles = $this->template_data['template']['styles'];
+        }
+        
+        if (!empty($styles)) {
+            $css .= $styles;
+        }
         }
 
         return $css;
@@ -163,14 +175,24 @@ abstract class BaseGenerator
             $logger = PDF_Builder_Logger::get_instance();
             $logger->debug_log('generateContent - template_data structure: ' . print_r($this->template_data, true));
             $logger->debug_log('generateContent - isset template: ' . isset($this->template_data['template']));
-            $logger->debug_log('generateContent - isset elements: ' . isset($this->template_data['template']['elements']));
+            $logger->debug_log('generateContent - isset elements directly: ' . isset($this->template_data['elements']));
+            if (isset($this->template_data['elements'])) {
+                $logger->debug_log('generateContent - elements count (direct): ' . count($this->template_data['elements']));
+            }
             if (isset($this->template_data['template']['elements'])) {
-                $logger->debug_log('generateContent - elements count: ' . count($this->template_data['template']['elements']));
-                $logger->debug_log('generateContent - elements: ' . print_r($this->template_data['template']['elements'], true));
+                $logger->debug_log('generateContent - elements count (nested): ' . count($this->template_data['template']['elements']));
             }
         }
         
-        if (!isset($this->template_data['template']['elements'])) {
+        // Déterminer où sont les éléments (nouvelle ou ancienne structure)
+        $elements = null;
+        if (isset($this->template_data['elements']) && is_array($this->template_data['elements'])) {
+            $elements = $this->template_data['elements'];
+        } elseif (isset($this->template_data['template']['elements']) && is_array($this->template_data['template']['elements'])) {
+            $elements = $this->template_data['template']['elements'];
+        }
+        
+        if (!$elements) {
             $logger = PDF_Builder_Logger::get_instance();
             $logger->debug_log('generateContent - NO ELEMENTS FOUND, returning empty content');
             $logger->debug_log('generateContent - Full template_data: ' . print_r($this->template_data, true));
@@ -178,9 +200,9 @@ abstract class BaseGenerator
         }
 
         $logger = PDF_Builder_Logger::get_instance();
-        $logger->debug_log('generateContent - FOUND ELEMENTS, processing ' . count($this->template_data['template']['elements']) . ' elements');
+        $logger->debug_log('generateContent - FOUND ELEMENTS, processing ' . count($elements) . ' elements');
 
-        foreach ($this->template_data['template']['elements'] as $element) {
+        foreach ($elements as $element) {
             // Convert stdClass to array if necessary
             $elementArray = is_array($element) ? $element : (array) $element;
             $logger->debug_log('generateContent - Processing element: ' . print_r($elementArray, true));
