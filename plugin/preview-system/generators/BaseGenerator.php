@@ -3,7 +3,7 @@
 namespace PDF_Builder\Generators;
 
 use PDF_Builder\Interfaces\DataProviderInterface;
-use PDF_Builder\Managers\PDF_Builder_Logger;
+use PDF_Builder_Logger;
 
 /**
  * Classe abstraite BaseGenerator
