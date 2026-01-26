@@ -1034,6 +1034,36 @@ function pdf_builder_load_bootstrap()
         PDFEditorPreferences::get_instance();
     }
 
+    // Charger les fonctions globales de préférences si elles ne sont pas déjà définies
+    if (!function_exists('pdf_builder_get_user_preference')) {
+        /**
+         * Obtenir une préférence utilisateur
+         */
+        function pdf_builder_get_user_preference($key, $default = null) {
+            $preferences = PDFEditorPreferences::get_instance();
+            $all_prefs = $preferences->get_preferences();
+            return isset($all_prefs[$key]) ? $all_prefs[$key] : $default;
+        }
+
+        /**
+         * Sauvegarder une préférence utilisateur
+         */
+        function pdf_builder_set_user_preference($key, $value) {
+            $preferences = PDFEditorPreferences::get_instance();
+            $current = $preferences->get_preferences();
+            $current[$key] = $value;
+            return $preferences->save_preferences($current);
+        }
+
+        /**
+         * Obtenir toutes les préférences utilisateur
+         */
+        function pdf_builder_get_all_user_preferences() {
+            $preferences = PDFEditorPreferences::get_instance();
+            return $preferences->get_preferences();
+        }
+    }
+
     // CHARGER LES STYLES ET SCRIPTS DES NOTIFICATIONS - DESACTIVE TEMPORAIREMENT
     /*
     add_action('admin_enqueue_scripts', function() {

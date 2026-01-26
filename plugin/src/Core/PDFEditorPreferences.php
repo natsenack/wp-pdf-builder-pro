@@ -18,6 +18,14 @@ class PDFEditorPreferences {
      * Constructeur privé pour singleton
      */
     private function __construct() {
+        // Différer l'initialisation de l'user_id jusqu'à ce que WordPress soit prêt
+        add_action('init', array($this, 'init_user_and_hooks'));
+    }
+
+    /**
+     * Initialiser l'utilisateur et les hooks une fois WordPress chargé
+     */
+    public function init_user_and_hooks() {
         $this->user_id = get_current_user_id();
         $this->init_hooks();
     }
@@ -38,6 +46,7 @@ class PDFEditorPreferences {
     private function init_hooks() {
         add_action('wp_ajax_pdf_editor_save_preferences', array($this, 'ajax_save_preferences'));
         add_action('wp_ajax_pdf_editor_get_preferences', array($this, 'ajax_get_preferences'));
+        // Charger sur TOUTES les pages admin pour remplacer wp-preferences partout
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'), 999);
     }
 
@@ -45,6 +54,11 @@ class PDFEditorPreferences {
      * Enregistrer les préférences utilisateur
      */
     public function save_preferences($preferences) {
+        // S'assurer que user_id est défini
+        if (!$this->user_id) {
+            $this->user_id = get_current_user_id();
+        }
+
         if (!$this->user_id) {
             return false;
         }
@@ -57,6 +71,11 @@ class PDFEditorPreferences {
      * Récupérer les préférences utilisateur
      */
     public function get_preferences() {
+        // S'assurer que user_id est défini
+        if (!$this->user_id) {
+            $this->user_id = get_current_user_id();
+        }
+
         if (!$this->user_id) {
             return $this->get_default_preferences();
         }
@@ -223,10 +242,8 @@ class PDFEditorPreferences {
      * Enregistrer les scripts JavaScript
      */
     public function enqueue_scripts($hook) {
-        // Charger seulement sur la page de l'éditeur PDF
-        if ($hook !== 'pdf-builder_page_pdf-builder-react-editor' && (!isset($_GET['page']) || $_GET['page'] !== 'pdf-builder-react-editor')) {
-            return;
-        }
+        // Charger sur TOUTES les pages admin pour remplacer wp-preferences
+        // Plus de restriction à la page de l'éditeur seulement
 
         // Ajouter le script des préférences
         wp_add_inline_script('jquery', $this->get_javascript_code(), 'after');

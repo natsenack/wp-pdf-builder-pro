@@ -12,21 +12,18 @@ class ReactAssets {
     
     public static function register() {
         add_action('admin_enqueue_scripts', [self::class, 'enqueue_scripts'], 1);
-        // Désactiver wp-preferences sur la page de l'éditeur - REMPLACÉ PAR SYSTÈME PROPRE
+        // Désactiver wp-preferences SUR TOUTES LES PAGES ADMIN pour éviter les erreurs 404/JSON
         add_action('admin_enqueue_scripts', function($page) {
-            if ($page === 'admin.php?page=pdf-builder-react-editor') {
-                wp_deregister_script('wp-preferences');
-                wp_deregister_script('wp-preferences-persistence');
-                wp_dequeue_script('wp-preferences');
-                wp_dequeue_script('wp-preferences-persistence');
-            }
+            // Désactiver wp-preferences partout dans l'admin
+            wp_deregister_script('wp-preferences');
+            wp_deregister_script('wp-preferences-persistence');
+            wp_dequeue_script('wp-preferences');
+            wp_dequeue_script('wp-preferences-persistence');
         }, 0);
-        // Filtre pour supprimer wp-preferences des scripts par défaut
+        // Filtre pour supprimer wp-preferences des scripts par défaut partout
         add_filter('wp_default_scripts', function($scripts) {
-            if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor') {
-                unset($scripts->registered['wp-preferences']);
-                unset($scripts->registered['wp-preferences-persistence']);
-            }
+            unset($scripts->registered['wp-preferences']);
+            unset($scripts->registered['wp-preferences-persistence']);
             return $scripts;
         });
         add_action('admin_print_scripts', function() {

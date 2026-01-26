@@ -1289,7 +1289,7 @@ function selectPredefinedTemplate(templateSlug) {
     </div>
 </div>
 
-
+<script>
 // Fonction pour fermer la modale des paramètres
 function closeTemplateSettingsModal() {
     document.getElementById('template-settings-modal').style.display = 'none';
@@ -1625,3 +1625,4 @@ function saveTemplateSettings() {
     });
 }
 
+</script>
