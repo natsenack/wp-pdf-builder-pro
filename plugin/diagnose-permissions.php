@@ -191,7 +191,40 @@ echo "<li><strong>Plugin actif :</strong> " . (is_plugin_active('wp-pdf-builder-
 echo "</ul>";
 
 // Test de chargement du plugin
-echo "<h2>Test de chargement du plugin</h2>";
+echo "<h2>Test de l'erreur 500</h2>";
+
+// Test simple pour vérifier si la page reactEditorPage peut être appelée
+echo "<h3>Test d'appel direct à reactEditorPage</h3>";
+
+if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
+    try {
+        $admin = \PDF_Builder\Admin\PdfBuilderAdminNew::getInstance();
+
+        if (method_exists($admin, 'reactEditorPage')) {
+            echo "<p>✅ Méthode reactEditorPage existe.</p>";
+
+            // Tester l'appel de la méthode (sans output pour éviter les conflits HTML)
+            ob_start();
+            $admin->reactEditorPage();
+            $output = ob_get_clean();
+
+            if (!empty($output)) {
+                echo "<p>✅ Méthode reactEditorPage s'exécute sans erreur fatale.</p>";
+                echo "<p>Longueur de la sortie : " . strlen($output) . " caractères.</p>";
+            } else {
+                echo "<p>⚠️ Méthode reactEditorPage retourne une sortie vide.</p>";
+            }
+        } else {
+            echo "<p>❌ Méthode reactEditorPage n'existe pas.</p>";
+        }
+    } catch (Exception $e) {
+        echo "<p>❌ Exception lors du test : " . $e->getMessage() . "</p>";
+    } catch (Error $e) {
+        echo "<p>❌ Erreur fatale lors du test : " . $e->getMessage() . "</p>";
+    }
+} else {
+    echo "<p>❌ Classe PdfBuilderAdminNew non disponible.</p>";
+}
 
 // Forcer le chargement de la classe si elle n'est pas déjà chargée
 if (!class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
