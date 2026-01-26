@@ -8,6 +8,8 @@ interface ToolbarProps {
 }
 
 export function Toolbar({ className }: ToolbarProps) {
+  console.log('🔧 [TOOLBAR] Composant Toolbar rendu');
+
   const { state, dispatch, setMode, undo, redo, reset, toggleGrid, toggleGuides, setCanvas, zoomIn, zoomOut, resetZoom } = useBuilder();
   const canvasSettings = useCanvasSettings();
 
@@ -430,35 +432,40 @@ export function Toolbar({ className }: ToolbarProps) {
             </button>
 
             {/* Aperçu HTML */}
-            <button
-              onClick={() => {
-                console.log('🚀 [HTML PREVIEW BUTTON] Bouton HTML cliqué !');
-                handleHTMLPreview();
-              }}
-              style={{
-                padding: '8px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                backgroundColor: '#ffffff',
-                color: '#374151',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontWeight: '500',
-                transition: 'all 0.2s ease',
-                minWidth: '90px'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#f8fafc';
-                e.currentTarget.style.borderColor = '#9ca3af';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#ffffff';
-                e.currentTarget.style.borderColor = '#d1d5db';
-              }}
-              title="Générer un aperçu HTML du template"
-            >
-              🌐 HTML
-            </button>
+            {(() => {
+              console.log('🌐 [TOOLBAR] Rendu du bouton HTML preview');
+              return (
+                <button
+                  onClick={() => {
+                    console.log('🚀 [HTML PREVIEW BUTTON] Bouton HTML cliqué !');
+                    handleHTMLPreview();
+                  }}
+                  style={{
+                    padding: '8px 12px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    backgroundColor: '#ffffff',
+                    color: '#374151',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease',
+                    minWidth: '90px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#f8fafc';
+                    e.currentTarget.style.borderColor = '#9ca3af';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#ffffff';
+                    e.currentTarget.style.borderColor = '#d1d5db';
+                  }}
+                  title="Générer un aperçu HTML du template"
+                >
+                  🌐 HTML
+                </button>
+              );
+            })()}
 
             {/* Zoom - Toujours affiché */}
             <div style={{
