@@ -918,7 +918,7 @@ abstract class BaseGenerator
         // Ajouter des overlays de débogage
         document.addEventListener("DOMContentLoaded", function() {
             const elements = document.querySelectorAll("[data-element-type]");
-            elements.forEach(el => {
+            elements.forEach(function(el) {
                 const debug = document.createElement("div");
                 debug.className = "element-debug";
                 debug.setAttribute("data-type", el.getAttribute("data-element-type"));
@@ -932,6 +932,9 @@ abstract class BaseGenerator
     </script>
 </body>
 </html>';
+
+        $this->logInfo('HTML preview generation completed, length: ' . strlen($html));
+        return $html;
 
         $this->logInfo('HTML preview generation completed, length: ' . strlen($html));
         return $html;
