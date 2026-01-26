@@ -894,8 +894,7 @@ class PdfBuilderAdminNew
         // Désactiver les préférences WordPress problématiques sur notre page
         add_action('admin_enqueue_scripts', [$this, 'disable_problematic_preferences'], 1);
 
-        // Enqueue des scripts React pour l'éditeur
-        add_action('admin_enqueue_scripts', [$this, 'enqueue_react_editor_scripts'], 10);
+        // Les scripts React sont gérés par AdminScriptLoader
 
         // Inclure le gestionnaire de modèles prédéfinis
         include_once plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/predefined-templates-manager.php';
@@ -1053,41 +1052,6 @@ class PdfBuilderAdminNew
                 };
             }
         </script>";
-    }
-
-    /**
-     * Enqueue les scripts et styles React pour l'éditeur PDF
-     */
-    public function enqueue_react_editor_scripts($hook)
-    {
-        // Debug: Log du hook actuel
-        error_log("PDF Builder Debug - Hook: $hook, Page: " . (isset($_GET['page']) ? $_GET['page'] : 'none'));
-
-        // Pour le debug, charger toujours et voir si ça fonctionne
-        $version = time(); // Force reload pour éviter le cache
-
-        // Enqueue des scripts React
-        wp_enqueue_script('react-vendor', PDF_BUILDER_PRO_ASSETS_URL . 'js/react-vendor.min.js', [], $version, true);
-        wp_enqueue_script('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react.min.js', ['react-vendor'], $version, true);
-        wp_enqueue_script('pdf-builder-react-init', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react-init.min.js', ['pdf-builder-react'], $version, true);
-
-        // Enqueue du style React
-        wp_enqueue_style('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.min.css', [], $version);
-
-        // Localisation des scripts
-        wp_localize_script('pdf-builder-react-init', 'pdfBuilderReact', [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_ajax'),
-            'templateId' => isset($_GET['template_id']) ? intval($_GET['template_id']) : 1,
-            'templateType' => isset($_GET['template_type']) ? sanitize_text_field($_GET['template_type']) : 'custom',
-            'assetsUrl' => PDF_BUILDER_PRO_ASSETS_URL,
-            'strings' => [
-                'loading' => __('Chargement de l\'éditeur...', 'pdf-builder-pro'),
-                'error' => __('Une erreur s\'est produite', 'pdf-builder-pro'),
-                'save' => __('Enregistrer', 'pdf-builder-pro'),
-                'cancel' => __('Annuler', 'pdf-builder-pro'),
-            ]
-        ]);
     }
 
     /**
