@@ -73,7 +73,15 @@ class PDFEditorPreferences {
         $result = update_user_meta($this->user_id, $this->preferences_key, $sanitized);
         error_log('[PDF Editor Preferences] update_user_meta result: ' . ($result ? 'true (' . $result . ')' : 'false'));
 
-        return $result;
+        // Vérifier si la sauvegarde a réussi en comparant la valeur sauvegardée
+        $saved_value = get_user_meta($this->user_id, $this->preferences_key, true);
+        if ($saved_value == $sanitized) {
+            error_log('[PDF Editor Preferences] Save verified successful');
+            return true;
+        } else {
+            error_log('[PDF Editor Preferences] Save verification failed');
+            return false;
+        }
     }
 
     /**
@@ -278,6 +286,7 @@ class PDFEditorPreferences {
 
         ob_start();
         ?>
+<script>
         (function($) {
             'use strict';
 
@@ -338,6 +347,8 @@ class PDFEditorPreferences {
                 // Sauvegarder les préférences
                 savePreferences: function(callback) {
                     var self = this;
+
+                    console.log('[PDF Editor Preferences] savePreferences called with:', this.preferences);
 
                     $.ajax({
                         url: this.ajaxUrl,
