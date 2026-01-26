@@ -694,16 +694,21 @@ abstract class BaseGenerator
     protected function buildElementStyle(array $element): string
     {
         $style = 'position: absolute; ';
-        if (isset($element['x'])) {
-            $style .= "left: {$element['x']}px; ";
-        }
-        if (isset($element['y'])) {
-            $style .= "top: {$element['y']}px; ";
-        }
+        
+        // Adjust positioning to compensate for any remaining offset
+        $x = $element['x'] ?? 0;
+        $y = $element['y'] ?? 0;
+        
+        // Subtract 20px offset if values are >= 20px
+        if ($x >= 20) $x -= 20;
+        if ($y >= 20) $y -= 20;
+        
+        $style .= "left: {$x}px; ";
+        $style .= "top: {$y}px; ";
         
         // Debug log for positioning
         if (isset($element['x']) || isset($element['y'])) {
-            error_log("[PDF] Element positioning - x: " . ($element['x'] ?? 'not set') . ", y: " . ($element['y'] ?? 'not set'));
+            error_log("[PDF] Element positioning - original x: " . ($element['x'] ?? 'not set') . ", y: " . ($element['y'] ?? 'not set') . " | adjusted x: {$x}, y: {$y}");
         }
         if (isset($element['width'])) {
             $style .= "width: {$element['width']}px; ";
