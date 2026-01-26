@@ -277,38 +277,8 @@ class PreviewAjaxHandler {
         try {
             error_log('[HTML PREVIEW] ===== STARTING generateHtmlPreview =====');
             
-            // Créer un DataProvider basique pour les options de page
-            $dataProvider = new class($pageOptions) implements \PDF_Builder\Interfaces\DataProviderInterface {
-                private $pageOptions;
-                
-                public function __construct($pageOptions) {
-                    $this->pageOptions = $pageOptions;
-                }
-                
-                public function getVariableValue(string $variable): string {
-                    return 'Test Value';
-                }
-                
-                public function hasVariable(string $variable): bool {
-                    return true;
-                }
-                
-                public function getAllVariables(): array {
-                    return ['test'];
-                }
-                
-                public function isSampleData(): bool {
-                    return true;
-                }
-                
-                public function getContext(): string {
-                    return 'preview';
-                }
-                
-                public function validateAndSanitizeData(array $data): array {
-                    return $data;
-                }
-            };
+            // Créer un SampleDataProvider avec des données d'exemple réalistes
+            $dataProvider = new \PDF_Builder\Data\SampleDataProvider('preview');
             
             // Fonction pour convertir récursivement les objets en tableaux
             $objectToArray = function($obj) use (&$objectToArray) {

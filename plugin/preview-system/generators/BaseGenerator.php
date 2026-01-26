@@ -363,28 +363,31 @@ abstract class BaseGenerator
      */
     protected function renderCustomerInfoElement(array $element): string
     {
-        error_log('[PDF] Customer info - keys: ' . implode(', ', array_keys($element)) . ', name: ' . ($element['customerName'] ?? $element['name'] ?? 'empty'));
+        error_log('[PDF] Customer info - keys: ' . implode(', ', array_keys($element)));
         
         $style = $this->buildElementStyle($element);
         
-        // Use real element data with flexible property names
-        $customerName = $element['customerName'] ?? $element['name'] ?? $element['customer_name'] ?? $element['fullName'] ?? 'Client';
-        $customerAddress = $element['customerAddress'] ?? $element['address'] ?? $element['customer_address'] ?? '';
-        $customerEmail = $element['customerEmail'] ?? $element['email'] ?? $element['customer_email'] ?? '';
-        $customerPhone = $element['customerPhone'] ?? $element['phone'] ?? $element['customer_phone'] ?? '';
+        // Récupérer les données depuis le data provider pour l'aperçu
+        $customerName = $this->data_provider->getVariableValue('customer_full_name');
+        $customerAddress = $this->data_provider->getVariableValue('billing_address_1') . ', ' . 
+                          $this->data_provider->getVariableValue('billing_postcode') . ' ' . 
+                          $this->data_provider->getVariableValue('billing_city') . ', ' . 
+                          $this->data_provider->getVariableValue('billing_country');
+        $customerEmail = $this->data_provider->getVariableValue('billing_email');
+        $customerPhone = $this->data_provider->getVariableValue('billing_phone');
         
-        // Also check for nested properties
-        if (empty($customerName) && isset($element['properties']['customerName'])) {
-            $customerName = $element['properties']['customerName'];
+        // Fallback vers les propriétés de l'élément si data provider ne fournit rien
+        if (empty($customerName) || $customerName === '{{customer_full_name}}') {
+            $customerName = $element['customerName'] ?? $element['name'] ?? $element['customer_name'] ?? $element['fullName'] ?? 'Client';
         }
-        if (empty($customerAddress) && isset($element['properties']['customerAddress'])) {
-            $customerAddress = $element['properties']['customerAddress'];
+        if (empty($customerAddress) || strpos($customerAddress, '{{') !== false) {
+            $customerAddress = $element['customerAddress'] ?? $element['address'] ?? $element['customer_address'] ?? '';
         }
-        if (empty($customerEmail) && isset($element['properties']['customerEmail'])) {
-            $customerEmail = $element['properties']['customerEmail'];
+        if (empty($customerEmail) || strpos($customerEmail, '{{') !== false) {
+            $customerEmail = $element['customerEmail'] ?? $element['email'] ?? $element['customer_email'] ?? '';
         }
-        if (empty($customerPhone) && isset($element['properties']['customerPhone'])) {
-            $customerPhone = $element['properties']['customerPhone'];
+        if (empty($customerPhone) || strpos($customerPhone, '{{') !== false) {
+            $customerPhone = $element['customerPhone'] ?? $element['phone'] ?? $element['customer_phone'] ?? '';
         }
         
         $content = $customerName;
@@ -549,32 +552,32 @@ abstract class BaseGenerator
      */
     protected function renderCompanyInfoElement(array $element): string
     {
-        error_log('[PDF] Company info - keys: ' . implode(', ', array_keys($element)) . ', name: ' . ($element['companyName'] ?? $element['name'] ?? 'empty'));
+        error_log('[PDF] Company info - keys: ' . implode(', ', array_keys($element)));
         
         $style = $this->buildElementStyle($element);
         
-        // Use real element data with flexible property names
-        $companyName = $element['companyName'] ?? $element['name'] ?? $element['company_name'] ?? 'Entreprise';
-        $companyAddress = $element['companyAddress'] ?? $element['address'] ?? $element['company_address'] ?? '';
-        $companyEmail = $element['companyEmail'] ?? $element['email'] ?? $element['company_email'] ?? '';
-        $companyPhone = $element['companyPhone'] ?? $element['phone'] ?? $element['company_phone'] ?? '';
-        $companySiret = $element['companySiret'] ?? $element['siret'] ?? $element['company_siret'] ?? '';
+        // Récupérer les données depuis le data provider pour l'aperçu
+        $companyName = $this->data_provider->getVariableValue('company_name');
+        $companyAddress = $this->data_provider->getVariableValue('company_full_address');
+        $companyEmail = $this->data_provider->getVariableValue('company_email');
+        $companyPhone = $this->data_provider->getVariableValue('company_phone');
+        $companySiret = $this->data_provider->getVariableValue('company_siret');
         
-        // Also check for nested properties
-        if (empty($companyName) && isset($element['properties']['companyName'])) {
-            $companyName = $element['properties']['companyName'];
+        // Fallback vers les propriétés de l'élément si data provider ne fournit rien
+        if (empty($companyName) || $companyName === '{{company_name}}') {
+            $companyName = $element['companyName'] ?? $element['name'] ?? $element['company_name'] ?? 'Entreprise';
         }
-        if (empty($companyAddress) && isset($element['properties']['companyAddress'])) {
-            $companyAddress = $element['properties']['companyAddress'];
+        if (empty($companyAddress) || strpos($companyAddress, '{{') !== false) {
+            $companyAddress = $element['companyAddress'] ?? $element['address'] ?? $element['company_address'] ?? '';
         }
-        if (empty($companyEmail) && isset($element['properties']['companyEmail'])) {
-            $companyEmail = $element['properties']['companyEmail'];
+        if (empty($companyEmail) || strpos($companyEmail, '{{') !== false) {
+            $companyEmail = $element['companyEmail'] ?? $element['email'] ?? $element['company_email'] ?? '';
         }
-        if (empty($companyPhone) && isset($element['properties']['companyPhone'])) {
-            $companyPhone = $element['properties']['companyPhone'];
+        if (empty($companyPhone) || strpos($companyPhone, '{{') !== false) {
+            $companyPhone = $element['companyPhone'] ?? $element['phone'] ?? $element['company_phone'] ?? '';
         }
-        if (empty($companySiret) && isset($element['properties']['companySiret'])) {
-            $companySiret = $element['properties']['companySiret'];
+        if (empty($companySiret) || strpos($companySiret, '{{') !== false) {
+            $companySiret = $element['companySiret'] ?? $element['siret'] ?? $element['company_siret'] ?? '';
         }
         
         $content = $companyName;
