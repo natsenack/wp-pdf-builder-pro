@@ -409,28 +409,57 @@ abstract class BaseGenerator
     {
         $style = 'position: absolute; ';
 
+        // Debug: Log element structure
+        error_log("[PDF] buildElementStyle - Element keys: " . implode(', ', array_keys($element)));
+        if (isset($element['properties']) && is_array($element['properties'])) {
+            error_log("[PDF] buildElementStyle - Properties keys: " . implode(', ', array_keys($element['properties'])));
+        } else {
+            error_log("[PDF] buildElementStyle - No properties array found");
+        }
+
         // Helper function to get CSS property value from element or properties array
         $getCssProperty = function($propertyName, $element) {
             // First check in properties array if it exists
             if (isset($element['properties']) && is_array($element['properties'])) {
-                if (isset($element['properties'][$propertyName]) && $element['properties'][$propertyName] !== null && $element['properties'][$propertyName] !== '') {
-                    return $element['properties'][$propertyName];
+                if (isset($element['properties'][$propertyName])) {
+                    $value = $element['properties'][$propertyName];
+                    if ($value !== null && $value !== '') {
+                        error_log("[PDF] getCssProperty - Found '{$propertyName}' in properties: '{$value}'");
+                        return $value;
+                    } else {
+                        error_log("[PDF] getCssProperty - '{$propertyName}' in properties is null/empty: '" . var_export($value, true) . "'");
+                    }
                 }
                 // Also check for hyphenated version in properties
                 $hyphenated = str_replace('_', '-', $propertyName);
-                if (isset($element['properties'][$hyphenated]) && $element['properties'][$hyphenated] !== null && $element['properties'][$hyphenated] !== '') {
-                    return $element['properties'][$hyphenated];
+                if (isset($element['properties'][$hyphenated])) {
+                    $value = $element['properties'][$hyphenated];
+                    if ($value !== null && $value !== '') {
+                        error_log("[PDF] getCssProperty - Found hyphenated '{$hyphenated}' in properties: '{$value}'");
+                        return $value;
+                    }
                 }
             }
             // Then check directly in element
-            if (isset($element[$propertyName]) && $element[$propertyName] !== null && $element[$propertyName] !== '') {
-                return $element[$propertyName];
+            if (isset($element[$propertyName])) {
+                $value = $element[$propertyName];
+                if ($value !== null && $value !== '') {
+                    error_log("[PDF] getCssProperty - Found '{$propertyName}' directly in element: '{$value}'");
+                    return $value;
+                } else {
+                    error_log("[PDF] getCssProperty - '{$propertyName}' directly in element is null/empty: '" . var_export($value, true) . "'");
+                }
             }
             // Also check for hyphenated version in element
             $hyphenated = str_replace('_', '-', $propertyName);
-            if (isset($element[$hyphenated]) && $element[$hyphenated] !== null && $element[$hyphenated] !== '') {
-                return $element[$hyphenated];
+            if (isset($element[$hyphenated])) {
+                $value = $element[$hyphenated];
+                if ($value !== null && $value !== '') {
+                    error_log("[PDF] getCssProperty - Found hyphenated '{$hyphenated}' directly in element: '{$value}'");
+                    return $value;
+                }
             }
+            error_log("[PDF] getCssProperty - Property '{$propertyName}' not found anywhere");
             return null;
         };
 
@@ -558,6 +587,12 @@ abstract class BaseGenerator
         if (($value = $getCssProperty('skew', $element)) !== null) {
             $transforms[] = "skew({$value}deg)";
         }
+        if (!empty($transforms)) {
+            $style .= "transform: " . implode(' ', $transforms) . "; ";
+            error_log("[PDF] buildElementStyle - Applied transforms: " . implode(' ', $transforms));
+        } else {
+            error_log("[PDF] buildElementStyle - No transforms applied");
+        }
         if (($value = $getCssProperty('wordSpacing', $element)) !== null) {
             $style .= "word-spacing: {$value}px; ";
         }
@@ -651,6 +686,9 @@ abstract class BaseGenerator
         if (($value = $getCssProperty('alignContent', $element)) !== null) {
             $style .= "align-content: {$value}; ";
         }
+
+        // Debug: Log final style
+        error_log("[PDF] buildElementStyle - Final style: '{$style}'");
 
         return $style;
     }
