@@ -920,7 +920,7 @@ class PdfBuilderAdminNew
         });
 
         // Hook pour la compatibilité avec les anciens liens template_id
-        add_action('admin_init', [$this, 'handle_legacy_template_links']);
+        add_action('admin_init', [$this, 'handleLegacyTemplateLinks']);
     }
 
     /**
