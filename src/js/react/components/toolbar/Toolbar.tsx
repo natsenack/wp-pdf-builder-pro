@@ -76,13 +76,22 @@ export function Toolbar({ className }: ToolbarProps) {
   };
 
   const handleHTMLPreview = () => {
+    // Construire les données du template à partir du state actuel
+    const templateData = {
+      elements: state.elements,
+      canvasWidth: state.canvas.width,
+      canvasHeight: state.canvas.height,
+      template: state.template,
+      // Ajouter d'autres propriétés si nécessaire
+    };
+
     // Générer l'aperçu HTML
     const formData = new FormData();
     formData.append('action', 'pdf_builder_generate_html_preview');
     formData.append('nonce', (window as any).pdfBuilderNonce);
     formData.append('data', JSON.stringify({
       pageOptions: {
-        template: state.templateData
+        template: templateData
       }
     }));
 
