@@ -76,6 +76,8 @@ export function Toolbar({ className }: ToolbarProps) {
   };
 
   const handleHTMLPreview = () => {
+    console.log('🔍 [HTML PREVIEW] Début de handleHTMLPreview');
+
     // Construire les données du template à partir du state actuel
     const templateData = {
       elements: state.elements,
@@ -84,6 +86,10 @@ export function Toolbar({ className }: ToolbarProps) {
       template: state.template,
       // Ajouter d'autres propriétés si nécessaire
     };
+
+    console.log('🔍 [HTML PREVIEW] Template data construit:', templateData);
+    console.log('🔍 [HTML PREVIEW] State elements count:', state.elements?.length || 0);
+    console.log('🔍 [HTML PREVIEW] Canvas dimensions:', { width: state.canvas.width, height: state.canvas.height });
 
     // Générer l'aperçu HTML
     const formData = new FormData();
@@ -95,26 +101,47 @@ export function Toolbar({ className }: ToolbarProps) {
       }
     }));
 
+    console.log('🔍 [HTML PREVIEW] FormData préparé:');
+    console.log('🔍 [HTML PREVIEW] - action:', 'pdf_builder_generate_html_preview');
+    console.log('🔍 [HTML PREVIEW] - nonce:', (window as any).pdfBuilderNonce);
+    console.log('🔍 [HTML PREVIEW] - data length:', JSON.stringify({
+      pageOptions: {
+        template: templateData
+      }
+    }).length);
+
+    console.log('🔍 [HTML PREVIEW] Envoi de la requête fetch...');
+
     fetch('/wp-admin/admin-ajax.php', {
       method: 'POST',
       body: formData
     })
-    .then(r => r.json())
+    .then(r => {
+      console.log('🔍 [HTML PREVIEW] Réponse reçue, status:', r.status);
+      console.log('🔍 [HTML PREVIEW] Headers:', Object.fromEntries(r.headers.entries()));
+      return r.json();
+    })
     .then(d => {
+      console.log('🔍 [HTML PREVIEW] Données JSON reçues:', d);
+
       if (d.success && d.data && d.data.html) {
+        console.log('🔍 [HTML PREVIEW] Succès - ouverture de la nouvelle fenêtre');
         // Ouvrir l'aperçu HTML dans une nouvelle fenêtre
         const newWindow = window.open('', '_blank');
         if (newWindow) {
           newWindow.document.write(d.data.html);
           newWindow.document.close();
+          console.log('🔍 [HTML PREVIEW] Nouvelle fenêtre ouverte avec succès');
+        } else {
+          console.error('🔍 [HTML PREVIEW] Impossible d\'ouvrir la nouvelle fenêtre (popup bloqué?)');
         }
       } else {
-        console.error('Erreur lors de la génération de l\'aperçu HTML:', d);
+        console.error('🔍 [HTML PREVIEW] Erreur dans la réponse:', d);
         alert('Erreur lors de la génération de l\'aperçu HTML. Vérifiez la console pour plus de détails.');
       }
     })
     .catch(e => {
-      console.error('Erreur réseau lors de l\'aperçu HTML:', e);
+      console.error('🔍 [HTML PREVIEW] Erreur réseau:', e);
       alert('Erreur réseau lors de la génération de l\'aperçu HTML.');
     });
   };
