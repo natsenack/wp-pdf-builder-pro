@@ -40,7 +40,9 @@
                 action: config.endpoint,
                 nonce: config.nonce,
                 data: JSON.stringify({
-                    pageOptions: templateData,
+                    pageOptions: {
+                        template: templateData
+                    },
                     previewType: 'general',
                     orderNumberToPreview: ''
                 }),
