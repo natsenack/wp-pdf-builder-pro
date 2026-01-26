@@ -2223,13 +2223,16 @@ export const Canvas = function Canvas({
       const props = element as TextElementProperties & {
         showBackground?: boolean;
         backgroundColor?: string;
+        content?: string;
+        textColor?: string;
       };
-      const text = props.text || "Texte personnalisable";
+      const text = props.text || props.content || "Texte personnalisable";
       const fontSize = props.fontSize || 14;
       const fontFamily = props.fontFamily || "Arial";
       const fontWeight = props.fontWeight || "normal";
       const fontStyle = props.fontStyle || "normal";
       const autoWrap = props.autoWrap !== false; // Par défaut activé
+      const textColor = props.textColor || props.color || "#000000";
 
       // Appliquer le fond seulement si showBackground est activé
       if (props.showBackground !== false) {
@@ -2237,7 +2240,7 @@ export const Canvas = function Canvas({
         ctx.fillRect(0, 0, element.width, element.height);
       }
 
-      ctx.fillStyle = "#000000";
+      ctx.fillStyle = textColor;
       ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
       ctx.textAlign = "left";
 
@@ -2580,7 +2583,7 @@ export const Canvas = function Canvas({
           debugLog(`[Canvas] Rendering document type element: ${element.id}`);
           drawDocumentType(ctx, element, currentState);
           break;
-        case "dynamic-text":
+        case "dynamic_text":
           debugLog(`[Canvas] Rendering dynamic text element: ${element.id}`);
           drawDynamicText(ctx, element);
           break;
@@ -2980,7 +2983,7 @@ export const Canvas = function Canvas({
           const element = state.elements.find((el) => el.id === elementId);
           if (
             element &&
-            (element.type === "text" || element.type === "dynamic-text")
+            (element.type === "text" || element.type === "dynamic_text")
           ) {
             // Pour les éléments texte, ajuster la hauteur selon le contenu
             const canvas = document.createElement("canvas");

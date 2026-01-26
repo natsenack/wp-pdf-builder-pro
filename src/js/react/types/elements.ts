@@ -123,7 +123,7 @@ export interface WoocommerceInvoiceNumberElement extends BaseElement {
 }
 
 export interface DynamicTextElement extends BaseElement {
-  type: 'dynamic_text' | 'dynamic-text';
+  type: 'dynamic_text';
   textTemplate?: string;
   autoWrap?: boolean;
   theme?: string;
