@@ -49,7 +49,7 @@ class ReactAssets {
         // Charger la médiathèque WordPress pour les composants qui en ont besoin
         wp_enqueue_media();
         
-        $plugin_url = plugin_dir_url(__FILE__);
+        $plugin_url = PDF_BUILDER_PLUGIN_URL;
         $version = '2.0.0';
         
         // CSS

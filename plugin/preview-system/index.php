@@ -57,7 +57,7 @@ add_action('admin_enqueue_scripts', function() {
     
     wp_enqueue_script(
         'pdf-preview-integration',
-        plugin_dir_url(__FILE__) . '../../assets/js/pdf-preview-integration.min.js',
+        PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-integration.min.js',
         ['jquery', 'pdf-preview-api-client'],
         '1.0.0',
         true
