@@ -1173,18 +1173,6 @@ class PdfBuilderAdminNew
             }
         });
 
-        // Debug output
-        echo '<div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border: 1px solid #ccc;">';
-        echo '<h3>DEBUG: Éditeur PDF React</h3>';
-        echo '<p>Template ID: ' . esc_html($template_id) . '</p>';
-        echo '<p>Template Type: ' . esc_html($template_type) . '</p>';
-        echo '<p>Assets URL: ' . esc_html(PDF_BUILDER_PRO_ASSETS_URL) . '</p>';
-        echo '<p>JS File: ' . esc_html(PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react.min.js') . '</p>';
-        echo '<p>Init File: ' . esc_html(PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react-init.min.js') . '</p>';
-        echo '<p>Version: ' . esc_html(PDF_BUILDER_PRO_VERSION) . '</p>';
-        echo '<p>Timestamp: ' . time() . '</p>';
-        echo '</div>';
-
         ?>
         <div class="wrap pdf-builder-editor-page">
             <div id="pdf-builder-react-root"></div>
