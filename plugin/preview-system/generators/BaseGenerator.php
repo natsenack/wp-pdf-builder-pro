@@ -409,6 +409,9 @@ abstract class BaseGenerator
     {
         $style = 'position: absolute; ';
 
+        // Debug log for element properties
+        error_log("[PDF] Building style for element: " . json_encode($element));
+
         // Helper function to normalize CSS values
         $normalizeCssValue = function($value, $unit = '') {
             if (is_numeric($value) && !empty($unit)) {
@@ -1550,6 +1553,9 @@ abstract class BaseGenerator
                 $style .= "columns: {$props['columns']}; ";
             }
         }
+
+        // Debug log for final style
+        error_log("[PDF] Final style generated: " . $style);
 
         return $style;
     }
