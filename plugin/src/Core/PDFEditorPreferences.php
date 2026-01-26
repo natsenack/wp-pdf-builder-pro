@@ -281,8 +281,45 @@ class PDFEditorPreferences {
 
                 // Initialisation
                 init: function() {
+                    this.overrideWPPreferences();
                     this.bindEvents();
                     this.loadPreferences();
+                },
+
+                // Override WordPress preferences to use our AJAX system
+                overrideWPPreferences: function() {
+                    if (typeof wp !== 'undefined' && wp.preferences) {
+                        var self = this;
+
+                        // Override the transport to use AJAX instead of REST API
+                        if (wp.preferences.__internalSetTransport) {
+                            wp.preferences.__internalSetTransport({
+                                get: function(key, defaultValue) {
+                                    return Promise.resolve(self.getPreference(key, defaultValue));
+                                },
+                                set: function(key, value) {
+                                    return new Promise(function(resolve) {
+                                        self.setPreference(key, value);
+                                        resolve();
+                                    });
+                                }
+                            });
+                        } else {
+                            // Fallback: override direct methods
+                            var originalGet = wp.preferences.get;
+                            var originalSet = wp.preferences.set;
+
+                            wp.preferences.get = function(key, defaultValue) {
+                                return self.getPreference(key, defaultValue);
+                            };
+
+                            wp.preferences.set = function(key, value) {
+                                self.setPreference(key, value);
+                            };
+                        }
+
+                        console.log('[PDF Editor Preferences] wp.preferences transport overridden successfully');
+                    }
                 },
 
                 // Lier les événements
