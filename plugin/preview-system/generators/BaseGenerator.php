@@ -156,7 +156,6 @@ abstract class BaseGenerator
         if (!empty($styles)) {
             $css .= $styles;
         }
-        }
 
         return $css;
     }
