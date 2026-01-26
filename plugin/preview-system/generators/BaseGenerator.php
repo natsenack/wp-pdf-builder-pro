@@ -281,7 +281,7 @@ abstract class BaseGenerator
         $text = $this->injectVariables($text);
         $style = $this->buildElementStyle($element);
         error_log('[PDF] Text element - FINAL text: "' . $text . '", style length: ' . strlen($style));
-        return "<div class=\"pdf-element text-element\" style=\"{$style}\">{$text}</div>";
+        return "<div class=\"pdf-element text-element\" data-element-type=\"text\" style=\"{$style}\">{$text}</div>";
     }
 
     /**
@@ -325,7 +325,7 @@ abstract class BaseGenerator
 
         $style = $this->buildElementStyle($element);
         error_log('[PDF] Image element - FINAL src: "' . $src . '", alt: "' . $alt . '", style length: ' . strlen($style));
-        return "<img class=\"pdf-element image-element\" src=\"{$src}\" alt=\"{$alt}\" style=\"{$style}\" />";
+        return "<img class=\"pdf-element image-element\" data-element-type=\"image\" src=\"{$src}\" alt=\"{$alt}\" style=\"{$style}\" />";
     }
 
     /**
@@ -354,7 +354,7 @@ abstract class BaseGenerator
         
         $style .= "border: {$borderWidth}px solid {$borderColor}; background-color: {$backgroundColor};";
         error_log('[PDF] Rectangle element - FINAL borderColor: "' . $borderColor . '", borderWidth: ' . $borderWidth . ', backgroundColor: "' . $backgroundColor . '"');
-        return "<div class=\"pdf-element rectangle-element\" style=\"{$style}\"></div>";
+        return "<div class=\"pdf-element rectangle-element\" data-element-type=\"rectangle\" style=\"{$style}\"></div>";
     }
 
     /**
@@ -393,7 +393,7 @@ abstract class BaseGenerator
         if (!empty($customerPhone)) $content .= "\n" . $customerPhone;
         
         error_log('[PDF] Customer info - FINAL name: "' . $customerName . '", address: "' . $customerAddress . '", email: "' . $customerEmail . '", phone: "' . $customerPhone . '"');
-        return "<div class=\"pdf-element\" style=\"{$style}\">" . nl2br($content) . "</div>";
+        return "<div class=\"pdf-element\" data-element-type=\"customer_info\" style=\"{$style}\">" . nl2br($content) . "</div>";
     }
 
     /**
@@ -436,7 +436,7 @@ abstract class BaseGenerator
         if (!empty($companySiret)) $content .= "\nSIRET: " . $companySiret;
         
         error_log('[PDF] Company info - FINAL name: "' . $companyName . '", address: "' . $companyAddress . '", email: "' . $companyEmail . '", phone: "' . $companyPhone . '", siret: "' . $companySiret . '"');
-        return "<div class=\"pdf-element\" style=\"{$style}\">" . nl2br($content) . "</div>";
+        return "<div class=\"pdf-element\" data-element-type=\"company_info\" style=\"{$style}\">" . nl2br($content) . "</div>";
     }
 
     /**
@@ -814,11 +814,125 @@ abstract class BaseGenerator
     }
 
     /**
-     * Log une information
+     * Récupère les éléments du template
      *
-     * @param string $message Message d'information
+     * @return array|null Liste des éléments ou null si non trouvés
      */
-    protected function logInfo(string $message): void
+    protected function getElements(): ?array
     {
+        // Déterminer où sont les éléments (nouvelle ou ancienne structure)
+        if (isset($this->template_data['elements']) && is_array($this->template_data['elements'])) {
+            return $this->template_data['elements'];
+        } elseif (isset($this->template_data['template']['elements']) && is_array($this->template_data['template']['elements'])) {
+            return $this->template_data['template']['elements'];
+        }
+
+        return null;
     }
-}
+
+    /**
+     * Génère un aperçu HTML pour débogage visuel
+     *
+     * @return string HTML complet pour visualisation dans le navigateur
+     */
+    public function generateHtmlPreview(): string
+    {
+        $this->logInfo('Starting HTML preview generation');
+
+        // Récupérer les éléments
+        $elements = $this->getElements();
+        if (empty($elements)) {
+            return '<html><body><h1>Erreur: Aucun élément trouvé</h1></body></html>';
+        }
+
+        // Récupérer les dimensions du canvas
+        $canvasWidth = $this->template_data['canvasWidth'] ?? 800;
+        $canvasHeight = $this->template_data['canvasHeight'] ?? 1100;
+
+        // Générer le HTML des éléments
+        $htmlContent = '';
+        foreach ($elements as $index => $element) {
+            $elementType = $element['type'] ?? 'unknown';
+            $this->logInfo("Processing element {$index} type: {$elementType}");
+
+            $htmlContent .= $this->renderElement($element);
+        }
+
+        // Générer le HTML complet
+        $html = '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aperçu HTML - PDF Builder</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .canvas-container {
+            position: relative;
+            width: ' . $canvasWidth . 'px;
+            height: ' . $canvasHeight . 'px;
+            background-color: white;
+            border: 2px solid #ccc;
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .canvas-info {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 12px;
+        }
+        .element-debug {
+            position: absolute;
+            background: rgba(255,0,0,0.1);
+            border: 1px dashed red;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .element-debug::before {
+            content: attr(data-type);
+            position: absolute;
+            top: -20px;
+            left: 0;
+            background: red;
+            color: white;
+            padding: 2px 4px;
+            font-size: 10px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="canvas-info">
+        Canvas: ' . $canvasWidth . 'x' . $canvasHeight . 'px | Éléments: ' . count($elements) . '
+    </div>
+    <div class="canvas-container">
+        ' . $htmlContent . '
+    </div>
+    <script>
+        // Ajouter des overlays de débogage
+        document.addEventListener("DOMContentLoaded", function() {
+            const elements = document.querySelectorAll("[data-element-type]");
+            elements.forEach(el => {
+                const debug = document.createElement("div");
+                debug.className = "element-debug";
+                debug.setAttribute("data-type", el.getAttribute("data-element-type"));
+                debug.style.left = el.style.left;
+                debug.style.top = el.style.top;
+                debug.style.width = el.style.width;
+                debug.style.height = el.style.height;
+                document.querySelector(".canvas-container").appendChild(debug);
+            });
+        });
+    </script>
+</body>
+</html>';
+
+        $this->logInfo('HTML preview generation completed, length: ' . strlen($html));
+        return $html;
+    }

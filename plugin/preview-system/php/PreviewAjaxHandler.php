@@ -11,6 +11,8 @@ class PreviewAjaxHandler {
     public static function init() {
         add_action('wp_ajax_pdf_builder_generate_preview', [self::class, 'generatePreviewAjax']);
         add_action('wp_ajax_nopriv_pdf_builder_generate_preview', [self::class, 'generatePreviewAjax']);
+        add_action('wp_ajax_pdf_builder_generate_html_preview', [self::class, 'generateHtmlPreviewAjax']);
+        add_action('wp_ajax_nopriv_pdf_builder_generate_html_preview', [self::class, 'generateHtmlPreviewAjax']);
     }
 
     public static function generatePreviewAjax() {
@@ -72,6 +74,48 @@ class PreviewAjaxHandler {
             }
             
             $result = self::generatePreviewLegacy($template_data, $format);
+        }
+        
+        if (isset($result['error'])) {
+            wp_send_json_error($result['error'], 400);
+        }
+        
+        wp_send_json_success($result);
+    }
+
+    public static function generateHtmlPreviewAjax() {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permissions insuffisantes', 403);
+        }
+        
+        $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
+        if (!wp_verify_nonce($nonce, 'pdf_builder_nonce')) {
+            wp_send_json_error('Nonce invalide', 403);
+        }
+        
+        // Vérifier si on utilise le nouveau format (pageOptions)
+        if (isset($_POST['data'])) {
+            $options = stripslashes($_POST['data']);
+            
+            if (empty($options)) {
+                wp_send_json_error('Données manquantes', 400);
+            }
+            
+            $options = json_decode($options);
+            if (!$options) {
+                wp_send_json_error('Données JSON invalides', 400);
+            }
+            
+            $pageOptions = $options->pageOptions ?? null;
+            
+            if (!$pageOptions) {
+                wp_send_json_error('Options de page manquantes', 400);
+            }
+            
+            $result = self::generateHtmlPreview($pageOptions);
+            
+        } else {
+            wp_send_json_error('Format de données non supporté pour l\'aperçu HTML', 400);
         }
         
         if (isset($result['error'])) {
@@ -226,7 +270,71 @@ class PreviewAjaxHandler {
         }
     }
     
-    private static function generatePreviewLegacy(array $template_data, string $format = 'pdf'): array {
+    private static function generateHtmlPreview($pageOptions): array {
+        require_once dirname(__FILE__) . '/../../vendor/autoload.php';
+        
+        try {
+            error_log('[HTML PREVIEW] ===== STARTING generateHtmlPreview =====');
+            
+            // Créer un DataProvider basique pour les options de page
+            $dataProvider = new class($pageOptions) implements \PDF_Builder\Interfaces\DataProviderInterface {
+                private $pageOptions;
+                
+                public function __construct($pageOptions) {
+                    $this->pageOptions = $pageOptions;
+                }
+                
+                public function getVariableValue(string $variable): string {
+                    return 'Test Value';
+                }
+                
+                public function hasVariable(string $variable): bool {
+                    return true;
+                }
+                
+                public function getAllVariables(): array {
+                    return ['test'];
+                }
+                
+                public function isSampleData(): bool {
+                    return true;
+                }
+                
+                public function getContext(): string {
+                    return 'preview';
+                }
+                
+                public function validateAndSanitizeData(array $data): array {
+                    return $data;
+                }
+            };
+            
+            // Convertir les options de page en array si nécessaire
+            $pageOptionsArray = is_array($pageOptions) ? $pageOptions : (array) $pageOptions;
+            
+            // Extraire les données du template depuis pageOptions.template
+            $templateData = $pageOptionsArray['template'] ?? $pageOptionsArray;
+            
+            // S'assurer que templateData est un array
+            $templateData = is_array($templateData) ? $templateData : (array) $templateData;
+            
+            error_log('[HTML PREVIEW] Creating PDFGenerator for HTML preview');
+            // Créer le générateur PDF avec les données du template
+            $generator = new \PDF_Builder\Generators\PDFGenerator($templateData, $dataProvider, true, []);
+            
+            error_log('[HTML PREVIEW] Calling generateHtmlPreview');
+            // Générer l'aperçu HTML
+            $html = $generator->generateHtmlPreview();
+            
+            error_log('[HTML PREVIEW] HTML preview generation completed, length: ' . strlen($html));
+            return ['html' => $html, 'success' => true];
+            
+        } catch (\Exception $e) {
+            error_log('[HTML PREVIEW] Exception caught: ' . $e->getMessage());
+            error_log('[HTML PREVIEW] Exception trace: ' . $e->getTraceAsString());
+            return ['error' => 'Erreur lors de la génération de l\'aperçu HTML: ' . $e->getMessage()];
+        }
+    }
         require_once dirname(__FILE__) . '/../../vendor/autoload.php';
         
         if (!class_exists('Dompdf\Dompdf')) {
