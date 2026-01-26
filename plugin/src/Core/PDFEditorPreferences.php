@@ -46,8 +46,8 @@ class PDFEditorPreferences {
     private function init_hooks() {
         add_action('wp_ajax_pdf_editor_save_preferences', array($this, 'ajax_save_preferences'));
         add_action('wp_ajax_pdf_editor_get_preferences', array($this, 'ajax_get_preferences'));
-        // Charger sur TOUTES les pages admin pour remplacer wp-preferences partout
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'), 999);
+        // Charger AVANT les scripts wp-preferences par défaut
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'), 1);
     }
 
     /**
@@ -319,6 +319,12 @@ class PDFEditorPreferences {
                         }
 
                         console.log('[PDF Editor Preferences] wp.preferences transport overridden successfully');
+                    } else {
+                        // If wp.preferences is not ready yet, wait a bit and try again
+                        var self = this;
+                        setTimeout(function() {
+                            self.overrideWPPreferences();
+                        }, 10);
                     }
                 },
 
@@ -411,6 +417,9 @@ class PDFEditorPreferences {
                     return this.preferences;
                 }
             };
+
+            // Override wp.preferences immediately when script loads
+            window.PDFEditorPreferences.overrideWPPreferences();
 
             // Initialiser quand le DOM est prêt
             $(document).ready(function() {
