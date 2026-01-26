@@ -147,8 +147,11 @@ class PreviewAjaxHandler {
                 }
             };
             
+            // Convertir les options de page en array si nécessaire
+            $pageOptionsArray = is_array($pageOptions) ? $pageOptions : (array) $pageOptions;
+            
             // Créer le générateur PDF avec les options de page
-            $generator = new \PDF_Builder\Generators\PDFGenerator($pageOptions, $dataProvider, true, []);
+            $generator = new \PDF_Builder\Generators\PDFGenerator($pageOptionsArray, $dataProvider, true, []);
             
             // Pour l'instant, on ne gère que les aperçus généraux
             // TODO: Implémenter la gestion des aperçus de commande spécifique
