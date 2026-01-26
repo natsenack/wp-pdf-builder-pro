@@ -130,16 +130,20 @@ class PreviewAjaxHandler {
                     return true;
                 }
                 
-                public function getAvailableVariables(): array {
+                public function getAllVariables(): array {
                     return ['test'];
                 }
                 
-                public function getOrderData(): array {
-                    return [];
+                public function isSampleData(): bool {
+                    return true;
                 }
                 
-                public function getProductData(): array {
-                    return [];
+                public function getContext(): string {
+                    return 'preview';
+                }
+                
+                public function validateAndSanitizeData(array $data): array {
+                    return $data;
                 }
             };
             
