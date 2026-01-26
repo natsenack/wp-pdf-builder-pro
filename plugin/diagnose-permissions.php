@@ -1,12 +1,30 @@
 <?php
 /**
  * Script de diagnostic pour les permissions PDF Builder
- * À placer à la racine du plugin pour diagnostiquer les problèmes d'accès
+ * Peut être exécuté directement ou inclus dans WordPress
  */
 
-// Empêcher l'accès direct
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit');
+// Vérification d'accès direct - seulement si on n'est pas dans un contexte de diagnostic
+if (!defined('ABSPATH') && !isset($_GET['direct_access'])) {
+    exit('Accès direct interdit - Utilisez ?direct_access=1 pour le diagnostic');
+}
+
+// Si accès direct demandé, on définit les constantes WordPress minimales
+if (!defined('ABSPATH') && isset($_GET['direct_access'])) {
+    // Simuler un environnement WordPress minimal pour le diagnostic
+    define('ABSPATH', dirname(__FILE__) . '/../../../');
+    define('WPINC', 'wp-includes');
+
+    // Charger wp-load.php si possible
+    $wp_load = ABSPATH . 'wp-load.php';
+    if (file_exists($wp_load)) {
+        require_once $wp_load;
+    } else {
+        echo "<h1>❌ Impossible de charger WordPress</h1>";
+        echo "<p>Le fichier wp-load.php n'a pas été trouvé à : " . $wp_load . "</p>";
+        echo "<p>Assurez-vous que ce script est placé dans le dossier plugins de WordPress.</p>";
+        exit;
+    }
 }
 
 // Forcer l'affichage des erreurs pour le diagnostic
