@@ -181,12 +181,10 @@ abstract class BaseGenerator
         $logMessage .= "[PDF GENERATOR] generateContent - isset elements directly: " . (isset($this->template_data['elements']) ? 'YES' : 'NO') . "\n";
         $logMessage .= "[PDF GENERATOR] generateContent - isset template.elements: " . (isset($this->template_data['template']['elements']) ? 'YES' : 'NO') . "\n";
         
-        if (isset($this->template_data['elements'])) {
-            $logMessage .= "[PDF GENERATOR] generateContent - elements count (direct): " . count($this->template_data['elements']) . "\n";
-            if (!empty($this->template_data['elements'])) {
-                $logMessage .= "[PDF GENERATOR] generateContent - first element: " . print_r($this->template_data['elements'][0], true) . "\n";
-            }
-        }
+        // TEMPORARY DEBUG: Log full template data
+        $logMessage .= "[PDF GENERATOR] ===== FULL TEMPLATE DATA =====\n";
+        $logMessage .= print_r($this->template_data, true) . "\n";
+        $logMessage .= "[PDF GENERATOR] ===== END FULL TEMPLATE DATA =====\n";
         
         file_put_contents($logFile, $logMessage, FILE_APPEND);
         
@@ -194,13 +192,6 @@ abstract class BaseGenerator
         error_log('[PDF GENERATOR] generateContent - template_data keys: ' . implode(', ', array_keys($this->template_data)));
         error_log('[PDF GENERATOR] generateContent - isset elements directly: ' . (isset($this->template_data['elements']) ? 'YES' : 'NO'));
         error_log('[PDF GENERATOR] generateContent - isset template.elements: ' . (isset($this->template_data['template']['elements']) ? 'YES' : 'NO'));
-        
-        if (isset($this->template_data['elements'])) {
-            error_log('[PDF GENERATOR] generateContent - elements count (direct): ' . count($this->template_data['elements']));
-            if (!empty($this->template_data['elements'])) {
-                error_log('[PDF GENERATOR] generateContent - first element: ' . print_r($this->template_data['elements'][0], true));
-            }
-        }
         
         // Déterminer où sont les éléments (nouvelle ou ancienne structure)
         $elements = null;
