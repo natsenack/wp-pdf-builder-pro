@@ -284,6 +284,20 @@ class AdminScriptLoader
         error_log('[DEBUG] PDF Builder AdminScriptLoader: loadReactEditorScripts STARTED at ' . date('Y-m-d H:i:s'));
         error_log('[DEBUG] PDF Builder AdminScriptLoader: 🚀🚀🚀 REACT EDITOR SCRIPTS LOADING STARTED 🚀🚀🚀');
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] loadReactEditorScripts called at ' . date('Y-m-d H:i:s') . ' for page: ' . (isset($_GET['page']) ? $_GET['page'] : 'unknown')); }
+
+        // VÉRIFICATION DES FICHIERS AVANT CHARGEMENT
+        $throttle_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/ajax-throttle.min.js';
+        $react_vendors_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/react-vendor.min.js';
+        $runtime_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/runtime.min.js';
+        $react_main_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-react.min.js';
+        $react_init_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-react-init.min.js';
+
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: FILE CHECKS:');
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: - ajax-throttle.min.js: ' . (file_exists($throttle_file) ? 'EXISTS' : 'MISSING') . ' at ' . $throttle_file);
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: - react-vendor.min.js: ' . (file_exists($react_vendors_file) ? 'EXISTS' : 'MISSING') . ' at ' . $react_vendors_file);
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: - runtime.min.js: ' . (file_exists($runtime_file) ? 'EXISTS' : 'MISSING') . ' at ' . $runtime_file);
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: - pdf-builder-react.min.js: ' . (file_exists($react_main_file) ? 'EXISTS' : 'MISSING') . ' at ' . $react_main_file);
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: - pdf-builder-react-init.min.js: ' . (file_exists($react_init_file) ? 'EXISTS' : 'MISSING') . ' at ' . $react_init_file);
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set')); }
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Current URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set')); }
 
