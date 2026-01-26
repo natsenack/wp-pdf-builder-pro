@@ -695,13 +695,13 @@ abstract class BaseGenerator
     {
         $style = 'position: absolute; ';
         
-        // Adjust positioning to compensate for any remaining offset
-        $x = $element['x'] ?? 0;
-        $y = $element['y'] ?? 0;
+        // Adjust positioning to compensate for offset - subtract 20px from all values
+        $x = ($element['x'] ?? 0) - 20;
+        $y = ($element['y'] ?? 0) - 20;
         
-        // Subtract 20px offset if values are >= 20px
-        if ($x >= 20) $x -= 20;
-        if ($y >= 20) $y -= 20;
+        // Ensure we don't go negative
+        $x = max(0, $x);
+        $y = max(0, $y);
         
         $style .= "left: {$x}px; ";
         $style .= "top: {$y}px; ";
