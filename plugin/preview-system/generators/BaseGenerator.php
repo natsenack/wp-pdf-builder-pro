@@ -297,6 +297,7 @@ abstract class BaseGenerator
 
     /**
      * Rend un élément customer_info
+     * Version: 2026-01-26 12:25
      */
     protected function renderCustomerInfoElement(array $element): string
     {
