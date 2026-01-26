@@ -123,10 +123,32 @@ echo "</ul>";
 
 // Test de chargement du plugin
 echo "<h2>Test de chargement du plugin</h2>";
-if (class_exists('PDF_Builder_Admin')) {
-    echo "<p>✅ Classe PDF_Builder_Admin chargée.</p>";
+
+// Forcer le chargement de la classe si elle n'est pas déjà chargée
+if (!class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
+    echo "<p>🔄 Tentative de chargement de PdfBuilderAdminNew...</p>";
+
+    // Simuler l'initialisation comme dans le bootstrap
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
+        echo "<p>✅ Fichier PDF_Builder_Admin.php chargé.</p>";
+    } else {
+        echo "<p>❌ Fichier PDF_Builder_Admin.php introuvable.</p>";
+    }
+}
+
+if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
+    echo "<p>✅ Classe PdfBuilderAdminNew chargée.</p>";
+
+    // Tester l'instanciation
+    try {
+        $admin = \PDF_Builder\Admin\PdfBuilderAdminNew::getInstance();
+        echo "<p>✅ Instance PdfBuilderAdminNew créée avec succès.</p>";
+    } catch (Exception $e) {
+        echo "<p>❌ Erreur lors de l'instanciation : " . $e->getMessage() . "</p>";
+    }
 } else {
-    echo "<p>❌ Classe PDF_Builder_Admin non trouvée.</p>";
+    echo "<p>❌ Classe PdfBuilderAdminNew non trouvée.</p>";
 }
 
 if (function_exists('pdf_builder_register_ajax_handlers')) {
