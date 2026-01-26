@@ -148,7 +148,7 @@ class PreviewAjaxHandler {
             };
             
             // Créer le générateur PDF avec les options de page
-            $generator = new \PDF_Builder\Generators\PDFGenerator($pageOptions, $dataProvider);
+            $generator = new \PDF_Builder\Generators\PDFGenerator($pageOptions, $dataProvider, true, []);
             
             // Pour l'instant, on ne gère que les aperçus généraux
             // TODO: Implémenter la gestion des aperçus de commande spécifique
