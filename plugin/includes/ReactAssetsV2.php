@@ -47,6 +47,8 @@ class ReactAssets {
         }
 
         // Désactiver wp-preferences qui cause des erreurs REST API sur cette page
+        wp_deregister_script('wp-preferences');
+        wp_deregister_script('wp-preferences-persistence');
         wp_dequeue_script('wp-preferences');
         wp_dequeue_script('wp-preferences-persistence');
 
