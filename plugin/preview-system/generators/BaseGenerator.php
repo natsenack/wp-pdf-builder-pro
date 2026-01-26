@@ -141,7 +141,12 @@ abstract class BaseGenerator
     {
         $css = '
             body { margin: 0; padding: 0; font-family: Arial, sans-serif; position: relative; }
-            .pdf-element { position: absolute; }
+            .pdf-element { 
+                position: absolute; 
+                margin: 0; 
+                padding: 0; 
+                box-sizing: border-box;
+            }
             .text-element { white-space: pre-wrap; }
             .image-element { max-width: 100%; height: auto; }
         ';
@@ -694,6 +699,11 @@ abstract class BaseGenerator
         }
         if (isset($element['y'])) {
             $style .= "top: {$element['y']}px; ";
+        }
+        
+        // Debug log for positioning
+        if (isset($element['x']) || isset($element['y'])) {
+            error_log("[PDF] Element positioning - x: " . ($element['x'] ?? 'not set') . ", y: " . ($element['y'] ?? 'not set'));
         }
         if (isset($element['width'])) {
             $style .= "width: {$element['width']}px; ";
