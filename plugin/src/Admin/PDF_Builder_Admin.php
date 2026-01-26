@@ -1151,10 +1151,11 @@ class PdfBuilderAdminNew
         // Enqueue des scripts et styles React pour l'éditeur
         add_action('admin_enqueue_scripts', function() {
             if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor') {
-                wp_enqueue_script('react-vendor', PDF_BUILDER_PRO_ASSETS_URL . 'js/react-vendor.min.js', [], PDF_BUILDER_PRO_VERSION, true);
-                wp_enqueue_script('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react.min.js', ['react-vendor'], PDF_BUILDER_PRO_VERSION, true);
-                wp_enqueue_script('pdf-builder-react-init', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react-init.min.js', ['pdf-builder-react'], PDF_BUILDER_PRO_VERSION, true);
-                wp_enqueue_style('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.min.css', [], PDF_BUILDER_PRO_VERSION);
+                $version = time(); // Force reload
+                wp_enqueue_script('react-vendor', PDF_BUILDER_PRO_ASSETS_URL . 'js/react-vendor.min.js', [], $version, true);
+                wp_enqueue_script('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react.min.js', ['react-vendor'], $version, true);
+                wp_enqueue_script('pdf-builder-react-init', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react-init.min.js', ['pdf-builder-react'], $version, true);
+                wp_enqueue_style('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.min.css', [], $version);
 
                 // Localisation des scripts
                 wp_localize_script('pdf-builder-react-init', 'pdfBuilderReact', [
