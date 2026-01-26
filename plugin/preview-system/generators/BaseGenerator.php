@@ -409,6 +409,14 @@ abstract class BaseGenerator
     {
         $style = 'position: absolute; ';
 
+        // Helper function to normalize CSS values
+        $normalizeCssValue = function($value, $unit = '') {
+            if (is_string($value) && strpos($value, $unit) !== false) {
+                return $value; // Already has the unit
+            }
+            return $value . $unit;
+        };
+
         // Adjust positioning to compensate for offset - subtract 20px from all values only for PDF generation
         // For HTML preview, use exact positions as defined in the canvas
         $x = $element['x'] ?? 0;
@@ -429,16 +437,19 @@ abstract class BaseGenerator
             error_log("[PDF] Element positioning - original x: " . ($element['x'] ?? 'not set') . ", y: " . ($element['y'] ?? 'not set') . " | adjusted x: {$x}, y: {$y} | is_preview: " . ($this->is_preview ? 'true' : 'false'));
         }
         if (isset($element['width'])) {
-            $style .= "width: {$element['width']}px; ";
+            $style .= "width: " . $normalizeCssValue($element['width'], 'px') . "; ";
         }
         if (isset($element['height'])) {
-            $style .= "height: {$element['height']}px; ";
+            $style .= "height: " . $normalizeCssValue($element['height'], 'px') . "; ";
         }
         if (isset($element['color'])) {
             $style .= "color: {$element['color']}; ";
         }
+        if (isset($element['textColor'])) {
+            $style .= "color: {$element['textColor']}; ";
+        }
         if (isset($element['fontSize'])) {
-            $style .= "font-size: {$element['fontSize']}px; ";
+            $style .= "font-size: " . $normalizeCssValue($element['fontSize'], 'px') . "; ";
         }
         if (isset($element['fontWeight'])) {
             $style .= "font-weight: {$element['fontWeight']}; ";
@@ -456,10 +467,10 @@ abstract class BaseGenerator
             $style .= "border-color: {$element['borderColor']}; ";
         }
         if (isset($element['borderWidth'])) {
-            $style .= "border-width: {$element['borderWidth']}px; ";
+            $style .= "border-width: " . $normalizeCssValue($element['borderWidth'], 'px') . "; ";
         }
         if (isset($element['borderRadius'])) {
-            $style .= "border-radius: {$element['borderRadius']}px; ";
+            $style .= "border-radius: " . $normalizeCssValue($element['borderRadius'], 'px') . "; ";
         }
         if (isset($element['rotation'])) {
             $style .= "transform: rotate({$element['rotation']}deg); ";
@@ -596,6 +607,96 @@ abstract class BaseGenerator
         if (isset($element['flexWrap'])) {
             $style .= "flex-wrap: {$element['flexWrap']}; ";
         }
+        if (isset($element['textAlignLast'])) {
+            $style .= "text-align-last: {$element['textAlignLast']}; ";
+        }
+        if (isset($element['textDecorationLine'])) {
+            $style .= "text-decoration-line: {$element['textDecorationLine']}; ";
+        }
+        if (isset($element['textDecorationStyle'])) {
+            $style .= "text-decoration-style: {$element['textDecorationStyle']}; ";
+        }
+        if (isset($element['textDecorationColor'])) {
+            $style .= "text-decoration-color: {$element['textDecorationColor']}; ";
+        }
+        if (isset($element['textTransform'])) {
+            $style .= "text-transform: {$element['textTransform']}; ";
+        }
+        if (isset($element['textAlignLast'])) {
+            $style .= "text-align-last: {$element['textAlignLast']}; ";
+        }
+        if (isset($element['backgroundBlendMode'])) {
+            $style .= "background-blend-mode: {$element['backgroundBlendMode']}; ";
+        }
+        if (isset($element['mixBlendMode'])) {
+            $style .= "mix-blend-mode: {$element['mixBlendMode']}; ";
+        }
+        if (isset($element['filter'])) {
+            $style .= "filter: {$element['filter']}; ";
+        }
+        if (isset($element['backdropFilter'])) {
+            $style .= "backdrop-filter: {$element['backdropFilter']}; ";
+        }
+        if (isset($element['mask'])) {
+            $style .= "mask: {$element['mask']}; ";
+        }
+        if (isset($element['maskImage'])) {
+            $style .= "mask-image: {$element['maskImage']}; ";
+        }
+        if (isset($element['transformStyle'])) {
+            $style .= "transform-style: {$element['transformStyle']}; ";
+        }
+        if (isset($element['perspectiveOrigin'])) {
+            $style .= "perspective-origin: {$element['perspectiveOrigin']}; ";
+        }
+        if (isset($element['animationFillMode'])) {
+            $style .= "animation-fill-mode: {$element['animationFillMode']}; ";
+        }
+        if (isset($element['animationDirection'])) {
+            $style .= "animation-direction: {$element['animationDirection']}; ";
+        }
+        if (isset($element['animationIterationCount'])) {
+            $style .= "animation-iteration-count: {$element['animationIterationCount']}; ";
+        }
+        if (isset($element['animationPlayState'])) {
+            $style .= "animation-play-state: {$element['animationPlayState']}; ";
+        }
+        if (isset($element['transitionProperty'])) {
+            $style .= "transition-property: {$element['transitionProperty']}; ";
+        }
+        if (isset($element['transitionDuration'])) {
+            $style .= "transition-duration: {$element['transitionDuration']}; ";
+        }
+        if (isset($element['transitionTimingFunction'])) {
+            $style .= "transition-timing-function: {$element['transitionTimingFunction']}; ";
+        }
+        if (isset($element['transitionDelay'])) {
+            $style .= "transition-delay: {$element['transitionDelay']}; ";
+        }
+        if (isset($element['writingMode'])) {
+            $style .= "writing-mode: {$element['writingMode']}; ";
+        }
+        if (isset($element['direction'])) {
+            $style .= "direction: {$element['direction']}; ";
+        }
+        if (isset($element['textOrientation'])) {
+            $style .= "text-orientation: {$element['textOrientation']}; ";
+        }
+        if (isset($element['unicodeBidi'])) {
+            $style .= "unicode-bidi: {$element['unicodeBidi']}; ";
+        }
+        if (isset($element['content'])) {
+            $style .= "content: {$element['content']}; ";
+        }
+        if (isset($element['quotes'])) {
+            $style .= "quotes: {$element['quotes']}; ";
+        }
+        if (isset($element['counterIncrement'])) {
+            $style .= "counter-increment: {$element['counterIncrement']}; ";
+        }
+        if (isset($element['counterReset'])) {
+            $style .= "counter-reset: {$element['counterReset']}; ";
+        }
         if (isset($element['position'])) {
             $style .= "position: {$element['position']}; ";
         }
@@ -708,18 +809,21 @@ abstract class BaseGenerator
                 error_log("[PDF] Element positioning from properties - y: {$props['y']}, adjusted y: {$adjustedY} | is_preview: " . ($this->is_preview ? 'true' : 'false'));
             }
             if (!isset($element['width']) && isset($props['width'])) {
-                $style .= "width: {$props['width']}px; ";
+                $style .= "width: " . $normalizeCssValue($props['width'], 'px') . "; ";
             }
             if (!isset($element['height']) && isset($props['height'])) {
-                $style .= "height: {$props['height']}px; ";
+                $style .= "height: " . $normalizeCssValue($props['height'], 'px') . "; ";
             }
 
             // Autres propriétés depuis properties si pas déjà définis
-            if (!isset($element['color']) && isset($props['color'])) {
+            if (!isset($element['color']) && !isset($element['textColor']) && isset($props['color'])) {
                 $style .= "color: {$props['color']}; ";
             }
+            if (!isset($element['color']) && !isset($element['textColor']) && isset($props['textColor'])) {
+                $style .= "color: {$props['textColor']}; ";
+            }
             if (!isset($element['fontSize']) && isset($props['fontSize'])) {
-                $style .= "font-size: {$props['fontSize']}px; ";
+                $style .= "font-size: " . $normalizeCssValue($props['fontSize'], 'px') . "; ";
             }
             if (!isset($element['fontWeight']) && isset($props['fontWeight'])) {
                 $style .= "font-weight: {$props['fontWeight']}; ";
@@ -737,10 +841,10 @@ abstract class BaseGenerator
                 $style .= "border-color: {$props['borderColor']}; ";
             }
             if (!isset($element['borderWidth']) && isset($props['borderWidth'])) {
-                $style .= "border-width: {$props['borderWidth']}px; ";
+                $style .= "border-width: " . $normalizeCssValue($props['borderWidth'], 'px') . "; ";
             }
             if (!isset($element['borderRadius']) && isset($props['borderRadius'])) {
-                $style .= "border-radius: {$props['borderRadius']}px; ";
+                $style .= "border-radius: " . $normalizeCssValue($props['borderRadius'], 'px') . "; ";
             }
             if (!isset($element['rotation']) && isset($props['rotation'])) {
                 $style .= "transform: rotate({$props['rotation']}deg); ";
@@ -965,6 +1069,96 @@ abstract class BaseGenerator
             }
             if (!isset($element['listStyleImage']) && isset($props['listStyleImage'])) {
                 $style .= "list-style-image: {$props['listStyleImage']}; ";
+            }
+            if (!isset($element['textAlignLast']) && isset($props['textAlignLast'])) {
+                $style .= "text-align-last: {$props['textAlignLast']}; ";
+            }
+            if (!isset($element['textDecorationLine']) && isset($props['textDecorationLine'])) {
+                $style .= "text-decoration-line: {$props['textDecorationLine']}; ";
+            }
+            if (!isset($element['textDecorationStyle']) && isset($props['textDecorationStyle'])) {
+                $style .= "text-decoration-style: {$props['textDecorationStyle']}; ";
+            }
+            if (!isset($element['textDecorationColor']) && isset($props['textDecorationColor'])) {
+                $style .= "text-decoration-color: {$props['textDecorationColor']}; ";
+            }
+            if (!isset($element['textTransform']) && isset($props['textTransform'])) {
+                $style .= "text-transform: {$props['textTransform']}; ";
+            }
+            if (!isset($element['textAlignLast']) && isset($props['textAlignLast'])) {
+                $style .= "text-align-last: {$props['textAlignLast']}; ";
+            }
+            if (!isset($element['backgroundBlendMode']) && isset($props['backgroundBlendMode'])) {
+                $style .= "background-blend-mode: {$props['backgroundBlendMode']}; ";
+            }
+            if (!isset($element['mixBlendMode']) && isset($props['mixBlendMode'])) {
+                $style .= "mix-blend-mode: {$props['mixBlendMode']}; ";
+            }
+            if (!isset($element['filter']) && isset($props['filter'])) {
+                $style .= "filter: {$props['filter']}; ";
+            }
+            if (!isset($element['backdropFilter']) && isset($props['backdropFilter'])) {
+                $style .= "backdrop-filter: {$props['backdropFilter']}; ";
+            }
+            if (!isset($element['mask']) && isset($props['mask'])) {
+                $style .= "mask: {$props['mask']}; ";
+            }
+            if (!isset($element['maskImage']) && isset($props['maskImage'])) {
+                $style .= "mask-image: {$props['maskImage']}; ";
+            }
+            if (!isset($element['transformStyle']) && isset($props['transformStyle'])) {
+                $style .= "transform-style: {$props['transformStyle']}; ";
+            }
+            if (!isset($element['perspectiveOrigin']) && isset($props['perspectiveOrigin'])) {
+                $style .= "perspective-origin: {$props['perspectiveOrigin']}; ";
+            }
+            if (!isset($element['animationFillMode']) && isset($props['animationFillMode'])) {
+                $style .= "animation-fill-mode: {$props['animationFillMode']}; ";
+            }
+            if (!isset($element['animationDirection']) && isset($props['animationDirection'])) {
+                $style .= "animation-direction: {$props['animationDirection']}; ";
+            }
+            if (!isset($element['animationIterationCount']) && isset($props['animationIterationCount'])) {
+                $style .= "animation-iteration-count: {$props['animationIterationCount']}; ";
+            }
+            if (!isset($element['animationPlayState']) && isset($props['animationPlayState'])) {
+                $style .= "animation-play-state: {$props['animationPlayState']}; ";
+            }
+            if (!isset($element['transitionProperty']) && isset($props['transitionProperty'])) {
+                $style .= "transition-property: {$props['transitionProperty']}; ";
+            }
+            if (!isset($element['transitionDuration']) && isset($props['transitionDuration'])) {
+                $style .= "transition-duration: {$props['transitionDuration']}; ";
+            }
+            if (!isset($element['transitionTimingFunction']) && isset($props['transitionTimingFunction'])) {
+                $style .= "transition-timing-function: {$props['transitionTimingFunction']}; ";
+            }
+            if (!isset($element['transitionDelay']) && isset($props['transitionDelay'])) {
+                $style .= "transition-delay: {$props['transitionDelay']}; ";
+            }
+            if (!isset($element['writingMode']) && isset($props['writingMode'])) {
+                $style .= "writing-mode: {$props['writingMode']}; ";
+            }
+            if (!isset($element['direction']) && isset($props['direction'])) {
+                $style .= "direction: {$props['direction']}; ";
+            }
+            if (!isset($element['textOrientation']) && isset($props['textOrientation'])) {
+                $style .= "text-orientation: {$props['textOrientation']}; ";
+            }
+            if (!isset($element['unicodeBidi']) && isset($props['unicodeBidi'])) {
+                $style .= "unicode-bidi: {$props['unicodeBidi']}; ";
+            }
+            if (!isset($element['content']) && isset($props['content'])) {
+                $style .= "content: {$props['content']}; ";
+            }
+            if (!isset($element['quotes']) && isset($props['quotes'])) {
+                $style .= "quotes: {$props['quotes']}; ";
+            }
+            if (!isset($element['counterIncrement']) && isset($props['counterIncrement'])) {
+                $style .= "counter-increment: {$props['counterIncrement']}; ";
+            }
+            if (!isset($element['counterReset']) && isset($props['counterReset'])) {
+                $style .= "counter-reset: {$props['counterReset']}; ";
             }
         }
 
