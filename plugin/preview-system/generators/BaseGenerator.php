@@ -1022,7 +1022,7 @@ abstract class BaseGenerator
             const elements = document.querySelectorAll("[data-element-type]");
             elements.forEach(function(el) {
                 const elementType = el.getAttribute("data-element-type");
-                // Ne pas ajouter d'overlay pour customer_info et company_info
+                // Exclure customer_info et company_info des indicateurs de débogage
                 if (elementType === "customer_info" || elementType === "company_info") {
                     return;
                 }
