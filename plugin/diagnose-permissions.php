@@ -95,23 +95,54 @@ echo "<h2>Test d'accès à la page</h2>";
 $page_url = admin_url('admin.php?page=pdf-builder-react-editor');
 echo "<p><strong>URL de l'éditeur :</strong> <a href='$page_url' target='_blank'>$page_url</a></p>";
 
-// Vérifier si la page existe
-global $submenu;
-$found = false;
-if (isset($submenu['pdf-builder-pro'])) {
-    foreach ($submenu['pdf-builder-pro'] as $item) {
-        if (isset($item[2]) && $item[2] === 'pdf-builder-react-editor') {
-            $found = true;
+// Vérifier si les pages admin sont enregistrées
+echo "<h2>Test d'enregistrement des pages admin</h2>";
+
+// Simuler l'appel au hook admin_menu pour voir si les pages s'enregistrent
+global $menu, $submenu;
+
+// Sauvegarder l'état actuel
+$menu_backup = $menu;
+$submenu_backup = $submenu;
+
+// Simuler l'exécution du hook admin_menu
+do_action('admin_menu');
+
+// Vérifier si notre menu existe maintenant
+$menu_found = false;
+$submenu_found = false;
+
+if (isset($menu)) {
+    foreach ($menu as $item) {
+        if (isset($item[2]) && $item[2] === 'pdf-builder-pro') {
+            $menu_found = true;
+            echo "<p>✅ Menu principal 'pdf-builder-pro' trouvé.</p>";
             break;
         }
     }
 }
 
-if ($found) {
-    echo "<p>✅ La page de l'éditeur est enregistrée dans le menu admin.</p>";
-} else {
-    echo "<p>❌ La page de l'éditeur n'est pas trouvée dans le menu admin.</p>";
+if (isset($submenu['pdf-builder-pro'])) {
+    foreach ($submenu['pdf-builder-pro'] as $item) {
+        if (isset($item[2]) && $item[2] === 'pdf-builder-react-editor') {
+            $submenu_found = true;
+            echo "<p>✅ Sous-menu 'pdf-builder-react-editor' trouvé.</p>";
+            break;
+        }
+    }
 }
+
+if (!$menu_found) {
+    echo "<p>❌ Menu principal 'pdf-builder-pro' non trouvé après do_action('admin_menu').</p>";
+}
+
+if (!$submenu_found) {
+    echo "<p>❌ Sous-menu 'pdf-builder-react-editor' non trouvé après do_action('admin_menu').</p>";
+}
+
+// Restaurer l'état
+$menu = $menu_backup;
+$submenu = $submenu_backup;
 
 // Informations système
 echo "<h2>Informations système</h2>";
