@@ -869,6 +869,13 @@ class PdfBuilderAdminNew
      */
     private function initHooks()
     {
+        // N'enregistrer les hooks admin que si nécessaire
+        $is_admin_or_pdf_ajax = is_admin() || (isset($_REQUEST['action']) && strpos($_REQUEST['action'], 'pdf_builder') !== false);
+
+        if (!$is_admin_or_pdf_ajax) {
+            return; // Ne pas enregistrer les hooks si pas dans l'admin
+        }
+
         // Enregistrer les paramètres
         add_action('admin_init', array($this, 'register_settings'));
 

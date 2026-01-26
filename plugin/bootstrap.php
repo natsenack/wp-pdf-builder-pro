@@ -1220,9 +1220,9 @@ function pdf_builder_load_bootstrap()
         // Initialiser l'interface d'administration dans l'admin OU lors d'AJAX pour nos actions
         // DÉPLACÉ DANS LE HOOK 'init' pour que $_REQUEST soit disponible
         add_action('init', function() use ($core) {
-            $is_admin_or_pdf_ajax = is_admin() || (isset($_REQUEST['action']) && strpos($_REQUEST['action'], 'pdf_builder') !== false);
-
-            if ($is_admin_or_pdf_ajax && class_exists('PDF_Builder\\Admin\\PdfBuilderAdminNew')) {
+            // Créer l'instance admin plus tôt pour éviter les problèmes de timing
+            // La classe gérera elle-même si elle doit s'activer
+            if (class_exists('PDF_Builder\\Admin\\PdfBuilderAdminNew')) {
                 try {
                     $admin = \PDF_Builder\Admin\PdfBuilderAdminNew::getInstance($core);
                 } catch (Exception $e) {
