@@ -889,6 +889,7 @@ abstract class BaseGenerator
             background-color: white;
             border: 2px solid #ccc;
             margin: 0 auto;
+            padding: 20px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         .canvas-info {
