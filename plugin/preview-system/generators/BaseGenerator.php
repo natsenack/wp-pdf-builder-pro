@@ -828,8 +828,19 @@ abstract class BaseGenerator
         $style = $this->buildElementStyle($element);
         $strokeColor = $element['strokeColor'] ?? '#000000';
         $strokeWidth = $element['strokeWidth'] ?? 2;
-        $style .= "border-top: {$strokeWidth}px solid {$strokeColor}; height: 0;";
-        error_log('[PDF] Line element - FINAL strokeColor: "' . $strokeColor . '", strokeWidth: ' . $strokeWidth);
+
+        // For lines, we need to center the line vertically within the element
+        // The canvas draws the line at y = height/2, so we adjust the top position
+        $height = $element['height'] ?? 1;
+        $centerOffset = $height / 2 - $strokeWidth / 2; // Center the line within the height
+
+        // Remove the height from style and add centering
+        $style = preg_replace('/height:\s*\d+px;\s*/', '', $style);
+        $style .= "height: {$strokeWidth}px; ";
+        $style .= "margin-top: {$centerOffset}px; ";
+        $style .= "background-color: {$strokeColor}; ";
+
+        error_log('[PDF] Line element - FINAL strokeColor: "' . $strokeColor . '", strokeWidth: ' . $strokeWidth . ', centerOffset: ' . $centerOffset);
         return "<div class=\"pdf-element line\" style=\"{$style}\"></div>";
     }
 
