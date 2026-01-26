@@ -215,14 +215,6 @@ class PdfBuilderAdminNew
         // Initialiser le manager de thumbnails
         $this->thumbnail_manager = \PDF_Builder\Managers\PdfBuilderThumbnailManager::getInstance();
 
-        // Charger manuellement AdminScriptLoader si nécessaire
-        if (!class_exists('PDF_Builder\Admin\Loaders\AdminScriptLoader')) {
-            $admin_script_loader_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Loaders/AdminScriptLoader.php';
-            if (file_exists($admin_script_loader_file)) {
-                require_once $admin_script_loader_file;
-            }
-        }
-
         // Initialiser les nouveaux services et loaders
         $this->script_loader = new \PDF_Builder\Admin\Loaders\AdminScriptLoader($this);
         error_log('[DEBUG] PDF Builder Admin: AdminScriptLoader instantiated successfully');
