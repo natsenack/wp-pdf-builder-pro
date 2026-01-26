@@ -98,76 +98,89 @@ echo "<p><strong>URL de l'éditeur :</strong> <a href='$page_url' target='_blank
 // Vérifier si les pages admin sont enregistrées
 echo "<h2>Test d'enregistrement des pages admin</h2>";
 
-// Vérifier l'état du flag menu_added avant la simulation
+// Test d'enregistrement des pages admin
+echo "<h2>Test d'enregistrement des pages admin</h2>";
+
+// Méthode alternative : créer l'instance manuellement et tester directement
+echo "<h3>Test direct de l'enregistrement des menus</h3>";
+
 if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
-    $reflection = new ReflectionClass('PDF_Builder\Admin\PdfBuilderAdminNew');
-    $menu_added_property = $reflection->getProperty('menu_added');
-    $menu_added_property->setAccessible(true);
+    try {
+        // Créer l'instance si elle n'existe pas
+        $admin_instance = \PDF_Builder\Admin\PdfBuilderAdminNew::getInstance();
 
-    $menu_added_before = $menu_added_property->getValue();
-    echo "<p>Flag menu_added avant do_action('admin_menu'): " . ($menu_added_before ? 'true' : 'false') . "</p>";
-}
+        // Vérifier l'état du flag menu_added avant
+        $reflection = new ReflectionClass('PDF_Builder\Admin\PdfBuilderAdminNew');
+        $menu_added_property = $reflection->getProperty('menu_added');
+        $menu_added_property->setAccessible(true);
 
-// Simuler l'appel au hook admin_menu pour voir si les pages s'enregistrent
-global $menu, $submenu;
+        $menu_added_before = $menu_added_property->getValue();
+        echo "<p>Flag menu_added avant addAdminMenu(): " . ($menu_added_before ? 'true' : 'false') . "</p>";
 
-// Sauvegarder l'état actuel
-$menu_backup = $menu;
-$submenu_backup = $submenu;
+        // Sauvegarder l'état actuel des menus
+        global $menu, $submenu;
+        $menu_backup = $menu ?? [];
+        $submenu_backup = $submenu ?? [];
 
-// Simuler d'abord le hook 'init' pour initialiser les classes
-do_action('init');
+        // Forcer la réinitialisation du flag pour le test
+        $_GET['force_menu_reset'] = '1';
 
-// Forcer la réinitialisation du flag menu_added pour le diagnostic
-$_GET['force_menu_reset'] = '1';
+        // Appeler directement la méthode addAdminMenu
+        echo "<p>🔄 Appel direct de addAdminMenu()...</p>";
+        $admin_instance->addAdminMenu();
+        echo "<p>✅ addAdminMenu() exécutée avec succès.</p>";
 
-// Simuler l'exécution du hook admin_menu
-do_action('admin_menu');
+        // Nettoyer
+        unset($_GET['force_menu_reset']);
 
-// Nettoyer le paramètre de diagnostic
-unset($_GET['force_menu_reset']);
+        // Vérifier l'état du flag après
+        $menu_added_after = $menu_added_property->getValue();
+        echo "<p>Flag menu_added après addAdminMenu(): " . ($menu_added_after ? 'true' : 'false') . "</p>";
 
-// Vérifier l'état du flag menu_added après la simulation
-if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
-    $menu_added_after = $menu_added_property->getValue();
-    echo "<p>Flag menu_added après do_action('admin_menu'): " . ($menu_added_after ? 'true' : 'false') . "</p>";
-}
+        // Vérifier si nos menus existent maintenant
+        $menu_found = false;
+        $submenu_found = false;
 
-// Vérifier si notre menu existe maintenant
-$menu_found = false;
-$submenu_found = false;
-
-if (isset($menu)) {
-    foreach ($menu as $item) {
-        if (isset($item[2]) && $item[2] === 'pdf-builder-pro') {
-            $menu_found = true;
-            echo "<p>✅ Menu principal 'pdf-builder-pro' trouvé.</p>";
-            break;
+        if (isset($menu) && is_array($menu)) {
+            foreach ($menu as $item) {
+                if (isset($item[2]) && $item[2] === 'pdf-builder-pro') {
+                    $menu_found = true;
+                    echo "<p>✅ Menu principal 'pdf-builder-pro' trouvé.</p>";
+                    break;
+                }
+            }
         }
-    }
-}
 
-if (isset($submenu['pdf-builder-pro'])) {
-    foreach ($submenu['pdf-builder-pro'] as $item) {
-        if (isset($item[2]) && $item[2] === 'pdf-builder-react-editor') {
-            $submenu_found = true;
-            echo "<p>✅ Sous-menu 'pdf-builder-react-editor' trouvé.</p>";
-            break;
+        if (isset($submenu) && isset($submenu['pdf-builder-pro']) && is_array($submenu['pdf-builder-pro'])) {
+            foreach ($submenu['pdf-builder-pro'] as $item) {
+                if (isset($item[2]) && $item[2] === 'pdf-builder-react-editor') {
+                    $submenu_found = true;
+                    echo "<p>✅ Sous-menu 'pdf-builder-react-editor' trouvé.</p>";
+                    break;
+                }
+            }
         }
+
+        if (!$menu_found) {
+            echo "<p>❌ Menu principal 'pdf-builder-pro' non trouvé après addAdminMenu().</p>";
+        }
+
+        if (!$submenu_found) {
+            echo "<p>❌ Sous-menu 'pdf-builder-react-editor' non trouvé après addAdminMenu().</p>";
+        }
+
+        // Restaurer l'état
+        $menu = $menu_backup;
+        $submenu = $submenu_backup;
+
+    } catch (Exception $e) {
+        echo "<p>❌ Erreur lors du test direct : " . $e->getMessage() . "</p>";
+    } catch (Error $e) {
+        echo "<p>❌ Erreur fatale lors du test direct : " . $e->getMessage() . "</p>";
     }
+} else {
+    echo "<p>❌ Classe PdfBuilderAdminNew non disponible pour le test direct.</p>";
 }
-
-if (!$menu_found) {
-    echo "<p>❌ Menu principal 'pdf-builder-pro' non trouvé après do_action('admin_menu').</p>";
-}
-
-if (!$submenu_found) {
-    echo "<p>❌ Sous-menu 'pdf-builder-react-editor' non trouvé après do_action('admin_menu').</p>";
-}
-
-// Restaurer l'état
-$menu = $menu_backup;
-$submenu = $submenu_backup;
 
 // Informations système
 echo "<h2>Informations système</h2>";
