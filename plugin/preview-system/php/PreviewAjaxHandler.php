@@ -108,11 +108,15 @@ class PreviewAjaxHandler {
     private static function generatePreviewNew($pageOptions, string $previewType = 'general', string $orderNumberToPreview = ''): array {
         require_once dirname(__FILE__) . '/../../vendor/autoload.php';
         
+        error_log('[PDF PREVIEW] Starting generatePreviewNew');
+        
         if (!class_exists('Dompdf\Dompdf')) {
+            error_log('[PDF PREVIEW] Dompdf not available');
             return ['error' => 'Dompdf non disponible', 'fallback' => true];
         }
         
         try {
+            error_log('[PDF PREVIEW] Creating DataProvider');
             // Créer un DataProvider basique pour les options de page
             $dataProvider = new class($pageOptions) implements \PDF_Builder\Interfaces\DataProviderInterface {
                 private $pageOptions;
@@ -147,15 +151,20 @@ class PreviewAjaxHandler {
                 }
             };
             
+            error_log('[PDF PREVIEW] Converting pageOptions to array');
             // Convertir les options de page en array si nécessaire
             $pageOptionsArray = is_array($pageOptions) ? $pageOptions : (array) $pageOptions;
             
+            error_log('[PDF PREVIEW] Extracting template data');
             // Extraire les données du template depuis pageOptions.template
             $templateData = $pageOptionsArray['template'] ?? $pageOptionsArray;
+            error_log('[PDF PREVIEW] Template data keys: ' . implode(', ', array_keys($templateData)));
             
+            error_log('[PDF PREVIEW] Creating PDFGenerator');
             // Créer le générateur PDF avec les données du template
             $generator = new \PDF_Builder\Generators\PDFGenerator($templateData, $dataProvider, true, []);
             
+            error_log('[PDF PREVIEW] Calling generatePreview');
             // Pour l'instant, on ne gère que les aperçus généraux
             // TODO: Implémenter la gestion des aperçus de commande spécifique
             
@@ -163,9 +172,12 @@ class PreviewAjaxHandler {
             $generator->generatePreview();
             
             // Cette ligne ne devrait pas être atteinte car generatePreview() fait exit()
+            error_log('[PDF PREVIEW] generatePreview completed without exit');
             return ['success' => true];
             
         } catch (\Exception $e) {
+            error_log('[PDF PREVIEW] Exception caught: ' . $e->getMessage());
+            error_log('[PDF PREVIEW] Exception trace: ' . $e->getTraceAsString());
             return ['error' => 'Erreur lors de la génération de l\'aperçu: ' . $e->getMessage()];
         }
     }
