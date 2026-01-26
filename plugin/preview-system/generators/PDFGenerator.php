@@ -27,7 +27,7 @@ class PDFGenerator extends BaseGenerator
     protected function initialize(): void
     {
         // Charger l'autoload pour s'assurer que DomPDF est disponible
-        $vendorPath = dirname(__DIR__) . '/vendor/autoload.php';
+        $vendorPath = dirname(__DIR__, 2) . '/vendor/autoload.php';
         if (file_exists($vendorPath)) {
             require_once $vendorPath;
         }
@@ -70,7 +70,7 @@ class PDFGenerator extends BaseGenerator
         }
 
         // Essayer de charger manuellement depuis vendor
-        $vendorPath = dirname(__DIR__) . '/vendor/autoload.php';
+        $vendorPath = dirname(__DIR__, 2) . '/vendor/autoload.php';
         if (file_exists($vendorPath)) {
             $this->logInfo("Trying to load DomPDF via vendor autoload");
             try {
