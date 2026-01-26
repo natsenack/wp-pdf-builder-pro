@@ -406,9 +406,16 @@ abstract class BaseGenerator
     {
         $style = 'position: absolute; ';
 
-        // Adjust positioning to compensate for offset - subtract 20px from all values
-        $x = ($element['x'] ?? 0) - 20;
-        $y = ($element['y'] ?? 0) - 20;
+        // Adjust positioning to compensate for offset - subtract 20px from all values only for PDF generation
+        // For HTML preview, use exact positions as defined in the canvas
+        $x = $element['x'] ?? 0;
+        $y = $element['y'] ?? 0;
+
+        if (!$this->is_preview) {
+            // Apply offset compensation only for PDF generation
+            $x -= 20;
+            $y -= 20;
+        }
 
         // Allow negative values for proper positioning
         $style .= "left: {$x}px; ";
@@ -416,7 +423,7 @@ abstract class BaseGenerator
 
         // Debug log for positioning
         if (isset($element['x']) || isset($element['y'])) {
-            error_log("[PDF] Element positioning - original x: " . ($element['x'] ?? 'not set') . ", y: " . ($element['y'] ?? 'not set') . " | adjusted x: {$x}, y: {$y}");
+            error_log("[PDF] Element positioning - original x: " . ($element['x'] ?? 'not set') . ", y: " . ($element['y'] ?? 'not set') . " | adjusted x: {$x}, y: {$y} | is_preview: " . ($this->is_preview ? 'true' : 'false'));
         }
         if (isset($element['width'])) {
             $style .= "width: {$element['width']}px; ";
@@ -470,14 +477,20 @@ abstract class BaseGenerator
 
             // Position et dimensions depuis properties si pas déjà définis
             if (!isset($element['x']) && isset($props['x'])) {
-                $adjustedX = $props['x'] - 20;
+                $adjustedX = $props['x'];
+                if (!$this->is_preview) {
+                    $adjustedX -= 20;
+                }
                 $style .= "left: {$adjustedX}px; ";
-                error_log("[PDF] Element positioning from properties - x: {$props['x']}, adjusted x: {$adjustedX}");
+                error_log("[PDF] Element positioning from properties - x: {$props['x']}, adjusted x: {$adjustedX} | is_preview: " . ($this->is_preview ? 'true' : 'false'));
             }
             if (!isset($element['y']) && isset($props['y'])) {
-                $adjustedY = $props['y'] - 20;
+                $adjustedY = $props['y'];
+                if (!$this->is_preview) {
+                    $adjustedY -= 20;
+                }
                 $style .= "top: {$adjustedY}px; ";
-                error_log("[PDF] Element positioning from properties - y: {$props['y']}, adjusted y: {$adjustedY}");
+                error_log("[PDF] Element positioning from properties - y: {$props['y']}, adjusted y: {$adjustedY} | is_preview: " . ($this->is_preview ? 'true' : 'false'));
             }
             if (!isset($element['width']) && isset($props['width'])) {
                 $style .= "width: {$props['width']}px; ";
