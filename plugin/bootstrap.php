@@ -723,16 +723,6 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
     }
 
-    // Charger le handler AJAX de prévisualisation PDF
-    error_log('[BOOTSTRAP] About to check for AJAX file: ' . PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/PDF_Builder_Preview_Ajax.php');
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/PDF_Builder_Preview_Ajax.php')) {
-        error_log('[BOOTSTRAP] AJAX file exists, requiring it');
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/PDF_Builder_Preview_Ajax.php';
-        error_log('[BOOTSTRAP] AJAX file loaded successfully');
-    } else {
-        error_log('[BOOTSTRAP] AJAX file does not exist at: ' . PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/PDF_Builder_Preview_Ajax.php');
-    }
-
     // Charger les handlers AJAX pour les paramètres
 
     // ============================================================================
