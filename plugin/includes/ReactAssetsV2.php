@@ -28,6 +28,14 @@ class ReactAssets {
         wp_enqueue_script('wp-util');
         wp_enqueue_script('wp-api');
 
+        // Désactiver wp-preferences AVANT tout chargement sur cette page
+        if ($page === 'admin.php?page=pdf-builder-react-editor') {
+            wp_deregister_script('wp-preferences');
+            wp_deregister_script('wp-preferences-persistence');
+            wp_dequeue_script('wp-preferences');
+            wp_dequeue_script('wp-preferences-persistence');
+        }
+
         // S'assurer que l'objet wp global est disponible
         add_action('admin_enqueue_scripts', function() {
             ?>
@@ -45,12 +53,6 @@ class ReactAssets {
         if ($page !== 'admin.php?page=pdf-builder-react-editor') {
             return;
         }
-
-        // Désactiver wp-preferences qui cause des erreurs REST API sur cette page
-        wp_deregister_script('wp-preferences');
-        wp_deregister_script('wp-preferences-persistence');
-        wp_dequeue_script('wp-preferences');
-        wp_dequeue_script('wp-preferences-persistence');
 
         // Charger la médiathèque WordPress pour les composants qui en ont besoin
         wp_enqueue_media();
