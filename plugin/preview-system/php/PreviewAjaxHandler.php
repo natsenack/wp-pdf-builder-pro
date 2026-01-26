@@ -310,14 +310,26 @@ class PreviewAjaxHandler {
                 }
             };
             
+            // Fonction pour convertir récursivement les objets en tableaux
+            $objectToArray = function($obj) use (&$objectToArray) {
+                if (is_object($obj)) {
+                    $obj = (array) $obj;
+                }
+                if (is_array($obj)) {
+                    foreach ($obj as $key => $value) {
+                        $obj[$key] = $objectToArray($value);
+                    }
+                }
+                return $obj;
+            };
+            
             // Convertir les options de page en array si nécessaire
-            $pageOptionsArray = is_array($pageOptions) ? $pageOptions : (array) $pageOptions;
+            $pageOptionsArray = $objectToArray($pageOptions);
             
             // Extraire les données du template depuis pageOptions.template
             $templateData = $pageOptionsArray['template'] ?? $pageOptionsArray;
             
-            // S'assurer que templateData est un array
-            $templateData = is_array($templateData) ? $templateData : (array) $templateData;
+            // S'assurer que templateData est un array (déjà fait par objectToArray)
             
             error_log('[HTML PREVIEW] Creating PDFGenerator for HTML preview');
             // Créer le générateur PDF avec les données du template
