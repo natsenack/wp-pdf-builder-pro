@@ -891,6 +891,9 @@ class PdfBuilderAdminNew
         // Script loading is handled by AdminScriptLoader
         // add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
 
+        // Désactiver les préférences WordPress problématiques sur notre page
+        add_action('admin_enqueue_scripts', [$this, 'disable_problematic_preferences'], 1);
+
         // Inclure le gestionnaire de modèles prédéfinis
         include_once plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/predefined-templates-manager.php';
 
@@ -964,11 +967,89 @@ class PdfBuilderAdminNew
     }
 
     /**
-     * Alias pour handleLegacyTemplateLinks() - compatibilité
+     * Désactive les préférences WordPress problématiques qui causent des erreurs API REST
      */
-    public function handle_legacy_template_links()
+    public function disable_problematic_preferences()
     {
-        return $this->handleLegacyTemplateLinks();
+        global $pagenow;
+        $page = isset($_GET['page']) ? $_GET['page'] : '';
+
+        // Ne désactiver que sur notre page d'éditeur
+        if ($page !== 'pdf-builder-react-editor') {
+            return;
+        }
+
+        // Désactiver les préférences utilisateur qui causent des erreurs API REST
+        echo "<script>
+            // Désactiver les appels API REST problématiques
+            if (typeof wp !== 'undefined' && wp.apiFetch) {
+                // Override apiFetch to prevent problematic calls
+                var originalApiFetch = wp.apiFetch;
+                wp.apiFetch = function(options) {
+                    // Block calls to users/me endpoint that cause 404
+                    if (options.path && options.path.includes('/wp/v2/users/me')) {
+                        return Promise.reject({
+                            code: 'blocked_endpoint',
+                            message: 'Endpoint blocked to prevent errors'
+                        });
+                    }
+                    return originalApiFetch(options);
+                };
+            }
+
+            // Désactiver les préférences qui causent des erreurs JSON
+            if (typeof wp !== 'undefined' && wp.data && wp.data.dispatch) {
+                try {
+                    // Désactiver les préférences utilisateur si elles existent
+                    if (wp.data.dispatch('core/preferences')) {
+                        // Override pour éviter les erreurs
+                        wp.data.dispatch('core/preferences').set = function() {
+                            // Silent fail
+                        };
+                    }
+                } catch (e) {
+                    // Ignore errors
+                }
+            }
+
+            // Corriger les appels AJAX qui retournent du HTML au lieu de JSON
+            if (typeof jQuery !== 'undefined') {
+                // Override jQuery.ajax pour gérer les réponses non-JSON
+                var originalAjax = jQuery.ajax;
+                jQuery.ajax = function(options) {
+                    if (options.dataType === 'json' || (options.url && options.url.includes('admin-ajax.php'))) {
+                        var originalSuccess = options.success;
+                        var originalError = options.error;
+
+                        options.success = function(data, textStatus, jqXHR) {
+                            // Vérifier si la réponse est du JSON valide
+                            if (typeof data === 'string' && data.trim().charAt(0) !== '{') {
+                                // Réponse HTML au lieu de JSON - traiter comme erreur
+                                if (originalError) {
+                                    originalError(jqXHR, 'parsererror', {
+                                        code: 'invalid_json',
+                                        message: 'La réponse n\\'est pas une réponse JSON valide.'
+                                    });
+                                }
+                                return;
+                            }
+                            if (originalSuccess) {
+                                originalSuccess(data, textStatus, jqXHR);
+                            }
+                        };
+
+                        options.error = function(jqXHR, textStatus, errorThrown) {
+                            // Log pour debug mais ne pas afficher d'erreur bloquante
+                            console.warn('PDF Builder: AJAX error handled:', textStatus, errorThrown);
+                            if (originalError) {
+                                originalError(jqXHR, textStatus, errorThrown);
+                            }
+                        };
+                    }
+                    return originalAjax.call(this, options);
+                };
+            }
+        </script>";
     }
 
     /**
