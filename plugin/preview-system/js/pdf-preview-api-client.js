@@ -83,20 +83,38 @@
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const result = await response.json();
-            console.log('[PDF PREVIEW API] Backend response:', result);
+            // Handle different response types based on format
+            const format = options.format || 'png';
+            if (format === 'pdf') {
+                // For PDF, expect binary content and create a blob URL
+                const pdfBlob = await response.blob();
+                const pdfUrl = URL.createObjectURL(pdfBlob);
+                console.log('[PDF PREVIEW API] PDF blob created, URL:', pdfUrl);
 
-            if (!result.success) {
-                throw new Error(result.error || 'Erreur lors de la génération du PDF');
-            }
+                return {
+                    success: true,
+                    data: {
+                        image_url: pdfUrl,
+                        format: 'pdf'
+                    }
+                };
+            } else {
+                // For images (PNG/JPG), expect JSON response
+                const result = await response.json();
+                console.log('[PDF PREVIEW API] Backend response:', result);
 
-            return {
-                success: true,
-                data: {
-                    image_url: result.data?.image_url || result.image_url,
-                    format: options.format || 'png'
+                if (!result.success) {
+                    throw new Error(result.error || 'Erreur lors de la génération du PDF');
                 }
-            };
+
+                return {
+                    success: true,
+                    data: {
+                        image_url: result.data?.image_url || result.image_url,
+                        format: format
+                    }
+                };
+            }
         } catch (error) {
             console.error('[PDF PREVIEW API] Backend call failed:', error);
             throw new Error(`Erreur backend: ${error.message}`);
