@@ -278,7 +278,23 @@ abstract class BaseGenerator
      */
     protected function renderTextElement(array $element): string
     {
-        $text = $element['text'] ?? '';
+        // Log all element properties for debugging
+        error_log('[PDF GENERATOR] renderTextElement - element data: ' . print_r($element, true));
+        
+        // Use real element data with flexible property names
+        $text = $element['text'] ?? $element['content'] ?? $element['value'] ?? '';
+        
+        // Also check for nested properties
+        if (empty($text) && isset($element['properties']['text'])) {
+            $text = $element['properties']['text'];
+        }
+        if (empty($text) && isset($element['properties']['content'])) {
+            $text = $element['properties']['content'];
+        }
+        if (empty($text) && isset($element['properties']['value'])) {
+            $text = $element['properties']['value'];
+        }
+        
         $text = $this->injectVariables($text);
         $style = $this->buildElementStyle($element);
         return "<div class=\"pdf-element text-element\" style=\"{$style}\">{$text}</div>";
@@ -292,8 +308,34 @@ abstract class BaseGenerator
      */
     protected function renderImageElement(array $element): string
     {
-        $src = $element['src'] ?? '';
-        $alt = $element['alt'] ?? '';
+        // Log all element properties for debugging
+        error_log('[PDF GENERATOR] renderImageElement - element data: ' . print_r($element, true));
+        
+        // Use real element data with flexible property names
+        $src = $element['src'] ?? $element['url'] ?? $element['imageUrl'] ?? '';
+        $alt = $element['alt'] ?? $element['altText'] ?? $element['title'] ?? '';
+        
+        // Also check for nested properties
+        if (empty($src) && isset($element['properties']['src'])) {
+            $src = $element['properties']['src'];
+        }
+        if (empty($src) && isset($element['properties']['url'])) {
+            $src = $element['properties']['url'];
+        }
+        if (empty($src) && isset($element['properties']['imageUrl'])) {
+            $src = $element['properties']['imageUrl'];
+        }
+        
+        if (empty($alt) && isset($element['properties']['alt'])) {
+            $alt = $element['properties']['alt'];
+        }
+        if (empty($alt) && isset($element['properties']['altText'])) {
+            $alt = $element['properties']['altText'];
+        }
+        if (empty($alt) && isset($element['properties']['title'])) {
+            $alt = $element['properties']['title'];
+        }
+        
         if (empty($src)) {
             return '';
         }
@@ -310,8 +352,24 @@ abstract class BaseGenerator
      */
     protected function renderRectangleElement(array $element): string
     {
+        // Log all element properties for debugging
+        error_log('[PDF GENERATOR] renderRectangleElement - element data: ' . print_r($element, true));
+        
         $style = $this->buildElementStyle($element);
-        $style .= 'border: 1px solid #000;';
+        
+        // Use real element data with flexible property names
+        $borderColor = $element['borderColor'] ?? $element['strokeColor'] ?? $element['color'] ?? '#000000';
+        $borderWidth = $element['borderWidth'] ?? $element['strokeWidth'] ?? $element['width'] ?? 1;
+        $backgroundColor = $element['backgroundColor'] ?? $element['fillColor'] ?? $element['fill'] ?? 'transparent';
+        
+        // Also check for nested properties
+        if (isset($element['properties'])) {
+            $borderColor = $element['properties']['borderColor'] ?? $element['properties']['strokeColor'] ?? $element['properties']['color'] ?? $borderColor;
+            $borderWidth = $element['properties']['borderWidth'] ?? $element['properties']['strokeWidth'] ?? $element['properties']['width'] ?? $borderWidth;
+            $backgroundColor = $element['properties']['backgroundColor'] ?? $element['properties']['fillColor'] ?? $element['properties']['fill'] ?? $backgroundColor;
+        }
+        
+        $style .= "border: {$borderWidth}px solid {$borderColor}; background-color: {$backgroundColor};";
         return "<div class=\"pdf-element rectangle-element\" style=\"{$style}\"></div>";
     }
 
@@ -326,11 +384,25 @@ abstract class BaseGenerator
         
         $style = $this->buildElementStyle($element);
         
-        // Use real element data instead of hardcoded values
-        $customerName = $element['customerName'] ?? $element['name'] ?? 'Client';
-        $customerAddress = $element['customerAddress'] ?? $element['address'] ?? '';
-        $customerEmail = $element['customerEmail'] ?? $element['email'] ?? '';
-        $customerPhone = $element['customerPhone'] ?? $element['phone'] ?? '';
+        // Use real element data with flexible property names
+        $customerName = $element['customerName'] ?? $element['name'] ?? $element['customer_name'] ?? $element['fullName'] ?? 'Client';
+        $customerAddress = $element['customerAddress'] ?? $element['address'] ?? $element['customer_address'] ?? '';
+        $customerEmail = $element['customerEmail'] ?? $element['email'] ?? $element['customer_email'] ?? '';
+        $customerPhone = $element['customerPhone'] ?? $element['phone'] ?? $element['customer_phone'] ?? '';
+        
+        // Also check for nested properties
+        if (empty($customerName) && isset($element['properties']['customerName'])) {
+            $customerName = $element['properties']['customerName'];
+        }
+        if (empty($customerAddress) && isset($element['properties']['customerAddress'])) {
+            $customerAddress = $element['properties']['customerAddress'];
+        }
+        if (empty($customerEmail) && isset($element['properties']['customerEmail'])) {
+            $customerEmail = $element['properties']['customerEmail'];
+        }
+        if (empty($customerPhone) && isset($element['properties']['customerPhone'])) {
+            $customerPhone = $element['properties']['customerPhone'];
+        }
         
         $content = $customerName;
         if (!empty($customerAddress)) $content .= "\n" . $customerAddress;
@@ -350,12 +422,29 @@ abstract class BaseGenerator
         
         $style = $this->buildElementStyle($element);
         
-        // Use real element data instead of hardcoded values
-        $companyName = $element['companyName'] ?? $element['name'] ?? 'Entreprise';
-        $companyAddress = $element['companyAddress'] ?? $element['address'] ?? '';
-        $companyEmail = $element['companyEmail'] ?? $element['email'] ?? '';
-        $companyPhone = $element['companyPhone'] ?? $element['phone'] ?? '';
-        $companySiret = $element['companySiret'] ?? $element['siret'] ?? '';
+        // Use real element data with flexible property names
+        $companyName = $element['companyName'] ?? $element['name'] ?? $element['company_name'] ?? 'Entreprise';
+        $companyAddress = $element['companyAddress'] ?? $element['address'] ?? $element['company_address'] ?? '';
+        $companyEmail = $element['companyEmail'] ?? $element['email'] ?? $element['company_email'] ?? '';
+        $companyPhone = $element['companyPhone'] ?? $element['phone'] ?? $element['company_phone'] ?? '';
+        $companySiret = $element['companySiret'] ?? $element['siret'] ?? $element['company_siret'] ?? '';
+        
+        // Also check for nested properties
+        if (empty($companyName) && isset($element['properties']['companyName'])) {
+            $companyName = $element['properties']['companyName'];
+        }
+        if (empty($companyAddress) && isset($element['properties']['companyAddress'])) {
+            $companyAddress = $element['properties']['companyAddress'];
+        }
+        if (empty($companyEmail) && isset($element['properties']['companyEmail'])) {
+            $companyEmail = $element['properties']['companyEmail'];
+        }
+        if (empty($companyPhone) && isset($element['properties']['companyPhone'])) {
+            $companyPhone = $element['properties']['companyPhone'];
+        }
+        if (empty($companySiret) && isset($element['properties']['companySiret'])) {
+            $companySiret = $element['properties']['companySiret'];
+        }
         
         $content = $companyName;
         if (!empty($companyAddress)) $content .= "\n" . $companyAddress;
@@ -376,8 +465,13 @@ abstract class BaseGenerator
         
         $style = $this->buildElementStyle($element);
         
-        // Use real element data instead of hardcoded values
-        $orderNumber = $element['orderNumber'] ?? $element['number'] ?? $element['value'] ?? '#12345';
+        // Use real element data with flexible property names
+        $orderNumber = $element['orderNumber'] ?? $element['number'] ?? $element['value'] ?? $element['order_number'] ?? '#12345';
+        
+        // Also check for nested properties
+        if ($orderNumber === '#12345' && isset($element['properties']['orderNumber'])) {
+            $orderNumber = $element['properties']['orderNumber'];
+        }
         
         return "<div class=\"pdf-element\" style=\"{$style}\">{$orderNumber}</div>";
     }
@@ -408,11 +502,19 @@ abstract class BaseGenerator
         
         $style = $this->buildElementStyle($element);
         
-        // Use real element data instead of hardcoded values
-        $products = $element['products'] ?? $element['items'] ?? [];
-        $showHeaders = $element['showHeaders'] ?? true;
-        $showBorders = $element['showBorders'] ?? true;
-        $currency = $element['currency'] ?? '€';
+        // Use real element data with flexible property names
+        $products = $element['products'] ?? $element['items'] ?? $element['productList'] ?? [];
+        $showHeaders = $element['showHeaders'] ?? $element['headers'] ?? $element['show_header'] ?? true;
+        $showBorders = $element['showBorders'] ?? $element['borders'] ?? $element['show_border'] ?? true;
+        $currency = $element['currency'] ?? $element['currencySymbol'] ?? '€';
+        
+        // Also check for nested properties
+        if (empty($products) && isset($element['properties'])) {
+            $products = $element['properties']['products'] ?? $element['properties']['items'] ?? $element['properties']['productList'] ?? [];
+            $showHeaders = $element['properties']['showHeaders'] ?? $element['properties']['headers'] ?? $element['properties']['show_header'] ?? $showHeaders;
+            $showBorders = $element['properties']['showBorders'] ?? $element['properties']['borders'] ?? $element['properties']['show_border'] ?? $showBorders;
+            $currency = $element['properties']['currency'] ?? $element['properties']['currencySymbol'] ?? $currency;
+        }
         
         $tableStyle = $showBorders ? 'border-collapse: collapse;' : 'border-collapse: separate;';
         $borderStyle = $showBorders ? 'border: 1px solid #ddd;' : '';
@@ -458,9 +560,26 @@ abstract class BaseGenerator
      */
     protected function renderWoocommerceOrderDateElement(array $element): string
     {
+        // Log all element properties for debugging
+        error_log('[PDF GENERATOR] renderWoocommerceOrderDateElement - element data: ' . print_r($element, true));
+        
         $style = $this->buildElementStyle($element);
-        $content = date('d/m/Y');
-        return "<div class=\"pdf-element\" style=\"{$style}\">{$content}</div>";
+        
+        // Use real element data with flexible property names
+        $date = $element['date'] ?? $element['orderDate'] ?? $element['order_date'] ?? date('d/m/Y');
+        
+        // Also check for nested properties
+        if ($date === date('d/m/Y') && isset($element['properties']['date'])) {
+            $date = $element['properties']['date'];
+        }
+        if ($date === date('d/m/Y') && isset($element['properties']['orderDate'])) {
+            $date = $element['properties']['orderDate'];
+        }
+        if ($date === date('d/m/Y') && isset($element['properties']['order_date'])) {
+            $date = $element['properties']['order_date'];
+        }
+        
+        return "<div class=\"pdf-element\" style=\"{$style}\">{$date}</div>";
     }
 
     /**
@@ -472,7 +591,21 @@ abstract class BaseGenerator
         error_log('[PDF GENERATOR] renderDocumentTypeElement - element data: ' . print_r($element, true));
         
         $style = $this->buildElementStyle($element);
-        $title = $element['title'] ?? $element['documentType'] ?? $element['type'] ?? 'Facture';
+        
+        // Use real element data with flexible property names
+        $title = $element['title'] ?? $element['documentType'] ?? $element['type'] ?? $element['document_type'] ?? 'Facture';
+        
+        // Also check for nested properties
+        if ($title === 'Facture' && isset($element['properties']['title'])) {
+            $title = $element['properties']['title'];
+        }
+        if ($title === 'Facture' && isset($element['properties']['documentType'])) {
+            $title = $element['properties']['documentType'];
+        }
+        if ($title === 'Facture' && isset($element['properties']['type'])) {
+            $title = $element['properties']['type'];
+        }
+        
         return "<div class=\"pdf-element\" style=\"{$style}\">{$title}</div>";
     }
 
@@ -485,7 +618,21 @@ abstract class BaseGenerator
         error_log('[PDF GENERATOR] renderDynamicTextElement - element data: ' . print_r($element, true));
         
         $style = $this->buildElementStyle($element);
-        $text = $element['text'] ?? $element['textTemplate'] ?? $element['content'] ?? 'Texte dynamique';
+        
+        // Use real element data with flexible property names
+        $text = $element['text'] ?? $element['textTemplate'] ?? $element['content'] ?? $element['dynamicText'] ?? 'Texte dynamique';
+        
+        // Also check for nested properties
+        if ($text === 'Texte dynamique' && isset($element['properties']['text'])) {
+            $text = $element['properties']['text'];
+        }
+        if ($text === 'Texte dynamique' && isset($element['properties']['textTemplate'])) {
+            $text = $element['properties']['textTemplate'];
+        }
+        if ($text === 'Texte dynamique' && isset($element['properties']['content'])) {
+            $text = $element['properties']['content'];
+        }
+        
         $text = $this->injectVariables($text);
         return "<div class=\"pdf-element text-element\" style=\"{$style}\">{$text}</div>";
     }
@@ -499,12 +646,39 @@ abstract class BaseGenerator
         error_log('[PDF GENERATOR] renderMentionsElement - element data: ' . print_r($element, true));
         
         $style = $this->buildElementStyle($element);
+        
+        // Use real element data with flexible property names
+        $showEmail = $element['showEmail'] ?? $element['email'] ?? $element['show_email'] ?? false;
+        $showPhone = $element['showPhone'] ?? $element['phone'] ?? $element['show_phone'] ?? false;
+        $showSiret = $element['showSiret'] ?? $element['siret'] ?? $element['show_siret'] ?? false;
+        $showVat = $element['showVat'] ?? $element['vat'] ?? $element['show_vat'] ?? false;
+        
+        $email = $element['email'] ?? $element['emailAddress'] ?? 'contact@example.com';
+        $phone = $element['phone'] ?? $element['phoneNumber'] ?? '+33 1 23 45 67 89';
+        $siret = $element['siret'] ?? $element['siretNumber'] ?? '123 456 789 00012';
+        $vat = $element['vat'] ?? $element['vatNumber'] ?? 'FR123456789';
+        $separator = $element['separator'] ?? $element['separatorChar'] ?? ' • ';
+        
+        // Also check for nested properties
+        if (isset($element['properties'])) {
+            $showEmail = $element['properties']['showEmail'] ?? $element['properties']['email'] ?? $element['properties']['show_email'] ?? $showEmail;
+            $showPhone = $element['properties']['showPhone'] ?? $element['properties']['phone'] ?? $element['properties']['show_phone'] ?? $showPhone;
+            $showSiret = $element['properties']['showSiret'] ?? $element['properties']['siret'] ?? $element['properties']['show_siret'] ?? $showSiret;
+            $showVat = $element['properties']['showVat'] ?? $element['properties']['vat'] ?? $element['properties']['show_vat'] ?? $showVat;
+            
+            $email = $element['properties']['email'] ?? $element['properties']['emailAddress'] ?? $email;
+            $phone = $element['properties']['phone'] ?? $element['properties']['phoneNumber'] ?? $phone;
+            $siret = $element['properties']['siret'] ?? $element['properties']['siretNumber'] ?? $siret;
+            $vat = $element['properties']['vat'] ?? $element['properties']['vatNumber'] ?? $vat;
+            $separator = $element['properties']['separator'] ?? $element['properties']['separatorChar'] ?? $separator;
+        }
+        
         $mentions = [];
-        if ($element['showEmail'] ?? false) $mentions[] = $element['email'] ?? 'contact@example.com';
-        if ($element['showPhone'] ?? false) $mentions[] = $element['phone'] ?? '+33 1 23 45 67 89';
-        if ($element['showSiret'] ?? false) $mentions[] = 'SIRET: ' . ($element['siret'] ?? '123 456 789 00012');
-        if ($element['showVat'] ?? false) $mentions[] = 'TVA: ' . ($element['vat'] ?? 'FR123456789');
-        $separator = $element['separator'] ?? ' • ';
+        if ($showEmail) $mentions[] = $email;
+        if ($showPhone) $mentions[] = $phone;
+        if ($showSiret) $mentions[] = 'SIRET: ' . $siret;
+        if ($showVat) $mentions[] = 'TVA: ' . $vat;
+        
         $content = implode($separator, $mentions);
         return "<div class=\"pdf-element\" style=\"{$style}\">{$content}</div>";
     }
