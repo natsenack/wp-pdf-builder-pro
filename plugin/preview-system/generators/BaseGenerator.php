@@ -935,7 +935,4 @@ abstract class BaseGenerator
 
         $this->logInfo('HTML preview generation completed, length: ' . strlen($html));
         return $html;
-
-        $this->logInfo('HTML preview generation completed, length: ' . strlen($html));
-        return $html;
     }
