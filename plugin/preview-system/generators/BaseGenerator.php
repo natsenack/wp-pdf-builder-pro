@@ -1017,13 +1017,19 @@ abstract class BaseGenerator
         ' . $htmlContent . '
     </div>
     <script>
-        // Ajouter des overlays de débogage
+        // Ajouter des overlays de débogage (sauf pour customer_info et company_info)
         document.addEventListener("DOMContentLoaded", function() {
             const elements = document.querySelectorAll("[data-element-type]");
             elements.forEach(function(el) {
+                const elementType = el.getAttribute("data-element-type");
+                // Ne pas ajouter d'overlay pour customer_info et company_info
+                if (elementType === "customer_info" || elementType === "company_info") {
+                    return;
+                }
+                
                 const debug = document.createElement("div");
                 debug.className = "element-debug";
-                debug.setAttribute("data-type", el.getAttribute("data-element-type"));
+                debug.setAttribute("data-type", elementType);
                 debug.style.left = el.style.left;
                 debug.style.top = el.style.top;
                 debug.style.width = el.style.width;
