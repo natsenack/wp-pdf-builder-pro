@@ -10,6 +10,11 @@ console.log('Timestamp:', Date.now());
 console.log('User Agent:', navigator.userAgent);
 console.log('Location:', window.location.href);
 
+console.log('🚀🚀🚀 [REACT INIT] SCRIPT CHARGÉ - DÉBUT DE L\'INITIALISATION 🚀🚀🚀');
+console.log('📅 Timestamp:', new Date().toISOString());
+console.log('🌐 URL:', window.location.href);
+console.log('👤 User Agent:', navigator.userAgent);
+
 console.log('[REACT INIT] ===== FILE LOADED =====');
 console.log('[REACT INIT] React initialization script loaded at:', new Date().toISOString());
 console.log('[REACT INIT] Window object available:', typeof window);
