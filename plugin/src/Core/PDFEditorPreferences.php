@@ -54,17 +54,26 @@ class PDFEditorPreferences {
      * Enregistrer les préférences utilisateur
      */
     public function save_preferences($preferences) {
+        error_log('[PDF Editor Preferences] save_preferences called with: ' . print_r($preferences, true));
+
         // S'assurer que user_id est défini
         if (!$this->user_id) {
             $this->user_id = get_current_user_id();
+            error_log('[PDF Editor Preferences] user_id was not set, now: ' . $this->user_id);
         }
 
         if (!$this->user_id) {
+            error_log('[PDF Editor Preferences] No user ID, returning false');
             return false;
         }
 
         $sanitized = $this->sanitize_preferences($preferences);
-        return update_user_meta($this->user_id, $this->preferences_key, $sanitized);
+        error_log('[PDF Editor Preferences] Sanitized preferences: ' . print_r($sanitized, true));
+
+        $result = update_user_meta($this->user_id, $this->preferences_key, $sanitized);
+        error_log('[PDF Editor Preferences] update_user_meta result: ' . ($result ? 'true (' . $result . ')' : 'false'));
+
+        return $result;
     }
 
     /**
@@ -170,32 +179,40 @@ class PDFEditorPreferences {
      */
     public function ajax_save_preferences() {
         try {
+            error_log('[PDF Editor Preferences] AJAX save called');
+
             // Vérifier le nonce
             if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_editor_preferences')) {
+                error_log('[PDF Editor Preferences] Invalid nonce');
                 wp_send_json_error(array('message' => 'Sécurité: nonce invalide'));
                 return;
             }
 
             // Vérifier les permissions
             if (!current_user_can('edit_posts')) {
+                error_log('[PDF Editor Preferences] Insufficient permissions');
                 wp_send_json_error(array('message' => 'Permissions insuffisantes'));
                 return;
             }
 
             // Récupérer les données
             $preferences = isset($_POST['preferences']) ? $_POST['preferences'] : array();
+            error_log('[PDF Editor Preferences] Raw preferences: ' . print_r($preferences, true));
 
             if (!is_array($preferences)) {
                 $preferences = json_decode(stripslashes($preferences), true);
             }
+            error_log('[PDF Editor Preferences] Decoded preferences: ' . print_r($preferences, true));
 
             if (!is_array($preferences)) {
+                error_log('[PDF Editor Preferences] Invalid preferences data');
                 wp_send_json_error(array('message' => 'Données de préférences invalides'));
                 return;
             }
 
             // Sauvegarder
             $result = $this->save_preferences($preferences);
+            error_log('[PDF Editor Preferences] Save result: ' . ($result ? 'success' : 'failure'));
 
             if ($result) {
                 wp_send_json_success(array(
@@ -203,10 +220,12 @@ class PDFEditorPreferences {
                     'preferences' => $this->get_preferences()
                 ));
             } else {
+                error_log('[PDF Editor Preferences] Save failed, returning error');
                 wp_send_json_error(array('message' => 'Erreur lors de la sauvegarde'));
             }
 
         } catch (Exception $e) {
+            error_log('[PDF Editor Preferences] Exception: ' . $e->getMessage());
             wp_send_json_error(array('message' => 'Erreur: ' . $e->get_message()));
         }
     }
