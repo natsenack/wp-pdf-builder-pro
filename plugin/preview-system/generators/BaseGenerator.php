@@ -140,7 +140,7 @@ abstract class BaseGenerator
     protected function generateCSS(): string
     {
         $css = '
-            body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+            body { margin: 0; padding: 0; font-family: Arial, sans-serif; position: relative; }
             .pdf-element { position: absolute; }
             .text-element { white-space: pre-wrap; }
             .image-element { max-width: 100%; height: auto; }
@@ -688,7 +688,7 @@ abstract class BaseGenerator
      */
     protected function buildElementStyle(array $element): string
     {
-        $style = '';
+        $style = 'position: absolute; ';
         if (isset($element['x'])) {
             $style .= "left: {$element['x']}px; ";
         }
