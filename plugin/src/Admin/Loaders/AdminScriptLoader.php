@@ -609,8 +609,10 @@ class AdminScriptLoader
 
         // React initialization script - initializes PDFBuilderReact component
         $react_init_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-init.min.js' . $random_param;
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: ENQUEUING pdf-builder-react-initializer with URL: ' . $react_init_url);
         wp_enqueue_script('pdf-builder-react-initializer', $react_init_url, ['pdf-builder-react-main'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react-initializer', 'type', 'text/javascript');
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: AFTER ENQUEUE - checking if script is registered: ' . (wp_script_is('pdf-builder-react-initializer', 'enqueued') ? 'YES' : 'NO'));
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-initializer'); }
 
         // Scripts de l'API Preview
@@ -698,6 +700,8 @@ class AdminScriptLoader
                 })();
             ');
         }
+
+        error_log('[DEBUG] PDF Builder AdminScriptLoader: loadReactEditorScripts COMPLETED - all React scripts should be enqueued now');
     }
 
     /**
