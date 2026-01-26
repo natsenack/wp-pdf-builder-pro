@@ -473,6 +473,45 @@ abstract class BaseGenerator
         if (isset($element['fontStyle'])) {
             $style .= "font-style: {$element['fontStyle']}; ";
         }
+        if (isset($element['padding'])) {
+            $style .= "padding: {$element['padding']}px; ";
+        }
+        if (isset($element['margin'])) {
+            $style .= "margin: {$element['margin']}px; ";
+        }
+        if (isset($element['borderStyle'])) {
+            $style .= "border-style: {$element['borderStyle']}; ";
+        }
+        if (isset($element['opacity'])) {
+            $style .= "opacity: {$element['opacity']}; ";
+        }
+        if (isset($element['zIndex'])) {
+            $style .= "z-index: {$element['zIndex']}; ";
+        }
+        if (isset($element['boxShadow'])) {
+            $style .= "box-shadow: {$element['boxShadow']}; ";
+        }
+        if (isset($element['textShadow'])) {
+            $style .= "text-shadow: {$element['textShadow']}; ";
+        }
+        if (isset($element['letterSpacing'])) {
+            $style .= "letter-spacing: {$element['letterSpacing']}px; ";
+        }
+        if (isset($element['wordSpacing'])) {
+            $style .= "word-spacing: {$element['wordSpacing']}px; ";
+        }
+        if (isset($element['verticalAlign'])) {
+            $style .= "vertical-align: {$element['verticalAlign']}; ";
+        }
+        if (isset($element['display'])) {
+            $style .= "display: {$element['display']}; ";
+        }
+        if (isset($element['overflow'])) {
+            $style .= "overflow: {$element['overflow']}; ";
+        }
+        if (isset($element['whiteSpace'])) {
+            $style .= "white-space: {$element['whiteSpace']}; ";
+        }
 
         // Vérifier les propriétés imbriquées (properties) si les propriétés directes ne sont pas définies
         if (isset($element['properties']) && is_array($element['properties'])) {
@@ -541,6 +580,45 @@ abstract class BaseGenerator
             }
             if (!isset($element['fontStyle']) && isset($props['fontStyle'])) {
                 $style .= "font-style: {$props['fontStyle']}; ";
+            }
+            if (!isset($element['padding']) && isset($props['padding'])) {
+                $style .= "padding: {$props['padding']}px; ";
+            }
+            if (!isset($element['margin']) && isset($props['margin'])) {
+                $style .= "margin: {$props['margin']}px; ";
+            }
+            if (!isset($element['borderStyle']) && isset($props['borderStyle'])) {
+                $style .= "border-style: {$props['borderStyle']}; ";
+            }
+            if (!isset($element['opacity']) && isset($props['opacity'])) {
+                $style .= "opacity: {$props['opacity']}; ";
+            }
+            if (!isset($element['zIndex']) && isset($props['zIndex'])) {
+                $style .= "z-index: {$props['zIndex']}; ";
+            }
+            if (!isset($element['boxShadow']) && isset($props['boxShadow'])) {
+                $style .= "box-shadow: {$props['boxShadow']}; ";
+            }
+            if (!isset($element['textShadow']) && isset($props['textShadow'])) {
+                $style .= "text-shadow: {$props['textShadow']}; ";
+            }
+            if (!isset($element['letterSpacing']) && isset($props['letterSpacing'])) {
+                $style .= "letter-spacing: {$props['letterSpacing']}px; ";
+            }
+            if (!isset($element['wordSpacing']) && isset($props['wordSpacing'])) {
+                $style .= "word-spacing: {$props['wordSpacing']}px; ";
+            }
+            if (!isset($element['verticalAlign']) && isset($props['verticalAlign'])) {
+                $style .= "vertical-align: {$props['verticalAlign']}; ";
+            }
+            if (!isset($element['display']) && isset($props['display'])) {
+                $style .= "display: {$props['display']}; ";
+            }
+            if (!isset($element['overflow']) && isset($props['overflow'])) {
+                $style .= "overflow: {$props['overflow']}; ";
+            }
+            if (!isset($element['whiteSpace']) && isset($props['whiteSpace'])) {
+                $style .= "white-space: {$props['whiteSpace']}; ";
             }
         }
 
