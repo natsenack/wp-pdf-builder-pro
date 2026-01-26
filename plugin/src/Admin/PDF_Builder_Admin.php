@@ -1148,26 +1148,30 @@ class PdfBuilderAdminNew
         $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 1;
         $template_type = isset($_GET['template_type']) ? sanitize_text_field($_GET['template_type']) : 'custom';
 
-        // Enqueue des scripts et styles React
-        wp_enqueue_script('react-vendor', PDF_BUILDER_PRO_ASSETS_URL . 'js/react-vendor.min.js', [], PDF_BUILDER_PRO_VERSION, true);
-        wp_enqueue_script('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react.min.js', ['react-vendor'], PDF_BUILDER_PRO_VERSION, true);
-        wp_enqueue_script('pdf-builder-react-init', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react-init.min.js', ['pdf-builder-react'], PDF_BUILDER_PRO_VERSION, true);
-        wp_enqueue_style('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.min.css', [], PDF_BUILDER_PRO_VERSION);
+        // Enqueue des scripts et styles React pour l'éditeur
+        add_action('admin_enqueue_scripts', function() {
+            if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor') {
+                wp_enqueue_script('react-vendor', PDF_BUILDER_PRO_ASSETS_URL . 'js/react-vendor.min.js', [], PDF_BUILDER_PRO_VERSION, true);
+                wp_enqueue_script('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react.min.js', ['react-vendor'], PDF_BUILDER_PRO_VERSION, true);
+                wp_enqueue_script('pdf-builder-react-init', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react-init.min.js', ['pdf-builder-react'], PDF_BUILDER_PRO_VERSION, true);
+                wp_enqueue_style('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.min.css', [], PDF_BUILDER_PRO_VERSION);
 
-        // Localisation des scripts
-        wp_localize_script('pdf-builder-react-init', 'pdfBuilderReact', [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_ajax'),
-            'templateId' => $template_id,
-            'templateType' => $template_type,
-            'assetsUrl' => PDF_BUILDER_PRO_ASSETS_URL,
-            'strings' => [
-                'loading' => __('Chargement de l\'éditeur...', 'pdf-builder-pro'),
-                'error' => __('Une erreur s\'est produite', 'pdf-builder-pro'),
-                'save' => __('Enregistrer', 'pdf-builder-pro'),
-                'cancel' => __('Annuler', 'pdf-builder-pro'),
-            ]
-        ]);
+                // Localisation des scripts
+                wp_localize_script('pdf-builder-react-init', 'pdfBuilderReact', [
+                    'ajaxUrl' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('pdf_builder_ajax'),
+                    'templateId' => isset($_GET['template_id']) ? intval($_GET['template_id']) : 1,
+                    'templateType' => isset($_GET['template_type']) ? sanitize_text_field($_GET['template_type']) : 'custom',
+                    'assetsUrl' => PDF_BUILDER_PRO_ASSETS_URL,
+                    'strings' => [
+                        'loading' => __('Chargement de l\'éditeur...', 'pdf-builder-pro'),
+                        'error' => __('Une erreur s\'est produite', 'pdf-builder-pro'),
+                        'save' => __('Enregistrer', 'pdf-builder-pro'),
+                        'cancel' => __('Annuler', 'pdf-builder-pro'),
+                    ]
+                ]);
+            }
+        });
 
         // Debug output
         echo '<div style="background: #f0f0f0; padding: 10px; margin: 10px 0; border: 1px solid #ccc;">';
