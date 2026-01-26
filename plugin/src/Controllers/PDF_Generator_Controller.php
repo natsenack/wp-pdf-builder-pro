@@ -108,7 +108,9 @@ class PdfBuilderProGenerator
      */
     private function generateHtmlFromElements($elements)
     {
-        // Récupérer les paramètres canvas
+        // Récupérer les paramètres canvas dynamiquement depuis les options WordPress
+        $canvas_width = intval(get_option('pdf_builder_canvas_width', 794));
+        $canvas_height = intval(get_option('pdf_builder_canvas_height', 1123));
         $canvas_bg_color = $this->config['canvas_background_color'] ?? '#ffffff';
         $canvas_border_color = $this->config['canvas_border_color'] ?? '#cccccc';
         $canvas_border_width = $this->config['canvas_border_width'] ?? 1;
@@ -132,7 +134,14 @@ class PdfBuilderProGenerator
     <title>PDF Document</title>
     <style>
         body { margin: 0; padding: 0; background: white; }
-        .pdf-container { position: relative; width: 100%; height: 100%; margin: 0; padding: 0; }
+        .pdf-container {
+            position: relative;
+            width: ' . $canvas_width . 'px;
+            height: ' . $canvas_height . 'px;
+            ' . $container_styles . '
+            margin: 0;
+            padding: 0;
+        }
     </style>
 </head>
 <body>
@@ -165,9 +174,9 @@ class PdfBuilderProGenerator
             $coords['height'] = 50; // Hauteur par défaut
         }
 
-        // CONTRAINTE: S'assurer que l'élément reste dans les limites A4 (595x842 pixels)
-        $canvas_width = 595;
-        $canvas_height = 842;
+        // CONTRAINTE: S'assurer que l'élément reste dans les limites du canvas configuré
+        $canvas_width = intval(get_option('pdf_builder_canvas_width', 794));
+        $canvas_height = intval(get_option('pdf_builder_canvas_height', 1123));
         $coords['x'] = max(0, min($canvas_width - $coords['width'], $coords['x']));
         $coords['y'] = max(0, min($canvas_height - $coords['height'], $coords['y']));
 
