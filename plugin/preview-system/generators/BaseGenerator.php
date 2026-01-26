@@ -169,50 +169,55 @@ abstract class BaseGenerator
     {
         $content = '';
         
-        // Logging détaillé de la structure du template
-        $logger = PDF_Builder_Logger::get_instance();
-        $logger->debug_log('generateContent - STARTING CONTENT GENERATION');
-        $logger->debug_log('generateContent - template_data structure: ' . print_r($this->template_data, true));
-        $logger->debug_log('generateContent - isset template: ' . isset($this->template_data['template']));
-        $logger->debug_log('generateContent - isset elements directly: ' . isset($this->template_data['elements']));
+        // Logging détaillé de la structure du template - TOUJOURS ACTIF
+        error_log('[PDF GENERATOR] generateContent - STARTING CONTENT GENERATION');
+        error_log('[PDF GENERATOR] generateContent - template_data keys: ' . implode(', ', array_keys($this->template_data)));
+        error_log('[PDF GENERATOR] generateContent - isset elements directly: ' . (isset($this->template_data['elements']) ? 'YES' : 'NO'));
+        error_log('[PDF GENERATOR] generateContent - isset template.elements: ' . (isset($this->template_data['template']['elements']) ? 'YES' : 'NO'));
+        
         if (isset($this->template_data['elements'])) {
-            $logger->debug_log('generateContent - elements count (direct): ' . count($this->template_data['elements']));
-            $logger->debug_log('generateContent - elements sample: ' . print_r(array_slice($this->template_data['elements'], 0, 2), true));
-        }
-        if (isset($this->template_data['template']['elements'])) {
-            $logger->debug_log('generateContent - elements count (nested): ' . count($this->template_data['template']['elements']));
-            $logger->debug_log('generateContent - elements sample (nested): ' . print_r(array_slice($this->template_data['template']['elements'], 0, 2), true));
+            error_log('[PDF GENERATOR] generateContent - elements count (direct): ' . count($this->template_data['elements']));
+            if (!empty($this->template_data['elements'])) {
+                error_log('[PDF GENERATOR] generateContent - first element: ' . print_r($this->template_data['elements'][0], true));
+            }
         }
         
         // Déterminer où sont les éléments (nouvelle ou ancienne structure)
         $elements = null;
         if (isset($this->template_data['elements']) && is_array($this->template_data['elements'])) {
             $elements = $this->template_data['elements'];
-            $logger->debug_log('generateContent - USING DIRECT ELEMENTS');
+            error_log('[PDF GENERATOR] generateContent - USING DIRECT ELEMENTS');
         } elseif (isset($this->template_data['template']['elements']) && is_array($this->template_data['template']['elements'])) {
             $elements = $this->template_data['template']['elements'];
-            $logger->debug_log('generateContent - USING NESTED ELEMENTS');
+            error_log('[PDF GENERATOR] generateContent - USING NESTED ELEMENTS');
         }
         
         if (!$elements) {
-            $logger->debug_log('generateContent - NO ELEMENTS FOUND, returning empty content');
-            $logger->debug_log('generateContent - Full template_data: ' . print_r($this->template_data, true));
+            error_log('[PDF GENERATOR] generateContent - NO ELEMENTS FOUND, returning empty content');
+            error_log('[PDF GENERATOR] generateContent - Full template_data: ' . print_r($this->template_data, true));
             return $content;
         }
 
-        $logger->debug_log('generateContent - FOUND ELEMENTS, processing ' . count($elements) . ' elements');
+        error_log('[PDF GENERATOR] generateContent - FOUND ELEMENTS, processing ' . count($elements) . ' elements');
 
         foreach ($elements as $index => $element) {
             // Convert stdClass to array if necessary
             $elementArray = is_array($element) ? $element : (array) $element;
-            $logger->debug_log('generateContent - Processing element ' . $index . ': ' . print_r($elementArray, true));
+            error_log('[PDF GENERATOR] generateContent - Processing element ' . $index . ' type: ' . ($elementArray['type'] ?? 'unknown'));
             $html = $this->renderElement($elementArray);
-            $logger->debug_log('generateContent - Element ' . $index . ' rendered HTML length: ' . strlen($html));
+            error_log('[PDF GENERATOR] generateContent - Element ' . $index . ' rendered HTML length: ' . strlen($html));
+            if (strlen($html) > 0) {
+                error_log('[PDF GENERATOR] generateContent - Element ' . $index . ' HTML preview: ' . substr($html, 0, 100));
+            }
             $content .= $html;
         }
 
-        $logger->debug_log('generateContent - FINAL CONTENT LENGTH: ' . strlen($content));
-        $logger->debug_log('generateContent - FINAL CONTENT PREVIEW: ' . substr($content, 0, 200));
+        error_log('[PDF GENERATOR] generateContent - FINAL CONTENT LENGTH: ' . strlen($content));
+        if (strlen($content) > 0) {
+            error_log('[PDF GENERATOR] generateContent - FINAL CONTENT PREVIEW: ' . substr($content, 0, 200));
+        } else {
+            error_log('[PDF GENERATOR] generateContent - FINAL CONTENT IS EMPTY!');
+        }
         
         return $content;
     }
@@ -227,23 +232,21 @@ abstract class BaseGenerator
     {
         $type = $element['type'] ?? 'unknown';
         
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            $logger = PDF_Builder_Logger::get_instance();
-            $logger->debug_log('renderElement - processing element type: ' . $type);
-            $logger->debug_log('renderElement - element data: ' . print_r($element, true));
-        }
+        error_log('[PDF GENERATOR] renderElement - processing element type: ' . $type);
+        error_log('[PDF GENERATOR] renderElement - element data keys: ' . implode(', ', array_keys($element)));
         
         $method = 'render' . ucfirst($type) . 'Element';
         if (method_exists($this, $method)) {
+            error_log('[PDF GENERATOR] renderElement - calling method: ' . $method);
             $result = $this->$method($element);
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                $logger = PDF_Builder_Logger::get_instance();
-                $logger->debug_log('renderElement - rendered HTML: ' . $result);
+            error_log('[PDF GENERATOR] renderElement - rendered HTML length: ' . strlen($result));
+            if (strlen($result) > 0) {
+                error_log('[PDF GENERATOR] renderElement - HTML preview: ' . substr($result, 0, 100));
             }
             return $result;
         }
 
-        $this->logWarning("Unknown element type: {$type}");
+        error_log('[PDF GENERATOR] renderElement - Unknown element type: ' . $type);
         return '';
     }
 
