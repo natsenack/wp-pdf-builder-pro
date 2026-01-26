@@ -29,7 +29,7 @@
         console.log('[PDF PREVIEW API] - options:', options);
 
         try {
-            // Extraire template_id s'il est dans templateData
+            // Extraire template_id s'il est dans templateData (pour compatibilité)
             const template_id = templateData?.template_id || null;
             
             console.log('[PDF PREVIEW API] Config nonce:', config.nonce);
@@ -39,10 +39,20 @@
             const params = {
                 action: config.endpoint,
                 nonce: config.nonce,
-                template_data: JSON.stringify(templateData),
+                data: JSON.stringify({
+                    pageOptions: templateData,
+                    previewType: 'general',
+                    orderNumberToPreview: ''
+                }),
                 format: options.format || 'png',
                 quality: options.quality || 150
             };
+
+            // Ajouter template_id s'il existe (pour compatibilité)
+            if (template_id) {
+                params.template_id = template_id;
+                console.log('[PDF PREVIEW API] Template ID to send:', template_id);
+            }
 
             console.log('[PDF PREVIEW API] Params before send:', {
                 action: params.action,
