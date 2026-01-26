@@ -1970,6 +1970,12 @@ class PDF_Builder_Unified_Ajax_Handler {
                  return;
              }
 
+             // Vérifier que les headers n'ont pas encore été envoyés
+             if (headers_sent()) {
+                 wp_send_json_error(['message' => __('Impossible d\'envoyer les headers - sortie déjà commencée.', 'pdf-builder-pro')]);
+                 return;
+             }
+
              // Forcer le téléchargement du fichier
              header('Content-Type: application/octet-stream');
              header('Content-Disposition: attachment; filename="' . basename($filename) . '"');

@@ -15,7 +15,6 @@ require_once plugin_dir_path(__FILE__) . 'settings-loader.php';
 require_once plugin_dir_path(__FILE__) . 'settings-parts/settings-main.php';
 
 // Add floating save button and JavaScript here for better execution context
-echo '<!-- PDF BUILDER SETTINGS PAGE LOADED - DEBUG MARKER -->';
 
 // All JavaScript moved to settings-main.php to avoid conflicts
 

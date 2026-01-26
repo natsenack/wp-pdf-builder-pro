@@ -16,10 +16,6 @@
  * date de début de la création du plugin : 15/10/2025
  */
 
-error_log('[DEBUG] PDF BUILDER PRO MAIN FILE LOADED at ' . microtime(true));
-error_log('[DEBUG] PDF BUILDER PRO REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no uri'));
-error_log('[DEBUG] PDF BUILDER PRO GET page: ' . (isset($_GET['page']) ? $_GET['page'] : 'no page'));
-
 // Définir les constantes du plugin
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
@@ -1145,6 +1141,10 @@ function pdf_builder_init()
  */
 function pdf_builder_add_asset_cache_headers()
 {
+    // Éviter l'erreur "headers already sent" si les headers ont déjà été envoyés
+    if (headers_sent()) {
+        return;
+    }
 
     // Vérifier si le cache est activé dans les paramètres
     $settings = pdf_builder_get_option('pdf_builder_settings', array());
@@ -1393,6 +1393,11 @@ function pdf_builder_download_backup() {
         // Nettoyer toute sortie précédente
         if (ob_get_level()) {
             ob_clean();
+        }
+
+        // Vérifier que les headers n'ont pas encore été envoyés
+        if (headers_sent()) {
+            wp_die('Impossible d\'envoyer les headers - sortie déjà commencée');
         }
 
         // Déterminer le type de fichier et le Content-Type approprié

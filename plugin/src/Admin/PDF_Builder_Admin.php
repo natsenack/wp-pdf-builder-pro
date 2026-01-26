@@ -1139,72 +1139,39 @@ class PdfBuilderAdminNew
      */
     public function reactEditorPage()
     {
-        // Version simplifiée pour déboguer l'erreur 500
-        echo "<!DOCTYPE html><html><head><title>PDF Builder Debug</title></head><body>";
-        echo "<h1>PDF Builder - Mode Debug</h1>";
-
-        try {
-            echo "<h2>Étape 1: Vérification des permissions</h2>";
-            if (!$this->checkAdminPermissions()) {
-                echo "<p style='color: red;'>❌ Permissions insuffisantes</p>";
-                return;
-            }
-            echo "<p style='color: green;'>✅ Permissions OK</p>";
-
-            echo "<h2>Étape 2: Récupération des paramètres</h2>";
-            $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 1;
-            $template_type = isset($_GET['template_type']) ? sanitize_text_field($_GET['template_type']) : 'custom';
-            echo "<p>Template ID: $template_id, Type: $template_type</p>";
-
-            echo "<h2>Étape 3: Validation du type</h2>";
-            $valid_types = ['custom', 'predefined', 'system'];
-            if (!in_array($template_type, $valid_types)) {
-                $template_type = 'custom';
-            }
-            echo "<p style='color: green;'>✅ Type validé: $template_type</p>";
-
-            echo "<h2>Étape 4: Test des constantes</h2>";
-            if (defined('PDF_BUILDER_PLUGIN_DIR')) {
-                echo "<p style='color: green;'>✅ PDF_BUILDER_PLUGIN_DIR défini: " . PDF_BUILDER_PLUGIN_DIR . "</p>";
-            } else {
-                echo "<p style='color: red;'>❌ PDF_BUILDER_PLUGIN_DIR non défini</p>";
-            }
-
-            echo "<h2>Étape 5: Test des chemins de fichiers</h2>";
-            $test_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/js/pdf-builder-react.min.js';
-            if (file_exists($test_file)) {
-                echo "<p style='color: green;'>✅ Fichier React existe: " . basename($test_file) . "</p>";
-            } else {
-                echo "<p style='color: red;'>❌ Fichier React manquant: " . $test_file . "</p>";
-            }
-
-            echo "<h2>Étape 6: Test de la mémoire</h2>";
-            $memory_used = memory_get_usage(true);
-            $memory_limit = ini_get('memory_limit');
-            echo "<p>Mémoire utilisée: " . round($memory_used / 1024 / 1024, 2) . " MB</p>";
-            echo "<p>Limite mémoire: $memory_limit</p>";
-
-            echo "<h2>Étape 7: Test du temps d'exécution</h2>";
-            $time_elapsed = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
-            echo "<p>Temps écoulé: " . round($time_elapsed, 3) . " secondes</p>";
-
-            echo "<h2 style='color: green;'>✅ Toutes les vérifications sont passées !</h2>";
-            echo "<p>Si vous voyez ce message, l'erreur 500 vient probablement du HTML/CSS/JS qui suit.</p>";
-
-        } catch (Exception $e) {
-            echo "<h2 style='color: red;'>❌ Exception capturée</h2>";
-            echo "<p><strong>Type:</strong> " . get_class($e) . "</p>";
-            echo "<p><strong>Message:</strong> " . $e->getMessage() . "</p>";
-            echo "<p><strong>Fichier:</strong> " . $e->getFile() . " ligne " . $e->getLine() . "</p>";
-        } catch (Error $e) {
-            echo "<h2 style='color: red;'>❌ Erreur fatale capturée</h2>";
-            echo "<p><strong>Type:</strong> " . get_class($e) . "</p>";
-            echo "<p><strong>Message:</strong> " . $e->getMessage() . "</p>";
-            echo "<p><strong>Fichier:</strong> " . $e->getFile() . " ligne " . $e->getLine() . "</p>";
+        if (!$this->checkAdminPermissions()) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
-        echo "</body></html>";
-        return;
+        // Récupération des paramètres
+        $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 1;
+        $template_type = isset($_GET['template_type']) ? sanitize_text_field($_GET['template_type']) : 'custom';
+
+        // Enqueue des scripts et styles React
+        wp_enqueue_script('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react.min.js', [], PDF_BUILDER_PRO_VERSION, true);
+        wp_enqueue_script('pdf-builder-react-init', PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-react-init.min.js', ['pdf-builder-react'], PDF_BUILDER_PRO_VERSION, true);
+        wp_enqueue_style('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.min.css', [], PDF_BUILDER_PRO_VERSION);
+
+        // Localisation des scripts
+        wp_localize_script('pdf-builder-react-init', 'pdfBuilderReact', [
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('pdf_builder_ajax'),
+            'templateId' => $template_id,
+            'templateType' => $template_type,
+            'assetsUrl' => PDF_BUILDER_PRO_ASSETS_URL,
+            'strings' => [
+                'loading' => __('Chargement de l\'éditeur...', 'pdf-builder-pro'),
+                'error' => __('Une erreur s\'est produite', 'pdf-builder-pro'),
+                'save' => __('Enregistrer', 'pdf-builder-pro'),
+                'cancel' => __('Annuler', 'pdf-builder-pro'),
+            ]
+        ]);
+
+        ?>
+        <div class="wrap pdf-builder-editor-page">
+            <div id="pdf-builder-react-root"></div>
+        </div>
+        <?php
     }
 
     /**

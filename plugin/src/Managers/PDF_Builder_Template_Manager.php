@@ -675,6 +675,12 @@ class PdfBuilderTemplateManager
      */
     public function ajaxLoadTemplate()
     {
+        // Vérifier que les headers n'ont pas encore été envoyés
+        if (headers_sent()) {
+            \wp_send_json_error('Impossible d\'envoyer les headers - sortie déjà commencée');
+            return;
+        }
+
         // ✅ CRITICAL: Disable all caching for AJAX template loading
         // This ensures F5 and Ctrl+F5 load the same fresh data from DB
         // Without these headers, browsers or CDN can cache stale responses
