@@ -335,31 +335,7 @@ class PreviewAjaxHandler {
             return ['error' => 'Erreur lors de la génération de l\'aperçu HTML: ' . $e->getMessage()];
         }
     }
-        require_once dirname(__FILE__) . '/../../vendor/autoload.php';
-        
-        if (!class_exists('Dompdf\Dompdf')) {
-            return ['error' => 'Dompdf non disponible', 'fallback' => true];
-        }
-        
-        // Construire HTML à partir du template
-        $html = self::buildHtmlFromTemplate($template_data);
-        
-        $dompdf = new \Dompdf\Dompdf();
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
-        
-        $pdf_content = $dompdf->output();
-        $pdf_url = self::savePdfTemporarily($pdf_content);
-        
-        return [
-            'image_url' => $pdf_url,
-            'success' => true,
-            'fallback' => false,
-            'format' => 'pdf'
-        ];
-    }
-    
+
     private static function buildHtmlFromTemplate(array $template_data): string {
         $elements = $template_data['elements'] ?? [];
         
