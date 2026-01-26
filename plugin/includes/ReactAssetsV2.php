@@ -41,42 +41,6 @@ class ReactAssets {
             <?php
         }, 1); // Priorité 1 pour s'exécuter très tôt
 
-        // Ajouter un script pour réparer wp-api-fetch sur cette page
-        add_action('admin_enqueue_scripts', function() {
-            ?>
-            <script type="text/javascript">
-            // Réparer wp.apiFetch pour cette page
-            if (typeof wp !== 'undefined' && wp.apiFetch) {
-                // S'assurer que les credentials sont inclus
-                wp.apiFetch.use(wp.apiFetch.createPreloadingMiddleware());
-                wp.apiFetch.use(wp.apiFetch.createRootURLMiddleware(wp.apiSettings.root));
-                
-                // Intercepter les erreurs 404 sur users/me et les ignorer silencieusement
-                const originalFetch = wp.apiFetch;
-                wp.apiFetch = function(options) {
-                    if (options.path && options.path.includes('/wp/v2/users/me')) {
-                        // Pour cette endpoint spécifique, essayer avec credentials explicites
-                        options = Object.assign({}, options, {
-                            credentials: 'same-origin',
-                            headers: Object.assign({}, options.headers, {
-                                'X-WP-Nonce': wp.apiSettings.nonce
-                            })
-                        });
-                    }
-                    return originalFetch(options).catch(function(error) {
-                        if (options.path && options.path.includes('/wp/v2/users/me') && error.code === 'invalid_json') {
-                            // Ignorer silencieusement l'erreur pour users/me
-                            console.warn('[PDF Builder] Ignored wp-preferences API error for users/me');
-                            return Promise.resolve({}); // Retourner un objet vide pour éviter l'erreur
-                        }
-                        throw error;
-                    });
-                };
-            }
-            </script>
-            <?php
-        }, 5); // Après wp-api mais avant les autres scripts
-
         // Charger seulement sur la page du PDF Builder
         if ($page !== 'admin.php?page=pdf-builder-react-editor') {
             return;
