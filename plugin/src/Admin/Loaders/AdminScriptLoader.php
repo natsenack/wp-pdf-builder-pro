@@ -540,6 +540,43 @@ class AdminScriptLoader
             }
         }
 
+        // Charger les données du template prédéfini si predefined_template est fourni
+        if (isset($_GET['predefined_template']) && !empty($_GET['predefined_template'])) {
+            $predefined_slug = sanitize_key($_GET['predefined_template']);
+            error_log('[DEBUG] PDF Builder: Predefined template slug detected: ' . $predefined_slug);
+
+            // Charger le template prédéfini
+            if ($this->admin->predefined_templates_manager) {
+                try {
+                    // Simuler la requête AJAX pour charger le template prédéfini
+                    $template_data = $this->admin->predefined_templates_manager->loadTemplateFromFile($predefined_slug);
+
+                    if ($template_data && isset($template_data['json'])) {
+                        $json_data = json_decode($template_data['json'], true);
+                        if ($json_data && isset($json_data['elements'])) {
+                            $localize_data['initialElements'] = $json_data['elements'];
+                            $localize_data['existingTemplate'] = $json_data;
+                            $localize_data['hasExistingData'] = true;
+                            $localize_data['isPredefinedTemplate'] = true;
+                            $localize_data['predefinedTemplateName'] = $template_data['name'] ?? 'Template prédéfini';
+                            error_log('[DEBUG] PDF Builder: Predefined template data loaded successfully');
+                            if (class_exists('PDF_Builder_Logger')) {
+                                PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Predefined template loaded successfully: ' . $predefined_slug);
+                            }
+                        } else {
+                            error_log('[DEBUG] PDF Builder: Failed to parse predefined template JSON data');
+                        }
+                    } else {
+                        error_log('[DEBUG] PDF Builder: Predefined template not found or invalid: ' . $predefined_slug);
+                    }
+                } catch (Exception $e) {
+                    error_log('[DEBUG] PDF Builder: Error loading predefined template: ' . $e->getMessage());
+                }
+            } else {
+                error_log('[DEBUG] PDF Builder: Predefined templates manager not available');
+            }
+        }
+
         wp_localize_script('pdf-builder-react-main', 'pdfBuilderData', $localize_data);
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] wp_localize_script called for pdf-builder-react-main with data: ' . json_encode($localize_data)); }
 
