@@ -1140,21 +1140,44 @@ class PdfBuilderAdminNew
     public function reactEditorPage()
     {
         error_log('[DEBUG] PDF Builder Admin: reactEditorPage() called at ' . date('Y-m-d H:i:s'));
-        if (!$this->checkAdminPermissions()) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+
+        try {
+            // Log initial state
+            error_log('[DEBUG] PDF Builder: Starting reactEditorPage execution');
+
+            if (!$this->checkAdminPermissions()) {
+                error_log('[DEBUG] PDF Builder: Permission check failed');
+                wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+            }
+
+            error_log('[DEBUG] PDF Builder: Permission check passed');
+
+            // Get template ID and type from URL parameters
+            $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 1;
+            $template_type = isset($_GET['template_type']) ? sanitize_text_field($_GET['template_type']) : 'custom';
+
+            error_log('[DEBUG] PDF Builder: Template ID: ' . $template_id . ', Type: ' . $template_type);
+
+            // Validate template type
+            $valid_types = ['custom', 'predefined', 'system'];
+            if (!in_array($template_type, $valid_types)) {
+                $template_type = 'custom';
+            }
+
+            error_log('[DEBUG] PDF Builder: Template type validated: ' . $template_type);
+
+            // Enqueue React scripts are now handled in enqueueAdminScripts()
+            error_log('[DEBUG] PDF Builder: About to output HTML');
+
+        } catch (Exception $e) {
+            error_log('[ERROR] PDF Builder reactEditorPage: Exception caught: ' . $e->getMessage());
+            error_log('[ERROR] PDF Builder reactEditorPage: Stack trace: ' . $e->getTraceAsString());
+            wp_die('Erreur interne du serveur: ' . $e->getMessage());
+        } catch (Error $e) {
+            error_log('[ERROR] PDF Builder reactEditorPage: Fatal error caught: ' . $e->getMessage());
+            error_log('[ERROR] PDF Builder reactEditorPage: Stack trace: ' . $e->getTraceAsString());
+            wp_die('Erreur fatale: ' . $e->getMessage());
         }
-
-        // Get template ID and type from URL parameters
-        $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 1;
-        $template_type = isset($_GET['template_type']) ? sanitize_text_field($_GET['template_type']) : 'custom';
-
-        // Validate template type
-        $valid_types = ['custom', 'predefined', 'system'];
-        if (!in_array($template_type, $valid_types)) {
-            $template_type = 'custom';
-        }
-
-        // Enqueue React scripts are now handled in enqueueAdminScripts()
 
         ?>
         <div class="wrap pdf-builder-editor-page">
