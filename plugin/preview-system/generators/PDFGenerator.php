@@ -795,13 +795,34 @@ class PDFGenerator extends BaseGenerator
     }
 
     /**
-     * Retourne le HTML généré (pour debug)
-     *
-     * @return string|null HTML généré ou null si pas encore généré
+     * Génère un aperçu PDF et le stream directement (inspiré de woo-pdf)
+     * 
+     * @param bool $saveToDatabase Sauvegarder en base ou non
      */
-    public function getGeneratedHTML(): ?string
-    {
-        return $this->generated_html;
+    public function generatePreview($saveToDatabase = false) {
+        // Générer le PDF d'abord
+        $this->generate('pdf');
+        
+        // Vérifier si on a du debug activé
+        if (get_option('pdf_builder_enable_page_debug', false) == true) {
+            echo str_replace('</body>', '<div style="position: absolute;top:0;left:0;padding:5px;background:red;color:white">
+                    <strong>Debug Mode:</strong> Preview HTML instead of PDF
+                    </div></body>', $this->generated_html);
+            die();
+        }
+        
+        // Streamer le PDF directement dans le navigateur
+        $this->dompdf->stream($this->getFileName(), array("Attachment" => false));
+        exit; // Terminer l'exécution après le stream
+    }
+
+    /**
+     * Retourne le nom du fichier pour l'aperçu
+     * 
+     * @return string Nom du fichier
+     */
+    private function getFileName(): string {
+        return 'pdf-preview-' . date('Y-m-d-H-i-s') . '.pdf';
     }
 
     /**

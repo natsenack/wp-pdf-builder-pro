@@ -23,29 +23,61 @@ class PreviewAjaxHandler {
             wp_send_json_error('Nonce invalide', 403);
         }
         
-        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
-        $format = isset($_POST['format']) ? sanitize_text_field($_POST['format']) : 'pdf';
-        
-        // D'abord, essayer de charger les données depuis POST (template_data envoyé par le frontend)
-        $template_data = [];
-        if (isset($_POST['template_data'])) {
-            $json_data = sanitize_text_field($_POST['template_data']);
-            $decoded = json_decode($json_data, true);
-            if (is_array($decoded)) {
-                $template_data = $decoded;
+        // Vérifier si on utilise le nouveau format (pageOptions) ou l'ancien (template_data)
+        if (isset($_POST['data'])) {
+            // Nouveau format (inspiré de woo-pdf)
+            $options = stripslashes($_POST['data']);
+            
+            if (empty($options)) {
+                wp_send_json_error('Données manquantes', 400);
             }
+            
+            $options = json_decode($options);
+            if (!$options) {
+                wp_send_json_error('Données JSON invalides', 400);
+            }
+            
+            $pageOptions = $options->pageOptions ?? null;
+            $previewType = $options->previewType ?? 'general';
+            $orderNumberToPreview = $options->orderNumberToPreview ?? '';
+            
+            if (!$pageOptions) {
+                wp_send_json_error('Options de page manquantes', 400);
+            }
+            
+            $result = self::generatePreviewNew($pageOptions, $previewType, $orderNumberToPreview);
+            
+        } else {
+            // Ancien format (rétrocompatibilité)
+            $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
+            $format = isset($_POST['format']) ? sanitize_text_field($_POST['format']) : 'pdf';
+            
+            // D'abord, essayer de charger les données depuis POST (template_data envoyé par le frontend)
+            $template_data = [];
+            if (isset($_POST['template_data'])) {
+                $json_data = sanitize_text_field($_POST['template_data']);
+                $decoded = json_decode($json_data, true);
+                if (is_array($decoded)) {
+                    $template_data = $decoded;
+                }
+            }
+            
+            // Si pas de template_data dans POST, essayer depuis la DB
+            if (empty($template_data) && $template_id && $template_id > 0) {
+                $template_data = self::loadTemplateFromDatabase($template_id);
+            }
+            
+            if (!is_array($template_data) || empty($template_data)) {
+                wp_send_json_error('Template non trouvé', 400);
+            }
+            
+            $result = self::generatePreviewLegacy($template_data, $format);
         }
         
-        // Si pas de template_data dans POST, essayer depuis la DB
-        if (empty($template_data) && $template_id && $template_id > 0) {
-            $template_data = self::loadTemplateFromDatabase($template_id);
+        if (isset($result['error'])) {
+            wp_send_json_error($result['error'], 400);
         }
         
-        if (!is_array($template_data) || empty($template_data)) {
-            wp_send_json_error('Template non trouvé', 400);
-        }
-        
-        $result = self::generatePreview($template_data, $format);
         wp_send_json_success($result);
     }
 
@@ -73,7 +105,62 @@ class PreviewAjaxHandler {
         return $template_data;
     }
 
-    private static function generatePreview(array $template_data, string $format = 'pdf'): array {
+    private static function generatePreviewNew($pageOptions, string $previewType = 'general', string $orderNumberToPreview = ''): array {
+        require_once dirname(__FILE__) . '/../../vendor/autoload.php';
+        
+        if (!class_exists('Dompdf\Dompdf')) {
+            return ['error' => 'Dompdf non disponible', 'fallback' => true];
+        }
+        
+        try {
+            // Créer un DataProvider basique pour les options de page
+            $dataProvider = new class($pageOptions) implements \PDF_Builder\Interfaces\DataProviderInterface {
+                private $pageOptions;
+                
+                public function __construct($pageOptions) {
+                    $this->pageOptions = $pageOptions;
+                }
+                
+                public function getVariableValue(string $variable): string {
+                    // Pour l'instant, retourner des valeurs fictives
+                    return 'Test Value';
+                }
+                
+                public function hasVariable(string $variable): bool {
+                    return true;
+                }
+                
+                public function getAvailableVariables(): array {
+                    return ['test'];
+                }
+                
+                public function getOrderData(): array {
+                    return [];
+                }
+                
+                public function getProductData(): array {
+                    return [];
+                }
+            };
+            
+            // Créer le générateur PDF avec les options de page
+            $generator = new \PDF_Builder\Generators\PDFGenerator($pageOptions, $dataProvider);
+            
+            // Pour l'instant, on ne gère que les aperçus généraux
+            // TODO: Implémenter la gestion des aperçus de commande spécifique
+            
+            // Générer et streamer directement le PDF
+            $generator->generatePreview();
+            
+            // Cette ligne ne devrait pas être atteinte car generatePreview() fait exit()
+            return ['success' => true];
+            
+        } catch (\Exception $e) {
+            return ['error' => 'Erreur lors de la génération de l\'aperçu: ' . $e->getMessage()];
+        }
+    }
+    
+    private static function generatePreviewLegacy(array $template_data, string $format = 'pdf'): array {
         require_once dirname(__FILE__) . '/../../vendor/autoload.php';
         
         if (!class_exists('Dompdf\Dompdf')) {
