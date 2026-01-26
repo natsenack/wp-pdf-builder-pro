@@ -699,10 +699,7 @@ abstract class BaseGenerator
         $x = ($element['x'] ?? 0) - 20;
         $y = ($element['y'] ?? 0) - 20;
         
-        // Ensure we don't go negative
-        $x = max(0, $x);
-        $y = max(0, $y);
-        
+        // Allow negative values for proper positioning
         $style .= "left: {$x}px; ";
         $style .= "top: {$y}px; ";
         
