@@ -123,64 +123,144 @@ class ReactAssets {
             <?php
         }, 1); // Priorité 1 pour s'exécuter très tôt
 
-        // === BLOQUER WP-PREFERENCES AU NIVEAU JAVASCRIPT ===
+        // === REMPLACEMENT COMPLET DE WP-PREFERENCES ===
         add_action('admin_enqueue_scripts', function() {
             ?>
             <script type="text/javascript">
-            // Bloquer wp-preferences au niveau JavaScript - FILET DE SÉCURITÉ
+            // REMPLACEMENT COMPLET DE WP-PREFERENCES - approche agressive
             (function() {
                 'use strict';
 
-                // Désactiver wp-preferences avant qu'il ne s'initialise
-                if (typeof window.wp !== 'undefined' && typeof window.wp.preferences !== 'undefined') {
+                console.log('[PDF Builder] Remplacement wp-preferences activé');
+
+                // Fonction pour remplacer wp.preferences
+                function replaceWpPreferences() {
+                    if (typeof window.wp === 'undefined') {
+                        window.wp = {};
+                    }
+
+                    // Remplacement complet de wp.preferences
                     window.wp.preferences = {
-                        get: function() { return {}; },
-                        set: function() { return false; },
-                        request: function() { return Promise.resolve({}); }
-                    };
-                }
-
-                // Intercepter les appels à l'API REST pour wp-preferences
-                var originalFetch = window.fetch;
-                if (typeof window.fetch !== 'undefined') {
-                    window.fetch = function(input, init) {
-                        // Bloquer les appels à l'API users/me de wp-preferences
-                        if (typeof input === 'string' && input.indexOf('/wp-json/wp/v2/users/me') !== -1) {
-                            console.warn('[PDF Builder] Bloqué: appel wp-preferences API REST');
-                            return Promise.resolve({
-                                ok: true,
-                                status: 200,
-                                json: function() { return Promise.resolve({}); }
-                            });
-                        }
-                        return originalFetch.apply(this, arguments);
-                    };
-                }
-
-                // Intercepter les appels XMLHttpRequest pour wp-preferences
-                var originalXMLHttpRequest = window.XMLHttpRequest;
-                if (typeof window.XMLHttpRequest !== 'undefined') {
-                    window.XMLHttpRequest = function() {
-                        var xhr = new originalXMLHttpRequest();
-                        var originalOpen = xhr.open;
-                        xhr.open = function(method, url) {
-                            // Bloquer les appels à l'API users/me
-                            if (typeof url === 'string' && url.indexOf('/wp-json/wp/v2/users/me') !== -1) {
-                                console.warn('[PDF Builder] Bloqué: XMLHttpRequest wp-preferences API');
-                                // Ne pas faire l'appel
-                                return;
+                        // Méthodes principales
+                        get: function(key, defaultValue) {
+                            console.log('[PDF Builder] wp.preferences.get appelé:', key);
+                            // Utiliser notre système de préférences personnalisé
+                            if (typeof window.PDFEditorPreferences !== 'undefined') {
+                                return window.PDFEditorPreferences.getPreference(key, defaultValue);
                             }
-                            return originalOpen.apply(this, arguments);
-                        };
-                        return xhr;
+                            return defaultValue;
+                        },
+
+                        set: function(key, value) {
+                            console.log('[PDF Builder] wp.preferences.set appelé:', key, value);
+                            // Utiliser notre système de préférences personnalisé
+                            if (typeof window.PDFEditorPreferences !== 'undefined') {
+                                window.PDFEditorPreferences.setPreference(key, value);
+                                return window.PDFEditorPreferences.savePreferences();
+                            }
+                            return Promise.resolve(false);
+                        },
+
+                        request: function() {
+                            console.log('[PDF Builder] wp.preferences.request appelé - bloqué');
+                            // Retourner une promesse résolue vide
+                            return Promise.resolve({});
+                        },
+
+                        // Autres méthodes pour compatibilité
+                        getAll: function() {
+                            console.log('[PDF Builder] wp.preferences.getAll appelé');
+                            if (typeof window.PDFEditorPreferences !== 'undefined') {
+                                return window.PDFEditorPreferences.getAllPreferences();
+                            }
+                            return {};
+                        },
+
+                        save: function() {
+                            console.log('[PDF Builder] wp.preferences.save appelé');
+                            if (typeof window.PDFEditorPreferences !== 'undefined') {
+                                return window.PDFEditorPreferences.savePreferences();
+                            }
+                            return Promise.resolve(false);
+                        }
                     };
                 }
 
-                console.log('[PDF Builder] Protection wp-preferences activée');
+                // Remplacer immédiatement
+                replaceWpPreferences();
+
+                // Surveiller et remplacer en continu (au cas où wp-preferences se charge après)
+                var checkInterval = setInterval(function() {
+                    if (window.wp && window.wp.preferences && typeof window.wp.preferences.get !== 'function') {
+                        console.log('[PDF Builder] wp.preferences détecté et remplacé');
+                        replaceWpPreferences();
+                    }
+                }, 100);
+
+                // Arrêter la surveillance après 10 secondes
+                setTimeout(function() {
+                    clearInterval(checkInterval);
+                }, 10000);
+
+                // 2. Intercepter TOUS les appels API REST liés aux préférences
+                var originalApiFetch = window.wp && window.wp.apiFetch ? window.wp.apiFetch : null;
+                if (originalApiFetch) {
+                    window.wp.apiFetch = function(options) {
+                        if (options && options.path && options.path.indexOf('/wp/v2/users/me') !== -1) {
+                            console.log('[PDF Builder] API Fetch bloqué:', options.path);
+                            return Promise.resolve({});
+                        }
+                        return originalApiFetch.apply(this, arguments);
+                    };
+                }
+
+                // 3. Bloquer les appels fetch vers l'API users
+                var originalFetch = window.fetch;
+                window.fetch = function(input, init) {
+                    if (typeof input === 'string' && input.indexOf('/wp-json/wp/v2/users/me') !== -1) {
+                        console.log('[PDF Builder] Fetch bloqué:', input);
+                        return Promise.resolve({
+                            ok: true,
+                            status: 200,
+                            json: function() { return Promise.resolve({}); },
+                            text: function() { return Promise.resolve('{}'); }
+                        });
+                    }
+                    return originalFetch.apply(this, arguments);
+                };
+
+                // 4. Bloquer XMLHttpRequest vers l'API users
+                var originalXMLHttpRequest = window.XMLHttpRequest;
+                window.XMLHttpRequest = function() {
+                    var xhr = new originalXMLHttpRequest();
+                    var originalOpen = xhr.open;
+                    xhr.open = function(method, url) {
+                        if (typeof url === 'string' && url.indexOf('/wp-json/wp/v2/users/me') !== -1) {
+                            console.log('[PDF Builder] XMLHttpRequest bloqué:', url);
+                            // Ne pas faire l'appel
+                            return;
+                        }
+                        return originalOpen.apply(this, arguments);
+                    };
+                    return xhr;
+                };
+
+                // 5. Désactiver les événements liés aux préférences
+                var originalDispatch = window.dispatchEvent;
+                window.dispatchEvent = function(event) {
+                    if (event && event.type && event.type.indexOf('wp-preferences') !== -1) {
+                        console.log('[PDF Builder] Événement wp-preferences bloqué:', event.type);
+                        return true; // Prétendre que c'est réussi
+                    }
+                    return originalDispatch.apply(this, arguments);
+                };
+
+                console.log('[PDF Builder] Remplacement wp-preferences terminé');
+
             })();
             </script>
             <?php
-        }, 0); // Priorité 0 pour s'exécuter très tôt
+        }, -1000); // Priorité ultra-haute pour s'exécuter en premier
 
         // Charger seulement sur la page du PDF Builder
         if ($page !== 'admin.php?page=pdf-builder-react-editor') {
