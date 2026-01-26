@@ -512,6 +512,84 @@ abstract class BaseGenerator
         if (isset($element['whiteSpace'])) {
             $style .= "white-space: {$element['whiteSpace']}; ";
         }
+        if (isset($element['backgroundImage'])) {
+            $style .= "background-image: {$element['backgroundImage']}; ";
+        }
+        if (isset($element['backgroundSize'])) {
+            $style .= "background-size: {$element['backgroundSize']}; ";
+        }
+        if (isset($element['backgroundPosition'])) {
+            $style .= "background-position: {$element['backgroundPosition']}; ";
+        }
+        if (isset($element['backgroundRepeat'])) {
+            $style .= "background-repeat: {$element['backgroundRepeat']}; ";
+        }
+        if (isset($element['borderTop'])) {
+            $style .= "border-top: {$element['borderTop']}; ";
+        }
+        if (isset($element['borderRight'])) {
+            $style .= "border-right: {$element['borderRight']}; ";
+        }
+        if (isset($element['borderBottom'])) {
+            $style .= "border-bottom: {$element['borderBottom']}; ";
+        }
+        if (isset($element['borderLeft'])) {
+            $style .= "border-left: {$element['borderLeft']}; ";
+        }
+        if (isset($element['outline'])) {
+            $style .= "outline: {$element['outline']}; ";
+        }
+        if (isset($element['cursor'])) {
+            $style .= "cursor: {$element['cursor']}; ";
+        }
+        if (isset($element['visibility'])) {
+            $style .= "visibility: {$element['visibility']}; ";
+        }
+        if (isset($element['clipPath'])) {
+            $style .= "clip-path: {$element['clipPath']}; ";
+        }
+        if (isset($element['filter'])) {
+            $style .= "filter: {$element['filter']}; ";
+        }
+        if (isset($element['backdropFilter'])) {
+            $style .= "backdrop-filter: {$element['backdropFilter']}; ";
+        }
+        if (isset($element['transformOrigin'])) {
+            $style .= "transform-origin: {$element['transformOrigin']}; ";
+        }
+        if (isset($element['perspective'])) {
+            $style .= "perspective: {$element['perspective']}; ";
+        }
+        if (isset($element['transition'])) {
+            $style .= "transition: {$element['transition']}; ";
+        }
+        if (isset($element['animation'])) {
+            $style .= "animation: {$element['animation']}; ";
+        }
+        if (isset($element['minWidth'])) {
+            $style .= "min-width: {$element['minWidth']}px; ";
+        }
+        if (isset($element['maxWidth'])) {
+            $style .= "max-width: {$element['maxWidth']}px; ";
+        }
+        if (isset($element['minHeight'])) {
+            $style .= "min-height: {$element['minHeight']}px; ";
+        }
+        if (isset($element['maxHeight'])) {
+            $style .= "max-height: {$element['maxHeight']}px; ";
+        }
+        if (isset($element['flexDirection'])) {
+            $style .= "flex-direction: {$element['flexDirection']}; ";
+        }
+        if (isset($element['justifyContent'])) {
+            $style .= "justify-content: {$element['justifyContent']}; ";
+        }
+        if (isset($element['alignItems'])) {
+            $style .= "align-items: {$element['alignItems']}; ";
+        }
+        if (isset($element['flexWrap'])) {
+            $style .= "flex-wrap: {$element['flexWrap']}; ";
+        }
 
         // Vérifier les propriétés imbriquées (properties) si les propriétés directes ne sont pas définies
         if (isset($element['properties']) && is_array($element['properties'])) {
@@ -619,6 +697,84 @@ abstract class BaseGenerator
             }
             if (!isset($element['whiteSpace']) && isset($props['whiteSpace'])) {
                 $style .= "white-space: {$props['whiteSpace']}; ";
+            }
+            if (!isset($element['backgroundImage']) && isset($props['backgroundImage'])) {
+                $style .= "background-image: {$props['backgroundImage']}; ";
+            }
+            if (!isset($element['backgroundSize']) && isset($props['backgroundSize'])) {
+                $style .= "background-size: {$props['backgroundSize']}; ";
+            }
+            if (!isset($element['backgroundPosition']) && isset($props['backgroundPosition'])) {
+                $style .= "background-position: {$props['backgroundPosition']}; ";
+            }
+            if (!isset($element['backgroundRepeat']) && isset($props['backgroundRepeat'])) {
+                $style .= "background-repeat: {$props['backgroundRepeat']}; ";
+            }
+            if (!isset($element['borderTop']) && isset($props['borderTop'])) {
+                $style .= "border-top: {$props['borderTop']}; ";
+            }
+            if (!isset($element['borderRight']) && isset($props['borderRight'])) {
+                $style .= "border-right: {$props['borderRight']}; ";
+            }
+            if (!isset($element['borderBottom']) && isset($props['borderBottom'])) {
+                $style .= "border-bottom: {$props['borderBottom']}; ";
+            }
+            if (!isset($element['borderLeft']) && isset($props['borderLeft'])) {
+                $style .= "border-left: {$props['borderLeft']}; ";
+            }
+            if (!isset($element['outline']) && isset($props['outline'])) {
+                $style .= "outline: {$props['outline']}; ";
+            }
+            if (!isset($element['cursor']) && isset($props['cursor'])) {
+                $style .= "cursor: {$props['cursor']}; ";
+            }
+            if (!isset($element['visibility']) && isset($props['visibility'])) {
+                $style .= "visibility: {$props['visibility']}; ";
+            }
+            if (!isset($element['clipPath']) && isset($props['clipPath'])) {
+                $style .= "clip-path: {$props['clipPath']}; ";
+            }
+            if (!isset($element['filter']) && isset($props['filter'])) {
+                $style .= "filter: {$props['filter']}; ";
+            }
+            if (!isset($element['backdropFilter']) && isset($props['backdropFilter'])) {
+                $style .= "backdrop-filter: {$props['backdropFilter']}; ";
+            }
+            if (!isset($element['transformOrigin']) && isset($props['transformOrigin'])) {
+                $style .= "transform-origin: {$props['transformOrigin']}; ";
+            }
+            if (!isset($element['perspective']) && isset($props['perspective'])) {
+                $style .= "perspective: {$props['perspective']}; ";
+            }
+            if (!isset($element['transition']) && isset($props['transition'])) {
+                $style .= "transition: {$props['transition']}; ";
+            }
+            if (!isset($element['animation']) && isset($props['animation'])) {
+                $style .= "animation: {$props['animation']}; ";
+            }
+            if (!isset($element['minWidth']) && isset($props['minWidth'])) {
+                $style .= "min-width: {$props['minWidth']}px; ";
+            }
+            if (!isset($element['maxWidth']) && isset($props['maxWidth'])) {
+                $style .= "max-width: {$props['maxWidth']}px; ";
+            }
+            if (!isset($element['minHeight']) && isset($props['minHeight'])) {
+                $style .= "min-height: {$props['minHeight']}px; ";
+            }
+            if (!isset($element['maxHeight']) && isset($props['maxHeight'])) {
+                $style .= "max-height: {$props['maxHeight']}px; ";
+            }
+            if (!isset($element['flexDirection']) && isset($props['flexDirection'])) {
+                $style .= "flex-direction: {$props['flexDirection']}; ";
+            }
+            if (!isset($element['justifyContent']) && isset($props['justifyContent'])) {
+                $style .= "justify-content: {$props['justifyContent']}; ";
+            }
+            if (!isset($element['alignItems']) && isset($props['alignItems'])) {
+                $style .= "align-items: {$props['alignItems']}; ";
+            }
+            if (!isset($element['flexWrap']) && isset($props['flexWrap'])) {
+                $style .= "flex-wrap: {$props['flexWrap']}; ";
             }
         }
 
