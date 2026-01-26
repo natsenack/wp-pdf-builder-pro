@@ -701,6 +701,51 @@ class AdminScriptLoader
             ');
         }
 
+        // AJOUTER UN TEST DE CHARGEMENT DES SCRIPTS REACT
+        wp_add_inline_script('jquery', '
+            (function() {
+                console.log("🔍 [DOM CHECK] Starting DOM script check...");
+                
+                // Vérifier immédiatement si les scripts sont dans le DOM
+                setTimeout(function() {
+                    var scripts = document.getElementsByTagName("script");
+                    var foundScripts = [];
+                    for (var i = 0; i < scripts.length; i++) {
+                        var src = scripts[i].src || "";
+                        if (src.includes("pdf-builder-react")) {
+                            foundScripts.push(src);
+                        }
+                    }
+                    console.log("🔍 [DOM CHECK] Scripts pdf-builder-react trouvés dans DOM:", foundScripts.length);
+                    foundScripts.forEach(function(url, index) {
+                        console.log("🔍 [DOM CHECK] Script " + (index + 1) + ":", url);
+                    });
+                    
+                    // Tester si les scripts spécifiques sont présents
+                    var initScript = document.querySelector(\'script[src*="pdf-builder-react-init.min.js"]\');
+                    console.log("🔍 [DOM CHECK] Script pdf-builder-react-init.min.js found in DOM:", initScript ? "YES" : "NO");
+                    if (initScript) {
+                        console.log("🔍 [DOM CHECK] Init script URL:", initScript.src);
+                    }
+                    
+                    var mainScript = document.querySelector(\'script[src*="pdf-builder-react.min.js"]\');
+                    console.log("🔍 [DOM CHECK] Script pdf-builder-react.min.js found in DOM:", mainScript ? "YES" : "NO");
+                    if (mainScript) {
+                        console.log("🔍 [DOM CHECK] Main script URL:", mainScript.src);
+                    }
+                }, 500);
+                
+                // Tester le chargement après un délai plus long
+                setTimeout(function() {
+                    console.log("🔍 [EXECUTION CHECK] Checking if scripts executed...");
+                    console.log("🔍 [EXECUTION CHECK] window.pdfBuilderReact available:", typeof window.pdfBuilderReact !== "undefined");
+                    if (window.pdfBuilderReact) {
+                        console.log("🔍 [EXECUTION CHECK] initPDFBuilderReact function available:", typeof window.pdfBuilderReact.initPDFBuilderReact !== "undefined");
+                    }
+                }, 2000);
+            })();
+        ');
+
         error_log('[DEBUG] PDF Builder AdminScriptLoader: loadReactEditorScripts COMPLETED - all React scripts should be enqueued now');
     }
 
