@@ -805,6 +805,15 @@ abstract class BaseGenerator
     }
 
     /**
+     * Log une information
+     *
+     * @param string $message Message d'information
+     */
+    protected function logInfo(string $message): void
+    {
+    }
+
+    /**
      * Log un avertissement
      *
      * @param string $message Message d'avertissement
