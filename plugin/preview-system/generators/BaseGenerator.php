@@ -394,6 +394,8 @@ abstract class BaseGenerator
         
         error_log('[PDF] Customer info - FINAL name: "' . $customerName . '", address: "' . $customerAddress . '", email: "' . $customerEmail . '", phone: "' . $customerPhone . '"');
         return "<div class=\"pdf-element\" data-element-type=\"customer_info\" style=\"{$style}\">" . nl2br($content) . "</div>";
+    }
+
     /**
      * Construit le style CSS d'un élément
      *
