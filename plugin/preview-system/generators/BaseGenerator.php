@@ -218,7 +218,10 @@ abstract class BaseGenerator
         error_log("[PDF] Rendering element type: {$type}");
         error_log("[PDF] Element keys: " . implode(', ', array_keys($element)));
         
-        $method = 'render' . ucfirst($type) . 'Element';
+        // Convert underscore notation to camelCase (e.g., customer_info -> CustomerInfo)
+        $camelCaseType = $this->convertToCamelCase($type);
+        $method = 'render' . $camelCaseType . 'Element';
+        
         if (method_exists($this, $method)) {
             error_log("[PDF] Calling method: {$method}");
             $result = $this->$method($element);
@@ -228,6 +231,22 @@ abstract class BaseGenerator
 
         error_log("[PDF] Unknown element type: {$type}");
         return '';
+    }
+
+    /**
+     * Convertit une chaîne avec underscores en camelCase
+     *
+     * @param string $string Chaîne à convertir
+     * @return string Chaîne en camelCase
+     */
+    protected function convertToCamelCase(string $string): string
+    {
+        $parts = explode('_', $string);
+        $camelCase = '';
+        foreach ($parts as $part) {
+            $camelCase .= ucfirst($part);
+        }
+        return $camelCase;
     }
 
     /**
