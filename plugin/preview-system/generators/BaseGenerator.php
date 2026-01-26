@@ -358,9 +358,106 @@ abstract class BaseGenerator
     }
 
     /**
-     * Rend un élément customer_info
-     * Version: 2026-01-26 12:25
+     * Construit les styles CSS pour un élément
+     *
+     * @param array $element Données de l'élément
+     * @return string Styles CSS
      */
+    protected function buildElementStyle(array $element): string
+    {
+        $styles = [];
+
+        // Position absolue
+        $x = $element['x'] ?? $element['left'] ?? 0;
+        $y = $element['y'] ?? $element['top'] ?? 0;
+        $width = $element['width'] ?? 100;
+        $height = $element['height'] ?? 50;
+
+        $styles[] = "position: absolute";
+        $styles[] = "left: {$x}px";
+        $styles[] = "top: {$y}px";
+        $styles[] = "width: {$width}px";
+        $styles[] = "height: {$height}px";
+
+        // Rotation si présente
+        if (isset($element['rotation']) && $element['rotation'] != 0) {
+            $rotation = $element['rotation'];
+            $styles[] = "transform: rotate({$rotation}deg)";
+            $styles[] = "transform-origin: center center";
+        }
+
+        // Opacité si présente
+        if (isset($element['opacity']) && $element['opacity'] < 1) {
+            $opacity = $element['opacity'];
+            $styles[] = "opacity: {$opacity}";
+        }
+
+        // Styles de texte pour les éléments texte
+        if (isset($element['fontSize'])) {
+            $styles[] = "font-size: {$element['fontSize']}px";
+        }
+        if (isset($element['fontFamily'])) {
+            $styles[] = "font-family: {$element['fontFamily']}";
+        }
+        if (isset($element['color'])) {
+            $styles[] = "color: {$element['color']}";
+        }
+        if (isset($element['textAlign'])) {
+            $styles[] = "text-align: {$element['textAlign']}";
+        }
+        if (isset($element['fontWeight'])) {
+            $styles[] = "font-weight: {$element['fontWeight']}";
+        }
+
+        // Vérifier les propriétés imbriquées (properties)
+        if (isset($element['properties']) && is_array($element['properties'])) {
+            $props = $element['properties'];
+
+            // Position et dimensions depuis properties si pas déjà définis
+            if (!isset($element['x']) && isset($props['x'])) {
+                $styles[] = "left: {$props['x']}px";
+            }
+            if (!isset($element['y']) && isset($props['y'])) {
+                $styles[] = "top: {$props['y']}px";
+            }
+            if (!isset($element['width']) && isset($props['width'])) {
+                $styles[] = "width: {$props['width']}px";
+            }
+            if (!isset($element['height']) && isset($props['height'])) {
+                $styles[] = "height: {$props['height']}px";
+            }
+
+            // Rotation depuis properties
+            if (!isset($element['rotation']) && isset($props['rotation'])) {
+                $styles[] = "transform: rotate({$props['rotation']}deg)";
+                $styles[] = "transform-origin: center center";
+            }
+
+            // Opacité depuis properties
+            if (!isset($element['opacity']) && isset($props['opacity'])) {
+                $styles[] = "opacity: {$props['opacity']}";
+            }
+
+            // Styles de texte depuis properties
+            if (!isset($element['fontSize']) && isset($props['fontSize'])) {
+                $styles[] = "font-size: {$props['fontSize']}px";
+            }
+            if (!isset($element['fontFamily']) && isset($props['fontFamily'])) {
+                $styles[] = "font-family: {$props['fontFamily']}";
+            }
+            if (!isset($element['color']) && isset($props['color'])) {
+                $styles[] = "color: {$props['color']}";
+            }
+            if (!isset($element['textAlign']) && isset($props['textAlign'])) {
+                $styles[] = "text-align: {$props['textAlign']}";
+            }
+            if (!isset($element['fontWeight']) && isset($props['fontWeight'])) {
+                $styles[] = "font-weight: {$props['fontWeight']}";
+            }
+        }
+
+        return implode('; ', $styles) . ';';
+    }
     protected function renderCustomerInfoElement(array $element): string
     {
         error_log('[PDF] Customer info - keys: ' . implode(', ', array_keys($element)) . ', name: ' . ($element['customerName'] ?? $element['name'] ?? 'empty'));
@@ -889,7 +986,6 @@ abstract class BaseGenerator
             background-color: white;
             border: 2px solid #ccc;
             margin: 0 auto;
-            padding: 20px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         .canvas-info {
