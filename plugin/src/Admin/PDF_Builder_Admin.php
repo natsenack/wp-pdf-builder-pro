@@ -1139,45 +1139,73 @@ class PdfBuilderAdminNew
      */
     public function reactEditorPage()
     {
-        error_log('[DEBUG] PDF Builder Admin: reactEditorPage() called at ' . date('Y-m-d H:i:s'));
+        // Version simplifiée pour déboguer l'erreur 500
+        echo "<!DOCTYPE html><html><head><title>PDF Builder Debug</title></head><body>";
+        echo "<h1>PDF Builder - Mode Debug</h1>";
 
         try {
-            // Log initial state
-            error_log('[DEBUG] PDF Builder: Starting reactEditorPage execution');
-
+            echo "<h2>Étape 1: Vérification des permissions</h2>";
             if (!$this->checkAdminPermissions()) {
-                error_log('[DEBUG] PDF Builder: Permission check failed');
-                wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+                echo "<p style='color: red;'>❌ Permissions insuffisantes</p>";
+                return;
             }
+            echo "<p style='color: green;'>✅ Permissions OK</p>";
 
-            error_log('[DEBUG] PDF Builder: Permission check passed');
-
-            // Get template ID and type from URL parameters
+            echo "<h2>Étape 2: Récupération des paramètres</h2>";
             $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 1;
             $template_type = isset($_GET['template_type']) ? sanitize_text_field($_GET['template_type']) : 'custom';
+            echo "<p>Template ID: $template_id, Type: $template_type</p>";
 
-            error_log('[DEBUG] PDF Builder: Template ID: ' . $template_id . ', Type: ' . $template_type);
-
-            // Validate template type
+            echo "<h2>Étape 3: Validation du type</h2>";
             $valid_types = ['custom', 'predefined', 'system'];
             if (!in_array($template_type, $valid_types)) {
                 $template_type = 'custom';
             }
+            echo "<p style='color: green;'>✅ Type validé: $template_type</p>";
 
-            error_log('[DEBUG] PDF Builder: Template type validated: ' . $template_type);
+            echo "<h2>Étape 4: Test des constantes</h2>";
+            if (defined('PDF_BUILDER_PLUGIN_DIR')) {
+                echo "<p style='color: green;'>✅ PDF_BUILDER_PLUGIN_DIR défini: " . PDF_BUILDER_PLUGIN_DIR . "</p>";
+            } else {
+                echo "<p style='color: red;'>❌ PDF_BUILDER_PLUGIN_DIR non défini</p>";
+            }
 
-            // Enqueue React scripts are now handled in enqueueAdminScripts()
-            error_log('[DEBUG] PDF Builder: About to output HTML');
+            echo "<h2>Étape 5: Test des chemins de fichiers</h2>";
+            $test_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/js/pdf-builder-react.min.js';
+            if (file_exists($test_file)) {
+                echo "<p style='color: green;'>✅ Fichier React existe: " . basename($test_file) . "</p>";
+            } else {
+                echo "<p style='color: red;'>❌ Fichier React manquant: " . $test_file . "</p>";
+            }
+
+            echo "<h2>Étape 6: Test de la mémoire</h2>";
+            $memory_used = memory_get_usage(true);
+            $memory_limit = ini_get('memory_limit');
+            echo "<p>Mémoire utilisée: " . round($memory_used / 1024 / 1024, 2) . " MB</p>";
+            echo "<p>Limite mémoire: $memory_limit</p>";
+
+            echo "<h2>Étape 7: Test du temps d'exécution</h2>";
+            $time_elapsed = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
+            echo "<p>Temps écoulé: " . round($time_elapsed, 3) . " secondes</p>";
+
+            echo "<h2 style='color: green;'>✅ Toutes les vérifications sont passées !</h2>";
+            echo "<p>Si vous voyez ce message, l'erreur 500 vient probablement du HTML/CSS/JS qui suit.</p>";
 
         } catch (Exception $e) {
-            error_log('[ERROR] PDF Builder reactEditorPage: Exception caught: ' . $e->getMessage());
-            error_log('[ERROR] PDF Builder reactEditorPage: Stack trace: ' . $e->getTraceAsString());
-            wp_die('Erreur interne du serveur: ' . $e->getMessage());
+            echo "<h2 style='color: red;'>❌ Exception capturée</h2>";
+            echo "<p><strong>Type:</strong> " . get_class($e) . "</p>";
+            echo "<p><strong>Message:</strong> " . $e->getMessage() . "</p>";
+            echo "<p><strong>Fichier:</strong> " . $e->getFile() . " ligne " . $e->getLine() . "</p>";
         } catch (Error $e) {
-            error_log('[ERROR] PDF Builder reactEditorPage: Fatal error caught: ' . $e->getMessage());
-            error_log('[ERROR] PDF Builder reactEditorPage: Stack trace: ' . $e->getTraceAsString());
-            wp_die('Erreur fatale: ' . $e->getMessage());
+            echo "<h2 style='color: red;'>❌ Erreur fatale capturée</h2>";
+            echo "<p><strong>Type:</strong> " . get_class($e) . "</p>";
+            echo "<p><strong>Message:</strong> " . $e->getMessage() . "</p>";
+            echo "<p><strong>Fichier:</strong> " . $e->getFile() . " ligne " . $e->getLine() . "</p>";
         }
+
+        echo "</body></html>";
+        return;
+    }
 
         ?>
         <div class="wrap pdf-builder-editor-page">
