@@ -165,7 +165,7 @@ class PreviewAjaxHandler {
             
             error_log('[PDF PREVIEW] Creating PDFGenerator');
             // Créer le générateur PDF avec les données du template
-            $generator = new \PDF_Builder\Generators\PDFGenerator($templateData, $dataProvider, true, []);
+            $generator = new \PDF_Builder\Generators\PDFGenerator(['template' => $templateData], $dataProvider, true, []);
             
             error_log('[PDF PREVIEW] Calling generatePreview');
             // Pour l'instant, on ne gère que les aperçus généraux
