@@ -158,6 +158,9 @@ class PreviewAjaxHandler {
             error_log('[PDF PREVIEW] Extracting template data');
             // Extraire les données du template depuis pageOptions.template
             $templateData = $pageOptionsArray['template'] ?? $pageOptionsArray;
+            
+            // S'assurer que templateData est un array
+            $templateData = is_array($templateData) ? $templateData : (array) $templateData;
             error_log('[PDF PREVIEW] Template data keys: ' . implode(', ', array_keys($templateData)));
             
             error_log('[PDF PREVIEW] Creating PDFGenerator');
