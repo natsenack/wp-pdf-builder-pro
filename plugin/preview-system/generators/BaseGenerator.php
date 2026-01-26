@@ -296,6 +296,144 @@ abstract class BaseGenerator
     }
 
     /**
+     * Rend un élément customer_info
+     */
+    protected function renderCustomerInfoElement(array $element): string
+    {
+        $style = $this->buildElementStyle($element);
+        $content = "John Doe\n123 Main Street\nParis, France\njohn@example.com\n+33 1 23 45 67 89";
+        return "<div class=\"pdf-element\" style=\"{$style}\">{$content}</div>";
+    }
+
+    /**
+     * Rend un élément company_info
+     */
+    protected function renderCompanyInfoElement(array $element): string
+    {
+        $style = $this->buildElementStyle($element);
+        $content = "Ma Société SARL\n123 Avenue des Champs\n75008 Paris, France\nSIRET: 123 456 789 00012\ncontact@masociete.fr";
+        return "<div class=\"pdf-element\" style=\"{$style}\">{$content}</div>";
+    }
+
+    /**
+     * Rend un élément order_number
+     */
+    protected function renderOrderNumberElement(array $element): string
+    {
+        $style = $this->buildElementStyle($element);
+        $content = "#12345";
+        return "<div class=\"pdf-element\" style=\"{$style}\">{$content}</div>";
+    }
+
+    /**
+     * Rend un élément company_logo
+     */
+    protected function renderCompanyLogoElement(array $element): string
+    {
+        $style = $this->buildElementStyle($element);
+        $src = $element['src'] ?? '';
+        if (empty($src)) {
+            return "<div class=\"pdf-element image-element\" style=\"{$style}; background-color: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #666;\">🏢 Logo</div>";
+        }
+        return "<img class=\"pdf-element image-element\" src=\"{$src}\" style=\"{$style}; max-width: 100%; height: auto;\" alt=\"Logo\" />";
+    }
+
+    /**
+     * Rend un élément product_table
+     */
+    protected function renderProductTableElement(array $element): string
+    {
+        $style = $this->buildElementStyle($element);
+        $content = "<table style='width: 100%; border-collapse: collapse;'>
+            <thead>
+                <tr style='background-color: #f5f5f5;'>
+                    <th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>Produit</th>
+                    <th style='border: 1px solid #ddd; padding: 8px; text-align: center;'>Qté</th>
+                    <th style='border: 1px solid #ddd; padding: 8px; text-align: right;'>Prix</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style='border: 1px solid #ddd; padding: 8px;'>Produit Exemple</td>
+                    <td style='border: 1px solid #ddd; padding: 8px; text-align: center;'>2</td>
+                    <td style='border: 1px solid #ddd; padding: 8px; text-align: right;'>€50.00</td>
+                </tr>
+                <tr style='background-color: #fafafa;'>
+                    <td style='border: 1px solid #ddd; padding: 8px;'>Autre Produit</td>
+                    <td style='border: 1px solid #ddd; padding: 8px; text-align: center;'>1</td>
+                    <td style='border: 1px solid #ddd; padding: 8px; text-align: right;'>€25.00</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr style='background-color: #f5f5f5; font-weight: bold;'>
+                    <td colspan='2' style='border: 1px solid #ddd; padding: 8px; text-align: right;'>Total:</td>
+                    <td style='border: 1px solid #ddd; padding: 8px; text-align: right;'>€75.00</td>
+                </tr>
+            </tfoot>
+        </table>";
+        return "<div class=\"pdf-element table-element\" style=\"{$style}\">{$content}</div>";
+    }
+
+    /**
+     * Rend un élément woocommerce_order_date
+     */
+    protected function renderWoocommerceOrderDateElement(array $element): string
+    {
+        $style = $this->buildElementStyle($element);
+        $content = date('d/m/Y');
+        return "<div class=\"pdf-element\" style=\"{$style}\">{$content}</div>";
+    }
+
+    /**
+     * Rend un élément document_type
+     */
+    protected function renderDocumentTypeElement(array $element): string
+    {
+        $style = $this->buildElementStyle($element);
+        $title = $element['title'] ?? 'Facture';
+        return "<div class=\"pdf-element\" style=\"{$style}\">{$title}</div>";
+    }
+
+    /**
+     * Rend un élément dynamic_text
+     */
+    protected function renderDynamicTextElement(array $element): string
+    {
+        $style = $this->buildElementStyle($element);
+        $text = $element['text'] ?? $element['textTemplate'] ?? 'Texte dynamique';
+        $text = $this->injectVariables($text);
+        return "<div class=\"pdf-element text-element\" style=\"{$style}\">{$text}</div>";
+    }
+
+    /**
+     * Rend un élément mentions
+     */
+    protected function renderMentionsElement(array $element): string
+    {
+        $style = $this->buildElementStyle($element);
+        $mentions = [];
+        if ($element['showEmail'] ?? false) $mentions[] = 'contact@example.com';
+        if ($element['showPhone'] ?? false) $mentions[] = '+33 1 23 45 67 89';
+        if ($element['showSiret'] ?? false) $mentions[] = 'SIRET: 123 456 789 00012';
+        if ($element['showVat'] ?? false) $mentions[] = 'TVA: FR123456789';
+        $separator = $element['separator'] ?? ' • ';
+        $content = implode($separator, $mentions);
+        return "<div class=\"pdf-element\" style=\"{$style}\">{$content}</div>";
+    }
+
+    /**
+     * Rend un élément line
+     */
+    protected function renderLineElement(array $element): string
+    {
+        $style = $this->buildElementStyle($element);
+        $strokeColor = $element['strokeColor'] ?? '#000000';
+        $strokeWidth = $element['strokeWidth'] ?? 2;
+        $style .= "border-top: {$strokeWidth}px solid {$strokeColor}; height: 0;";
+        return "<div class=\"pdf-element line\" style=\"{$style}\"></div>";
+    }
+
+    /**
      * Construit le style CSS d'un élément
      *
      * @param array $element Données de l'élément
@@ -325,10 +463,36 @@ abstract class BaseGenerator
         if (isset($element['fontWeight'])) {
             $style .= "font-weight: {$element['fontWeight']}; ";
         }
+        if (isset($element['fontFamily'])) {
+            $style .= "font-family: {$element['fontFamily']}; ";
+        }
         if (isset($element['textAlign'])) {
             $style .= "text-align: {$element['textAlign']}; ";
         }
-
+        if (isset($element['backgroundColor'])) {
+            $style .= "background-color: {$element['backgroundColor']}; ";
+        }
+        if (isset($element['borderColor'])) {
+            $style .= "border-color: {$element['borderColor']}; ";
+        }
+        if (isset($element['borderWidth'])) {
+            $style .= "border-width: {$element['borderWidth']}px; ";
+        }
+        if (isset($element['borderRadius'])) {
+            $style .= "border-radius: {$element['borderRadius']}px; ";
+        }
+        if (isset($element['rotation'])) {
+            $style .= "transform: rotate({$element['rotation']}deg); ";
+        }
+        if (isset($element['lineHeight'])) {
+            $style .= "line-height: {$element['lineHeight']}; ";
+        }
+        if (isset($element['textDecoration'])) {
+            $style .= "text-decoration: {$element['textDecoration']}; ";
+        }
+        if (isset($element['fontStyle'])) {
+            $style .= "font-style: {$element['fontStyle']}; ";
+        }
         return $style;
     }
 
