@@ -82,6 +82,10 @@ class ReactAssets {
             return;
         }
 
+        // Désactiver wp-preferences qui cause des erreurs REST API sur cette page
+        wp_dequeue_script('wp-preferences');
+        wp_dequeue_script('wp-preferences-persistence');
+
         // Charger la médiathèque WordPress pour les composants qui en ont besoin
         wp_enqueue_media();
         
