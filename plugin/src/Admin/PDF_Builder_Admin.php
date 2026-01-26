@@ -969,8 +969,8 @@ class PdfBuilderAdminNew
      */
     public function addAdminMenu()
     {
-        // Éviter l'ajout multiple du menu
-        if (self::$menu_added) {
+        // Éviter l'ajout multiple du menu (sauf en mode diagnostic)
+        if (self::$menu_added && !isset($_GET['force_menu_reset'])) {
             return;
         }
         self::$menu_added = true;

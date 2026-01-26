@@ -115,8 +115,14 @@ global $menu, $submenu;
 $menu_backup = $menu;
 $submenu_backup = $submenu;
 
+// Forcer la réinitialisation du flag menu_added pour le diagnostic
+$_GET['force_menu_reset'] = '1';
+
 // Simuler l'exécution du hook admin_menu
 do_action('admin_menu');
+
+// Nettoyer le paramètre de diagnostic
+unset($_GET['force_menu_reset']);
 
 // Vérifier l'état du flag menu_added après la simulation
 if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
