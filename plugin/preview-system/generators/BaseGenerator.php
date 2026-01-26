@@ -859,7 +859,8 @@ abstract class BaseGenerator
         }
 
         // Générer le HTML complet
-        $html = '<!DOCTYPE html>
+        $html = <<<HTML
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -874,8 +875,8 @@ abstract class BaseGenerator
         }
         .canvas-container {
             position: relative;
-            width: ' . $canvasWidth . 'px;
-            height: ' . $canvasHeight . 'px;
+            width: {$canvasWidth}px;
+            height: {$canvasHeight}px;
             background-color: white;
             border: 2px solid #ccc;
             margin: 0 auto;
@@ -909,10 +910,10 @@ abstract class BaseGenerator
 </head>
 <body>
     <div class="canvas-info">
-        Canvas: ' . $canvasWidth . 'x' . $canvasHeight . 'px | Éléments: ' . count($elements) . '
+        Canvas: {$canvasWidth}x{$canvasHeight}px | Éléments: {$elementCount}
     </div>
     <div class="canvas-container">
-        ' . $htmlContent . '
+        {$htmlContent}
     </div>
     <script>
         // Ajouter des overlays de débogage
@@ -931,7 +932,8 @@ abstract class BaseGenerator
         });
     </script>
 </body>
-</html>';
+</html>
+HTML;
 
         $this->logInfo('HTML preview generation completed, length: ' . strlen($html));
         return $html;
