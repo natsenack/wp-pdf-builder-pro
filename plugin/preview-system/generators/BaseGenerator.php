@@ -170,6 +170,26 @@ abstract class BaseGenerator
         $content = '';
         
         // Logging détaillé de la structure du template - TOUJOURS ACTIF
+        $logFile = dirname(__DIR__) . '/../../../logs/pdf_preview_debug.log';
+        $logDir = dirname($logFile);
+        if (!is_dir($logDir)) {
+            mkdir($logDir, 0755, true);
+        }
+        
+        $logMessage = "[PDF GENERATOR] ===== generateContent - STARTING CONTENT GENERATION =====\n";
+        $logMessage .= "[PDF GENERATOR] generateContent - template_data keys: " . implode(', ', array_keys($this->template_data)) . "\n";
+        $logMessage .= "[PDF GENERATOR] generateContent - isset elements directly: " . (isset($this->template_data['elements']) ? 'YES' : 'NO') . "\n";
+        $logMessage .= "[PDF GENERATOR] generateContent - isset template.elements: " . (isset($this->template_data['template']['elements']) ? 'YES' : 'NO') . "\n";
+        
+        if (isset($this->template_data['elements'])) {
+            $logMessage .= "[PDF GENERATOR] generateContent - elements count (direct): " . count($this->template_data['elements']) . "\n";
+            if (!empty($this->template_data['elements'])) {
+                $logMessage .= "[PDF GENERATOR] generateContent - first element: " . print_r($this->template_data['elements'][0], true) . "\n";
+            }
+        }
+        
+        file_put_contents($logFile, $logMessage, FILE_APPEND);
+        
         error_log('[PDF GENERATOR] ===== generateContent - STARTING CONTENT GENERATION =====');
         error_log('[PDF GENERATOR] generateContent - template_data keys: ' . implode(', ', array_keys($this->template_data)));
         error_log('[PDF GENERATOR] generateContent - isset elements directly: ' . (isset($this->template_data['elements']) ? 'YES' : 'NO'));
@@ -301,9 +321,23 @@ abstract class BaseGenerator
      */
     protected function renderCustomerInfoElement(array $element): string
     {
+        // Log all element properties for debugging
+        error_log('[PDF GENERATOR] renderCustomerInfoElement - element data: ' . print_r($element, true));
+        
         $style = $this->buildElementStyle($element);
-        $content = "John Doe\n123 Main Street\nParis, France\njohn@example.com\n+33 1 23 45 67 89";
-        return "<div class=\"pdf-element\" style=\"{$style}\">{$content}</div>";
+        
+        // Use real element data instead of hardcoded values
+        $customerName = $element['customerName'] ?? $element['name'] ?? 'Client';
+        $customerAddress = $element['customerAddress'] ?? $element['address'] ?? '';
+        $customerEmail = $element['customerEmail'] ?? $element['email'] ?? '';
+        $customerPhone = $element['customerPhone'] ?? $element['phone'] ?? '';
+        
+        $content = $customerName;
+        if (!empty($customerAddress)) $content .= "\n" . $customerAddress;
+        if (!empty($customerEmail)) $content .= "\n" . $customerEmail;
+        if (!empty($customerPhone)) $content .= "\n" . $customerPhone;
+        
+        return "<div class=\"pdf-element\" style=\"{$style}\">" . nl2br($content) . "</div>";
     }
 
     /**
@@ -311,9 +345,25 @@ abstract class BaseGenerator
      */
     protected function renderCompanyInfoElement(array $element): string
     {
+        // Log all element properties for debugging
+        error_log('[PDF GENERATOR] renderCompanyInfoElement - element data: ' . print_r($element, true));
+        
         $style = $this->buildElementStyle($element);
-        $content = "Ma Société SARL\n123 Avenue des Champs\n75008 Paris, France\nSIRET: 123 456 789 00012\ncontact@masociete.fr";
-        return "<div class=\"pdf-element\" style=\"{$style}\">{$content}</div>";
+        
+        // Use real element data instead of hardcoded values
+        $companyName = $element['companyName'] ?? $element['name'] ?? 'Entreprise';
+        $companyAddress = $element['companyAddress'] ?? $element['address'] ?? '';
+        $companyEmail = $element['companyEmail'] ?? $element['email'] ?? '';
+        $companyPhone = $element['companyPhone'] ?? $element['phone'] ?? '';
+        $companySiret = $element['companySiret'] ?? $element['siret'] ?? '';
+        
+        $content = $companyName;
+        if (!empty($companyAddress)) $content .= "\n" . $companyAddress;
+        if (!empty($companyEmail)) $content .= "\n" . $companyEmail;
+        if (!empty($companyPhone)) $content .= "\n" . $companyPhone;
+        if (!empty($companySiret)) $content .= "\nSIRET: " . $companySiret;
+        
+        return "<div class=\"pdf-element\" style=\"{$style}\">" . nl2br($content) . "</div>";
     }
 
     /**
@@ -321,9 +371,15 @@ abstract class BaseGenerator
      */
     protected function renderOrderNumberElement(array $element): string
     {
+        // Log all element properties for debugging
+        error_log('[PDF GENERATOR] renderOrderNumberElement - element data: ' . print_r($element, true));
+        
         $style = $this->buildElementStyle($element);
-        $content = "#12345";
-        return "<div class=\"pdf-element\" style=\"{$style}\">{$content}</div>";
+        
+        // Use real element data instead of hardcoded values
+        $orderNumber = $element['orderNumber'] ?? $element['number'] ?? $element['value'] ?? '#12345';
+        
+        return "<div class=\"pdf-element\" style=\"{$style}\">{$orderNumber}</div>";
     }
 
     /**
@@ -331,8 +387,11 @@ abstract class BaseGenerator
      */
     protected function renderCompanyLogoElement(array $element): string
     {
+        // Log all element properties for debugging
+        error_log('[PDF GENERATOR] renderCompanyLogoElement - element data: ' . print_r($element, true));
+        
         $style = $this->buildElementStyle($element);
-        $src = $element['src'] ?? '';
+        $src = $element['src'] ?? $element['logoUrl'] ?? $element['url'] ?? '';
         if (empty($src)) {
             return "<div class=\"pdf-element image-element\" style=\"{$style}; background-color: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #666;\">🏢 Logo</div>";
         }
@@ -344,34 +403,53 @@ abstract class BaseGenerator
      */
     protected function renderProductTableElement(array $element): string
     {
+        // Log all element properties for debugging
+        error_log('[PDF GENERATOR] renderProductTableElement - element data: ' . print_r($element, true));
+        
         $style = $this->buildElementStyle($element);
-        $content = "<table style='width: 100%; border-collapse: collapse;'>
-            <thead>
-                <tr style='background-color: #f5f5f5;'>
-                    <th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>Produit</th>
-                    <th style='border: 1px solid #ddd; padding: 8px; text-align: center;'>Qté</th>
-                    <th style='border: 1px solid #ddd; padding: 8px; text-align: right;'>Prix</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style='border: 1px solid #ddd; padding: 8px;'>Produit Exemple</td>
-                    <td style='border: 1px solid #ddd; padding: 8px; text-align: center;'>2</td>
-                    <td style='border: 1px solid #ddd; padding: 8px; text-align: right;'>€50.00</td>
-                </tr>
-                <tr style='background-color: #fafafa;'>
-                    <td style='border: 1px solid #ddd; padding: 8px;'>Autre Produit</td>
-                    <td style='border: 1px solid #ddd; padding: 8px; text-align: center;'>1</td>
-                    <td style='border: 1px solid #ddd; padding: 8px; text-align: right;'>€25.00</td>
-                </tr>
-            </tbody>
-            <tfoot>
-                <tr style='background-color: #f5f5f5; font-weight: bold;'>
-                    <td colspan='2' style='border: 1px solid #ddd; padding: 8px; text-align: right;'>Total:</td>
-                    <td style='border: 1px solid #ddd; padding: 8px; text-align: right;'>€75.00</td>
-                </tr>
-            </tfoot>
-        </table>";
+        
+        // Use real element data instead of hardcoded values
+        $products = $element['products'] ?? $element['items'] ?? [];
+        $showHeaders = $element['showHeaders'] ?? true;
+        $showBorders = $element['showBorders'] ?? true;
+        $currency = $element['currency'] ?? '€';
+        
+        $tableStyle = $showBorders ? 'border-collapse: collapse;' : 'border-collapse: separate;';
+        $borderStyle = $showBorders ? 'border: 1px solid #ddd;' : '';
+        
+        $content = "<table style='width: 100%; {$tableStyle}'>";
+        
+        if ($showHeaders) {
+            $content .= "<thead><tr style='background-color: #f5f5f5;'>";
+            $content .= "<th style='{$borderStyle} padding: 8px; text-align: left;'>Produit</th>";
+            $content .= "<th style='{$borderStyle} padding: 8px; text-align: center;'>Qté</th>";
+            $content .= "<th style='{$borderStyle} padding: 8px; text-align: right;'>Prix</th>";
+            $content .= "</tr></thead>";
+        }
+        
+        $content .= "<tbody>";
+        
+        if (empty($products)) {
+            // Sample data if no products provided
+            $content .= "<tr>";
+            $content .= "<td style='{$borderStyle} padding: 8px;'>Produit Exemple</td>";
+            $content .= "<td style='{$borderStyle} padding: 8px; text-align: center;'>2</td>";
+            $content .= "<td style='{$borderStyle} padding: 8px; text-align: right;'>{$currency}50.00</td>";
+            $content .= "</tr>";
+        } else {
+            // Use real product data
+            foreach ($products as $index => $product) {
+                $rowStyle = ($index % 2 == 1) ? 'background-color: #fafafa;' : '';
+                $content .= "<tr style='{$rowStyle}'>";
+                $content .= "<td style='{$borderStyle} padding: 8px;'>" . ($product['name'] ?? 'Produit') . "</td>";
+                $content .= "<td style='{$borderStyle} padding: 8px; text-align: center;'>" . ($product['quantity'] ?? 1) . "</td>";
+                $content .= "<td style='{$borderStyle} padding: 8px; text-align: right;'>{$currency}" . ($product['price'] ?? '0.00') . "</td>";
+                $content .= "</tr>";
+            }
+        }
+        
+        $content .= "</tbody></table>";
+        
         return "<div class=\"pdf-element table-element\" style=\"{$style}\">{$content}</div>";
     }
 
@@ -390,8 +468,11 @@ abstract class BaseGenerator
      */
     protected function renderDocumentTypeElement(array $element): string
     {
+        // Log all element properties for debugging
+        error_log('[PDF GENERATOR] renderDocumentTypeElement - element data: ' . print_r($element, true));
+        
         $style = $this->buildElementStyle($element);
-        $title = $element['title'] ?? 'Facture';
+        $title = $element['title'] ?? $element['documentType'] ?? $element['type'] ?? 'Facture';
         return "<div class=\"pdf-element\" style=\"{$style}\">{$title}</div>";
     }
 
@@ -400,8 +481,11 @@ abstract class BaseGenerator
      */
     protected function renderDynamicTextElement(array $element): string
     {
+        // Log all element properties for debugging
+        error_log('[PDF GENERATOR] renderDynamicTextElement - element data: ' . print_r($element, true));
+        
         $style = $this->buildElementStyle($element);
-        $text = $element['text'] ?? $element['textTemplate'] ?? 'Texte dynamique';
+        $text = $element['text'] ?? $element['textTemplate'] ?? $element['content'] ?? 'Texte dynamique';
         $text = $this->injectVariables($text);
         return "<div class=\"pdf-element text-element\" style=\"{$style}\">{$text}</div>";
     }
@@ -411,12 +495,15 @@ abstract class BaseGenerator
      */
     protected function renderMentionsElement(array $element): string
     {
+        // Log all element properties for debugging
+        error_log('[PDF GENERATOR] renderMentionsElement - element data: ' . print_r($element, true));
+        
         $style = $this->buildElementStyle($element);
         $mentions = [];
-        if ($element['showEmail'] ?? false) $mentions[] = 'contact@example.com';
-        if ($element['showPhone'] ?? false) $mentions[] = '+33 1 23 45 67 89';
-        if ($element['showSiret'] ?? false) $mentions[] = 'SIRET: 123 456 789 00012';
-        if ($element['showVat'] ?? false) $mentions[] = 'TVA: FR123456789';
+        if ($element['showEmail'] ?? false) $mentions[] = $element['email'] ?? 'contact@example.com';
+        if ($element['showPhone'] ?? false) $mentions[] = $element['phone'] ?? '+33 1 23 45 67 89';
+        if ($element['showSiret'] ?? false) $mentions[] = 'SIRET: ' . ($element['siret'] ?? '123 456 789 00012');
+        if ($element['showVat'] ?? false) $mentions[] = 'TVA: ' . ($element['vat'] ?? 'FR123456789');
         $separator = $element['separator'] ?? ' • ';
         $content = implode($separator, $mentions);
         return "<div class=\"pdf-element\" style=\"{$style}\">{$content}</div>";
