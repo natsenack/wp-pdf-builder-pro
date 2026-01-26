@@ -286,6 +286,11 @@ abstract class BaseGenerator
             $text = $element['properties']['value'];
         }
         
+        // TEMPORARY DEBUG: Always show something
+        if (empty($text)) {
+            $text = '[TEXTE VIDE - TYPE: ' . ($element['type'] ?? 'unknown') . ']';
+        }
+        
         $text = $this->injectVariables($text);
         $style = $this->buildElementStyle($element);
         return "<div class=\"pdf-element text-element\" style=\"{$style}\">{$text}</div>";
