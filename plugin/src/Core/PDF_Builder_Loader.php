@@ -140,7 +140,11 @@ class PDF_Builder_Loader {
     private function load_constants() {
         if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
             define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path(dirname(__FILE__)) . '/');
+        }
+        if (!defined('PDF_BUILDER_PLUGIN_URL')) {
             define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url(dirname(__FILE__)) . '/');
+        }
+        if (!defined('PDF_BUILDER_VERSION')) {
             define('PDF_BUILDER_VERSION', '1.1.0');
         }
     }
