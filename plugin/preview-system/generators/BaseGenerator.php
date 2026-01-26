@@ -170,7 +170,7 @@ abstract class BaseGenerator
         $content = '';
         
         // Logging détaillé de la structure du template - TOUJOURS ACTIF
-        error_log('[PDF GENERATOR] generateContent - STARTING CONTENT GENERATION');
+        error_log('[PDF GENERATOR] ===== generateContent - STARTING CONTENT GENERATION =====');
         error_log('[PDF GENERATOR] generateContent - template_data keys: ' . implode(', ', array_keys($this->template_data)));
         error_log('[PDF GENERATOR] generateContent - isset elements directly: ' . (isset($this->template_data['elements']) ? 'YES' : 'NO'));
         error_log('[PDF GENERATOR] generateContent - isset template.elements: ' . (isset($this->template_data['template']['elements']) ? 'YES' : 'NO'));

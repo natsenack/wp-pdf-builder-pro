@@ -108,7 +108,33 @@ class PreviewAjaxHandler {
     private static function generatePreviewNew($pageOptions, string $previewType = 'general', string $orderNumberToPreview = ''): array {
         require_once dirname(__FILE__) . '/../../vendor/autoload.php';
         
-        error_log('[PDF PREVIEW] Starting generatePreviewNew');
+        error_log('[PDF PREVIEW] ===== STARTING generatePreviewNew =====');
+        error_log('[PDF PREVIEW] pageOptions type: ' . gettype($pageOptions));
+        error_log('[PDF PREVIEW] pageOptions is object: ' . (is_object($pageOptions) ? 'YES' : 'NO'));
+        error_log('[PDF PREVIEW] pageOptions is array: ' . (is_array($pageOptions) ? 'YES' : 'NO'));
+        
+        if (is_object($pageOptions)) {
+            error_log('[PDF PREVIEW] pageOptions keys (object): ' . implode(', ', array_keys((array)$pageOptions)));
+            error_log('[PDF PREVIEW] pageOptions->template exists: ' . (isset($pageOptions->template) ? 'YES' : 'NO'));
+            if (isset($pageOptions->template)) {
+                error_log('[PDF PREVIEW] pageOptions->template type: ' . gettype($pageOptions->template));
+                if (is_object($pageOptions->template)) {
+                    error_log('[PDF PREVIEW] pageOptions->template keys: ' . implode(', ', array_keys((array)$pageOptions->template)));
+                    error_log('[PDF PREVIEW] pageOptions->template has elements: ' . (isset($pageOptions->template->elements) ? 'YES' : 'NO'));
+                    if (isset($pageOptions->template->elements)) {
+                        error_log('[PDF PREVIEW] elements count: ' . (is_array($pageOptions->template->elements) ? count($pageOptions->template->elements) : 'NOT ARRAY'));
+                        if (is_array($pageOptions->template->elements) && count($pageOptions->template->elements) > 0) {
+                            error_log('[PDF PREVIEW] first element: ' . print_r($pageOptions->template->elements[0], true));
+                        }
+                    }
+                }
+            }
+        } elseif (is_array($pageOptions)) {
+            error_log('[PDF PREVIEW] pageOptions keys (array): ' . implode(', ', array_keys($pageOptions)));
+        }
+        
+        error_log('[PDF PREVIEW] previewType: ' . $previewType);
+        error_log('[PDF PREVIEW] orderNumberToPreview: ' . $orderNumberToPreview);
         
         if (!class_exists('Dompdf\Dompdf')) {
             error_log('[PDF PREVIEW] Dompdf not available');
