@@ -161,24 +161,29 @@ abstract class BaseGenerator
         // Logging détaillé de la structure du template
         if (defined('WP_DEBUG') && WP_DEBUG) {
             $logger = PDF_Builder_Logger::get_instance();
-            // $logger->debug_log('generateContent - template_data structure: ' . print_r($this->template_data, true));
-            // $logger->debug_log('generateContent - isset template: ' . isset($this->template_data['template']));
-            // $logger->debug_log('generateContent - isset elements: ' . isset($this->template_data['template']['elements']));
+            $logger->debug_log('generateContent - template_data structure: ' . print_r($this->template_data, true));
+            $logger->debug_log('generateContent - isset template: ' . isset($this->template_data['template']));
+            $logger->debug_log('generateContent - isset elements: ' . isset($this->template_data['template']['elements']));
             if (isset($this->template_data['template']['elements'])) {
-                // $logger->debug_log('generateContent - elements count: ' . count($this->template_data['template']['elements']));
-                // $logger->debug_log('generateContent - elements: ' . print_r($this->template_data['template']['elements'], true));
+                $logger->debug_log('generateContent - elements count: ' . count($this->template_data['template']['elements']));
+                $logger->debug_log('generateContent - elements: ' . print_r($this->template_data['template']['elements'], true));
             }
         }
         
         if (!isset($this->template_data['template']['elements'])) {
             $logger = PDF_Builder_Logger::get_instance();
-            // $logger->debug_log('generateContent - NO ELEMENTS FOUND, returning empty content');
+            $logger->debug_log('generateContent - NO ELEMENTS FOUND, returning empty content');
+            $logger->debug_log('generateContent - Full template_data: ' . print_r($this->template_data, true));
             return $content;
         }
+
+        $logger = PDF_Builder_Logger::get_instance();
+        $logger->debug_log('generateContent - FOUND ELEMENTS, processing ' . count($this->template_data['template']['elements']) . ' elements');
 
         foreach ($this->template_data['template']['elements'] as $element) {
             // Convert stdClass to array if necessary
             $elementArray = is_array($element) ? $element : (array) $element;
+            $logger->debug_log('generateContent - Processing element: ' . print_r($elementArray, true));
             $content .= $this->renderElement($elementArray);
         }
 
@@ -202,8 +207,8 @@ abstract class BaseGenerator
         
         if (defined('WP_DEBUG') && WP_DEBUG) {
             $logger = PDF_Builder_Logger::get_instance();
-            // $logger->debug_log('renderElement - processing element type: ' . $type);
-            // $logger->debug_log('renderElement - element data: ' . print_r($element, true));
+            $logger->debug_log('renderElement - processing element type: ' . $type);
+            $logger->debug_log('renderElement - element data: ' . print_r($element, true));
         }
         
         $method = 'render' . ucfirst($type) . 'Element';
@@ -211,7 +216,7 @@ abstract class BaseGenerator
             $result = $this->$method($element);
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 $logger = PDF_Builder_Logger::get_instance();
-                // $logger->debug_log('renderElement - rendered HTML: ' . $result);
+                $logger->debug_log('renderElement - rendered HTML: ' . $result);
             }
             return $result;
         }

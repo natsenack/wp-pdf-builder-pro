@@ -812,14 +812,12 @@ class PDFGenerator extends BaseGenerator
         return $this->performance_metrics;
     }
 
-    /**
-     * Génère un aperçu PDF et le stream directement (inspiré de woo-pdf)
-     * 
-     * @param bool $saveToDatabase Sauvegarder en base ou non
-     */
     public function generatePreview($saveToDatabase = false) {
+        $this->logInfo("generatePreview called - starting PDF generation");
+        
         // Générer le PDF d'abord
         $pdfContent = $this->generate('pdf');
+        $this->logInfo("PDF content generated, length: " . strlen($pdfContent));
         
         // Vérifier si on a du debug activé
         if (get_option('pdf_builder_enable_page_debug', false) == true) {
@@ -831,17 +829,19 @@ class PDFGenerator extends BaseGenerator
         
         // Vérifier que le contenu PDF est valide
         if (empty($pdfContent) || !is_string($pdfContent)) {
-            error_log('[PDF PREVIEW] PDF content is empty or invalid');
+            $this->logError("PDF content is empty or invalid");
             echo 'Erreur: Impossible de générer le PDF. Le contenu est vide.';
             die();
         }
         
         // Vérifier que c'est bien du contenu PDF
         if (!preg_match('/^%PDF-/', $pdfContent)) {
-            error_log('[PDF PREVIEW] Generated content does not appear to be a valid PDF');
+            $this->logError("Generated content does not appear to be a valid PDF. Content starts with: " . substr($pdfContent, 0, 50));
             echo 'Erreur: Le contenu généré n\'est pas un PDF valide.';
             die();
         }
+        
+        $this->logInfo("PDF content is valid, streaming to browser");
         
         // Définir les headers pour le PDF
         header('Content-Type: application/pdf');
