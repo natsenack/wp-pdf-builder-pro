@@ -75,6 +75,41 @@ export function Toolbar({ className }: ToolbarProps) {
     }
   };
 
+  const handleHTMLPreview = () => {
+    // Générer l'aperçu HTML
+    const formData = new FormData();
+    formData.append('action', 'pdf_builder_generate_html_preview');
+    formData.append('nonce', (window as any).pdfBuilderNonce);
+    formData.append('data', JSON.stringify({
+      pageOptions: {
+        template: state.templateData
+      }
+    }));
+
+    fetch('/wp-admin/admin-ajax.php', {
+      method: 'POST',
+      body: formData
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (d.success && d.data && d.data.html) {
+        // Ouvrir l'aperçu HTML dans une nouvelle fenêtre
+        const newWindow = window.open('', '_blank');
+        if (newWindow) {
+          newWindow.document.write(d.data.html);
+          newWindow.document.close();
+        }
+      } else {
+        console.error('Erreur lors de la génération de l\'aperçu HTML:', d);
+        alert('Erreur lors de la génération de l\'aperçu HTML. Vérifiez la console pour plus de détails.');
+      }
+    })
+    .catch(e => {
+      console.error('Erreur réseau lors de l\'aperçu HTML:', e);
+      alert('Erreur réseau lors de la génération de l\'aperçu HTML.');
+    });
+  };
+
   const handleToggleSnapToGrid = () => {
     // Vérifier que la grille globale est activée avant d'autoriser l'accrochage
     if (canvasSettings.gridShow && canvasSettings.gridSnapEnabled) {
@@ -355,6 +390,34 @@ export function Toolbar({ className }: ToolbarProps) {
               }}
             >
               {state.template.showGuides ? '📏 Guides' : '📐 Guides'}
+            </button>
+
+            {/* Aperçu HTML */}
+            <button
+              onClick={handleHTMLPreview}
+              style={{
+                padding: '8px 12px',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                backgroundColor: '#ffffff',
+                color: '#374151',
+                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '500',
+                transition: 'all 0.2s ease',
+                minWidth: '90px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#f8fafc';
+                e.currentTarget.style.borderColor = '#9ca3af';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#ffffff';
+                e.currentTarget.style.borderColor = '#d1d5db';
+              }}
+              title="Générer un aperçu HTML du template"
+            >
+              🌐 HTML
             </button>
 
             {/* Zoom - Toujours affiché */}
