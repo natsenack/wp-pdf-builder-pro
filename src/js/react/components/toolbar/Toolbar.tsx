@@ -76,7 +76,8 @@ export function Toolbar({ className }: ToolbarProps) {
   };
 
   const handleHTMLPreview = () => {
-    console.log('🔍 [HTML PREVIEW] Début de handleHTMLPreview');
+    console.log('� [HTML PREVIEW FUNCTION] handleHTMLPreview appelée !');
+    console.log('�🔍 [HTML PREVIEW] Début de handleHTMLPreview');
 
     // Construire les données du template à partir du state actuel
     const templateData = {
@@ -430,7 +431,10 @@ export function Toolbar({ className }: ToolbarProps) {
 
             {/* Aperçu HTML */}
             <button
-              onClick={handleHTMLPreview}
+              onClick={() => {
+                console.log('🚀 [HTML PREVIEW BUTTON] Bouton HTML cliqué !');
+                handleHTMLPreview();
+              }}
               style={{
                 padding: '8px 12px',
                 border: '1px solid #d1d5db',
