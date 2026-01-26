@@ -115,6 +115,9 @@ global $menu, $submenu;
 $menu_backup = $menu;
 $submenu_backup = $submenu;
 
+// Simuler d'abord le hook 'init' pour initialiser les classes
+do_action('init');
+
 // Forcer la réinitialisation du flag menu_added pour le diagnostic
 $_GET['force_menu_reset'] = '1';
 
