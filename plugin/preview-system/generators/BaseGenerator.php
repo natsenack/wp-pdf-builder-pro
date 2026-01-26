@@ -859,6 +859,7 @@ abstract class BaseGenerator
         }
 
         // Générer le HTML complet
+        $elementCount = count($elements);
         $html = <<<HTML
 <!DOCTYPE html>
 <html lang="fr">
@@ -910,7 +911,7 @@ abstract class BaseGenerator
 </head>
 <body>
     <div class="canvas-info">
-        Canvas: {$canvasWidth}x{$canvasHeight}px | Éléments: {count($elements)}
+        Canvas: {$canvasWidth}x{$canvasHeight}px | Éléments: {$elementCount}
     </div>
     <div class="canvas-container">
         {$htmlContent}
