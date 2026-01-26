@@ -358,106 +358,9 @@ abstract class BaseGenerator
     }
 
     /**
-     * Construit les styles CSS pour un élément
-     *
-     * @param array $element Données de l'élément
-     * @return string Styles CSS
+     * Rend un élément customer_info
+     * Version: 2026-01-26 12:25
      */
-    protected function buildElementStyle(array $element): string
-    {
-        $styles = [];
-
-        // Position absolue
-        $x = $element['x'] ?? $element['left'] ?? 0;
-        $y = $element['y'] ?? $element['top'] ?? 0;
-        $width = $element['width'] ?? 100;
-        $height = $element['height'] ?? 50;
-
-        $styles[] = "position: absolute";
-        $styles[] = "left: {$x}px";
-        $styles[] = "top: {$y}px";
-        $styles[] = "width: {$width}px";
-        $styles[] = "height: {$height}px";
-
-        // Rotation si présente
-        if (isset($element['rotation']) && $element['rotation'] != 0) {
-            $rotation = $element['rotation'];
-            $styles[] = "transform: rotate({$rotation}deg)";
-            $styles[] = "transform-origin: center center";
-        }
-
-        // Opacité si présente
-        if (isset($element['opacity']) && $element['opacity'] < 1) {
-            $opacity = $element['opacity'];
-            $styles[] = "opacity: {$opacity}";
-        }
-
-        // Styles de texte pour les éléments texte
-        if (isset($element['fontSize'])) {
-            $styles[] = "font-size: {$element['fontSize']}px";
-        }
-        if (isset($element['fontFamily'])) {
-            $styles[] = "font-family: {$element['fontFamily']}";
-        }
-        if (isset($element['color'])) {
-            $styles[] = "color: {$element['color']}";
-        }
-        if (isset($element['textAlign'])) {
-            $styles[] = "text-align: {$element['textAlign']}";
-        }
-        if (isset($element['fontWeight'])) {
-            $styles[] = "font-weight: {$element['fontWeight']}";
-        }
-
-        // Vérifier les propriétés imbriquées (properties)
-        if (isset($element['properties']) && is_array($element['properties'])) {
-            $props = $element['properties'];
-
-            // Position et dimensions depuis properties si pas déjà définis
-            if (!isset($element['x']) && isset($props['x'])) {
-                $styles[] = "left: {$props['x']}px";
-            }
-            if (!isset($element['y']) && isset($props['y'])) {
-                $styles[] = "top: {$props['y']}px";
-            }
-            if (!isset($element['width']) && isset($props['width'])) {
-                $styles[] = "width: {$props['width']}px";
-            }
-            if (!isset($element['height']) && isset($props['height'])) {
-                $styles[] = "height: {$props['height']}px";
-            }
-
-            // Rotation depuis properties
-            if (!isset($element['rotation']) && isset($props['rotation'])) {
-                $styles[] = "transform: rotate({$props['rotation']}deg)";
-                $styles[] = "transform-origin: center center";
-            }
-
-            // Opacité depuis properties
-            if (!isset($element['opacity']) && isset($props['opacity'])) {
-                $styles[] = "opacity: {$props['opacity']}";
-            }
-
-            // Styles de texte depuis properties
-            if (!isset($element['fontSize']) && isset($props['fontSize'])) {
-                $styles[] = "font-size: {$props['fontSize']}px";
-            }
-            if (!isset($element['fontFamily']) && isset($props['fontFamily'])) {
-                $styles[] = "font-family: {$props['fontFamily']}";
-            }
-            if (!isset($element['color']) && isset($props['color'])) {
-                $styles[] = "color: {$props['color']}";
-            }
-            if (!isset($element['textAlign']) && isset($props['textAlign'])) {
-                $styles[] = "text-align: {$props['textAlign']}";
-            }
-            if (!isset($element['fontWeight']) && isset($props['fontWeight'])) {
-                $styles[] = "font-weight: {$props['fontWeight']}";
-            }
-        }
-
-        return implode('; ', $styles) . ';';
-    }
     protected function renderCustomerInfoElement(array $element): string
     {
         error_log('[PDF] Customer info - keys: ' . implode(', ', array_keys($element)) . ', name: ' . ($element['customerName'] ?? $element['name'] ?? 'empty'));
@@ -491,6 +394,139 @@ abstract class BaseGenerator
         
         error_log('[PDF] Customer info - FINAL name: "' . $customerName . '", address: "' . $customerAddress . '", email: "' . $customerEmail . '", phone: "' . $customerPhone . '"');
         return "<div class=\"pdf-element\" data-element-type=\"customer_info\" style=\"{$style}\">" . nl2br($content) . "</div>";
+    /**
+     * Construit le style CSS d'un élément
+     *
+     * @param array $element Données de l'élément
+     * @return string Style CSS
+     */
+    protected function buildElementStyle(array $element): string
+    {
+        $style = 'position: absolute; ';
+
+        // Adjust positioning to compensate for offset - subtract 20px from all values
+        $x = ($element['x'] ?? 0) - 20;
+        $y = ($element['y'] ?? 0) - 20;
+
+        // Allow negative values for proper positioning
+        $style .= "left: {$x}px; ";
+        $style .= "top: {$y}px; ";
+
+        // Debug log for positioning
+        if (isset($element['x']) || isset($element['y'])) {
+            error_log("[PDF] Element positioning - original x: " . ($element['x'] ?? 'not set') . ", y: " . ($element['y'] ?? 'not set') . " | adjusted x: {$x}, y: {$y}");
+        }
+        if (isset($element['width'])) {
+            $style .= "width: {$element['width']}px; ";
+        }
+        if (isset($element['height'])) {
+            $style .= "height: {$element['height']}px; ";
+        }
+        if (isset($element['color'])) {
+            $style .= "color: {$element['color']}; ";
+        }
+        if (isset($element['fontSize'])) {
+            $style .= "font-size: {$element['fontSize']}px; ";
+        }
+        if (isset($element['fontWeight'])) {
+            $style .= "font-weight: {$element['fontWeight']}; ";
+        }
+        if (isset($element['fontFamily'])) {
+            $style .= "font-family: {$element['fontFamily']}; ";
+        }
+        if (isset($element['textAlign'])) {
+            $style .= "text-align: {$element['textAlign']}; ";
+        }
+        if (isset($element['backgroundColor'])) {
+            $style .= "background-color: {$element['backgroundColor']}; ";
+        }
+        if (isset($element['borderColor'])) {
+            $style .= "border-color: {$element['borderColor']}; ";
+        }
+        if (isset($element['borderWidth'])) {
+            $style .= "border-width: {$element['borderWidth']}px; ";
+        }
+        if (isset($element['borderRadius'])) {
+            $style .= "border-radius: {$element['borderRadius']}px; ";
+        }
+        if (isset($element['rotation'])) {
+            $style .= "transform: rotate({$element['rotation']}deg); ";
+        }
+        if (isset($element['lineHeight'])) {
+            $style .= "line-height: {$element['lineHeight']}; ";
+        }
+        if (isset($element['textDecoration'])) {
+            $style .= "text-decoration: {$element['textDecoration']}; ";
+        }
+        if (isset($element['fontStyle'])) {
+            $style .= "font-style: {$element['fontStyle']}; ";
+        }
+
+        // Vérifier les propriétés imbriquées (properties) si les propriétés directes ne sont pas définies
+        if (isset($element['properties']) && is_array($element['properties'])) {
+            $props = $element['properties'];
+
+            // Position et dimensions depuis properties si pas déjà définis
+            if (!isset($element['x']) && isset($props['x'])) {
+                $adjustedX = $props['x'] - 20;
+                $style .= "left: {$adjustedX}px; ";
+                error_log("[PDF] Element positioning from properties - x: {$props['x']}, adjusted x: {$adjustedX}");
+            }
+            if (!isset($element['y']) && isset($props['y'])) {
+                $adjustedY = $props['y'] - 20;
+                $style .= "top: {$adjustedY}px; ";
+                error_log("[PDF] Element positioning from properties - y: {$props['y']}, adjusted y: {$adjustedY}");
+            }
+            if (!isset($element['width']) && isset($props['width'])) {
+                $style .= "width: {$props['width']}px; ";
+            }
+            if (!isset($element['height']) && isset($props['height'])) {
+                $style .= "height: {$props['height']}px; ";
+            }
+
+            // Autres propriétés depuis properties si pas déjà définis
+            if (!isset($element['color']) && isset($props['color'])) {
+                $style .= "color: {$props['color']}; ";
+            }
+            if (!isset($element['fontSize']) && isset($props['fontSize'])) {
+                $style .= "font-size: {$props['fontSize']}px; ";
+            }
+            if (!isset($element['fontWeight']) && isset($props['fontWeight'])) {
+                $style .= "font-weight: {$props['fontWeight']}; ";
+            }
+            if (!isset($element['fontFamily']) && isset($props['fontFamily'])) {
+                $style .= "font-family: {$props['fontFamily']}; ";
+            }
+            if (!isset($element['textAlign']) && isset($props['textAlign'])) {
+                $style .= "text-align: {$props['textAlign']}; ";
+            }
+            if (!isset($element['backgroundColor']) && isset($props['backgroundColor'])) {
+                $style .= "background-color: {$props['backgroundColor']}; ";
+            }
+            if (!isset($element['borderColor']) && isset($props['borderColor'])) {
+                $style .= "border-color: {$props['borderColor']}; ";
+            }
+            if (!isset($element['borderWidth']) && isset($props['borderWidth'])) {
+                $style .= "border-width: {$props['borderWidth']}px; ";
+            }
+            if (!isset($element['borderRadius']) && isset($props['borderRadius'])) {
+                $style .= "border-radius: {$props['borderRadius']}px; ";
+            }
+            if (!isset($element['rotation']) && isset($props['rotation'])) {
+                $style .= "transform: rotate({$props['rotation']}deg); ";
+            }
+            if (!isset($element['lineHeight']) && isset($props['lineHeight'])) {
+                $style .= "line-height: {$props['lineHeight']}; ";
+            }
+            if (!isset($element['textDecoration']) && isset($props['textDecoration'])) {
+                $style .= "text-decoration: {$props['textDecoration']}; ";
+            }
+            if (!isset($element['fontStyle']) && isset($props['fontStyle'])) {
+                $style .= "font-style: {$props['fontStyle']}; ";
+            }
+        }
+
+        return $style;
     }
 
     /**
@@ -986,6 +1022,7 @@ abstract class BaseGenerator
             background-color: white;
             border: 2px solid #ccc;
             margin: 0 auto;
+            padding: 20px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         .canvas-info {
