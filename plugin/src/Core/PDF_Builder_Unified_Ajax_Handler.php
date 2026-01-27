@@ -795,7 +795,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'pdf_builder_last_maintenance', 'pdf_builder_next_maintenance', 'pdf_builder_last_backup', 'pdf_builder_cache_last_cleanup',
                 // Canvas text fields
                 'pdf_builder_canvas_canvas_bg_color', 'pdf_builder_canvas_canvas_border_color', 'pdf_builder_canvas_canvas_container_bg_color', 'pdf_builder_canvas_canvas_selection_mode', 'pdf_builder_canvas_canvas_export_format',
-                'pdf_builder_default_canvas_format', 'pdf_builder_default_canvas_orientation', 'pdf_builder_default_canvas_unit', 'pdf_builder_canvas_canvas_format'
+                'pdf_builder_default_canvas_format', 'pdf_builder_default_canvas_orientation', 'pdf_builder_canvas_unit', 'pdf_builder_canvas_canvas_format'
             ],
             'int_fields' => [
                 'pdf_builder_cache_max_size', 'pdf_builder_cache_ttl',
