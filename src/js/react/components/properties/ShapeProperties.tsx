@@ -137,27 +137,27 @@ export function ShapeProperties({ element, onChange, activeTab, setActiveTab }: 
         <>
           <ColorPropertyInput
             label="Couleur de remplissage"
-            value={(element.properties?.fillColor ?? element.fillColor) === 'transparent' ? '#ffffff' : (element.properties?.fillColor ?? element.fillColor)}
+            value={element.fillColor === 'transparent' ? '#ffffff' : element.fillColor}
             defaultValue="#007bff"
-            onChange={(value) => onChange(element.id, 'properties', { ...element.properties, fillColor: value })}
+            onChange={(value) => onChange(element.id, 'fillColor', value)}
           />
 
           <ColorPropertyInput
             label="Couleur de bordure"
-            value={(element.properties?.strokeColor ?? element.strokeColor) === 'transparent' ? '#000000' : (element.properties?.strokeColor ?? element.strokeColor)}
+            value={element.strokeColor === 'transparent' ? '#000000' : element.strokeColor}
             defaultValue="#000000"
-            onChange={(value) => onChange(element.id, 'properties', { ...element.properties, strokeColor: value })}
+            onChange={(value) => onChange(element.id, 'strokeColor', value)}
           />
 
           <div style={{ marginBottom: '12px' }}>
             <NumericPropertyInput
               label="Épaisseur de bordure"
-              value={element.properties?.strokeWidth ?? element.strokeWidth}
+              value={element.strokeWidth}
               defaultValue={1}
               min={0}
               max={20}
               unit="px"
-              onChange={(value) => onChange(element.id, 'properties', { ...element.properties, strokeWidth: value })}
+              onChange={(value) => onChange(element.id, 'strokeWidth', value)}
             />
           </div>
         </>

@@ -208,15 +208,15 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </div>
             <div style={{ paddingLeft: '8px' }}>
               <Toggle
-                checked={(element.properties?.showHeaders ?? element.showHeaders) !== false}
-                onChange={(checked) => onChange(element.id, 'properties', { ...element.properties, showHeaders: checked })}
+                checked={element.showHeaders !== false}
+                onChange={(checked) => onChange(element.id, 'showHeaders', checked)}
                 label="Afficher les en-têtes"
                 description="Affiche les noms des colonnes"
               />
 
               <Toggle
-                checked={(element.properties?.showBorders ?? element.showBorders) !== false}
-                onChange={(checked) => onChange(element.id, 'properties', { ...element.properties, showBorders: checked })}
+                checked={element.showBorders !== false}
+                onChange={(checked) => onChange(element.id, 'showBorders', checked)}
                 label="Afficher les bordures"
                 description="Affiche les bordures du tableau"
               />

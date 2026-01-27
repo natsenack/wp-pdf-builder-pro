@@ -110,20 +110,20 @@ export function LineProperties({ element, onChange, activeTab, setActiveTab }: L
         <>
           <ColorPropertyInput
             label="Couleur de la ligne"
-            value={(element.properties?.strokeColor ?? element.strokeColor)}
+            value={element.strokeColor}
             defaultValue="#000000"
-            onChange={(value) => onChange(element.id, 'properties', { ...element.properties, strokeColor: value })}
+            onChange={(value) => onChange(element.id, 'strokeColor', value)}
           />
 
           <div style={{ marginBottom: '12px' }}>
             <NumericPropertyInput
               label="Épaisseur de la ligne"
-              value={element.properties?.strokeWidth ?? element.strokeWidth}
+              value={element.strokeWidth}
               defaultValue={2}
               min={1}
               max={20}
               unit="px"
-              onChange={(value) => onChange(element.id, 'properties', { ...element.properties, strokeWidth: value })}
+              onChange={(value) => onChange(element.id, 'strokeWidth', value)}
             />
           </div>
 

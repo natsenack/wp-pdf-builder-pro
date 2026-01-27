@@ -70,9 +70,9 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
 
           <ColorPropertyInput
             label="Couleur de fond"
-            value={(element.properties?.fillColor ?? element.fillColor)}
+            value={element.fillColor}
             defaultValue="#ffffff"
-            onChange={(value) => onChange(element.id, 'properties', { ...element.properties, fillColor: value })}
+            onChange={(value) => onChange(element.id, 'fillColor', value)}
           />
 
           <ColorPropertyInput
@@ -118,8 +118,8 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
             </label>
             <input
               type="color"
-              value={(element.properties?.fillColor ?? element.fillColor) || '#ffffff'}
-              onChange={(e) => onChange(element.id, 'properties', { ...element.properties, fillColor: e.target.value })}
+              value={element.fillColor || '#ffffff'}
+              onChange={(e) => onChange(element.id, 'fillColor', e.target.value)}
               style={{
                 width: '100%',
                 height: '32px',

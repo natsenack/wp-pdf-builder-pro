@@ -5,7 +5,7 @@
  * Phase 3.3.4 - Renderer spécialisé pour les tableaux
  *
  * Gère le rendu des éléments de tableaux :
- * - product_table : Tableaux de produits WooCommerce avec calculs
+ * - product-table : Tableaux de produits WooCommerce avec calculs
  */
 
 namespace PDF_Builder\Renderers;
@@ -22,7 +22,7 @@ class TableRenderer
     /**
      * Types d'éléments supportés par ce renderer
      */
-    const SUPPORTED_TYPES = ['product_table'];
+    const SUPPORTED_TYPES = ['product-table'];
 /**
      * Styles CSS par défaut pour les tableaux
      */
@@ -62,11 +62,11 @@ class TableRenderer
             ];
         }
 
-        $type = $elementData['type'] ?? 'product_table';
+        $type = $elementData['type'] ?? 'product-table';
         $properties = $elementData['properties'] ?? [];
 // Rendu selon le type d'élément
         switch ($type) {
-            case 'product_table':
+            case 'product-table':
                 return $this->renderProductTable($properties, $context);
             default:
                 return [

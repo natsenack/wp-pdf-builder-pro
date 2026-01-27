@@ -144,8 +144,8 @@ export function WoocommerceInvoiceNumberProperties({
               </label>
               <input
                 type="text"
-                value={(element.properties?.prefix) || ''}
-                onChange={(e) => onChange(element.id, 'properties', { ...element.properties, prefix: e.target.value })}
+                value={element.prefix || ''}
+                onChange={(e) => onChange(element.id, 'prefix', e.target.value)}
                 style={{
                   width: '100%',
                   padding: '4px 8px',
@@ -162,8 +162,8 @@ export function WoocommerceInvoiceNumberProperties({
               </label>
               <input
                 type="text"
-                value={(element.properties?.suffix) || ''}
-                onChange={(e) => onChange(element.id, 'properties', { ...element.properties, suffix: e.target.value })}
+                value={element.suffix || ''}
+                onChange={(e) => onChange(element.id, 'suffix', e.target.value)}
                 style={{
                   width: '100%',
                   padding: '4px 8px',
@@ -187,8 +187,8 @@ export function WoocommerceInvoiceNumberProperties({
                 Police
               </label>
               <select
-                value={(element.properties?.fontFamily) || 'Arial'}
-                onChange={(e) => onChange(element.id, 'properties', { ...element.properties, fontFamily: e.target.value })}
+                value={element.fontFamily || 'Arial'}
+                onChange={(e) => onChange(element.id, 'fontFamily', e.target.value)}
                 style={{
                   width: '100%',
                   padding: '4px 8px',
@@ -208,19 +208,19 @@ export function WoocommerceInvoiceNumberProperties({
             <div style={{ marginBottom: '12px' }}>
               <NumericPropertyInput
                 label="Taille"
-                value={element.properties?.fontSize}
+                value={element.fontSize}
                 defaultValue={12}
                 min={8}
                 max={72}
                 unit="px"
-                onChange={(value) => onChange(element.id, 'properties', { ...element.properties, fontSize: value })}
+                onChange={(value) => onChange(element.id, 'fontSize', value)}
               />
             </div>
             <ColorPropertyInput
               label="Couleur"
-              value={element.properties?.color}
+              value={element.color}
               defaultValue="#000000"
-              onChange={(value) => onChange(element.id, 'properties', { ...element.properties, color: value })}
+              onChange={(value) => onChange(element.id, 'color', value)}
             />
           </Accordion>
         </>

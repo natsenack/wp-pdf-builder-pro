@@ -143,8 +143,8 @@ export function WoocommerceOrderDateProperties({
                 Format
               </label>
               <select
-                value={(element.properties?.dateFormat) || 'd/m/Y'}
-                onChange={(e) => onChange(element.id, 'properties', { ...element.properties, dateFormat: e.target.value })}
+                value={element.dateFormat || 'd/m/Y'}
+                onChange={(e) => onChange(element.id, 'dateFormat', e.target.value)}
                 style={{
                   width: '100%',
                   padding: '4px 8px',
@@ -163,8 +163,8 @@ export function WoocommerceOrderDateProperties({
             <div style={{ marginBottom: '12px' }}>
               <input
                 type="checkbox"
-                checked={(element.properties?.showTime) || false}
-                onChange={(e) => onChange(element.id, 'properties', { ...element.properties, showTime: e.target.checked })}
+                checked={element.showTime || false}
+                onChange={(e) => onChange(element.id, 'showTime', e.target.checked)}
                 id={`showtime-${element.id}`}
                 style={{ marginRight: '8px', cursor: 'pointer' }}
               />
@@ -185,8 +185,8 @@ export function WoocommerceOrderDateProperties({
                 Police
               </label>
               <select
-                value={(element.properties?.fontFamily) || 'Arial'}
-                onChange={(e) => onChange(element.id, 'properties', { ...element.properties, fontFamily: e.target.value })}
+                value={element.fontFamily || 'Arial'}
+                onChange={(e) => onChange(element.id, 'fontFamily', e.target.value)}
                 style={{
                   width: '100%',
                   padding: '4px 8px',
@@ -206,19 +206,19 @@ export function WoocommerceOrderDateProperties({
             <div style={{ marginBottom: '12px' }}>
               <NumericPropertyInput
                 label="Taille"
-                value={element.properties?.fontSize}
+                value={element.fontSize}
                 defaultValue={12}
                 min={8}
                 max={72}
                 unit="px"
-                onChange={(value) => onChange(element.id, 'properties', { ...element.properties, fontSize: value })}
+                onChange={(value) => onChange(element.id, 'fontSize', value)}
               />
             </div>
             <ColorPropertyInput
               label="Couleur"
-              value={element.properties?.color}
+              value={element.color || element.textColor}
               defaultValue="#000000"
-              onChange={(value) => onChange(element.id, 'properties', { ...element.properties, color: value })}
+              onChange={(value) => onChange(element.id, 'color', value)}
             />
           </Accordion>
         </>
