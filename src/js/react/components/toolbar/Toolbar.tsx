@@ -85,37 +85,28 @@ export function Toolbar({ className }: ToolbarProps) {
     const transformElementForPreview = (element: any) => {
       const transformed = { ...element };
       
-      // Créer l'objet properties avec les propriétés de style
-      transformed.properties = {
-        // Propriétés de texte
-        fontSize: element.fontSize,
-        color: element.color,
-        textAlign: element.textAlign,
-        fontFamily: element.fontFamily,
-        fontWeight: element.bold ? 'bold' : (element.fontWeight || 'normal'),
-        fontStyle: element.italic ? 'italic' : 'normal',
-        textDecoration: element.underline ? 'underline' : 'none',
-        
-        // Propriétés de forme
-        backgroundColor: element.fillColor,
-        borderColor: element.strokeColor,
-        borderWidth: element.strokeWidth,
-        borderRadius: element.borderRadius,
-        
-        // Propriétés communes
-        opacity: element.opacity,
-        
-        // Propriétés spécifiques selon le type
-        ...(element.type === 'text' && { text: element.text }),
-        ...(element.type === 'image' && { src: element.src }),
-        
-        // Autres propriétés dynamiques
-        ...Object.fromEntries(
-          Object.entries(element).filter(([key]) => 
-            !['id', 'type', 'x', 'y', 'width', 'height', 'rotation', 'visible', 'locked', 'createdAt', 'updatedAt', 'fontSize', 'color', 'textAlign', 'fontFamily', 'bold', 'italic', 'underline', 'fillColor', 'strokeColor', 'strokeWidth', 'borderRadius', 'opacity', 'text', 'src', 'objectFit'].includes(key)
-          )
-        )
-      };
+      // Liste des propriétés système à exclure
+      const systemProps = ['id', 'type', 'x', 'y', 'width', 'height', 'rotation', 'visible', 'locked', 'createdAt', 'updatedAt'];
+      
+      // Créer l'objet properties avec TOUTES les propriétés non-système
+      transformed.properties = {};
+      
+      // Copier toutes les propriétés qui ne sont pas système
+      Object.entries(element).forEach(([key, value]) => {
+        if (!systemProps.includes(key) && value !== undefined && value !== null) {
+          transformed.properties[key] = value;
+        }
+      });
+      
+      // S'assurer que les propriétés spécifiques sont correctement mappées
+      if (element.bold) transformed.properties.fontWeight = 'bold';
+      if (element.italic) transformed.properties.fontStyle = 'italic';
+      if (element.underline) transformed.properties.textDecoration = 'underline';
+      
+      // Mapper les propriétés de forme
+      if (element.fillColor) transformed.properties.backgroundColor = element.fillColor;
+      if (element.strokeColor) transformed.properties.borderColor = element.strokeColor;
+      if (element.strokeWidth) transformed.properties.borderWidth = element.strokeWidth;
       
       return transformed;
     };

@@ -423,42 +423,77 @@ abstract class BaseGenerator
             if (isset($element['properties']) && is_array($element['properties'])) {
                 if (isset($element['properties'][$propertyName])) {
                     $value = $element['properties'][$propertyName];
-                    if ($value !== null && $value !== '') {
+                    if ($value !== null && $value !== '' && $value !== false) {
                         error_log("[PDF] getCssProperty - Found '{$propertyName}' in properties: '{$value}'");
                         return $value;
-                    } else {
-                        error_log("[PDF] getCssProperty - '{$propertyName}' in properties is null/empty: '" . var_export($value, true) . "'");
                     }
                 }
                 // Also check for hyphenated version in properties
                 $hyphenated = str_replace('_', '-', $propertyName);
                 if (isset($element['properties'][$hyphenated])) {
                     $value = $element['properties'][$hyphenated];
-                    if ($value !== null && $value !== '') {
+                    if ($value !== null && $value !== '' && $value !== false) {
                         error_log("[PDF] getCssProperty - Found hyphenated '{$hyphenated}' in properties: '{$value}'");
                         return $value;
                     }
                 }
             }
-            // Then check directly in element
+            // Then check directly in element (for both camelCase and hyphenated)
             if (isset($element[$propertyName])) {
                 $value = $element[$propertyName];
-                if ($value !== null && $value !== '') {
+                if ($value !== null && $value !== '' && $value !== false) {
                     error_log("[PDF] getCssProperty - Found '{$propertyName}' directly in element: '{$value}'");
                     return $value;
-                } else {
-                    error_log("[PDF] getCssProperty - '{$propertyName}' directly in element is null/empty: '" . var_export($value, true) . "'");
                 }
             }
-            // Also check for hyphenated version in element
+            // Check for hyphenated version in element
             $hyphenated = str_replace('_', '-', $propertyName);
             if (isset($element[$hyphenated])) {
                 $value = $element[$hyphenated];
-                if ($value !== null && $value !== '') {
+                if ($value !== null && $value !== '' && $value !== false) {
                     error_log("[PDF] getCssProperty - Found hyphenated '{$hyphenated}' directly in element: '{$value}'");
                     return $value;
                 }
             }
+            // Special handling for common property name variations
+            $variations = [];
+            if ($propertyName === 'fontSize') {
+                $variations = ['font-size', 'fontsize', 'font_size'];
+            } elseif ($propertyName === 'fontWeight') {
+                $variations = ['font-weight', 'fontweight', 'font_weight', 'bold'];
+            } elseif ($propertyName === 'fontFamily') {
+                $variations = ['font-family', 'fontfamily', 'font_family'];
+            } elseif ($propertyName === 'textAlign') {
+                $variations = ['text-align', 'textalign', 'text_align', 'align'];
+            } elseif ($propertyName === 'backgroundColor') {
+                $variations = ['background-color', 'backgroundcolor', 'background_color', 'bgColor', 'bg_color'];
+            } elseif ($propertyName === 'color') {
+                $variations = ['color', 'textColor', 'text_color', 'foregroundColor', 'foreground_color'];
+            } elseif ($propertyName === 'borderColor') {
+                $variations = ['border-color', 'bordercolor', 'border_color', 'strokeColor', 'stroke_color'];
+            } elseif ($propertyName === 'borderWidth') {
+                $variations = ['border-width', 'borderwidth', 'border_width', 'strokeWidth', 'stroke_width'];
+            }
+
+            foreach ($variations as $variation) {
+                // Check in properties
+                if (isset($element['properties'][$variation])) {
+                    $value = $element['properties'][$variation];
+                    if ($value !== null && $value !== '' && $value !== false) {
+                        error_log("[PDF] getCssProperty - Found variation '{$variation}' in properties: '{$value}' for '{$propertyName}'");
+                        return $value;
+                    }
+                }
+                // Check directly in element
+                if (isset($element[$variation])) {
+                    $value = $element[$variation];
+                    if ($value !== null && $value !== '' && $value !== false) {
+                        error_log("[PDF] getCssProperty - Found variation '{$variation}' directly in element: '{$value}' for '{$propertyName}'");
+                        return $value;
+                    }
+                }
+            }
+
             error_log("[PDF] getCssProperty - Property '{$propertyName}' not found anywhere");
             return null;
         };
