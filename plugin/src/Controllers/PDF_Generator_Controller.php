@@ -269,7 +269,7 @@ class PdfBuilderProGenerator
 
                 return "<div class='canvas-element' style='" . esc_attr($style) . "'>" . $table_html . "</div>";
 
-            case 'customer_info':
+            case 'customer-info':
                 // LOG DES PROPRIÉTÉS CUSTOMER INFO
 
 
@@ -404,7 +404,7 @@ class PdfBuilderProGenerator
                 }
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($customer_info ?: 'Informations client') . "</div>";
 
-            case 'company_info':
+            case 'company-info':
                 // Récupération des données d'entreprise
                 $company_data = $this->getCompanyData();
 
@@ -413,7 +413,7 @@ class PdfBuilderProGenerator
 
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($company_info ?: '[company_info]') . "</div>";
 
-            case 'order_number':
+            case 'order-number':
                 // LOG DES PROPRIÉTÉS ORDER NUMBER
 
 

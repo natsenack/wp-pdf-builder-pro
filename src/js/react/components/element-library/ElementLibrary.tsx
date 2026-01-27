@@ -50,7 +50,7 @@ const WOOCOMMERCE_ELEMENTS = [
     },
   },
   {
-    type: "customer_info",
+    type: "customer-info",
     label: "Fiche Client",
     icon: "👤",
     description: "Informations détaillées du client (nom, adresse, email)",
@@ -95,7 +95,7 @@ const WOOCOMMERCE_ELEMENTS = [
     },
   },
   {
-    type: "company_info",
+    type: "company-info",
     label: "Informations Entreprise",
     icon: "[D]",
     description: "Nom, adresse, contact et TVA de l'entreprise",
@@ -170,7 +170,7 @@ const WOOCOMMERCE_ELEMENTS = [
     },
   },
   {
-    type: "order_number",
+    type: "order-number",
     label: "Numéro de Commande",
     icon: "🔢",
     description: "Référence de commande avec date",

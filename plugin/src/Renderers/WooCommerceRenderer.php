@@ -5,8 +5,8 @@
  * Phase 3.3.6 - Renderer spécialisé pour les éléments WooCommerce
  *
  * Gère le rendu des éléments WooCommerce :
- * - woocommerce_order_date : Date de commande formatée
- * - woocommerce_invoice_number : Numéro de facture formaté
+ * - woocommerce-order-date : Date de commande formatée
+ * - woocommerce-invoice-number : Numéro de facture formaté
  */
 
 namespace PDF_Builder\Renderers;
@@ -57,7 +57,7 @@ class WooCommerceRenderer
     }
 
     /**
-     * Rend un élément woocommerce_order_date
+     * Rend un élément woocommerce-order-date
      *
      * @param array $elementData Données de l'élément
      * @return string HTML rendu
@@ -82,7 +82,7 @@ class WooCommerceRenderer
     }
 
     /**
-     * Rend un élément woocommerce_invoice_number
+     * Rend un élément woocommerce-invoice-number
      *
      * @param array $elementData Données de l'élément
      * @return string HTML rendu

@@ -109,7 +109,7 @@ if (!defined('ABSPATH')) {
                     <span class="step-number">4</span>
                     <div class="step-content">
                         <h4>🛒 Intégrez WooCommerce</h4>
-                        <p>Utilisez les variables dynamiques : {{order_number}}, {{customer_name}}, etc.</p>
+                        <p>Utilisez les variables dynamiques : {{order-number}}, {{customer-name}}, etc.</p>
                         <small>💡 Aperçu direct dans les metabox des commandes WooCommerce</small>
                     </div>
                 </div>

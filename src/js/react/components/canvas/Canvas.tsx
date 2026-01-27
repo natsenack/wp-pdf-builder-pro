@@ -1024,7 +1024,7 @@ const drawCustomerInfo = (
   }
 };
 
-// Constantes pour les thèmes company_info
+// Constantes pour les thèmes company-info
 const COMPANY_THEMES = {
   corporate: {
     backgroundColor: "#ffffff",
@@ -1089,7 +1089,7 @@ const getCompanyData = (props: CompanyInfoElementProperties) => {
 const shouldDisplayValue = (value: string, showFlag: boolean) =>
   showFlag && value && value !== 'Non indiqué';
 
-// Fonction helper pour dessiner une ligne de texte company_info
+// Fonction helper pour dessiner une ligne de texte company-info
 const drawCompanyLine = (
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -2553,11 +2553,11 @@ export const Canvas = function Canvas({
           debugLog(`[Canvas] Rendering product table element: ${element.id}`);
           drawProductTable(ctx, element, currentState);
           break;
-        case "customer_info":
+        case "customer-info":
           debugLog(`[Canvas] Rendering customer info element: ${element.id}`);
           drawCustomerInfo(ctx, element, currentState);
           break;
-        case "company_info":
+        case "company-info":
           debugLog(`[Canvas] Rendering company info element: ${element.id}`);
           drawCompanyInfo(ctx, element, currentState);
           break;
@@ -2565,7 +2565,7 @@ export const Canvas = function Canvas({
           debugLog(`[Canvas] Rendering company logo element: ${element.id}`);
           drawCompanyLogo(ctx, element);
           break;
-        case "order_number":
+        case "order-number":
           debugLog(`[Canvas] Rendering order number element: ${element.id}`);
           drawOrderNumber(ctx, element, currentState);
           break;
@@ -2949,8 +2949,8 @@ export const Canvas = function Canvas({
               text: { width: 100, height: 30 },
               line: { width: 100, height: 2 },
               product_table: { width: 400, height: 200 },
-              customer_info: { width: 300, height: 80 },
-              company_info: { width: 300, height: 120 },
+              "customer-info": { width: 300, height: 80 },
+              "company-info": { width: 300, height: 120 },
               company_logo: { width: 150, height: 80 },
               "order-number": { width: 200, height: 40 },
               document_type: { width: 150, height: 30 },
