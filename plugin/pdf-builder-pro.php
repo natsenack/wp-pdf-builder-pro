@@ -1867,7 +1867,7 @@ function pdf_builder_load_template_settings_handler() {
                 'created_at' => $template['created_at'],
                 'updated_at' => $template['updated_at'],
                 'canvas_settings' => [
-                    'default_canvas_format' => get_option('pdf_builder_canvas_default_format', 'A4'),
+                    'default_canvas_format' => get_option('pdf_builder_canvas_format', 'A4'),
                     'default_canvas_orientation' => get_option('pdf_builder_canvas_default_orientation', 'portrait'),
                     'default_canvas_dpi' => get_option('pdf_builder_canvas_dpi', 96)
                 ]
