@@ -310,17 +310,73 @@ JS;
     }
 
     /**
+     * Calcule les dimensions du canvas basées sur le format, l'orientation et le DPI
+     *
+     * @param string $format
+     * @param string $orientation
+     * @param string $unit
+     * @param int $dpi
+     * @return array
+     */
+    private function calculateDimensionsFromFormat($format, $orientation, $unit, $dpi)
+    {
+        // Dimensions en mm pour les formats standards
+        $paperFormats = [
+            'A4' => ['width' => 210, 'height' => 297],
+            'A3' => ['width' => 297, 'height' => 420],
+            'A5' => ['width' => 148, 'height' => 210],
+            'Letter' => ['width' => 215.9, 'height' => 279.4],
+            'Legal' => ['width' => 215.9, 'height' => 355.6],
+            'Tabloid' => ['width' => 279.4, 'height' => 431.8]
+        ];
+
+        // Format par défaut si non trouvé
+        if (!isset($paperFormats[$format])) {
+            $format = 'A4';
+        }
+
+        $dimensions = $paperFormats[$format];
+
+        // Appliquer l'orientation (swap width/height si landscape)
+        if ($orientation === 'landscape') {
+            $temp = $dimensions['width'];
+            $dimensions['width'] = $dimensions['height'];
+            $dimensions['height'] = $temp;
+        }
+
+        // Convertir selon l'unité demandée
+        if ($unit === 'px') {
+            // Conversion mm vers pixels : 1mm = (DPI / 25.4) pixels
+            $mmToPx = $dpi / 25.4;
+            $dimensions['width'] = round($dimensions['width'] * $mmToPx);
+            $dimensions['height'] = round($dimensions['height'] * $mmToPx);
+        }
+        // Pour 'mm', on garde les dimensions en mm
+        // Pour 'in', on pourrait ajouter une conversion future si nécessaire
+
+        return $dimensions;
+    }
+
+    /**
      * Récupère les dimensions du canvas
      *
      * @return array
      */
     public function getCanvasDimensions()
     {
+        $format = $this->getSetting('default_canvas_format', 'A4');
+        $orientation = $this->getSetting('default_canvas_orientation', 'portrait');
+        $unit = $this->getSetting('default_canvas_unit', 'px');
+        $dpi = $this->getSetting('default_canvas_dpi', 96);
+
+        $dimensions = $this->calculateDimensionsFromFormat($format, $orientation, $unit, $dpi);
+
         return [
-            'width' => $this->getSetting('default_canvas_width', 794),
-            'height' => $this->getSetting('default_canvas_height', 1123),
-            'unit' => $this->getSetting('default_canvas_unit', 'px'),
-            'orientation' => $this->getSetting('default_canvas_orientation', 'portrait'),
+            'width' => $dimensions['width'],
+            'height' => $dimensions['height'],
+            'unit' => $unit,
+            'orientation' => $orientation,
+            'format' => $format
         ];
     }
 
