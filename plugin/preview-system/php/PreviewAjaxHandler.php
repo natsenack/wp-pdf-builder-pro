@@ -342,13 +342,13 @@ class PreviewAjaxHandler {
                 case 'document_type':
                     $doc_type_element = $element;
                     break;
-                case 'company_info':
+                case 'company-info':
                     $company_info_element = $element;
                     break;
-                case 'customer_info':
+                case 'customer-info':
                     $customer_info_element = $element;
                     break;
-                case 'order_number':
+                case 'order-number':
                     $order_number_element = $element;
                     break;
                 case 'woocommerce_order_date':

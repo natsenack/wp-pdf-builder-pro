@@ -358,7 +358,7 @@ abstract class BaseGenerator
     }
 
     /**
-     * Rend un élément customer_info
+     * Rend un élément customer-info
      * Version: 2026-01-26 12:25
      */
     protected function renderCustomerInfoElement(array $element): string
@@ -447,11 +447,11 @@ abstract class BaseGenerator
         }
         
         error_log('[PDF] Customer info - FINAL name: "' . $customerName . '", address: "' . $customerAddress . '", email: "' . $customerEmail . '", phone: "' . $customerPhone . '", showHeaders: ' . ($showHeaders ? 'YES' : 'NO'));
-        return "<div class=\"pdf-element\" data-element-type=\"customer_info\" style=\"{$style}\">" . nl2br($content) . "</div>";
+        return "<div class=\"pdf-element\" data-element-type=\"customer-info\" style=\"{$style}\">" . nl2br($content) . "</div>";
     }
 
     /**
-     * Rend un élément company_info
+     * Rend un élément company-info
      * Version: 2026-01-26 12:25
      */
     protected function renderCompanyInfoElement(array $element): string
@@ -584,7 +584,7 @@ abstract class BaseGenerator
         }
         
         error_log('[PDF] Company info - FINAL name: "' . $companyName . '", address: "' . $companyAddress . '", email: "' . $companyEmail . '", phone: "' . $companyPhone . '", siret: "' . $companySiret . '", showHeaders: ' . ($showHeaders ? 'YES' : 'NO'));
-        return "<div class=\"pdf-element\" data-element-type=\"company_info\" style=\"{$style}\">" . nl2br($content) . "</div>";
+        return "<div class=\"pdf-element\" data-element-type=\"company-info\" style=\"{$style}\">" . nl2br($content) . "</div>";
     }
 
     /**

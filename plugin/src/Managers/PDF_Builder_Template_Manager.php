@@ -274,8 +274,8 @@ class PDF_Builder_Template_Manager
                     // file_put_contents($log_file, date('Y-m-d H:i:s') . ' ===== COMPLETE ELEMENTS BEFORE STRUCTURE =====' . "\n", FILE_APPEND);
                     foreach ($elements_data as $idx => $el) {
                         // file_put_contents($log_file, date('Y-m-d H:i:s') . " Element[$idx] " . ($el['type'] ?? 'unknown') . " keys: " . implode(',', array_keys($el)) . "\n", FILE_APPEND);
-                        if (isset($el['type']) && $el['type'] === 'order_number') {
-                            // file_put_contents($log_file, date('Y-m-d H:i:s') . " >>> ORDER_NUMBER DETAILS: " . json_encode($el, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
+                        if (isset($el['type']) && $el['type'] === 'order-number') {
+                            // file_put_contents($log_file, date('Y-m-d H:i:s') . " >>> ORDER-NUMBER DETAILS: " . json_encode($el, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
                         }
                     }
                 }
@@ -448,10 +448,10 @@ class PDF_Builder_Template_Manager
                         if (isset($saved_decoded['elements'])) {
                             // file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED ELEMENTS COUNT: ' . count($saved_decoded['elements']) . "\n", FILE_APPEND);
                             
-                            // Find order_number in saved data
+                            // Find order-number in saved data
                             foreach ($saved_decoded['elements'] as $el) {
-                                if (isset($el['type']) && $el['type'] === 'order_number') {
-                                    // file_put_contents($log_file, date('Y-m-d H:i:s') . ' >>> SAVED ORDER_NUMBER: ' . json_encode($el, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
+                                if (isset($el['type']) && $el['type'] === 'order-number') {
+                                    // file_put_contents($log_file, date('Y-m-d H:i:s') . ' >>> SAVED ORDER-NUMBER: ' . json_encode($el, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
                                 }
                             }
                         }
