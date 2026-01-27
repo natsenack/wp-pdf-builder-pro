@@ -1859,12 +1859,19 @@ function pdf_builder_load_template_settings_handler() {
         }
 
         wp_send_json_success([
-            'name' => $template['name'],
-            'description' => $template_data['description'] ?? '',
-            'category' => $template_data['category'] ?? 'autre',
-            'is_public' => $template_data['is_public'] ?? false,
-            'paper_size' => $template_data['paper_size'] ?? 'A4',
-            'orientation' => $template_data['orientation'] ?? 'portrait'
+            'template' => [
+                'name' => $template['name'],
+                'description' => $template_data['description'] ?? '',
+                'category' => $template_data['category'] ?? 'autre',
+                'is_default' => $template['is_default'],
+                'created_at' => $template['created_at'],
+                'updated_at' => $template['updated_at'],
+                'canvas_settings' => [
+                    'default_canvas_format' => get_option('pdf_builder_canvas_default_format', 'A4'),
+                    'default_canvas_orientation' => get_option('pdf_builder_canvas_default_orientation', 'portrait'),
+                    'default_canvas_dpi' => get_option('pdf_builder_canvas_default_dpi', 96)
+                ]
+            ]
         ]);
 
     } catch (Exception $e) {
