@@ -6,20 +6,11 @@
 
 namespace PDF_Builder\Database;
 
-/**
- * Déclaration de classe pour Intelephense
- */
-if (!class_exists('PDF_Builder_Logger')) {
-    class PDF_Builder_Logger {
-        public static function get_instance() { return new self(); }
-        public function debug_log($message) {}
-    }
-}
-
 class Settings_Table_Manager {
     
     const TABLE_NAME = 'wp_pdf_builder_settings';
     const LEGACY_OPTION_KEY = 'pdf_builder_settings';
+    const ARRAY_A = 2; // WordPress constant for associative array results
     
     /**
      * Créer la table lors de l'activation
@@ -47,7 +38,7 @@ class Settings_Table_Manager {
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
         
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Table wp_pdf_builder_settings créée avec succès'); }
+        if (class_exists('PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Table wp_pdf_builder_settings créée avec succès'); }
         return true;
     }
     
@@ -125,7 +116,7 @@ class Settings_Table_Manager {
         
         $options = $wpdb->get_results(
             "SELECT option_name, option_value FROM $table_name",
-            ARRAY_A
+            self::ARRAY_A
         );
         
         if (empty($options)) {
@@ -150,7 +141,7 @@ class Settings_Table_Manager {
         
         $result = $wpdb->query("TRUNCATE TABLE $table_name");
         
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Table wp_pdf_builder_settings vidée'); }
+        if (class_exists('PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Table wp_pdf_builder_settings vidée'); }
         
         return $result !== false;
     }

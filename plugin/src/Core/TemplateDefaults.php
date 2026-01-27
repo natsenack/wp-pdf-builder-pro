@@ -3,16 +3,6 @@
 namespace PDF_Builder;
 
 /**
- * Déclaration de classe pour Intelephense
- */
-if (!class_exists('PDF_Builder_Logger')) {
-    class PDF_Builder_Logger {
-        public static function get_instance() { return new self(); }
-        public function debug_log($message) {}
-    }
-}
-
-/**
  * Gestionnaire des templates par défaut pour le système freemium
  * Fournit 3 templates gratuits de base (Modern, Classic, Corporate)
  */
@@ -122,9 +112,9 @@ class TemplateDefaults {
             );
 
             if ($result === false) {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('Erreur lors de la création du template par défaut pour l\'utilisateur ' . $user_id . ': ' . $wpdb->last_error); }
+                if (class_exists('PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('Erreur lors de la création du template par défaut pour l\'utilisateur ' . $user_id . ': ' . $wpdb->last_error); }
             } else {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('Template par défaut créé avec succès pour l\'utilisateur ' . $user_id . ': ' . $template_data['name']); }
+                if (class_exists('PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('Template par défaut créé avec succès pour l\'utilisateur ' . $user_id . ': ' . $template_data['name']); }
             }
         }
     }

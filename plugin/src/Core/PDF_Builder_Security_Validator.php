@@ -2,16 +2,6 @@
 namespace PDF_Builder\Core;
 
 /**
- * Déclaration de classe pour Intelephense
- */
-if (!class_exists('PDF_Builder_Logger')) {
-    class PDF_Builder_Logger {
-        public static function get_instance() { return new self(); }
-        public function debug_log($message) {}
-    }
-}
-
-/**
  * Validateur de sécurité pour PDF Builder
  * ATTENTION: Cette classe contient des implémentations temporaires pour le développement.
  * En production, toutes les méthodes doivent être implémentées avec des validations réelles.
@@ -69,7 +59,7 @@ class PDF_Builder_Security_Validator {
         // Validation temporaire - À remplacer par une vraie vérification nonce
         $nonce_received = isset($_POST['nonce']) ? $_POST['nonce'] : 'NOT_SET';
         $nonce_valid = wp_verify_nonce($nonce_received, 'pdf_builder_ajax');
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Nonce validation: received=' . $nonce_received . ', valid=' . ($nonce_valid ? 'YES' : 'NO')); }
+        if (class_exists('PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Nonce validation: received=' . $nonce_received . ', valid=' . ($nonce_valid ? 'YES' : 'NO')); }
         return $nonce_valid;
     }
 
