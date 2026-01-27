@@ -140,7 +140,7 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
           </h5>
 
           {/* Propriétés communes - masquées pour les éléments WooCommerce et les éléments de base qui ont leurs propres onglets */}
-          {element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'woocommerce_order_date' && element.type !== 'woocommerce_invoice_number' && element.type !== 'document_type' && element.type !== 'dynamic_text' && element.type !== 'mentions' && element.type !== 'text' && element.type !== 'rectangle' && element.type !== 'circle' && element.type !== 'image' && element.type !== 'line' && (
+          {element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'woocommerce_order_date' && element.type !== 'woocommerce_invoice_number' && element.type !== 'document_type' && element.type !== 'dynamic-text' && element.type !== 'mentions' && element.type !== 'text' && element.type !== 'rectangle' && element.type !== 'circle' && element.type !== 'image' && element.type !== 'line' && (
           <div style={{ display: 'grid', gap: '8px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
@@ -378,7 +378,7 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
               setActiveTab={setActiveTab}
             />
           )}
-          {(element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'woocommerce_order_date' && element.type !== 'woocommerce_invoice_number' && element.type !== 'document_type' && element.type !== 'dynamic_text' && element.type !== 'mentions' && element.type !== 'text' && element.type !== 'rectangle' && element.type !== 'circle' && element.type !== 'image' && element.type !== 'line') && (
+          {(element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'woocommerce_order_date' && element.type !== 'woocommerce_invoice_number' && element.type !== 'document_type' && element.type !== 'dynamic-text' && element.type !== 'mentions' && element.type !== 'text' && element.type !== 'rectangle' && element.type !== 'circle' && element.type !== 'image' && element.type !== 'line') && (
             <ElementProperties
               element={element}
               onChange={handlePropertyChange}

@@ -303,7 +303,7 @@ const WOOCOMMERCE_ELEMENTS = [
     },
   },
   {
-    type: "dynamic_text",
+    type: "dynamic-text",
     label: "Texte Dynamique",
     icon: "📝",
     description: "Texte avec variables dynamiques",
@@ -374,7 +374,7 @@ const WOOCOMMERCE_ELEMENTS = [
     },
   },
   {
-    type: "dynamic_text",
+    type: "dynamic-text",
     label: "Texte Dynamique",
     icon: "📝",
     description: "Zone de texte personnalisable pour signatures ou mentions",

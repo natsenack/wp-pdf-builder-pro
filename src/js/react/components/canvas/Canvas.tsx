@@ -2265,20 +2265,22 @@ export const Canvas = function Canvas({
       ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
       ctx.textAlign = "left";
 
-      // Remplacer les variables génériques par des valeurs par défaut
+      // Remplacer les variables génériques par des valeurs par défaut pour l'aperçu
       const processedText = text
-        .replace(/\[date\]/g, new Date().toLocaleDateString("fr-FR"))
-        .replace(/\[nom\]/g, "Dupont")
-        .replace(/\[prenom\]/g, "Marie")
-        .replace(/\[entreprise\]/g, "Ma Société")
-        .replace(/\[telephone\]/g, "+33 1 23 45 67 89")
-        .replace(/\[email\]/g, "contact@masociete.com")
-        .replace(/\[site\]/g, "www.masociete.com")
-        .replace(/\[ville\]/g, "Paris")
-        .replace(/\[siret\]/g, "123 456 789 00012")
-        .replace(/\[tva\]/g, "FR 12 345 678 901")
-        .replace(/\[capital\]/g, "10 000")
-        .replace(/\[rcs\]/g, "Paris B 123 456 789");
+        .replace(/\{\{customer_name\}\}/g, "Dupont Marie")
+        .replace(/\{\{customer_first_name\}\}/g, "Marie")
+        .replace(/\{\{customer_last_name\}\}/g, "Dupont")
+        .replace(/\{\{customer_email\}\}/g, "marie.dupont@email.com")
+        .replace(/\{\{customer_phone\}\}/g, "+33 1 23 45 67 89")
+        .replace(/\{\{order_number\}\}/g, "CMD-2026-001")
+        .replace(/\{\{order_date\}\}/g, new Date().toLocaleDateString("fr-FR"))
+        .replace(/\{\{order_total\}\}/g, "150,00 €")
+        .replace(/\{\{company_name\}\}/g, "Ma Société")
+        .replace(/\{\{company_email\}\}/g, "contact@masociete.com")
+        .replace(/\{\{company_phone\}\}/g, "+33 1 23 45 67 89")
+        .replace(/\{\{company_address\}\}/g, "123 Rue de la Paix, 75001 Paris")
+        .replace(/\{\{current_date\}\}/g, new Date().toLocaleDateString("fr-FR"))
+        .replace(/\{\{current_time\}\}/g, new Date().toLocaleTimeString("fr-FR"));
 
       if (autoWrap) {
         // Fonction pour diviser le texte en lignes selon la largeur disponible
@@ -2604,7 +2606,7 @@ export const Canvas = function Canvas({
           debugLog(`[Canvas] Rendering document type element: ${element.id}`);
           drawDocumentType(ctx, element, currentState);
           break;
-        case "dynamic_text":
+        case "dynamic-text":
           debugLog(`[Canvas] Rendering dynamic text element: ${element.id}`);
           drawDynamicText(ctx, element);
           break;
@@ -3004,7 +3006,7 @@ export const Canvas = function Canvas({
           const element = state.elements.find((el) => el.id === elementId);
           if (
             element &&
-            (element.type === "text" || element.type === "dynamic_text")
+            (element.type === "text" || element.type === "dynamic-text")
           ) {
             // Pour les éléments texte, ajuster la hauteur selon le contenu
             const canvas = document.createElement("canvas");

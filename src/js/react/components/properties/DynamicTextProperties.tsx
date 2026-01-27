@@ -414,18 +414,20 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
   ];
 
   const availableVariables = [
-    { key: '[date]', label: 'Date actuelle' },
-    { key: '[nom]', label: 'Nom' },
-    { key: '[prenom]', label: 'Prénom' },
-    { key: '[entreprise]', label: 'Nom de l\'entreprise' },
-    { key: '[telephone]', label: 'Téléphone' },
-    { key: '[email]', label: 'Email' },
-    { key: '[site]', label: 'Site web' },
-    { key: '[ville]', label: 'Ville' },
-    { key: '[siret]', label: 'Numéro SIRET' },
-    { key: '[tva]', label: 'Numéro TVA' },
-    { key: '[capital]', label: 'Capital social' },
-    { key: '[rcs]', label: 'RCS' }
+    { key: '{{customer_name}}', label: 'Nom du client' },
+    { key: '{{customer_first_name}}', label: 'Prénom du client' },
+    { key: '{{customer_last_name}}', label: 'Nom du client' },
+    { key: '{{customer_email}}', label: 'Email du client' },
+    { key: '{{customer_phone}}', label: 'Téléphone du client' },
+    { key: '{{order_number}}', label: 'Numéro de commande' },
+    { key: '{{order_date}}', label: 'Date de commande' },
+    { key: '{{order_total}}', label: 'Total de la commande' },
+    { key: '{{company_name}}', label: 'Nom de l\'entreprise' },
+    { key: '{{company_email}}', label: 'Email de l\'entreprise' },
+    { key: '{{company_phone}}', label: 'Téléphone de l\'entreprise' },
+    { key: '{{company_address}}', label: 'Adresse de l\'entreprise' },
+    { key: '{{current_date}}', label: 'Date actuelle' },
+    { key: '{{current_time}}', label: 'Heure actuelle' }
   ];
 
   return (
