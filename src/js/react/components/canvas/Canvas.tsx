@@ -48,6 +48,28 @@ const estimateImageMemorySize = (img: HTMLImageElement): number => {
   return img.naturalWidth * img.naturalHeight * bytesPerPixel;
 };
 
+// Fonction utilitaire pour dessiner des rectangles avec coins arrondis
+const roundedRect = (
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number
+) => {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+};
+
 const cleanupImageCache = (
   imageCache: MutableRefObject<
     Map<string, { image: HTMLImageElement; size: number; lastUsed: number }>
@@ -157,14 +179,35 @@ const setupRenderContext = (
   ctx.textBaseline = "top";
 };
 
-// Fonctions de dessin pour les éléments
-const drawRectangle = (ctx: CanvasRenderingContext2D, element: Element) => {
-  const props = element as ShapeElementProperties;
-  const colors = createColorConfig(props);
+// Fonction helper pour configurer les couleurs des shapes
+const createShapeColors = (props: ShapeElementProperties) => ({
+  background: normalizeColor(props.fillColor || "#ffffff"),
+  border: normalizeColor(props.strokeColor || "#000000"),
+});
 
+// Fonction helper pour appliquer les couleurs et styles de shape
+const applyShapeStyle = (ctx: CanvasRenderingContext2D, colors: ReturnType<typeof createShapeColors>, strokeWidth: number = 1) => {
   ctx.fillStyle = colors.background;
   ctx.strokeStyle = colors.border;
-  ctx.lineWidth = props.strokeWidth || 1;
+  ctx.lineWidth = strokeWidth;
+};
+
+// Fonction helper pour calculer la position X selon l'alignement du texte
+const calculateTextAlignX = (element: Element, align: string = "left") => {
+  switch (align) {
+    case "center":
+      return element.width / 2;
+    case "right":
+      return element.width;
+    default:
+      return 0;
+  }
+};
+const drawRectangle = (ctx: CanvasRenderingContext2D, element: Element) => {
+  const props = element as ShapeElementProperties;
+  const colors = createShapeColors(props);
+
+  applyShapeStyle(ctx, colors, props.strokeWidth);
 
   if (props.borderRadius && props.borderRadius > 0) {
     roundedRect(ctx, 0, 0, element.width, element.height, props.borderRadius);
@@ -178,15 +221,13 @@ const drawRectangle = (ctx: CanvasRenderingContext2D, element: Element) => {
 
 const drawCircle = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as ShapeElementProperties;
-  const colors = createColorConfig(props);
+  const colors = createShapeColors(props);
+
+  applyShapeStyle(ctx, colors, props.strokeWidth);
 
   const centerX = element.width / 2;
   const centerY = element.height / 2;
   const radius = Math.min(centerX, centerY);
-
-  ctx.fillStyle = colors.background;
-  ctx.strokeStyle = colors.border;
-  ctx.lineWidth = props.strokeWidth || 1;
 
   ctx.beginPath();
   ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
@@ -197,24 +238,18 @@ const drawCircle = (ctx: CanvasRenderingContext2D, element: Element) => {
 const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as TextElementProperties;
   const fontConfig = createFontConfig(props, 16);
-  const colors = createColorConfig(props);
+  const colorConfig = createColorConfig(props);
 
-  ctx.fillStyle = colors.text;
-  ctx.font = `${fontConfig.size}px ${fontConfig.family}`;
-  ctx.textAlign = (props.align || "left") as CanvasTextAlign;
+  setupRenderContext(ctx, fontConfig, colorConfig, props.align);
 
-  const x = props.align === "center"
-    ? element.width / 2
-    : props.align === "right"
-    ? element.width
-    : 0;
+  const x = calculateTextAlignX(element, props.align);
 
   ctx.fillText(props.text || "Text", x, fontConfig.size);
 };
 
 const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as LineElementProperties;
-  const colors = createColorConfig(props, { background: "#ffffff", border: "#000000", text: "#000000" });
+  const colors = createShapeColors(props);
 
   ctx.strokeStyle = colors.border;
   ctx.lineWidth = props.strokeWidth || 2;
