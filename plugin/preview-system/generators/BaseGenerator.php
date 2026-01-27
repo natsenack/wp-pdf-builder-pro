@@ -964,25 +964,79 @@ abstract class BaseGenerator
         $products = $element['products'] ?? $element['items'] ?? $element['productList'] ?? [];
         $showHeaders = $element['showHeaders'] ?? $element['headers'] ?? $element['show_header'] ?? true;
         $showBorders = $element['showBorders'] ?? $element['borders'] ?? $element['show_border'] ?? true;
+        $showAlternatingRows = $element['showAlternatingRows'] ?? $element['alternatingRows'] ?? $element['show_alternating'] ?? false;
+        $showSku = $element['showSku'] ?? $element['sku'] ?? $element['show_sku'] ?? true;
+        $showDescription = $element['showDescription'] ?? $element['description'] ?? $element['show_description'] ?? false;
+        $showQuantity = $element['showQuantity'] ?? $element['quantity'] ?? $element['show_quantity'] ?? true;
+        $showShipping = $element['showShipping'] ?? $element['shipping'] ?? $element['show_shipping'] ?? false;
+        $showTax = $element['showTax'] ?? $element['tax'] ?? $element['show_tax'] ?? false;
+        $showGlobalDiscount = $element['showGlobalDiscount'] ?? $element['globalDiscount'] ?? $element['show_global_discount'] ?? false;
         $currency = $element['currency'] ?? $element['currencySymbol'] ?? '€';
+        
+        // Customization properties
+        $globalFontSize = $element['globalFontSize'] ?? $element['fontSize'] ?? 11;
+        $globalFontFamily = $element['globalFontFamily'] ?? $element['fontFamily'] ?? 'Arial';
+        $globalFontWeight = $element['globalFontWeight'] ?? $element['fontWeight'] ?? 'normal';
+        $globalFontStyle = $element['globalFontStyle'] ?? 'normal';
+        $headerFontSize = $element['headerFontSize'] ?? $globalFontSize;
+        $headerFontFamily = $element['headerFontFamily'] ?? $globalFontFamily;
+        $headerFontWeight = $element['headerFontWeight'] ?? 'bold';
+        $headerFontStyle = $element['headerFontStyle'] ?? 'normal';
+        $rowFontSize = $element['rowFontSize'] ?? $globalFontSize;
+        $rowFontFamily = $element['rowFontFamily'] ?? $globalFontFamily;
+        $rowFontWeight = $element['rowFontWeight'] ?? $globalFontWeight;
+        $rowFontStyle = $element['rowFontStyle'] ?? $globalFontStyle;
         
         // Also check for nested properties
         if (empty($products) && isset($element['properties'])) {
             $products = $element['properties']['products'] ?? $element['properties']['items'] ?? $element['properties']['productList'] ?? [];
             $showHeaders = $element['properties']['showHeaders'] ?? $element['properties']['headers'] ?? $element['properties']['show_header'] ?? $showHeaders;
             $showBorders = $element['properties']['showBorders'] ?? $element['properties']['borders'] ?? $element['properties']['show_border'] ?? $showBorders;
+            $showAlternatingRows = $element['properties']['showAlternatingRows'] ?? $element['properties']['alternatingRows'] ?? $element['properties']['show_alternating'] ?? $showAlternatingRows;
+            $showSku = $element['properties']['showSku'] ?? $element['properties']['sku'] ?? $element['properties']['show_sku'] ?? $showSku;
+            $showDescription = $element['properties']['showDescription'] ?? $element['properties']['description'] ?? $element['properties']['show_description'] ?? $showDescription;
+            $showQuantity = $element['properties']['showQuantity'] ?? $element['properties']['quantity'] ?? $element['properties']['show_quantity'] ?? $showQuantity;
+            $showShipping = $element['properties']['showShipping'] ?? $element['properties']['shipping'] ?? $element['properties']['show_shipping'] ?? $showShipping;
+            $showTax = $element['properties']['showTax'] ?? $element['properties']['tax'] ?? $element['properties']['show_tax'] ?? $showTax;
+            $showGlobalDiscount = $element['properties']['showGlobalDiscount'] ?? $element['properties']['globalDiscount'] ?? $element['properties']['show_global_discount'] ?? $showGlobalDiscount;
             $currency = $element['properties']['currency'] ?? $element['properties']['currencySymbol'] ?? $currency;
+            
+            // Customization properties from properties array
+            $globalFontSize = $element['properties']['globalFontSize'] ?? $element['properties']['fontSize'] ?? $globalFontSize;
+            $globalFontFamily = $element['properties']['globalFontFamily'] ?? $element['properties']['fontFamily'] ?? $globalFontFamily;
+            $globalFontWeight = $element['properties']['globalFontWeight'] ?? $element['properties']['fontWeight'] ?? $globalFontWeight;
+            $globalFontStyle = $element['properties']['globalFontStyle'] ?? $globalFontStyle;
+            $headerFontSize = $element['properties']['headerFontSize'] ?? $headerFontSize;
+            $headerFontFamily = $element['properties']['headerFontFamily'] ?? $headerFontFamily;
+            $headerFontWeight = $element['properties']['headerFontWeight'] ?? $headerFontWeight;
+            $headerFontStyle = $element['properties']['headerFontStyle'] ?? $headerFontStyle;
+            $rowFontSize = $element['properties']['rowFontSize'] ?? $rowFontSize;
+            $rowFontFamily = $element['properties']['rowFontFamily'] ?? $rowFontFamily;
+            $rowFontWeight = $element['properties']['rowFontWeight'] ?? $rowFontWeight;
+            $rowFontStyle = $element['properties']['rowFontStyle'] ?? $rowFontStyle;
         }
         
         $tableStyle = $showBorders ? 'border-collapse: collapse;' : 'border-collapse: separate;';
+        $tableStyle .= " font-family: {$globalFontFamily}; font-size: {$globalFontSize}px; font-weight: {$globalFontWeight}; font-style: {$globalFontStyle};";
         $borderStyle = $showBorders ? 'border: 1px solid #ddd;' : '';
+        
+        $headerStyle = "font-family: {$headerFontFamily}; font-size: {$headerFontSize}px; font-weight: {$headerFontWeight}; font-style: {$headerFontStyle};";
+        $rowStyleBase = "font-family: {$rowFontFamily}; font-size: {$rowFontSize}px; font-weight: {$rowFontWeight}; font-style: {$rowFontStyle};";
         
         $content = "<table style='width: 100%; {$tableStyle}'>";
         
         if ($showHeaders) {
-            $content .= "<thead><tr style='background-color: #f5f5f5;'>";
+            $content .= "<thead><tr style='background-color: #f5f5f5; {$headerStyle}'>";
             $content .= "<th style='{$borderStyle} padding: 8px; text-align: left;'>Produit</th>";
-            $content .= "<th style='{$borderStyle} padding: 8px; text-align: center;'>Qté</th>";
+            if ($showSku) {
+                $content .= "<th style='{$borderStyle} padding: 8px; text-align: left;'>SKU</th>";
+            }
+            if ($showDescription) {
+                $content .= "<th style='{$borderStyle} padding: 8px; text-align: left;'>Description</th>";
+            }
+            if ($showQuantity) {
+                $content .= "<th style='{$borderStyle} padding: 8px; text-align: center;'>Qté</th>";
+            }
             $content .= "<th style='{$borderStyle} padding: 8px; text-align: right;'>Prix</th>";
             $content .= "</tr></thead>";
         }
@@ -994,26 +1048,56 @@ abstract class BaseGenerator
         if (empty($products)) {
             // Sample data if no products provided
             error_log('[PDF] Product table - using sample data (no products found)');
-            $content .= "<tr>";
+            $content .= "<tr" . ($showAlternatingRows ? " style='background-color: #fafafa; {$rowStyleBase}'" : " style='{$rowStyleBase}'") . ">";
             $content .= "<td style='{$borderStyle} padding: 8px;'>Produit Exemple</td>";
-            $content .= "<td style='{$borderStyle} padding: 8px; text-align: center;'>2</td>";
+            if ($showSku) {
+                $content .= "<td style='{$borderStyle} padding: 8px;'>EX-001</td>";
+            }
+            if ($showDescription) {
+                $content .= "<td style='{$borderStyle} padding: 8px;'>Description exemple</td>";
+            }
+            if ($showQuantity) {
+                $content .= "<td style='{$borderStyle} padding: 8px; text-align: center;'>2</td>";
+            }
             $content .= "<td style='{$borderStyle} padding: 8px; text-align: right;'>{$currency}50.00</td>";
             $content .= "</tr>";
         } else {
             // Use real product data
             foreach ($products as $index => $product) {
-                $rowStyle = ($index % 2 == 1) ? 'background-color: #fafafa;' : '';
-                $content .= "<tr style='{$rowStyle}'>";
+                $rowStyle = '';
+                if ($showAlternatingRows && $index % 2 == 1) {
+                    $rowStyle = 'background-color: #fafafa;';
+                }
+                $content .= "<tr style='{$rowStyle} {$rowStyleBase}'>";
                 $content .= "<td style='{$borderStyle} padding: 8px;'>" . ($product['name'] ?? 'Produit') . "</td>";
-                $content .= "<td style='{$borderStyle} padding: 8px; text-align: center;'>" . ($product['quantity'] ?? 1) . "</td>";
+                if ($showSku) {
+                    $content .= "<td style='{$borderStyle} padding: 8px;'>" . ($product['sku'] ?? '') . "</td>";
+                }
+                if ($showDescription) {
+                    $content .= "<td style='{$borderStyle} padding: 8px;'>" . ($product['description'] ?? '') . "</td>";
+                }
+                if ($showQuantity) {
+                    $content .= "<td style='{$borderStyle} padding: 8px; text-align: center;'>" . ($product['quantity'] ?? 1) . "</td>";
+                }
                 $content .= "<td style='{$borderStyle} padding: 8px; text-align: right;'>{$currency}" . ($product['price'] ?? '0.00') . "</td>";
                 $content .= "</tr>";
             }
         }
         
+        // Add shipping, tax, discount rows if enabled
+        if ($showShipping) {
+            $content .= "<tr style='{$rowStyleBase}'><td colspan='" . (1 + ($showSku ? 1 : 0) + ($showDescription ? 1 : 0) + ($showQuantity ? 1 : 0)) . "' style='{$borderStyle} padding: 8px; text-align: right; font-weight: bold;'>Frais de port:</td><td style='{$borderStyle} padding: 8px; text-align: right;'>{$currency}10.00</td></tr>";
+        }
+        if ($showTax) {
+            $content .= "<tr style='{$rowStyleBase}'><td colspan='" . (1 + ($showSku ? 1 : 0) + ($showDescription ? 1 : 0) + ($showQuantity ? 1 : 0)) . "' style='{$borderStyle} padding: 8px; text-align: right; font-weight: bold;'>TVA:</td><td style='{$borderStyle} padding: 8px; text-align: right;'>{$currency}8.50</td></tr>";
+        }
+        if ($showGlobalDiscount) {
+            $content .= "<tr style='{$rowStyleBase}'><td colspan='" . (1 + ($showSku ? 1 : 0) + ($showDescription ? 1 : 0) + ($showQuantity ? 1 : 0)) . "' style='{$borderStyle} padding: 8px; text-align: right; font-weight: bold;'>Remise globale:</td><td style='{$borderStyle} padding: 8px; text-align: right;'>-{$currency}5.00</td></tr>";
+        }
+        
         $content .= "</tbody></table>";
         
-        error_log('[PDF] Product table - FINAL products count: ' . count($products) . ', showHeaders: ' . ($showHeaders ? 'YES' : 'NO') . ', showBorders: ' . ($showBorders ? 'YES' : 'NO') . ', currency: "' . $currency . '"');
+        error_log('[PDF] Product table - FINAL products count: ' . count($products) . ', showHeaders: ' . ($showHeaders ? 'YES' : 'NO') . ', showBorders: ' . ($showBorders ? 'YES' : 'NO') . ', showAlternatingRows: ' . ($showAlternatingRows ? 'YES' : 'NO') . ', showSku: ' . ($showSku ? 'YES' : 'NO') . ', showDescription: ' . ($showDescription ? 'YES' : 'NO') . ', showQuantity: ' . ($showQuantity ? 'YES' : 'NO') . ', showShipping: ' . ($showShipping ? 'YES' : 'NO') . ', showTax: ' . ($showTax ? 'YES' : 'NO') . ', showGlobalDiscount: ' . ($showGlobalDiscount ? 'YES' : 'NO') . ', globalFontSize: ' . $globalFontSize . ', globalFontFamily: ' . $globalFontFamily);
         return "<div class=\"pdf-element table-element\" style=\"{$style}\">{$content}</div>";
     }
 
@@ -1028,6 +1112,8 @@ abstract class BaseGenerator
         
         // Use real element data with flexible property names
         $date = $element['date'] ?? $element['orderDate'] ?? $element['order_date'] ?? date('d/m/Y');
+        $dateFormat = $element['dateFormat'] ?? $element['format'] ?? 'd/m/Y';
+        $showTime = $element['showTime'] ?? $element['time'] ?? $element['show_time'] ?? false;
         
         // Also check for nested properties
         if ($date === date('d/m/Y') && isset($element['properties']['date'])) {
@@ -1039,9 +1125,30 @@ abstract class BaseGenerator
         if ($date === date('d/m/Y') && isset($element['properties']['order_date'])) {
             $date = $element['properties']['order_date'];
         }
+        if (isset($element['properties']['dateFormat'])) {
+            $dateFormat = $element['properties']['dateFormat'];
+        }
+        if (isset($element['properties']['format'])) {
+            $dateFormat = $element['properties']['format'];
+        }
+        if (isset($element['properties']['showTime'])) {
+            $showTime = $element['properties']['showTime'];
+        }
+        if (isset($element['properties']['time'])) {
+            $showTime = $element['properties']['time'];
+        }
+        if (isset($element['properties']['show_time'])) {
+            $showTime = $element['properties']['show_time'];
+        }
         
-        error_log('[PDF] Order date - FINAL date: "' . $date . '"');
-        return "<div class=\"pdf-element\" style=\"{$style}\">{$date}</div>";
+        // Format the date
+        $formattedDate = date($dateFormat, strtotime($date));
+        if ($showTime) {
+            $formattedDate .= ' ' . date('H:i:s', strtotime($date));
+        }
+        
+        error_log('[PDF] Order date - FINAL date: "' . $formattedDate . '", format: "' . $dateFormat . '", showTime: ' . ($showTime ? 'YES' : 'NO'));
+        return "<div class=\"pdf-element\" style=\"{$style}\">{$formattedDate}</div>";
     }
 
     /**
