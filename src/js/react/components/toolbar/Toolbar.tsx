@@ -81,9 +81,51 @@ export function Toolbar({ className }: ToolbarProps) {
     console.log('� [HTML PREVIEW FUNCTION] handleHTMLPreview appelée !');
     console.log('�🔍 [HTML PREVIEW] Début de handleHTMLPreview');
 
+    // Fonction pour transformer les éléments pour l'aperçu HTML
+    const transformElementForPreview = (element: any) => {
+      const transformed = { ...element };
+      
+      // Créer l'objet properties avec les propriétés de style
+      transformed.properties = {
+        // Propriétés de texte
+        fontSize: element.fontSize,
+        color: element.color,
+        textAlign: element.textAlign,
+        fontFamily: element.fontFamily,
+        fontWeight: element.bold ? 'bold' : (element.fontWeight || 'normal'),
+        fontStyle: element.italic ? 'italic' : 'normal',
+        textDecoration: element.underline ? 'underline' : 'none',
+        
+        // Propriétés de forme
+        backgroundColor: element.fillColor,
+        borderColor: element.strokeColor,
+        borderWidth: element.strokeWidth,
+        borderRadius: element.borderRadius,
+        
+        // Propriétés communes
+        opacity: element.opacity,
+        
+        // Propriétés spécifiques selon le type
+        ...(element.type === 'text' && { text: element.text }),
+        ...(element.type === 'image' && { src: element.src }),
+        
+        // Autres propriétés dynamiques
+        ...Object.fromEntries(
+          Object.entries(element).filter(([key]) => 
+            !['id', 'type', 'x', 'y', 'width', 'height', 'rotation', 'visible', 'locked', 'createdAt', 'updatedAt', 'fontSize', 'color', 'textAlign', 'fontFamily', 'bold', 'italic', 'underline', 'fillColor', 'strokeColor', 'strokeWidth', 'borderRadius', 'opacity', 'text', 'src', 'objectFit'].includes(key)
+          )
+        )
+      };
+      
+      return transformed;
+    };
+
+    // Transformer tous les éléments
+    const transformedElements = state.elements.map(transformElementForPreview);
+
     // Construire les données du template à partir du state actuel
     const templateData = {
-      elements: state.elements,
+      elements: transformedElements,
       canvasWidth: state.canvas.width,
       canvasHeight: state.canvas.height,
       template: state.template,
