@@ -69,50 +69,94 @@ import { ContextMenu, ContextMenuItem } from "../ui/ContextMenu";
 
 // Fonctions utilitaires de dessin (déplacées en dehors du composant pour éviter les avertissements React Compiler)
 
-// Fonction helper pour normaliser les couleurs
-const normalizeColor = (color: string): string => {
-  if (!color || color === "transparent") {
-    return "rgba(0,0,0,0)"; // Transparent
+// Constantes communes pour les valeurs par défaut
+const DEFAULT_FONT = {
+  family: "Arial",
+  size: 12,
+  weight: "normal",
+  style: "normal",
+} as const;
+
+const DEFAULT_COLORS = {
+  background: "#ffffff",
+  border: "#000000",
+  text: "#000000",
+} as const;
+
+// Fonction helper pour configurer les polices
+const createFontConfig = (props: any, baseSize: number = DEFAULT_FONT.size) => ({
+  family: props.fontFamily || DEFAULT_FONT.family,
+  size: props.fontSize || baseSize,
+  weight: props.fontWeight || DEFAULT_FONT.weight,
+  style: props.fontStyle || DEFAULT_FONT.style,
+});
+
+// Fonction helper pour configurer les couleurs avec normalisation
+const createColorConfig = (props: any, defaults: typeof DEFAULT_COLORS = DEFAULT_COLORS) => ({
+  background: normalizeColor(props.backgroundColor || defaults.background),
+  border: normalizeColor(props.borderColor || defaults.border),
+  text: normalizeColor(props.textColor || defaults.text),
+});
+
+// Fonction helper pour configurer le padding
+const getPadding = (props: any) => ({
+  top: props.padding?.top || props.paddingTop || 0,
+  right: props.padding?.right || props.paddingRight || 0,
+  bottom: props.padding?.bottom || props.paddingBottom || 0,
+  left: props.padding?.left || props.paddingLeft || 0,
+});
+
+// Fonction helper pour calculer la position X selon l'alignement
+const calculateTextX = (element: Element, textAlign: string, padding: ReturnType<typeof getPadding>) => {
+  switch (textAlign) {
+    case "center": return element.width / 2;
+    case "right": return element.width - padding.right;
+    default: return padding.left;
   }
-  return color;
 };
 
-// Fonction utilitaire pour rectangle arrondi
-const roundedRect = (
+// Fonction helper pour appliquer les bordures avec style
+const applyBorder = (ctx: CanvasRenderingContext2D, element: Element, borderProps: any) => {
+  if (!borderProps || borderProps.width <= 0) return;
+
+  ctx.strokeStyle = borderProps.color || "#000000";
+  ctx.lineWidth = borderProps.width;
+
+  // Appliquer le style de ligne
+  switch (borderProps.style) {
+    case "dashed": ctx.setLineDash([5, 5]); break;
+    case "dotted": ctx.setLineDash([2, 2]); break;
+    default: ctx.setLineDash([]);
+  }
+
+  ctx.strokeRect(0, 0, element.width, element.height);
+  ctx.setLineDash([]); // Reset
+};
+
+// Fonction helper pour configurer le contexte de rendu de base
+const setupRenderContext = (
   ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  radius: number
+  fontConfig: ReturnType<typeof createFontConfig>,
+  colorConfig: ReturnType<typeof createColorConfig>,
+  textAlign: string = "left"
 ) => {
-  ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-  ctx.lineTo(x + width - radius, y);
-  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-  ctx.lineTo(x + width, y + height - radius);
-  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-  ctx.lineTo(x + radius, y + height);
-  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-  ctx.lineTo(x, y + radius);
-  ctx.quadraticCurveTo(x, y, x + radius, y);
-  ctx.closePath();
+  ctx.fillStyle = colorConfig.text;
+  ctx.font = `${fontConfig.style} ${fontConfig.weight} ${fontConfig.size}px ${fontConfig.family}`;
+  ctx.textAlign = textAlign as CanvasTextAlign;
+  ctx.textBaseline = "top";
 };
 
 // Fonctions de dessin pour les éléments
 const drawRectangle = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as ShapeElementProperties;
-  const fillColor = normalizeColor(props.fillColor || "#ffffff");
-  const strokeColor = normalizeColor(props.strokeColor || "#000000");
-  const strokeWidth = props.strokeWidth || 1;
-  const borderRadius = props.borderRadius || 0;
+  const colors = createColorConfig(props);
 
-  ctx.fillStyle = fillColor;
-  ctx.strokeStyle = strokeColor;
-  ctx.lineWidth = strokeWidth;
+  ctx.fillStyle = colors.background;
+  ctx.strokeStyle = colors.border;
+  ctx.lineWidth = props.strokeWidth || 1;
 
-  if (borderRadius > 0) {
-    roundedRect(ctx, 0, 0, element.width, element.height, borderRadius);
+  if (props.borderRadius && props.borderRadius > 0) {
+    roundedRect(ctx, 0, 0, element.width, element.height, props.borderRadius);
     ctx.fill();
     ctx.stroke();
   } else {
@@ -123,17 +167,15 @@ const drawRectangle = (ctx: CanvasRenderingContext2D, element: Element) => {
 
 const drawCircle = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as ShapeElementProperties;
-  const fillColor = normalizeColor(props.fillColor || "#ffffff");
-  const strokeColor = normalizeColor(props.strokeColor || "#000000");
-  const strokeWidth = props.strokeWidth || 1;
+  const colors = createColorConfig(props);
 
   const centerX = element.width / 2;
   const centerY = element.height / 2;
   const radius = Math.min(centerX, centerY);
 
-  ctx.fillStyle = fillColor;
-  ctx.strokeStyle = strokeColor;
-  ctx.lineWidth = strokeWidth;
+  ctx.fillStyle = colors.background;
+  ctx.strokeStyle = colors.border;
+  ctx.lineWidth = props.strokeWidth || 1;
 
   ctx.beginPath();
   ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
@@ -143,39 +185,36 @@ const drawCircle = (ctx: CanvasRenderingContext2D, element: Element) => {
 
 const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as TextElementProperties;
-  const text = props.text || "Text";
-  const fontSize = props.fontSize || 16;
-  const color = normalizeColor(props.color || "#000000");
-  const align = props.align || "left";
+  const fontConfig = createFontConfig(props, 16);
+  const colors = createColorConfig(props);
 
-  ctx.fillStyle = color;
-  ctx.font = `${fontSize}px Arial`;
-  ctx.textAlign = align as CanvasTextAlign;
+  ctx.fillStyle = colors.text;
+  ctx.font = `${fontConfig.size}px ${fontConfig.family}`;
+  ctx.textAlign = (props.align || "left") as CanvasTextAlign;
 
-  const x =
-    align === "center"
-      ? element.width / 2
-      : align === "right"
-      ? element.width
-      : 0;
-  ctx.fillText(text, x, fontSize);
+  const x = props.align === "center"
+    ? element.width / 2
+    : props.align === "right"
+    ? element.width
+    : 0;
+
+  ctx.fillText(props.text || "Text", x, fontConfig.size);
 };
 
 const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as LineElementProperties;
-  const strokeColor = normalizeColor(props.strokeColor || "#000000");
-  const strokeWidth = props.strokeWidth || 2;
+  const colors = createColorConfig(props, { background: "#ffffff", border: "#000000", text: "#000000" });
 
-  ctx.strokeStyle = strokeColor;
-  ctx.lineWidth = strokeWidth;
+  ctx.strokeStyle = colors.border;
+  ctx.lineWidth = props.strokeWidth || 2;
 
   ctx.beginPath();
-  ctx.moveTo(0, element.height / 2); // Centre verticalement
-  ctx.lineTo(element.width, element.height / 2); // Ligne horizontale droite
+  ctx.moveTo(0, element.height / 2);
+  ctx.lineTo(element.width, element.height / 2);
   ctx.stroke();
 };
 
-// Fonction pour dessiner une image
+// Fonction pour dessiner une image avec gestion optimisée du cache
 const drawImage = (
   ctx: CanvasRenderingContext2D,
   element: Element,
@@ -187,130 +226,110 @@ const drawImage = (
   const imageUrl = props.src || "";
 
   if (!imageUrl) {
-    // Pas d'URL, dessiner un placeholder
-    ctx.fillStyle = "#f0f0f0";
-    ctx.fillRect(0, 0, element.width, element.height);
-    ctx.strokeStyle = "#cccccc";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(0, 0, element.width, element.height);
-    ctx.fillStyle = "#999999";
-    ctx.font = "14px Arial";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("Image", element.width / 2, element.height / 2);
+    // Placeholder pour image manquante
+    drawImagePlaceholder(ctx, element);
     return;
   }
 
-  // Vérifier si l'image est en cache
-  let cachedImage = imageCache.current.get(imageUrl);
-
+  const cachedImage = imageCache.current.get(imageUrl);
   if (!cachedImage) {
-    // Créer une nouvelle image et la mettre en cache
-    const img = document.createElement("img");
-    img.crossOrigin = "anonymous";
-    img.src = imageUrl;
-
-    // Attendre que l'image soit chargée pour calculer sa taille mémoire
-    img.onload = () => {
-      const size = estimateImageMemorySize(img);
-      imageCache.current.set(imageUrl, {
-        image: img,
-        size: size,
-        lastUsed: Date.now(),
-      });
-      // Déclencher un nettoyage après ajout
-      cleanupImageCache(imageCache);
-    };
-
-    img.onerror = () => {
-      debugWarn(`[Canvas] Failed to load image: ${imageUrl}`);
-    };
-
-    // Retourner temporairement pour éviter les erreurs
+    loadAndCacheImage(imageUrl, imageCache);
+    drawImagePlaceholder(ctx, element);
     return;
   }
 
-  const img = cachedImage.image;
   // Mettre à jour la date d'utilisation
   cachedImage.lastUsed = Date.now();
 
-  // Si l'image est chargée, la dessiner
+  const img = cachedImage.image;
   if (img.complete && img.naturalHeight !== 0) {
-    // Appliquer object-fit
-    const objectFit = props.objectFit || "cover";
-    let drawX = 0,
-      drawY = 0,
-      drawWidth = element.width,
-      drawHeight = element.height;
-    let sourceX = 0,
-      sourceY = 0,
-      sourceWidth = img.naturalWidth,
-      sourceHeight = img.naturalHeight;
+    drawImageWithObjectFit(ctx, img, element, props.objectFit || "cover");
+  } else {
+    drawImagePlaceholder(ctx, element);
+  }
+};
 
-    if (objectFit === "contain") {
-      const ratio = Math.min(
-        element.width / img.naturalWidth,
-        element.height / img.naturalHeight
-      );
-      drawWidth = img.naturalWidth * ratio;
-      drawHeight = img.naturalHeight * ratio;
+// Fonction helper pour dessiner un placeholder d'image
+const drawImagePlaceholder = (ctx: CanvasRenderingContext2D, element: Element) => {
+  const colors = createColorConfig({}, { background: "#f0f0f0", border: "#cccccc", text: "#999999" });
+
+  ctx.fillStyle = colors.background;
+  ctx.fillRect(0, 0, element.width, element.height);
+  ctx.strokeStyle = colors.border;
+  ctx.lineWidth = 1;
+  ctx.strokeRect(0, 0, element.width, element.height);
+
+  ctx.fillStyle = colors.text;
+  ctx.font = "14px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("Image", element.width / 2, element.height / 2);
+};
+
+// Fonction helper pour charger et mettre en cache une image
+const loadAndCacheImage = (
+  imageUrl: string,
+  imageCache: MutableRefObject<Map<string, { image: HTMLImageElement; size: number; lastUsed: number }>>
+) => {
+  const img = document.createElement("img");
+  img.crossOrigin = "anonymous";
+  img.src = imageUrl;
+
+  img.onload = () => {
+    const size = estimateImageMemorySize(img);
+    imageCache.current.set(imageUrl, {
+      image: img,
+      size,
+      lastUsed: Date.now(),
+    });
+    cleanupImageCache(imageCache);
+  };
+
+  img.onerror = () => {
+    debugWarn(`[Canvas] Failed to load image: ${imageUrl}`);
+  };
+};
+
+// Fonction helper pour dessiner une image avec object-fit
+const drawImageWithObjectFit = (
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  element: Element,
+  objectFit: string
+) => {
+  let drawX = 0, drawY = 0, drawWidth = element.width, drawHeight = element.height;
+  let sourceX = 0, sourceY = 0, sourceWidth = img.naturalWidth, sourceHeight = img.naturalHeight;
+
+  switch (objectFit) {
+    case "contain":
+      const containRatio = Math.min(element.width / img.naturalWidth, element.height / img.naturalHeight);
+      drawWidth = img.naturalWidth * containRatio;
+      drawHeight = img.naturalHeight * containRatio;
       drawX = (element.width - drawWidth) / 2;
       drawY = (element.height - drawHeight) / 2;
-    } else if (objectFit === "cover") {
-      const ratio = Math.max(
-        element.width / img.naturalWidth,
-        element.height / img.naturalHeight
-      );
-      sourceWidth = element.width / ratio;
-      sourceHeight = element.height / ratio;
+      break;
+
+    case "cover":
+      const coverRatio = Math.max(element.width / img.naturalWidth, element.height / img.naturalHeight);
+      sourceWidth = element.width / coverRatio;
+      sourceHeight = element.height / coverRatio;
       sourceX = (img.naturalWidth - sourceWidth) / 2;
       sourceY = (img.naturalHeight - sourceHeight) / 2;
-    } else if (objectFit === "fill") {
-      // Utiliser les dimensions de l'élément directement
-    } else if (objectFit === "scale-down") {
-      if (
-        img.naturalWidth > element.width ||
-        img.naturalHeight > element.height
-      ) {
-        const ratio = Math.min(
-          element.width / img.naturalWidth,
-          element.height / img.naturalHeight
-        );
-        drawWidth = img.naturalWidth * ratio;
-        drawHeight = img.naturalHeight * ratio;
+      break;
+
+    case "scale-down":
+      if (img.naturalWidth > element.width || img.naturalHeight > element.height) {
+        const scaleDownRatio = Math.min(element.width / img.naturalWidth, element.height / img.naturalHeight);
+        drawWidth = img.naturalWidth * scaleDownRatio;
+        drawHeight = img.naturalHeight * scaleDownRatio;
         drawX = (element.width - drawWidth) / 2;
         drawY = (element.height - drawHeight) / 2;
       }
-    }
-
-    ctx.drawImage(
-      img,
-      sourceX,
-      sourceY,
-      sourceWidth,
-      sourceHeight,
-      drawX,
-      drawY,
-      drawWidth,
-      drawHeight
-    );
-  } else {
-    // Image en cours de chargement ou erreur, dessiner un placeholder
-    ctx.fillStyle = "#e0e0e0";
-    ctx.fillRect(0, 0, element.width, element.height);
-    ctx.strokeStyle = "#999999";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(0, 0, element.width, element.height);
-    ctx.fillStyle = "#666666";
-    ctx.font = "12px Arial";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(
-      img.complete ? "Erreur" : "Chargement...",
-      element.width / 2,
-      element.height / 2
-    );
+      break;
+    // "fill" utilise les dimensions par défaut
   }
+
+  ctx.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, drawX, drawY, drawWidth, drawHeight);
 };
 
 // Fonctions de rendu WooCommerce avec données fictives ou réelles selon le mode
@@ -959,111 +978,43 @@ const drawCustomerInfo = (
   }
 };
 
-const drawCompanyInfo = (
-  ctx: CanvasRenderingContext2D,
-  element: Element,
-  canvasSettings: any
-) => {
-  const props = element as CompanyInfoElementProperties;
+// Constantes pour les thèmes company_info
+const COMPANY_THEMES = {
+  corporate: {
+    backgroundColor: "#ffffff",
+    borderColor: "#1f2937",
+    textColor: "#374151",
+    headerTextColor: "#111827",
+  },
+  modern: {
+    backgroundColor: "#ffffff",
+    borderColor: "#3b82f6",
+    textColor: "#1e40af",
+    headerTextColor: "#1e3a8a",
+  },
+  elegant: {
+    backgroundColor: "#ffffff",
+    borderColor: "#8b5cf6",
+    textColor: "#6d28d9",
+    headerTextColor: "#581c87",
+  },
+  minimal: {
+    backgroundColor: "#ffffff",
+    borderColor: "#e5e7eb",
+    textColor: "#374151",
+    headerTextColor: "#111827",
+  },
+  professional: {
+    backgroundColor: "#ffffff",
+    borderColor: "#059669",
+    textColor: "#047857",
+    headerTextColor: "#064e3b",
+  },
+} as const;
 
-  const fontSize = props.fontSize || 12;
-  const fontFamily = props.fontFamily || "Arial";
-  const fontWeight = props.fontWeight || "normal";
-  const fontStyle = props.fontStyle || "normal";
-  // Propriétés de police pour l'en-tête (nom de l'entreprise)
-  const headerFontSize = props.headerFontSize || Math.round(fontSize * 1.2);
-  const headerFontFamily = props.headerFontFamily || fontFamily;
-  const headerFontWeight = props.headerFontWeight || "bold";
-  const headerFontStyle = props.headerFontStyle || fontStyle;
-  // Propriétés de police pour le corps du texte
-  const bodyFontSize = props.bodyFontSize || fontSize;
-  const bodyFontFamily = props.bodyFontFamily || fontFamily;
-  const bodyFontWeight = props.bodyFontWeight || fontWeight;
-  const bodyFontStyle = props.bodyFontStyle || fontStyle;
-  const textAlign = "left"; // Forcer alignement à gauche pour company_info
-  const theme = (props.theme || "corporate") as keyof typeof themes;
-  const showBackground = props.showBackground !== false; // Par défaut true
-  const showBorders = props.showBorders !== false; // Par défaut true
-  const showCompanyName = props.showCompanyName !== false; // Par défaut true
-  const showAddress = props.showAddress !== false; // Par défaut true
-  const showPhone = props.showPhone !== false; // Par défaut true
-  const showEmail = props.showEmail !== false; // Par défaut true
-  const showSiret = props.showSiret !== false; // Par défaut true
-  const showVat = props.showVat !== false; // Par défaut true
-  const showRcs = props.showRcs !== false; // Par défaut true
-  const showCapital = props.showCapital !== false; // Par défaut true
-
-  // Définition des thèmes
-  const themes = {
-    corporate: {
-      backgroundColor: "#ffffff",
-      borderColor: "#1f2937",
-      textColor: "#374151",
-      headerTextColor: "#111827",
-    },
-    modern: {
-      backgroundColor: "#ffffff",
-      borderColor: "#3b82f6",
-      textColor: "#1e40af",
-      headerTextColor: "#1e3a8a",
-    },
-    elegant: {
-      backgroundColor: "#ffffff",
-      borderColor: "#8b5cf6",
-      textColor: "#6d28d9",
-      headerTextColor: "#581c87",
-    },
-    minimal: {
-      backgroundColor: "#ffffff",
-      borderColor: "#e5e7eb",
-      textColor: "#374151",
-      headerTextColor: "#111827",
-    },
-    professional: {
-      backgroundColor: "#ffffff",
-      borderColor: "#059669",
-      textColor: "#047857",
-      headerTextColor: "#064e3b",
-    },
-  };
-
-  const currentTheme = themes[theme] || themes.corporate;
-
-  // Utiliser les couleurs depuis les props de l'élément ou le thème (PAS les paramètres canvas globaux)
-  const bgColor = normalizeColor(
-    props.backgroundColor || currentTheme.backgroundColor
-  );
-  const borderCol = normalizeColor(
-    props.borderColor || currentTheme.borderColor
-  );
-  const txtColor = normalizeColor(props.textColor || currentTheme.textColor);
-  const headerTxtColor = normalizeColor(
-    props.headerTextColor || currentTheme.headerTextColor
-  );
-
-  // Appliquer le fond si demandé
-  if (showBackground) {
-    ctx.fillStyle = bgColor;
-    ctx.fillRect(0, 0, element.width, element.height);
-  }
-
-  // Appliquer les bordures si demandé
-  if (showBorders) {
-    ctx.strokeStyle = borderCol;
-    ctx.lineWidth = props.borderWidth || 1;
-    ctx.strokeRect(0, 0, element.width, element.height);
-  }
-
-  ctx.fillStyle = txtColor;
-  ctx.textAlign = textAlign as CanvasTextAlign;
-
-  // Calcul de la position X (toujours aligné à gauche pour company_info)
-  let x = 10;
-
-  let y = 20;
-
-  // Informations entreprise hybrides : props configurables + valeurs par défaut
-  const companyData = {
+// Fonction helper pour récupérer les données d'entreprise
+const getCompanyData = (props: CompanyInfoElementProperties) => {
+  const baseData = {
     name: props.companyName || "",
     address: props.companyAddress || "",
     city: props.companyCity || "",
@@ -1075,85 +1026,141 @@ const drawCompanyInfo = (
     phone: props.companyPhone || "",
   };
 
-  // DEBUG: Log company data from plugin settings
-  console.log('[CANVAS DEBUG] Company data from plugin settings:', (window as any).pdfBuilderData?.company);
-  console.log('[CANVAS DEBUG] Original company data:', companyData);
-
   // Remplacer par les données dynamiques du plugin si disponibles
-  if ((window as any).pdfBuilderData?.company) {
-    const pluginCompany = (window as any).pdfBuilderData.company;
-    companyData.name = pluginCompany.name || companyData.name;
-    companyData.address = pluginCompany.address || companyData.address;
-    companyData.siret = pluginCompany.siret || companyData.siret;
-    companyData.tva = pluginCompany.vat || companyData.tva;
-    companyData.rcs = pluginCompany.rcs || companyData.rcs;
-    companyData.capital = pluginCompany.capital || companyData.capital;
-    companyData.email = pluginCompany.email || companyData.email;
-    companyData.phone = pluginCompany.phone || companyData.phone;
-    
-    console.log('[CANVAS DEBUG] Updated company data with plugin settings:', companyData);
-  } else {
-    console.log('[CANVAS DEBUG] No plugin company data found, using defaults');
+  const pluginCompany = (window as any).pdfBuilderData?.company;
+  if (pluginCompany) {
+    Object.keys(baseData).forEach(key => {
+      if (pluginCompany[key] && pluginCompany[key] !== 'Non indiqué') {
+        (baseData as any)[key] = pluginCompany[key];
+      }
+    });
   }
 
-  // Afficher le nom de l'entreprise si demandé et qu'il n'est pas "Non indiqué"
-  if (showCompanyName && companyData.name && companyData.name !== 'Non indiqué') {
-    ctx.fillStyle = headerTxtColor;
-    ctx.font = `${headerFontStyle} ${headerFontWeight} ${headerFontSize}px ${headerFontFamily}`;
-    ctx.fillText(companyData.name, x, y);
-    y += Math.round(fontSize * 0.2);
-    ctx.fillStyle = txtColor;
+  return baseData;
+};
+
+// Fonction helper pour vérifier si une valeur doit être affichée
+const shouldDisplayValue = (value: string, showFlag: boolean) =>
+  showFlag && value && value !== 'Non indiqué';
+
+// Fonction helper pour dessiner une ligne de texte company_info
+const drawCompanyLine = (
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  fontSize: number
+) => {
+  ctx.fillText(text, x, y);
+  return y + Math.round(fontSize * 0.2);
+};
+
+const drawCompanyInfo = (
+  ctx: CanvasRenderingContext2D,
+  element: Element,
+  canvasSettings: any
+) => {
+  const props = element as CompanyInfoElementProperties;
+
+  // Configuration des polices
+  const fontSize = props.fontSize || 12;
+  const fontConfig = {
+    family: props.fontFamily || "Arial",
+    weight: props.fontWeight || "normal",
+    style: props.fontStyle || "normal",
+    headerSize: props.headerFontSize || Math.round(fontSize * 1.2),
+    headerWeight: props.headerFontWeight || "bold",
+    headerStyle: props.headerFontStyle || props.fontStyle || "normal",
+    bodySize: props.bodyFontSize || fontSize,
+    bodyWeight: props.bodyFontWeight || props.fontWeight || "normal",
+    bodyStyle: props.bodyFontStyle || props.fontStyle || "normal",
+  };
+
+  // Configuration d'affichage
+  const displayConfig = {
+    background: props.showBackground !== false,
+    borders: props.showBorders !== false,
+    companyName: props.showCompanyName !== false,
+    address: props.showAddress !== false,
+    phone: props.showPhone !== false,
+    email: props.showEmail !== false,
+    siret: props.showSiret !== false,
+    vat: props.showVat !== false,
+    rcs: props.showRcs !== false,
+    capital: props.showCapital !== false,
+  };
+
+  // Thème et couleurs
+  const theme = COMPANY_THEMES[(props.theme || "corporate") as keyof typeof COMPANY_THEMES] || COMPANY_THEMES.corporate;
+  const colors = {
+    background: normalizeColor(props.backgroundColor || theme.backgroundColor),
+    border: normalizeColor(props.borderColor || theme.borderColor),
+    text: normalizeColor(props.textColor || theme.textColor),
+    headerText: normalizeColor(props.headerTextColor || theme.headerTextColor),
+  };
+
+  // Appliquer le fond et les bordures
+  if (displayConfig.background) {
+    ctx.fillStyle = colors.background;
+    ctx.fillRect(0, 0, element.width, element.height);
   }
 
-  // Police normale pour les autres éléments
-  ctx.font = `${bodyFontStyle} ${bodyFontWeight} ${bodyFontSize}px ${bodyFontFamily}`;
+  if (displayConfig.borders) {
+    ctx.strokeStyle = colors.border;
+    ctx.lineWidth = props.borderWidth || 1;
+    ctx.strokeRect(0, 0, element.width, element.height);
+  }
 
-  // Afficher l'adresse si demandée et qu'elle n'est pas "Non indiqué"
-  if (showAddress && companyData.address && companyData.address !== 'Non indiqué') {
-    ctx.fillText(companyData.address, x, y);
-    y += Math.round(fontSize * 0.2);
-    if (companyData.city && companyData.city !== 'Non indiqué') {
-      ctx.fillText(companyData.city, x, y);
-      y += Math.round(fontSize * 0.2);
-    } else {
-      y += Math.round(fontSize * 0.2);
+  // Configuration du contexte
+  ctx.fillStyle = colors.text;
+  ctx.textAlign = "left";
+
+  // Position de départ
+  let x = 10;
+  let y = 20;
+
+  // Récupération des données d'entreprise
+  const companyData = getCompanyData(props);
+
+  // Fonction helper pour dessiner avec la police appropriée
+  const drawWithFont = (text: string, useHeaderFont: boolean = false) => {
+    const config = useHeaderFont
+      ? { size: fontConfig.headerSize, weight: fontConfig.headerWeight, style: fontConfig.headerStyle }
+      : { size: fontConfig.bodySize, weight: fontConfig.bodyWeight, style: fontConfig.bodyStyle };
+
+    ctx.font = `${config.style} ${config.weight} ${config.size}px ${fontConfig.family}`;
+    if (useHeaderFont) ctx.fillStyle = colors.headerText;
+    y = drawCompanyLine(ctx, text, x, y, config.size);
+    if (useHeaderFont) ctx.fillStyle = colors.text;
+  };
+
+  // Appliquer la police du corps par défaut
+  ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.family}`;
+
+  // Afficher les éléments selon la configuration
+  if (shouldDisplayValue(companyData.name, displayConfig.companyName)) {
+    drawWithFont(companyData.name, true);
+  }
+
+  if (shouldDisplayValue(companyData.address, displayConfig.address)) {
+    y = drawCompanyLine(ctx, companyData.address, x, y, fontConfig.bodySize);
+    if (shouldDisplayValue(companyData.city, displayConfig.address)) {
+      y = drawCompanyLine(ctx, companyData.city, x, y, fontConfig.bodySize);
     }
   }
 
-  // Afficher le SIRET si demandé et qu'il n'est pas "Non indiqué"
-  if (showSiret && companyData.siret && companyData.siret !== 'Non indiqué') {
-    ctx.fillText(companyData.siret, x, y);
-    y += Math.round(fontSize * 0.2);
-  }
-
-  // Afficher la TVA si demandée et qu'elle n'est pas "Non indiqué"
-  if (showVat && companyData.tva && companyData.tva !== 'Non indiqué') {
-    ctx.fillText(companyData.tva, x, y);
-    y += Math.round(fontSize * 0.2);
-  }
-
-  // Afficher le RCS si demandé et qu'il n'est pas "Non indiqué"
-  if (showRcs && companyData.rcs && companyData.rcs !== 'Non indiqué') {
-    ctx.fillText(companyData.rcs, x, y);
-    y += Math.round(fontSize * 0.2);
-  }
-
-  // Afficher le Capital social si demandé et qu'il n'est pas "Non indiqué"
-  if (showCapital && companyData.capital && companyData.capital !== 'Non indiqué') {
-    ctx.fillText(companyData.capital, x, y);
-    y += Math.round(fontSize * 0.2);
-  }
-
-  // Afficher l'email si demandé et qu'il n'est pas "Non indiqué"
-  if (showEmail && companyData.email && companyData.email !== 'Non indiqué') {
-    ctx.fillText(companyData.email, x, y);
-    y += Math.round(fontSize * 0.2);
-  }
-
-  // Afficher le téléphone si demandé et qu'il n'est pas "Non indiqué"
-  if (showPhone && companyData.phone && companyData.phone !== 'Non indiqué') {
-    ctx.fillText(companyData.phone, x, y);
-  }
+  [
+    [companyData.siret, displayConfig.siret],
+    [companyData.tva, displayConfig.vat],
+    [companyData.rcs, displayConfig.rcs],
+    [companyData.capital, displayConfig.capital],
+    [companyData.email, displayConfig.email],
+    [companyData.phone, displayConfig.phone],
+  ].forEach(([value, show]) => {
+    if (shouldDisplayValue(value as string, show as boolean)) {
+      y = drawCompanyLine(ctx, value as string, x, y, fontConfig.bodySize);
+    }
+  });
 };
 
 const drawOrderNumber = (
@@ -1381,98 +1388,61 @@ const drawWoocommerceOrderDate = (
   state: BuilderState
 ) => {
   const props = element.properties || {};
-  const fontSize = props.fontSize || 12;
-  const fontFamily = props.fontFamily || "Arial";
-  const fontWeight = props.fontWeight || "normal";
-  const fontStyle = props.fontStyle || "normal";
-  const textAlign = props.textAlign || "left";
-  const color = props.color || "#000000";
-  const backgroundColor = props.backgroundColor || "transparent";
-  const dateFormat = props.dateFormat || "d/m/Y";
-  const showTime = props.showTime || false;
+  const fontConfig = createFontConfig(props, 12);
+  const colorConfig = createColorConfig(props);
+  const padding = getPadding(props);
 
-  // Appliquer le fond si spécifié
-  if (backgroundColor !== "transparent") {
-    ctx.fillStyle = backgroundColor;
+  // Appliquer le fond
+  if (props.backgroundColor && props.backgroundColor !== "transparent") {
+    ctx.fillStyle = props.backgroundColor;
     ctx.fillRect(0, 0, element.width, element.height);
   }
 
-  // Appliquer la bordure si spécifiée
-  if (props.border && props.border.width > 0) {
-    ctx.strokeStyle = props.border.color || "#000000";
-    ctx.lineWidth = props.border.width;
-    if (props.border.style === "dashed") {
-      ctx.setLineDash([5, 5]);
-    } else if (props.border.style === "dotted") {
-      ctx.setLineDash([2, 2]);
-    }
-    ctx.strokeRect(0, 0, element.width, element.height);
-    ctx.setLineDash([]);
-  }
+  // Appliquer la bordure
+  applyBorder(ctx, element, props.border);
 
-  // Récupérer la date de la commande
-  let orderDate: string;
-  if (state.previewMode === "command") {
-    orderDate = wooCommerceManager.getOrderDate();
-  } else {
-    orderDate = wooCommerceManager.getOrderDate() || "27/10/2024";
-  }
+  // Récupérer et formater la date
+  const orderDate = state.previewMode === "command"
+    ? wooCommerceManager.getOrderDate()
+    : wooCommerceManager.getOrderDate() || "27/10/2024";
 
-  // Formater la date selon le format spécifié
-  let displayDate = orderDate;
+  const displayDate = formatOrderDate(orderDate, props.dateFormat, props.showTime);
+
+  // Configurer le contexte et afficher
+  setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign);
+  const x = calculateTextX(element, props.textAlign, padding);
+  ctx.fillText(displayDate, x, padding.top + 10);
+};
+
+// Fonction helper pour formater les dates de commande
+const formatOrderDate = (dateString: string, format: string = "d/m/Y", showTime: boolean = false): string => {
   try {
-    const dateObj = new Date(orderDate);
-    if (!isNaN(dateObj.getTime())) {
-      // Formater selon le format spécifié
-      const day = String(dateObj.getDate()).padStart(2, "0");
-      const month = String(dateObj.getMonth() + 1).padStart(2, "0");
-      const year = dateObj.getFullYear();
-      
-      if (dateFormat === "m/d/Y") {
-        displayDate = `${month}/${day}/${year}`;
-      } else if (dateFormat === "Y-m-d") {
-        displayDate = `${year}-${month}-${day}`;
-      } else if (dateFormat === "d-m-Y") {
-        displayDate = `${day}-${month}-${year}`;
-      } else if (dateFormat === "d.m.Y") {
-        displayDate = `${day}.${month}.${year}`;
-      } else {
-        // d/m/Y par défaut
-        displayDate = `${day}/${month}/${year}`;
-      }
+    const dateObj = new Date(dateString);
+    if (isNaN(dateObj.getTime())) return dateString;
 
-      // Ajouter l'heure si demandé
-      if (showTime) {
-        const hours = String(dateObj.getHours()).padStart(2, "0");
-        const minutes = String(dateObj.getMinutes()).padStart(2, "0");
-        displayDate += ` ${hours}:${minutes}`;
-      }
+    const day = String(dateObj.getDate()).padStart(2, "0");
+    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const year = dateObj.getFullYear();
+
+    let formattedDate: string;
+    switch (format) {
+      case "m/d/Y": formattedDate = `${month}/${day}/${year}`; break;
+      case "Y-m-d": formattedDate = `${year}-${month}-${day}`; break;
+      case "d-m-Y": formattedDate = `${day}-${month}-${year}`; break;
+      case "d.m.Y": formattedDate = `${day}.${month}.${year}`; break;
+      default: formattedDate = `${day}/${month}/${year}`;
     }
-  } catch (e) {
-    // Utiliser la date brute en cas d'erreur
+
+    if (showTime) {
+      const hours = String(dateObj.getHours()).padStart(2, "0");
+      const minutes = String(dateObj.getMinutes()).padStart(2, "0");
+      formattedDate += ` ${hours}:${minutes}`;
+    }
+
+    return formattedDate;
+  } catch {
+    return dateString;
   }
-
-  // Appliquer le padding
-  const padding = props.padding || { top: 0, right: 0, bottom: 0, left: 0 };
-  const yOffset = padding.top || 0;
-  const xOffset = padding.left || 0;
-
-  // Configurer le contexte de rendu
-  ctx.fillStyle = color;
-  ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
-  ctx.textAlign = textAlign as CanvasTextAlign;
-  ctx.textBaseline = "top";
-
-  // Calculer la position X selon l'alignement
-  let x = xOffset;
-  if (textAlign === "center") {
-    x = element.width / 2;
-  } else if (textAlign === "right") {
-    x = element.width - (padding.right || 0);
-  }
-
-  // Afficher la date
-  ctx.fillText(displayDate, x, yOffset + 10);
 };
 
 const drawWoocommerceInvoiceNumber = (
@@ -1480,62 +1450,27 @@ const drawWoocommerceInvoiceNumber = (
   element: Element
 ) => {
   const props = element.properties || {};
-  const fontSize = props.fontSize || 12;
-  const fontFamily = props.fontFamily || "Arial";
-  const fontWeight = props.fontWeight || "normal";
-  const fontStyle = props.fontStyle || "normal";
-  const textAlign = props.textAlign || "left";
-  const color = props.color || "#000000";
-  const backgroundColor = props.backgroundColor || "transparent";
-  const prefix = props.prefix || "";
-  const suffix = props.suffix || "";
+  const fontConfig = createFontConfig(props, 12);
+  const colorConfig = createColorConfig(props);
+  const padding = getPadding(props);
 
-  // Appliquer le fond si spécifié
-  if (backgroundColor !== "transparent") {
-    ctx.fillStyle = backgroundColor;
+  // Appliquer le fond
+  if (props.backgroundColor && props.backgroundColor !== "transparent") {
+    ctx.fillStyle = props.backgroundColor;
     ctx.fillRect(0, 0, element.width, element.height);
   }
 
-  // Appliquer la bordure si spécifiée
-  if (props.border && props.border.width > 0) {
-    ctx.strokeStyle = props.border.color || "#000000";
-    ctx.lineWidth = props.border.width;
-    if (props.border.style === "dashed") {
-      ctx.setLineDash([5, 5]);
-    } else if (props.border.style === "dotted") {
-      ctx.setLineDash([2, 2]);
-    }
-    ctx.strokeRect(0, 0, element.width, element.height);
-    ctx.setLineDash([]);
-  }
+  // Appliquer la bordure
+  applyBorder(ctx, element, props.border);
 
-  // Récupérer le numéro de facture WooCommerce
+  // Récupérer et formater le numéro de facture
   const invoiceNumber = wooCommerceManager.getInvoiceNumber?.() || "INV-2024-00001";
+  const displayText = `${props.prefix || ""}${invoiceNumber}${props.suffix || ""}`;
 
-  // Construire le texte avec préfixe et suffixe
-  const displayText = `${prefix}${invoiceNumber}${suffix}`;
-
-  // Appliquer le padding
-  const padding = props.padding || { top: 0, right: 0, bottom: 0, left: 0 };
-  const yOffset = padding.top || 0;
-  const xOffset = padding.left || 0;
-
-  // Configurer le contexte de rendu
-  ctx.fillStyle = color;
-  ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
-  ctx.textAlign = textAlign as CanvasTextAlign;
-  ctx.textBaseline = "top";
-
-  // Calculer la position X selon l'alignement
-  let x = xOffset;
-  if (textAlign === "center") {
-    x = element.width / 2;
-  } else if (textAlign === "right") {
-    x = element.width - (padding.right || 0);
-  }
-
-  // Afficher le numéro de facture
-  ctx.fillText(displayText, x, yOffset + 10);
+  // Configurer le contexte et afficher
+  setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign);
+  const x = calculateTextX(element, props.textAlign, padding);
+  ctx.fillText(displayText, x, padding.top + 10);
 };
 
 const drawDocumentType = (
@@ -1544,56 +1479,45 @@ const drawDocumentType = (
   state: BuilderState
 ) => {
   const props = element as DocumentTypeElementProperties;
-  const fontSize = props.fontSize || 18;
-  const fontFamily = props.fontFamily || "Arial";
-  const fontWeight = props.fontWeight || "bold";
-  const fontStyle = props.fontStyle || "normal";
-  const textAlign = props.textAlign || "left";
-  const textColor = props.textColor || "#000000";
+  const fontConfig = createFontConfig(props, 18);
+  fontConfig.weight = props.fontWeight || "bold"; // Override default weight
 
-  // Appliquer le fond seulement si showBackground est activé
+  const colorConfig = createColorConfig(props);
+
+  // Appliquer le fond
   if (props.showBackground !== false) {
     ctx.fillStyle = props.backgroundColor || "#e5e7eb";
     ctx.fillRect(0, 0, element.width, element.height);
   }
 
-  ctx.fillStyle = textColor;
-  ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
-  ctx.textAlign = textAlign as CanvasTextAlign;
+  // Configurer le contexte
+  setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign);
 
-  // Type de document fictif ou réel selon le mode
-  let documentType: string;
+  // Déterminer le type de document
+  const documentType = props.documentType || "FACTURE";
 
-  if (state.previewMode === "command") {
-    // En mode commande réel, on pourrait récupérer le type depuis WooCommerce
-    // Pour l'instant, on utilise la valeur configurée ou une valeur par défaut
-    documentType = props.documentType || "FACTURE";
-  } else {
-    // Données fictives pour le mode éditeur
-    documentType = props.documentType || "FACTURE";
-  }
-
-  // Convertir les valeurs techniques en texte lisible
-  const documentTypeLabels: { [key: string]: string } = {
+  // Mapping des types techniques vers les labels lisibles
+  const DOCUMENT_TYPE_LABELS = {
     FACTURE: "FACTURE",
     DEVIS: "DEVIS",
     BON_COMMANDE: "BON DE COMMANDE",
     AVOIR: "AVOIR",
     RELEVE: "RELEVE",
     CONTRAT: "CONTRAT",
-  };
+  } as const;
 
-  documentType = documentTypeLabels[documentType] || documentType;
+  const displayText = DOCUMENT_TYPE_LABELS[documentType as keyof typeof DOCUMENT_TYPE_LABELS] || documentType;
 
-  const x =
-    textAlign === "center"
-      ? element.width / 2
-      : textAlign === "right"
-      ? element.width - 10
-      : 10;
-  const y = element.height / 2 + fontSize / 3; // Centrer verticalement
+  // Calculer la position centrée
+  const x = props.textAlign === "center"
+    ? element.width / 2
+    : props.textAlign === "right"
+    ? element.width - 10
+    : 10;
 
-  ctx.fillText(documentType, x, y);
+  const y = element.height / 2 + fontConfig.size / 3; // Centrage vertical
+
+  ctx.fillText(displayText, x, y);
 };
 
 interface CanvasProps {
