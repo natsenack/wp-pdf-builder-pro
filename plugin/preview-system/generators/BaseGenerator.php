@@ -449,6 +449,143 @@ abstract class BaseGenerator
     }
 
     /**
+     * Rend un élément company_info
+     * Version: 2026-01-26 12:25
+     */
+    protected function renderCompanyInfoElement(array $element): string
+    {
+        error_log('[PDF] Company info - keys: ' . implode(', ', array_keys($element)));
+        
+        $style = $this->buildElementStyle($element);
+        
+        // Récupérer les propriétés d'affichage
+        $properties = $element['properties'] ?? [];
+        $showHeaders = $properties['showHeaders'] ?? true;
+        $showFullName = $properties['showFullName'] ?? true;
+        $showAddress = $properties['showAddress'] ?? true;
+        $showEmail = $properties['showEmail'] ?? true;
+        $showPhone = $properties['showPhone'] ?? true;
+        $showSiret = $properties['showSiret'] ?? true;
+        $showVat = $properties['showVat'] ?? true;
+        $showRcs = $properties['showRcs'] ?? true;
+        $showCapital = $properties['showCapital'] ?? true;
+        $showCompanyName = $properties['showCompanyName'] ?? true;
+        $layout = $properties['layout'] ?? 'vertical';
+        
+        // Récupérer les données depuis le data provider pour l'aperçu
+        $companyName = $this->data_provider->getVariableValue('company_name');
+        $companyAddress = $this->data_provider->getVariableValue('company_address');
+        $companyEmail = $this->data_provider->getVariableValue('company_email');
+        $companyPhone = $this->data_provider->getVariableValue('company_phone');
+        $companySiret = $this->data_provider->getVariableValue('company_siret');
+        $companyVat = $this->data_provider->getVariableValue('company_vat');
+        $companyRcs = $this->data_provider->getVariableValue('company_rcs');
+        $companyCapital = $this->data_provider->getVariableValue('company_capital');
+        
+        // Fallback vers les propriétés de l'élément si data provider ne fournit rien
+        if (empty($companyName) || $companyName === '{{company_name}}') {
+            $companyName = $element['companyName'] ?? $element['name'] ?? $element['company_name'] ?? $element['fullName'] ?? 'Ma Boutique en Ligne';
+        }
+        if (empty($companyAddress) || strpos($companyAddress, '{{') !== false) {
+            $companyAddress = $element['companyAddress'] ?? $element['address'] ?? $element['company_address'] ?? '123 Avenue des Commerçants, 69000 Lyon, France';
+        }
+        if (empty($companyEmail) || strpos($companyEmail, '{{') !== false) {
+            $companyEmail = $element['companyEmail'] ?? $element['email'] ?? $element['company_email'] ?? 'contact@ma-boutique.com';
+        }
+        if (empty($companyPhone) || strpos($companyPhone, '{{') !== false) {
+            $companyPhone = $element['companyPhone'] ?? $element['phone'] ?? $element['company_phone'] ?? '+33 4 12 34 56 78';
+        }
+        if (empty($companySiret) || strpos($companySiret, '{{') !== false) {
+            $companySiret = $element['companySiret'] ?? $element['siret'] ?? $element['company_siret'] ?? '123 456 789 01234';
+        }
+        if (empty($companyVat) || strpos($companyVat, '{{') !== false) {
+            $companyVat = $element['companyVat'] ?? $element['vat'] ?? $element['company_vat'] ?? '';
+        }
+        if (empty($companyRcs) || strpos($companyRcs, '{{') !== false) {
+            $companyRcs = $element['companyRcs'] ?? $element['rcs'] ?? $element['company_rcs'] ?? '';
+        }
+        if (empty($companyCapital) || strpos($companyCapital, '{{') !== false) {
+            $companyCapital = $element['companyCapital'] ?? $element['capital'] ?? $element['company_capital'] ?? '';
+        }
+        
+        // Générer le contenu selon les options d'affichage
+        $content = '';
+        $fields = [];
+        
+        if ($showCompanyName && !empty($companyName)) {
+            $fields[] = [
+                'label' => $showHeaders ? 'Société' : '',
+                'value' => $companyName
+            ];
+        }
+        
+        if ($showAddress && !empty($companyAddress)) {
+            $fields[] = [
+                'label' => $showHeaders ? 'Adresse' : '',
+                'value' => $companyAddress
+            ];
+        }
+        
+        if ($showEmail && !empty($companyEmail)) {
+            $fields[] = [
+                'label' => $showHeaders ? 'Email' : '',
+                'value' => $companyEmail
+            ];
+        }
+        
+        if ($showPhone && !empty($companyPhone)) {
+            $fields[] = [
+                'label' => $showHeaders ? 'Téléphone' : '',
+                'value' => $companyPhone
+            ];
+        }
+        
+        if ($showSiret && !empty($companySiret)) {
+            $fields[] = [
+                'label' => $showHeaders ? 'SIRET' : '',
+                'value' => $companySiret
+            ];
+        }
+        
+        if ($showVat && !empty($companyVat)) {
+            $fields[] = [
+                'label' => $showHeaders ? 'TVA' : '',
+                'value' => $companyVat
+            ];
+        }
+        
+        if ($showRcs && !empty($companyRcs)) {
+            $fields[] = [
+                'label' => $showHeaders ? 'RCS' : '',
+                'value' => $companyRcs
+            ];
+        }
+        
+        if ($showCapital && !empty($companyCapital)) {
+            $fields[] = [
+                'label' => $showHeaders ? 'Capital' : '',
+                'value' => $companyCapital
+            ];
+        }
+        
+        // Générer le HTML selon le layout
+        if ($layout === 'horizontal') {
+            $content = implode(' • ', array_map(function($field) {
+                return (!empty($field['label']) ? $field['label'] . ': ' : '') . $field['value'];
+            }, $fields));
+        } else {
+            // Layout vertical
+            foreach ($fields as $field) {
+                if (!empty($content)) $content .= "\n";
+                $content .= (!empty($field['label']) ? $field['label'] . ': ' : '') . $field['value'];
+            }
+        }
+        
+        error_log('[PDF] Company info - FINAL name: "' . $companyName . '", address: "' . $companyAddress . '", email: "' . $companyEmail . '", phone: "' . $companyPhone . '", siret: "' . $companySiret . '", showHeaders: ' . ($showHeaders ? 'YES' : 'NO'));
+        return "<div class=\"pdf-element\" data-element-type=\"company_info\" style=\"{$style}\">" . nl2br($content) . "</div>";
+    }
+
+    /**
      * Construit le style CSS d'un élément
      *
      * @param array $element Données de l'élément
