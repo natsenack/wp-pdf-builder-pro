@@ -5,7 +5,7 @@
  * Created: 2025-12-12
  */
 
-// Valeurs par défaut pour les champs Canvas
+// Valeurs par défaut pour les champs Canvas - SYNCHRONISÉES avec Canvas_Manager.php
 $canvas_defaults = [
     'width' => '794',
     'height' => '1123',
@@ -19,27 +19,27 @@ $canvas_defaults = [
     'border_width' => '1',
     'container_bg_color' => '#f8f9fa',
     'shadow_enabled' => '0',
-    'grid_enabled' => '1',
-    'grid_size' => '20',
-    'guides_enabled' => '1',
-    'snap_to_grid' => '1',
-    'zoom_min' => '25',
+    'grid_enabled' => '0',  // false -> '0'
+    'grid_size' => '10',    // CORRIGÉ: 20 -> 10 (cohérent avec Canvas_Manager)
+    'guides_enabled' => '0', // false -> '0'
+    'snap_to_grid' => '0',   // false -> '0'
+    'zoom_min' => '10',     // CORRIGÉ: 25 -> 10 (cohérent avec Canvas_Manager)
     'zoom_max' => '500',
     'zoom_default' => '100',
     'zoom_step' => '25',
-    'drag_enabled' => '1',
-    'resize_enabled' => '1',
-    'rotate_enabled' => '1',
-    'multi_select' => '1',
+    'drag_enabled' => '0',  // false -> '0'
+    'resize_enabled' => '0', // false -> '0'
+    'rotate_enabled' => '0', // false -> '0'
+    'multi_select' => '0',   // false -> '0'
     'selection_mode' => 'single',
-    'keyboard_shortcuts' => '1',
-    'export_quality' => '90',
+    'keyboard_shortcuts' => '0', // false -> '0'
+    'export_quality' => 'print', // CORRIGÉ: '90' -> 'print'
     'export_format' => 'pdf',
     'export_transparent' => '0',
     'fps_target' => '60',
-    'memory_limit_js' => '128',
+    'memory_limit_js' => '50',
     'response_timeout' => '5000',
-    'debug_enabled' => '0',
+    'debug_enabled' => '0', // false -> '0'
     'performance_monitoring' => '1',
     'error_reporting' => '1'
 ];
@@ -47,9 +47,9 @@ $canvas_defaults = [
 // Ajuster les valeurs par défaut pour les utilisateurs gratuits (features premium)
 $can_use_grid_navigation = \PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('grid_navigation');
 if (!$can_use_grid_navigation) {
-    $canvas_defaults['grid_enabled'] = '0';
-    $canvas_defaults['guides_enabled'] = '0';
-    $canvas_defaults['snap_to_grid'] = '0';
+    $canvas_defaults['grid_enabled'] = '0';      // DÉJÀ '0', inchangé
+    $canvas_defaults['guides_enabled'] = '0';    // DÉJÀ '0', inchangé
+    $canvas_defaults['snap_to_grid'] = '0';      // DÉJÀ '0', inchangé
 }
 
 // Fonction helper pour récupérer une valeur canvas
