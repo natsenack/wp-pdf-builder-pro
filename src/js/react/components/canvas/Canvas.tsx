@@ -1101,7 +1101,7 @@ const drawCompanyInfo = (
     ctx.fillStyle = headerTxtColor;
     ctx.font = `${headerFontStyle} ${headerFontWeight} ${headerFontSize}px ${headerFontFamily}`;
     ctx.fillText(companyData.name, x, y);
-    y += Math.round(fontSize * 1.5);
+    y += Math.round(fontSize * 0.2);
     ctx.fillStyle = txtColor;
   }
 
@@ -1111,43 +1111,43 @@ const drawCompanyInfo = (
   // Afficher l'adresse si demandée et qu'elle n'est pas "Non indiqué"
   if (showAddress && companyData.address && companyData.address !== 'Non indiqué') {
     ctx.fillText(companyData.address, x, y);
-    y += Math.round(fontSize * 1.2);
+    y += Math.round(fontSize * 0.2);
     if (companyData.city && companyData.city !== 'Non indiqué') {
       ctx.fillText(companyData.city, x, y);
-      y += Math.round(fontSize * 1.5);
+      y += Math.round(fontSize * 0.2);
     } else {
-      y += Math.round(fontSize * 1.5);
+      y += Math.round(fontSize * 0.2);
     }
   }
 
   // Afficher le SIRET si demandé et qu'il n'est pas "Non indiqué"
   if (showSiret && companyData.siret && companyData.siret !== 'Non indiqué') {
     ctx.fillText(companyData.siret, x, y);
-    y += Math.round(fontSize * 1.2);
+    y += Math.round(fontSize * 0.2);
   }
 
   // Afficher la TVA si demandée et qu'elle n'est pas "Non indiqué"
   if (showVat && companyData.tva && companyData.tva !== 'Non indiqué') {
     ctx.fillText(companyData.tva, x, y);
-    y += Math.round(fontSize * 1.2);
+    y += Math.round(fontSize * 0.2);
   }
 
   // Afficher le RCS si demandé et qu'il n'est pas "Non indiqué"
   if (showRcs && companyData.rcs && companyData.rcs !== 'Non indiqué') {
     ctx.fillText(companyData.rcs, x, y);
-    y += Math.round(fontSize * 1.2);
+    y += Math.round(fontSize * 0.2);
   }
 
   // Afficher le Capital social si demandé et qu'il n'est pas "Non indiqué"
   if (showCapital && companyData.capital && companyData.capital !== 'Non indiqué') {
     ctx.fillText(companyData.capital, x, y);
-    y += Math.round(fontSize * 1.2);
+    y += Math.round(fontSize * 0.2);
   }
 
   // Afficher l'email si demandé et qu'il n'est pas "Non indiqué"
   if (showEmail && companyData.email && companyData.email !== 'Non indiqué') {
     ctx.fillText(companyData.email, x, y);
-    y += Math.round(fontSize * 1.2);
+    y += Math.round(fontSize * 0.2);
   }
 
   // Afficher le téléphone si demandé et qu'il n'est pas "Non indiqué"
