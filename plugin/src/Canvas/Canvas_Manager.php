@@ -71,12 +71,12 @@ class Canvas_Manager
         $is_premium = class_exists('\PDF_Builder\Admin\PDF_Builder_Admin') && \PDF_Builder\Admin\PDF_Builder_Admin::is_premium_user();
 
         $this->settings = [
-            'default_canvas_format' => pdf_builder_get_option('pdf_builder_canvas_format', $defaults['default_canvas_format'] ?? 'A4'),
-            'default_canvas_orientation' => pdf_builder_get_option('pdf_builder_canvas_orientation', $defaults['default_orientation'] ?? 'portrait'),
-            'default_canvas_unit' => pdf_builder_get_option('pdf_builder_canvas_unit', $defaults['default_canvas_unit'] ?? 'px'),
-            'default_canvas_dpi' => intval(pdf_builder_get_option('pdf_builder_canvas_dpi', $defaults['default_canvas_dpi'] ?? 96)),
-            'default_canvas_width' => intval(pdf_builder_get_option('pdf_builder_canvas_width', $defaults['default_canvas_width'] ?? 794)),
-            'default_canvas_height' => intval(pdf_builder_get_option('pdf_builder_canvas_height', $defaults['default_canvas_height'] ?? 1123)),
+            'default_canvas_format' => $settings['pdf_builder_canvas_format'] ?? $defaults['default_canvas_format'],
+            'default_canvas_orientation' => $settings['pdf_builder_canvas_orientation'] ?? $defaults['default_orientation'],
+            'default_canvas_unit' => $settings['pdf_builder_canvas_unit'] ?? $defaults['default_canvas_unit'],
+            'default_canvas_dpi' => intval($settings['pdf_builder_canvas_dpi'] ?? $defaults['default_canvas_dpi']),
+            'default_canvas_width' => intval($settings['pdf_builder_canvas_width'] ?? $defaults['default_canvas_width']),
+            'default_canvas_height' => intval($settings['pdf_builder_canvas_height'] ?? $defaults['default_canvas_height']),
             'canvas_background_color' => $settings['pdf_builder_canvas_bg_color'] ?? $defaults['canvas_background_color'],
             'canvas_show_transparency' => ($settings['pdf_builder_canvas_show_transparency'] ?? ($defaults['canvas_show_transparency'] ? '1' : '0')) == '1',
             'container_background_color' => $settings['pdf_builder_canvas_container_bg_color'] ?? $defaults['container_background_color'],
