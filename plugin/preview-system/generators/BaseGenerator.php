@@ -369,12 +369,14 @@ abstract class BaseGenerator
         
         // Récupérer les propriétés d'affichage
         $properties = $element['properties'] ?? [];
-        $showHeaders = $properties['showHeaders'] ?? true;
+        $showHeaders = $element['showHeaders'] ?? $properties['showHeaders'] ?? true;
         $showFullName = $properties['showFullName'] ?? true;
         $showAddress = $properties['showAddress'] ?? true;
         $showEmail = $properties['showEmail'] ?? true;
         $showPhone = $properties['showPhone'] ?? true;
         $layout = $properties['layout'] ?? 'vertical';
+        
+        error_log('[PDF] Customer info - showHeaders value: ' . var_export($showHeaders, true) . ' (type: ' . gettype($showHeaders) . ')');
         
         // Récupérer les données depuis le data provider pour l'aperçu
         $customerName = $this->data_provider->getVariableValue('customer_full_name');
