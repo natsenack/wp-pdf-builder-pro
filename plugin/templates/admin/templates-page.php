@@ -45,9 +45,9 @@ if ($templates_count === 0 && !$is_premium) {
 
 // Fonction helper pour parser les paramètres canvas
 function parse_canvas_setting($setting_key, $default_value, $type = 'string') {
-    $settings = pdf_builder_get_option('pdf_builder_settings', array());
-    $setting_value = isset($settings[$setting_key]) ? $settings[$setting_key] : $default_value;
-    
+    // Lire directement depuis l'option séparée (cohérent avec Canvas_Manager.php)
+    $setting_value = get_option($setting_key, $default_value);
+
     if (is_string($setting_value) && strpos($setting_value, ',') !== false) {
         $parsed = explode(',', $setting_value);
     } elseif (is_array($setting_value)) {
@@ -56,14 +56,14 @@ function parse_canvas_setting($setting_key, $default_value, $type = 'string') {
         // Valeur unique, la convertir en tableau
         $parsed = [$setting_value];
     }
-    
+
     // Appliquer le type
     if ($type === 'int') {
         $parsed = array_map('intval', $parsed);
     } elseif ($type === 'string') {
         $parsed = array_map('strval', $parsed);
     }
-    
+
     return $parsed;
 }
 
