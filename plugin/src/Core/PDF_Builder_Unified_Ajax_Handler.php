@@ -305,7 +305,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] GRID_TOGGLE_SAVE - {$setting_key}: {$value}"); }
                         
                         // Validation premium: forcer à '0' si l'utilisateur n'a pas accès à la fonctionnalité
-                        if (!\PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation')) {
+                        if (!\PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('grid_navigation')) {
                             $value = '0';
                             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] GRID_TOGGLE_FORCED_OFF - {$setting_key}: utilisateur gratuit, forcé à 0"); }
                         }

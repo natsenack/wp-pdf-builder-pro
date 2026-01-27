@@ -45,7 +45,7 @@ $canvas_defaults = [
 ];
 
 // Ajuster les valeurs par défaut pour les utilisateurs gratuits (features premium)
-$can_use_grid_navigation = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation');
+$can_use_grid_navigation = \PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('grid_navigation');
 if (!$can_use_grid_navigation) {
     $canvas_defaults['grid_enabled'] = '0';
     $canvas_defaults['guides_enabled'] = '0';
@@ -75,7 +75,7 @@ function get_canvas_modal_value($key, $default = '') {
     // Validation premium: forcer à '0' si l'utilisateur n'a pas accès aux fonctionnalités de grille
     $premium_grid_keys = ['canvas_grid_enabled', 'canvas_guides_enabled', 'canvas_snap_to_grid'];
     if (in_array($key, $premium_grid_keys)) {
-        if (!\PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation')) {
+        if (!\PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('grid_navigation')) {
             $value = '0';
         }
     }
@@ -129,7 +129,7 @@ function get_canvas_modal_value($key, $default = '') {
                         $current_dpis = array_map('strval', $current_dpis); // S'assurer que ce sont des chaînes
 
                         $is_premium = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium();
-                        $can_use_high_dpi = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('high_dpi');
+                        $can_use_high_dpi = \PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('high_dpi');
 
                         $dpi_options = [
                             ['value' => '72', 'label' => '72 DPI - Écran', 'desc' => 'Faible qualité', 'premium' => false],
@@ -182,7 +182,7 @@ function get_canvas_modal_value($key, $default = '') {
                         $current_formats = array_map('strval', $current_formats); // S'assurer que ce sont des chaînes
 
                         $is_premium = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium();
-                        $can_use_extended_formats = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('extended_formats');
+                        $can_use_extended_formats = \PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('extended_formats');
 
                         $format_options = [
                             ['value' => 'A4', 'label' => 'A4 (210×297mm)', 'desc' => 'Format standard européen', 'icon' => '📄', 'premium' => false],
@@ -259,7 +259,7 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
                 <div class="setting-group">
                     <label style="display: flex; align-items: center; justify-content: space-between;"><span style="font-size: 16px;">🔳</span> Bordure du canvas <span class="premium-badge">⭐ PREMIUM</span></label>
-                    <?php $can_use_custom_colors = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('custom_colors'); ?>
+                    <?php $can_use_custom_colors = \PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('custom_colors'); ?>
                     <?php if ($can_use_custom_colors): ?>
                     <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
                         <div style="flex: 1;">
@@ -346,7 +346,7 @@ function get_canvas_modal_value($key, $default = '') {
         </div>
         <div class="canvas-modal-body">
             <div class="modal-settings-grid">
-                <?php $can_use_grid_navigation = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('grid_navigation'); ?>
+                <?php $can_use_grid_navigation = \PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('grid_navigation'); ?>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">📐</span> Grille activée<?php if (!$can_use_grid_navigation): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?> <span class="info-tooltip" title="Affiche une grille d'aide à l'alignement">ℹ️</span></label>
                     <div class="toggle-switch<?php echo !$can_use_grid_navigation ? ' disabled' : ''; ?>"<?php echo !$can_use_grid_navigation ? ' style="opacity: 0.6; pointer-events: none;"' : ''; ?>>
@@ -454,7 +454,7 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">🎯</span> Mode de sélection <span class="info-tooltip" title="Comportement de la sélection (simple ou rectangle)">ℹ️</span></label>
-                    <?php $can_use_advanced_selection = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('advanced_selection'); ?>
+                    <?php $can_use_advanced_selection = \PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('advanced_selection'); ?>
                     <select id="modal_canvas_selection_mode" name="pdf_builder_canvas_selection_mode">
                         <option value="single" <?php selected(get_canvas_modal_value('canvas_selection_mode', $canvas_defaults['selection_mode']), 'single'); ?>>Simple</option>
                         <option value="multiple" <?php selected(get_canvas_modal_value('canvas_selection_mode', $canvas_defaults['selection_mode']), 'multiple'); ?> <?php echo !$can_use_advanced_selection ? 'disabled' : ''; ?>><?php echo !$can_use_advanced_selection ? 'Multiple ⭐ PREMIUM' : 'Multiple'; ?></option>
@@ -468,7 +468,7 @@ function get_canvas_modal_value($key, $default = '') {
                     <?php endif; ?>
                 </div>
                 <div class="setting-group">
-                    <?php $can_use_keyboard_shortcuts = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('keyboard_shortcuts'); ?>
+                    <?php $can_use_keyboard_shortcuts = \PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('keyboard_shortcuts'); ?>
                     <label for="modal_canvas_keyboard_shortcuts">Raccourcis clavier<?php if (!$can_use_keyboard_shortcuts): ?> <span class="premium-badge">⭐ PREMIUM</span><?php endif; ?></label>
                     <?php if ($can_use_keyboard_shortcuts): ?>
                     <div class="toggle-switch">

@@ -72,7 +72,7 @@ $is_premium = $license_manager->isPremium();
                         <tr>
                             <th scope="row"><label for="export_format">Format export</label></th>
                             <td>
-                                <?php $can_use_multi_format_export = \PDF_Builder\Managers\PdfBuilderFeatureManager::canUseFeature('multi_format_export'); ?>
+                                <?php $can_use_multi_format_export = \PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('multi_format_export'); ?>
                                 <select id="export_format" name="pdf_builder_settings[pdf_builder_canvas_export_format]">
                                     <option value="pdf" <?php selected($settings['pdf_builder_canvas_export_format'] ?? 'pdf', 'pdf'); ?>>PDF</option>
                                     <option value="png" <?php selected($settings['pdf_builder_canvas_export_format'] ?? 'pdf', 'png'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'PNG ⭐ PREMIUM' : 'PNG'; ?></option>
