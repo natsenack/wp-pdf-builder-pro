@@ -72,7 +72,7 @@ class Canvas_Manager
 
         $this->settings = [
             'default_canvas_format' => $settings['pdf_builder_canvas_format'] ?? $defaults['default_canvas_format'],
-            'default_canvas_orientation' => $settings['pdf_builder_canvas_orientation'] ?? $defaults['default_orientation'],
+            'default_canvas_orientation' => $settings['pdf_builder_canvas_default_orientation'] ?? $defaults['default_orientation'],
             'default_canvas_unit' => $settings['pdf_builder_canvas_unit'] ?? $defaults['default_canvas_unit'],
             'default_canvas_dpi' => intval($settings['pdf_builder_canvas_dpi'] ?? $defaults['default_canvas_dpi']),
             'default_canvas_width' => intval($settings['pdf_builder_canvas_width'] ?? $defaults['default_canvas_width']),
