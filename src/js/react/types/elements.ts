@@ -271,16 +271,9 @@ export interface ShapeElementProperties {
   borderRadius?: number;
 }
 
-export interface TextElementProperties {
+export interface TextElementProperties extends BaseTextProperties {
   text?: string;
-  fontSize?: number;
-  color?: string;
-  align?: 'left' | 'center' | 'right';
-  fontFamily?: string;
-  fontWeight?: string;
-  fontStyle?: string;
-  autoWrap?: boolean;
-  backgroundColor?: string;
+  textAlign?: 'left' | 'center' | 'right'; // Override to allow undefined
 }
 
 export interface LineElementProperties {
@@ -330,14 +323,21 @@ export interface ProductTableElementProperties {
   verticalAlign?: 'top' | 'middle' | 'bottom';
 }
 
-export interface DynamicTextElementProperties {
-  textTemplate?: string;
-  autoWrap?: boolean;
-  theme?: string;
-  textDecoration?: string;
+export interface BaseTextProperties {
+  fontSize?: number;
+  color?: string;
+  fontFamily?: string;
   fontWeight?: string;
   fontStyle?: string;
+  textAlign?: 'left' | 'center' | 'right';
   backgroundColor?: string;
+  autoWrap?: boolean;
+}
+
+export interface DynamicTextElementProperties extends BaseTextProperties {
+  textTemplate?: string;
+  theme?: string;
+  textDecoration?: string;
   showBackground?: boolean;
 }
 
@@ -514,27 +514,19 @@ export interface OrderNumberElementProperties {
   dateFormat?: string;
 }
 
-export interface MentionsElementProperties {
+export interface MentionsElementProperties extends BaseTextProperties {
   mentionType?: string;
   selectedMentions?: string[];
   medleySeparator?: string;
   separatorStyle?: string;
   theme?: string;
-  fontSize?: number | string;
-  fontFamily?: string;
-  fontWeight?: string;
-  fontStyle?: string;
-  textAlign?: 'left' | 'center' | 'right';
-  textColor?: string;
-  backgroundColor?: string;
-  showBackground?: boolean;
   content?: string;
-  autoWrap?: boolean;
   lineHeight?: number;
   margin?: number;
   padding?: number;
   text?: string;
   showSeparator?: boolean;
+  showBackground?: boolean; // Override
 }
 
 // Interface spécifique pour les éléments CompanyInfo
