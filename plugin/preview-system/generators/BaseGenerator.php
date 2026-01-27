@@ -842,8 +842,24 @@ abstract class BaseGenerator
         if (($value = $getCssProperty('wordSpacing', $element)) !== null) {
             $style .= "word-spacing: {$value}px; ";
         }
-        if (($value = $getCssProperty('verticalAlign', $element)) !== null) {
-            $style .= "vertical-align: {$value}; ";
+        // Handle vertical alignment for absolutely positioned elements
+        if (($verticalAlign = $getCssProperty('verticalAlign', $element)) !== null) {
+            $height = $getCssProperty('height', $element) ?: 0;
+            switch ($verticalAlign) {
+                case 'top':
+                    // No transformation needed, element stays at its top position
+                    break;
+                case 'middle':
+                    if ($height > 0) {
+                        $transforms[] = "translateY(-50%)";
+                    }
+                    break;
+                case 'bottom':
+                    if ($height > 0) {
+                        $transforms[] = "translateY(-100%)";
+                    }
+                    break;
+            }
         }
         if (($value = $getCssProperty('display', $element)) !== null) {
             $style .= "display: {$value}; ";

@@ -89,6 +89,8 @@ export interface OrderNumberElement extends BaseElement {
   dateFontStyle?: string;
   // Propriétés de couleur
   headerTextColor?: string;
+  textColor?: string;
+  color?: string; // Alias pour textColor pour compatibilité
   // Propriétés de style
   theme?: string;
   // Propriétés spécifiques à l'ordre
@@ -104,7 +106,8 @@ export interface WoocommerceOrderDateElement extends BaseElement {
   showTime?: boolean;
   fontFamily?: string;
   fontSize?: number;
-  color?: string;
+  textColor?: string;
+  color?: string; // Alias pour textColor pour compatibilité
   fontWeight?: string;
   fontStyle?: string;
   textAlign?: string;
@@ -120,7 +123,8 @@ export interface WoocommerceInvoiceNumberElement extends BaseElement {
   suffix?: string;
   fontFamily?: string;
   fontSize?: number;
-  color?: string;
+  textColor?: string;
+  color?: string; // Alias pour textColor pour compatibilité
   fontWeight?: string;
   fontStyle?: string;
   textAlign?: string;
@@ -389,6 +393,7 @@ export interface TextElement extends BaseElement {
   backgroundColor?: string;
   borderColor?: string;
   borderWidth?: number;
+  verticalAlign?: 'top' | 'middle' | 'bottom';
 }
 
 export interface LineElement extends BaseElement {
@@ -401,6 +406,7 @@ export interface LineElement extends BaseElement {
 export interface TextElementProperties extends BaseTextProperties {
   text?: string;
   textAlign?: 'left' | 'center' | 'right'; // Override to allow undefined
+  verticalAlign?: 'top' | 'middle' | 'bottom';
 }
 
 export interface LineElementProperties extends BaseElementProperties {
@@ -458,6 +464,7 @@ export interface BaseTextProperties extends BaseElementProperties {
   bold?: boolean;
   italic?: boolean;
   underline?: boolean;
+  verticalAlign?: 'top' | 'middle' | 'bottom';
 }
 
 export interface DynamicTextElementProperties extends BaseTextProperties {
@@ -468,6 +475,7 @@ export interface DynamicTextElementProperties extends BaseTextProperties {
 
 export interface DocumentTypeElementProperties extends BaseTextProperties {
   documentType?: string;
+  verticalAlign?: 'top' | 'middle' | 'bottom';
 }
 
 export interface CustomerInfoElementProperties extends BaseTextProperties {
@@ -498,6 +506,7 @@ export interface CustomerInfoElementProperties extends BaseTextProperties {
   showFullName?: boolean;
   // Propriétés de style
   headerTextColor?: string;
+  verticalAlign?: 'top' | 'middle' | 'bottom';
 }
 
 export interface CompanyInfoElementProperties extends BaseTextProperties {
@@ -588,6 +597,8 @@ export interface OrderNumberElementProperties extends BaseTextProperties {
   dateFontStyle?: string;
   // Propriétés de couleur
   headerTextColor?: string;
+  textColor?: string;
+  color?: string; // Alias pour textColor pour compatibilité
   // Propriétés de style
   theme?: string;
   // Propriétés spécifiques à l'ordre
@@ -705,12 +716,14 @@ export interface CustomerInfoElement extends BaseElement {
   showFullName?: boolean;
   // Propriétés de style
   headerTextColor?: string;
+  verticalAlign?: 'top' | 'middle' | 'bottom';
 }
 
 // Interface spécifique pour les éléments DocumentType
 export interface DocumentTypeElement extends BaseElement {
   type: 'document-type';
   documentType?: string;
+  verticalAlign?: 'top' | 'middle' | 'bottom';
 }
 
 

@@ -3,7 +3,6 @@ import { NumericPropertyInput } from '../ui/NumericPropertyInput';
 import { ColorPropertyInput } from '../ui/ColorPropertyInput';
 
 interface ExtendedElement extends Element {
-  verticalAlign?: string;
   textColor?: string;
   backgroundColor?: string;
   fontWeight?: string;
