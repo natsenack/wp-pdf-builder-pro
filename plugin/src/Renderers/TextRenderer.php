@@ -6,7 +6,7 @@
  *
  * Gère le rendu des éléments texte avec variables dynamiques :
  * - dynamic-text : Texte avec variables {{variable}}
- * - order-number : Numéros de commande formatés
+ * - order_number : Numéros de commande formatés
  */
 
 namespace PDF_Builder\Renderers;
@@ -24,7 +24,7 @@ class TextRenderer
     /**
      * Types d'éléments supportés par ce renderer
      */
-    const SUPPORTED_TYPES = ['dynamic-text', 'order-number'];
+    const SUPPORTED_TYPES = ['dynamic-text', 'order_number'];
 /**
      * Styles CSS par défaut pour le texte
      */
@@ -77,7 +77,7 @@ class TextRenderer
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        $result = $this->renderDynamicText($content, $properties, $context);
 
                     break;
-                case 'order-number':
+                case 'order_number':
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        $result = $this->renderOrderNumber($properties, $context);
 
                     break;
@@ -125,7 +125,7 @@ class TextRenderer
     }
 
     /**
-     * Rend un élément order-number
+     * Rend un élément order_number
      *
      * @param array $properties Propriétés de formatage
      * @param array $context Données du contexte

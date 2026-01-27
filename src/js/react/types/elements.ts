@@ -57,7 +57,7 @@ export interface BaseElementProperties {
 }
 
 export interface OrderNumberElement extends BaseElement {
-  type: 'order-number';
+  type: 'order_number';
   // Propriétés d'affichage
   showHeaders?: boolean;
   showBorders?: boolean;
@@ -219,7 +219,7 @@ export interface MentionsElement extends BaseElement {
 }
 
 export interface CustomerInfoElement extends BaseElement {
-  type: 'customer-info';
+  type: 'customer_info';
   showName?: boolean;
   showEmail?: boolean;
   showPhone?: boolean;
@@ -260,7 +260,7 @@ export interface CustomerInfoElement extends BaseElement {
 }
 
 export interface CompanyInfoElement extends BaseElement {
-  type: 'company-info';
+  type: 'company_info';
   template?: string;
   fields?: string[];
   layout?: 'vertical' | 'horizontal';
@@ -630,7 +630,7 @@ export interface MentionsElementProperties extends BaseTextProperties {
 
 // Interface spécifique pour les éléments CompanyInfo
 export interface CompanyInfoElement extends BaseElement {
-  type: 'company-info';
+  type: 'company_info';
   // Propriétés d'affichage
   showCompanyName?: boolean;
   showAddress?: boolean;
@@ -691,7 +691,7 @@ export interface CompanyLogoElement extends BaseElement {
 
 // Interface spécifique pour les éléments CustomerInfo
 export interface CustomerInfoElement extends BaseElement {
-  type: 'customer-info';
+  type: 'customer_info';
   // Propriétés d'affichage
   showName?: boolean;
   showEmail?: boolean;

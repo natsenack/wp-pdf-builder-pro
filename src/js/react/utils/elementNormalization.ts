@@ -11,7 +11,7 @@ import type { Element } from '../types/elements';
  * Utilisée au chargement APRÈS le parsing JSON
  * 
  * Propriétés à préserver ABSOLUMENT:
- * - contentAlign, labelPosition (order-number)
+ * - contentAlign, labelPosition (order_number)
  * - Toute propriété custom ajoutée via l'éditeur
  */
 export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
@@ -72,8 +72,8 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
     if (typeof normalized.width !== 'number') normalized.width = 100;
     if (typeof normalized.height !== 'number') normalized.height = 100;
 
-    // CRITICAL: Log les propriétés order-number avant sauvegarde
-    if (normalized.type === 'order-number') {
+    // CRITICAL: Log les propriétés order_number avant sauvegarde
+    if (normalized.type === 'order_number') {
     }
 
     // Filtrer les propriétés non sérialisables (Date, Function, etc)
@@ -136,7 +136,7 @@ export function validateElementIntegrity(elements: Element[], elementType: strin
       allValid = false;
     }
 
-    if (elementType === 'order-number') {
+    if (elementType === 'order_number') {
       const hasContentAlign = 'contentAlign' in el;
       const hasLabelPosition = 'labelPosition' in el;
 

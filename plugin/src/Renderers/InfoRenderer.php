@@ -5,8 +5,8 @@
  * Phase 3.3.5 - Renderer spécialisé pour les informations structurées
  *
  * Gère le rendu des éléments d'information :
- * - customer-info : Informations client (nom, adresse, contact)
- * - company-info : Informations société avec templates prédéfinis
+ * - customer_info : Informations client (nom, adresse, contact)
+ * - company_info : Informations société avec templates prédéfinis
  * - mentions : Mentions légales et conditions
  */
 
@@ -24,7 +24,7 @@ class InfoRenderer
     /**
      * Types d'éléments supportés par ce renderer
      */
-    const SUPPORTED_TYPES = ['customer-info', 'company-info', 'mentions'];
+    const SUPPORTED_TYPES = ['customer_info', 'company_info', 'mentions'];
 /**
      * Styles CSS par défaut pour les informations
      */
@@ -36,7 +36,7 @@ class InfoRenderer
         'margin-bottom' => '10px'
     ];
 /**
-     * Templates prédéfinis pour company-info
+     * Templates prédéfinis pour company_info
      */
     const COMPANY_TEMPLATES = [
         'default' => [
@@ -99,13 +99,13 @@ class InfoRenderer
             ];
         }
 
-        $type = $elementData['type'] ?? 'customer-info';
+        $type = $elementData['type'] ?? 'customer_info';
         $properties = $elementData['properties'] ?? [];
 // Rendu selon le type d'élément
         switch ($type) {
-            case 'customer-info':
+            case 'customer_info':
                 return $this->renderCustomerInfo($properties, $context);
-            case 'company-info':
+            case 'company_info':
                 return $this->renderCompanyInfo($properties, $context);
             case 'mentions':
                 return $this->renderMentions($properties, $context);

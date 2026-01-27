@@ -297,9 +297,9 @@ export function useTemplate() {
 
         // 🔍 Tracer les éléments reçus du serveur
         if (templateData.elements) {
-          // 🔍 Vérifier spécifiquement les éléments order-number
+          // 🔍 Vérifier spécifiquement les éléments order_number
           const orderNumberElements = templateData.elements.filter(
-            (el: any) => el.type === "order-number"
+            (el: any) => el.type === "order_number"
           );
         }
 
@@ -412,9 +412,9 @@ export function useTemplate() {
           lastSavedDate = new Date();
         }
 
-        // 🔍 Log final des éléments order-number avant envoi au contexte
+        // 🔍 Log final des éléments order_number avant envoi au contexte
         const finalOrderNumberElements = enrichedElements.filter(
-          (el: Record<string, unknown>) => el.type === "order-number"
+          (el: Record<string, unknown>) => el.type === "order_number"
         );
 
         dispatch({

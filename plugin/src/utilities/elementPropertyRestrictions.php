@@ -93,10 +93,10 @@ const ELEMENT_PROPERTY_RESTRICTIONS = [
 const ELEMENT_TYPE_MAPPING = [
     // Spéciaux
     'product_table' => 'special',
-    'customer-info' => 'special',
+    'customer_info' => 'special',
     'company_logo' => 'special',
-    'company-info' => 'special',
-    'order-number' => 'special',
+    'company_info' => 'special',
+    'order_number' => 'special',
     'document_type' => 'special',
     'progress-bar' => 'special',
 
