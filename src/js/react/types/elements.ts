@@ -408,6 +408,16 @@ export interface CompanyInfoElementProperties extends BaseTextProperties {
   showRcs?: boolean;
   showCapital?: boolean;
   headerTextColor?: string;
+  // Propriétés de données d'entreprise
+  companyName?: string;
+  companyAddress?: string;
+  companyCity?: string;
+  companySiret?: string;
+  companyTva?: string;
+  companyRcs?: string;
+  companyCapital?: string;
+  companyEmail?: string;
+  companyPhone?: string;
 }
 
 export interface ImageElementProperties extends BaseElementProperties {
