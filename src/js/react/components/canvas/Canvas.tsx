@@ -392,9 +392,9 @@ const drawProductTable = (
 
   if (element.width < minWidth || element.height < minHeight) {
     // Element too small, draw placeholder
-    ctx.fillStyle = "#f0f0f0";
+    ctx.fillStyle = normalizeColor("#f0f0f0");
     ctx.fillRect(0, 0, element.width, element.height);
-    ctx.fillStyle = "#999999";
+    ctx.fillStyle = normalizeColor("#999999");
     ctx.font = "12px Arial";
     ctx.textAlign = "center";
     ctx.fillText("Trop petit", element.width / 2, element.height / 2);
@@ -690,7 +690,7 @@ const drawProductTable = (
     });
 
     // Ligne de séparation sous les en-têtes
-    ctx.strokeStyle = "#e5e7eb";
+    ctx.strokeStyle = normalizeColor("#e5e7eb");
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(4, 34 + offsetY); // Ajusté pour la nouvelle hauteur
@@ -785,7 +785,7 @@ const drawProductTable = (
   // Section des totaux
 
   // Ligne de séparation avant les totaux
-  ctx.strokeStyle = "#d1d5db";
+  ctx.strokeStyle = normalizeColor("#d1d5db");
   ctx.lineWidth = 1;
   ctx.beginPath();
   ctx.moveTo(element.width - 200, currentY);
@@ -815,7 +815,7 @@ const drawProductTable = (
     itemDiscounts + (showGlobalDiscount ? globalDiscountAmount : 0);
   if (totalDiscounts > 0) {
     ctx.textAlign = "left";
-    ctx.fillStyle = "#059669"; // Garder le vert pour la remise (couleur spéciale)
+    ctx.fillStyle = normalizeColor("#059669"); // Garder le vert pour la remise (couleur spéciale)
     ctx.fillText("Coupon:", element.width - 200, currentY);
     ctx.textAlign = "right";
     ctx.fillText(
@@ -1280,7 +1280,7 @@ const drawOrderNumber = (
     ctx.fillRect(0, 0, element.width, element.height);
   }
 
-  ctx.fillStyle = "#000000";
+  ctx.fillStyle = normalizeColor("#000000");
 
   // Numéro de commande et date fictifs ou réels selon le mode
   let orderNumber: string;
@@ -1439,14 +1439,14 @@ const drawWoocommerceOrderDate = (
   element: Element,
   state: BuilderState
 ) => {
-  const props = element.properties || {};
+  const props = element as any;
   const fontConfig = createFontConfig(props, 12);
   const colorConfig = createColorConfig(props);
   const padding = getPadding(props);
 
   // Appliquer le fond
-  if (props.backgroundColor && props.backgroundColor !== "transparent") {
-    ctx.fillStyle = props.backgroundColor;
+  if (props.showBackground !== false) {
+    ctx.fillStyle = colorConfig.background;
     ctx.fillRect(0, 0, element.width, element.height);
   }
 
@@ -1499,16 +1499,17 @@ const formatOrderDate = (dateString: string, format: string = "d/m/Y", showTime:
 
 const drawWoocommerceInvoiceNumber = (
   ctx: CanvasRenderingContext2D,
-  element: Element
+  element: Element,
+  state: BuilderState
 ) => {
-  const props = element.properties || {};
+  const props = element as any;
   const fontConfig = createFontConfig(props, 12);
   const colorConfig = createColorConfig(props);
   const padding = getPadding(props);
 
   // Appliquer le fond
-  if (props.backgroundColor && props.backgroundColor !== "transparent") {
-    ctx.fillStyle = props.backgroundColor;
+  if (props.showBackground !== false) {
+    ctx.fillStyle = colorConfig.background;
     ctx.fillRect(0, 0, element.width, element.height);
   }
 
@@ -1957,14 +1958,14 @@ export const Canvas = function Canvas({
       const y = (element.height - logoHeight) / 2;
 
       // Rectangle du logo
-      ctx.fillStyle = "#f0f0f0";
-      ctx.strokeStyle = "#ccc";
+      ctx.fillStyle = normalizeColor("#f0f0f0");
+      ctx.strokeStyle = normalizeColor("#ccc");
       ctx.lineWidth = 1;
       ctx.fillRect(x, y, logoWidth, logoHeight);
       ctx.strokeRect(x, y, logoWidth, logoHeight);
 
       // Texte du placeholder
-      ctx.fillStyle = "#666";
+      ctx.fillStyle = normalizeColor("#666");
       ctx.font = "12px Arial";
       ctx.textAlign = "center";
       ctx.fillText(text, x + logoWidth / 2, y + logoHeight / 2 + 4);
@@ -2241,7 +2242,7 @@ export const Canvas = function Canvas({
         ctx.fillRect(0, 0, element.width, element.height);
       }
 
-      ctx.fillStyle = textColor;
+      ctx.fillStyle = normalizeColor(textColor);
       ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
       ctx.textAlign = "left";
 
@@ -2579,7 +2580,7 @@ export const Canvas = function Canvas({
           break;
         case "woocommerce_invoice_number":
           debugLog(`[Canvas] Rendering woocommerce invoice number element: ${element.id}`);
-          drawWoocommerceInvoiceNumber(ctx, element);
+          drawWoocommerceInvoiceNumber(ctx, element, currentState);
           break;
         case "document_type":
           debugLog(`[Canvas] Rendering document type element: ${element.id}`);
@@ -2602,7 +2603,7 @@ export const Canvas = function Canvas({
             `[Canvas] Unknown element type: ${element.type} for element ${element.id}`
           );
           // Élément générique - dessiner un rectangle simple
-          ctx.strokeStyle = "#000000";
+          ctx.strokeStyle = normalizeColor("#000000");
           ctx.lineWidth = 1;
           ctx.strokeRect(0, 0, element.width, element.height);
       }
@@ -2645,7 +2646,7 @@ export const Canvas = function Canvas({
       });
 
       // Rectangle de sélection
-      ctx.strokeStyle = "#007acc";
+      ctx.strokeStyle = normalizeColor("#007acc");
       ctx.lineWidth = 1;
       ctx.setLineDash([5, 5]);
       ctx.strokeRect(minX - 2, minY - 2, maxX - minX + 4, maxY - minY + 4);
@@ -2653,7 +2654,7 @@ export const Canvas = function Canvas({
       // Poignées de redimensionnement (conditionnées par les settings)
       if (canvasSettings?.selectionShowHandles) {
         const handleSize = 6;
-        ctx.fillStyle = "#007acc";
+        ctx.fillStyle = normalizeColor("#007acc");
         ctx.setLineDash([]);
 
         // Coins
@@ -2781,7 +2782,7 @@ export const Canvas = function Canvas({
 
           // Afficher les dimensions en pixels sur le coin supérieur droit
           ctx.font = "11px Arial";
-          ctx.fillStyle = "#007acc";
+          ctx.fillStyle = normalizeColor("#007acc");
           ctx.textAlign = "right";
           ctx.textBaseline = "top";
 
@@ -2801,7 +2802,7 @@ export const Canvas = function Canvas({
           );
 
           // Texte
-          ctx.fillStyle = "#007acc";
+          ctx.fillStyle = normalizeColor("#007acc");
           ctx.font = "bold 11px Arial";
           ctx.fillText(dimensionText, x + width - padding, y - 16);
         }
@@ -3275,7 +3276,7 @@ export const Canvas = function Canvas({
       canvasHeight: number
     ) => {
       ctx.save();
-      ctx.strokeStyle = "#007acc";
+      ctx.strokeStyle = normalizeColor("#007acc");
       ctx.lineWidth = 1;
       ctx.setLineDash([5, 5]);
 
@@ -3433,7 +3434,7 @@ export const Canvas = function Canvas({
       ) {
         // Dessiner le rectangle de sélection
         ctx.save();
-        ctx.strokeStyle = "#0066cc";
+        ctx.strokeStyle = normalizeColor("#0066cc");
         ctx.lineWidth = 1;
         ctx.setLineDash([5, 5]);
         ctx.strokeRect(
@@ -3458,7 +3459,7 @@ export const Canvas = function Canvas({
       ) {
         // Dessiner le lasso
         ctx.save();
-        ctx.strokeStyle = "#0066cc";
+        ctx.strokeStyle = normalizeColor("#0066cc");
         ctx.lineWidth = 1;
         ctx.setLineDash([5, 5]);
         ctx.beginPath();
