@@ -381,7 +381,7 @@ export interface CustomerInfoElementProperties extends BaseTextProperties {
 }
 
 export interface CompanyInfoElementProperties extends BaseTextProperties {
-  showName?: boolean;
+  showCompanyName?: boolean;
   showAddress?: boolean;
   showPhone?: boolean;
   showEmail?: boolean;

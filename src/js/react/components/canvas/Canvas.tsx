@@ -645,7 +645,7 @@ const drawProductTable = (
   }
 
   // Fond
-  ctx.fillStyle = props.backgroundColor || "#ffffff";
+  ctx.fillStyle = normalizeColor(props.backgroundColor || "#ffffff");
   ctx.fillRect(0, 0, element.width, element.height);
 
   // Bordure extérieure
@@ -665,7 +665,7 @@ const drawProductTable = (
 
   // En-têtes avec style professionnel
   if (showHeaders) {
-    ctx.fillStyle = props.headerBackgroundColor || "#f9fafb";
+    ctx.fillStyle = normalizeColor(props.headerBackgroundColor || "#f9fafb");
     // Utiliser roundedRect si borderRadius > 0, sinon fillRect normal
     if (borderRadius > 0) {
       roundedRect(ctx, 1, 1 + offsetY, element.width - 2, 32, borderRadius);
@@ -674,7 +674,7 @@ const drawProductTable = (
       ctx.fillRect(1, 1 + offsetY, element.width - 2, 32);
     }
 
-    ctx.fillStyle = props.headerTextColor || "#374151";
+    ctx.fillStyle = normalizeColor(props.headerTextColor || "#374151");
     ctx.font = `${fontStyle} ${fontWeight} ${fontSize + 1}px ${fontFamily}`;
     ctx.textBaseline = "top";
 
@@ -712,7 +712,7 @@ const drawProductTable = (
 
     // Fond alterné pour les lignes (sans bordures)
     if (showAlternatingRows && index % 2 === 1) {
-      ctx.fillStyle = props.alternateRowColor || "#f9fafb";
+      ctx.fillStyle = normalizeColor(props.alternateRowColor || "#f9fafb");
       // Utiliser roundedRect si borderRadius > 0
       if (borderRadius > 0) {
         roundedRect(ctx, 1, rowY, element.width - 2, rowHeight, borderRadius);
@@ -908,13 +908,13 @@ const drawCustomerInfo = (
 
   // Fond
   if (props.showBackground !== false) {
-    ctx.fillStyle = props.backgroundColor || "#ffffff";
+    ctx.fillStyle = normalizeColor(props.backgroundColor || "#ffffff");
     ctx.fillRect(0, 0, element.width, element.height);
   }
 
   // Bordures
   if (showBorders) {
-    ctx.strokeStyle = props.borderColor || "#e5e7eb";
+    ctx.strokeStyle = normalizeColor(props.borderColor || "#e5e7eb");
     ctx.lineWidth = 1;
     ctx.strokeRect(0, 0, element.width, element.height);
   }
@@ -1104,7 +1104,7 @@ const drawCompanyLine = (
 const drawCompanyInfo = (
   ctx: CanvasRenderingContext2D,
   element: Element,
-  canvasSettings: any
+  state: BuilderState
 ) => {
   const props = element as CompanyInfoElementProperties;
 
@@ -1276,7 +1276,7 @@ const drawOrderNumber = (
 
   // Appliquer le fond seulement si showBackground est activé
   if (props.showBackground !== false) {
-    ctx.fillStyle = props.backgroundColor || "#e5e7eb";
+    ctx.fillStyle = normalizeColor(props.backgroundColor || "#e5e7eb");
     ctx.fillRect(0, 0, element.width, element.height);
   }
 
@@ -1538,7 +1538,7 @@ const drawDocumentType = (
 
   // Appliquer le fond
   if (props.showBackground !== false) {
-    ctx.fillStyle = props.backgroundColor || "#e5e7eb";
+    ctx.fillStyle = normalizeColor(props.backgroundColor || "#e5e7eb");
     ctx.fillRect(0, 0, element.width, element.height);
   }
 
@@ -2237,7 +2237,7 @@ export const Canvas = function Canvas({
 
       // Appliquer le fond seulement si showBackground est activé
       if (props.showBackground !== false) {
-        ctx.fillStyle = props.backgroundColor || "#e5e7eb";
+        ctx.fillStyle = normalizeColor(props.backgroundColor || "#e5e7eb");
         ctx.fillRect(0, 0, element.width, element.height);
       }
 
@@ -2563,13 +2563,12 @@ export const Canvas = function Canvas({
           break;
         case "company_info":
           debugLog(`[Canvas] Rendering company info element: ${element.id}`);
-          drawCompanyInfo(ctx, element, canvasSettings);
+          drawCompanyInfo(ctx, element, currentState);
           break;
         case "company_logo":
           debugLog(`[Canvas] Rendering company logo element: ${element.id}`);
           drawCompanyLogo(ctx, element);
           break;
-        case "order-number":
         case "order_number":
           debugLog(`[Canvas] Rendering order number element: ${element.id}`);
           drawOrderNumber(ctx, element, currentState);
