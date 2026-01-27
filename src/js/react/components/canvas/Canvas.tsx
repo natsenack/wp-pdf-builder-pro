@@ -1064,15 +1064,15 @@ const drawCompanyInfo = (
 
   // Informations entreprise hybrides : props configurables + valeurs par défaut
   const companyData = {
-    name: props.companyName || "Ma Boutique En Ligne",
-    address: props.companyAddress || "25 avenue des Commerçants",
-    city: props.companyCity || "69000 Lyon",
-    siret: props.companySiret || "SIRET: 123 456 789 00012",
-    tva: props.companyTva || "TVA: FR 12 345 678 901",
-    rcs: props.companyRcs || "RCS: Lyon B 123 456 789",
-    capital: props.companyCapital || "Capital social: 10 000 €",
-    email: props.companyEmail || "contact@maboutique.com",
-    phone: props.companyPhone || "+33 4 12 34 56 78",
+    name: props.companyName || "",
+    address: props.companyAddress || "",
+    city: props.companyCity || "",
+    siret: props.companySiret || "",
+    tva: props.companyTva || "",
+    rcs: props.companyRcs || "",
+    capital: props.companyCapital || "",
+    email: props.companyEmail || "",
+    phone: props.companyPhone || "",
   };
 
   // DEBUG: Log company data from plugin settings
@@ -1096,8 +1096,8 @@ const drawCompanyInfo = (
     console.log('[CANVAS DEBUG] No plugin company data found, using defaults');
   }
 
-  // Afficher le nom de l'entreprise si demandé
-  if (showCompanyName) {
+  // Afficher le nom de l'entreprise si demandé et qu'il n'est pas "Non indiqué"
+  if (showCompanyName && companyData.name && companyData.name !== 'Non indiqué') {
     ctx.fillStyle = headerTxtColor;
     ctx.font = `${headerFontStyle} ${headerFontWeight} ${headerFontSize}px ${headerFontFamily}`;
     ctx.fillText(companyData.name, x, y);
@@ -1108,46 +1108,50 @@ const drawCompanyInfo = (
   // Police normale pour les autres éléments
   ctx.font = `${bodyFontStyle} ${bodyFontWeight} ${bodyFontSize}px ${bodyFontFamily}`;
 
-  // Afficher l'adresse si demandée
-  if (showAddress) {
+  // Afficher l'adresse si demandée et qu'elle n'est pas "Non indiqué"
+  if (showAddress && companyData.address && companyData.address !== 'Non indiqué') {
     ctx.fillText(companyData.address, x, y);
     y += Math.round(fontSize * 1.2);
-    ctx.fillText(companyData.city, x, y);
-    y += Math.round(fontSize * 1.5);
+    if (companyData.city && companyData.city !== 'Non indiqué') {
+      ctx.fillText(companyData.city, x, y);
+      y += Math.round(fontSize * 1.5);
+    } else {
+      y += Math.round(fontSize * 1.5);
+    }
   }
 
-  // Afficher le SIRET si demandé
-  if (showSiret) {
+  // Afficher le SIRET si demandé et qu'il n'est pas "Non indiqué"
+  if (showSiret && companyData.siret && companyData.siret !== 'Non indiqué') {
     ctx.fillText(companyData.siret, x, y);
     y += Math.round(fontSize * 1.2);
   }
 
-  // Afficher la TVA si demandée
-  if (showVat) {
+  // Afficher la TVA si demandée et qu'elle n'est pas "Non indiqué"
+  if (showVat && companyData.tva && companyData.tva !== 'Non indiqué') {
     ctx.fillText(companyData.tva, x, y);
     y += Math.round(fontSize * 1.2);
   }
 
-  // Afficher le RCS si demandé
-  if (showRcs) {
+  // Afficher le RCS si demandé et qu'il n'est pas "Non indiqué"
+  if (showRcs && companyData.rcs && companyData.rcs !== 'Non indiqué') {
     ctx.fillText(companyData.rcs, x, y);
     y += Math.round(fontSize * 1.2);
   }
 
-  // Afficher le Capital social si demandé
-  if (showCapital) {
+  // Afficher le Capital social si demandé et qu'il n'est pas "Non indiqué"
+  if (showCapital && companyData.capital && companyData.capital !== 'Non indiqué') {
     ctx.fillText(companyData.capital, x, y);
     y += Math.round(fontSize * 1.2);
   }
 
-  // Afficher l'email si demandé
-  if (showEmail) {
+  // Afficher l'email si demandé et qu'il n'est pas "Non indiqué"
+  if (showEmail && companyData.email && companyData.email !== 'Non indiqué') {
     ctx.fillText(companyData.email, x, y);
     y += Math.round(fontSize * 1.2);
   }
 
-  // Afficher le téléphone si demandé
-  if (showPhone) {
+  // Afficher le téléphone si demandé et qu'il n'est pas "Non indiqué"
+  if (showPhone && companyData.phone && companyData.phone !== 'Non indiqué') {
     ctx.fillText(companyData.phone, x, y);
   }
 };

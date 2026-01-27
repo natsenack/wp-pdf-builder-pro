@@ -482,6 +482,32 @@ class AdminScriptLoader
             $company_data['email'] = get_option('admin_email', '');
         }
         
+        // Si après tous les fallbacks les valeurs sont encore vides, indiquer "Non indiqué"
+        if (empty($company_data['name'])) {
+            $company_data['name'] = 'Non indiqué';
+        }
+        if (empty($company_data['address'])) {
+            $company_data['address'] = 'Non indiqué';
+        }
+        if (empty($company_data['phone'])) {
+            $company_data['phone'] = 'Non indiqué';
+        }
+        if (empty($company_data['email'])) {
+            $company_data['email'] = 'Non indiqué';
+        }
+        if (empty($company_data['siret'])) {
+            $company_data['siret'] = 'Non indiqué';
+        }
+        if (empty($company_data['vat'])) {
+            $company_data['vat'] = 'Non indiqué';
+        }
+        if (empty($company_data['rcs'])) {
+            $company_data['rcs'] = 'Non indiqué';
+        }
+        if (empty($company_data['capital'])) {
+            $company_data['capital'] = 'Non indiqué';
+        }
+        
         $localize_data['company'] = $company_data;
         
         // DEBUG: Log company data being sent to JS
