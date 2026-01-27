@@ -1156,12 +1156,15 @@ const drawCompanyInfo = (
   }
 
   if (shouldDisplayValue(companyData.address, displayConfig.address)) {
+    // Appliquer la police du body pour l'adresse
+    ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
     y = drawCompanyLine(ctx, companyData.address, x, y, fontConfig.bodySize);
     if (shouldDisplayValue(companyData.city, displayConfig.address)) {
       y = drawCompanyLine(ctx, companyData.city, x, y, fontConfig.bodySize);
     }
   }
 
+  // Appliquer les informations avec la police du body
   [
     [companyData.siret, displayConfig.siret],
     [companyData.tva, displayConfig.vat],
@@ -1171,6 +1174,7 @@ const drawCompanyInfo = (
     [companyData.phone, displayConfig.phone],
   ].forEach(([value, show]) => {
     if (shouldDisplayValue(value as string, show as boolean)) {
+      ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
       y = drawCompanyLine(ctx, value as string, x, y, fontConfig.bodySize);
     }
   });
