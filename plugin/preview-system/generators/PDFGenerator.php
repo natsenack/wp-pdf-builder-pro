@@ -96,9 +96,7 @@ class PDFGenerator extends BaseGenerator
             WP_PLUGIN_DIR . '/dompdf-lib/src/Dompdf.php',
             dirname(__DIR__) . '/../dompdf-lib/src/Dompdf.php',
             // Vendor déployé - CHEMIN CORRECT
-            dirname(__DIR__) . '/vendor/dompdf/src/Dompdf.php',
-            // Chemin absolu complet du serveur
-            '/var/www/nats/data/www/threeaxe.fr/wp-content/plugins/wp-pdf-builder-pro/vendor/dompdf/src/Dompdf.php'
+            dirname(__DIR__) . '/vendor/dompdf/src/Dompdf.php'
         ];
         foreach ($altPaths as $path) {
             if (file_exists($path)) {

@@ -997,7 +997,7 @@ class PdfBuilderTemplateManager
         $valid_types = ['text', 'image', 'rectangle', 'line', 'product_table',
                        'customer_info', 'company_logo', 'company_info', 'order_number',
                        'document_type', 'textarea', 'html', 'divider', 'progress-bar',
-                       'dynamic-text', 'dynamic_text', 'mentions',
+                       'dynamic-text', 'mentions',
                        'woocommerce_order_date', 'woocommerce_invoice_number'];
 
         // Normaliser pour la vérification (accepter les deux formats)
