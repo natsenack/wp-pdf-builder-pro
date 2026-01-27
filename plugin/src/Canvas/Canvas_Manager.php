@@ -320,7 +320,7 @@ JS;
             'width' => $this->getSetting('default_canvas_width', 794),
             'height' => $this->getSetting('default_canvas_height', 1123),
             'unit' => $this->getSetting('default_canvas_unit', 'px'),
-            'orientation' => $this->getSetting('default_orientation', 'portrait'),
+            'orientation' => $this->getSetting('default_canvas_orientation', 'portrait'),
         ];
     }
 
