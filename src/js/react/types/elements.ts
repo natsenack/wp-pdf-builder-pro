@@ -48,6 +48,8 @@ export interface BaseElementProperties {
   backgroundColor?: string;
   borderColor?: string;
   borderWidth?: number;
+  borderRadius?: number;
+  padding?: number;
 }
 
 export interface BaseTextProperties extends BaseElementProperties {
@@ -315,10 +317,8 @@ export interface ProductTableElementProperties extends BaseElementProperties {
   bodyBackgroundColor?: string;
   bodyTextColor?: string;
   alternateRowColor?: string;
-  padding?: number;
   theme?: string;
   textColor?: string;
-  borderRadius?: number;
   shippingCost?: number;
   taxRate?: number;
   globalDiscount?: number;
@@ -328,7 +328,7 @@ export interface ProductTableElementProperties extends BaseElementProperties {
 
 export interface BaseTextProperties extends BaseElementProperties {
   fontSize?: number;
-  color?: string;
+  textColor?: string;
   fontFamily?: string;
   fontWeight?: string;
   fontStyle?: string;
@@ -448,7 +448,6 @@ export interface ImageElementProperties extends BaseElementProperties {
   fit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
   position?: 'center' | 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
   opacity?: number;
-  borderRadius?: number;
   alignment?: 'left' | 'center' | 'right';
   maintainAspectRatio?: boolean;
 }
@@ -494,8 +493,6 @@ export interface OrderNumberElementProperties extends BaseElementProperties {
   textColor?: string;
   headerTextColor?: string;
   // Propriétés de style
-  borderRadius?: number;
-  padding?: number;
   theme?: string;
   // Propriétés spécifiques à l'ordre
   prefix?: string;
