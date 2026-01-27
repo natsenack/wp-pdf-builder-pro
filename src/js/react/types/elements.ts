@@ -51,9 +51,10 @@ export interface BaseElementProperties {
   borderRadius?: number;
   padding?: number;
   showBackground?: boolean;
+  fillColor?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
 }
-
-export interface BaseTextProperties extends BaseElementProperties {
 
 export interface OrderNumberElement extends BaseElement {
   type: 'order_number' | 'order-number';
@@ -274,9 +275,6 @@ export interface LoadTemplatePayload {
 
 // Propriétés spécifiques pour les éléments
 export interface ShapeElementProperties extends BaseElementProperties {
-  fillColor?: string;
-  strokeColor?: string;
-  strokeWidth?: number;
   borderRadius?: number;
 }
 
@@ -286,8 +284,6 @@ export interface TextElementProperties extends BaseTextProperties {
 }
 
 export interface LineElementProperties extends BaseElementProperties {
-  strokeColor?: string;
-  strokeWidth?: number;
 }
 
 export interface ProductTableElementProperties extends BaseElementProperties {
@@ -318,8 +314,11 @@ export interface ProductTableElementProperties extends BaseElementProperties {
   bodyBackgroundColor?: string;
   bodyTextColor?: string;
   alternateRowColor?: string;
+  rowTextColor?: string;
+  totalTextColor?: string;
   theme?: string;
   textColor?: string;
+  currency?: string;
   shippingCost?: number;
   taxRate?: number;
   globalDiscount?: number;
@@ -330,11 +329,15 @@ export interface ProductTableElementProperties extends BaseElementProperties {
 export interface BaseTextProperties extends BaseElementProperties {
   fontSize?: number;
   textColor?: string;
+  color?: string; // Alias pour textColor pour compatibilité
   fontFamily?: string;
   fontWeight?: string;
   fontStyle?: string;
   textAlign?: 'left' | 'center' | 'right';
   autoWrap?: boolean;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
 }
 
 export interface DynamicTextElementProperties extends BaseTextProperties {
