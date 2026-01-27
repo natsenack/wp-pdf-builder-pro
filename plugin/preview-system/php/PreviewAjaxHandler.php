@@ -276,6 +276,7 @@ class PreviewAjaxHandler {
         
         try {
             error_log('[HTML PREVIEW] ===== STARTING generateHtmlPreview =====');
+            error_log('[HTML PREVIEW] Raw pageOptions received: ' . print_r($pageOptions, true));
             
             // Créer un SampleDataProvider avec des données d'exemple réalistes
             $dataProvider = new \PDF_Builder\Data\SampleDataProvider('preview');

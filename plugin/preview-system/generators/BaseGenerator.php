@@ -367,6 +367,15 @@ abstract class BaseGenerator
         
         $style = $this->buildElementStyle($element);
         
+        // Récupérer les propriétés d'affichage
+        $properties = $element['properties'] ?? [];
+        $showHeaders = $properties['showHeaders'] ?? true;
+        $showFullName = $properties['showFullName'] ?? true;
+        $showAddress = $properties['showAddress'] ?? true;
+        $showEmail = $properties['showEmail'] ?? true;
+        $showPhone = $properties['showPhone'] ?? true;
+        $layout = $properties['layout'] ?? 'vertical';
+        
         // Récupérer les données depuis le data provider pour l'aperçu
         $customerName = $this->data_provider->getVariableValue('customer_full_name');
         $customerAddress = $this->data_provider->getVariableValue('billing_address_1') . ', ' . 
@@ -378,24 +387,64 @@ abstract class BaseGenerator
         
         // Fallback vers les propriétés de l'élément si data provider ne fournit rien
         if (empty($customerName) || $customerName === '{{customer_full_name}}') {
-            $customerName = $element['customerName'] ?? $element['name'] ?? $element['customer_name'] ?? $element['fullName'] ?? 'Client';
+            $customerName = $element['customerName'] ?? $element['name'] ?? $element['customer_name'] ?? $element['fullName'] ?? 'Jean Dupont';
         }
         if (empty($customerAddress) || strpos($customerAddress, '{{') !== false) {
-            $customerAddress = $element['customerAddress'] ?? $element['address'] ?? $element['customer_address'] ?? '';
+            $customerAddress = $element['customerAddress'] ?? $element['address'] ?? $element['customer_address'] ?? '15 rue de la Paix, 75001 Paris, FR';
         }
         if (empty($customerEmail) || strpos($customerEmail, '{{') !== false) {
-            $customerEmail = $element['customerEmail'] ?? $element['email'] ?? $element['customer_email'] ?? '';
+            $customerEmail = $element['customerEmail'] ?? $element['email'] ?? $element['customer_email'] ?? 'jean.dupont@email.com';
         }
         if (empty($customerPhone) || strpos($customerPhone, '{{') !== false) {
-            $customerPhone = $element['customerPhone'] ?? $element['phone'] ?? $element['customer_phone'] ?? '';
+            $customerPhone = $element['customerPhone'] ?? $element['phone'] ?? $element['customer_phone'] ?? '+33 6 12 34 56 78';
         }
         
-        $content = $customerName;
-        if (!empty($customerAddress)) $content .= "\n" . $customerAddress;
-        if (!empty($customerEmail)) $content .= "\n" . $customerEmail;
-        if (!empty($customerPhone)) $content .= "\n" . $customerPhone;
+        // Générer le contenu selon les options d'affichage
+        $content = '';
+        $fields = [];
         
-        error_log('[PDF] Customer info - FINAL name: "' . $customerName . '", address: "' . $customerAddress . '", email: "' . $customerEmail . '", phone: "' . $customerPhone . '"');
+        if ($showFullName && !empty($customerName)) {
+            $fields[] = [
+                'label' => $showHeaders ? 'Nom' : '',
+                'value' => $customerName
+            ];
+        }
+        
+        if ($showAddress && !empty($customerAddress)) {
+            $fields[] = [
+                'label' => $showHeaders ? 'Adresse' : '',
+                'value' => $customerAddress
+            ];
+        }
+        
+        if ($showEmail && !empty($customerEmail)) {
+            $fields[] = [
+                'label' => $showHeaders ? 'Email' : '',
+                'value' => $customerEmail
+            ];
+        }
+        
+        if ($showPhone && !empty($customerPhone)) {
+            $fields[] = [
+                'label' => $showHeaders ? 'Téléphone' : '',
+                'value' => $customerPhone
+            ];
+        }
+        
+        // Générer le HTML selon le layout
+        if ($layout === 'horizontal') {
+            $content = implode(' • ', array_map(function($field) {
+                return (!empty($field['label']) ? $field['label'] . ': ' : '') . $field['value'];
+            }, $fields));
+        } else {
+            // Layout vertical
+            foreach ($fields as $field) {
+                if (!empty($content)) $content .= "\n";
+                $content .= (!empty($field['label']) ? $field['label'] . ': ' : '') . $field['value'];
+            }
+        }
+        
+        error_log('[PDF] Customer info - FINAL name: "' . $customerName . '", address: "' . $customerAddress . '", email: "' . $customerEmail . '", phone: "' . $customerPhone . '", showHeaders: ' . ($showHeaders ? 'YES' : 'NO'));
         return "<div class=\"pdf-element\" data-element-type=\"customer_info\" style=\"{$style}\">" . nl2br($content) . "</div>";
     }
 
@@ -537,9 +586,6 @@ abstract class BaseGenerator
             $style .= "height: " . $normalizeCssValue($value, 'px') . "; ";
         }
         if (($value = $getCssProperty('color', $element)) !== null) {
-            $style .= "color: {$value}; ";
-        }
-        if (($value = $getCssProperty('textColor', $element)) !== null) {
             $style .= "color: {$value}; ";
         }
         if (($value = $getCssProperty('fontSize', $element)) !== null) {
@@ -1125,6 +1171,16 @@ abstract class BaseGenerator
         $elements = $this->getElements();
         if (empty($elements)) {
             return '<html><body><h1>Erreur: Aucun élément trouvé</h1></body></html>';
+        }
+
+        error_log('[HTML PREVIEW] Found ' . count($elements) . ' elements');
+        foreach ($elements as $index => $element) {
+            error_log('[HTML PREVIEW] Element ' . $index . ' keys: ' . implode(', ', array_keys($element)));
+            if (isset($element['properties'])) {
+                error_log('[HTML PREVIEW] Element ' . $index . ' properties keys: ' . implode(', ', array_keys($element['properties'])));
+            } else {
+                error_log('[HTML PREVIEW] Element ' . $index . ' has NO properties array');
+            }
         }
 
         // Récupérer les dimensions du canvas

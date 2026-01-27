@@ -114,6 +114,9 @@ export function Toolbar({ className }: ToolbarProps) {
     // Transformer tous les éléments
     const transformedElements = state.elements.map(transformElementForPreview);
 
+    console.log('🔍 [HTML PREVIEW] Original elements sample:', state.elements.slice(0, 2));
+    console.log('🔍 [HTML PREVIEW] Transformed elements sample:', transformedElements.slice(0, 2));
+
     // Construire les données du template à partir du state actuel
     const templateData = {
       elements: transformedElements,
