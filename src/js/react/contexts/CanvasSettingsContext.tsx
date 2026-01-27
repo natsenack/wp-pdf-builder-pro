@@ -123,9 +123,9 @@ const DEFAULT_SETTINGS: Omit<
   CanvasSettingsContextType,
   "updateGridSettings" | "saveGridSettings"
 > = {
-  canvasWidth: 210,
-  canvasHeight: 297,
-  canvasUnit: "mm",
+  canvasWidth: 794,
+  canvasHeight: 1123,
+  canvasUnit: "px",
   canvasOrientation: "portrait",
 
   canvasBackgroundColor: "#ffffff",
