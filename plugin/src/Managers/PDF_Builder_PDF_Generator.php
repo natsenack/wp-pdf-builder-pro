@@ -415,6 +415,12 @@ class PdfBuilderPdfGenerator
             case 'dynamic-text':
             case 'multiline_text':
                 $content = $element['content'] ?? $element['text'] ?? $element['customContent'] ?? '';
+                
+                // Pour dynamic-text, remplacer les variables si un ordre est défini
+                if ($type === 'dynamic-text' && $order) {
+                    $content = $this->replaceOrderVariables($content, $order);
+                }
+                
                 $style .= 'white-space: pre-wrap; word-wrap: break-word; ';
                 return "<div class='canvas-element' style='" . esc_attr($style) . "'>" . wp_kses_post($content) . "</div>";
 
