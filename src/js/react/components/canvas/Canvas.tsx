@@ -1075,6 +1075,19 @@ const drawCompanyInfo = (
     phone: props.companyPhone || "+33 4 12 34 56 78",
   };
 
+  // Remplacer par les données dynamiques du plugin si disponibles
+  if ((window as any).pdfBuilderData?.company) {
+    const pluginCompany = (window as any).pdfBuilderData.company;
+    companyData.name = pluginCompany.name || companyData.name;
+    companyData.address = pluginCompany.address || companyData.address;
+    companyData.siret = pluginCompany.siret || companyData.siret;
+    companyData.tva = pluginCompany.vat || companyData.tva;
+    companyData.rcs = pluginCompany.rcs || companyData.rcs;
+    companyData.capital = pluginCompany.capital || companyData.capital;
+    companyData.email = pluginCompany.email || companyData.email;
+    companyData.phone = pluginCompany.phone || companyData.phone;
+  }
+
   // Afficher le nom de l'entreprise si demandé
   if (showCompanyName) {
     ctx.fillStyle = headerTxtColor;

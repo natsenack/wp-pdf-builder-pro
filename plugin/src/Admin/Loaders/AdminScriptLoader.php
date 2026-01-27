@@ -451,6 +451,20 @@ class AdminScriptLoader
             $localize_data['license'] = $license_data;
         }
 
+        // Ajouter les informations de l'entreprise depuis les paramètres du plugin
+        $company_data = [
+            'name' => pdf_builder_get_option('pdf_builder_company_name', ''),
+            'address' => pdf_builder_get_option('pdf_builder_company_address', ''),
+            'phone' => pdf_builder_get_option('pdf_builder_company_phone_manual', ''),
+            'email' => pdf_builder_get_option('pdf_builder_company_email', ''),
+            'siret' => pdf_builder_get_option('pdf_builder_company_siret', ''),
+            'vat' => pdf_builder_get_option('pdf_builder_company_vat', ''),
+            'rcs' => pdf_builder_get_option('pdf_builder_company_rcs', ''),
+            'capital' => pdf_builder_get_option('pdf_builder_company_capital', ''),
+        ];
+        
+        $localize_data['company'] = $company_data;
+
         // Ajouter les paramètres canvas
         if (class_exists('\PDF_Builder\Canvas\Canvas_Manager')) {
             $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::get_instance();
