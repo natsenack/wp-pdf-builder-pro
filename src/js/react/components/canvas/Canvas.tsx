@@ -180,16 +180,16 @@ const setupRenderContext = (
 };
 
 // Fonction helper pour configurer les couleurs des shapes
-const createShapeColors = (props: ShapeElementProperties) => ({
-  background: normalizeColor(props.fillColor || "#ffffff"),
-  border: normalizeColor(props.strokeColor || "#000000"),
+const createShapeColors = (props: any) => ({
+  background: normalizeColor(props.backgroundColor || props.fillColor || "#ffffff"),
+  border: normalizeColor(props.borderColor || props.strokeColor || "#000000"),
 });
 
 // Fonction helper pour appliquer les couleurs et styles de shape
-const applyShapeStyle = (ctx: CanvasRenderingContext2D, colors: ReturnType<typeof createShapeColors>, strokeWidth: number = 1) => {
+const applyShapeStyle = (ctx: CanvasRenderingContext2D, colors: ReturnType<typeof createShapeColors>, borderWidth: number = 1) => {
   ctx.fillStyle = colors.background;
   ctx.strokeStyle = colors.border;
-  ctx.lineWidth = strokeWidth;
+  ctx.lineWidth = borderWidth;
 };
 
 // Fonction helper pour calculer la position X selon l'alignement du texte
@@ -204,10 +204,10 @@ const calculateTextAlignX = (element: Element, align: string = "left") => {
   }
 };
 const drawRectangle = (ctx: CanvasRenderingContext2D, element: Element) => {
-  const props = element as ShapeElementProperties;
+  const props = element as RectangleElement;
   const colors = createShapeColors(props);
 
-  applyShapeStyle(ctx, colors, props.strokeWidth);
+  applyShapeStyle(ctx, colors, props.borderWidth);
 
   if (props.borderRadius && props.borderRadius > 0) {
     roundedRect(ctx, 0, 0, element.width, element.height, props.borderRadius);
@@ -220,10 +220,10 @@ const drawRectangle = (ctx: CanvasRenderingContext2D, element: Element) => {
 };
 
 const drawCircle = (ctx: CanvasRenderingContext2D, element: Element) => {
-  const props = element as ShapeElementProperties;
+  const props = element as CircleElement;
   const colors = createShapeColors(props);
 
-  applyShapeStyle(ctx, colors, props.strokeWidth);
+  applyShapeStyle(ctx, colors, props.borderWidth);
 
   const centerX = element.width / 2;
   const centerY = element.height / 2;
@@ -236,23 +236,23 @@ const drawCircle = (ctx: CanvasRenderingContext2D, element: Element) => {
 };
 
 const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
-  const props = element as TextElementProperties;
+  const props = element as TextElement;
   const fontConfig = createFontConfig(props, 16);
   const colorConfig = createColorConfig(props);
 
-  setupRenderContext(ctx, fontConfig, colorConfig, props.align);
+  setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign);
 
-  const x = calculateTextAlignX(element, props.align);
+  const x = calculateTextAlignX(element, props.textAlign);
 
   ctx.fillText(props.text || "Text", x, fontConfig.size);
 };
 
 const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {
-  const props = element as LineElementProperties;
+  const props = element as LineElement;
   const colors = createShapeColors(props);
 
   ctx.strokeStyle = colors.border;
-  ctx.lineWidth = props.strokeWidth || 2;
+  ctx.lineWidth = props.borderWidth || 2;
 
   ctx.beginPath();
   ctx.moveTo(0, element.height / 2);
@@ -268,7 +268,7 @@ const drawImage = (
     Map<string, { image: HTMLImageElement; size: number; lastUsed: number }>
   >
 ) => {
-  const props = element as Element & { src?: string; objectFit?: string };
+  const props = element as ImageElement;
   const imageUrl = props.src || "";
 
   if (!imageUrl) {
@@ -289,7 +289,7 @@ const drawImage = (
 
   const img = cachedImage.image;
   if (img.complete && img.naturalHeight !== 0) {
-    drawImageWithObjectFit(ctx, img, element, props.objectFit || "cover");
+    drawImageWithObjectFit(ctx, img, element, props.fit || "cover");
   } else {
     drawImagePlaceholder(ctx, element);
   }
@@ -2222,12 +2222,7 @@ export const Canvas = function Canvas({
   // ✅ BUGFIX-007: Memoize drawDynamicText to prevent recreation on every render
   const drawDynamicText = useCallback(
     (ctx: CanvasRenderingContext2D, element: Element) => {
-      const props = element as DynamicTextElement & {
-        showBackground?: boolean;
-        backgroundColor?: string;
-        content?: string;
-        textColor?: string;
-      };
+  const props = element as DynamicTextElement;
       const text = props.text || props.content || "Texte personnalisable";
       const fontSize = props.fontSize || 14;
       const fontFamily = props.fontFamily || "Arial";

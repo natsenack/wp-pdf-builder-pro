@@ -133,9 +133,23 @@ export interface WoocommerceInvoiceNumberElement extends BaseElement {
 export interface DynamicTextElement extends BaseElement {
   type: 'dynamic-text';
   text?: string;
+  content?: string;
   textTemplate?: string;
   theme?: string;
   textDecoration?: string;
+  fontSize?: number;
+  textColor?: string;
+  color?: string; // Alias pour textColor pour compatibilité
+  fontFamily?: string;
+  fontWeight?: string;
+  fontStyle?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  autoWrap?: boolean;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  showBackground?: boolean;
+  backgroundColor?: string;
 }
 
 export interface ProductTableElement extends BaseElement {
@@ -343,8 +357,45 @@ export interface LoadTemplatePayload {
 }
 
 // Propriétés spécifiques pour les éléments
-export interface ShapeElementProperties extends BaseElementProperties {
+export interface RectangleElement extends BaseElement {
+  type: 'rectangle';
+  backgroundColor?: string;
+  borderColor?: string;
+  borderWidth?: number;
   borderRadius?: number;
+}
+
+export interface CircleElement extends BaseElement {
+  type: 'circle';
+  backgroundColor?: string;
+  borderColor?: string;
+  borderWidth?: number;
+}
+
+export interface TextElement extends BaseElement {
+  type: 'text';
+  text?: string;
+  fontSize?: number;
+  textColor?: string;
+  color?: string; // Alias pour textColor pour compatibilité
+  fontFamily?: string;
+  fontWeight?: string;
+  fontStyle?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  autoWrap?: boolean;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  backgroundColor?: string;
+  borderColor?: string;
+  borderWidth?: number;
+}
+
+export interface LineElement extends BaseElement {
+  type: 'line';
+  backgroundColor?: string;
+  borderColor?: string;
+  borderWidth?: number;
 }
 
 export interface TextElementProperties extends BaseTextProperties {
@@ -492,12 +543,14 @@ export interface CompanyInfoElementProperties extends BaseTextProperties {
   companyPhone?: string;
 }
 
-export interface ImageElementProperties extends BaseElementProperties {
+export interface ImageElement extends BaseElement {
+  type: 'image';
   src?: string;
   logoUrl?: string;
   alt?: string;
   fit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
   position?: 'center' | 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+}
   opacity?: number;
   alignment?: 'left' | 'center' | 'right';
   maintainAspectRatio?: boolean;
