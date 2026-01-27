@@ -343,23 +343,11 @@ export interface DynamicTextElementProperties extends BaseTextProperties {
   textDecoration?: string;
 }
 
-export interface DocumentTypeElementProperties extends BaseElementProperties {
-  fontSize?: number;
-  fontFamily?: string;
-  fontWeight?: string;
-  fontStyle?: string;
-  textAlign?: 'left' | 'center' | 'right';
-  textColor?: string;
+export interface DocumentTypeElementProperties extends BaseTextProperties {
   documentType?: string;
 }
 
-export interface CustomerInfoElementProperties extends BaseElementProperties {
-  fontSize?: number;
-  fontFamily?: string;
-  fontWeight?: string;
-  fontStyle?: string;
-  textAlign?: 'left' | 'center' | 'right';
-  textColor?: string;
+export interface CustomerInfoElementProperties extends BaseTextProperties {
   showName?: boolean;
   showEmail?: boolean;
   showPhone?: boolean;
@@ -389,13 +377,7 @@ export interface CustomerInfoElementProperties extends BaseElementProperties {
   headerTextColor?: string;
 }
 
-export interface CompanyInfoElementProperties extends BaseElementProperties {
-  fontSize?: number;
-  fontFamily?: string;
-  fontWeight?: string;
-  fontStyle?: string;
-  textAlign?: 'left' | 'center' | 'right';
-  textColor?: string;
+export interface CompanyInfoElementProperties extends BaseTextProperties {
   showName?: boolean;
   showAddress?: boolean;
   showPhone?: boolean;
@@ -449,22 +431,16 @@ export interface ImageElementProperties extends BaseElementProperties {
   maintainAspectRatio?: boolean;
 }
 
-export interface OrderNumberElementProperties extends BaseElementProperties {
+export interface OrderNumberElementProperties extends BaseTextProperties {
   // Propriétés d'affichage
   showHeaders?: boolean;
   showBorders?: boolean;
   showLabel?: boolean;
   showDate?: boolean;
   // Propriétés de mise en page
-  textAlign?: 'left' | 'center' | 'right';
   contentAlign?: 'left' | 'center' | 'right';
   labelPosition?: 'above' | 'left' | 'right' | 'below';
   labelText?: string;
-  // Propriétés de police générales (fallback)
-  fontSize?: number;
-  fontFamily?: string;
-  fontWeight?: string;
-  fontStyle?: string;
   // Propriétés de police pour les en-têtes (label)
   headerFontSize?: number;
   headerFontFamily?: string;
@@ -486,7 +462,6 @@ export interface OrderNumberElementProperties extends BaseElementProperties {
   dateFontWeight?: string;
   dateFontStyle?: string;
   // Propriétés de couleur
-  textColor?: string;
   headerTextColor?: string;
   // Propriétés de style
   theme?: string;
