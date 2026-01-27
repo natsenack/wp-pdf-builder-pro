@@ -260,6 +260,11 @@ class PDFEditorPreferences {
         // Désactiver les styles associés si nécessaire
         wp_dequeue_style('wp-preferences');
     }
+
+    /**
+     * Enregistrer les scripts JavaScript
+     */
+    public function enqueue_scripts($hook) {
         // Charger sur TOUTES les pages admin pour remplacer wp-preferences
         // Plus de restriction à la page de l'éditeur seulement
 
