@@ -263,9 +263,9 @@ class PDF_Builder_Template_Manager
                     $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
                     // file_put_contents($log_file, date('Y-m-d H:i:s') . ' ELEMENTS COUNT: ' . count($elements_data) . "\n", FILE_APPEND);
 
-                    // Log order_number elements specifically BEFORE saving
+                    // Log order-number elements specifically BEFORE saving
                     foreach ($elements_data as $el) {
-                        if (isset($el['type']) && $el['type'] === 'order_number') {
+                        if (isset($el['type']) && $el['type'] === 'order-number') {
                             // file_put_contents($log_file, date('Y-m-d H:i:s') . ' ORDER ELEMENT BEFORE SAVE: ' . json_encode($el) . "\n", FILE_APPEND);
                         }
                     }
@@ -994,11 +994,11 @@ class PDF_Builder_Template_Manager
         }
 
         // Vérifier le type d'élément valide (accepter les tirets et underscores)
-        $valid_types = ['text', 'image', 'rectangle', 'line', 'product_table',
-                       'customer_info', 'company_logo', 'company_info', 'order_number',
-                       'document_type', 'textarea', 'html', 'divider', 'progress-bar',
+        $valid_types = ['text', 'image', 'rectangle', 'line', 'product-table',
+                       'customer-info', 'company-logo', 'company-info', 'order-number',
+                       'document-type', 'textarea', 'html', 'divider', 'progress-bar',
                        'dynamic-text', 'mentions',
-                       'woocommerce_order_date', 'woocommerce_invoice_number'];
+                       'woocommerce-order-date', 'woocommerce-invoice-number'];
 
         // Normaliser pour la vérification (accepter les deux formats)
         $normalized_type_dash = str_replace('_', '-', $element_type);
@@ -1067,10 +1067,10 @@ class PDF_Builder_Template_Manager
         }
 
         // Validation spécifique pour les éléments spéciaux
-        if ($normalized_type === 'order_number' || $normalized_type_dash === 'order_number') {
-            // Les éléments order_number doivent avoir une propriété 'format'
+        if ($normalized_type === 'order-number' || $normalized_type_dash === 'order-number') {
+            // Les éléments order-number doivent avoir une propriété 'format'
             if (!isset($element['format'])) {
-                $errors[] = "Élément $index ($element_id): propriété 'format' obligatoire manquante pour les éléments order_number";
+                $errors[] = "Élément $index ($element_id): propriété 'format' obligatoire manquante pour les éléments order-number";
             } elseif (!is_string($element['format'])) {
                 $errors[] = "Élément $index ($element_id): propriété 'format' doit être une chaîne de caractères";
             }

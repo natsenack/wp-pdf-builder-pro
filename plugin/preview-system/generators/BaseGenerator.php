@@ -1148,49 +1148,17 @@ abstract class BaseGenerator
      */
     protected function renderWoocommerceOrderDateElement(array $element): string
     {
-        error_log('[PDF] Order date - keys: ' . implode(', ', array_keys($element)) . ', date: ' . ($element['date'] ?? 'empty'));
-        
-        $style = $this->buildElementStyle($element);
-        
-        // Use real element data with flexible property names
-        $date = $element['date'] ?? $element['orderDate'] ?? $element['order_date'] ?? date('d/m/Y');
-        $dateFormat = $element['dateFormat'] ?? $element['format'] ?? 'd/m/Y';
-        $showTime = $element['showTime'] ?? $element['time'] ?? $element['show_time'] ?? false;
-        
-        // Also check for nested properties
-        if ($date === date('d/m/Y') && isset($element['properties']['date'])) {
-            $date = $element['properties']['date'];
-        }
-        if ($date === date('d/m/Y') && isset($element['properties']['orderDate'])) {
-            $date = $element['properties']['orderDate'];
-        }
-        if ($date === date('d/m/Y') && isset($element['properties']['order_date'])) {
-            $date = $element['properties']['order_date'];
-        }
-        if (isset($element['properties']['dateFormat'])) {
-            $dateFormat = $element['properties']['dateFormat'];
-        }
-        if (isset($element['properties']['format'])) {
-            $dateFormat = $element['properties']['format'];
-        }
-        if (isset($element['properties']['showTime'])) {
-            $showTime = $element['properties']['showTime'];
-        }
-        if (isset($element['properties']['time'])) {
-            $showTime = $element['properties']['time'];
-        }
-        if (isset($element['properties']['show_time'])) {
-            $showTime = $element['properties']['show_time'];
-        }
-        
-        // Format the date
-        $formattedDate = date($dateFormat, strtotime($date));
-        if ($showTime) {
-            $formattedDate .= ' ' . date('H:i:s', strtotime($date));
-        }
-        
-        error_log('[PDF] Order date - FINAL date: "' . $formattedDate . '", format: "' . $dateFormat . '", showTime: ' . ($showTime ? 'YES' : 'NO'));
-        return "<div class=\"pdf-element\" style=\"{$style}\">{$formattedDate}</div>";
+        $renderer = new \PDF_Builder\Renderers\WooCommerceRenderer();
+        return $renderer->render($element);
+    }
+
+    /**
+     * Rend un élément woocommerce_invoice_number
+     */
+    protected function renderWoocommerceInvoiceNumberElement(array $element): string
+    {
+        $renderer = new \PDF_Builder\Renderers\WooCommerceRenderer();
+        return $renderer->render($element);
     }
 
     /**

@@ -57,7 +57,7 @@ export interface BaseElementProperties {
 }
 
 export interface OrderNumberElement extends BaseElement {
-  type: 'order_number';
+  type: 'order-number';
   // Propriétés d'affichage
   showHeaders?: boolean;
   showBorders?: boolean;
@@ -101,7 +101,7 @@ export interface OrderNumberElement extends BaseElement {
 }
 
 export interface WoocommerceOrderDateElement extends BaseElement {
-  type: 'woocommerce_order_date';
+  type: 'woocommerce-order-date';
   dateFormat?: string;
   showTime?: boolean;
   fontFamily?: string;
@@ -118,7 +118,7 @@ export interface WoocommerceOrderDateElement extends BaseElement {
 }
 
 export interface WoocommerceInvoiceNumberElement extends BaseElement {
-  type: 'woocommerce_invoice_number';
+  type: 'woocommerce-invoice-number';
   prefix?: string;
   suffix?: string;
   fontFamily?: string;
@@ -216,6 +216,75 @@ export interface MentionsElement extends BaseElement {
   text?: string;
   showSeparator?: boolean;
   showBackground?: boolean;
+}
+
+export interface CustomerInfoElement extends BaseElement {
+  type: 'customer-info';
+  showName?: boolean;
+  showEmail?: boolean;
+  showPhone?: boolean;
+  showAddress?: boolean;
+  showCompany?: boolean;
+  showPaymentMethod?: boolean;
+  showTransactionId?: boolean;
+  labelColor?: string;
+  valueColor?: string;
+  separator?: string;
+  // Propriétés de police pour l'en-tête
+  headerFontSize?: number;
+  headerFontFamily?: string;
+  headerFontWeight?: string;
+  headerFontStyle?: string;
+  // Propriétés de police pour le corps du texte
+  bodyFontSize?: number;
+  bodyFontFamily?: string;
+  bodyFontWeight?: string;
+  bodyFontStyle?: string;
+  bodyTextColor?: string;
+  // Propriétés de mise en page
+  layout?: 'vertical' | 'horizontal';
+  showLabels?: boolean;
+  labelPosition?: 'before' | 'above';
+  // Propriétés de style générales
+  fontFamily?: string;
+  fontSize?: number;
+  fontWeight?: string;
+  fontStyle?: string;
+  textColor?: string;
+  color?: string; // Alias pour textColor pour compatibilité
+  textAlign?: 'left' | 'center' | 'right';
+  backgroundColor?: string;
+  showBackground?: boolean;
+  border?: { width?: number; style?: string; color?: string };
+  padding?: { top?: number; right?: number; bottom?: number; left?: number };
+}
+
+export interface CompanyInfoElement extends BaseElement {
+  type: 'company-info';
+  template?: string;
+  fields?: string[];
+  layout?: 'vertical' | 'horizontal';
+  separator?: string;
+  // Informations de l'entreprise
+  name?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  taxId?: string;
+  registrationNumber?: string;
+  // Propriétés de style
+  fontFamily?: string;
+  fontSize?: number;
+  fontWeight?: string;
+  fontStyle?: string;
+  textColor?: string;
+  color?: string; // Alias pour textColor pour compatibilité
+  textAlign?: 'left' | 'center' | 'right';
+  backgroundColor?: string;
+  showBackground?: boolean;
+  border?: { width?: number; style?: string; color?: string };
+  padding?: { top?: number; right?: number; bottom?: number; left?: number };
 }
 
 export interface ElementProperties {
@@ -401,70 +470,6 @@ export interface LineElement extends BaseElement {
   backgroundColor?: string;
   borderColor?: string;
   borderWidth?: number;
-}
-
-export interface TextElementProperties extends BaseTextProperties {
-  text?: string;
-  textAlign?: 'left' | 'center' | 'right'; // Override to allow undefined
-  verticalAlign?: 'top' | 'middle' | 'bottom';
-}
-
-export interface LineElementProperties extends BaseElementProperties {
-}
-
-export interface ProductTableElementProperties extends BaseElementProperties {
-  showHeaders?: boolean;
-  showBorders?: boolean;
-  showAlternatingRows?: boolean;
-  showSku?: boolean;
-  showDescription?: boolean;
-  showQuantity?: boolean;
-  showShipping?: boolean;
-  showTax?: boolean;
-  showGlobalDiscount?: boolean;
-  fontSize?: number;
-  fontFamily?: string;
-  fontWeight?: string;
-  fontStyle?: string;
-  headerFontSize?: number;
-  headerFontFamily?: string;
-  headerFontWeight?: string;
-  headerFontStyle?: string;
-  bodyFontSize?: number;
-  bodyFontFamily?: string;
-  bodyFontWeight?: string;
-  bodyFontStyle?: string;
-  textAlign?: 'left' | 'center' | 'right';
-  headerBackgroundColor?: string;
-  headerTextColor?: string;
-  bodyBackgroundColor?: string;
-  bodyTextColor?: string;
-  alternateRowColor?: string;
-  rowTextColor?: string;
-  totalTextColor?: string;
-  theme?: string;
-  textColor?: string;
-  currency?: string;
-  shippingCost?: number;
-  taxRate?: number;
-  globalDiscount?: number;
-  orderFees?: number;
-  verticalAlign?: 'top' | 'middle' | 'bottom';
-}
-
-export interface BaseTextProperties extends BaseElementProperties {
-  fontSize?: number;
-  textColor?: string;
-  color?: string; // Alias pour textColor pour compatibilité
-  fontFamily?: string;
-  fontWeight?: string;
-  fontStyle?: string;
-  textAlign?: 'left' | 'center' | 'right';
-  autoWrap?: boolean;
-  bold?: boolean;
-  italic?: boolean;
-  underline?: boolean;
-  verticalAlign?: 'top' | 'middle' | 'bottom';
 }
 
 export interface DynamicTextElementProperties extends BaseTextProperties {
@@ -725,6 +730,22 @@ export interface DocumentTypeElement extends BaseElement {
   documentType?: string;
   verticalAlign?: 'top' | 'middle' | 'bottom';
 }
+
+// Type union pour tous les éléments supportés
+export type Element =
+  | OrderNumberElement
+  | WoocommerceOrderDateElement
+  | WoocommerceInvoiceNumberElement
+  | DynamicTextElement
+  | ProductTableElement
+  | MentionsElement
+  | CustomerInfoElement
+  | CompanyInfoElement
+  | RectangleElement
+  | CircleElement
+  | TextElement
+  | LineElement
+  | DocumentTypeElement;
 
 
 

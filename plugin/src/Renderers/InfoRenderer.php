@@ -5,8 +5,8 @@
  * Phase 3.3.5 - Renderer spécialisé pour les informations structurées
  *
  * Gère le rendu des éléments d'information :
- * - customer_info : Informations client (nom, adresse, contact)
- * - company_info : Informations société avec templates prédéfinis
+ * - customer-info : Informations client (nom, adresse, contact)
+ * - company-info : Informations société avec templates prédéfinis
  * - mentions : Mentions légales et conditions
  */
 
@@ -24,7 +24,7 @@ class InfoRenderer
     /**
      * Types d'éléments supportés par ce renderer
      */
-    const SUPPORTED_TYPES = ['customer_info', 'company_info', 'mentions'];
+    const SUPPORTED_TYPES = ['customer-info', 'company-info', 'mentions'];
 /**
      * Styles CSS par défaut pour les informations
      */
@@ -36,7 +36,7 @@ class InfoRenderer
         'margin-bottom' => '10px'
     ];
 /**
-     * Templates prédéfinis pour company_info
+     * Templates prédéfinis pour company-info
      */
     const COMPANY_TEMPLATES = [
         'default' => [
@@ -99,13 +99,13 @@ class InfoRenderer
             ];
         }
 
-        $type = $elementData['type'] ?? 'customer_info';
+        $type = $elementData['type'] ?? 'customer-info';
         $properties = $elementData['properties'] ?? [];
 // Rendu selon le type d'élément
         switch ($type) {
-            case 'customer_info':
+            case 'customer-info':
                 return $this->renderCustomerInfo($properties, $context);
-            case 'company_info':
+            case 'company-info':
                 return $this->renderCompanyInfo($properties, $context);
             case 'mentions':
                 return $this->renderMentions($properties, $context);
@@ -284,7 +284,7 @@ class InfoRenderer
     }
 
     /**
-     * Rend un layout vertical pour customer_info
+     * Rend un layout vertical pour customer-info
      *
      * @param array $data Données à afficher
      * @param array $fields Champs à afficher
@@ -311,7 +311,7 @@ class InfoRenderer
     }
 
     /**
-     * Rend un layout horizontal pour customer_info
+     * Rend un layout horizontal pour customer-info
      *
      * @param array $data Données à afficher
      * @param array $fields Champs à afficher
@@ -338,7 +338,7 @@ class InfoRenderer
     }
 
     /**
-     * Rend un layout vertical pour company_info
+     * Rend un layout vertical pour company-info
      *
      * @param array $data Données société
      * @param array $fields Champs à afficher
@@ -362,7 +362,7 @@ class InfoRenderer
     }
 
     /**
-     * Rend un layout horizontal pour company_info
+     * Rend un layout horizontal pour company-info
      *
      * @param array $data Données société
      * @param array $fields Champs à afficher
