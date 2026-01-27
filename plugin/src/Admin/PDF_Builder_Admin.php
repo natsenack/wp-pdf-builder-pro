@@ -203,7 +203,7 @@ class PdfBuilderAdminNew
         }
 
         // Charger manuellement le Thumbnail Manager si nécessaire
-        if (!class_exists('PDF_Builder\Managers\PdfBuilderThumbnailManager')) {
+        if (!class_exists('PDF_Builder\Managers\PDF_Builder_Thumbnail_Manager')) {
             // Chemin absolu depuis ce fichier
             $plugin_root = dirname(dirname(dirname(__DIR__)));
             $thumbnail_manager_file = $plugin_root . '/src/Managers/PDF_Builder_Thumbnail_Manager.php';
@@ -213,7 +213,7 @@ class PdfBuilderAdminNew
         }
 
         // Initialiser le manager de thumbnails
-        $this->thumbnail_manager = \PDF_Builder\Managers\PdfBuilderThumbnailManager::getInstance();
+        $this->thumbnail_manager = \PDF_Builder\Managers\PDF_Builder_Thumbnail_Manager::getInstance();
 
         // Initialiser les nouveaux services et loaders
         $this->script_loader = new \PDF_Builder\Admin\Loaders\AdminScriptLoader($this);

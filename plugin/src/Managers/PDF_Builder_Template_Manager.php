@@ -432,7 +432,7 @@ class PDF_Builder_Template_Manager
                     $saved_decoded = json_decode($template_data, true);
                     
                     // Générer le thumbnail du template
-                    $thumbnail_manager = \PDF_Builder\Managers\PdfBuilderThumbnailManager::getInstance();
+                    $thumbnail_manager = \PDF_Builder\Managers\PDF_Builder_Thumbnail_Manager::getInstance();
                     $thumbnail_url = $thumbnail_manager->generateTemplateThumbnail($template_id, $saved_decoded);
                     if ($thumbnail_url) {
                         $thumbnail_manager->updateTemplateThumbnail($template_id, $thumbnail_url);
