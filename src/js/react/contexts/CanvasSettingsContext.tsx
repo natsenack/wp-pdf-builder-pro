@@ -223,18 +223,28 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
       throw new Error("Les paramètres du canvas ne sont pas un objet valide");
     }
 
+    // Facteurs de conversion vers pixels (96 DPI)
+    const UNIT_CONVERSIONS = {
+      px: 1,
+      mm: 3.779527559, // 96 / 25.4
+      cm: 37.79527559, // 96 / 2.54
+      in: 96
+    };
+
+    // Charger l'unité d'abord
+    const canvasUnit = (windowSettings.default_canvas_unit as "px" | "mm" | "cm" | "in") ?? DEFAULT_SETTINGS.canvasUnit;
+    const unitFactor = UNIT_CONVERSIONS[canvasUnit];
+
     // Mapper les paramètres depuis le format WordPress vers notre format
     const newSettings: CanvasSettingsContextType = {
-      // Dimensions
+      // Dimensions (convertir vers pixels)
       canvasWidth:
-        (windowSettings.default_canvas_width as number) ??
-        DEFAULT_SETTINGS.canvasWidth,
+        ((windowSettings.default_canvas_width as number) ??
+        DEFAULT_SETTINGS.canvasWidth) * unitFactor,
       canvasHeight:
-        (windowSettings.default_canvas_height as number) ??
-        DEFAULT_SETTINGS.canvasHeight,
-      canvasUnit:
-        (windowSettings.default_canvas_unit as "px" | "mm" | "cm" | "in") ??
-        DEFAULT_SETTINGS.canvasUnit,
+        ((windowSettings.default_canvas_height as number) ??
+        DEFAULT_SETTINGS.canvasHeight) * unitFactor,
+      canvasUnit: canvasUnit,
       canvasOrientation:
         (windowSettings.default_canvas_orientation as
           | "portrait"
@@ -255,16 +265,16 @@ function loadSettingsFromWindowObj(): CanvasSettingsContextType {
         (windowSettings.shadow_enabled as boolean) === true ||
         (windowSettings.shadow_enabled as string) === "1",
 
-      // Marges
+      // Marges (convertir vers pixels)
       marginTop:
-        (windowSettings.margin_top as number) ?? DEFAULT_SETTINGS.marginTop,
+        ((windowSettings.margin_top as number) ?? DEFAULT_SETTINGS.marginTop) * unitFactor,
       marginRight:
-        (windowSettings.margin_right as number) ?? DEFAULT_SETTINGS.marginRight,
+        ((windowSettings.margin_right as number) ?? DEFAULT_SETTINGS.marginRight) * unitFactor,
       marginBottom:
-        (windowSettings.margin_bottom as number) ??
-        DEFAULT_SETTINGS.marginBottom,
+        ((windowSettings.margin_bottom as number) ??
+        DEFAULT_SETTINGS.marginBottom) * unitFactor,
       marginLeft:
-        (windowSettings.margin_left as number) ?? DEFAULT_SETTINGS.marginLeft,
+        ((windowSettings.margin_left as number) ?? DEFAULT_SETTINGS.marginLeft) * unitFactor,
       showMargins:
         (windowSettings.show_margins as boolean) === true ||
         (windowSettings.show_margins as string) === "1",
@@ -508,7 +518,14 @@ export function CanvasSettingsProvider({
         gridSnapEnabled: boolean;
       }>
     ) => {
-      setSettings((prev) => ({ ...prev, ...newSettings }));
+      // Appliquer la synchronisation automatique comme dans saveGridSettings
+      const syncedSettings = { ...newSettings };
+      if (newSettings.gridShow === false) {
+        syncedSettings.gridSize = 0;
+        syncedSettings.gridSnapEnabled = false;
+      }
+
+      setSettings((prev) => ({ ...prev, ...syncedSettings }));
     },
 
     saveGridSettings: async (
