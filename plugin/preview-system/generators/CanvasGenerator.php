@@ -82,9 +82,9 @@ class CanvasGenerator extends BaseGenerator
     {
         $template_data = $this->template_data;
         $data_provider = $this->data_provider;
-// Dimensions A4 en pixels (approximatif pour aperçu)
-        $width = 800;
-        $height = 600;
+// Dimensions A4 en pixels à 96 DPI (794 × 1123 pixels)
+        $width = 794;
+        $height = 1123;
 // Créer l'image GD
         $image = imagecreatetruecolor($width, $height);
 // Couleurs
@@ -208,9 +208,9 @@ class CanvasGenerator extends BaseGenerator
     private function generateCanvasHTML(): string
     {
         $data_provider = $this->data_provider;
-// Dimensions A4 en pixels (approximatif pour aperçu)
-        $width = 595;
-        $height = 842;
+// Dimensions A4 en pixels à 96 DPI (794 × 1123 pixels)
+        $width = 794;
+        $height = 1123;
         $html = '<div class="wp-pdf-canvas-preview" style="position: relative; width: ' . $width . 'px; height: ' . $height . 'px; background: white; border: 1px solid #ddd;">';
         $html .= '<canvas id="pdf-canvas-' . uniqid() . '" width="' . $width . '" height="' . $height . '" style="display: block;"></canvas>';
 // JavaScript pour rendre les éléments

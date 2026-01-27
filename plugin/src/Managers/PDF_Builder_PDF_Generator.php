@@ -370,7 +370,7 @@ class PDF_Builder_PDF_Generator
             $height = 50;
         }
 
-        // Contraindre dans les limites A4 (595x842 pixels)
+        // Contraindre dans les limites A4 (595x842 points PDF à 72 DPI)
         $canvas_width = 595;
         $canvas_height = 842;
         $x = max(0, min($canvas_width - $width, $x));

@@ -417,24 +417,24 @@ class SettingsManager
     {
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
         return [
-            'format' => $settings['pdf_builder_canvas_canvas_format'] ?? 'A4',
-            'orientation' => $settings['pdf_builder_canvas_canvas_orientation'] ?? 'portrait',
-            'dpi' => intval($settings['pdf_builder_canvas_canvas_dpi'] ?? 96),
-            'width' => intval($settings['pdf_builder_canvas_canvas_width'] ?? 794),
-            'height' => intval($settings['pdf_builder_canvas_canvas_height'] ?? 1123),
-            'drag_enabled' => ($settings['pdf_builder_canvas_canvas_drag_enabled'] ?? '1') === '1',
-            'resize_enabled' => ($settings['pdf_builder_canvas_canvas_resize_enabled'] ?? '1') === '1',
-            'rotate_enabled' => ($settings['pdf_builder_canvas_canvas_rotate_enabled'] ?? '1') === '1',
-            'multi_select' => ($settings['pdf_builder_canvas_canvas_multi_select'] ?? '1') === '1',
-            'selection_mode' => $settings['pdf_builder_canvas_canvas_selection_mode'] ?? 'click',
-            'keyboard_shortcuts' => ($settings['pdf_builder_canvas_canvas_keyboard_shortcuts'] ?? '1') === '1',
-            'grid_enabled' => ($settings['pdf_builder_canvas_canvas_grid_enabled'] ?? '1') === '1',
-            'grid_size' => intval($settings['pdf_builder_canvas_canvas_grid_size'] ?? 20),
-            'snap_to_grid' => ($settings['pdf_builder_canvas_canvas_snap_to_grid'] ?? '1') === '1',
-            'navigation_enabled' => ($settings['pdf_builder_canvas_canvas_navigation_enabled'] ?? '1') === '1',
-            'zoom_default' => intval($settings['pdf_builder_canvas_canvas_zoom_default'] ?? 100),
-            'export_format' => $settings['pdf_builder_canvas_canvas_export_format'] ?? 'png',
-            'export_quality' => intval($settings['pdf_builder_canvas_canvas_export_quality'] ?? 90),
+            'format' => $settings['pdf_builder_canvas_format'] ?? 'A4',
+            'orientation' => $settings['pdf_builder_canvas_default_orientation'] ?? 'portrait',
+            'dpi' => intval($settings['pdf_builder_canvas_dpi'] ?? 96),
+            'width' => intval($settings['pdf_builder_canvas_width'] ?? 794),
+            'height' => intval($settings['pdf_builder_canvas_height'] ?? 1123),
+            'drag_enabled' => ($settings['pdf_builder_canvas_drag_enabled'] ?? '1') === '1',
+            'resize_enabled' => ($settings['pdf_builder_canvas_resize_enabled'] ?? '1') === '1',
+            'rotate_enabled' => ($settings['pdf_builder_canvas_rotate_enabled'] ?? '1') === '1',
+            'multi_select' => ($settings['pdf_builder_canvas_multi_select'] ?? '1') === '1',
+            'selection_mode' => $settings['pdf_builder_canvas_selection_mode'] ?? 'click',
+            'keyboard_shortcuts' => ($settings['pdf_builder_canvas_keyboard_shortcuts'] ?? '1') === '1',
+            'grid_enabled' => ($settings['pdf_builder_canvas_grid_enabled'] ?? '1') === '1',
+            'grid_size' => intval($settings['pdf_builder_canvas_grid_size'] ?? 20),
+            'snap_to_grid' => ($settings['pdf_builder_canvas_snap_to_grid'] ?? '1') === '1',
+            'navigation_enabled' => ($settings['pdf_builder_canvas_navigation_enabled'] ?? '1') === '1',
+            'zoom_default' => intval($settings['pdf_builder_canvas_zoom_default'] ?? 100),
+            'export_format' => $settings['pdf_builder_canvas_export_format'] ?? 'png',
+            'export_quality' => intval($settings['pdf_builder_canvas_export_quality'] ?? 90),
         ];
     }
 
@@ -802,9 +802,9 @@ class SettingsManager
         $check_fields = [
             'pdf_builder_default_template',
             'pdf_builder_template_library_enabled',
-            'pdf_builder_canvas_canvas_bg_color',
-            'pdf_builder_canvas_canvas_border_color',
-            'pdf_builder_canvas_canvas_container_bg_color'
+            'pdf_builder_canvas_bg_color',
+            'pdf_builder_canvas_border_color',
+            'pdf_builder_canvas_container_bg_color'
         ];
 
         if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === SETTINGS UPDATE DETAILS ==='); }

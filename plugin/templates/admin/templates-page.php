@@ -512,7 +512,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                     <div class="setting-group">
                         <label class="setting-label">Format de papier</label>
                         <select id="template-paper-size" class="setting-select">
-                            <option value="A4">A4 (594 × 1123 px)</option>
+                            <option value="A4">A4 (794 × 1123 px)</option>
                             <option value="A3">A3 (840 × 1191 px)</option>
                             <option value="Letter">Letter (612 × 792 px)</option>
                             <option value="Legal">Legal (612 × 1008 px)</option>
