@@ -465,7 +465,7 @@ class AdminScriptLoader
         
         // Remplacer par les données WooCommerce si elles existent et que les paramètres du plugin sont vides
         if (empty($company_data['name'])) {
-            $company_data['name'] = get_option('woocommerce_store_name', '');
+            $company_data['name'] = get_bloginfo('name', '');
         }
         if (empty($company_data['address'])) {
             // Récupérer l'adresse complète depuis WooCommerce
@@ -475,11 +475,11 @@ class AdminScriptLoader
             $store_postcode = get_option('woocommerce_store_postcode', '');
             $store_country = get_option('woocommerce_store_country', '');
             
-            $full_address = array_filter([$store_address, $store_address_2, $store_city, $store_postcode, $store_country]);
+            $full_address = array_filter([$store_address, $store_address_2, $store_postcode . ' ' . $store_city, $store_country]);
             $company_data['address'] = implode(', ', $full_address);
         }
         if (empty($company_data['email'])) {
-            $company_data['email'] = get_option('woocommerce_store_email', '');
+            $company_data['email'] = get_option('admin_email', '');
         }
         
         $localize_data['company'] = $company_data;
