@@ -11,7 +11,7 @@
  * @version 1.0.0
  */
 
-namespace PDF_Builder\Src\Utilities;
+namespace PDF_Builder\Utilities;
 
 if (!defined('ABSPATH')) {
     exit;
