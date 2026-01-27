@@ -667,6 +667,14 @@ abstract class BaseGenerator
                 $variations = ['opacity', 'alpha', 'transparency'];
             } elseif ($propertyName === 'verticalAlign') {
                 $variations = ['vertical-align', 'verticalalign', 'vertical_align', 'valign'];
+            } elseif ($propertyName === 'paddingTop') {
+                $variations = ['padding-top', 'paddingtop', 'padding_top', 'paddingTop'];
+            } elseif ($propertyName === 'paddingRight') {
+                $variations = ['padding-right', 'paddingright', 'padding_right', 'paddingRight'];
+            } elseif ($propertyName === 'paddingBottom') {
+                $variations = ['padding-bottom', 'paddingbottom', 'padding_bottom', 'paddingBottom'];
+            } elseif ($propertyName === 'paddingLeft') {
+                $variations = ['padding-left', 'paddingleft', 'padding_left', 'paddingLeft'];
             }
 
             foreach ($variations as $variation) {
@@ -762,6 +770,18 @@ abstract class BaseGenerator
         }
         if (($value = $getCssProperty('padding', $element)) !== null) {
             $style .= "padding: {$value}px; ";
+        }
+        if (($value = $getCssProperty('paddingTop', $element)) !== null) {
+            $style .= "padding-top: {$value}px; ";
+        }
+        if (($value = $getCssProperty('paddingRight', $element)) !== null) {
+            $style .= "padding-right: {$value}px; ";
+        }
+        if (($value = $getCssProperty('paddingBottom', $element)) !== null) {
+            $style .= "padding-bottom: {$value}px; ";
+        }
+        if (($value = $getCssProperty('paddingLeft', $element)) !== null) {
+            $style .= "padding-left: {$value}px; ";
         }
         if (($value = $getCssProperty('margin', $element)) !== null) {
             $style .= "margin: {$value}px; ";
