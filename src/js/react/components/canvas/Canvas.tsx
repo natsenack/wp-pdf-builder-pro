@@ -1075,6 +1075,10 @@ const drawCompanyInfo = (
     phone: props.companyPhone || "+33 4 12 34 56 78",
   };
 
+  // DEBUG: Log company data from plugin settings
+  console.log('[CANVAS DEBUG] Company data from plugin settings:', (window as any).pdfBuilderData?.company);
+  console.log('[CANVAS DEBUG] Original company data:', companyData);
+
   // Remplacer par les données dynamiques du plugin si disponibles
   if ((window as any).pdfBuilderData?.company) {
     const pluginCompany = (window as any).pdfBuilderData.company;
@@ -1086,6 +1090,10 @@ const drawCompanyInfo = (
     companyData.capital = pluginCompany.capital || companyData.capital;
     companyData.email = pluginCompany.email || companyData.email;
     companyData.phone = pluginCompany.phone || companyData.phone;
+    
+    console.log('[CANVAS DEBUG] Updated company data with plugin settings:', companyData);
+  } else {
+    console.log('[CANVAS DEBUG] No plugin company data found, using defaults');
   }
 
   // Afficher le nom de l'entreprise si demandé

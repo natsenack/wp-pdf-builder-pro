@@ -464,6 +464,9 @@ class AdminScriptLoader
         ];
         
         $localize_data['company'] = $company_data;
+        
+        // DEBUG: Log company data being sent to JS
+        error_log('[PHP DEBUG] Company data sent to JS: ' . print_r($company_data, true));
 
         // Ajouter les paramètres canvas
         if (class_exists('\PDF_Builder\Canvas\Canvas_Manager')) {
@@ -631,6 +634,17 @@ class AdminScriptLoader
         // Also set window.pdfBuilderData directly before React initializes
         wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData'); }
+
+        // DEBUG: Add inline script to check if data is available
+        wp_add_inline_script('pdf-builder-react-main', '
+            console.log("[DEBUG] pdfBuilderData available:", typeof window.pdfBuilderData);
+            if (window.pdfBuilderData) {
+                console.log("[DEBUG] pdfBuilderData.company:", window.pdfBuilderData.company);
+                console.log("[DEBUG] Full pdfBuilderData:", window.pdfBuilderData);
+            } else {
+                console.log("[DEBUG] pdfBuilderData is not defined");
+            }
+        ', 'after');
 
         // Emergency reload script - DISABLED - Don't force reload
         // The React wrapper handles its own initialization without hard reload requirements
