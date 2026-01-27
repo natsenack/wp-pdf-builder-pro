@@ -1,4 +1,5 @@
 import { CompanyLogoElement } from '../../types/elements';
+import { NumericPropertyInput } from '../ui/NumericPropertyInput';
 
 // Déclaration des types WordPress pour TypeScript
 declare global {
@@ -271,44 +272,27 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Rayon des coins
-            </label>
-            <input
-              type="number"
-              min="0"
-              max="50"
-              value={element.borderRadius || 0}
-              onChange={(e) => onChange(element.id, 'borderRadius', parseInt(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Rayon des coins"
+              value={element.borderRadius}
+              defaultValue={0}
+              min={0}
+              max={50}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'borderRadius', value)}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Rotation
-            </label>
-            <input
-              type="number"
-              min="-180"
-              max="180"
-              value={element.rotation || 0}
-              onChange={(e) => onChange(element.id, 'rotation', parseInt(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Rotation"
+              value={element.rotation}
+              defaultValue={0}
+              min={-180}
+              max={180}
+              unit="°"
+              onChange={(value) => onChange(element.id, 'rotation', value)}
             />
-            <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}>Degrés</div>
           </div>
         </>
       )}
@@ -317,74 +301,50 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
       {logoCurrentTab === 'positionnement' && (
         <>
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Position X
-            </label>
-            <input
-              type="number"
-              value={element.x || 0}
-              onChange={(e) => onChange(element.id, 'x', parseInt(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Position X"
+              value={element.x}
+              defaultValue={0}
+              min={0}
+              max={1000}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'x', value)}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Position Y
-            </label>
-            <input
-              type="number"
-              value={element.y || 0}
-              onChange={(e) => onChange(element.id, 'y', parseInt(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Position Y"
+              value={element.y}
+              defaultValue={0}
+              min={0}
+              max={1000}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'y', value)}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Largeur
-            </label>
-            <input
-              type="number"
-              value={element.width || 100}
-              onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value) || 100)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Largeur"
+              value={element.width}
+              defaultValue={100}
+              min={10}
+              max={1000}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'width', value)}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Hauteur
-            </label>
-            <input
-              type="number"
-              value={element.height || 100}
-              onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value) || 100)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Hauteur"
+              value={element.height}
+              defaultValue={100}
+              min={10}
+              max={1000}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'height', value)}
             />
           </div>
         </>

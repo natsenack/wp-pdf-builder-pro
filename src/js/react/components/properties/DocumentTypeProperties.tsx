@@ -1,4 +1,5 @@
 import { DocumentTypeElement } from '../../types/elements';
+import { NumericPropertyInput } from '../ui/NumericPropertyInput';
 
 // Composant Toggle personnalisé
 const Toggle = ({ checked, onChange, label, description }: {
@@ -164,22 +165,14 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
 
           <div style={{ display: 'grid', gap: '12px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#6b7280' }}>
-                Taille de police
-              </label>
-              <input
-                type="number"
-                value={element.fontSize || 18}
-                onChange={(e) => onChange(element.id, 'fontSize', parseInt(e.target.value) || 18)}
-                min="8"
-                max="72"
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '14px'
-                }}
+              <NumericPropertyInput
+                label="Taille de police"
+                value={element.fontSize}
+                defaultValue={18}
+                min={8}
+                max={72}
+                unit="px"
+                onChange={(value) => onChange(element.id, 'fontSize', value)}
               />
             </div>
 
@@ -225,6 +218,28 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
                 <option value="left">Gauche</option>
                 <option value="center">Centre</option>
                 <option value="right">Droite</option>
+              </select>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#6b7280' }}>
+                Alignement vertical
+              </label>
+              <select
+                value={element.verticalAlign || 'top'}
+                onChange={(e) => onChange(element.id, 'verticalAlign', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  backgroundColor: '#ffffff'
+                }}
+              >
+                <option value="top">Haut</option>
+                <option value="middle">Milieu</option>
+                <option value="bottom">Bas</option>
               </select>
             </div>
 
@@ -278,79 +293,41 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
 
           <div style={{ display: 'grid', gap: '12px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#6b7280' }}>
-                  Position X
-                </label>
-                <input
-                  type="number"
-                  value={element.x}
-                  onChange={(e) => onChange(element.id, 'x', parseFloat(e.target.value) || 0)}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px'
-                  }}
-                />
-              </div>
+              <NumericPropertyInput
+                label="Position X"
+                value={element.x}
+                defaultValue={0}
+                unit="px"
+                onChange={(value) => onChange(element.id, 'x', value)}
+              />
 
-              <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#6b7280' }}>
-                  Position Y
-                </label>
-                <input
-                  type="number"
-                  value={element.y}
-                  onChange={(e) => onChange(element.id, 'y', parseFloat(e.target.value) || 0)}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px'
-                  }}
-                />
-              </div>
+              <NumericPropertyInput
+                label="Position Y"
+                value={element.y}
+                defaultValue={0}
+                unit="px"
+                onChange={(value) => onChange(element.id, 'y', value)}
+              />
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#6b7280' }}>
-                  Largeur
-                </label>
-                <input
-                  type="number"
-                  value={element.width}
-                  onChange={(e) => onChange(element.id, 'width', parseFloat(e.target.value) || 0)}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px'
-                  }}
-                />
-              </div>
+              <NumericPropertyInput
+                label="Largeur"
+                value={element.width}
+                defaultValue={100}
+                min={1}
+                unit="px"
+                onChange={(value) => onChange(element.id, 'width', value)}
+              />
 
-              <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#6b7280' }}>
-                  Hauteur
-                </label>
-                <input
-                  type="number"
-                  value={element.height}
-                  onChange={(e) => onChange(element.id, 'height', parseFloat(e.target.value) || 0)}
-                  style={{
-                    width: '100%',
-                    padding: '8px 12px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    fontSize: '14px'
-                  }}
-                />
-              </div>
+              <NumericPropertyInput
+                label="Hauteur"
+                value={element.height}
+                defaultValue={50}
+                min={1}
+                unit="px"
+                onChange={(value) => onChange(element.id, 'height', value)}
+              />
             </div>
           </div>
         </div>

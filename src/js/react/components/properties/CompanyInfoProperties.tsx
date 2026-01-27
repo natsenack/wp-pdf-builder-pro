@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CompanyInfoElement } from '../../types/elements';
+import { NumericPropertyInput } from '../ui/NumericPropertyInput';
 
 interface CompanyInfoPropertiesProps {
   element: CompanyInfoElement;
@@ -723,22 +724,14 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
                 <div style={{ padding: '12px', backgroundColor: '#ffffff' }}>
 
             <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Taille de police
-              </label>
-              <input
-                type="number"
-                min="10"
-                max="32"
-                value={element.headerFontSize || Math.round((element.fontSize || 12) * 1.2)}
-                onChange={(e) => onChange(element.id, 'headerFontSize', parseInt(e.target.value) || 14)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
+              <NumericPropertyInput
+                label="Taille de police"
+                value={element.headerFontSize}
+                defaultValue={Math.round((element.fontSize || 12) * 1.2)}
+                min={10}
+                max={32}
+                unit="px"
+                onChange={(value) => onChange(element.id, 'headerFontSize', value)}
               />
             </div>
 
@@ -848,22 +841,14 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
               <div style={{ padding: '12px', backgroundColor: '#ffffff' }}>
 
             <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Taille de police
-              </label>
-              <input
-                type="number"
-                min="8"
-                max="24"
-                value={element.bodyFontSize || element.fontSize || 12}
-                onChange={(e) => onChange(element.id, 'bodyFontSize', parseInt(e.target.value) || 12)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
+              <NumericPropertyInput
+                label="Taille de police"
+                value={element.bodyFontSize}
+                defaultValue={element.fontSize || 12}
+                min={8}
+                max={24}
+                unit="px"
+                onChange={(value) => onChange(element.id, 'bodyFontSize', value)}
               />
             </div>
 
@@ -1011,28 +996,17 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
                 )}
 
                 {element.showBorders !== false && (
-                  <div style={{ marginBottom: '8px' }}>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                      Épaisseur de la bordure
-                    </label>
-                    <select
-                      value={String(element.borderWidth || '1')}
-                      onChange={(e) => onChange(element.id, 'borderWidth', e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '4px 8px',
-                        border: '1px solid #ccc',
-                        borderRadius: '3px',
-                        fontSize: '12px'
-                      }}
-                    >
-                      <option value="0.5">Fin (0.5px)</option>
-                      <option value="1">Normal (1px)</option>
-                      <option value="1.5">Moyen (1.5px)</option>
-                      <option value="2">Épais (2px)</option>
-                      <option value="3">Très épais (3px)</option>
-                    </select>
-                  </div>
+                  <NumericPropertyInput
+                    label="Épaisseur de la bordure"
+                    value={element.borderWidth}
+                    defaultValue={1}
+                    min={0.5}
+                    max={10}
+                    step={0.5}
+                    unit="px"
+                    onChange={(value) => onChange(element.id, 'borderWidth', value)}
+                    description="Épaisseur de la bordure en pixels"
+                  />
                 )}
 
                 <div style={{ marginBottom: '8px' }}>
@@ -1098,74 +1072,50 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
       {companyCurrentTab === 'positionnement' && (
         <>
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Position X
-            </label>
-            <input
-              type="number"
-              value={element.x || 0}
-              onChange={(e) => onChange(element.id, 'x', parseInt(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Position X"
+              value={element.x}
+              defaultValue={0}
+              min={0}
+              max={1000}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'x', value)}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Position Y
-            </label>
-            <input
-              type="number"
-              value={element.y || 0}
-              onChange={(e) => onChange(element.id, 'y', parseInt(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Position Y"
+              value={element.y}
+              defaultValue={0}
+              min={0}
+              max={1000}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'y', value)}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Largeur
-            </label>
-            <input
-              type="number"
-              value={element.width || 200}
-              onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value) || 200)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Largeur"
+              value={element.width}
+              defaultValue={200}
+              min={10}
+              max={1000}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'width', value)}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Hauteur
-            </label>
-            <input
-              type="number"
-              value={element.height || 100}
-              onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value) || 100)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Hauteur"
+              value={element.height}
+              defaultValue={100}
+              min={10}
+              max={1000}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'height', value)}
             />
           </div>
         </>

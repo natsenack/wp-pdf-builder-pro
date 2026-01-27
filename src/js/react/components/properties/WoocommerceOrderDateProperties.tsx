@@ -1,5 +1,6 @@
 import { useState, ReactNode } from 'react';
 import { WoocommerceOrderDateElement } from '../../types/elements';
+import { NumericPropertyInput } from '../ui/NumericPropertyInput';
 
 // Composant Accordion personnalisé - même style que les autres propriétés
 const Accordion = ({ title, children, defaultOpen = false }: {
@@ -202,22 +203,14 @@ export function WoocommerceOrderDateProperties({
               </select>
             </div>
             <div style={{ marginBottom: '12px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Taille
-              </label>
-              <input
-                type="number"
-                min="8"
-                max="72"
-                value={(element.properties?.fontSize) || 12}
-                onChange={(e) => onChange(element.id, 'properties', { ...element.properties, fontSize: parseInt(e.target.value) || 12 })}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
+              <NumericPropertyInput
+                label="Taille"
+                value={element.properties?.fontSize}
+                defaultValue={12}
+                min={8}
+                max={72}
+                unit="px"
+                onChange={(value) => onChange(element.id, 'properties', { ...element.properties, fontSize: value })}
               />
             </div>
             <div style={{ marginBottom: '12px' }}>

@@ -1,4 +1,5 @@
 import { Element } from '../../types/elements';
+import { NumericPropertyInput } from '../ui/NumericPropertyInput';
 
 interface ExtendedElement extends Element {
   verticalAlign?: string;
@@ -193,25 +194,17 @@ export function TextProperties({ element, onChange, activeTab, setActiveTab }: T
             </select>
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Taille de police <span style={{ color: '#666', fontSize: '10px' }}>({element.fontSize || 16}px)</span>
-            </label>
-            <input
-              type="number"
-              min="6"
-              max="72"
-              value={element.fontSize || 16}
-              onChange={(e) => onChange(element.id, 'fontSize', parseInt(e.target.value) || 16)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
-            />
-          </div>
+          <NumericPropertyInput
+            label="Taille de police"
+            value={element.fontSize}
+            defaultValue={16}
+            min={6}
+            max={72}
+            step={1}
+            unit="px"
+            onChange={(value) => onChange(element.id, 'fontSize', value)}
+            description="Taille de la police en pixels"
+          />
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
@@ -308,96 +301,56 @@ export function TextProperties({ element, onChange, activeTab, setActiveTab }: T
       {textCurrentTab === 'positionnement' && (
         <>
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Position X <span style={{ color: '#666', fontSize: '10px' }}>({element.x || 0}px)</span>
-            </label>
-            <input
-              type="number"
-              value={element.x || 0}
-              onChange={(e) => onChange(element.id, 'x', parseFloat(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Position X"
+              value={element.x}
+              defaultValue={0}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'x', value)}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Position Y <span style={{ color: '#666', fontSize: '10px' }}>({element.y || 0}px)</span>
-            </label>
-            <input
-              type="number"
-              value={element.y || 0}
-              onChange={(e) => onChange(element.id, 'y', parseFloat(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Position Y"
+              value={element.y}
+              defaultValue={0}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'y', value)}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Largeur <span style={{ color: '#666', fontSize: '10px' }}>({element.width || 100}px)</span>
-            </label>
-            <input
-              type="number"
-              min="1"
-              value={element.width || 100}
-              onChange={(e) => onChange(element.id, 'width', parseFloat(e.target.value) || 100)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Largeur"
+              value={element.width}
+              defaultValue={100}
+              min={1}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'width', value)}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Hauteur <span style={{ color: '#666', fontSize: '10px' }}>({element.height || 50}px)</span>
-            </label>
-            <input
-              type="number"
-              min="1"
-              value={element.height || 50}
-              onChange={(e) => onChange(element.id, 'height', parseFloat(e.target.value) || 50)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Hauteur"
+              value={element.height}
+              defaultValue={50}
+              min={1}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'height', value)}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Rotation <span style={{ color: '#666', fontSize: '10px' }}>({element.rotation || 0}°)</span>
-            </label>
-            <input
-              type="number"
-              min="-180"
-              max="180"
-              value={element.rotation || 0}
-              onChange={(e) => onChange(element.id, 'rotation', parseFloat(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Rotation"
+              value={element.rotation}
+              defaultValue={0}
+              min={-180}
+              max={180}
+              unit="°"
+              onChange={(value) => onChange(element.id, 'rotation', value)}
             />
           </div>
 

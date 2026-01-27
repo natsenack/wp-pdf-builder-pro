@@ -1,5 +1,6 @@
 import { useState, ReactNode } from 'react';
 import { ProductTableElement } from '../../types/elements';
+import { NumericPropertyInput } from '../ui/NumericPropertyInput';
 
 // Composant Accordion personnalisé
 const Accordion = ({ title, children, defaultOpen = false }: {
@@ -317,23 +318,14 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               gap: '12px'
             }}>
               <div>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px', color: '#007bff' }}>
-                  Taille
-                </label>
-                <input
-                  type="number"
-                  min="8"
-                  max="24"
-                  value={element.globalFontSize || 11}
-                  onChange={(e) => onChange(element.id, 'globalFontSize', parseInt(e.target.value) || 11)}
-                  style={{
-                    width: '100%',
-                    padding: '4px 6px',
-                    border: '1px solid #007bff',
-                    borderRadius: '3px',
-                    fontSize: '11px',
-                    backgroundColor: 'white'
-                  }}
+                <NumericPropertyInput
+                  label="Taille"
+                  value={element.globalFontSize}
+                  defaultValue={11}
+                  min={8}
+                  max={24}
+                  unit="px"
+                  onChange={(value) => onChange(element.id, 'globalFontSize', value)}
                 />
               </div>
 
@@ -428,22 +420,14 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               {/* Accordéon Police de l'entête */}
               <Accordion title="Police de l'entête" defaultOpen={false}>
                 <div style={{ marginBottom: '12px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-                    Taille de police de l&apos;entête
-                  </label>
-                  <input
-                    type="number"
-                    min="8"
-                    max="24"
-                    value={element.headerFontSize || element.globalFontSize || 12}
-                    onChange={(e) => onChange(element.id, 'headerFontSize', parseInt(e.target.value) || 12)}
-                    style={{
-                      width: '100%',
-                      padding: '4px 8px',
-                      border: '1px solid #ccc',
-                      borderRadius: '3px',
-                      fontSize: '12px'
-                    }}
+                  <NumericPropertyInput
+                    label="Taille de police de l'entête"
+                    value={element.headerFontSize}
+                    defaultValue={element.globalFontSize || 12}
+                    min={8}
+                    max={24}
+                    unit="px"
+                    onChange={(value) => onChange(element.id, 'headerFontSize', value)}
                   />
                   <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
                     Défaut: {element.globalFontSize || 11}px
@@ -554,22 +538,14 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               {/* Accordéon Police des lignes */}
               <Accordion title="Police des lignes" defaultOpen={false}>
                 <div style={{ marginBottom: '12px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-                    Taille de police des lignes
-                  </label>
-                  <input
-                    type="number"
-                    min="8"
-                    max="24"
-                    value={element.rowFontSize || element.globalFontSize || 11}
-                    onChange={(e) => onChange(element.id, 'rowFontSize', parseInt(e.target.value) || 11)}
-                    style={{
-                      width: '100%',
-                      padding: '4px 8px',
-                      border: '1px solid #ccc',
-                      borderRadius: '3px',
-                      fontSize: '12px'
-                    }}
+                  <NumericPropertyInput
+                    label="Taille de police des lignes"
+                    value={element.rowFontSize}
+                    defaultValue={element.globalFontSize || 11}
+                    min={8}
+                    max={24}
+                    unit="px"
+                    onChange={(value) => onChange(element.id, 'rowFontSize', value)}
                   />
                   <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
                     Défaut: {element.globalFontSize || 11}px
@@ -680,22 +656,14 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               {/* Accordéon Police des totaux */}
               <Accordion title="Police des totaux" defaultOpen={false}>
                 <div style={{ marginBottom: '12px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-                    Taille de police des totaux
-                  </label>
-                  <input
-                    type="number"
-                    min="8"
-                    max="24"
-                    value={element.totalFontSize || element.globalFontSize || 12}
-                    onChange={(e) => onChange(element.id, 'totalFontSize', parseInt(e.target.value) || 12)}
-                    style={{
-                      width: '100%',
-                      padding: '4px 8px',
-                      border: '1px solid #ccc',
-                      borderRadius: '3px',
-                      fontSize: '12px'
-                    }}
+                  <NumericPropertyInput
+                    label="Taille de police des totaux"
+                    value={element.totalFontSize}
+                    defaultValue={element.globalFontSize || 12}
+                    min={8}
+                    max={24}
+                    unit="px"
+                    onChange={(value) => onChange(element.id, 'totalFontSize', value)}
                   />
                   <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
                     Défaut: {element.globalFontSize || 12}px
@@ -1734,85 +1702,51 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
       {currentTab === 'positionnement' && (
         <>
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Position X <span style={{ color: '#666', fontSize: '10px' }}>({((element.x) * 1).toFixed(1)}px)</span>
-            </label>
-            <input
-              type="number"
-              step="0.1"
+            <NumericPropertyInput
+              label="Position X"
               value={element.x}
-              onChange={(e) => onChange(element.id, 'x', parseFloat(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
-              placeholder="Entrer la valeur en pixels"
+              defaultValue={0}
+              step={0.1}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'x', value)}
             />
             <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Valeur en pixels</small>
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Position Y <span style={{ color: '#666', fontSize: '10px' }}>({((element.y) * 1).toFixed(1)}px)</span>
-            </label>
-            <input
-              type="number"
-              step="0.1"
+            <NumericPropertyInput
+              label="Position Y"
               value={element.y}
-              onChange={(e) => onChange(element.id, 'y', parseFloat(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
-              placeholder="Entrer la valeur en pixels"
+              defaultValue={0}
+              step={0.1}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'y', value)}
             />
             <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Valeur en pixels</small>
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Largeur <span style={{ color: '#666', fontSize: '10px' }}>({((element.width) * 1).toFixed(1)}px)</span>
-            </label>
-            <input
-              type="number"
-              step="0.1"
+            <NumericPropertyInput
+              label="Largeur"
               value={element.width}
-              onChange={(e) => onChange(element.id, 'width', parseFloat(e.target.value) || 100)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
-              placeholder="Entrer la valeur en pixels"
+              defaultValue={100}
+              step={0.1}
+              min={1}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'width', value)}
             />
             <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Valeur en pixels</small>
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Hauteur <span style={{ color: '#666', fontSize: '10px' }}>({((element.height) * 1).toFixed(1)}px)</span>
-            </label>
-            <input
-              type="number"
-              step="0.1"
+            <NumericPropertyInput
+              label="Hauteur"
               value={element.height}
-              onChange={(e) => onChange(element.id, 'height', parseFloat(e.target.value) || 100)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
-              placeholder="Entrer la valeur en pixels"
+              defaultValue={100}
+              step={0.1}
+              min={1}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'height', value)}
             />
             <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Valeur en pixels</small>
           </div>

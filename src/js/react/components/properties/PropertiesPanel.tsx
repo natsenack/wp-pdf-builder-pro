@@ -2,6 +2,7 @@ import React, { useState, useMemo, useCallback, memo } from 'react';
 import { useBuilder } from '../../contexts/builder/BuilderContext';
 import { useIsMobile, useIsTablet } from '../../hooks/useResponsive';
 import { ResponsiveContainer } from '../ui/Responsive';
+import { NumericPropertyInput } from '../ui/NumericPropertyInput';
 import { ProductTableProperties } from './ProductTableProperties';
 import { CustomerInfoProperties } from './CustomerInfoProperties';
 import { CompanyInfoProperties } from './CompanyInfoProperties';
@@ -142,95 +143,49 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
           {/* Propriétés communes - masquées pour les éléments WooCommerce et les éléments de base qui ont leurs propres onglets */}
           {element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'woocommerce_order_date' && element.type !== 'woocommerce_invoice_number' && element.type !== 'document_type' && element.type !== 'dynamic-text' && element.type !== 'mentions' && element.type !== 'text' && element.type !== 'rectangle' && element.type !== 'circle' && element.type !== 'image' && element.type !== 'line' && (
           <div style={{ display: 'grid', gap: '8px' }}>
-            <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Position X
-              </label>
-              <input
-                type="number"
-                value={element.x}
-                onChange={(e) => handlePropertyChange(element.id, 'x', parseFloat(e.target.value) || 0)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
-              />
-            </div>
+            <NumericPropertyInput
+              label="Position X"
+              value={element.x}
+              defaultValue={0}
+              unit="px"
+              onChange={(value) => handlePropertyChange(element.id, 'x', value)}
+            />
 
-            <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Position Y
-              </label>
-              <input
-                type="number"
-                value={element.y}
-                onChange={(e) => handlePropertyChange(element.id, 'y', parseFloat(e.target.value) || 0)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
-              />
-            </div>
+            <NumericPropertyInput
+              label="Position Y"
+              value={element.y}
+              defaultValue={0}
+              unit="px"
+              onChange={(value) => handlePropertyChange(element.id, 'y', value)}
+            />
 
-            <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Largeur
-              </label>
-              <input
-                type="number"
-                value={element.width}
-                onChange={(e) => handlePropertyChange(element.id, 'width', parseFloat(e.target.value) || 0)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
-              />
-            </div>
+            <NumericPropertyInput
+              label="Largeur"
+              value={element.width}
+              defaultValue={100}
+              min={1}
+              unit="px"
+              onChange={(value) => handlePropertyChange(element.id, 'width', value)}
+            />
 
-            <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Hauteur
-              </label>
-              <input
-                type="number"
-                value={element.height}
-                onChange={(e) => handlePropertyChange(element.id, 'height', parseFloat(e.target.value) || 0)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
-              />
-            </div>
+            <NumericPropertyInput
+              label="Hauteur"
+              value={element.height}
+              defaultValue={50}
+              min={1}
+              unit="px"
+              onChange={(value) => handlePropertyChange(element.id, 'height', value)}
+            />
 
-            <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Rotation (°)
-              </label>
-              <input
-                type="number"
-                value={element.rotation || 0}
-                onChange={(e) => handlePropertyChange(element.id, 'rotation', parseFloat(e.target.value) || 0)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
-              />
-            </div>
+            <NumericPropertyInput
+              label="Rotation"
+              value={element.rotation}
+              defaultValue={0}
+              min={-180}
+              max={180}
+              unit="°"
+              onChange={(value) => handlePropertyChange(element.id, 'rotation', value)}
+            />
 
             <div>
               <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>

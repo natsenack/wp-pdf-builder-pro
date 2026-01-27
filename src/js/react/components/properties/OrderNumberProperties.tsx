@@ -1,5 +1,6 @@
 import { useState, ReactNode } from 'react';
 import { OrderNumberElement } from '../../types/elements';
+import { NumericPropertyInput } from '../ui/NumericPropertyInput';
 
 // Composant Accordion personnalisé
 const Accordion = ({ title, children, defaultOpen = false }: {
@@ -217,22 +218,14 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             </div>
 
             <div style={{ marginBottom: '12px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Taille de police générale
-              </label>
-              <input
-                type="number"
-                min="8"
-                max="72"
-                value={element.fontSize || 14}
-                onChange={(e) => onChange(element.id, 'fontSize', parseInt(e.target.value) || 14)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
+              <NumericPropertyInput
+                label="Taille de police générale"
+                value={element.fontSize}
+                defaultValue={14}
+                min={8}
+                max={72}
+                unit="px"
+                onChange={(value) => onChange(element.id, 'fontSize', value)}
               />
             </div>
 
@@ -809,22 +802,14 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
           {element.showLabel !== false && element.showHeaders !== false && (
             <Accordion title="Police du libellé" defaultOpen={false}>
               <div style={{ marginBottom: '8px' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                  Taille de police
-                </label>
-                <input
-                  type="number"
-                  min="8"
-                  max="32"
-                  value={element.headerFontSize as number || (Number(element.fontSize) || 14) + 2}
-                  onChange={(e) => onChange(element.id, 'headerFontSize', parseInt(e.target.value) || 16)}
-                  style={{
-                    width: '100%',
-                    padding: '4px 8px',
-                    border: '1px solid #ccc',
-                    borderRadius: '3px',
-                    fontSize: '12px'
-                  }}
+                <NumericPropertyInput
+                  label="Taille de police"
+                  value={element.headerFontSize as number}
+                  defaultValue={(Number(element.fontSize) || 14) + 2}
+                  min={8}
+                  max={32}
+                  unit="px"
+                  onChange={(value) => onChange(element.id, 'headerFontSize', value)}
                 />
               </div>
 
@@ -921,42 +906,26 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
           {/* Accordéon Police du numéro et de la date */}
           <Accordion title="Police du numéro et de la date" defaultOpen={false}>
             <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Taille de police du numéro
-              </label>
-              <input
-                type="number"
-                min="8"
-                max="24"
-                value={element.numberFontSize || element.bodyFontSize || element.fontSize || 14}
-                onChange={(e) => onChange(element.id, 'numberFontSize', parseInt(e.target.value) || 14)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
+              <NumericPropertyInput
+                label="Taille de police du numéro"
+                value={element.numberFontSize}
+                defaultValue={element.bodyFontSize || element.fontSize || 14}
+                min={8}
+                max={24}
+                unit="px"
+                onChange={(value) => onChange(element.id, 'numberFontSize', value)}
               />
             </div>
 
             <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Taille de police de la date
-              </label>
-              <input
-                type="number"
-                min="8"
-                max="24"
-                value={element.dateFontSize || (Number(element.bodyFontSize || element.fontSize) || 14) - 2}
-                onChange={(e) => onChange(element.id, 'dateFontSize', parseInt(e.target.value) || 12)}
-                style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
+              <NumericPropertyInput
+                label="Taille de police de la date"
+                value={element.dateFontSize}
+                defaultValue={(Number(element.bodyFontSize || element.fontSize) || 14) - 2}
+                min={8}
+                max={24}
+                unit="px"
+                onChange={(value) => onChange(element.id, 'dateFontSize', value)}
               />
             </div>
 
@@ -1128,74 +1097,44 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
       {currentTab === 'positionnement' && (
         <>
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Position X
-            </label>
-            <input
-              type="number"
-              value={element.x || 0}
-              onChange={(e) => onChange(element.id, 'x', parseInt(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Position X"
+              value={element.x}
+              defaultValue={0}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'x', value)}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Position Y
-            </label>
-            <input
-              type="number"
-              value={element.y || 0}
-              onChange={(e) => onChange(element.id, 'y', parseInt(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Position Y"
+              value={element.y}
+              defaultValue={0}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'y', value)}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Largeur
-            </label>
-            <input
-              type="number"
-              value={element.width || 200}
-              onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value) || 200)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Largeur"
+              value={element.width}
+              defaultValue={200}
+              min={1}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'width', value)}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Hauteur
-            </label>
-            <input
-              type="number"
-              value={element.height || 40}
-              onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value) || 40)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Hauteur"
+              value={element.height}
+              defaultValue={40}
+              min={1}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'height', value)}
             />
           </div>
 

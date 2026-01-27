@@ -1,4 +1,5 @@
 import { Element } from '../../types/elements';
+import { NumericPropertyInput } from '../ui/NumericPropertyInput';
 
 interface ElementPropertiesProps {
   element: Element;
@@ -10,89 +11,53 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
     <>
       {/* Propriétés communes à tous les éléments */}
       <div style={{ marginBottom: '12px' }}>
-        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-          Largeur <span style={{ color: '#666', fontSize: '10px' }}>({((element.width || 100) * 1).toFixed(1)}px)</span>
-        </label>
-        <input
-          type="number"
-          min="1"
-          step="0.1"
-          value={element.width || 100}
-          onChange={(e) => onChange(element.id, 'width', parseFloat(e.target.value) || 100)}
-          style={{
-            width: '100%',
-            padding: '4px 8px',
-            border: '1px solid #ccc',
-            borderRadius: '3px',
-            fontSize: '12px'
-          }}
-          placeholder="Valeur en pixels"
+        <NumericPropertyInput
+          label="Largeur"
+          value={element.width}
+          defaultValue={100}
+          min={1}
+          step={0.1}
+          unit="px"
+          onChange={(value) => onChange(element.id, 'width', value)}
         />
         <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Entrer la largeur en pixels</small>
       </div>
 
       <div style={{ marginBottom: '12px' }}>
-        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-          Hauteur <span style={{ color: '#666', fontSize: '10px' }}>({((element.height || 50) * 1).toFixed(1)}px)</span>
-        </label>
-        <input
-          type="number"
-          min="1"
-          step="0.1"
-          value={element.height || 50}
-          onChange={(e) => onChange(element.id, 'height', parseFloat(e.target.value) || 50)}
-          style={{
-            width: '100%',
-            padding: '4px 8px',
-            border: '1px solid #ccc',
-            borderRadius: '3px',
-            fontSize: '12px'
-          }}
-          placeholder="Valeur en pixels"
+        <NumericPropertyInput
+          label="Hauteur"
+          value={element.height}
+          defaultValue={50}
+          min={1}
+          step={0.1}
+          unit="px"
+          onChange={(value) => onChange(element.id, 'height', value)}
         />
         <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Entrer la hauteur en pixels</small>
       </div>
 
       <div style={{ marginBottom: '12px' }}>
-        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-          Position X <span style={{ color: '#666', fontSize: '10px' }}>({((element.x || 0) * 1).toFixed(1)}px)</span>
-        </label>
-        <input
-          type="number"
-          min="0"
-          step="0.1"
-          value={element.x || 0}
-          onChange={(e) => onChange(element.id, 'x', parseFloat(e.target.value) || 0)}
-          style={{
-            width: '100%',
-            padding: '4px 8px',
-            border: '1px solid #ccc',
-            borderRadius: '3px',
-            fontSize: '12px'
-          }}
-          placeholder="Valeur en pixels"
+        <NumericPropertyInput
+          label="Position X"
+          value={element.x}
+          defaultValue={0}
+          min={0}
+          step={0.1}
+          unit="px"
+          onChange={(value) => onChange(element.id, 'x', value)}
         />
         <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Entrer la position en pixels</small>
       </div>
 
       <div style={{ marginBottom: '12px' }}>
-        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-          Position Y <span style={{ color: '#666', fontSize: '10px' }}>({((element.y || 0) * 1).toFixed(1)}px)</span>
-        </label>
-        <input
-          type="number"
-          min="0"
-          step="0.1"
-          value={element.y || 0}
-          onChange={(e) => onChange(element.id, 'y', parseFloat(e.target.value) || 0)}
-          style={{
-            width: '100%',
-            padding: '4px 8px',
-            border: '1px solid #ccc',
-            borderRadius: '3px',
-            fontSize: '12px'
-          }}
-          placeholder="Valeur en pixels"
+        <NumericPropertyInput
+          label="Position Y"
+          value={element.y}
+          defaultValue={0}
+          min={0}
+          step={0.1}
+          unit="px"
+          onChange={(value) => onChange(element.id, 'y', value)}
         />
         <small style={{ color: '#999', display: 'block', marginTop: '2px' }}>Entrer la position en pixels</small>
       </div>
@@ -137,42 +102,26 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Épaisseur de bordure
-            </label>
-            <input
-              type="number"
-              min="0"
-              max="20"
-              value={element.strokeWidth || 1}
-              onChange={(e) => onChange(element.id, 'strokeWidth', parseInt(e.target.value) || 1)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Épaisseur de bordure"
+              value={element.strokeWidth}
+              defaultValue={1}
+              min={0}
+              max={20}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'strokeWidth', value)}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Rayon des coins
-            </label>
-            <input
-              type="number"
-              min="0"
-              max="50"
-              value={element.borderRadius || 0}
-              onChange={(e) => onChange(element.id, 'borderRadius', parseInt(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Rayon des coins"
+              value={element.borderRadius}
+              defaultValue={0}
+              min={0}
+              max={50}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'borderRadius', value)}
             />
           </div>
         </>
@@ -217,22 +166,14 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Épaisseur de bordure
-            </label>
-            <input
-              type="number"
-              min="0"
-              max="20"
-              value={element.strokeWidth || 1}
-              onChange={(e) => onChange(element.id, 'strokeWidth', parseInt(e.target.value) || 1)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Épaisseur de bordure"
+              value={element.strokeWidth}
+              defaultValue={1}
+              min={0}
+              max={20}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'strokeWidth', value)}
             />
           </div>
         </>
@@ -262,22 +203,14 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Taille de police
-            </label>
-            <input
-              type="number"
-              min="8"
-              max="72"
-              value={element.fontSize || 12}
-              onChange={(e) => onChange(element.id, 'fontSize', parseInt(e.target.value) || 12)}
-              style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Taille de police"
+              value={element.fontSize}
+              defaultValue={12}
+              min={8}
+              max={72}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'fontSize', value)}
             />
           </div>
 

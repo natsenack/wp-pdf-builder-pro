@@ -1,4 +1,5 @@
 import { MentionsElement } from '../../types/elements';
+import { NumericPropertyInput } from '../ui/NumericPropertyInput';
 
 // Composant Toggle personnalisé
 const Toggle = ({ checked, onChange, label, description }: {
@@ -919,38 +920,22 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
       {mentionsCurrentTab === 'positionnement' && (
         <>
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Position X
-            </label>
-            <input
-              type="number"
-              value={element.x || 0}
-              onChange={(e) => onChange(element.id, 'x', parseInt(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Position X"
+              value={element.x}
+              defaultValue={0}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'x', value)}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Position Y
-            </label>
-            <input
-              type="number"
-              value={element.y || 0}
-              onChange={(e) => onChange(element.id, 'y', parseInt(e.target.value) || 0)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label="Position Y"
+              value={element.y}
+              defaultValue={0}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'y', value)}
             />
           </div>
 
@@ -958,17 +943,13 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Largeur {currentMentionType === 'medley' ? '(manuel = clipping activé)' : ''}
             </label>
-            <input
-              type="number"
-              value={element.width || 500}
-              onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value) || 500)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label=""
+              value={element.width}
+              defaultValue={500}
+              min={1}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'width', value)}
             />
             {currentMentionType === 'medley' && (
               <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
@@ -981,17 +962,13 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Hauteur {currentMentionType === 'medley' ? '(manuel = clipping activé)' : ''}
             </label>
-            <input
-              type="number"
-              value={element.height || 60}
-              onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value) || 60)}
-              style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
+            <NumericPropertyInput
+              label=""
+              value={element.height}
+              defaultValue={60}
+              min={1}
+              unit="px"
+              onChange={(value) => onChange(element.id, 'height', value)}
             />
             {currentMentionType === 'medley' && (
               <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
