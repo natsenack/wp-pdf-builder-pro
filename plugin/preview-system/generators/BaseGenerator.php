@@ -661,7 +661,12 @@ abstract class BaseGenerator
                 $variations = ['border-color', 'bordercolor', 'border_color', 'strokeColor', 'stroke_color'];
             } elseif ($propertyName === 'borderWidth') {
                 $variations = ['border-width', 'borderwidth', 'border_width', 'strokeWidth', 'stroke_width'];
-            }
+            } elseif ($propertyName === 'rotation') {
+                $variations = ['rotation', 'rotate', 'angle'];
+            } elseif ($propertyName === 'opacity') {
+                $variations = ['opacity', 'alpha', 'transparency'];
+            } elseif ($propertyName === 'verticalAlign') {
+                $variations = ['vertical-align', 'verticalalign', 'vertical_align', 'valign'];
 
             foreach ($variations as $variation) {
                 // Check in properties
