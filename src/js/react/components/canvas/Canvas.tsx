@@ -2581,7 +2581,7 @@ export const Canvas = function Canvas({
           debugLog(`[Canvas] Rendering document type element: ${element.id}`);
           drawDocumentType(ctx, element, currentState);
           break;
-        case "dynamic-text":
+        case "dynamic_text":
           debugLog(`[Canvas] Rendering dynamic text element: ${element.id}`);
           drawDynamicText(ctx, element);
           break;
@@ -2981,7 +2981,7 @@ export const Canvas = function Canvas({
           const element = state.elements.find((el) => el.id === elementId);
           if (
             element &&
-            (element.type === "text" || element.type === "dynamic-text")
+            (element.type === "text" || element.type === "dynamic_text")
           ) {
             // Pour les éléments texte, ajuster la hauteur selon le contenu
             const canvas = document.createElement("canvas");
@@ -3196,7 +3196,7 @@ export const Canvas = function Canvas({
           action: () => handleContextMenuAction("fit-to-content", elementId),
           disabled:
             isLocked ||
-            !(element?.type === "text" || element?.type === "dynamic-text"),
+            !(element?.type === "text" || element?.type === "dynamic_text"),
         },
         { id: "separator3", separator: true },
 

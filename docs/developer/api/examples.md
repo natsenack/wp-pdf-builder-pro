@@ -19,12 +19,12 @@ const templateData = {
       style: { fontSize: 24, fontWeight: "bold" }
     },
     {
-      type: "dynamic-text",
+      type: "dynamic_text",
       content: "Client: {{customer_name}}",
       position: { x: 50, y: 100 }
     },
     {
-      type: "dynamic-text",
+      type: "dynamic_text",
       content: "Total: {{order_total}} €",
       position: { x: 50, y: 120 }
     }

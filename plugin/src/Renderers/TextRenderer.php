@@ -5,7 +5,7 @@
  * Phase 3.3.1 - Renderer spécialisé pour les éléments texte
  *
  * Gère le rendu des éléments texte avec variables dynamiques :
- * - dynamic-text : Texte avec variables {{variable}}
+ * - dynamic_text : Texte avec variables {{variable}}
  * - order_number : Numéros de commande formatés
  */
 
@@ -24,7 +24,7 @@ class TextRenderer
     /**
      * Types d'éléments supportés par ce renderer
      */
-    const SUPPORTED_TYPES = ['dynamic-text', 'order_number'];
+    const SUPPORTED_TYPES = ['dynamic_text', 'order_number'];
 /**
      * Styles CSS par défaut pour le texte
      */
@@ -68,12 +68,12 @@ class TextRenderer
                 ];
             }
 
-            $type = $elementData['type'] ?? 'dynamic-text';
+            $type = $elementData['type'] ?? 'dynamic_text';
             $content = $elementData['content'] ?? '';
             $properties = $elementData['properties'] ?? [];
 // Rendu selon le type d'élément
             switch ($type) {
-                case 'dynamic-text':
+                case 'dynamic_text':
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        $result = $this->renderDynamicText($content, $properties, $context);
 
                     break;
@@ -100,7 +100,7 @@ class TextRenderer
     }
 
     /**
-     * Rend un élément dynamic-text avec variables
+     * Rend un élément dynamic_text avec variables
      *
      * @param string $content Contenu avec variables {{variable}}
      * @param array $properties Propriétés de style
@@ -426,8 +426,8 @@ class TextRenderer
             return false;
         }
 
-        // Pour dynamic-text, vérification du contenu
-        if ($type === 'dynamic-text' && empty($elementData['content'])) {
+        // Pour dynamic_text, vérification du contenu
+        if ($type === 'dynamic_text' && empty($elementData['content'])) {
             return false;
         }
 

@@ -215,14 +215,14 @@ class PdfBuilderProGenerator
     {
         switch ($type) {
             case 'text':
-            case 'dynamic-text':
+            case 'dynamic_text':
             case 'multiline_text':
                 // LOG DES PROPRIÉTÉS TEXT
 
 
 
-                // Pour dynamic-text, prioriser customContent, sinon content/text
-                if ($type === 'dynamic-text') {
+                // Pour dynamic_text, prioriser customContent, sinon content/text
+                if ($type === 'dynamic_text') {
                     $content = $element['customContent'] ?? $element['content'] ?? $element['text'] ?? '';
                 } else {
                     $content = $element['content'] ?? $element['text'] ?? '';
@@ -230,8 +230,8 @@ class PdfBuilderProGenerator
 
 
 
-                // Pour dynamic-text, remplacer les variables si un ordre est défini
-                if ($type === 'dynamic-text' && $this->order) {
+                // Pour dynamic_text, remplacer les variables si un ordre est défini
+                if ($type === 'dynamic_text' && $this->order) {
                     $original_content = $content;
                     $content = $this->replaceOrderVariables($content, $this->order);
                 }

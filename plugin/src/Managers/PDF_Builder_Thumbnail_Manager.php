@@ -171,7 +171,7 @@ class PDF_Builder_Thumbnail_Manager
 
                     switch ($element_type) {
                         case 'text':
-                        case 'dynamic-text':
+                        case 'dynamic_text':
                             $element_text = isset($element['content']) ? substr($element['content'], 0, 20) : 'Texte';
                             break;
                         case 'company_logo':

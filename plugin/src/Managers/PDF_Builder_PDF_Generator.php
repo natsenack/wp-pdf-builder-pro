@@ -412,12 +412,12 @@ class PDF_Builder_PDF_Generator
         // Rendre selon le type d'élément
         switch ($type) {
             case 'text':
-            case 'dynamic-text':
+            case 'dynamic_text':
             case 'multiline_text':
                 $content = $element['content'] ?? $element['text'] ?? $element['customContent'] ?? '';
                 
-                // Pour dynamic-text, remplacer les variables si un ordre est défini
-                if ($type === 'dynamic-text' && $order) {
+                // Pour dynamic_text, remplacer les variables si un ordre est défini
+                if ($type === 'dynamic_text' && $order) {
                     $content = $this->replaceOrderVariables($content, $order);
                 }
                 

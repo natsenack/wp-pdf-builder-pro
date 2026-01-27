@@ -182,7 +182,7 @@ Liste tous les types d'éléments disponibles.
       "properties": ["content", "position", "style"],
       "renderer": "TextRenderer"
     },
-    "dynamic-text": {
+    "dynamic_text": {
       "label": "Texte Dynamique",
       "description": "Texte avec variables",
       "properties": ["content", "variables", "position"],

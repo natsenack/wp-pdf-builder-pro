@@ -113,7 +113,7 @@ const ELEMENT_TYPE_MAPPING = [
 
     // Texte
     'text' => 'text',
-    'dynamic-text' => 'text',
+    'dynamic_text' => 'text',
     'conditional-text' => 'text',
     'counter' => 'text',
     'date-dynamic' => 'text',

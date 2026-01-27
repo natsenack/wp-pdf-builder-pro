@@ -248,7 +248,7 @@ class PdfHtmlGenerator
 
         switch ($element['type']) {
             case 'text':
-            case 'dynamic-text':
+            case 'dynamic_text':
                 $final_content = $order ? $this->admin->getHtmlRenderer()->replaceOrderVariables($content, $order) : $content;
                 $html = sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $safe_style, esc_html($final_content));
                 break;

@@ -1076,7 +1076,7 @@ class PDF_Builder_WooCommerce_Integration
     {
         switch ($type) {
             case 'text':
-            case 'dynamic-text':
+            case 'dynamic_text':
                 return wp_kses(
                     $content,
                     [

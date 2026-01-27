@@ -48,7 +48,7 @@ function pdf_builder_get_element_inline_styles($element)
         case 'text':
         case 'document_type':
         case 'order_number':
-        case 'dynamic-text':
+        case 'dynamic_text':
             if (isset($properties['color']) || isset($properties['textColor'])) {
                 $color = $properties['color'] ?? $properties['textColor'] ?? '#000000';
                 $styles['color'] = $color;

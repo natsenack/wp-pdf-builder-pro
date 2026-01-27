@@ -303,7 +303,7 @@ const WOOCOMMERCE_ELEMENTS = [
     },
   },
   {
-    type: "dynamic-text",
+    type: "dynamic_text",
     label: "Texte Dynamique",
     icon: "📝",
     description: "Texte avec variables dynamiques",

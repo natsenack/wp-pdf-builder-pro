@@ -52,7 +52,7 @@ function setup_default_templates() {
                 'style' => ['fontSize' => 24, 'fontWeight' => 'bold']
             ],
             [
-                'type' => 'dynamic-text',
+                'type' => 'dynamic_text',
                 'content' => 'N° {{invoice_number}}',
                 'position' => ['x' => 400, 'y' => 50]
             ]
@@ -166,17 +166,17 @@ $dynamic_template = [
         ],
         // Informations client
         [
-            'type' => 'dynamic-text',
+            'type' => 'dynamic_text',
             'content' => 'Client: {{client_name}}',
             'position' => ['x' => 20, 'y' => 60]
         ],
         [
-            'type' => 'dynamic-text',
+            'type' => 'dynamic_text',
             'content' => 'Email: {{client_email}}',
             'position' => ['x' => 20, 'y' => 75]
         ],
         [
-            'type' => 'dynamic-text',
+            'type' => 'dynamic_text',
             'content' => 'Date: {{quote_date}}',
             'position' => ['x' => 350, 'y' => 60]
         ],
@@ -198,18 +198,18 @@ $dynamic_template = [
         ],
         // Total
         [
-            'type' => 'dynamic-text',
+            'type' => 'dynamic_text',
             'content' => 'Total HT: {{total_ht}} €',
             'position' => ['x' => 350, 'y' => 200],
             'style' => ['fontWeight' => 'bold']
         ],
         [
-            'type' => 'dynamic-text',
+            'type' => 'dynamic_text',
             'content' => 'TVA (20%): {{tva}} €',
             'position' => ['x' => 350, 'y' => 215]
         ],
         [
-            'type' => 'dynamic-text',
+            'type' => 'dynamic_text',
             'content' => 'Total TTC: {{total_ttc}} €',
             'position' => ['x' => 350, 'y' => 235],
             'style' => ['fontSize' => 14, 'fontWeight' => 'bold']

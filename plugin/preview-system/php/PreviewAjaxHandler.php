@@ -357,7 +357,7 @@ class PreviewAjaxHandler {
                 case 'product_table':
                     $product_table_element = $element;
                     break;
-                case 'dynamic-text':
+                case 'dynamic_text':
                     $dynamic_text_element = $element;
                     break;
                 case 'mentions':

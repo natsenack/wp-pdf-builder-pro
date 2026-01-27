@@ -236,23 +236,23 @@ function create_default_woocommerce_templates() {
             ],
             // Informations commande
             [
-                'type' => 'dynamic-text',
+                'type' => 'dynamic_text',
                 'content' => 'Commande N°: {{order_number}}',
                 'position' => ['x' => 20, 'y' => 60]
             ],
             [
-                'type' => 'dynamic-text',
+                'type' => 'dynamic_text',
                 'content' => 'Date: {{order_date}}',
                 'position' => ['x' => 350, 'y' => 60]
             ],
             // Informations client
             [
-                'type' => 'dynamic-text',
+                'type' => 'dynamic_text',
                 'content' => 'Client: {{customer_name}}',
                 'position' => ['x' => 20, 'y' => 80]
             ],
             [
-                'type' => 'dynamic-text',
+                'type' => 'dynamic_text',
                 'content' => 'Email: {{customer_email}}',
                 'position' => ['x' => 20, 'y' => 95]
             ],
@@ -270,22 +270,22 @@ function create_default_woocommerce_templates() {
             ],
             // Totaux
             [
-                'type' => 'dynamic-text',
+                'type' => 'dynamic_text',
                 'content' => 'Sous-total: {{subtotal}} €',
                 'position' => ['x' => 350, 'y' => 200]
             ],
             [
-                'type' => 'dynamic-text',
+                'type' => 'dynamic_text',
                 'content' => 'TVA: {{tax_total}} €',
                 'position' => ['x' => 350, 'y' => 215]
             ],
             [
-                'type' => 'dynamic-text',
+                'type' => 'dynamic_text',
                 'content' => 'Livraison: {{shipping_total}} €',
                 'position' => ['x' => 350, 'y' => 230]
             ],
             [
-                'type' => 'dynamic-text',
+                'type' => 'dynamic_text',
                 'content' => 'Total: {{order_total}} €',
                 'position' => ['x' => 350, 'y' => 250],
                 'style' => ['fontSize' => 14, 'fontWeight' => 'bold']
