@@ -6,7 +6,7 @@
  */
 
 if (!defined('ABSPATH')) {
-    exit('Accès direct interdit');
+    exit('Direct access not allowed');
 }
 
 // Cette fonction sera appelée pour générer des styles CSS pour les éléments

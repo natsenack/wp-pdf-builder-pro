@@ -6,7 +6,7 @@
 
 // Sécurité
 if (!defined('ABSPATH')) {
-    die('Accès direct interdit');
+    die('Direct access not allowed');
 }
 
 // Vérifier les permissions

@@ -13,7 +13,7 @@
 namespace PDF_Builder\PreviewSystem;
 
 if (!defined('ABSPATH')) {
-    exit('Accès direct interdit');
+    exit('Direct access not allowed');
 }
 
 // === LAYER 1: GENERATORS ===

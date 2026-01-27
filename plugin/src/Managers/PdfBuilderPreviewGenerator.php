@@ -11,7 +11,7 @@ namespace PDF_Builder\Managers;
 use Exception;
 
 if (!defined('ABSPATH')) {
-    exit('Accès direct interdit');
+    exit('Direct access not allowed');
 }
 
 class PdfBuilderPreviewGenerator

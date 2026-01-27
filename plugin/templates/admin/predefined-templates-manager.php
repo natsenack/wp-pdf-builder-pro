@@ -2,7 +2,7 @@
 namespace PDF_Builder\Admin;
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
-    exit('Accès direct interdit');
+    exit('Direct access not allowed');
 }
 
 /**

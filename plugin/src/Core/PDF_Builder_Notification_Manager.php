@@ -7,7 +7,7 @@
  */
 
 if (!defined('ABSPATH')) {
-    exit('Direct access forbidden');
+    exit('Direct access not allowed');
 }
 
 /**

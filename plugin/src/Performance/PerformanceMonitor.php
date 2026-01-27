@@ -15,7 +15,7 @@ namespace PDF_Builder\Performance;
 
 // Sécurité WordPress - Désactivée pour les tests
 // if (!defined('ABSPATH')) {
-//     exit('Accès direct interdit');
+//     exit('Direct access not allowed');
 // }
 
 class PerformanceMonitor

@@ -9,7 +9,7 @@
 namespace PDF_Builder\Core;
 
 if (!defined('ABSPATH')) {
-    exit('Accès direct interdit');
+    exit('Direct access not allowed');
 }
 
 class PDFBuilderMuPluginBlocker {

@@ -5,7 +5,7 @@
  */
 
 if (!defined('ABSPATH')) {
-    exit('Direct access forbidden');
+    exit('Direct access not allowed');
 }
 
 // Include settings loader (loads JavaScript and CSS assets)

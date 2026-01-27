@@ -1,5 +1,5 @@
 <?php
-if (!defined('ABSPATH')) exit('No direct access');
+if (!defined('ABSPATH')) exit('Direct access not allowed');
 
 // Task Scheduler is already loaded in bootstrap.php
 $task_scheduler = PDF_Builder_Task_Scheduler::get_instance();

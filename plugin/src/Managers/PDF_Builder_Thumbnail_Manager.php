@@ -8,7 +8,7 @@
 namespace PDF_Builder\Managers;
 
 if (!defined('ABSPATH')) {
-    exit('Accès direct interdit');
+    exit('Direct access not allowed');
 }
 
 class PdfBuilderThumbnailManager

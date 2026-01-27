@@ -14,7 +14,7 @@ namespace PDF_Builder\Renderers;
 
 // Sécurité WordPress
 if (!defined('ABSPATH')) {
-    exit('Accès direct interdit');
+    exit('Direct access not allowed');
 }
 
 // Système de cache supprimé - génération directe des styles

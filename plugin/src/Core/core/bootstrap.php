@@ -7,7 +7,7 @@
 
 // Prevent direct access
 if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
-    exit('Direct access forbidden');
+    exit('Direct access not allowed');
 }
 
 // For tests, just load the main bootstrap if it exists

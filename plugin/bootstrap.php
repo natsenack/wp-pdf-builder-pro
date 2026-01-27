@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * PDF Builder Pro - Bootstrap
@@ -7,7 +7,7 @@
 
 // Empêcher l'accès direct (sauf pour les tests)
 if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
-    exit('Accès direct interdit');
+    exit('Direct access not allowed');
 }
 
 // Activer le débogage pour capture les erreurs PHP critiques

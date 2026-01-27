@@ -6,7 +6,7 @@
  */
 
 // Prevent direct access
-if (!defined('ABSPATH')) exit('No direct access');
+if (!defined('ABSPATH')) exit('Direct access not allowed');
 
 // =============================================================================
 // SAFE WORDPRESS FUNCTION WRAPPERS

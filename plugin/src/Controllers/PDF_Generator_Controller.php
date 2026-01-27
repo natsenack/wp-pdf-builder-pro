@@ -15,7 +15,7 @@ use Exception;
 
 // Sécurité WordPress - Empêcher l'accès direct
 if (!defined('ABSPATH')) {
-    exit('Accès direct interdit');
+    exit('Direct access not allowed');
 }
 
 class PdfBuilderProGenerator

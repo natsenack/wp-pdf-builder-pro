@@ -4,7 +4,7 @@ namespace PDF_Builder\Managers;
 
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
-    exit('Accès direct interdit');
+    exit('Direct access not allowed');
 }
 /**
  * PDF Builder Pro - Database Query Optimizer
