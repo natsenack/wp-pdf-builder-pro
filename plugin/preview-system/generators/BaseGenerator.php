@@ -667,6 +667,7 @@ abstract class BaseGenerator
                 $variations = ['opacity', 'alpha', 'transparency'];
             } elseif ($propertyName === 'verticalAlign') {
                 $variations = ['vertical-align', 'verticalalign', 'vertical_align', 'valign'];
+            }
 
             foreach ($variations as $variation) {
                 // Check in properties
