@@ -72,6 +72,14 @@ import { ContextMenu, ContextMenuItem } from "../ui/ContextMenu";
 // Fonction pour normaliser les couleurs (simple identité pour le web)
 const normalizeColor = (color: string): string => color;
 
+// Fonction pour normaliser les poids de police
+const normalizeFontWeight = (weight: string | number): string => {
+  if (typeof weight === 'number') return weight.toString();
+  if (weight === 'bold') return '700';
+  if (weight === 'normal') return '400';
+  return weight;
+};
+
 // Constantes communes pour les valeurs par défaut
 const DEFAULT_FONT = {
   family: "Arial",
@@ -1069,16 +1077,16 @@ const drawCompanyInfo = (
   const fontSize = props.fontSize || 12;
   const fontConfig = {
     family: props.fontFamily || "Arial",
-    weight: props.fontWeight || "normal",
+    weight: normalizeFontWeight(props.fontWeight || "normal"),
     style: props.fontStyle || "normal",
+    headerSize: props.headerFontSize || 14,
     headerFamily: props.headerFontFamily || props.fontFamily || "Arial",
-    headerSize: props.headerFontSize || Math.round(fontSize * 1.2),
-    headerWeight: props.headerFontWeight || "bold",
-    headerStyle: props.headerFontStyle || props.fontStyle || "normal",
+    headerWeight: normalizeFontWeight(props.headerFontWeight || "bold"),
+    headerStyle: props.headerFontStyle || "normal",
+    bodySize: props.bodyFontSize || 12,
     bodyFamily: props.bodyFontFamily || props.fontFamily || "Arial",
-    bodySize: props.bodyFontSize || fontSize,
-    bodyWeight: props.bodyFontWeight || props.fontWeight || "normal",
-    bodyStyle: props.bodyFontStyle || props.fontStyle || "normal",
+    bodyWeight: normalizeFontWeight(props.bodyFontWeight || "normal"),
+    bodyStyle: props.bodyFontStyle || "normal",
   };
 
   // Configuration d'affichage
@@ -1140,7 +1148,7 @@ const drawCompanyInfo = (
   };
 
   // Appliquer la police du corps par défaut
-  ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.family}`;
+  ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
 
   // Afficher les éléments selon la configuration
   if (shouldDisplayValue(companyData.name, displayConfig.companyName)) {
