@@ -1055,7 +1055,7 @@ const drawCompanyLine = (
   fontSize: number
 ) => {
   ctx.fillText(text, x, y);
-  return y + Math.round(fontSize * 0.2);
+  return y + Math.max(fontSize * 1.2, fontSize + 4); // Espacement minimum de 1.2x la taille de police ou taille de police + 4px
 };
 
 const drawCompanyInfo = (
