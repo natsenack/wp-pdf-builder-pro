@@ -69,6 +69,9 @@ import { ContextMenu, ContextMenuItem } from "../ui/ContextMenu";
 
 // Fonctions utilitaires de dessin (déplacées en dehors du composant pour éviter les avertissements React Compiler)
 
+// Fonction pour normaliser les couleurs (simple identité pour le web)
+const normalizeColor = (color: string): string => color;
+
 // Constantes communes pour les valeurs par défaut
 const DEFAULT_FONT = {
   family: "Arial",
