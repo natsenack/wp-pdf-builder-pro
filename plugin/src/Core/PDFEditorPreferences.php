@@ -46,6 +46,8 @@ class PDFEditorPreferences {
     private function init_hooks() {
         add_action('wp_ajax_pdf_editor_save_preferences', array($this, 'ajax_save_preferences'));
         add_action('wp_ajax_pdf_editor_get_preferences', array($this, 'ajax_get_preferences'));
+        // Désactiver les scripts wp-preferences par défaut sur les pages admin
+        add_action('admin_enqueue_scripts', array($this, 'dequeue_wp_preferences'), 0);
         // Charger AVANT les scripts wp-preferences par défaut
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'), 1);
     }
@@ -248,9 +250,16 @@ class PDFEditorPreferences {
     }
 
     /**
-     * Enregistrer les scripts JavaScript
+     * Désactiver les scripts wp-preferences par défaut
      */
-    public function enqueue_scripts($hook) {
+    public function dequeue_wp_preferences($hook) {
+        // Désactiver les scripts wp-preferences qui causent des erreurs REST API
+        wp_dequeue_script('wp-preferences');
+        wp_dequeue_script('wp-preferences-persistence');
+
+        // Désactiver les styles associés si nécessaire
+        wp_dequeue_style('wp-preferences');
+    }
         // Charger sur TOUTES les pages admin pour remplacer wp-preferences
         // Plus de restriction à la page de l'éditeur seulement
 
