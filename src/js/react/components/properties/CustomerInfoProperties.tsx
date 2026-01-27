@@ -1,6 +1,7 @@
 import { useState, ReactNode } from 'react';
 import { CustomerInfoElement } from '../../types/elements';
 import { NumericPropertyInput } from '../ui/NumericPropertyInput';
+import { ColorPropertyInput } from '../ui/ColorPropertyInput';
 
 // Composant Accordion personnalisé
 const Accordion = ({ title, children, defaultOpen = false }: {
@@ -760,19 +761,11 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               </div>
 
               <div style={{ marginBottom: '0' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                  Couleur de police
-                </label>
-                <input
-                  type="color"
+                <ColorPropertyInput
+                  label="Couleur de police"
                   value={(element.headerTextColor as string) || element.textColor || '#111827'}
-                  onChange={(e) => onChange(element.id, 'headerTextColor', e.target.value)}
-                  style={{
-                    width: '100%',
-                    height: '32px',
-                    border: '1px solid #ccc',
-                    borderRadius: '3px'
-                  }}
+                  defaultValue="#111827"
+                  onChange={(value) => onChange(element.id, 'headerTextColor', value)}
                 />
               </div>
             </Accordion>
@@ -864,19 +857,11 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
             </div>
 
             <div style={{ marginBottom: '0' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Couleur de police
-              </label>
-              <input
-                type="color"
+              <ColorPropertyInput
+                label="Couleur de police"
                 value={element.textColor || '#374151'}
-                onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px'
-                }}
+                defaultValue="#374151"
+                onChange={(value) => onChange(element.id, 'textColor', value)}
               />
             </div>
           </Accordion>
@@ -884,72 +869,40 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
           {/* Accordéon Couleurs */}
           <Accordion title="Couleurs" defaultOpen={false}>
             <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Couleur du texte d&apos;en-tête
-              </label>
-              <input
-                type="color"
+              <ColorPropertyInput
+                label="Couleur du texte d'en-tête"
                 value={(element.headerTextColor as string) || element.textColor || '#111827'}
-                onChange={(e) => onChange(element.id, 'headerTextColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px'
-                }}
+                defaultValue="#111827"
+                onChange={(value) => onChange(element.id, 'headerTextColor', value)}
               />
             </div>
 
             <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Couleur du texte du corps
-              </label>
-              <input
-                type="color"
+              <ColorPropertyInput
+                label="Couleur du texte du corps"
                 value={element.textColor || '#374151'}
-                onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px'
-                }}
+                defaultValue="#374151"
+                onChange={(value) => onChange(element.id, 'textColor', value)}
               />
             </div>
 
             {element.showBackground !== false && (
               <div style={{ marginBottom: '8px' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                  Couleur de fond
-                </label>
-                <input
-                  type="color"
+                <ColorPropertyInput
+                  label="Couleur de fond"
                   value={element.backgroundColor === 'transparent' ? '#ffffff' : (element.backgroundColor || '#ffffff')}
-                  onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
-                  style={{
-                    width: '100%',
-                    height: '32px',
-                    border: '1px solid #ccc',
-                    borderRadius: '3px'
-                  }}
+                  defaultValue="#ffffff"
+                  onChange={(value) => onChange(element.id, 'backgroundColor', value)}
                 />
               </div>
             )}
 
             <div style={{ marginBottom: '0' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Couleur des bordures
-              </label>
-              <input
-                type="color"
+              <ColorPropertyInput
+                label="Couleur des bordures"
                 value={element.borderColor || '#e5e7eb'}
-                onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px'
-                }}
+                defaultValue="#e5e7eb"
+                onChange={(value) => onChange(element.id, 'borderColor', value)}
               />
             </div>
           </Accordion>

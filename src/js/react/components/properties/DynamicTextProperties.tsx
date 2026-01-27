@@ -1,5 +1,6 @@
 import { DynamicTextElement } from '../../types/elements';
 import { NumericPropertyInput } from '../ui/NumericPropertyInput';
+import { ColorPropertyInput } from '../ui/ColorPropertyInput';
 
 // Composant Toggle personnalisé
 const Toggle = ({ checked, onChange, label, description }: {
@@ -736,23 +737,12 @@ export function DynamicTextProperties({ element, onChange, activeTab, setActiveT
           {/* Section Couleur de fond - visible seulement si showBackground est activé */}
           {element.showBackground !== false && (
             <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
-              <div style={{ marginBottom: '12px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-                  Couleur de fond
-                </label>
-                <input
-                  type="color"
-                  value={element.backgroundColor || '#e5e7eb'}
-                  onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
-                  style={{
-                    width: '100%',
-                    height: '40px',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '6px',
-                    cursor: 'pointer'
-                  }}
-                />
-              </div>
+              <ColorPropertyInput
+                label="Couleur de fond"
+                value={element.backgroundColor}
+                defaultValue="#e5e7eb"
+                onChange={(value) => onChange(element.id, 'backgroundColor', value)}
+              />
             </div>
           )}
         </>

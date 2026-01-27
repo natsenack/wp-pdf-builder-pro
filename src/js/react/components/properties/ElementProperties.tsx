@@ -1,5 +1,6 @@
 import { Element } from '../../types/elements';
 import { NumericPropertyInput } from '../ui/NumericPropertyInput';
+import { ColorPropertyInput } from '../ui/ColorPropertyInput';
 
 interface ElementPropertiesProps {
   element: Element;
@@ -67,39 +68,19 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
         <>
           <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Couleur de fond
-            </label>
-            <input
-              type="color"
-              value={(element.properties?.fillColor ?? element.fillColor) || '#ffffff'}
-              onChange={(e) => onChange(element.id, 'properties', { ...element.properties, fillColor: e.target.value })}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px'
-              }}
-            />
-          </div>
+          <ColorPropertyInput
+            label="Couleur de fond"
+            value={(element.properties?.fillColor ?? element.fillColor)}
+            defaultValue="#ffffff"
+            onChange={(value) => onChange(element.id, 'properties', { ...element.properties, fillColor: value })}
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Couleur de bordure
-            </label>
-            <input
-              type="color"
-              value={element.strokeColor || '#000000'}
-              onChange={(e) => onChange(element.id, 'strokeColor', e.target.value)}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px'
-              }}
-            />
-          </div>
+          <ColorPropertyInput
+            label="Couleur de bordure"
+            value={element.strokeColor}
+            defaultValue="#000000"
+            onChange={(value) => onChange(element.id, 'strokeColor', value)}
+          />
 
           <div style={{ marginBottom: '12px' }}>
             <NumericPropertyInput
@@ -215,19 +196,11 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Couleur du texte
-            </label>
-            <input
-              type="color"
+            <ColorPropertyInput
+              label="Couleur du texte"
               value={element.color || '#000000'}
-              onChange={(e) => onChange(element.id, 'color', e.target.value)}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px'
-              }}
+              defaultValue="#000000"
+              onChange={(value) => onChange(element.id, 'color', value)}
             />
           </div>
 

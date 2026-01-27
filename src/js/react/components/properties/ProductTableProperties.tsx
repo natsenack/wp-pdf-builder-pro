@@ -1,6 +1,7 @@
 import { useState, ReactNode } from 'react';
 import { ProductTableElement } from '../../types/elements';
 import { NumericPropertyInput } from '../ui/NumericPropertyInput';
+import { ColorPropertyInput } from '../ui/ColorPropertyInput';
 
 // Composant Accordion personnalisé
 const Accordion = ({ title, children, defaultOpen = false }: {
@@ -514,25 +515,12 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   </div>
                 </div>
 
-                <div style={{ marginBottom: '12px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-                    Couleur du texte de l&apos;entête
-                  </label>
-                  <input
-                    type="color"
-                    value={element.headerTextColor || '#374151'}
-                    onChange={(e) => onChange(element.id, 'headerTextColor', e.target.value)}
-                    style={{
-                      width: '100%',
-                      height: '32px',
-                      border: '1px solid #ccc',
-                      borderRadius: '3px'
-                    }}
-                  />
-                  <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                    Défaut: #374151
-                  </div>
-                </div>
+                <ColorPropertyInput
+                  label="Couleur du texte de l'entête"
+                  value={element.headerTextColor}
+                  defaultValue="#374151"
+                  onChange={(value) => onChange(element.id, 'headerTextColor', value)}
+                />
               </Accordion>
 
               {/* Accordéon Police des lignes */}
@@ -632,25 +620,12 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   </div>
                 </div>
 
-                <div style={{ marginBottom: '12px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-                    Couleur du texte des lignes
-                  </label>
-                  <input
-                    type="color"
-                    value={element.rowTextColor || '#111827'}
-                    onChange={(e) => onChange(element.id, 'rowTextColor', e.target.value)}
-                    style={{
-                      width: '100%',
-                      height: '32px',
-                      border: '1px solid #ccc',
-                      borderRadius: '3px'
-                    }}
-                  />
-                  <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                    Défaut: #111827
-                  </div>
-                </div>
+                <ColorPropertyInput
+                  label="Couleur du texte des lignes"
+                  value={element.rowTextColor}
+                  defaultValue="#111827"
+                  onChange={(value) => onChange(element.id, 'rowTextColor', value)}
+                />
               </Accordion>
 
               {/* Accordéon Police des totaux */}
@@ -750,25 +725,12 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                   </div>
                 </div>
 
-                <div style={{ marginBottom: '12px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-                    Couleur du texte des totaux
-                  </label>
-                  <input
-                    type="color"
-                    value={element.totalTextColor || '#111827'}
-                    onChange={(e) => onChange(element.id, 'totalTextColor', e.target.value)}
-                    style={{
-                      width: '100%',
-                      height: '32px',
-                      border: '1px solid #ccc',
-                      borderRadius: '3px'
-                    }}
-                  />
-                  <div style={{ fontSize: '10px', color: '#666', marginTop: '2px' }}>
-                    Défaut: #111827
-                  </div>
-                </div>
+                <ColorPropertyInput
+                  label="Couleur du texte des totaux"
+                  value={element.totalTextColor}
+                  defaultValue="#111827"
+                  onChange={(value) => onChange(element.id, 'totalTextColor', value)}
+                />
               </Accordion>
             </>
           )}
@@ -1626,56 +1588,26 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               />
             </div>
 
-            <div style={{ marginBottom: '12px' }}>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Fond des en-têtes
-              </label>
-              <input
-                type="color"
-                value={element.headerBackgroundColor || '#f9fafb'}
-                onChange={(e) => onChange(element.id, 'headerBackgroundColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px'
-                }}
-              />
-            </div>
+            <ColorPropertyInput
+              label="Fond des en-têtes"
+              value={element.headerBackgroundColor}
+              defaultValue="#f9fafb"
+              onChange={(value) => onChange(element.id, 'headerBackgroundColor', value)}
+            />
 
-            <div style={{ marginBottom: '12px' }}>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Couleur lignes alternées
-              </label>
-              <input
-                type="color"
-                value={element.alternateRowColor || '#f9fafb'}
-                onChange={(e) => onChange(element.id, 'alternateRowColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px'
-                }}
-              />
-            </div>
+            <ColorPropertyInput
+              label="Couleur lignes alternées"
+              value={element.alternateRowColor}
+              defaultValue="#f9fafb"
+              onChange={(value) => onChange(element.id, 'alternateRowColor', value)}
+            />
 
-            <div style={{ marginBottom: '12px' }}>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Couleur des bordures
-              </label>
-              <input
-                type="color"
-                value={element.borderColor || '#e5e7eb'}
-                onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px'
-                }}
-              />
-            </div>
+            <ColorPropertyInput
+              label="Couleur des bordures"
+              value={element.borderColor}
+              defaultValue="#e5e7eb"
+              onChange={(value) => onChange(element.id, 'borderColor', value)}
+            />
 
             <div style={{ marginBottom: '12px' }}>
               <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>

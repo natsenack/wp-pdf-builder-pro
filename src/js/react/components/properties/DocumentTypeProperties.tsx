@@ -1,5 +1,6 @@
 import { DocumentTypeElement } from '../../types/elements';
 import { NumericPropertyInput } from '../ui/NumericPropertyInput';
+import { ColorPropertyInput } from '../ui/ColorPropertyInput';
 
 // Composant Toggle personnalisé
 const Toggle = ({ checked, onChange, label, description }: {
@@ -243,23 +244,12 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
               </select>
             </div>
 
-            <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: '500', marginBottom: '4px', color: '#6b7280' }}>
-                Couleur du texte
-              </label>
-              <input
-                type="color"
-                value={element.textColor || '#000000'}
-                onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '40px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  cursor: 'pointer'
-                }}
-              />
-            </div>
+            <ColorPropertyInput
+              label="Couleur du texte"
+              value={element.textColor}
+              defaultValue="#000000"
+              onChange={(value) => onChange(element.id, 'textColor', value)}
+            />
           </div>
 
           {/* Section Couleur de fond - visible seulement si showBackground est activé */}
@@ -268,17 +258,11 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
               <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#374151' }}>
                 Couleur de fond
               </h4>
-              <input
-                type="color"
-                value={element.backgroundColor as string || '#e5e7eb'}
-                onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '40px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  cursor: 'pointer'
-                }}
+              <ColorPropertyInput
+                label="Couleur de fond"
+                value={element.backgroundColor as string}
+                defaultValue="#e5e7eb"
+                onChange={(value) => onChange(element.id, 'backgroundColor', value)}
               />
             </div>
           )}

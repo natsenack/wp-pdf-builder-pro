@@ -1,6 +1,7 @@
 import { BaseElement } from '../../types/elements';
 import { useCanvasSettings } from '../../contexts/CanvasSettingsContext';
 import { NumericPropertyInput } from '../ui/NumericPropertyInput';
+import { ColorPropertyInput } from '../ui/ColorPropertyInput';
 
 interface ExtendedElement extends BaseElement {
   strokeColor?: string;
@@ -107,23 +108,12 @@ export function LineProperties({ element, onChange, activeTab, setActiveTab }: L
       {/* Onglet Personnalisation */}
       {lineCurrentTab === 'personnalisation' && (
         <>
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Couleur de la ligne
-            </label>
-            <input
-              type="color"
-              value={(element.properties?.strokeColor ?? element.strokeColor) || '#000000'}
-              onChange={(e) => onChange(element.id, 'properties', { ...element.properties, strokeColor: e.target.value })}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                cursor: 'pointer'
-              }}
-            />
-          </div>
+          <ColorPropertyInput
+            label="Couleur de la ligne"
+            value={(element.properties?.strokeColor ?? element.strokeColor)}
+            defaultValue="#000000"
+            onChange={(value) => onChange(element.id, 'properties', { ...element.properties, strokeColor: value })}
+          />
 
           <div style={{ marginBottom: '12px' }}>
             <NumericPropertyInput

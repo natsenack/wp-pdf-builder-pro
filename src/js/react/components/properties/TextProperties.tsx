@@ -1,5 +1,6 @@
 import { Element } from '../../types/elements';
 import { NumericPropertyInput } from '../ui/NumericPropertyInput';
+import { ColorPropertyInput } from '../ui/ColorPropertyInput';
 
 interface ExtendedElement extends Element {
   verticalAlign?: string;
@@ -259,41 +260,19 @@ export function TextProperties({ element, onChange, activeTab, setActiveTab }: T
             </div>
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Couleur du texte
-            </label>
-            <input
-              type="color"
-              value={element.textColor || element.color || '#000000'}
-              onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                cursor: 'pointer'
-              }}
-            />
-          </div>
+          <ColorPropertyInput
+            label="Couleur du texte"
+            value={element.textColor || element.color}
+            defaultValue="#000000"
+            onChange={(value) => onChange(element.id, 'textColor', value)}
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Couleur de fond
-            </label>
-            <input
-              type="color"
-              value={element.backgroundColor === 'transparent' ? '#ffffff' : (element.backgroundColor || '#ffffff')}
-              onChange={(e) => onChange(element.id, 'backgroundColor', e.target.value)}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                cursor: 'pointer'
-              }}
-            />
-          </div>
+          <ColorPropertyInput
+            label="Couleur de fond"
+            value={element.backgroundColor === 'transparent' ? '#ffffff' : element.backgroundColor}
+            defaultValue="#ffffff"
+            onChange={(value) => onChange(element.id, 'backgroundColor', value)}
+          />
         </>
       )}
 

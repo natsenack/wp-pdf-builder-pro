@@ -1,5 +1,6 @@
 import { Element } from '../../types/elements';
 import { NumericPropertyInput } from '../ui/NumericPropertyInput';
+import { ColorPropertyInput } from '../ui/ColorPropertyInput';
 
 interface ExtendedElement extends Element {
   fillColor?: string;
@@ -134,41 +135,19 @@ export function ShapeProperties({ element, onChange, activeTab, setActiveTab }: 
       {/* Onglet Personnalisation */}
       {shapeCurrentTab === 'personnalisation' && (
         <>
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Couleur de remplissage
-            </label>
-            <input
-              type="color"
-              value={(element.properties?.fillColor ?? element.fillColor) === 'transparent' ? '#ffffff' : ((element.properties?.fillColor ?? element.fillColor) || '#007bff')}
-              onChange={(e) => onChange(element.id, 'properties', { ...element.properties, fillColor: e.target.value })}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                cursor: 'pointer'
-              }}
-            />
-          </div>
+          <ColorPropertyInput
+            label="Couleur de remplissage"
+            value={(element.properties?.fillColor ?? element.fillColor) === 'transparent' ? '#ffffff' : (element.properties?.fillColor ?? element.fillColor)}
+            defaultValue="#007bff"
+            onChange={(value) => onChange(element.id, 'properties', { ...element.properties, fillColor: value })}
+          />
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Couleur de bordure
-            </label>
-            <input
-              type="color"
-              value={(element.properties?.strokeColor ?? element.strokeColor) === 'transparent' ? '#000000' : ((element.properties?.strokeColor ?? element.strokeColor) || '#000000')}
-              onChange={(e) => onChange(element.id, 'properties', { ...element.properties, strokeColor: e.target.value })}
-              style={{
-                width: '100%',
-                height: '32px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                cursor: 'pointer'
-              }}
-            />
-          </div>
+          <ColorPropertyInput
+            label="Couleur de bordure"
+            value={(element.properties?.strokeColor ?? element.strokeColor) === 'transparent' ? '#000000' : (element.properties?.strokeColor ?? element.strokeColor)}
+            defaultValue="#000000"
+            onChange={(value) => onChange(element.id, 'properties', { ...element.properties, strokeColor: value })}
+          />
 
           <div style={{ marginBottom: '12px' }}>
             <NumericPropertyInput
