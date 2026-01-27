@@ -384,7 +384,7 @@ const drawProductTable = (
   element: Element,
   state: BuilderState
 ) => {
-  const props = element as ProductTableElementProperties;
+  const props = element as ProductTableElement;
 
   // ✅ BUGFIX-020: Validate element has minimum size for rendering
   const minWidth = 100;
@@ -881,7 +881,7 @@ const drawCustomerInfo = (
   element: Element,
   state: BuilderState
 ) => {
-  const props = element as CustomerInfoElementProperties;
+  const props = element as CustomerInfoElement;
   const fontSize = props.fontSize || 12;
   const fontFamily = props.fontFamily || "Arial";
   const fontWeight = props.fontWeight || "normal";
@@ -1106,7 +1106,7 @@ const drawCompanyInfo = (
   element: Element,
   state: BuilderState
 ) => {
-  const props = element as CompanyInfoElementProperties;
+  const props = element as CompanyInfoElement;
 
   // Configuration des polices
   const fontSize = props.fontSize || 12;
@@ -1220,7 +1220,7 @@ const drawOrderNumber = (
   element: Element,
   state: BuilderState
 ) => {
-  const props = element as OrderNumberElementProperties;
+  const props = element as OrderNumberElement;
 
   const fontSize = props.fontSize || 14;
   const fontFamily = props.fontFamily || "Arial";
@@ -1439,7 +1439,7 @@ const drawWoocommerceOrderDate = (
   element: Element,
   state: BuilderState
 ) => {
-  const props = element as any;
+  const props = element as WoocommerceOrderDateElement;
   const fontConfig = createFontConfig(props, 12);
   const colorConfig = createColorConfig(props);
   const padding = getPadding(props);
@@ -1502,7 +1502,7 @@ const drawWoocommerceInvoiceNumber = (
   element: Element,
   state: BuilderState
 ) => {
-  const props = element as any;
+  const props = element as WoocommerceInvoiceNumberElement;
   const fontConfig = createFontConfig(props, 12);
   const colorConfig = createColorConfig(props);
   const padding = getPadding(props);
@@ -1531,7 +1531,7 @@ const drawDocumentType = (
   element: Element,
   state: BuilderState
 ) => {
-  const props = element as DocumentTypeElementProperties;
+  const props = element as DocumentTypeElement;
   const fontConfig = createFontConfig(props, 18);
   fontConfig.weight = props.fontWeight || "bold"; // Override default weight
 
@@ -1975,7 +1975,7 @@ export const Canvas = function Canvas({
 
   const drawCompanyLogo = useCallback(
     (ctx: CanvasRenderingContext2D, element: Element) => {
-      const props = element as ImageElementProperties;
+      const props = element as CompanyLogoElement;
       const logoUrl = props.src || props.logoUrl || "";
 
       // ✅ FIX: If no logo URL, show a better placeholder
@@ -2222,7 +2222,7 @@ export const Canvas = function Canvas({
   // ✅ BUGFIX-007: Memoize drawDynamicText to prevent recreation on every render
   const drawDynamicText = useCallback(
     (ctx: CanvasRenderingContext2D, element: Element) => {
-      const props = element as TextElementProperties & {
+      const props = element as DynamicTextElement & {
         showBackground?: boolean;
         backgroundColor?: string;
         content?: string;
@@ -2320,7 +2320,7 @@ export const Canvas = function Canvas({
   // ✅ BUGFIX-007: Memoize drawMentions to prevent recreation on every render
   const drawMentions = useCallback(
     (ctx: CanvasRenderingContext2D, element: Element) => {
-      const props = element as MentionsElementProperties;
+      const props = element as MentionsElement;
       const fontSizeRaw = props.fontSize || 10;
 
       // ✅ BUGFIX-021: Robust font size parsing for various formats

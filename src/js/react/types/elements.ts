@@ -57,78 +57,147 @@ export interface BaseElementProperties {
 }
 
 export interface OrderNumberElement extends BaseElement {
-  type: 'order_number' | 'order-number';
+  type: 'order_number';
+  // Propriétés d'affichage
+  showHeaders?: boolean;
+  showBorders?: boolean;
   showLabel?: boolean;
-  labelText?: string;
-  labelPosition?: string;
   showDate?: boolean;
-  contentAlign?: string;
-  fontSize?: string | number;
-  fontFamily?: string;
-  fontWeight?: string;
-  properties?: {
-    fontFamily?: string;
-    fontSize?: number;
-    color?: string;
-    fontWeight?: string;
-    fontStyle?: string;
-    textAlign?: string;
-    padding?: { top?: number; right?: number; bottom?: number; left?: number };
-    border?: { width?: number; style?: string; color?: string };
-    backgroundColor?: string;
-    [key: string]: any;
-  };
+  // Propriétés de mise en page
+  contentAlign?: 'left' | 'center' | 'right';
+  labelPosition?: 'above' | 'left' | 'right' | 'below';
+  labelText?: string;
+  // Propriétés de police pour les en-têtes (label)
+  headerFontSize?: number;
+  headerFontFamily?: string;
+  headerFontWeight?: string;
+  headerFontStyle?: string;
+  // Propriétés de police pour le corps (numéro et date)
+  bodyFontSize?: number;
+  bodyFontFamily?: string;
+  bodyFontWeight?: string;
+  bodyFontStyle?: string;
+  // Propriétés de police pour le numéro
+  numberFontSize?: number;
+  numberFontFamily?: string;
+  numberFontWeight?: string;
+  numberFontStyle?: string;
+  // Propriétés de police pour la date
+  dateFontSize?: number;
+  dateFontFamily?: string;
+  dateFontWeight?: string;
+  dateFontStyle?: string;
+  // Propriétés de couleur
+  headerTextColor?: string;
+  // Propriétés de style
+  theme?: string;
+  // Propriétés spécifiques à l'ordre
+  prefix?: string;
+  suffix?: string;
+  showOrderDate?: boolean;
+  dateFormat?: string;
 }
 
 export interface WoocommerceOrderDateElement extends BaseElement {
   type: 'woocommerce_order_date';
-  properties?: {
-    dateFormat?: string;
-    showTime?: boolean;
-    fontFamily?: string;
-    fontSize?: number;
-    color?: string;
-    fontWeight?: string;
-    fontStyle?: string;
-    textAlign?: string;
-    padding?: { top?: number; right?: number; bottom?: number; left?: number };
-    border?: { width?: number; style?: string; color?: string };
-    backgroundColor?: string;
-    [key: string]: any;
-  };
+  dateFormat?: string;
+  showTime?: boolean;
+  fontFamily?: string;
+  fontSize?: number;
+  color?: string;
+  fontWeight?: string;
+  fontStyle?: string;
+  textAlign?: string;
+  padding?: { top?: number; right?: number; bottom?: number; left?: number };
+  border?: { width?: number; style?: string; color?: string };
+  backgroundColor?: string;
+  showBackground?: boolean;
 }
 
 export interface WoocommerceInvoiceNumberElement extends BaseElement {
   type: 'woocommerce_invoice_number';
-  properties?: {
-    prefix?: string;
-    suffix?: string;
-    fontFamily?: string;
-    fontSize?: number;
-    color?: string;
-    fontWeight?: string;
-    fontStyle?: string;
-    textAlign?: string;
-    padding?: { top?: number; right?: number; bottom?: number; left?: number };
-    border?: { width?: number; style?: string; color?: string };
-    backgroundColor?: string;
-    [key: string]: any;
-  };
+  prefix?: string;
+  suffix?: string;
+  fontFamily?: string;
+  fontSize?: number;
+  color?: string;
+  fontWeight?: string;
+  fontStyle?: string;
+  textAlign?: string;
+  padding?: { top?: number; right?: number; bottom?: number; left?: number };
+  border?: { width?: number; style?: string; color?: string };
+  backgroundColor?: string;
+  showBackground?: boolean;
 }
 
 export interface DynamicTextElement extends BaseElement {
   type: 'dynamic-text';
-  properties?: DynamicTextElementProperties;
+  text?: string;
+  textTemplate?: string;
+  theme?: string;
+  textDecoration?: string;
 }
 
 export interface ProductTableElement extends BaseElement {
   type: 'product-table';
-  properties?: ProductTableElementProperties;
+  // Propriétés d'affichage
+  showHeaders?: boolean;
+  showBorders?: boolean;
+  showAlternatingRows?: boolean;
+  showSku?: boolean;
+  showDescription?: boolean;
+  showQuantity?: boolean;
+  showShipping?: boolean;
+  showTax?: boolean;
+  showGlobalDiscount?: boolean;
+  // Propriétés de police
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string;
+  fontStyle?: string;
+  headerFontSize?: number;
+  headerFontFamily?: string;
+  headerFontWeight?: string;
+  headerFontStyle?: string;
+  bodyFontSize?: number;
+  bodyFontFamily?: string;
+  bodyFontWeight?: string;
+  bodyFontStyle?: string;
+  // Propriétés d'alignement
+  textAlign?: 'left' | 'center' | 'right';
+  headerBackgroundColor?: string;
+  headerTextColor?: string;
+  bodyBackgroundColor?: string;
+  bodyTextColor?: string;
+  alternateRowColor?: string;
+  rowTextColor?: string;
+  totalTextColor?: string;
+  // Propriétés de thème et style
+  theme?: string;
+  textColor?: string;
+  currency?: string;
+  // Propriétés de données
+  shippingCost?: number;
+  taxRate?: number;
+  globalDiscount?: number;
+  orderFees?: number;
+  verticalAlign?: 'top' | 'middle' | 'bottom';
 }
 
 export interface MentionsElement extends BaseElement {
   type: 'mentions';
-  properties?: MentionsElementProperties;
+  mentionType?: string;
+  selectedMentions?: string[];
+  medleySeparator?: string;
+  separatorStyle?: string;
+  theme?: string;
+  content?: string;
+  lineHeight?: number;
+  margin?: number;
+  padding?: number;
+  text?: string;
+  showSeparator?: boolean;
+  showBackground?: boolean;
 }
 
 export interface ElementProperties {
@@ -493,25 +562,102 @@ export interface MentionsElementProperties extends BaseTextProperties {
 // Interface spécifique pour les éléments CompanyInfo
 export interface CompanyInfoElement extends BaseElement {
   type: 'company-info';
-  properties?: CompanyInfoElementProperties;
+  // Propriétés d'affichage
+  showCompanyName?: boolean;
+  showAddress?: boolean;
+  showPhone?: boolean;
+  showEmail?: boolean;
+  showWebsite?: boolean;
+  showTaxId?: boolean;
+  // Propriétés de logo
+  logoUrl?: string;
+  logoWidth?: number;
+  logoHeight?: number;
+  separator?: string;
+  // Propriétés de police pour l'en-tête (nom de l'entreprise)
+  headerFontSize?: number;
+  headerFontFamily?: string;
+  headerFontWeight?: string;
+  headerFontStyle?: string;
+  // Propriétés de police pour le corps du texte
+  bodyFontSize?: number;
+  bodyFontFamily?: string;
+  bodyFontWeight?: string;
+  bodyFontStyle?: string;
+  // Propriétés de thème et style
+  theme?: string;
+  showHeaders?: boolean;
+  showBorders?: boolean;
+  showCompanyName?: boolean;
+  showSiret?: boolean;
+  showVat?: boolean;
+  showRcs?: boolean;
+  showCapital?: boolean;
+  headerTextColor?: string;
+  // Propriétés de données d'entreprise
+  companyName?: string;
+  companyAddress?: string;
+  companyCity?: string;
+  companySiret?: string;
+  companyTva?: string;
+  companyRcs?: string;
+  companyCapital?: string;
+  companyEmail?: string;
+  companyPhone?: string;
 }
 
 // Interface spécifique pour les éléments CompanyLogo
 export interface CompanyLogoElement extends BaseElement {
   type: 'company-logo';
-  properties?: ImageElementProperties;
+  // Propriétés d'image
+  src?: string;
+  logoUrl?: string;
+  alt?: string;
+  fit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
+  position?: 'center' | 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  opacity?: number;
+  alignment?: 'left' | 'center' | 'right';
+  maintainAspectRatio?: boolean;
 }
 
 // Interface spécifique pour les éléments CustomerInfo
 export interface CustomerInfoElement extends BaseElement {
   type: 'customer-info';
-  properties?: CustomerInfoElementProperties;
+  // Propriétés d'affichage
+  showName?: boolean;
+  showEmail?: boolean;
+  showPhone?: boolean;
+  showAddress?: boolean;
+  showCompany?: boolean;
+  showPaymentMethod?: boolean;
+  showTransactionId?: boolean;
+  // Propriétés de couleur
+  labelColor?: string;
+  valueColor?: string;
+  separator?: string;
+  // Propriétés de police pour l'en-tête
+  headerFontSize?: number;
+  headerFontFamily?: string;
+  headerFontWeight?: string;
+  headerFontStyle?: string;
+  // Propriétés de police pour le corps du texte
+  bodyFontSize?: number;
+  bodyFontFamily?: string;
+  bodyFontWeight?: string;
+  bodyFontStyle?: string;
+  // Propriétés de mise en page
+  layout?: 'vertical' | 'horizontal';
+  showHeaders?: boolean;
+  showBorders?: boolean;
+  showFullName?: boolean;
+  // Propriétés de style
+  headerTextColor?: string;
 }
 
 // Interface spécifique pour les éléments DocumentType
 export interface DocumentTypeElement extends BaseElement {
   type: 'document-type';
-  properties?: DocumentTypeElementProperties;
+  documentType?: string;
 }
 
 
