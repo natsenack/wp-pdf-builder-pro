@@ -137,7 +137,7 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
           overflowY: 'auto'
         }}>
           <h5 style={{ margin: '0 0 8px 0', fontSize: '13px', fontWeight: 'bold' }}>
-            {element.type.charAt(0).toUpperCase() + element.type.slice(1)} - {element.id.slice(0, 8)}
+            {element.type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} - {element.id.slice(0, 8)}
           </h5>
 
           {/* Propriétés communes - masquées pour les éléments WooCommerce et les éléments de base qui ont leurs propres onglets */}
