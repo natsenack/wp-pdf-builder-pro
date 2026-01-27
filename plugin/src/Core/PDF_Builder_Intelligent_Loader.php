@@ -273,7 +273,7 @@ class PDF_Builder_Intelligent_Loader {
     }
 
     private function load_logging_component() {
-        return class_exists('PDF_Builder_Advanced_Logger');
+        return class_exists('PDF_Builder_Core_Logger');
     }
 
     private function load_api_component() {

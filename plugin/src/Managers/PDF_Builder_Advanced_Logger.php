@@ -4,7 +4,7 @@
  * Système structuré et configurable pour le logging
  */
 
-class PDF_Builder_Logger {
+class PDF_Builder_Advanced_Logger {
     private static $instance = null;
     private $log_level;
     private $log_file;
@@ -366,28 +366,28 @@ class PDF_Builder_Logger {
 
 // Fonctions globales pour faciliter l'utilisation
 function pdf_builder_log_debug($message, $context = []) {
-    PDF_Builder_Logger::get_instance()->debug($message, $context);
+    PDF_Builder_Advanced_Logger::get_instance()->debug($message, $context);
 }
 
 function pdf_builder_log_info($message, $context = []) {
-    PDF_Builder_Logger::get_instance()->info($message, $context);
+    PDF_Builder_Advanced_Logger::get_instance()->info($message, $context);
 }
 
 function pdf_builder_log_warning($message, $context = []) {
-    PDF_Builder_Logger::get_instance()->warning($message, $context);
+    PDF_Builder_Advanced_Logger::get_instance()->warning($message, $context);
 }
 
 function pdf_builder_log_error($message, $context = []) {
-    PDF_Builder_Logger::get_instance()->error($message, $context);
+    PDF_Builder_Advanced_Logger::get_instance()->error($message, $context);
 }
 
 function pdf_builder_log_critical($message, $context = []) {
-    PDF_Builder_Logger::get_instance()->critical($message, $context);
+    PDF_Builder_Advanced_Logger::get_instance()->critical($message, $context);
 }
 
 // Initialiser le logger
 add_action('plugins_loaded', function() {
-    PDF_Builder_Logger::get_instance();
+    PDF_Builder_Advanced_Logger::get_instance();
 });
 
 

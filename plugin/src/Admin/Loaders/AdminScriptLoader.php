@@ -29,7 +29,7 @@ class AdminScriptLoader
 
         // Ensure logger is loaded
         if (!class_exists('PDF_Builder_Logger')) {
-            $logger_file = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'src/Managers/PDF_Builder_Advanced_Logger.php';
+            $logger_file = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'src/Core/PDF_Builder_Core_Logger.php';
             if (file_exists($logger_file)) {
                 require_once $logger_file;
             }

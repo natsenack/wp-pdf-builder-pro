@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 /**
  * Classe principale du système de logging avancé
  */
-class PDF_Builder_Advanced_Logger {
+class PDF_Builder_Core_Logger {
 
     /**
      * Instance unique
