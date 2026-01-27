@@ -50,6 +50,7 @@ export interface BaseElementProperties {
   borderWidth?: number;
   borderRadius?: number;
   padding?: number;
+  showBackground?: boolean;
 }
 
 export interface BaseTextProperties extends BaseElementProperties {
@@ -340,7 +341,6 @@ export interface DynamicTextElementProperties extends BaseTextProperties {
   textTemplate?: string;
   theme?: string;
   textDecoration?: string;
-  showBackground?: boolean;
 }
 
 export interface DocumentTypeElementProperties extends BaseElementProperties {
@@ -350,7 +350,6 @@ export interface DocumentTypeElementProperties extends BaseElementProperties {
   fontStyle?: string;
   textAlign?: 'left' | 'center' | 'right';
   textColor?: string;
-  showBackground?: boolean;
   documentType?: string;
 }
 
@@ -386,7 +385,6 @@ export interface CustomerInfoElementProperties extends BaseElementProperties {
   showHeaders?: boolean;
   showBorders?: boolean;
   showFullName?: boolean;
-  showBackground?: boolean;
   // Propriétés de style
   headerTextColor?: string;
 }
@@ -421,7 +419,6 @@ export interface CompanyInfoElementProperties extends BaseElementProperties {
   // Propriétés de thème et style
   theme?: string;
   showHeaders?: boolean;
-  showBackground?: boolean;
   showBorders?: boolean;
   showCompanyName?: boolean;
   showSiret?: boolean;
@@ -455,7 +452,6 @@ export interface ImageElementProperties extends BaseElementProperties {
 export interface OrderNumberElementProperties extends BaseElementProperties {
   // Propriétés d'affichage
   showHeaders?: boolean;
-  showBackground?: boolean;
   showBorders?: boolean;
   showLabel?: boolean;
   showDate?: boolean;
