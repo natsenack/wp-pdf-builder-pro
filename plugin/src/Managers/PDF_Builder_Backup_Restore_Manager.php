@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
  * Gestionnaire de sauvegarde et restauration des templates
  */
 
-class PdfBuilderBackupRestoreManager
+class PDF_Builder_Backup_Restore_Manager
 {
     /**
      * Instance unique de la classe

@@ -142,7 +142,7 @@ class PDF_Builder_Loader {
             define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path(dirname(__FILE__)) . '/');
         }
         if (!defined('PDF_BUILDER_VERSION')) {
-            define('PDF_BUILDER_VERSION', '1.1.0');
+            define('PDF_BUILDER_VERSION', '1.0.1.0');
         }
     }
 
@@ -182,7 +182,6 @@ class PDF_Builder_Loader {
     private function load_managers() {
         $managers = [
             'PDF_Builder_Backup_Restore_Manager.php',
-            // 'PDF_Builder_Canvas_Manager.php', // Chargé dans bootstrap.php
             // 'PDF_Builder_Drag_Drop_Manager.php', // Chargé dans bootstrap.php
             // 'PDF_Builder_Feature_Manager.php', // Chargé dans bootstrap.php
             // 'PDF_Builder_License_Manager.php', // Chargé dans bootstrap.php

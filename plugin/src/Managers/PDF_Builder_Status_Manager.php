@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
  * Gestion dynamique des statuts de commande WooCommerce et assignation de templates
  */
 
-class PdfBuilderStatusManager
+class PDF_Builder_Status_Manager
 {
     /**
      * Instance du main plugin

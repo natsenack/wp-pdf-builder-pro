@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class PdfBuilderCanvasSaveLogger
+class PDF_Builder_Canvas_Save_Logger
 {
     /**
      * Instance unique du logger

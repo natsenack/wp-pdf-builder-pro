@@ -160,8 +160,8 @@ class PdfBuilderAdminNew
         $this->settings_manager = new SettingsManager($this);
 
         // Initialiser le template manager
-        if (class_exists('PDF_Builder\Managers\PdfBuilderTemplateManager')) {
-            $this->template_manager = new \PDF_Builder\Managers\PdfBuilderTemplateManager($this);
+        if (class_exists('PDF_Builder\Managers\PDF_Builder_Template_Manager')) {
+            $this->template_manager = new \PDF_Builder\Managers\PDF_Builder_Template_Manager($this);
         }
 
         // Initialiser les nouveaux modules spécialisés

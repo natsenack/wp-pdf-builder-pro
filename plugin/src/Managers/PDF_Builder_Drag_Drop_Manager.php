@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
 /**
  * Classe pour gérer les interactions de drag & drop
  */
-class PdfBuilderDragDropManager
+class PDF_Builder_Drag_Drop_Manager
 {
     /**
      * Instance singleton

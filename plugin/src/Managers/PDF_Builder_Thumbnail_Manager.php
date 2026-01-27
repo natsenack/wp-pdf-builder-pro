@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
     exit('Direct access not allowed');
 }
 
-class PdfBuilderThumbnailManager
+class PDF_Builder_Thumbnail_Manager
 {
     private static $instance = null;
 

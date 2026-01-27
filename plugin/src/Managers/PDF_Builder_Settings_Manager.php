@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
  * Gestion centralisée des paramètres et configurations
  */
 
-class PdfBuilderSettingsManager
+class PDF_Builder_Settings_Manager
 {
     /**
      * Instance du main plugin

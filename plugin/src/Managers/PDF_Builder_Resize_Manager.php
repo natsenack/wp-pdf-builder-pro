@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 /**
  * Classe pour gérer les interactions de redimensionnement
  */
-class PdfBuilderResizeManager
+class PDF_Builder_Resize_Manager
 {
     /**
      * Instance singleton

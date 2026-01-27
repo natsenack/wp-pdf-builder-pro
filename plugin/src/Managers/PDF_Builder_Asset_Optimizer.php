@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
  * Optimisation et compression des assets (JS, CSS, images)
  */
 
-class PdfBuilderAssetOptimizer
+class PDF_Builder_Asset_Optimizer
 {
     /**
      * Instance du main plugin

@@ -15,7 +15,7 @@ use Exception;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
-class PdfBuilderPdfGenerator
+class PDF_Builder_PDF_Generator
 {
     /**
      * Instance du main plugin

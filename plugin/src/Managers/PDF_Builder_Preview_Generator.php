@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
     exit('Direct access not allowed');
 }
 
-class PdfBuilderPreviewGenerator
+class PDF_Builder_Preview_Generator
 {
     private $template_data;
     private $preview_type;

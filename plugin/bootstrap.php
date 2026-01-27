@@ -565,7 +565,6 @@ function pdf_builder_load_core()
     $managers = array(
         // Tous les managers sont maintenant chargés par autoloader (namespace PDF_Builder\Managers\)
         // 'PDF_Builder_Backup_Restore_Manager.php',
-        // 'PDF_Builder_Canvas_Manager.php',
         // 'PDF_Builder_Drag_Drop_Manager.php',
         'PDF_Builder_Feature_Manager.php', // Chargé pour les fonctionnalités freemium
         'PDF_Builder_License_Manager.php', // Manuellement chargé car autoloader désactivé
@@ -1297,8 +1296,8 @@ function pdf_builder_register_essential_ajax_hooks()
 
     // Créer une instance du template manager pour les handlers AJAX
     $template_manager = null;
-    if (class_exists('PDF_Builder\\Managers\\PdfBuilderTemplateManager')) {
-        $template_manager = new \PDF_Builder\Managers\PdfBuilderTemplateManager();
+    if (class_exists('PDF_Builder\\Managers\\PDF_Builder_Template_Manager')) {
+        $template_manager = new \PDF_Builder\Managers\PDF_Builder_Template_Manager();
     }
 
     // Enregistrer les hooks AJAX essentiels - DISABLED: Conflit avec AjaxHandler.php

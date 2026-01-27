@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 
 
 
-class PdfBuilderFeatureManager
+class PDF_Builder_Feature_Manager
 {
     /**
      * Définition des fonctionnalités et leurs restrictions

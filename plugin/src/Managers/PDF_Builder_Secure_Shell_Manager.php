@@ -8,7 +8,7 @@ namespace PDF_Builder\Managers;
  * Sécurise les appels shell_exec() avec validation et chemins absolus
  */
 
-class PdfBuilderSecureShellManager
+class PDF_Builder_Secure_Shell_Manager
 {
     /**
      * Commandes autorisées avec leurs chemins validés

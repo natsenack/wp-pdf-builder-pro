@@ -24,7 +24,7 @@ if (!defined('ABSPATH')) {
  *
  * Handles mapping of dynamic variables to WooCommerce order data
  */
-class PDFBuilderVariableMapper
+class PDF_Builder_Variable_Mapper
 {
     /**
      * WooCommerce order object

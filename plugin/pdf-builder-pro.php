@@ -4,7 +4,7 @@
  * Plugin Name: PDF Builder Pro
  * Plugin URI: https://github.com/natsenack/wp-pdf-builder-pro
  * Description: Constructeur de PDF professionnel ultra-performant avec architecture modulaire avancée
- * Version: 1.1.0.0
+ * Version: 1.0.1.0
  * Author: Natsenack
  * Author URI: https://github.com/natsenack
  * License: GPL v2 or later
@@ -22,8 +22,8 @@ define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
 define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('PDF_BUILDER_PRO_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
 define('PDF_BUILDER_PRO_ASSETS_PATH', plugin_dir_path(__FILE__) . 'assets/');
-define('PDF_BUILDER_VERSION', '1.1.0.0');
-define('PDF_BUILDER_PRO_VERSION', '1.1.0.0');
+define('PDF_BUILDER_VERSION', '1.0.1.0');
+define('PDF_BUILDER_PRO_VERSION', '1.0.1.0');
 
 // Premium features constant (set to false for free version)
 if (!defined('PDF_BUILDER_PREMIUM')) {
@@ -116,7 +116,7 @@ function pdf_builder_activate()
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
     }
-    pdf_builder_update_option('pdf_builder_version', '1.1.0');
+    pdf_builder_update_option('pdf_builder_version', '1.0.1.0');
 
     // Définir les valeurs par défaut pour les paramètres canvas
     $default_canvas_settings = array(

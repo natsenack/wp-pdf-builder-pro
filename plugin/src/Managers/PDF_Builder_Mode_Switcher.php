@@ -15,7 +15,7 @@ namespace PDF_Builder\Managers;
  * Gère le basculement entre les modes Canvas (données fictives) et Metabox (données WooCommerce)
  * Implémente le pattern Strategy pour l'injection de dépendances
  */
-class PdfBuilderModeSwitcher
+class PDF_Builder_Mode_Switcher
 {
     /**
      * Modes disponibles

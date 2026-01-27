@@ -29,7 +29,7 @@ if (!class_exists('PDF_Builder\Managers\PdfBuilderSecureShellManager')) {
  * Génération de PDF haute-fidélité via capture d'écran du canvas
  */
 
-class PdfBuilderScreenshotRenderer
+class PDF_Builder_Screenshot_Renderer
 {
     /**
      * Instance du main plugin

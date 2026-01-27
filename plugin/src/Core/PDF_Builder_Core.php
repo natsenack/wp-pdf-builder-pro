@@ -46,8 +46,8 @@ class PdfBuilderCore
     {
         // Charger les managers essentiels
         $managers = array(
-            // 'PDF_Builder_Canvas_Manager.php', // Chargé dans bootstrap.php
             // 'PDF_Builder_Drag_Drop_Manager.php', // Chargé dans bootstrap.php
+            // 'PDF_Builder_Feature_Manager.php', // Chargé dans bootstrap.php
             // 'PDF_Builder_Feature_Manager.php', // Chargé dans bootstrap.php
             // 'PDF_Builder_License_Manager.php', // Chargé dans bootstrap.php
             // 'PDF_Builder_Logger.php', // Chargé dans bootstrap.php

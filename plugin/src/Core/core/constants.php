@@ -17,11 +17,11 @@ if (!defined('PDF_BUILDER_ADMIN_CAPABILITY')) {
 
 // Plugin version management
 if (!defined('PDF_BUILDER_VERSION')) {
-    define('PDF_BUILDER_VERSION', '1.1.0');
+    define('PDF_BUILDER_VERSION', '1.0.1.0');
 }
 
 if (!defined('PDF_BUILDER_PRO_VERSION')) {
-    define('PDF_BUILDER_PRO_VERSION', '1.1.0');
+    define('PDF_BUILDER_PRO_VERSION', '1.0.1.0');
 }
 
 /**

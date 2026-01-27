@@ -17,7 +17,7 @@ if (!class_exists('PDF_Builder\Managers\PdfBuilderPerformanceMonitor')) {
  * Track les métriques de performance en production
  */
 
-class PdfBuilderPerformanceMonitor
+class PDF_Builder_Performance_Monitor
 {
     private static $metrics = [];
     private static $start_time;

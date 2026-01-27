@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
  * Optimisation des requêtes de base de données pour WooCommerce
  */
 
-class PdfBuilderDatabaseQueryOptimizer
+class PDF_Builder_Database_Query_Optimizer
 {
     /**
      * Instance du main plugin
