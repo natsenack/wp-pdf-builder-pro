@@ -108,8 +108,8 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
             </label>
             <input
               type="color"
-              value={element.fillColor || '#ffffff'}
-              onChange={(e) => onChange(element.id, 'fillColor', e.target.value)}
+              value={(element.properties?.fillColor ?? element.fillColor) || '#ffffff'}
+              onChange={(e) => onChange(element.id, 'properties', { ...element.properties, fillColor: e.target.value })}
               style={{
                 width: '100%',
                 height: '32px',
@@ -188,8 +188,8 @@ export function ElementProperties({ element, onChange }: ElementPropertiesProps)
             </label>
             <input
               type="color"
-              value={element.fillColor || '#ffffff'}
-              onChange={(e) => onChange(element.id, 'fillColor', e.target.value)}
+              value={(element.properties?.fillColor ?? element.fillColor) || '#ffffff'}
+              onChange={(e) => onChange(element.id, 'properties', { ...element.properties, fillColor: e.target.value })}
               style={{
                 width: '100%',
                 height: '32px',

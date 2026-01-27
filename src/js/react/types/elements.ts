@@ -42,22 +42,6 @@ export interface BaseElement {
   locked: boolean;
   createdAt: Date;
   updatedAt: Date;
-  // Propriétés communes de style
-  fillColor?: string;
-  strokeColor?: string;
-  strokeWidth?: number;
-  borderRadius?: number;
-  text?: string;
-  fontSize?: string | number;
-  color?: string;
-  textAlign?: string;
-  fontFamily?: string;
-  bold?: boolean;
-  italic?: boolean;
-  underline?: boolean;
-  src?: string;
-  objectFit?: string;
-  [key: string]: unknown; // Propriétés dynamiques
 }
 
 export type Element = BaseElement;

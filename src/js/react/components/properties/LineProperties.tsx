@@ -112,8 +112,8 @@ export function LineProperties({ element, onChange, activeTab, setActiveTab }: L
             </label>
             <input
               type="color"
-              value={element.strokeColor || '#000000'}
-              onChange={(e) => onChange(element.id, 'strokeColor', e.target.value)}
+              value={(element.properties?.strokeColor ?? element.strokeColor) || '#000000'}
+              onChange={(e) => onChange(element.id, 'properties', { ...element.properties, strokeColor: e.target.value })}
               style={{
                 width: '100%',
                 height: '32px',
@@ -126,14 +126,14 @@ export function LineProperties({ element, onChange, activeTab, setActiveTab }: L
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Épaisseur de la ligne <span style={{ color: '#666', fontSize: '10px' }}>({element.strokeWidth || 2}px)</span>
+              Épaisseur de la ligne <span style={{ color: '#666', fontSize: '10px' }}>({ (element.properties?.strokeWidth ?? element.strokeWidth) || 2 }px)</span>
             </label>
             <input
               type="number"
               min="1"
               max="20"
-              value={element.strokeWidth || 2}
-              onChange={(e) => onChange(element.id, 'strokeWidth', parseInt(e.target.value) || 2)}
+              value={(element.properties?.strokeWidth ?? element.strokeWidth) || 2}
+              onChange={(e) => onChange(element.id, 'properties', { ...element.properties, strokeWidth: parseInt(e.target.value) || 2 })}
               style={{
                 width: '100%',
                 padding: '4px 8px',

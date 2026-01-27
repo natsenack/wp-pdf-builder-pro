@@ -147,8 +147,8 @@ export function ShapeProperties({ element, onChange, activeTab, setActiveTab }: 
             </label>
             <input
               type="color"
-              value={element.fillColor === 'transparent' ? '#ffffff' : (element.fillColor || '#007bff')}
-              onChange={(e) => onChange(element.id, 'fillColor', e.target.value)}
+              value={(element.properties?.fillColor ?? element.fillColor) === 'transparent' ? '#ffffff' : ((element.properties?.fillColor ?? element.fillColor) || '#007bff')}
+              onChange={(e) => onChange(element.id, 'properties', { ...element.properties, fillColor: e.target.value })}
               style={{
                 width: '100%',
                 height: '32px',
@@ -165,8 +165,8 @@ export function ShapeProperties({ element, onChange, activeTab, setActiveTab }: 
             </label>
             <input
               type="color"
-              value={element.strokeColor === 'transparent' ? '#000000' : (element.strokeColor || '#000000')}
-              onChange={(e) => onChange(element.id, 'strokeColor', e.target.value)}
+              value={(element.properties?.strokeColor ?? element.strokeColor) === 'transparent' ? '#000000' : ((element.properties?.strokeColor ?? element.strokeColor) || '#000000')}
+              onChange={(e) => onChange(element.id, 'properties', { ...element.properties, strokeColor: e.target.value })}
               style={{
                 width: '100%',
                 height: '32px',
@@ -179,14 +179,14 @@ export function ShapeProperties({ element, onChange, activeTab, setActiveTab }: 
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Épaisseur de bordure <span style={{ color: '#666', fontSize: '10px' }}>({element.strokeWidth || 1}px)</span>
+              Épaisseur de bordure <span style={{ color: '#666', fontSize: '10px' }}>({ (element.properties?.strokeWidth ?? element.strokeWidth) || 1 }px)</span>
             </label>
             <input
               type="number"
               min="0"
               max="20"
-              value={element.strokeWidth || 1}
-              onChange={(e) => onChange(element.id, 'strokeWidth', parseInt(e.target.value) || 1)}
+              value={(element.properties?.strokeWidth ?? element.strokeWidth) || 1}
+              onChange={(e) => onChange(element.id, 'properties', { ...element.properties, strokeWidth: parseInt(e.target.value) || 1 })}
               style={{
                 width: '100%',
                 padding: '4px 8px',

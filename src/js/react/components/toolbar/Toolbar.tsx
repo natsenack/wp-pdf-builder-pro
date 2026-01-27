@@ -99,14 +99,14 @@ export function Toolbar({ className }: ToolbarProps) {
       });
       
       // S'assurer que les propriétés spécifiques sont correctement mappées
-      if (element.bold) transformed.properties.fontWeight = 'bold';
-      if (element.italic) transformed.properties.fontStyle = 'italic';
-      if (element.underline) transformed.properties.textDecoration = 'underline';
+      if (element.properties?.bold ?? element.bold) transformed.properties.fontWeight = 'bold';
+      if (element.properties?.italic ?? element.italic) transformed.properties.fontStyle = 'italic';
+      if (element.properties?.underline ?? element.underline) transformed.properties.textDecoration = 'underline';
       
       // Mapper les propriétés de forme
-      if (element.fillColor) transformed.properties.backgroundColor = element.fillColor;
-      if (element.strokeColor) transformed.properties.borderColor = element.strokeColor;
-      if (element.strokeWidth) transformed.properties.borderWidth = element.strokeWidth;
+      if (element.properties?.fillColor ?? element.fillColor) transformed.properties.backgroundColor = element.properties?.fillColor ?? element.fillColor;
+      if (element.properties?.strokeColor ?? element.strokeColor) transformed.properties.borderColor = element.properties?.strokeColor ?? element.strokeColor;
+      if (element.properties?.strokeWidth ?? element.strokeWidth) transformed.properties.borderWidth = element.properties?.strokeWidth ?? element.strokeWidth;
       
       return transformed;
     };
