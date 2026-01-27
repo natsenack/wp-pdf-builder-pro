@@ -5,8 +5,8 @@ namespace PDF_Builder\Managers;
 /**
  * Déclaration de classe pour Intelephense
  */
-if (!class_exists('PDF_Builder_Performance_Monitor')) {
-    class PDF_Builder_Performance_Monitor {
+if (!class_exists('PDF_Builder\Managers\PdfBuilderPerformanceMonitor')) {
+    class PdfBuilderPerformanceMonitor {
         public static function init() {}
     }
 }
@@ -142,7 +142,7 @@ class PdfBuilderPerformanceMonitor
         ];
         self::$metrics[] = $metric;
 // Log dans le fichier de performance
-        $log_file = WP_CONTENT_DIR . '/pdf-builder-performance.log';
+        $log_file = (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : ABSPATH . 'wp-content') . '/pdf-builder-performance.log';
         $log_entry = date('Y-m-d H:i:s') . ' - ' . json_encode($metric) . "\n";
 // Rotation du log (max 2MB)
         if (file_exists($log_file) && filesize($log_file) > 2 * 1024 * 1024) {
@@ -165,7 +165,7 @@ class PdfBuilderPerformanceMonitor
      */
     public static function getRecentMetrics($limit = 100)
     {
-        $log_file = WP_CONTENT_DIR . '/pdf-builder-performance.log';
+        $log_file = (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : ABSPATH . 'wp-content') . '/pdf-builder-performance.log';
         if (!file_exists($log_file)) {
             return [];
         }
@@ -242,7 +242,7 @@ class PdfBuilderPerformanceMonitor
      */
     public static function cleanupOldLogs($days = 30)
     {
-        $log_file = WP_CONTENT_DIR . '/pdf-builder-performance.log';
+        $log_file = (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : ABSPATH . 'wp-content') . '/pdf-builder-performance.log';
         if (!file_exists($log_file)) {
             return;
         }
@@ -269,7 +269,7 @@ if (
     defined('PDF_BUILDER_ENABLE_PERFORMANCE_MONITORING') &&
     PDF_BUILDER_ENABLE_PERFORMANCE_MONITORING
 ) {
-    PDF_Builder_Performance_Monitor::init();
+    \PDF_Builder\Managers\PdfBuilderPerformanceMonitor::init();
 }
 
 

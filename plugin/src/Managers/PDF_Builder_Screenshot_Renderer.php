@@ -15,8 +15,8 @@ use Dompdf\Options;
 /**
  * Déclarations de classes pour Intelephense
  */
-if (!class_exists('PDF_Builder_Secure_Shell_Manager')) {
-    class PDF_Builder_Secure_Shell_Manager {
+if (!class_exists('PDF_Builder\Managers\PdfBuilderSecureShellManager')) {
+    class PdfBuilderSecureShellManager {
         public static function is_command_available($cmd) { return false; }
         public static function execute_wkhtmltopdf($html, $pdf) { return false; }
         public static function execute_node($script, $args) { return ''; }
@@ -265,7 +265,7 @@ class PdfBuilderScreenshotRenderer
     private function isWkhtmltopdfAvailable()
     {
         require_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
-        return PDF_Builder_Secure_Shell_Manager::is_command_available('wkhtmltopdf');
+        return \PDF_Builder\Managers\PdfBuilderSecureShellManager::is_command_available('wkhtmltopdf');
     }
 
     /**
@@ -274,7 +274,7 @@ class PdfBuilderScreenshotRenderer
     private function generateWithWkhtmltopdf($html_file, $pdf_path)
     {
         require_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
-        return PDF_Builder_Secure_Shell_Manager::execute_wkhtmltopdf($html_file, $pdf_path);
+        return \PDF_Builder\Managers\PdfBuilderSecureShellManager::execute_wkhtmltopdf($html_file, $pdf_path);
     }
 
     /**
@@ -284,14 +284,14 @@ class PdfBuilderScreenshotRenderer
     {
         // Vérifier si Node.js est disponible via le gestionnaire sécurisé
         require_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
-        $node_available = PDF_Builder_Secure_Shell_Manager::is_command_available('node');
+        $node_available = \PDF_Builder\Managers\PdfBuilderSecureShellManager::is_command_available('node');
         if (!$node_available) {
             return false;
         }
 
         // Vérifier si le script puppeteer existe et est sécurisé
         $script_path = plugin_dir_path(__FILE__) . '../../tools/pdf-screenshot.js';
-        return file_exists($script_path) && PDF_Builder_Secure_Shell_Manager::is_secure_file_path($script_path);
+        return file_exists($script_path) && \PDF_Builder\Managers\PdfBuilderSecureShellManager::is_secure_file_path($script_path);
     }
 
     /**
@@ -302,7 +302,7 @@ class PdfBuilderScreenshotRenderer
         $script_path = plugin_dir_path(__FILE__) . '../../tools/pdf-screenshot.js';
 
         require_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
-        $output = PDF_Builder_Secure_Shell_Manager::execute_node($script_path, [$html_file, $pdf_path]);
+        $output = \PDF_Builder\Managers\PdfBuilderSecureShellManager::execute_node($script_path, [$html_file, $pdf_path]);
 
         return $output !== false && file_exists($pdf_path) && filesize($pdf_path) > 0;
     }
