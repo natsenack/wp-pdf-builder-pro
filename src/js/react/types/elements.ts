@@ -44,7 +44,13 @@ export interface BaseElement {
   updatedAt: Date;
 }
 
-export type Element = BaseElement;
+export interface BaseElementProperties {
+  backgroundColor?: string;
+  borderColor?: string;
+  borderWidth?: number;
+}
+
+export interface BaseTextProperties extends BaseElementProperties {
 
 export interface OrderNumberElement extends BaseElement {
   type: 'order_number' | 'order-number';
@@ -264,7 +270,7 @@ export interface LoadTemplatePayload {
 }
 
 // Propriétés spécifiques pour les éléments
-export interface ShapeElementProperties {
+export interface ShapeElementProperties extends BaseElementProperties {
   fillColor?: string;
   strokeColor?: string;
   strokeWidth?: number;
@@ -276,12 +282,12 @@ export interface TextElementProperties extends BaseTextProperties {
   textAlign?: 'left' | 'center' | 'right'; // Override to allow undefined
 }
 
-export interface LineElementProperties {
+export interface LineElementProperties extends BaseElementProperties {
   strokeColor?: string;
   strokeWidth?: number;
 }
 
-export interface ProductTableElementProperties {
+export interface ProductTableElementProperties extends BaseElementProperties {
   showHeaders?: boolean;
   showBorders?: boolean;
   showAlternatingRows?: boolean;
@@ -309,8 +315,6 @@ export interface ProductTableElementProperties {
   bodyBackgroundColor?: string;
   bodyTextColor?: string;
   alternateRowColor?: string;
-  borderColor?: string;
-  borderWidth?: number;
   padding?: number;
   theme?: string;
   textColor?: string;
@@ -319,18 +323,16 @@ export interface ProductTableElementProperties {
   taxRate?: number;
   globalDiscount?: number;
   orderFees?: number;
-  backgroundColor?: string;
   verticalAlign?: 'top' | 'middle' | 'bottom';
 }
 
-export interface BaseTextProperties {
+export interface BaseTextProperties extends BaseElementProperties {
   fontSize?: number;
   color?: string;
   fontFamily?: string;
   fontWeight?: string;
   fontStyle?: string;
   textAlign?: 'left' | 'center' | 'right';
-  backgroundColor?: string;
   autoWrap?: boolean;
 }
 
@@ -341,26 +343,24 @@ export interface DynamicTextElementProperties extends BaseTextProperties {
   showBackground?: boolean;
 }
 
-export interface DocumentTypeElementProperties {
+export interface DocumentTypeElementProperties extends BaseElementProperties {
   fontSize?: number;
   fontFamily?: string;
   fontWeight?: string;
   fontStyle?: string;
   textAlign?: 'left' | 'center' | 'right';
   textColor?: string;
-  backgroundColor?: string;
   showBackground?: boolean;
   documentType?: string;
 }
 
-export interface CustomerInfoElementProperties {
+export interface CustomerInfoElementProperties extends BaseElementProperties {
   fontSize?: number;
   fontFamily?: string;
   fontWeight?: string;
   fontStyle?: string;
   textAlign?: 'left' | 'center' | 'right';
   textColor?: string;
-  backgroundColor?: string;
   showName?: boolean;
   showEmail?: boolean;
   showPhone?: boolean;
@@ -388,18 +388,16 @@ export interface CustomerInfoElementProperties {
   showFullName?: boolean;
   showBackground?: boolean;
   // Propriétés de style
-  borderColor?: string;
   headerTextColor?: string;
 }
 
-export interface CompanyInfoElementProperties {
+export interface CompanyInfoElementProperties extends BaseElementProperties {
   fontSize?: number;
   fontFamily?: string;
   fontWeight?: string;
   fontStyle?: string;
   textAlign?: 'left' | 'center' | 'right';
   textColor?: string;
-  backgroundColor?: string;
   showName?: boolean;
   showAddress?: boolean;
   showPhone?: boolean;
@@ -430,8 +428,6 @@ export interface CompanyInfoElementProperties {
   showVat?: boolean;
   showRcs?: boolean;
   showCapital?: boolean;
-  borderColor?: string;
-  borderWidth?: number;
   headerTextColor?: string;
   // Propriétés de données d'entreprise
   companyName?: string;
@@ -445,7 +441,7 @@ export interface CompanyInfoElementProperties {
   companyPhone?: string;
 }
 
-export interface ImageElementProperties {
+export interface ImageElementProperties extends BaseElementProperties {
   src?: string;
   logoUrl?: string;
   alt?: string;
@@ -453,14 +449,11 @@ export interface ImageElementProperties {
   position?: 'center' | 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
   opacity?: number;
   borderRadius?: number;
-  borderWidth?: number;
-  borderColor?: string;
-  backgroundColor?: string;
   alignment?: 'left' | 'center' | 'right';
   maintainAspectRatio?: boolean;
 }
 
-export interface OrderNumberElementProperties {
+export interface OrderNumberElementProperties extends BaseElementProperties {
   // Propriétés d'affichage
   showHeaders?: boolean;
   showBackground?: boolean;
@@ -499,11 +492,8 @@ export interface OrderNumberElementProperties {
   dateFontStyle?: string;
   // Propriétés de couleur
   textColor?: string;
-  backgroundColor?: string;
-  borderColor?: string;
   headerTextColor?: string;
   // Propriétés de style
-  borderWidth?: number;
   borderRadius?: number;
   padding?: number;
   theme?: string;
