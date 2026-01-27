@@ -486,28 +486,28 @@ abstract class BaseGenerator
         
         // Fallback vers les propriétés de l'élément si data provider ne fournit rien
         if (empty($companyName) || $companyName === '{{company_name}}') {
-            $companyName = $element['companyName'] ?? $element['name'] ?? $element['company_name'] ?? $element['fullName'] ?? 'Ma Boutique en Ligne';
+            $companyName = $properties['companyName'] ?? $element['companyName'] ?? $element['name'] ?? $element['company_name'] ?? $element['fullName'] ?? 'Ma Boutique en Ligne';
         }
         if (empty($companyAddress) || strpos($companyAddress, '{{') !== false) {
-            $companyAddress = $element['companyAddress'] ?? $element['address'] ?? $element['company_address'] ?? '123 Avenue des Commerçants, 69000 Lyon, France';
+            $companyAddress = $properties['companyAddress'] ?? $element['companyAddress'] ?? $element['address'] ?? $element['company_address'] ?? '123 Avenue des Commerçants, 69000 Lyon, France';
         }
         if (empty($companyEmail) || strpos($companyEmail, '{{') !== false) {
-            $companyEmail = $element['companyEmail'] ?? $element['email'] ?? $element['company_email'] ?? 'contact@ma-boutique.com';
+            $companyEmail = $properties['companyEmail'] ?? $element['companyEmail'] ?? $element['email'] ?? $element['company_email'] ?? 'contact@ma-boutique.com';
         }
         if (empty($companyPhone) || strpos($companyPhone, '{{') !== false) {
-            $companyPhone = $element['companyPhone'] ?? $element['phone'] ?? $element['company_phone'] ?? '+33 4 12 34 56 78';
+            $companyPhone = $properties['companyPhone'] ?? $element['companyPhone'] ?? $element['phone'] ?? $element['company_phone'] ?? '+33 4 12 34 56 78';
         }
         if (empty($companySiret) || strpos($companySiret, '{{') !== false) {
-            $companySiret = $element['companySiret'] ?? $element['siret'] ?? $element['company_siret'] ?? '123 456 789 01234';
+            $companySiret = $properties['companySiret'] ?? $element['companySiret'] ?? $element['siret'] ?? $element['company_siret'] ?? '123 456 789 01234';
         }
         if (empty($companyVat) || strpos($companyVat, '{{') !== false) {
-            $companyVat = $element['companyVat'] ?? $element['vat'] ?? $element['company_vat'] ?? '';
+            $companyVat = $properties['companyVat'] ?? $element['companyVat'] ?? $element['vat'] ?? $element['company_vat'] ?? '';
         }
         if (empty($companyRcs) || strpos($companyRcs, '{{') !== false) {
-            $companyRcs = $element['companyRcs'] ?? $element['rcs'] ?? $element['company_rcs'] ?? '';
+            $companyRcs = $properties['companyRcs'] ?? $element['companyRcs'] ?? $element['rcs'] ?? $element['company_rcs'] ?? '';
         }
         if (empty($companyCapital) || strpos($companyCapital, '{{') !== false) {
-            $companyCapital = $element['companyCapital'] ?? $element['capital'] ?? $element['company_capital'] ?? '';
+            $companyCapital = $properties['companyCapital'] ?? $element['companyCapital'] ?? $element['capital'] ?? $element['company_capital'] ?? '';
         }
         
         // Générer le contenu selon les options d'affichage

@@ -80,7 +80,8 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
     bodyFont: false,   // Accordéon des informations fermé par défaut
     layout: true,      // Accordéon disposition ouvert par défaut
     themes: false,     // Accordéon thèmes fermé par défaut
-    colors: false      // Accordéon couleurs fermé par défaut
+    colors: false,     // Accordéon couleurs fermé par défaut
+    companyData: false // Accordéon données entreprise fermé par défaut
   });
 
   const toggleAccordion = (accordion: 'headerFont' | 'bodyFont') => {
@@ -682,6 +683,213 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
                       {theme.preview}
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+
+          {/* Données de l'entreprise - Accordéon */}
+          <div style={{ marginBottom: '16px', border: '1px solid #e9ecef', borderRadius: '4px', overflow: 'hidden' }}>
+            <div
+              onClick={() => toggleAccordion('companyData')}
+              style={{
+                padding: '12px',
+                backgroundColor: '#f8f9fa',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderBottom: fontAccordions.companyData ? '1px solid #e9ecef' : 'none'
+              }}
+            >
+              <h4 style={{ margin: '0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
+                Données de l&apos;entreprise
+              </h4>
+              <span style={{
+                fontSize: '12px',
+                color: '#6c757d',
+                transform: fontAccordions.companyData ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s ease'
+              }}>
+                ▼
+              </span>
+            </div>
+
+            {fontAccordions.companyData && (
+              <div style={{ padding: '12px', backgroundColor: '#ffffff' }}>
+                <div style={{ marginBottom: '12px' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    Nom de l&apos;entreprise
+                  </label>
+                  <input
+                    type="text"
+                    value={element.companyName || ''}
+                    onChange={(e) => onChange(element.id, 'companyName', e.target.value)}
+                    placeholder="Entrez le nom de l'entreprise"
+                    style={{
+                      width: '100%',
+                      padding: '6px 8px',
+                      border: '1px solid #ccc',
+                      borderRadius: '3px',
+                      fontSize: '12px'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '12px' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    Adresse
+                  </label>
+                  <input
+                    type="text"
+                    value={element.companyAddress || ''}
+                    onChange={(e) => onChange(element.id, 'companyAddress', e.target.value)}
+                    placeholder="Entrez l'adresse"
+                    style={{
+                      width: '100%',
+                      padding: '6px 8px',
+                      border: '1px solid #ccc',
+                      borderRadius: '3px',
+                      fontSize: '12px'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '12px' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    Ville
+                  </label>
+                  <input
+                    type="text"
+                    value={element.companyCity || ''}
+                    onChange={(e) => onChange(element.id, 'companyCity', e.target.value)}
+                    placeholder="Entrez la ville"
+                    style={{
+                      width: '100%',
+                      padding: '6px 8px',
+                      border: '1px solid #ccc',
+                      borderRadius: '3px',
+                      fontSize: '12px'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '12px' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={element.companyEmail || ''}
+                    onChange={(e) => onChange(element.id, 'companyEmail', e.target.value)}
+                    placeholder="Entrez l'email"
+                    style={{
+                      width: '100%',
+                      padding: '6px 8px',
+                      border: '1px solid #ccc',
+                      borderRadius: '3px',
+                      fontSize: '12px'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '12px' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    Téléphone
+                  </label>
+                  <input
+                    type="tel"
+                    value={element.companyPhone || ''}
+                    onChange={(e) => onChange(element.id, 'companyPhone', e.target.value)}
+                    placeholder="Entrez le numéro de téléphone"
+                    style={{
+                      width: '100%',
+                      padding: '6px 8px',
+                      border: '1px solid #ccc',
+                      borderRadius: '3px',
+                      fontSize: '12px'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '12px' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    SIRET
+                  </label>
+                  <input
+                    type="text"
+                    value={element.companySiret || ''}
+                    onChange={(e) => onChange(element.id, 'companySiret', e.target.value)}
+                    placeholder="Entrez le numéro SIRET"
+                    style={{
+                      width: '100%',
+                      padding: '6px 8px',
+                      border: '1px solid #ccc',
+                      borderRadius: '3px',
+                      fontSize: '12px'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '12px' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    TVA
+                  </label>
+                  <input
+                    type="text"
+                    value={element.companyTva || ''}
+                    onChange={(e) => onChange(element.id, 'companyTva', e.target.value)}
+                    placeholder="Entrez le numéro TVA"
+                    style={{
+                      width: '100%',
+                      padding: '6px 8px',
+                      border: '1px solid #ccc',
+                      borderRadius: '3px',
+                      fontSize: '12px'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '12px' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    RCS
+                  </label>
+                  <input
+                    type="text"
+                    value={element.companyRcs || ''}
+                    onChange={(e) => onChange(element.id, 'companyRcs', e.target.value)}
+                    placeholder="Entrez le numéro RCS"
+                    style={{
+                      width: '100%',
+                      padding: '6px 8px',
+                      border: '1px solid #ccc',
+                      borderRadius: '3px',
+                      fontSize: '12px'
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '0' }}>
+                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                    Capital social (€)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={element.companyCapital || ''}
+                    onChange={(e) => onChange(element.id, 'companyCapital', e.target.value)}
+                    placeholder="Entrez le capital social"
+                    style={{
+                      width: '100%',
+                      padding: '6px 8px',
+                      border: '1px solid #ccc',
+                      borderRadius: '3px',
+                      fontSize: '12px'
+                    }}
+                  />
                 </div>
               </div>
             )}

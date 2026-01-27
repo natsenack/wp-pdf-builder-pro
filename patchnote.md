@@ -59,8 +59,6 @@
 
 ### Version 2.0.0 (Vision)
 - [ ] Architecture microservices
-- [ ] Intelligence artificielle pour la génération automatique
-- [ ] Support cloud
 - [ ] Analytics et reporting avancés
 
 ---
