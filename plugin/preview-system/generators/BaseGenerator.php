@@ -912,49 +912,6 @@ abstract class BaseGenerator
     }
 
     /**
-     * Rend un élément company_info
-     */
-    protected function renderCompanyInfoElement(array $element): string
-    {
-        error_log('[PDF] Company info - keys: ' . implode(', ', array_keys($element)));
-        
-        $style = $this->buildElementStyle($element);
-        
-        // Récupérer les données depuis le data provider pour l'aperçu
-        $companyName = $this->data_provider->getVariableValue('company_name');
-        $companyAddress = $this->data_provider->getVariableValue('company_full_address');
-        $companyEmail = $this->data_provider->getVariableValue('company_email');
-        $companyPhone = $this->data_provider->getVariableValue('company_phone');
-        $companySiret = $this->data_provider->getVariableValue('company_siret');
-        
-        // Fallback vers les propriétés de l'élément si data provider ne fournit rien
-        if (empty($companyName) || $companyName === '{{company_name}}') {
-            $companyName = $element['companyName'] ?? $element['name'] ?? $element['company_name'] ?? 'Entreprise';
-        }
-        if (empty($companyAddress) || strpos($companyAddress, '{{') !== false) {
-            $companyAddress = $element['companyAddress'] ?? $element['address'] ?? $element['company_address'] ?? '';
-        }
-        if (empty($companyEmail) || strpos($companyEmail, '{{') !== false) {
-            $companyEmail = $element['companyEmail'] ?? $element['email'] ?? $element['company_email'] ?? '';
-        }
-        if (empty($companyPhone) || strpos($companyPhone, '{{') !== false) {
-            $companyPhone = $element['companyPhone'] ?? $element['phone'] ?? $element['company_phone'] ?? '';
-        }
-        if (empty($companySiret) || strpos($companySiret, '{{') !== false) {
-            $companySiret = $element['companySiret'] ?? $element['siret'] ?? $element['company_siret'] ?? '';
-        }
-        
-        $content = $companyName;
-        if (!empty($companyAddress)) $content .= "\n" . $companyAddress;
-        if (!empty($companyEmail)) $content .= "\n" . $companyEmail;
-        if (!empty($companyPhone)) $content .= "\n" . $companyPhone;
-        if (!empty($companySiret)) $content .= "\nSIRET: " . $companySiret;
-        
-        error_log('[PDF] Company info - FINAL name: "' . $companyName . '", address: "' . $companyAddress . '", email: "' . $companyEmail . '", phone: "' . $companyPhone . '", siret: "' . $companySiret . '"');
-        return "<div class=\"pdf-element\" data-element-type=\"company_info\" style=\"{$style}\">" . nl2br($content) . "</div>";
-    }
-
-    /**
      * Rend un élément order_number
      */
     protected function renderOrderNumberElement(array $element): string
