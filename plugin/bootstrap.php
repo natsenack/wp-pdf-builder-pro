@@ -1009,7 +1009,7 @@ function pdf_builder_load_bootstrap()
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Backup_Restore_Manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Backup_Restore_Manager.php';
         // Initialiser l'instance
-        \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
+        \PDF_Builder\Managers\PDF_Builder_Backup_Restore_Manager::getInstance();
     }
 
     // INITIALISER LE GESTIONNAIRE DE TUTORIELS - SUPPRIMÉ

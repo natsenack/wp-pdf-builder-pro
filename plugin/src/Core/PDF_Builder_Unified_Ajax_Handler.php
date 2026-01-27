@@ -1805,7 +1805,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         try {
             // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Creating backup manager instance'); }
-            $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
+            $backup_manager = \PDF_Builder\Managers\PDF_Builder_Backup_Restore_Manager::getInstance();
 
             $options = [
                 'compress' => isset($_POST['compress']) && $_POST['compress'] === '1',
@@ -1848,7 +1848,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
 
         try {
-            $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
+            $backup_manager = \PDF_Builder\Managers\PDF_Builder_Backup_Restore_Manager::getInstance();
             $backups = $backup_manager->listBackups();
 
             wp_send_json_success(['backups' => $backups]);
@@ -1880,7 +1880,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
 
         try {
-            $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
+            $backup_manager = \PDF_Builder\Managers\PDF_Builder_Backup_Restore_Manager::getInstance();
 
             $options = [
                 'overwrite' => isset($_POST['overwrite']) && $_POST['overwrite'] === '1',
@@ -1927,7 +1927,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
 
         try {
-            $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
+            $backup_manager = \PDF_Builder\Managers\PDF_Builder_Backup_Restore_Manager::getInstance();
             $result = $backup_manager->deleteBackup($filename);
 
             if ($result['success']) {

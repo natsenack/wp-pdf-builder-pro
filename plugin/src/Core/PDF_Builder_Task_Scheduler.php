@@ -580,8 +580,8 @@ class PDF_Builder_Task_Scheduler {
         }
 
         try {
-            if (class_exists('\\PDF_Builder\\Managers\\PdfBuilderBackupRestoreManager')) {
-                $backup_manager = \PDF_Builder\Managers\PdfBuilderBackupRestoreManager::getInstance();
+            if (class_exists('\\PDF_Builder\\Managers\\PDF_Builder_Backup_Restore_Manager')) {
+                $backup_manager = \PDF_Builder\Managers\PDF_Builder_Backup_Restore_Manager::getInstance();
                 $result = $backup_manager->createBackup();
 
                 if (is_wp_error($result)) {
