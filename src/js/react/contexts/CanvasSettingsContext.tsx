@@ -134,10 +134,10 @@ const DEFAULT_SETTINGS: Omit<
   borderWidth: 1,
   shadowEnabled: false,
 
-  marginTop: 20,
-  marginRight: 20,
-  marginBottom: 20,
-  marginLeft: 20,
+  marginTop: 28,
+  marginRight: 28,
+  marginBottom: 10,
+  marginLeft: 10,
   showMargins: false,
 
   gridShow: true,

@@ -132,13 +132,13 @@ function useTemplate() {
                                 canvasData_1 = templateData_1.canvas;
                             }
                             else {
-                                canvasData_1 = { width: 210, height: 297 };
+                                canvasData_1 = { width: 794, height: 1123 };
                             }
                         }
                         catch (parseError) {
                             (0, debug_1.debugError)('❌ [LOAD TEMPLATE] Erreur de parsing des données localisées:', parseError);
                             elements_1 = [];
-                            canvasData_1 = { width: 210, height: 297 };
+                            canvasData_1 = { width: 794, height: 1123 };
                         }
                         normalizedElements_1 = (0, elementNormalization_1.normalizeElementsAfterLoad)(elements_1);
                         enrichedElements_1 = normalizedElements_1.map(function (el) {
@@ -310,13 +310,13 @@ function useTemplate() {
                             canvasData = templateData.canvas;
                         }
                         else {
-                            canvasData = { width: 210, height: 297 };
+                            canvasData = { width: 794, height: 1123 };
                         }
                     }
                     catch (parseError) {
                         (0, debug_1.debugError)('❌ [LOAD TEMPLATE] Erreur de parsing:', parseError);
                         elements = [];
-                        canvasData = { width: 210, height: 297 };
+                        canvasData = { width: 794, height: 1123 };
                     }
                     normalizedElements = (0, elementNormalization_1.normalizeElementsAfterLoad)(elements);
                     (0, elementNormalization_1.debugElementState)(normalizedElements, 'APRÈS CHARGEMENT');
