@@ -1071,9 +1071,11 @@ const drawCompanyInfo = (
     family: props.fontFamily || "Arial",
     weight: props.fontWeight || "normal",
     style: props.fontStyle || "normal",
+    headerFamily: props.headerFontFamily || props.fontFamily || "Arial",
     headerSize: props.headerFontSize || Math.round(fontSize * 1.2),
     headerWeight: props.headerFontWeight || "bold",
     headerStyle: props.headerFontStyle || props.fontStyle || "normal",
+    bodyFamily: props.bodyFontFamily || props.fontFamily || "Arial",
     bodySize: props.bodyFontSize || fontSize,
     bodyWeight: props.bodyFontWeight || props.fontWeight || "normal",
     bodyStyle: props.bodyFontStyle || props.fontStyle || "normal",
@@ -1128,10 +1130,10 @@ const drawCompanyInfo = (
   // Fonction helper pour dessiner avec la police appropriée
   const drawWithFont = (text: string, useHeaderFont: boolean = false) => {
     const config = useHeaderFont
-      ? { size: fontConfig.headerSize, weight: fontConfig.headerWeight, style: fontConfig.headerStyle }
-      : { size: fontConfig.bodySize, weight: fontConfig.bodyWeight, style: fontConfig.bodyStyle };
+      ? { size: fontConfig.headerSize, weight: fontConfig.headerWeight, style: fontConfig.headerStyle, family: fontConfig.headerFamily }
+      : { size: fontConfig.bodySize, weight: fontConfig.bodyWeight, style: fontConfig.bodyStyle, family: fontConfig.bodyFamily };
 
-    ctx.font = `${config.style} ${config.weight} ${config.size}px ${fontConfig.family}`;
+    ctx.font = `${config.style} ${config.weight} ${config.size}px ${config.family}`;
     if (useHeaderFont) ctx.fillStyle = colors.headerText;
     y = drawCompanyLine(ctx, text, x, y, config.size);
     if (useHeaderFont) ctx.fillStyle = colors.text;
