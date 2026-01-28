@@ -202,6 +202,7 @@ if (!class_exists('Dompdf\Dompdf') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'vend
 // ✅ FONCTIONS WRAPPER POUR LA TABLE PERSONNALISÉE DE PARAMÈTRES - TEMPORAIREMENT COMMENTE
 // ============================================================================
 
+// COMMENTE TEMPORAIREMENT POUR DIAGNOSTIC WOO
 /*
 /**
  * Récupérer une option depuis la table personnalisée wp_pdf_builder_settings
