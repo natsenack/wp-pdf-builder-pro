@@ -1123,8 +1123,6 @@ function pdf_builder_init()
         }
     }
 
-    // TEST 1: Commenter tout sauf la vérification WordPress
-    /*
     // Enregistrer les handlers AJAX au hook init
     // AJAX handlers supprimés - maintenant gérés dans pdf_builder_register_ajax_handlers() sur plugins_loaded
 
@@ -1142,7 +1140,6 @@ function pdf_builder_init()
         require_once $performance_monitor_path;
         // Le moniteur de performance est maintenant initialisé via PDF_Builder_Health_Monitor
     }
-    */
 }
 
 /**
