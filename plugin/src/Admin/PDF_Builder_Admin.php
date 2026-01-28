@@ -6,6 +6,8 @@
  * REFACORISÉ : Architecture modulaire avec séparation des responsabilités
  */
 
+namespace PDF_Builder\Admin;
+
 // Prevent multiple inclusions
 if (defined('PDF_BUILDER_ADMIN_LOADED')) {
     return;
