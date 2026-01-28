@@ -993,20 +993,14 @@ class PDF_Builder_Template_Manager
             $errors[] = "Élément $index: id doit être une chaîne non-vide (reçu: '$element_id')";
         }
 
-        // Vérifier le type d'élément valide (accepter les tirets et underscores)
+        // Vérifier le type d'élément valide
         $valid_types = ['text', 'image', 'rectangle', 'line', 'product-table',
                        'customer_info', 'company-logo', 'company_info', 'order_number',
                        'document_type', 'textarea', 'html', 'divider', 'progress-bar',
                        'dynamic_text', 'mentions',
                        'woocommerce_order_date', 'woocommerce_invoice_number'];
 
-        // Normaliser pour la vérification (accepter les deux formats)
-        $normalized_type_dash = str_replace('_', '-', $element_type);
-        $normalized_type_underscore = str_replace('-', '_', $element_type);
-
-        if (!in_array($element_type, $valid_types) &&
-            !in_array($normalized_type_dash, $valid_types) &&
-            !in_array($normalized_type_underscore, $valid_types)) {
+        if (!in_array($element_type, $valid_types)) {
             $errors[] = "Élément $index ($element_id): type invalide '$element_type' (types valides: " .
                        implode(', ', $valid_types) . ')';
         }
@@ -1067,7 +1061,7 @@ class PDF_Builder_Template_Manager
         }
 
         // Validation spécifique pour les éléments spéciaux
-        if ($normalized_type === 'order_number' || $normalized_type_dash === 'order_number') {
+        if ($element_type === 'order_number') {
             // Les éléments order_number doivent avoir une propriété 'format'
             if (!isset($element['format'])) {
                 $errors[] = "Élément $index ($element_id): propriété 'format' obligatoire manquante pour les éléments order_number";
