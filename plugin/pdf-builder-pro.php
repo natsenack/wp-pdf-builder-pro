@@ -47,6 +47,12 @@ function pdf_builder_init_plugin() {
     if (file_exists($bootstrap)) {
         error_log('[DEBUG] PDF Builder: Loading bootstrap.php');
         require_once $bootstrap;
+        error_log('[DEBUG] PDF Builder: Bootstrap loaded, calling pdf_builder_load_bootstrap()');
+        if (function_exists('pdf_builder_load_bootstrap')) {
+            pdf_builder_load_bootstrap();
+        } else {
+            error_log('[ERROR] PDF Builder: pdf_builder_load_bootstrap function not found');
+        }
     } else {
         error_log('[ERROR] PDF Builder: bootstrap.php not found at: ' . $bootstrap);
     }
