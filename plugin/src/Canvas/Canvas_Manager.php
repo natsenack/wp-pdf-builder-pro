@@ -68,7 +68,7 @@ class Canvas_Manager
         $defaults = $this->getDefaultSettings();
 
         // Vérifier si l'utilisateur est premium
-        $is_premium = class_exists('\PDF_Builder\Admin\PDF_Builder_Admin') && \PDF_Builder\Admin\PDF_Builder_Admin::is_premium_user();
+        $is_premium = class_exists('\PDF_Builder\Admin\PdfBuilderAdminNew') && \PDF_Builder\Admin\PdfBuilderAdminNew::is_premium_user();
 
         $this->settings = [
             'default_canvas_format' => $settings['pdf_builder_canvas_format'] ?? $defaults['default_canvas_format'],

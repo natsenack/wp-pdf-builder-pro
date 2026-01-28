@@ -8,6 +8,9 @@
 // Charger les fonctions utilitaires depuis bootstrap.php
 require_once dirname(dirname(dirname(__FILE__))) . '/bootstrap.php';
 
+// Inclure les stubs WordPress pour éviter les erreurs de linting
+require_once dirname(dirname(dirname(__FILE__))) . '/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php';
+
 /**
  * Déclarations de fonctions pour Intelephense
  * Ces fonctions sont définies dans bootstrap.php mais Intelephense ne les reconnaît pas
@@ -37,6 +40,103 @@ if (!function_exists('pdf_builder_delete_option')) {
      * @return bool
      */
     function pdf_builder_delete_option($option_name) {}
+}
+
+/**
+ * Déclarations de fonctions WordPress pour Intelephense
+ */
+if (!function_exists('add_action')) {
+    function add_action($tag, $function_to_add, $priority = 10, $accepted_args = 1) {}
+}
+if (!function_exists('sanitize_text_field')) {
+    function sanitize_text_field($str) {}
+}
+if (!function_exists('wp_send_json_error')) {
+    function wp_send_json_error($data = null, $status_code = null, $options = 0) {}
+}
+if (!function_exists('wp_send_json_success')) {
+    function wp_send_json_success($data = null, $status_code = null, $options = 0) {}
+}
+if (!function_exists('get_option')) {
+    function get_option($option, $default = false) {}
+}
+if (!defined('WP_DEBUG')) {
+    define('WP_DEBUG', false);
+}
+if (!function_exists('update_option')) {
+    function update_option($option, $value, $autoload = null) {}
+}
+if (!function_exists('sanitize_hex_color')) {
+    function sanitize_hex_color($color) {}
+}
+if (!function_exists('wp_cache_delete')) {
+    function wp_cache_delete($key, $group = '') {}
+}
+if (!function_exists('delete_option')) {
+    function delete_option($option) {}
+}
+if (!function_exists('wp_cache_set')) {
+    function wp_cache_set($key, $data, $group = '', $expire = 0) {}
+}
+if (!function_exists('wp_cache_get')) {
+    function wp_cache_get($key, $group = '', $force = false, &$found = null) {}
+}
+if (!function_exists('set_transient')) {
+    function set_transient($transient, $value, $expiration = 0) {}
+}
+if (!function_exists('get_transient')) {
+    function get_transient($transient) {}
+}
+if (!function_exists('delete_transient')) {
+    function delete_transient($transient) {}
+}
+if (!function_exists('wp_cache_flush')) {
+    function wp_cache_flush() {}
+}
+if (!defined('ARRAY_N')) {
+    define('ARRAY_N', 1);
+}
+if (!function_exists('current_time')) {
+    function current_time($type, $gmt = 0) {}
+}
+if (!function_exists('wp_upload_dir')) {
+    function wp_upload_dir($time = null, $create_dir = true, $refresh_cache = false) {}
+}
+if (!function_exists('current_user_can')) {
+    function current_user_can($capability, ...$args) {}
+}
+if (!function_exists('__')) {
+    function __($text, $domain = 'default') {}
+}
+if (!function_exists('size_format')) {
+    function size_format($bytes, $decimals = 0) {}
+}
+if (!function_exists('get_current_user_id')) {
+    function get_current_user_id() {}
+}
+if (!defined('WP_CONTENT_DIR')) {
+    define('WP_CONTENT_DIR', '');
+}
+if (!function_exists('wp_rand')) {
+    function wp_rand($min = 0, $max = 0) {}
+}
+if (!function_exists('get_temp_dir')) {
+    function get_temp_dir() {}
+}
+if (!function_exists('admin_url')) {
+    function admin_url($path = '', $scheme = 'admin') {}
+}
+if (!function_exists('wp_remote_head')) {
+    function wp_remote_head($url, $args = array()) {}
+}
+if (!function_exists('is_wp_error')) {
+    function is_wp_error($thing) {}
+}
+if (!function_exists('get_site_url')) {
+    function get_site_url($blog_id = null, $path = '', $scheme = null) {}
+}
+if (!function_exists('is_multisite')) {
+    function is_multisite() {}
 }
 
 class PDF_Builder_Unified_Ajax_Handler {

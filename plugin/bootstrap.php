@@ -25,6 +25,14 @@ if (file_exists($autoload_path)) {
 }
 
 // ========================================================================
+// ✅ CHARGEMENT DES STUBS WORDPRESS POUR LE LINTING
+// ========================================================================
+$stubs_path = PDF_BUILDER_PLUGIN_DIR . 'src/wordpress-stubs.php';
+if (file_exists($stubs_path)) {
+    require_once $stubs_path;
+}
+
+// ========================================================================
 // ✅ INJECTION DU NONCE DANS LE HEAD - TRÈS TÔT
 // Cela s'exécute avant admin_head et garantit que le nonce est disponible
 // ========================================================================
