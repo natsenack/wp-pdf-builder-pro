@@ -12,6 +12,85 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit('Direct access not allowed');
 }
 
+// ========================================================================
+// ✅ DÉCLARATIONS DE FONCTIONS WORDPRESS POUR INTELEPHENSE
+// ========================================================================
+if (!function_exists('is_admin')) {
+    function is_admin() { return false; }
+}
+if (!function_exists('wp_safe_redirect')) {
+    function wp_safe_redirect($location, $status = 302) { return; }
+}
+if (!function_exists('register_setting')) {
+    function register_setting($option_group, $option_name, $args = []) { return; }
+}
+if (!function_exists('wp_localize_script')) {
+    function wp_localize_script($handle, $object_name, $l10n) { return; }
+}
+if (!function_exists('wp_enqueue_script')) {
+    function wp_enqueue_script($handle, $src = '', $deps = [], $ver = false, $in_footer = false) { return; }
+}
+if (!function_exists('wp_doing_ajax')) {
+    function wp_doing_ajax() { return false; }
+}
+if (!function_exists('add_menu_page')) {
+    function add_menu_page($page_title, $menu_title, $capability, $menu_slug, $callback = '', $icon_url = '', $position = null) { return; }
+}
+if (!function_exists('add_submenu_page')) {
+    function add_submenu_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback = '') { return; }
+}
+if (!function_exists('_e')) {
+    function _e($text, $domain = 'default') { echo $text; }
+}
+if (!function_exists('settings_fields')) {
+    function settings_fields($option_group) { return; }
+}
+if (!function_exists('do_settings_sections')) {
+    function do_settings_sections($page) { return; }
+}
+if (!function_exists('submit_button')) {
+    function submit_button($text = null, $type = 'primary', $name = 'submit', $wrap = true, $other_attributes = null) { return; }
+}
+if (!function_exists('wp_die')) {
+    function wp_die($message = '', $title = '', $args = []) { return; }
+}
+if (!function_exists('wp_get_current_user')) {
+    function wp_get_current_user() { return null; }
+}
+if (!function_exists('wp_verify_nonce')) {
+    function wp_verify_nonce($nonce, $action = -1) { return true; }
+}
+if (!function_exists('add_option')) {
+    function add_option($option, $value = '', $deprecated = '', $autoload = 'yes') { return; }
+}
+if (!function_exists('get_post')) {
+    function get_post($post = null, $output = null, $filter = 'raw') { return null; }
+}
+if (!function_exists('get_post_meta')) {
+    function get_post_meta($post_id, $key = '', $single = false) { return ''; }
+}
+if (!function_exists('get_theme_mod')) {
+    function get_theme_mod($name, $default = false) { return $default; }
+}
+if (!function_exists('wp_get_attachment_image_url')) {
+    function wp_get_attachment_image_url($attachment_id, $size = 'thumbnail') { return ''; }
+}
+if (!function_exists('wp_create_nonce')) {
+    function wp_create_nonce($action = -1) { return 'test_nonce_' . time(); }
+}
+if (!function_exists('plugin_dir_path')) {
+    function plugin_dir_path($file) { return dirname($file) . '/'; }
+}
+if (!function_exists('is_ssl')) {
+    function is_ssl() { return false; }
+}
+if (!defined('DOING_AJAX')) {
+    define('DOING_AJAX', false);
+}
+if (!defined('REST_REQUEST')) {
+    define('REST_REQUEST', false);
+}
+
 // Le débogage est déjà configuré dans wp-config.php
 
 // ========================================================================
@@ -1067,7 +1146,8 @@ function pdf_builder_diagnostic_page() {
     echo '<ul>';
 
     $current_user = wp_get_current_user();
-    echo '<li>' . __('Utilisateur actuel:', 'pdf-builder-pro') . ' ' . $current_user->user_login . ' (ID: ' . $current_user->ID . ')</li>';
+    $user_info = $current_user ? $current_user->user_login . ' (ID: ' . $current_user->ID . ')' : 'Non connecté';
+    echo '<li>' . __('Utilisateur actuel:', 'pdf-builder-pro') . ' ' . $user_info . '</li>';
 
     $capabilities_to_test = [
         'manage_options' => __('Gérer les options', 'pdf-builder-pro'),

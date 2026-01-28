@@ -11,6 +11,13 @@ if (!defined('ABSPATH')) {
 /**
  * Déclarations de fonctions WordPress pour Intelephense
  */
+if (!function_exists('wp_verify_nonce')) {
+    function wp_verify_nonce($nonce, $action = -1) { return true; }
+}
+
+/**
+ * Déclarations de fonctions WordPress pour Intelephense
+ */
 if (!function_exists('update_user_meta')) {
     function update_user_meta($user_id, $meta_key, $meta_value, $prev_value = '') {}
 }

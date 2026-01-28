@@ -10,6 +10,16 @@ if (!defined('ABSPATH')) {
     exit('Direct access not allowed');
 }
 
+/**
+ * Déclarations de fonctions WordPress pour Intelephense
+ */
+if (!function_exists('plugin_dir_path')) {
+    function plugin_dir_path($file) { return dirname($file) . '/'; }
+}
+if (!function_exists('wp_enqueue_style')) {
+    function wp_enqueue_style($handle, $src = '', $deps = [], $ver = false, $media = 'all') { return; }
+}
+
 
 /**
  * Classe principale pour la gestion des notifications
