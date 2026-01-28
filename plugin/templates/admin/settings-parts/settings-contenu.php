@@ -5,6 +5,39 @@
      * Updated: 2025-12-03
      */
 
+    // Sécurité WordPress
+    if (!defined('ABSPATH')) {
+        exit('Direct access not allowed');
+    }
+
+    // Déclarations de fonctions WordPress si elles ne sont pas disponibles (pour linter)
+    if (!function_exists('add_option')) {
+        function add_option($option, $value = '', $deprecated = '', $autoload = 'yes') { return true; }
+    }
+    if (!function_exists('get_option')) {
+        function get_option($option, $default = false) { return $default; }
+    }
+    if (!function_exists('esc_attr')) {
+        function esc_attr($text) { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8'); }
+    }
+    if (!function_exists('esc_html')) {
+        function esc_html($text) { return htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8'); }
+    }
+    if (!function_exists('selected')) {
+        function selected($selected, $current = true, $echo = true) {
+            $result = $selected == $current ? ' selected="selected"' : '';
+            if ($echo) echo $result;
+            return $result;
+        }
+    }
+    if (!function_exists('checked')) {
+        function checked($checked, $current = true, $echo = true) {
+            $result = $checked == $current ? ' checked="checked"' : '';
+            if ($echo) echo $result;
+            return $result;
+        }
+    }
+
     echo "<!-- TEST: settings-contenu.php loaded - VERSION DIRECTE 2025-12-12 -->";
 
     $settings = pdf_builder_get_option('pdf_builder_settings', array());
@@ -442,7 +475,7 @@
                         canvas_background_color: <?php echo json_encode(get_canvas_option_contenu('canvas_bg_color', '#ffffff')); ?>,
                         <?php
                         // Vérifier si l'utilisateur est premium pour les paramètres de style avancés
-                        $is_premium = \PDF_Builder\Admin\PdfBuilderAdminNew::is_premium_user();
+                        $is_premium = defined('PDF_BUILDER_PRO_PREMIUM') && PDF_BUILDER_PRO_PREMIUM;
                         if ($is_premium) {
                             // Utilisateur premium : utiliser les paramètres configurés
                             echo 'border_color: ' . json_encode(get_canvas_option_contenu('canvas_border_color', '#cccccc')) . ',' . "\n";
