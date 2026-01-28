@@ -161,9 +161,12 @@ SCRIPT;
 }
 
 // Ajouter le hook admin_head avec priorité très haute
-add_action('admin_head', 'pdf_builder_inject_nonce', 1);
+// TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
+// add_action('admin_head', 'pdf_builder_inject_nonce', 1);
 
 // Vérifier si on est sur une page admin
+// TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
+/*
 if (is_admin()) {
     error_log('[BOOTSTRAP] We are in admin area');
     error_log('[BOOTSTRAP] Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'no page param'));
@@ -171,6 +174,7 @@ if (is_admin()) {
 } else {
     error_log('[BOOTSTRAP] Not in admin area');
 }
+*/
 
 // Définir les constantes essentielles si elles ne sont pas déjà définies
 if (!defined('PDF_BUILDER_PLUGIN_FILE')) {
