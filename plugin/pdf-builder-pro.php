@@ -32,6 +32,16 @@ if (!defined('PDF_BUILDER_PREMIUM')) {
 // CHARGEMENT CRITIQUE DE LA CLASSE ADMIN PRINCIPALE
 // Retardé au hook plugins_loaded pour éviter les conflits d'initialisation
 add_action('plugins_loaded', function() {
+    // Initialiser l'autoloader personnalisé
+    $autoloader_file = PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/autoloader.php';
+    if (file_exists($autoloader_file)) {
+        require_once $autoloader_file;
+        \PDF_Builder\Core\PdfBuilderAutoloader::init(PDF_BUILDER_PLUGIN_DIR);
+        error_log('[DEBUG] PDF Builder: Custom autoloader initialized successfully');
+    } else {
+        error_log('[ERROR] PDF Builder: Custom autoloader file not found: ' . $autoloader_file);
+    }
+
     if (!class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
         $admin_file = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
         if (file_exists($admin_file)) {
