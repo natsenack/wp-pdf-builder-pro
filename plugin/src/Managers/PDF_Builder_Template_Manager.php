@@ -996,7 +996,7 @@ class PDF_Builder_Template_Manager
         // Vérifier le type d'élément valide (accepter les tirets et underscores)
         $valid_types = ['text', 'image', 'rectangle', 'line', 'product-table',
                        'customer_info', 'company-logo', 'company_info', 'order_number',
-                       'document-type', 'textarea', 'html', 'divider', 'progress-bar',
+                       'document_type', 'textarea', 'html', 'divider', 'progress-bar',
                        'dynamic_text', 'mentions',
                        'woocommerce-order-date', 'woocommerce-invoice-number'];
 
