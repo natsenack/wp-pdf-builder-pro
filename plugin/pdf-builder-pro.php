@@ -1078,14 +1078,15 @@ function pdf_builder_init()
         return;
     }
 
-    // TEST 1: Commenter tout sauf la vérification WordPress
-    /*
+    // TEST 2: Réactiver l'autoloader Composer
     // Charger l'autoloader Composer
     $autoload_path = plugin_dir_path(__FILE__) . 'vendor/autoload.php';
     if (file_exists($autoload_path)) {
         require_once $autoload_path;
     }
 
+    // TEST 1: Commenter tout sauf la vérification WordPress
+    /*
     // Initialiser notre autoloader personnalisé
     require_once plugin_dir_path(__FILE__) . 'src/Core/core/autoloader.php';
     if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
