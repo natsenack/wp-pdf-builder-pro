@@ -452,11 +452,6 @@ function pdf_builder_load_core()
         return;
     }
 
-    // Charger le autoloader pour le nouveau système PSR-4 - DISABLED
-    // if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php')) {
-    //     require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
-    // }
-
     // Charger les constantes
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/constants.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/constants.php';
@@ -477,96 +472,6 @@ function pdf_builder_load_core()
     // Charger la classe principale PDF_Builder_Core depuis src/
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Core.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Core.php';
-    }
-
-    // Charger les managers essentiels depuis src/Managers/
-    $managers = array(
-        // Tous les managers sont maintenant chargés par autoloader (namespace PDF_Builder\Managers\)
-        // 'PDF_Builder_Backup_Restore_Manager.php',
-        // 'PDF_Builder_Drag_Drop_Manager.php',
-        'PDF_Builder_Feature_Manager.php', // Chargé pour les fonctionnalités freemium
-        'PDF_Builder_License_Manager.php', // Manuellement chargé car autoloader désactivé
-        'PDF_Builder_Logger.php', // Logger pour le débogage
-        // 'PDF_Builder_PDF_Generator.php',
-        // 'PDF_Builder_Resize_Manager.php',
-        // 'PDF_Builder_Settings_Manager.php',
-        // 'PDF_Builder_Status_Manager.php',
-        // 'PDF_Builder_Template_Manager.php',
-        // 'PDF_Builder_Variable_Mapper.php',
-        // 'PDF_Builder_WooCommerce_Integration.php'
-    );
-    foreach ($managers as $manager) {
-        $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/' . $manager;
-        if (file_exists($manager_path)) {
-            require_once $manager_path;
-        }
-    }
-
-    // Charger les managers Admin depuis src/Admin/Managers/
-    $admin_managers = array(
-        'SettingsManager.php',
-        'TemplateManager.php'
-    );
-    foreach ($admin_managers as $manager) {
-        $manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Managers/' . $manager;
-        if (file_exists($manager_path)) {
-            require_once $manager_path;
-        }
-    }
-
-    // Charger les handlers Admin depuis src/Admin/Handlers/
-    $admin_handlers = array(
-        'AjaxHandler.php'
-    );
-    foreach ($admin_handlers as $handler) {
-        $handler_path = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Handlers/' . $handler;
-        if (file_exists($handler_path)) {
-            require_once $handler_path;
-        }
-    }
-
-    // Charger les renderers Admin depuis src/Admin/Renderers/
-    $admin_renderers = array(
-        'HTMLRenderer.php'
-    );
-    foreach ($admin_renderers as $renderer) {
-        $renderer_path = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Renderers/' . $renderer;
-        if (file_exists($renderer_path)) {
-            require_once $renderer_path;
-        }
-    }
-
-    // Charger les processors Admin depuis src/Admin/Processors/
-    $admin_processors = array(
-        'TemplateProcessor.php'
-    );
-    foreach ($admin_processors as $processor) {
-        $processor_path = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Processors/' . $processor;
-        if (file_exists($processor_path)) {
-            require_once $processor_path;
-        }
-    }
-
-    // Charger les utilitaires de données Admin depuis src/Admin/Data/
-    $admin_data_utils = array(
-        'DataUtils.php'
-    );
-    foreach ($admin_data_utils as $data_util) {
-        $data_util_path = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Data/' . $data_util;
-        if (file_exists($data_util_path)) {
-            require_once $data_util_path;
-        }
-    }
-
-    // Charger les providers Admin depuis src/Admin/Providers/
-    $admin_providers = array(
-        'DashboardDataProvider.php'
-    );
-    foreach ($admin_providers as $provider) {
-        $provider_path = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Providers/' . $provider;
-        if (file_exists($provider_path)) {
-            require_once $provider_path;
-        }
     }
 
     // Forcer le déploiement - marqueur de test
@@ -759,25 +664,8 @@ function pdf_builder_load_core()
 
             wp_localize_script('pdf-builder-react-bundle', 'pdfBuilderAjax', $localize_data);
         }
-    });    // Charger le handler AJAX pour générer les styles des éléments
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/element-styles-handler.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/element-styles-handler.php';
-    }
-
-    // Charger l'injecteur de styles pour le canvas (inline)
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/canvas-style-injector-inline.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/canvas-style-injector-inline.php';
-    }
-
-    // Charger le handler AJAX pour rendre le template en HTML
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/render-template-html.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/render-template-html.php';
-    }
-
-    // Charger le handler AJAX pour les templates
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/PDF_Builder_Templates_Ajax.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/PDF_Builder_Templates_Ajax.php';
-    }
+    });
+    // Les handlers AJAX sont maintenant chargés automatiquement par autoloader PSR-4
 
     $loaded = true;
 }
@@ -790,80 +678,11 @@ function pdf_builder_load_new_classes()
         return;
     }
 
-    // Charger les interfaces et classes de données
-    $data_classes = [
-        'src/Interfaces/DataProviderInterface.php',
-        'config/data/SampleDataProvider.php',
-        'config/data/EditorDataProvider.php',
-        'config/data/WooCommerceDataProvider.php'
-    ];
-    foreach ($data_classes as $class_file) {
-        $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
-        if (file_exists($file_path)) {
-            require_once $file_path;
-        }
-    }
+    // Les classes PSR-4 sont maintenant chargées automatiquement par l'autoloader
+    // Seuls les fichiers spéciaux qui ne suivent pas PSR-4 sont chargés manuellement
 
-    // Charger les générateurs
-    $generator_classes = [
-        'src/Generators/BaseGenerator.php',
-        'src/Generators/PDFGenerator.php',
-        'src/Generators/GeneratorManager.php'
-    ];
-    foreach ($generator_classes as $class_file) {
-        $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
-        if (file_exists($file_path)) {
-            require_once $file_path;
-        }
-    }
-
-    // Charger les éléments et contrats
-    $element_classes = [
-        'src/Elements/ElementContracts.php'
-    ];
-    foreach ($element_classes as $class_file) {
-        $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
-        if (file_exists($file_path)) {
-            require_once $file_path;
-        }
-    }
-
-    // Charger le core et conventions
-    $core_classes = [
-        'src/Core/Conventions.php'
-    ];
-    foreach ($core_classes as $class_file) {
-        $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
-        if (file_exists($file_path)) {
-            require_once $file_path;
-        }
-    }
-
-    // Charger l'API
-    // Preview system moved to preview-system folder
+    // Charger l'API Preview (système spécial)
     require_once PDF_BUILDER_PLUGIN_DIR . 'preview-system/index.php';
-    
-    $api_classes = [
-        'api/MediaDiagnosticAPI.php',
-        'api/MediaLibraryFixAPI.php'
-    ];
-    foreach ($api_classes as $class_file) {
-        $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
-        if (file_exists($file_path)) {
-            require_once $file_path;
-        }
-    }
-
-    // Charger les états
-    $state_classes = [
-        'config/states/PreviewStateManager.php'
-    ];
-    foreach ($state_classes as $class_file) {
-        $file_path = PDF_BUILDER_PLUGIN_DIR . $class_file;
-        if (file_exists($file_path)) {
-            require_once $file_path;
-        }
-    }
 
     $new_classes_loaded = true;
 }
@@ -924,9 +743,7 @@ function pdf_builder_load_admin_components()
     }
 
     // CHARGER LE GESTIONNAIRE DE RATE LIMITING
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Security/Rate_Limiter.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Security/Rate_Limiter.php';
-    }
+    // Maintenant chargé automatiquement par autoloader PSR-4
 
     // INITIALISER LE VALIDATEUR DE SÉCURITÉ APRÈS LE CHARGEMENT DE WORDPRESS
     if (class_exists('PDF_Builder\\Core\\PDF_Builder_Security_Validator')) {
@@ -934,14 +751,11 @@ function pdf_builder_load_admin_components()
     }
 
     // CHARGER ET INITIALISER LE GESTIONNAIRE DE CANVAS
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Canvas/Canvas_Manager.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Canvas/Canvas_Manager.php';
-    }
+    // Maintenant chargé automatiquement par autoloader PSR-4
 
     // CHARGER ET INITIALISER LE GESTIONNAIRE DE SAUVEGARDE/RESTAURATION
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Backup_Restore_Manager.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Backup_Restore_Manager.php';
-        // Initialiser l'instance
+    // Maintenant chargé automatiquement par autoloader PSR-4
+    if (class_exists('PDF_Builder\\Managers\\PDF_Builder_Backup_Restore_Manager')) {
         \PDF_Builder\Managers\PDF_Builder_Backup_Restore_Manager::getInstance();
     }
 
@@ -951,16 +765,14 @@ function pdf_builder_load_admin_components()
     }
 
     // CHARGER LE GESTIONNAIRE DE NOTIFICATIONS
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php';
-        // Initialiser l'instance
+    // Maintenant chargé automatiquement par autoloader PSR-4
+    if (class_exists('PDF_Builder\\Core\\PDF_Builder_Notification_Manager')) {
         PDF_Builder_Notification_Manager::get_instance();
     }
 
     // CHARGER LE GESTIONNAIRE DE PRÉFÉRENCES DE L'ÉDITEUR PDF
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDFEditorPreferences.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDFEditorPreferences.php';
-        // Initialiser l'instance
+    // Maintenant chargé automatiquement par autoloader PSR-4
+    if (class_exists('PDF_Builder\\Core\\PDFEditorPreferences')) {
         PDFEditorPreferences::get_instance();
     }
 
