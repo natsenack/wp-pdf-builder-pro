@@ -36,7 +36,22 @@ add_action('plugins_loaded', function() {
         $admin_file = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
         if (file_exists($admin_file)) {
             require_once $admin_file;
+            error_log('[DEBUG] PDF Builder: Admin class loaded successfully');
+        } else {
+            error_log('[ERROR] PDF Builder: Admin class file not found: ' . $admin_file);
         }
+    }
+
+    // Instancier la classe admin principale pour enregistrer les menus et hooks
+    if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
+        try {
+            \PDF_Builder\Admin\PdfBuilderAdminNew::getInstance();
+            error_log('[DEBUG] PDF Builder: Admin class instantiated successfully');
+        } catch (Exception $e) {
+            error_log('[ERROR] PDF Builder: Failed to instantiate admin class: ' . $e->getMessage());
+        }
+    } else {
+        error_log('[ERROR] PDF Builder: Admin class not found after loading attempt');
     }
 });
 
