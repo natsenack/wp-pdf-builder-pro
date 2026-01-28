@@ -1,0 +1,66 @@
+<?php
+/**
+ * Diagnostic rapide pour PDF Builder Pro
+ * Vérifie si le bootstrap se charge correctement
+ */
+
+// Vérifier si on est dans WordPress
+if (!defined('ABSPATH')) {
+    die('Ce script doit être exécuté dans WordPress');
+}
+
+// Vérifier si la fonction existe
+if (function_exists('pdf_builder_load_bootstrap')) {
+    echo "<p style='color: green;'>✅ Fonction pdf_builder_load_bootstrap() existe</p>";
+} else {
+    echo "<p style='color: red;'>❌ Fonction pdf_builder_load_bootstrap() n'existe pas</p>";
+}
+
+// Vérifier si la classe existe
+if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
+    echo "<p style='color: green;'>✅ Classe PdfBuilderAdminNew existe</p>";
+} else {
+    echo "<p style='color: red;'>❌ Classe PdfBuilderAdminNew n'existe pas</p>";
+}
+
+// Vérifier si le hook est enregistré
+global $wp_filter;
+if (isset($wp_filter['plugins_loaded'])) {
+    echo "<p style='color: green;'>✅ Hook plugins_loaded existe</p>";
+
+    $has_bootstrap_hook = false;
+    foreach ($wp_filter['plugins_loaded']->callbacks as $priority => $callbacks) {
+        foreach ($callbacks as $callback) {
+            if (is_array($callback['function']) && $callback['function'][1] === 'pdf_builder_load_bootstrap') {
+                $has_bootstrap_hook = true;
+                echo "<p style='color: green;'>✅ Hook pdf_builder_load_bootstrap enregistré à la priorité $priority</p>";
+                break 2;
+            } elseif ($callback['function'] === 'pdf_builder_load_bootstrap') {
+                $has_bootstrap_hook = true;
+                echo "<p style='color: green;'>✅ Hook pdf_builder_load_bootstrap enregistré à la priorité $priority</p>";
+                break 2;
+            }
+        }
+    }
+
+    if (!$has_bootstrap_hook) {
+        echo "<p style='color: red;'>❌ Hook pdf_builder_load_bootstrap NON enregistré</p>";
+    }
+} else {
+    echo "<p style='color: red;'>❌ Hook plugins_loaded n'existe pas</p>";
+}
+
+// Vérifier les erreurs PHP récentes
+if (function_exists('error_get_last')) {
+    $last_error = error_get_last();
+    if ($last_error) {
+        echo "<p style='color: orange;'>⚠️ Dernière erreur PHP: " . esc_html($last_error['message']) . " dans " . esc_html($last_error['file']) . ":" . $last_error['line'] . "</p>";
+    } else {
+        echo "<p style='color: green;'>✅ Aucune erreur PHP récente</p>";
+    }
+}
+
+echo "<hr>";
+echo "<h3>Actions de diagnostic:</h3>";
+echo "<p><a href='" . admin_url('admin.php?page=pdf-builder-pro') . "' class='button'>Aller à PDF Builder (si visible)</a></p>";
+echo "<p><a href='" . admin_url() . "' class='button'>Retour à l'admin</a></p>";
