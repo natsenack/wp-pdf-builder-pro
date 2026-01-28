@@ -1101,11 +1101,12 @@ function pdf_builder_init()
     $nonce_manager = PDF_Builder_Nonce_Manager::get_instance();
     $unified_handler = PDF_Builder_Unified_Ajax_Handler::get_instance();
 
-    // TEST 1: Commenter tout sauf la vérification WordPress
-    /*
+    // TEST 5: Réactiver la vérification des tables
     // Vérifier et créer les tables manquantes
     pdf_builder_check_tables();
 
+    // TEST 1: Commenter tout sauf la vérification WordPress
+    /*
     // Ajouter les headers de cache pour les assets
     add_action('wp_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
     add_action('admin_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
