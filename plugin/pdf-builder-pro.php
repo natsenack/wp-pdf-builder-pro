@@ -1110,8 +1110,7 @@ function pdf_builder_init()
     add_action('wp_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
     add_action('admin_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
 
-    // TEST 1: Commenter tout sauf la vérification WordPress
-    /*
+    // TEST 7: Réactiver le chargement du bootstrap - C'EST PROBABLEMENT LE COUPABLE
     // Charger le bootstrap (version complète pour la production)
     $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
     if (file_exists($bootstrap_path)) {
@@ -1124,6 +1123,8 @@ function pdf_builder_init()
         }
     }
 
+    // TEST 1: Commenter tout sauf la vérification WordPress
+    /*
     // Enregistrer les handlers AJAX au hook init
     // AJAX handlers supprimés - maintenant gérés dans pdf_builder_register_ajax_handlers() sur plugins_loaded
 
