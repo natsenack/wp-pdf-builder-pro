@@ -24,7 +24,7 @@ class PDF_Builder_Settings_Manager
     public function __construct($main_instance)
     {
         $this->main = $main_instance;
-        $this->init_hooks();
+        $this->initHooks();
     }
 
     /**
