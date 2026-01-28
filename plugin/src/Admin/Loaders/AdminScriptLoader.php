@@ -237,7 +237,7 @@ class AdminScriptLoader
         // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Current hook: ' . $hook); }
 
         // Localize pdfBuilderAjax for API Preview scripts
-        wp_localize_script('pdf-preview-api-client', 'pdfBuilderAjax', [
+        wp_localize_script('pdf-preview-api-client', 'pdfBuilderData', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_order_actions'),
             'version' => PDF_BUILDER_PRO_VERSION,
@@ -247,6 +247,17 @@ class AdminScriptLoader
                 'generating_pdf' => __('Génération du PDF en cours...', 'pdf-builder-pro'),
             ]
         ]);
+
+        // Also set global pdfBuilderNonce for backward compatibility
+        wp_add_inline_script('pdf-preview-api-client', 'window.pdfBuilderNonce = "' . wp_create_nonce('pdf_builder_order_actions') . '";');
+
+        // Debug: Add script to check if variables are defined
+        wp_add_inline_script('pdf-preview-api-client', '
+            console.log("[DEBUG] PDF Builder variables check:");
+            console.log("[DEBUG] window.pdfBuilderData:", typeof window.pdfBuilderData, window.pdfBuilderData);
+            console.log("[DEBUG] window.pdfBuilderNonce:", typeof window.pdfBuilderNonce, window.pdfBuilderNonce);
+            console.log("[DEBUG] pdfBuilderData (global):", typeof pdfBuilderData, pdfBuilderData);
+        ');
 
         // Nonce pour les templates
         wp_add_inline_script('pdf-preview-api-client', 'var pdfBuilderTemplatesNonce = "' . wp_create_nonce('pdf_builder_templates') . '";');
