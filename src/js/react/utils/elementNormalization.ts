@@ -42,12 +42,199 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
       height: Number(element.height) || 100
     } as Element;
 
-    // Ajouter les valeurs par défaut pour les propriétés obligatoires
-    if (elementType === 'order_number') {
-      // La propriété 'format' est obligatoire pour order_number
-      if (!normalized.format) {
-        (normalized as any).format = 'CMD-{order_number}';
-      }
+    // ============================================================
+    // AJOUTER LES VALEURS PAR DÉFAUT POUR LES PROPRIÉTÉS OBLIGATOIRES
+    // ============================================================
+    // Cela garantit que tous les éléments chargés auront les propriétés requises
+    
+    // Propriétés communes requises (position et dimensions)
+    if (typeof normalized.x !== 'number' || normalized.x === undefined) {
+      (normalized as any).x = element.x ? Number(element.x) : 0;
+    }
+    if (typeof normalized.y !== 'number' || normalized.y === undefined) {
+      (normalized as any).y = element.y ? Number(element.y) : 0;
+    }
+    if (typeof normalized.width !== 'number' || normalized.width === undefined) {
+      (normalized as any).width = element.width ? Number(element.width) : 100;
+    }
+    if (typeof normalized.height !== 'number' || normalized.height === undefined) {
+      (normalized as any).height = element.height ? Number(element.height) : 100;
+    }
+
+    // Propriétés obligatoires spécifiques par type d'élément
+    switch (elementType) {
+      case 'text':
+      case 'dynamic_text':
+      case 'conditional_text':
+        // Requiert: content
+        if (!normalized.content) {
+          (normalized as any).content = '';
+        }
+        break;
+
+      case 'image':
+      case 'logo':
+      case 'image_upload':
+        // Requiert: src
+        if (!normalized.src) {
+          (normalized as any).src = '';
+        }
+        break;
+
+      case 'shape':
+      case 'shape_rectangle':
+      case 'shape_circle':
+      case 'shape_line':
+      case 'shape_arrow':
+      case 'shape_triangle':
+      case 'shape_star':
+        // Requiert: type
+        if (!normalized.type || normalized.type === 'shape') {
+          (normalized as any).type = 'rectangle';
+        }
+        break;
+
+      case 'line':
+        // Requiert: start_x, start_y, end_x, end_y
+        if (typeof normalized.start_x !== 'number') {
+          (normalized as any).start_x = (element as any).start_x ? Number((element as any).start_x) : 0;
+        }
+        if (typeof normalized.start_y !== 'number') {
+          (normalized as any).start_y = (element as any).start_y ? Number((element as any).start_y) : 0;
+        }
+        if (typeof normalized.end_x !== 'number') {
+          (normalized as any).end_x = (element as any).end_x ? Number((element as any).end_x) : 100;
+        }
+        if (typeof normalized.end_y !== 'number') {
+          (normalized as any).end_y = (element as any).end_y ? Number((element as any).end_y) : 100;
+        }
+        break;
+
+      case 'rectangle':
+        // Requiert: x, y, width, height (déjà définis plus haut)
+        break;
+
+      case 'circle':
+        // Requiert: cx, cy, r
+        if (typeof normalized.cx !== 'number') {
+          (normalized as any).cx = (element as any).cx ? Number((element as any).cx) : 50;
+        }
+        if (typeof normalized.cy !== 'number') {
+          (normalized as any).cy = (element as any).cy ? Number((element as any).cy) : 50;
+        }
+        if (typeof normalized.r !== 'number') {
+          (normalized as any).r = (element as any).r ? Number((element as any).r) : 40;
+        }
+        break;
+
+      case 'order_number':
+        // Requiert: format
+        if (!normalized.format) {
+          (normalized as any).format = 'CMD-{order_number}';
+        }
+        break;
+
+      case 'barcode':
+      case 'qrcode':
+      case 'qrcode_dynamic':
+        // Requiert: type (ou data pour code)
+        if (!normalized.type || normalized.type === 'barcode' || normalized.type === 'qrcode') {
+          (normalized as any).type = elementType === 'barcode' ? 'CODE128' : 'QRCODE';
+        }
+        if (!normalized.data && !normalized.content) {
+          (normalized as any).data = '123456789';
+        }
+        break;
+
+      case 'product_table':
+        // Propriétés pour tableau produits
+        if (!normalized.showHeaders) {
+          (normalized as any).showHeaders = true;
+        }
+        if (!normalized.showBorders) {
+          (normalized as any).showBorders = true;
+        }
+        if (!normalized.dataSource) {
+          (normalized as any).dataSource = 'order_items';
+        }
+        if (!normalized.columns) {
+          (normalized as any).columns = {
+            image: true,
+            name: true,
+            quantity: true,
+            price: true,
+            total: true
+          };
+        }
+        break;
+
+      case 'customer_info':
+        // Propriétés pour infos client
+        if (!normalized.showHeaders) {
+          (normalized as any).showHeaders = true;
+        }
+        if (!normalized.showBorders) {
+          (normalized as any).showBorders = false;
+        }
+        if (!normalized.layout) {
+          (normalized as any).layout = 'vertical';
+        }
+        if (!normalized.showLabels) {
+          (normalized as any).showLabels = true;
+        }
+        break;
+
+      case 'company_info':
+      case 'company_logo':
+        // Propriétés pour infos entreprise
+        if (!normalized.showHeaders) {
+          (normalized as any).showHeaders = false;
+        }
+        if (!normalized.showBorders) {
+          (normalized as any).showBorders = false;
+        }
+        break;
+
+      case 'document_type':
+        // Requiert: documentType
+        if (!normalized.documentType) {
+          (normalized as any).documentType = 'invoice';
+        }
+        break;
+
+      case 'woocommerce_order_date':
+      case 'woocommerce_invoice_number':
+        // Ces types doivent avoir au moins un contenu par défaut
+        if (!normalized.content && !normalized.text) {
+          (normalized as any).content = elementType === 'woocommerce_order_date' ? 
+            new Date().toLocaleDateString() : 
+            'INV-001';
+        }
+        break;
+
+      // Layouts et structures
+      case 'layout_header':
+      case 'layout_footer':
+      case 'layout_sidebar':
+      case 'layout_section':
+      case 'layout_container':
+        if (!normalized.content) {
+          (normalized as any).content = '';
+        }
+        break;
+
+      // Éléments dynamiques
+      case 'table_dynamic':
+      case 'gradient_box':
+      case 'shadow_box':
+      case 'rounded_box':
+      case 'border_box':
+      case 'background_pattern':
+      case 'watermark':
+        if (!normalized.content) {
+          (normalized as any).content = '';
+        }
+        break;
     }
 
     return normalized;
