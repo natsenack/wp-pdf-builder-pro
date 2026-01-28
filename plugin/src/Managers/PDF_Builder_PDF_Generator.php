@@ -53,37 +53,37 @@ class PDF_Builder_PDF_Generator
     public function ajax_download_pdf()
     {
         // Vérifier les permissions
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Permissions insuffisantes');
+        if (!\current_user_can('manage_options')) {
+            \wp_send_json_error('Permissions insuffisantes');
         }
 
         // Vérification de sécurité
-        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
-            wp_send_json_error('Sécurité: Nonce invalide');
+        if (!\wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+            \wp_send_json_error('Sécurité: Nonce invalide');
         }
 
         $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
-        $filename = isset($_POST['filename']) ? sanitize_file_name($_POST['filename']) : 'document.pdf';
+        $filename = isset($_POST['filename']) ? \sanitize_file_name($_POST['filename']) : 'document.pdf';
 
         if (empty($template_data)) {
-            wp_send_json_error('Données template manquantes');
+            \wp_send_json_error('Données template manquantes');
         }
 
         try {
             $pdf_path = $this->generatePdfFromTemplateData(json_decode($template_data, true), $filename);
 
             if ($pdf_path && file_exists($pdf_path)) {
-                wp_send_json_success(
+                \wp_send_json_success(
                     array(
                     'path' => $pdf_path,
                     'filename' => $filename
                     )
                 );
             } else {
-                wp_send_json_error('Erreur lors de la génération du PDF');
+                \wp_send_json_error('Erreur lors de la génération du PDF');
             }
         } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
+            \wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
 
@@ -104,10 +104,10 @@ class PDF_Builder_PDF_Generator
         $html = $this->generateHtmlFromTemplateData($template);
 
         // Créer le répertoire uploads s'il n'existe pas
-        $upload_dir = wp_upload_dir();
+        $upload_dir = \wp_upload_dir();
         $pdf_dir = $upload_dir['basedir'] . '/pdf-builder';
         if (!file_exists($pdf_dir)) {
-            wp_mkdir_p($pdf_dir);
+            \wp_mkdir_p($pdf_dir);
         }
 
         $pdf_path = $pdf_dir . '/' . $filename;
@@ -423,7 +423,7 @@ class PDF_Builder_PDF_Generator
                 }
                 
                 $style .= 'white-space: pre-wrap; word-wrap: break-word; ';
-                return "<div class='canvas-element' style='" . esc_attr($style) . "'>" . wp_kses_post($content) . "</div>";
+                return "<div class='canvas-element' style='" . esc_attr($style) . "'>" . \wp_kses_post($content) . "</div>";
 
             case 'image':
             case 'company_logo':
@@ -540,11 +540,11 @@ class PDF_Builder_PDF_Generator
     public function savePdf($dompdf, $filename = 'document.pdf', $context = [])
     {
         try {
-            $upload_dir = wp_upload_dir();
+            $upload_dir = \wp_upload_dir();
             $pdf_dir = $upload_dir['basedir'] . '/pdf-builder';
 
             if (!file_exists($pdf_dir)) {
-                wp_mkdir_p($pdf_dir);
+                \wp_mkdir_p($pdf_dir);
             }
 
             $pdf_path = $pdf_dir . '/' . sanitize_file_name($filename);
@@ -675,6 +675,7 @@ class PDF_Builder_PDF_Generator
         return $html_content;
     }
 }
+
 
 
 

@@ -18,8 +18,8 @@ function pdf_builder_ajax_render_template_html_handler()
 
     try {
 // Vérification des permissions
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Permissions insuffisantes');
+        if (!\current_user_can('manage_options')) {
+            \wp_send_json_error('Permissions insuffisantes');
         }
 
         // Vérification du nonce
@@ -35,7 +35,7 @@ function pdf_builder_ajax_render_template_html_handler()
 
         $template_data = json_decode($template_data_json, true);
         if ($template_data === null) {
-            wp_send_json_error('JSON invalide');
+            \wp_send_json_error('JSON invalide');
         }
 
         // Charger le générateur SVG
@@ -45,7 +45,7 @@ function pdf_builder_ajax_render_template_html_handler()
 
         $svg_generator_file = PDF_BUILDER_PLUGIN_DIR . 'generate-svg-preview.php';
         if (!file_exists($svg_generator_file)) {
-            wp_send_json_error('Générateur SVG non trouvé');
+            \wp_send_json_error('Générateur SVG non trouvé');
         }
 
         // Charger la classe
@@ -61,18 +61,19 @@ function pdf_builder_ajax_render_template_html_handler()
         // Nettoyer
             unlink($temp_file);
         // Retourner le SVG
-            wp_send_json_success([
+            \wp_send_json_success([
                 'html' => $svg_content,
                 'format' => 'svg',
                 'success' => true
             ]);
         } catch (Exception $e) {
-            wp_send_json_error('Erreur génération SVG: ' . $e->getMessage());
+            \wp_send_json_error('Erreur génération SVG: ' . $e->getMessage());
         }
     } catch (Exception $e) {
-        wp_send_json_error('Erreur: ' . $e->getMessage());
+        \wp_send_json_error('Erreur: ' . $e->getMessage());
     }
 }
 
 add_action('wp_ajax_pdf_builder_render_template_html', 'pdf_builder_ajax_render_template_html_handler');
+
 

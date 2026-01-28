@@ -976,7 +976,7 @@ class PDF_Builder_WooCommerce_Integration
             }
 
             // Vérifier le nonce de sécurité
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
                 wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
@@ -1135,7 +1135,7 @@ class PDF_Builder_WooCommerce_Integration
             }
 
             // Vérifier le nonce de sécurité
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
                 wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
@@ -1201,7 +1201,7 @@ class PDF_Builder_WooCommerce_Integration
             }
 
             // Vérifier le nonce de sécurité
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
                 wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
@@ -1532,7 +1532,7 @@ class PDF_Builder_WooCommerce_Integration
             }
 
             // Vérifier le nonce de sécurité
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
                 wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
@@ -1587,7 +1587,7 @@ class PDF_Builder_WooCommerce_Integration
             }
 
             // Vérifier le nonce de sécurité
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
                 wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
@@ -1631,7 +1631,7 @@ class PDF_Builder_WooCommerce_Integration
             }
 
             // Vérifier le nonce de sécurité
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
                 wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
@@ -1711,6 +1711,7 @@ class PDF_Builder_WooCommerce_Integration
         return implode("\n", $address_parts);
     }
 }
+
 
 
 

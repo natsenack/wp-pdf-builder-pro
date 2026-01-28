@@ -37,40 +37,40 @@ class PdfBuilderTemplatesAjax
     {
         try {
 // Vérification des permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error('Permissions insuffisantes');
             }
 
             // Vérification du nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_predefined_templates')) {
-                wp_send_json_error('Nonce invalide');
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_predefined_templates')) {
+                \wp_send_json_error('Nonce invalide');
             }
 
-            $template_slug = sanitize_text_field($_POST['template_slug'] ?? '');
+            $template_slug = \sanitize_text_field($_POST['template_slug'] ?? '');
             if (empty($template_slug)) {
-                wp_send_json_error('Slug du template manquant');
+                \wp_send_json_error('Slug du template manquant');
             }
 
             // Chemin vers le dossier des templates prédéfinis
             $predefined_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/predefined/';
             $template_file = $predefined_dir . $template_slug . '.json';
             if (!file_exists($template_file)) {
-                wp_send_json_error('Template prédéfini non trouvé');
+                \wp_send_json_error('Template prédéfini non trouvé');
             }
 
             // Charger le contenu du template
             $content = file_get_contents($template_file);
             $template_data = json_decode($content, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                wp_send_json_error('Erreur lors du décodage du JSON du template');
+                \wp_send_json_error('Erreur lors du décodage du JSON du template');
             }
 
-            wp_send_json_success(array(
+            \wp_send_json_success(array(
                 'template' => $template_data,
                 'slug' => $template_slug
             ));
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors du chargement du template: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors du chargement du template: ' . $e->getMessage());
         }
     }
 
@@ -81,36 +81,36 @@ class PdfBuilderTemplatesAjax
     {
         try {
 // Vérification des permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error('Permissions insuffisantes');
             }
 
             // Vérification du nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
-                wp_send_json_error('Nonce invalide');
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+                \wp_send_json_error('Nonce invalide');
             }
 
-            $template_slug = sanitize_text_field($_POST['template_slug'] ?? '');
-            $template_name = sanitize_text_field($_POST['template_name'] ?? '');
+            $template_slug = \sanitize_text_field($_POST['template_slug'] ?? '');
+            $template_name = \sanitize_text_field($_POST['template_name'] ?? '');
             if (empty($template_slug)) {
-                wp_send_json_error('Slug du template manquant');
+                \wp_send_json_error('Slug du template manquant');
             }
 
             if (empty($template_name)) {
-                wp_send_json_error('Nom du template manquant');
+                \wp_send_json_error('Nom du template manquant');
             }
 
             // Charger d'abord le template prédéfini
             $predefined_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/predefined/';
             $template_file = $predefined_dir . $template_slug . '.json';
             if (!file_exists($template_file)) {
-                wp_send_json_error('Template prédéfini non trouvé');
+                \wp_send_json_error('Template prédéfini non trouvé');
             }
 
             $content = file_get_contents($template_file);
             $template_data = json_decode($content, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                wp_send_json_error('Erreur lors du décodage du JSON du template');
+                \wp_send_json_error('Erreur lors du décodage du JSON du template');
             }
 
             // Créer un nouveau template personnalisé dans la base de données
@@ -128,17 +128,17 @@ class PdfBuilderTemplatesAjax
                     'is_default' => 0
                 ), array('%s', '%s', '%d', '%s', '%s', '%d'));
             if ($result === false) {
-                wp_send_json_error('Erreur lors de la création du template dans la base de données');
+                \wp_send_json_error('Erreur lors de la création du template dans la base de données');
             }
 
             $new_template_id = $wpdb->insert_id;
-            wp_send_json_success(array(
+            \wp_send_json_success(array(
                 'template_id' => 1,
                 'message' => 'Redirection vers l\'éditeur unique',
                 'redirect_url' => admin_url('admin.php?page=pdf-builder-react-editor')
             ));
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors de la création du template: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors de la création du template: ' . $e->getMessage());
         }
     }
 
@@ -149,31 +149,31 @@ class PdfBuilderTemplatesAjax
     {
         try {
             // Vérification des permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error('Permissions insuffisantes');
             }
 
             // Vérification du nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
-                wp_send_json_error('Nonce invalide');
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+                \wp_send_json_error('Nonce invalide');
             }
 
-            $template_slug = sanitize_text_field($_POST['template_slug'] ?? '');
+            $template_slug = \sanitize_text_field($_POST['template_slug'] ?? '');
             if (empty($template_slug)) {
-                wp_send_json_error('Slug du modèle prédéfini manquant');
+                \wp_send_json_error('Slug du modèle prédéfini manquant');
             }
 
             // Charger le modèle prédéfini depuis le fichier
             $predefined_dir = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/predefined/';
             $template_file = $predefined_dir . $template_slug . '.json';
             if (!file_exists($template_file)) {
-                wp_send_json_error('Modèle prédéfini introuvable');
+                \wp_send_json_error('Modèle prédéfini introuvable');
             }
 
             $content = file_get_contents($template_file);
             $predefined_data = json_decode($content, true);
             if (!$predefined_data || !isset($predefined_data['elements'])) {
-                wp_send_json_error('Format du modèle prédéfini invalide');
+                \wp_send_json_error('Format du modèle prédéfini invalide');
             }
 
             // Préparer les données du template
@@ -207,19 +207,19 @@ class PdfBuilderTemplatesAjax
             ]);
 
             if ($result === false) {
-                wp_send_json_error('Erreur lors de la création du template');
+                \wp_send_json_error('Erreur lors de la création du template');
             }
 
             // Récupérer l'ID du template créé
             $template_id = $wpdb->insert_id;
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'message' => 'Modèle prédéfini chargé avec succès',
                 'template_id' => $template_id,
                 'redirect_url' => admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id)
             ]);
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors du chargement du modèle prédéfini: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors du chargement du modèle prédéfini: ' . $e->getMessage());
         }
     }
 
@@ -228,18 +228,18 @@ class PdfBuilderTemplatesAjax
         try {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: loadTemplateSettings called with POST: ' . print_r($_POST, true)); }
 // Vérification des permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error('Permissions insuffisantes');
             }
 
             // Vérification du nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
-                wp_send_json_error('Nonce invalide');
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+                \wp_send_json_error('Nonce invalide');
             }
 
             $template_id = intval($_POST['template_id'] ?? 0);
             if (empty($template_id)) {
-                wp_send_json_error('ID du template manquant');
+                \wp_send_json_error('ID du template manquant');
             }
 
             global $wpdb;
@@ -247,7 +247,7 @@ class PdfBuilderTemplatesAjax
 // Récupérer le template
             $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
             if (!$template) {
-                wp_send_json_error('Template non trouvé');
+                \wp_send_json_error('Template non trouvé');
             }
 
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Template found: ' . print_r($template, true)); }
@@ -309,10 +309,10 @@ class PdfBuilderTemplatesAjax
             );
 
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Settings to return: ' . print_r($settings, true)); }
-            wp_send_json_success(array('template' => $settings));
+            \wp_send_json_success(array('template' => $settings));
         } catch (Exception $e) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Exception in loadTemplateSettings: ' . $e->getMessage()); }
-            wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());
         }
     }
 
@@ -323,19 +323,19 @@ class PdfBuilderTemplatesAjax
     {
         try {
 // Vérification des permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error('Permissions insuffisantes');
             }
 
             // Vérification du nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
-                wp_send_json_error('Nonce invalide');
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+                \wp_send_json_error('Nonce invalide');
             }
 
             $template_id = intval($_POST['template_id'] ?? 0);
             $is_default = intval($_POST['is_default'] ?? 0);
             if (empty($template_id)) {
-                wp_send_json_error('ID du template manquant');
+                \wp_send_json_error('ID du template manquant');
             }
 
             global $wpdb;
@@ -343,7 +343,7 @@ class PdfBuilderTemplatesAjax
 // Vérifier que le template existe
             $existing = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_templates WHERE id = %d", $template_id));
             if (!$existing) {
-                wp_send_json_error('Template non trouvé');
+                \wp_send_json_error('Template non trouvé');
             }
 
             // Si on définit comme défaut, retirer le statut par défaut des autres templates
@@ -354,15 +354,15 @@ class PdfBuilderTemplatesAjax
             // Mettre à jour le statut du template
             $result = $wpdb->update($table_templates, array('is_default' => $is_default), array('id' => $template_id), array('%d'), array('%d'));
             if ($result === false) {
-                wp_send_json_error('Erreur lors de la mise à jour du statut par défaut');
+                \wp_send_json_error('Erreur lors de la mise à jour du statut par défaut');
             }
 
             $message = $is_default ? 'Template défini comme par défaut' : 'Statut par défaut retiré';
-            wp_send_json_success(array(
+            \wp_send_json_success(array(
                 'message' => $message
             ));
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors de la modification du statut: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors de la modification du statut: ' . $e->getMessage());
         }
     }
 
@@ -373,28 +373,28 @@ class PdfBuilderTemplatesAjax
     {
         try {
             // Vérification des permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error('Permissions insuffisantes');
             }
 
             // Vérification du nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
-                wp_send_json_error('Nonce invalide');
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+                \wp_send_json_error('Nonce invalide');
             }
 
             $template_id = intval($_POST['template_id'] ?? 0);
-            $template_name = sanitize_text_field($_POST['template_name'] ?? '');
-            $template_description = sanitize_text_field($_POST['template_description'] ?? '');
-            $template_category = sanitize_text_field($_POST['template_category'] ?? 'autre');
+            $template_name = \sanitize_text_field($_POST['template_name'] ?? '');
+            $template_description = \sanitize_text_field($_POST['template_description'] ?? '');
+            $template_category = \sanitize_text_field($_POST['template_category'] ?? 'autre');
             $is_default = intval($_POST['is_default'] ?? 0);
             
             // Nouveaux paramètres canvas
-            $canvas_format = sanitize_text_field($_POST['canvas_format'] ?? 'A4');
-            $canvas_orientation = sanitize_text_field($_POST['canvas_orientation'] ?? 'portrait');
+            $canvas_format = \sanitize_text_field($_POST['canvas_format'] ?? 'A4');
+            $canvas_orientation = \sanitize_text_field($_POST['canvas_orientation'] ?? 'portrait');
             $canvas_dpi = intval($_POST['canvas_dpi'] ?? 96);
 
             if (empty($template_id) || empty($template_name)) {
-                wp_send_json_error('ID du template ou nom manquant');
+                \wp_send_json_error('ID du template ou nom manquant');
             }
 
             global $wpdb;
@@ -403,7 +403,7 @@ class PdfBuilderTemplatesAjax
             // Récupérer les données actuelles du template
             $existing = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id));
             if (!$existing) {
-                wp_send_json_error('Template non trouvé');
+                \wp_send_json_error('Template non trouvé');
             }
 
             // Décoder les données JSON actuelles
@@ -438,16 +438,16 @@ class PdfBuilderTemplatesAjax
             );
 
             if ($result === false) {
-                wp_send_json_error('Erreur lors de la sauvegarde des paramètres du template');
+                \wp_send_json_error('Erreur lors de la sauvegarde des paramètres du template');
             }
 
-            wp_send_json_success(array(
+            \wp_send_json_success(array(
                 'message' => 'Paramètres du template sauvegardés avec succès',
                 'template_id' => $template_id
             ));
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
         }
     }
 
@@ -458,18 +458,18 @@ class PdfBuilderTemplatesAjax
     {
         try {
 // Vérification des permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error('Permissions insuffisantes');
             }
 
             // Vérification du nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
-                wp_send_json_error('Nonce invalide');
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+                \wp_send_json_error('Nonce invalide');
             }
 
             $template_id = intval($_POST['template_id'] ?? 0);
             if (empty($template_id)) {
-                wp_send_json_error('ID du template manquant');
+                \wp_send_json_error('ID du template manquant');
             }
 
             global $wpdb;
@@ -477,7 +477,7 @@ class PdfBuilderTemplatesAjax
 // Vérifier que le template existe et récupérer son nom
             $template = $wpdb->get_row($wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
             if (!$template) {
-                wp_send_json_error('Template non trouvé');
+                \wp_send_json_error('Template non trouvé');
             }
 
             $template_name = $template['name'];
@@ -485,15 +485,15 @@ class PdfBuilderTemplatesAjax
             // Supprimer le template
             $result = $wpdb->delete($table_templates, array('id' => $template_id), array('%d'));
             if ($result === false) {
-                wp_send_json_error('Erreur lors de la suppression du template');
+                \wp_send_json_error('Erreur lors de la suppression du template');
             }
 // Déclencher le hook de suppression de template
             do_action('pdf_builder_template_deleted', $template_id, $template_name ?: 'Template #' . $template_id);
-            wp_send_json_success(array(
+            \wp_send_json_success(array(
                 'message' => 'Template supprimé avec succès'
             ));
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors de la suppression: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors de la suppression: ' . $e->getMessage());
         }
     }
 
@@ -504,19 +504,19 @@ class PdfBuilderTemplatesAjax
     {
         try {
 // Vérification des permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error('Permissions insuffisantes');
             }
 
             // Vérification du nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
-                wp_send_json_error('Nonce invalide');
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+                \wp_send_json_error('Nonce invalide');
             }
 
             $template_id = intval($_POST['template_id'] ?? 0);
-            $template_name = sanitize_text_field($_POST['template_name'] ?? '');
+            $template_name = \sanitize_text_field($_POST['template_name'] ?? '');
             if (empty($template_id) || empty($template_name)) {
-                wp_send_json_error('ID du template ou nom manquant');
+                \wp_send_json_error('ID du template ou nom manquant');
             }
 
             global $wpdb;
@@ -524,7 +524,7 @@ class PdfBuilderTemplatesAjax
 // Vérifier que le template existe
             $existing = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id));
             if (!$existing) {
-                wp_send_json_error('Template non trouvé');
+                \wp_send_json_error('Template non trouvé');
                 return;
             }
 
@@ -538,16 +538,16 @@ class PdfBuilderTemplatesAjax
                     'is_default' => 0
                 ), array('%s', '%s', '%d', '%s', '%s', '%d'));
             if ($result === false) {
-                wp_send_json_error('Erreur lors de la duplication du template');
+                \wp_send_json_error('Erreur lors de la duplication du template');
             }
 
             $new_template_id = $wpdb->insert_id;
-            wp_send_json_success(array(
+            \wp_send_json_success(array(
                 'message' => 'Template dupliqué avec succès',
                 'template_id' => $new_template_id
             ));
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors de la duplication: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors de la duplication: ' . $e->getMessage());
         }
     }
 
@@ -558,25 +558,25 @@ class PdfBuilderTemplatesAjax
     {
         try {
             // Vérification des permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error('Permissions insuffisantes');
             }
 
             // Vérification du nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates_nonce')) {
-                wp_send_json_error('Nonce invalide');
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates_nonce')) {
+                \wp_send_json_error('Nonce invalide');
             }
 
             // Récupérer les données JSON
             $templates_data_json = $_POST['templates_data'] ?? '';
             if (empty($templates_data_json)) {
-                wp_send_json_error('Données des templates manquantes');
+                \wp_send_json_error('Données des templates manquantes');
             }
 
             // Décoder les données JSON
             $templates_data = json_decode(stripslashes($templates_data_json), true);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                wp_send_json_error('Erreur lors du décodage des données JSON');
+                \wp_send_json_error('Erreur lors du décodage des données JSON');
             }
 
             // Valider et nettoyer les données
@@ -590,19 +590,20 @@ class PdfBuilderTemplatesAjax
             // Sauvegarder dans les options WordPress
             pdf_builder_update_option('pdf_builder_order_status_templates', $clean_data);
 
-            wp_send_json_success(array(
+            \wp_send_json_success(array(
                 'message' => 'Mappings des templates sauvegardés avec succès',
                 'saved_data' => $clean_data
             ));
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
         }
     }
 }
 
 // Initialiser le handler AJAX
 new PdfBuilderTemplatesAjax();
+
 
 
 

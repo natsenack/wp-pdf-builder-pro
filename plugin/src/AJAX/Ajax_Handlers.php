@@ -36,7 +36,7 @@ function pdf_builder_save_allowed_roles($value) {
 
     // Filtrer et valider les rôles
     $valid_roles = array();
-    $wp_roles = \wp_roles();
+    $wp_roles = wp_roles();
     $available_roles = array_keys($wp_roles->roles);
 
     foreach ($roles as $role) {
@@ -57,10 +57,10 @@ abstract class PDF_Builder_Ajax_Base {
      * Valide la requête AJAX de base
      */
     protected function validate_request() {
-        // Vérifier le nonce (temporarily disabled for debugging)
-        // if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], $this->nonce_action)) {
-        //     $this->send_error('Nonce invalide', 403);
-        // }
+        // Vérifier le nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], $this->nonce_action)) {
+            $this->send_error('Nonce invalide', 403);
+        }
 
         // Vérifier les permissions
         if (!current_user_can($this->required_capability)) {
@@ -91,7 +91,7 @@ abstract class PDF_Builder_Ajax_Base {
                 }
                 break;
             case 'string':
-                $value = sanitize_text_field($value);
+                $value = \sanitize_text_field($value);
                 if (empty($value)) {
                     $this->send_error("Paramètre vide: {$param_name}", 400);
                 }
@@ -115,7 +115,7 @@ abstract class PDF_Builder_Ajax_Base {
         wp_send_json_error([
             'message' => $message,
             'code' => $code,
-            'timestamp' => current_time('timestamp')
+            'timestamp' => \current_time('timestamp')
         ]);
         exit;
     }
@@ -126,7 +126,7 @@ abstract class PDF_Builder_Ajax_Base {
     protected function send_success($data = [], $message = 'Opération réussie') {
         wp_send_json_success(array_merge([
             'message' => $message,
-            'timestamp' => current_time('timestamp')
+            'timestamp' => \current_time('timestamp')
         ], $data));
         exit;
     }
@@ -304,7 +304,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                 } else {
                     $option_key = 'pdf_builder_' . $key;
                 }
-                $option_value = sanitize_text_field($value ?? '');
+                $option_value = \sanitize_text_field($value ?? '');
                 if ($is_prefixed) {
                     $settings[$option_key] = $option_value;
                 }
@@ -372,7 +372,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     $settings[$option_key] = $option_value;
                 } else {
                     // Unslash the value first (WordPress slashes POST data)
-                    $value = \wp_unslash($value);
+                    $value = wp_unslash($value);
                     // Traiter les JSON strings pour les arrays
                     if (\is_string($value) && (strpos($value, '[') === 0 || strpos($value, '{') === 0)) {
                         $decoded = \json_decode($value, true);
@@ -437,7 +437,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                         $option_value = array_map('sanitize_text_field', $value);
                         $settings[$option_key] = $option_value;
                     } else {
-                        $option_value = sanitize_text_field($value ?? '');
+                        $option_value = \sanitize_text_field($value ?? '');
                         $settings[$option_key] = $option_value;
                     }
                 } else {
@@ -448,7 +448,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
                     } elseif (is_array($value)) {
                         $option_value = array_map('sanitize_text_field', $value);
                     } else {
-                        $option_value = sanitize_text_field($value ?? '');
+                        $option_value = \sanitize_text_field($value ?? '');
                     }
                     $settings[$option_key] = $option_value;
                 }
@@ -636,7 +636,7 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
             $table_templates,
             [
                 'template_data' => wp_json_encode($template_data),
-                'updated_at' => current_time('mysql')
+                'updated_at' => \current_time('mysql')
             ],
             ['id' => $template_id],
             ['%s', '%s'],
@@ -658,7 +658,7 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
 
         $template = $wpdb->get_row(
             $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
-            \ARRAY_A
+            ARRAY_A
         );
 
         if (!$template) {
@@ -739,7 +739,7 @@ function pdf_builder_test_roles_handler() {
     // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: [TEST ROLES HANDLER] REQUEST data: ' . print_r($_REQUEST, true)); }
     
     // Vérifier le nonce
-    if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
         // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: [TEST ROLES HANDLER] Nonce invalide ou manquant'); }
         wp_send_json_error(['message' => 'Nonce invalide'], 403);
         return;
@@ -779,7 +779,7 @@ function pdf_builder_test_roles_handler() {
         'allowed_roles' => $final_roles,
         'count' => count($final_roles),
         'status' => 'handler_called',
-        'timestamp' => current_time('timestamp')
+        'timestamp' => \current_time('timestamp')
     ];
     
     // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: [TEST ROLES HANDLER] Response: ' . print_r($response, true)); }
@@ -795,7 +795,7 @@ function pdf_builder_reset_canvas_defaults_handler() {
     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] ===== DÉBUT DU HANDLER ====='); }
 
     // Vérifier le nonce
-    if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], 'reset_canvas_defaults')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'reset_canvas_defaults')) {
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Nonce invalide'); }
         wp_send_json_error(['message' => 'Nonce invalide'], 403);
         return;
@@ -890,7 +890,7 @@ function pdf_builder_reset_canvas_defaults_handler() {
             wp_send_json_success([
                 'message' => 'Paramètres canvas réinitialisés avec succès',
                 'reset_count' => $success_count,
-                'timestamp' => current_time('timestamp')
+                'timestamp' => \current_time('timestamp')
             ]);
         } else {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Échec de la sauvegarde - aucun paramètre n\'a pu être sauvegardé'); }
@@ -913,7 +913,7 @@ function pdf_builder_get_debug_settings_handler() {
     // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: [GET DEBUG SETTINGS HANDLER] Timestamp: ' . current_time('Y-m-d H:i:s')); }
     
     // Vérifier le nonce
-    if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
         // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: [GET DEBUG SETTINGS HANDLER] Nonce invalide'); }
         wp_send_json_error(['message' => 'Nonce invalide'], 403);
         return;
@@ -989,6 +989,8 @@ add_action('wp_ajax_pdf_builder_get_debug_settings', 'pdf_builder_get_debug_sett
 add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
 add_action('wp_ajax_pdf_builder_reset_canvas_defaults', 'pdf_builder_reset_canvas_defaults_handler');
 add_action('wp_ajax_verify_canvas_settings_consistency', 'pdf_builder_verify_canvas_settings_consistency_handler');
+
+
 
 
 
