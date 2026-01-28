@@ -436,6 +436,9 @@ export interface RectangleElement extends BaseElement {
   borderColor?: string;
   borderWidth?: number;
   borderRadius?: number;
+  fillColor?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
 }
 
 export interface CircleElement extends BaseElement {
@@ -443,6 +446,9 @@ export interface CircleElement extends BaseElement {
   backgroundColor?: string;
   borderColor?: string;
   borderWidth?: number;
+  fillColor?: string;
+  strokeColor?: string;
+  strokeWidth?: number;
 }
 
 export interface TextElement extends BaseElement {
@@ -455,6 +461,7 @@ export interface TextElement extends BaseElement {
   fontWeight?: string;
   fontStyle?: string;
   textAlign?: 'left' | 'center' | 'right';
+  textDecoration?: string;
   autoWrap?: boolean;
   bold?: boolean;
   italic?: boolean;

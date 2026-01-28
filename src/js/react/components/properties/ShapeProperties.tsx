@@ -1,16 +1,11 @@
-import { Element } from '../../types/elements';
+import { RectangleElement, CircleElement } from '../../types/elements';
 import { NumericPropertyInput } from '../ui/NumericPropertyInput';
 import { ColorPropertyInput } from '../ui/ColorPropertyInput';
 
-interface ExtendedElement extends Element {
-  fillColor?: string;
-  strokeColor?: string;
-  strokeWidth?: number;
-  borderRadius?: number;
-}
+type ShapeElement = RectangleElement | CircleElement;
 
 interface ShapePropertiesProps {
-  element: ExtendedElement;
+  element: ShapeElement;
   onChange: (elementId: string, property: string, value: unknown) => void;
   activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' };
   setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }) => void;
@@ -137,14 +132,14 @@ export function ShapeProperties({ element, onChange, activeTab, setActiveTab }: 
         <>
           <ColorPropertyInput
             label="Couleur de remplissage"
-            value={element.fillColor === 'transparent' ? '#ffffff' : element.fillColor}
-            defaultValue="#007bff"
+            value={element.fillColor || '#ffffff'}
+            defaultValue="#ffffff"
             onChange={(value) => onChange(element.id, 'fillColor', value)}
           />
 
           <ColorPropertyInput
             label="Couleur de bordure"
-            value={element.strokeColor === 'transparent' ? '#000000' : element.strokeColor}
+            value={element.strokeColor || '#000000'}
             defaultValue="#000000"
             onChange={(value) => onChange(element.id, 'strokeColor', value)}
           />

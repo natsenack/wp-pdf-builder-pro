@@ -216,7 +216,7 @@ export function WoocommerceOrderDateProperties({
             </div>
             <ColorPropertyInput
               label="Couleur"
-              value={element.color || element.textColor}
+              value={element.color || '#000000'}
               defaultValue="#000000"
               onChange={(value) => onChange(element.id, 'color', value)}
             />

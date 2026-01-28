@@ -123,9 +123,6 @@ class WooCommerceRenderer
         if (isset($elementData['color'])) {
             $styles['color'] = $elementData['color'];
         }
-        if (isset($elementData['textColor'])) {
-            $styles['color'] = $elementData['textColor'];
-        }
         if (isset($elementData['fontWeight'])) {
             $styles['font-weight'] = $elementData['fontWeight'];
         }

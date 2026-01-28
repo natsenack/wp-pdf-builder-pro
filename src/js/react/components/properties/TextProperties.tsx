@@ -1,22 +1,9 @@
-import { Element } from '../../types/elements';
+import { TextElement } from '../../types/elements';
 import { NumericPropertyInput } from '../ui/NumericPropertyInput';
 import { ColorPropertyInput } from '../ui/ColorPropertyInput';
 
-interface ExtendedElement extends Element {
-  textColor?: string;
-  backgroundColor?: string;
-  fontWeight?: string;
-  fontStyle?: string;
-  textDecoration?: string;
-  textAlign?: string;
-  fontFamily?: string;
-  fontSize?: number;
-  align?: string;
-  color?: string;
-}
-
 interface TextPropertiesProps {
-  element: ExtendedElement;
+  element: TextElement;
   onChange: (elementId: string, property: string, value: unknown) => void;
   activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' };
   setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }) => void;
@@ -126,7 +113,7 @@ export function TextProperties({ element, onChange, activeTab, setActiveTab }: T
               Alignement horizontal
             </label>
             <select
-              value={element.textAlign || element.align || 'left'}
+              value={element.textAlign || 'left'}
               onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
               style={{
                 width: '100%',
@@ -261,14 +248,14 @@ export function TextProperties({ element, onChange, activeTab, setActiveTab }: T
 
           <ColorPropertyInput
             label="Couleur du texte"
-            value={element.textColor || element.color}
+            value={element.color || '#000000'}
             defaultValue="#000000"
-            onChange={(value) => onChange(element.id, 'textColor', value)}
+            onChange={(value) => onChange(element.id, 'color', value)}
           />
 
           <ColorPropertyInput
             label="Couleur de fond"
-            value={element.backgroundColor === 'transparent' ? '#ffffff' : element.backgroundColor}
+            value={element.backgroundColor || '#ffffff'}
             defaultValue="#ffffff"
             onChange={(value) => onChange(element.id, 'backgroundColor', value)}
           />

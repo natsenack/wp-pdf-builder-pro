@@ -232,7 +232,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
 
             <ColorPropertyInput
               label="Couleur de texte générale"
-              value={element.color || element.textColor}
+              value={element.color || '#000000'}
               defaultValue="#000000"
               onChange={(value) => onChange(element.id, 'color', value)}
             />

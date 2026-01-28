@@ -218,7 +218,7 @@ export function WoocommerceInvoiceNumberProperties({
             </div>
             <ColorPropertyInput
               label="Couleur"
-              value={element.color}
+              value={element.color || '#000000'}
               defaultValue="#000000"
               onChange={(value) => onChange(element.id, 'color', value)}
             />

@@ -23,6 +23,49 @@ interface PropertiesPanelProps {
   className?: string;
 }
 
+// Éléments qui ont leurs propres composants de propriétés spécialisés
+const ELEMENTS_WITH_CUSTOM_PROPERTIES = new Set([
+  'product_table',
+  'customer_info',
+  'company_info',
+  'company_logo',
+  'order_number',
+  'woocommerce_order_date',
+  'woocommerce_invoice_number',
+  'document_type',
+  'dynamic_text',
+  'mentions',
+  'text',
+  'rectangle',
+  'circle',
+  'image',
+  'line'
+]);
+
+// Mapping des types d'éléments vers leurs composants de propriétés
+const ELEMENT_PROPERTY_COMPONENTS: Record<string, React.ComponentType<{
+  element: any;
+  onChange: (elementId: string, property: string, value: unknown) => void;
+  activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' };
+  setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }) => void;
+}>> = {
+  product_table: ProductTableProperties,
+  customer_info: CustomerInfoProperties,
+  company_info: CompanyInfoProperties,
+  company_logo: CompanyLogoProperties,
+  order_number: OrderNumberProperties,
+  woocommerce_order_date: WoocommerceOrderDateProperties,
+  woocommerce_invoice_number: WoocommerceInvoiceNumberProperties,
+  document_type: DocumentTypeProperties,
+  dynamic_text: DynamicTextProperties,
+  mentions: MentionsProperties,
+  text: TextProperties,
+  rectangle: ShapeProperties,
+  circle: ShapeProperties,
+  image: ImageProperties,
+  line: LineProperties,
+};
+
 export const PropertiesPanel = memo(function PropertiesPanel({ className }: PropertiesPanelProps) {
   const { state, updateElement, removeElement } = useBuilder();
   const [activeTab, setActiveTab] = useState<{ [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }>({});
@@ -140,8 +183,8 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
             {element.type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} - {element.id.slice(0, 8)}
           </h5>
 
-          {/* Propriétés communes - masquées pour les éléments WooCommerce et les éléments de base qui ont leurs propres onglets */}
-          {element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'woocommerce_order_date' && element.type !== 'woocommerce_invoice_number' && element.type !== 'document_type' && element.type !== 'dynamic_text' && element.type !== 'mentions' && element.type !== 'text' && element.type !== 'rectangle' && element.type !== 'circle' && element.type !== 'image' && element.type !== 'line' && (
+          {/* Propriétés communes - masquées pour les éléments qui ont leurs propres onglets */}
+          {!ELEMENTS_WITH_CUSTOM_PROPERTIES.has(element.type) && (
           <div style={{ display: 'grid', gap: '8px' }}>
             <NumericPropertyInput
               label="Position X"
@@ -207,133 +250,22 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
           </div>
           )}
 
-          {element.type === 'product_table' && (
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <ProductTableProperties
-              element={element as any}
-              onChange={handlePropertyChange}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          )}
-          {element.type === 'customer_info' && (
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <CustomerInfoProperties
-              element={element as any}
-              onChange={handlePropertyChange}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          )}
-          {element.type === 'company_info' && (
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <CompanyInfoProperties
-              element={element as any}
-              onChange={handlePropertyChange}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          )}
-          {element.type === 'company_logo' && (
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <CompanyLogoProperties
-              element={element as any}
-              onChange={handlePropertyChange}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          )}
-          {element.type === 'order_number' && (
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <OrderNumberProperties
-              element={element as any}
-              onChange={handlePropertyChange}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          )}
-          {element.type === 'woocommerce_order_date' && (
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <WoocommerceOrderDateProperties
-              element={element as any}
-              onChange={handlePropertyChange}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          )}
-          {element.type === 'woocommerce_invoice_number' && (
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <WoocommerceInvoiceNumberProperties
-              element={element as any}
-              onChange={handlePropertyChange}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          )}
-          {element.type === 'document_type' && (
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <DocumentTypeProperties
-              element={element as any}
-              onChange={handlePropertyChange}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          )}
-          {element.type === 'dynamic_text' && (
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <DynamicTextProperties
-              element={element as any}
-              onChange={handlePropertyChange}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          )}
-          {element.type === 'mentions' && (
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <MentionsProperties
-              element={element as any}
-              onChange={handlePropertyChange}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          )}
-          {element.type === 'text' && (
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <TextProperties
-              element={element as any}
-              onChange={handlePropertyChange}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          )}
-          {(element.type === 'rectangle' || element.type === 'circle') && (
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <ShapeProperties
-              element={element as any}
-              onChange={handlePropertyChange}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          )}
-          {element.type === 'image' && (
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <ImageProperties
-              element={element as any}
-              onChange={handlePropertyChange}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          )}
-          {element.type === 'line' && (
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <LineProperties
-              element={element as any}
-              onChange={handlePropertyChange}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          )}
-          {(element.type !== 'product_table' && element.type !== 'customer_info' && element.type !== 'company_info' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'woocommerce_order_date' && element.type !== 'woocommerce_invoice_number' && element.type !== 'document_type' && element.type !== 'dynamic_text' && element.type !== 'mentions' && element.type !== 'text' && element.type !== 'rectangle' && element.type !== 'circle' && element.type !== 'image' && element.type !== 'line') && (
+          {/* Composant de propriétés spécifique selon le type d'élément */}
+          {(() => {
+            const PropertyComponent = ELEMENT_PROPERTY_COMPONENTS[element.type];
+            if (PropertyComponent) {
+              return (
+                <PropertyComponent
+                  element={element}
+                  onChange={handlePropertyChange}
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                />
+              );
+            }
+            return null;
+          })()}
+          {!ELEMENTS_WITH_CUSTOM_PROPERTIES.has(element.type) && (
             <ElementProperties
               element={element}
               onChange={handlePropertyChange}
