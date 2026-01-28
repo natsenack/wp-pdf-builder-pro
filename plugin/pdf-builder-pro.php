@@ -280,8 +280,8 @@ function pdf_builder_deactivate()
 // Charger le plugin de manière standard
 if (function_exists('add_action')) {
     // add_action('plugins_loaded', 'pdf_builder_init', 1); // Priorité 1 pour charger l'autoloader en premier - TEMPORAIREMENT COMMENTE
-    // add_action('plugins_loaded', 'pdf_builder_load_textdomain', 1); // TEMPORAIREMENT COMMENTE
-    // add_action('plugins_loaded', 'pdf_builder_register_ajax_handlers', 5); // Enregistrer les handlers AJAX après le chargement - TEMPORAIREMENT COMMENTE
+    add_action('plugins_loaded', 'pdf_builder_load_textdomain', 1);
+    add_action('plugins_loaded', 'pdf_builder_register_ajax_handlers', 5); // Enregistrer les handlers AJAX après le chargement
 }
 
 /**
@@ -1078,6 +1078,8 @@ function pdf_builder_init()
         return;
     }
 
+    // TEST 1: Commenter tout sauf la vérification WordPress
+    /*
     // Charger l'autoloader Composer
     $autoload_path = plugin_dir_path(__FILE__) . 'vendor/autoload.php';
     if (file_exists($autoload_path)) {
@@ -1134,6 +1136,7 @@ function pdf_builder_init()
         require_once $performance_monitor_path;
         // Le moniteur de performance est maintenant initialisé via PDF_Builder_Health_Monitor
     }
+    */
 }
 
 /**
