@@ -32,7 +32,7 @@ if (!defined('PDF_BUILDER_PREMIUM')) {
 
 // VERSION ULTRA-SIMPLE - ne charger que l'essentiel
 if (function_exists('add_action')) {
-    add_action('wp_loaded', function() {
+    add_action('init', function() {
         // Charger seulement le bootstrap minimal
         $bootstrap = PDF_BUILDER_PLUGIN_DIR . 'bootstrap.php';
         if (file_exists($bootstrap)) {
