@@ -799,12 +799,17 @@ class PdfBuilderAdminNew
      */
     private function initHooks()
     {
+        error_log('[DEBUG] PDF Builder: initHooks() called');
+
         // N'enregistrer les hooks admin que si nécessaire
         $is_admin_or_pdf_ajax = is_admin() || (isset($_REQUEST['action']) && strpos($_REQUEST['action'], 'pdf_builder') !== false);
 
         if (!$is_admin_or_pdf_ajax) {
+            error_log('[DEBUG] PDF Builder: Not in admin context, skipping hooks');
             return; // Ne pas enregistrer les hooks si pas dans l'admin
         }
+
+        error_log('[DEBUG] PDF Builder: Registering admin hooks');
 
         // Enregistrer les paramètres
         add_action('admin_init', array($this, 'register_settings'));
@@ -818,6 +823,7 @@ class PdfBuilderAdminNew
 
         // Hooks de base de l'admin (restent dans cette classe)
         add_action('admin_menu', [$this, 'addAdminMenu']);
+        error_log('[DEBUG] PDF Builder: admin_menu hook registered');
         // Script loading is handled by AdminScriptLoader
         // add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
 
@@ -991,9 +997,12 @@ class PdfBuilderAdminNew
     {
         // Éviter l'ajout multiple du menu (sauf en mode diagnostic)
         if (self::$menu_added && !isset($_GET['force_menu_reset'])) {
+            error_log('[DEBUG] PDF Builder: Menu already added, skipping. Use ?force_menu_reset to force reset.');
             return;
         }
         self::$menu_added = true;
+
+        error_log('[DEBUG] PDF Builder: Adding admin menu...');
 
         // Menu principal avec icône distinctive - position remontée
         add_menu_page(__('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'), __('PDF Builder', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-pro', [$this, 'adminPage'], 'dashicons-pdf', 25);
