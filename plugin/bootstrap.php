@@ -5,6 +5,8 @@
  * Chargement différé des fonctionnalités du plugin
  */
 
+error_log('[DEBUG] PDF Builder: bootstrap.php loaded');
+
 // Empêcher l'accès direct (sauf pour les tests)
 if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit('Direct access not allowed');
@@ -690,9 +692,12 @@ function pdf_builder_load_new_classes()
 // Fonction principale de chargement du bootstrap
 function pdf_builder_load_bootstrap()
 {
+    error_log('[DEBUG] PDF Builder: pdf_builder_load_bootstrap() called');
+
     // Protection globale contre les chargements multiples
     static $bootstrap_loaded = false;
     if ($bootstrap_loaded || (defined('PDF_BUILDER_BOOTSTRAP_LOADED') && PDF_BUILDER_BOOTSTRAP_LOADED)) {
+        error_log('[DEBUG] PDF Builder: Bootstrap already loaded, skipping');
         return;
     }
     $bootstrap_loaded = true;

@@ -42,9 +42,13 @@ if (!class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
  * Fonction principale d'initialisation du plugin
  */
 function pdf_builder_init_plugin() {
+    error_log('[DEBUG] PDF Builder: pdf_builder_init_plugin() called');
     $bootstrap = PDF_BUILDER_PLUGIN_DIR . 'bootstrap.php';
     if (file_exists($bootstrap)) {
+        error_log('[DEBUG] PDF Builder: Loading bootstrap.php');
         require_once $bootstrap;
+    } else {
+        error_log('[ERROR] PDF Builder: bootstrap.php not found at: ' . $bootstrap);
     }
 }
 
