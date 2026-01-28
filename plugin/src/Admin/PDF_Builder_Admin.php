@@ -810,12 +810,17 @@ class PdfBuilderAdminNew
     {
         error_log('[DEBUG] PDF Builder: initHooks() called');
 
-        // N'enregistrer les hooks admin que si nécessaire
+        // Toujours enregistrer le hook admin_menu, même en dehors du contexte admin
+        // car WordPress l'appelle pendant la construction du menu
+        add_action('admin_menu', [$this, 'addAdminMenu']);
+        error_log('[DEBUG] PDF Builder: admin_menu hook registered');
+
+        // N'enregistrer les autres hooks admin que si nécessaire
         $is_admin_or_pdf_ajax = is_admin() || (isset($_REQUEST['action']) && strpos($_REQUEST['action'], 'pdf_builder') !== false);
 
         if (!$is_admin_or_pdf_ajax) {
-            error_log('[DEBUG] PDF Builder: Not in admin context, skipping hooks');
-            return; // Ne pas enregistrer les hooks si pas dans l'admin
+            error_log('[DEBUG] PDF Builder: Not in admin context, skipping other hooks');
+            return; // Ne pas enregistrer les autres hooks si pas dans l'admin
         }
 
         error_log('[DEBUG] PDF Builder: Registering admin hooks');
@@ -830,9 +835,6 @@ class PdfBuilderAdminNew
         // Enregistrer le custom post type pour les templates
         add_action('init', [$this, 'register_template_post_type']);
 
-        // Hooks de base de l'admin (restent dans cette classe)
-        add_action('admin_menu', [$this, 'addAdminMenu']);
-        error_log('[DEBUG] PDF Builder: admin_menu hook registered');
         // Script loading is handled by AdminScriptLoader
         // add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
 
@@ -1004,18 +1006,28 @@ class PdfBuilderAdminNew
      */
     public function addAdminMenu()
     {
-        // Permettre l'ajout du menu à chaque fois pour éviter les conflits
-        // Ancienne logique commentée :
-        // if (self::$menu_added && !isset($_GET['force_menu_reset'])) {
-        //     error_log('[DEBUG] PDF Builder: Menu already added, skipping. Use ?force_menu_reset to force reset.');
-        //     return;
-        // }
-        // self::$menu_added = true;
+        error_log('[DEBUG] PDF Builder: addAdminMenu() method called');
+
+        // Vérifier les permissions de l'utilisateur actuel
+        $current_user = wp_get_current_user();
+        $user_id = $current_user ? $current_user->ID : 'null';
+        $user_roles = $current_user ? implode(',', $current_user->roles) : 'none';
+        error_log('[DEBUG] PDF Builder: Current user ID: ' . $user_id . ', roles: ' . $user_roles);
+
+        // Vérifier la capacité manage_options
+        $has_manage_options = current_user_can('manage_options');
+        error_log('[DEBUG] PDF Builder: User has manage_options capability: ' . ($has_manage_options ? 'YES' : 'NO'));
+
+        if (!$has_manage_options) {
+            error_log('[DEBUG] PDF Builder: User does not have manage_options capability, skipping menu creation');
+            return;
+        }
 
         error_log('[DEBUG] PDF Builder: Adding admin menu...');
 
         // Menu principal avec icône distinctive - position remontée
-        add_menu_page(__('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'), __('PDF Builder', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-pro', [$this, 'adminPage'], 'dashicons-pdf', 25);
+        $menu_result = add_menu_page(__('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'), __('PDF Builder', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-pro', [$this, 'adminPage'], 'dashicons-pdf', 25);
+        error_log('[DEBUG] PDF Builder: add_menu_page result: ' . ($menu_result ? 'SUCCESS' : 'FAILED'));
 
         // Page d'accueil (sous-menu principal masqué)
         add_submenu_page(
