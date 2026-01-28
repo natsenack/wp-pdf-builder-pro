@@ -31,10 +31,10 @@ $templates_nonce = wp_create_nonce('pdf_builder_templates');
 // Vérifier si la notification a été rejetée (cookie)
 $notice_dismissed = isset($_COOKIE['pdf_builder_template_limit_notice_dismissed']) && $_COOKIE['pdf_builder_template_limit_notice_dismissed'] === 'true';
 
-// Vérifications freemium
-$user_can_create = \PDF_Builder\Admin\PdfBuilderAdminNew::can_create_template();
-$templates_count = \PDF_Builder\Admin\PdfBuilderAdminNew::count_user_templates(get_current_user_id());
-$is_premium = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium();
+// Vérifications freemium - Temporairement désactivé
+$user_can_create = true; // TODO: Implémenter vérification licence
+$templates_count = 0; // TODO: Compter les templates utilisateur
+$is_premium = false; // TODO: Implémenter vérification licence premium
 
 // Créer templates par défaut si aucun template et utilisateur gratuit
 if ($templates_count === 0 && !$is_premium) {
