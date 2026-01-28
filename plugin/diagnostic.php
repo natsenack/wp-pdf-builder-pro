@@ -48,6 +48,29 @@ if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
     echo "<p style='color: green;'>✅ Classe PdfBuilderAdminNew existe</p>";
 } else {
     echo "<p style='color: red;'>❌ Classe PdfBuilderAdminNew n'existe pas</p>";
+    
+    // Vérifier si le fichier existe
+    $admin_file = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
+    if (file_exists($admin_file)) {
+        echo "<p style='color: blue;'>ℹ️ Fichier PDF_Builder_Admin.php existe (" . filesize($admin_file) . " octets)</p>";
+        
+        // Essayer de charger le fichier manuellement
+        echo "<p style='color: blue;'>ℹ️ Tentative de chargement manuel...</p>";
+        try {
+            require_once $admin_file;
+            if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
+                echo "<p style='color: green;'>✅ Classe chargée avec succès après require_once manuel</p>";
+            } else {
+                echo "<p style='color: red;'>❌ Classe toujours introuvable après chargement manuel</p>";
+            }
+        } catch (Exception $e) {
+            echo "<p style='color: red;'>❌ Erreur lors du chargement: " . esc_html($e->getMessage()) . "</p>";
+        } catch (Error $e) {
+            echo "<p style='color: red;'>❌ Erreur fatale lors du chargement: " . esc_html($e->getMessage()) . "</p>";
+        }
+    } else {
+        echo "<p style='color: red;'>❌ Fichier PDF_Builder_Admin.php introuvable: " . esc_html($admin_file) . "</p>";
+    }
 }
 
 // Vérifier si le hook est enregistré
