@@ -47,9 +47,9 @@ class WooCommerceRenderer
         $type = $elementData['type'] ?? '';
 
         switch ($type) {
-            case 'woocommerce-order-date':
+            case 'woocommerce_order_date':
                 return $this->renderOrderDate($elementData);
-            case 'woocommerce-invoice-number':
+            case 'woocommerce_invoice_number':
                 return $this->renderInvoiceNumber($elementData);
             default:
                 return "<div class=\"pdf-element woocommerce-element\">Type non supporté: {$type}</div>";

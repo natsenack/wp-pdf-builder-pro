@@ -85,7 +85,7 @@ class ParameterValidator
 
         // Type d'élément
         if (isset($element['type'])) {
-            $validated['type'] = sanitize_key($element['type']);
+            $validated['type'] = isset($element['type']) && is_string($element['type']) ? $element['type'] : '';
         }
 
         // Position et taille

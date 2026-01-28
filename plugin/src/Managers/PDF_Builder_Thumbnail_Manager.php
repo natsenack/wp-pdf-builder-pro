@@ -187,7 +187,7 @@ class PDF_Builder_Thumbnail_Manager
                             $element_text = '[Tableau produits]';
                             break;
                         default:
-                            $element_text = ucfirst(str_replace('_', ' ', $element_type));
+                            $element_text = $element_type;
                     }
 
                     if (!empty($element_text)) {

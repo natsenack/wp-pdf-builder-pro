@@ -55,47 +55,6 @@ class PDF_Builder_Template_Manager
     }
 
     /**
-     * Normalise les types d'éléments en convertissant les tirets en underscores
-     * Utilisé pour la rétrocompatibilité avec les anciens templates
-     */
-    private function normalizeElementType($type)
-    {
-        // Mapping des tirets vers underscores pour rétrocompatibilité
-        $mapping = [
-            'product-table' => 'product_table',
-            'company-logo' => 'company_logo',
-            'progress-bar' => 'progress_bar',
-            'company-info' => 'company_info',
-            'woocommerce-order-date' => 'woocommerce_order_date',
-            'woocommerce-invoice-number' => 'woocommerce_invoice_number',
-            'order-number' => 'order_number',
-            'customer-info' => 'customer_info',
-            'document-type' => 'document_type',
-            'dynamic-text' => 'dynamic_text'
-        ];
-        
-        return isset($mapping[$type]) ? $mapping[$type] : $type;
-    }
-
-    /**
-     * Normalise tous les éléments d'un template pour utiliser les underscores
-     */
-    private function normalizeTemplateElements($template_data)
-    {
-        if (!isset($template_data['elements']) || !is_array($template_data['elements'])) {
-            return $template_data;
-        }
-
-        foreach ($template_data['elements'] as &$element) {
-            if (isset($element['type'])) {
-                $element['type'] = $this->normalizeElementType($element['type']);
-            }
-        }
-
-        return $template_data;
-    }
-
-    /**
      * Initialiser les hooks
      * NOTE: Cette méthode n'est plus appelée depuis le constructeur
      * Les hooks AJAX sont enregistrés directement par PDF_Builder_Admin

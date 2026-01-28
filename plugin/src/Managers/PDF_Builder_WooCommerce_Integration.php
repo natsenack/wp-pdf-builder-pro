@@ -1047,7 +1047,9 @@ class PDF_Builder_WooCommerce_Integration
 
             // Sanitiser les champs de base
             $sanitized_element['id'] = isset($element['id']) ? sanitize_text_field($element['id']) : '';
-            $sanitized_element['type'] = isset($element['type']) ? sanitize_text_field($element['type']) : '';
+            // NE PAS sanitizer le type avec sanitize_text_field car il enlève les underscores
+            // Simplement le valider
+            $sanitized_element['type'] = isset($element['type']) && is_string($element['type']) ? $element['type'] : '';
             $sanitized_element['x'] = isset($element['x']) ? floatval($element['x']) : 0;
             $sanitized_element['y'] = isset($element['y']) ? floatval($element['y']) : 0;
             $sanitized_element['width'] = isset($element['width']) ? floatval($element['width']) : 0;

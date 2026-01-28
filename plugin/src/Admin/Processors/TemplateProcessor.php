@@ -28,47 +28,6 @@ class TemplateProcessor
     }
 
     /**
-     * Normalise les types d'éléments en convertissant les tirets en underscores
-     * Utilisé pour la rétrocompatibilité avec les anciens templates
-     */
-    private function normalizeElementType($type)
-    {
-        // Mapping des tirets vers underscores pour rétrocompatibilité
-        $mapping = [
-            'product-table' => 'product_table',
-            'company-logo' => 'company_logo',
-            'progress-bar' => 'progress_bar',
-            'company-info' => 'company_info',
-            'woocommerce-order-date' => 'woocommerce_order_date',
-            'woocommerce-invoice-number' => 'woocommerce_invoice_number',
-            'order-number' => 'order_number',
-            'customer-info' => 'customer_info',
-            'document-type' => 'document_type',
-            'dynamic-text' => 'dynamic_text'
-        ];
-        
-        return isset($mapping[$type]) ? $mapping[$type] : $type;
-    }
-
-    /**
-     * Normalise tous les éléments d'un template pour utiliser les underscores
-     */
-    private function normalizeTemplateElements($template_data)
-    {
-        if (!isset($template_data['elements']) || !is_array($template_data['elements'])) {
-            return $template_data;
-        }
-
-        foreach ($template_data['elements'] as &$element) {
-            if (isset($element['type'])) {
-                $element['type'] = $this->normalizeElementType($element['type']);
-            }
-        }
-
-        return $template_data;
-    }
-
-    /**
      * Transforme les éléments pour React
      */
     public function transformElementsForReact($elements)
@@ -102,8 +61,6 @@ class TemplateProcessor
                 if (!isset($template_data['name']) || empty($template_data['name']) || preg_match('/^Template \d+$/', $template_data['name'])) {
                     $template_data['name'] = !empty($template['name']) ? $template['name'] : 'Template ' . $template_id;
                 }
-                // Normaliser les types d'éléments (tirets -> underscores)
-                $template_data = $this->normalizeTemplateElements($template_data);
                 // Ajouter les métadonnées du template
                 $template_data['_db_name'] = $template['name'] ?? '';
                 $template_data['_db_id'] = $template['id'];
@@ -119,8 +76,6 @@ class TemplateProcessor
                     if (isset($template['name']) && (!isset($template_data['name']) || empty($template_data['name']) || preg_match('/^Template \d+$/', $template_data['name']))) {
                         $template_data['name'] = $template['name'];
                     }
-                    // Normaliser les types d'éléments (tirets -> underscores)
-                    $template_data = $this->normalizeTemplateElements($template_data);
                     // Ajouter les métadonnées du template
                     $template_data['_db_name'] = $template['name'] ?? '';
                     $template_data['_db_id'] = $template['id'];
@@ -137,8 +92,6 @@ class TemplateProcessor
                     if (isset($template['name']) && (!isset($template_data['name']) || empty($template_data['name']) || preg_match('/^Template \d+$/', $template_data['name']))) {
                         $template_data['name'] = $template['name'];
                     }
-                    // Normaliser les types d'éléments (tirets -> underscores)
-                    $template_data = $this->normalizeTemplateElements($template_data);
                     // Ajouter les métadonnées du template
                     $template_data['_db_name'] = $template['name'] ?? '';
                     $template_data['_db_id'] = $template['id'];
