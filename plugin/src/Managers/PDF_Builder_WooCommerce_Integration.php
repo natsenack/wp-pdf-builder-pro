@@ -476,7 +476,7 @@ class PDF_Builder_WooCommerce_Integration
 
             // Créer le dossier temporaire s'il n'existe pas
             if (!file_exists($temp_dir)) {
-                wp_mkdir_p($temp_dir);
+                \wp_mkdir_p($temp_dir);
             }
 
             // Générer un nom de fichier unique
@@ -830,7 +830,7 @@ class PDF_Builder_WooCommerce_Integration
 
             case 'html':
                 // Allow basic HTML but sanitize it
-                return wp_kses(
+                return \wp_kses(
                     $content,
                     [
                     'br' => [],
@@ -1009,7 +1009,7 @@ class PDF_Builder_WooCommerce_Integration
 
             // Sauvegarder les données dans les meta de la commande
             $meta_key = '_pdf_builder_canvas_data';
-            $save_result = update_post_meta($order_id, $meta_key, $sanitized_elements);
+            $save_result = \update_post_meta($order_id, $meta_key, $sanitized_elements);
 
             if ($save_result === false) {
                 wp_send_json_error('Erreur lors de la sauvegarde des données canvas');
@@ -1079,7 +1079,7 @@ class PDF_Builder_WooCommerce_Integration
         switch ($type) {
             case 'text':
             case 'dynamic_text':
-                return wp_kses(
+                return \wp_kses(
                     $content,
                     [
                     'br' => [],
@@ -1089,7 +1089,7 @@ class PDF_Builder_WooCommerce_Integration
                     ]
                 );
             case 'image':
-                return esc_url_raw($content);
+                return \esc_url_raw($content);
             default:
                 return sanitize_text_field($content);
         }
@@ -1157,7 +1157,7 @@ class PDF_Builder_WooCommerce_Integration
 
             // Récupérer les données canvas depuis les meta
             $meta_key = '_pdf_builder_canvas_data';
-            $canvas_data = get_post_meta($order_id, $meta_key, true);
+            $canvas_data = \get_post_meta($order_id, $meta_key, true);
 
             // Si aucune donnée canvas n'existe, retourner un tableau vide
             if (empty($canvas_data)) {
@@ -1219,7 +1219,7 @@ class PDF_Builder_WooCommerce_Integration
             $template_data = null;
 
             // D'abord vérifier si c'est un post WordPress
-            if (get_post($template_id)) {
+            if (\get_post($template_id)) {
                 $template_exists = true;
             } else {
                 // Essayer de récupérer depuis la table pdf_builder_templates
@@ -1277,7 +1277,7 @@ class PDF_Builder_WooCommerce_Integration
                     }
                 } else {
                     // Template WordPress classique - récupérer depuis les métadonnées
-                    $canvas_elements = get_post_meta($template_id, 'pdf_builder_elements', true);
+                    $canvas_elements = \get_post_meta($template_id, 'pdf_builder_elements', true);
                 }
 
                 // Validation et nettoyage des données
@@ -1285,7 +1285,7 @@ class PDF_Builder_WooCommerce_Integration
 
                 // ✅ RESPECT DU SETTING CACHE: Only cache if cache is enabled in settings
                 if ($cache_enabled) {
-                    set_transient($cache_key, $canvas_elements, 5 * MINUTE_IN_SECONDS);
+                    \set_transient($cache_key, $canvas_elements, 5 * \MINUTE_IN_SECONDS);
                 }
             }
 
