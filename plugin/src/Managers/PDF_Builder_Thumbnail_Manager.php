@@ -45,14 +45,22 @@ class PDF_Builder_Thumbnail_Manager
     public function generateTemplateThumbnail($template_id, $template_data)
     {
         try {
-            // Utiliser le PreviewGenerator pour créer un aperçu
-            $preview_generator = new \PDF_Builder\Managers\PdfBuilderPreviewGenerator($template_data, 'thumbnail', 0);
-            $preview_url = $preview_generator->generatePreview();
+            // Utiliser le GeneratorManager pour créer un aperçu
+            $generator_manager = new \PDF_Builder\Generators\GeneratorManager();
 
-            if ($preview_url) {
-                // Convertir le PDF en image thumbnail
-                $thumbnail_url = $this->convertPdfToThumbnail($preview_url, $template_id);
-                return $thumbnail_url;
+            // Créer un data provider basique pour les thumbnails
+            $data_provider = new \PDF_Builder\Config\Data\SampleDataProvider();
+
+            $preview_result = $generator_manager->generatePreview(
+                $template_data,
+                $data_provider,
+                'png',
+                ['quality' => 75, 'width' => 300, 'height' => 200]
+            );
+
+            if ($preview_result && isset($preview_result['url'])) {
+                // Utiliser directement l'URL générée comme thumbnail
+                return $preview_result['url'];
             }
         } catch (\Exception $e) {
             // Log l'erreur mais ne pas échouer la sauvegarde
@@ -336,7 +344,7 @@ class PDF_Builder_Thumbnail_Manager
      */
     private function logError($message)
     {
-        PDF_Builder_Security_Manager::debug_log('php_errors', 'THUMBNAIL_ERROR: ' . $message);
+        PDF_Builder_Logger::get_instance()->debug_log('THUMBNAIL_ERROR: ' . $message);
     }
 
     /**
@@ -344,7 +352,7 @@ class PDF_Builder_Thumbnail_Manager
      */
     private function logInfo($message)
     {
-        PDF_Builder_Security_Manager::debug_log('php_errors', 'THUMBNAIL_INFO: ' . $message);
+        PDF_Builder_Logger::get_instance()->debug_log('THUMBNAIL_INFO: ' . $message);
     }
 }
 

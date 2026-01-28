@@ -666,12 +666,12 @@ class PdfBuilderCore
         if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
             // Utiliser réflexion pour éviter les erreurs de compilation
             try {
-                $reflection = new ReflectionClass('PDF_Builder\Admin\PdfBuilderAdminNew');
+                $reflection = new \ReflectionClass('PDF_Builder\Admin\PdfBuilderAdminNew');
                 if ($reflection->hasMethod('getInstance')) {
                     $method = $reflection->getMethod('getInstance');
                     $this->admin = $method->invoke(null, $this);
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // Classe existe mais méthode getInstance n'est pas disponible
                 $this->admin = null;
             }

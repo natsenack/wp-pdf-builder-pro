@@ -1685,9 +1685,10 @@ class PDF_Builder_WooCommerce_Integration
             }
 
             // Récupération et validation complète de la commande
-            $order = $this->getAndValidateOrder($order_id);
-            if (is_wp_error($order)) {
-                wp_send_json_error($order->get_error_message());
+            /** @var \WC_Order $order */
+            $order = wc_get_order($order_id);
+            if (!$order) {
+                wp_send_json_error('Commande introuvable');
                 return;
             }
 
@@ -1859,7 +1860,7 @@ class PDF_Builder_WooCommerce_Integration
         }
         
         // Use WooCommerce countries if available
-        if (function_exists('WC')) {
+        if (function_exists('WC') && WC()->countries && WC()->countries->countries) {
             $countries = WC()->countries->countries;
             return isset($countries[$country_code]) ? $countries[$country_code] : $country_code;
         }
