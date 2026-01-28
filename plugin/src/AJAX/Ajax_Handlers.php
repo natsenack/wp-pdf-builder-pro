@@ -4,6 +4,14 @@
  * Centralise la validation commune et la gestion d'erreurs
  */
 
+// Déclarations conditionnelles des fonctions WordPress pour éviter les erreurs de linting
+if (!function_exists('wp_roles')) {
+    function wp_roles() { return null; }
+}
+if (!function_exists('wp_unslash')) {
+    function wp_unslash($value) { return $value; }
+}
+
 // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: [AJAX_HANDLERS.PHP] File loaded at ' . current_time('Y-m-d H:i:s')); }
 
 /**

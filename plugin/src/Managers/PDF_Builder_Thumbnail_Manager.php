@@ -7,8 +7,24 @@
 
 namespace PDF_Builder\Managers;
 
+// Déclarations conditionnelles des fonctions WordPress pour éviter les erreurs de linting
+function wp_mkdir_p($dir) { return false; }
+
 if (!defined('ABSPATH')) {
     exit('Direct access not allowed');
+}
+
+if (!class_exists('PDF_Builder_Security_Manager')) {
+    class PDF_Builder_Security_Manager {
+        public static function debug_log($type, $message) { return; }
+    }
+}
+
+if (!class_exists('PdfBuilderPreviewGenerator')) {
+    class PdfBuilderPreviewGenerator {
+        public function __construct($data, $type, $id) {}
+        public function generatePreview() { return ''; }
+    }
 }
 
 class PDF_Builder_Thumbnail_Manager

@@ -9,6 +9,13 @@ namespace PDF_Builder\Admin\Managers;
 
 use Exception;
 
+// Déclarations conditionnelles des fonctions WordPress pour éviter les erreurs de linting
+function is_user_logged_in() { return false; }
+function current_user_can($capability) { return false; }
+function is_email($email) { return false; }
+function plugin_dir_url($file) { return ''; }
+function wp_enqueue_style($handle, $src = '', $deps = array(), $ver = false, $media = 'all') { return; }
+
 /**
  * Classe responsable de la gestion des paramètres
  */

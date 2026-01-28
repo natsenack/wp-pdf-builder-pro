@@ -8,6 +8,43 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * Déclarations de fonctions WordPress pour Intelephense
+ */
+if (!function_exists('update_user_meta')) {
+    function update_user_meta($user_id, $meta_key, $meta_value, $prev_value = '') {}
+}
+if (!function_exists('get_user_meta')) {
+    function get_user_meta($user_id, $key = '', $single = false) {}
+}
+if (!function_exists('wp_dequeue_script')) {
+    function wp_dequeue_script($handle) {}
+}
+if (!function_exists('wp_deregister_script')) {
+    function wp_deregister_script($handle) {}
+}
+if (!function_exists('wp_dequeue_style')) {
+    function wp_dequeue_style($handle) {}
+}
+if (!function_exists('wp_deregister_style')) {
+    function wp_deregister_style($handle) {}
+}
+if (!function_exists('wp_add_inline_script')) {
+    function wp_add_inline_script($handle, $data, $position = 'after') {}
+}
+if (!function_exists('wp_create_nonce')) {
+    function wp_create_nonce($action = -1) {}
+}
+if (!function_exists('esc_js')) {
+    function esc_js($text) {}
+}
+if (!function_exists('esc_url')) {
+    function esc_url($url, $protocols = null, $_context = 'display') {}
+}
+if (!function_exists('wp_json_encode')) {
+    function wp_json_encode($data, $options = 0, $depth = 512) {}
+}
+
 class PDFEditorPreferences {
 
     private static $instance = null;
@@ -218,7 +255,7 @@ class PDFEditorPreferences {
             }
 
         } catch (Exception $e) {
-            wp_send_json_error(array('message' => 'Erreur: ' . $e->get_message()));
+            wp_send_json_error(array('message' => 'Erreur: ' . $e->getMessage()));
         }
     }
 
@@ -245,7 +282,7 @@ class PDFEditorPreferences {
             wp_send_json_success(array('preferences' => $preferences));
 
         } catch (Exception $e) {
-            wp_send_json_error(array('message' => 'Erreur: ' . $e->get_message()));
+            wp_send_json_error(array('message' => 'Erreur: ' . $e->getMessage()));
         }
     }
 
