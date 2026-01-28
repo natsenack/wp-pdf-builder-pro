@@ -296,7 +296,7 @@ class PdfBuilderAdminNew
             'pdf_builder_pdf'
         );
 
-        \\add_settings_field(
+        \add_settings_field(
             'pdf_quality',
             \__('Qualité PDF', 'pdf-builder-pro'),
             array($this, 'pdf_quality_field_callback'),
@@ -304,7 +304,7 @@ class PdfBuilderAdminNew
             'pdf_builder_pdf'
         );
 
-        \\add_settings_field(
+        \add_settings_field(
             'pdf_compression',
             \__('Compression PDF', 'pdf-builder-pro'),
             array($this, 'pdf_compression_field_callback'),
@@ -313,14 +313,14 @@ class PdfBuilderAdminNew
         );
 
         // Section Canvas & Design
-        \\add_settings_section(
+        \add_settings_section(
             'pdf_builder_contenu',
             \__('Canvas & Design', 'pdf-builder-pro'),
             array($this, 'contenu_section_callback'),
             'pdf_builder_contenu'
         );
 
-        \\add_settings_field(
+        \add_settings_field(
             'canvas_default_width',
             \__('Largeur par défaut du canvas', 'pdf-builder-pro'),
             array($this, 'canvas_default_width_field_callback'),
@@ -329,14 +329,14 @@ class PdfBuilderAdminNew
         );
 
         // Section Templates
-        \\add_settings_section(
+        \add_settings_section(
             'pdf_builder_templates',
             \__('Paramètres Templates', 'pdf-builder-pro'),
             array($this, 'templates_section_callback'),
             'pdf_builder_templates'
         );
 
-        \\add_settings_field(
+        \add_settings_field(
             'template_cache_enabled',
             \__('Cache des templates activé', 'pdf-builder-pro'),
             array($this, 'template_cache_enabled_field_callback'),
@@ -345,14 +345,14 @@ class PdfBuilderAdminNew
         );
 
         // Section Développeur
-        \\add_settings_section(
+        \add_settings_section(
             'pdf_builder_developpeur',
             \__('Paramètres Développeur', 'pdf-builder-pro'),
             array($this, 'developpeur_section_callback'),
             'pdf_builder_developpeur'
         );
 
-        \\add_settings_field(
+        \add_settings_field(
             'developer_debug_mode',
             \__('Mode debug', 'pdf-builder-pro'),
             array($this, 'developer_debug_mode_field_callback'),
@@ -376,7 +376,7 @@ class PdfBuilderAdminNew
         }
 
         if (isset($input['company_address'])) {
-            $sanitized['company_address'] = \\sanitize_textarea_field($input['company_address']);
+            $sanitized['company_address'] = \sanitize_textarea_field($input['company_address']);
         }
 
         // Champs système
@@ -385,7 +385,7 @@ class PdfBuilderAdminNew
         }
 
         if (isset($input['system_max_execution_time'])) {
-            $sanitized['system_max_execution_time'] = \\absint($input['system_max_execution_time']);
+            $sanitized['system_max_execution_time'] = \absint($input['system_max_execution_time']);
         }
 
         // Champs sécurité
@@ -405,7 +405,7 @@ class PdfBuilderAdminNew
 
         // Champs contenu/canvas
         if (isset($input['canvas_default_width'])) {
-            $width = \\absint($input['canvas_default_width']);
+            $width = \absint($input['canvas_default_width']);
             $sanitized['canvas_default_width'] = max(400, min(2000, $width)); // Entre 400 et 2000
         }
 
@@ -447,7 +447,7 @@ class PdfBuilderAdminNew
     {
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['company_address']) ? $settings['company_address'] : '';
-        echo '<textarea name="pdf_builder_settings[company_address]" rows="3" class="large-text">' . \\esc_textarea($value) . '</textarea>';
+        echo '<textarea name="pdf_builder_settings[company_address]" rows="3" class="large-text">' . \esc_textarea($value) . '</textarea>';
     }
 
     /**
@@ -979,7 +979,7 @@ class PdfBuilderAdminNew
                                 if (originalError) {
                                     originalError(jqXHR, 'parsererror', {
                                         code: 'invalid_json',
-                                        message: 'La réponse n\\'est pas une réponse JSON valide.'
+                                        message: 'La réponse n\'est pas une réponse JSON valide.'
                                     });
                                 }
                                 return;
