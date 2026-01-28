@@ -199,7 +199,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                 Police générale
               </label>
               <select
-                value={element.fontFamily || 'Arial'}
+                value={String(element.fontFamily || 'Arial')}
                 onChange={(e) => onChange(element.id, 'fontFamily', e.target.value)}
                 style={{
                   width: '100%',
@@ -214,14 +214,23 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                 <option value="Times New Roman">Times New Roman</option>
                 <option value="Georgia">Georgia</option>
                 <option value="Verdana">Verdana</option>
+                <option value="Tahoma">Tahoma</option>
+                <option value="Trebuchet MS">Trebuchet MS</option>
+                <option value="Calibri">Calibri</option>
+                <option value="Cambria">Cambria</option>
+                <option value="Segoe UI">Segoe UI</option>
                 <option value="Courier New">Courier New</option>
+                <option value="Impact">Impact</option>
+                <option value="Lucida Sans">Lucida Sans</option>
+                <option value="Comic Sans MS">Comic Sans MS</option>
+                <option value="Lucida Console">Lucida Console</option>
               </select>
             </div>
 
             <div style={{ marginBottom: '12px' }}>
               <NumericPropertyInput
                 label="Taille de police générale"
-                value={element.fontSize}
+                value={element.fontSize || 14}
                 defaultValue={14}
                 min={8}
                 max={72}
@@ -242,7 +251,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                 Style de police général
               </label>
               <select
-                value={element.fontWeight || 'normal'}
+                value={String(element.fontWeight || 'normal')}
                 onChange={(e) => onChange(element.id, 'fontWeight', e.target.value)}
                 style={{
                   width: '100%',
@@ -271,7 +280,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                 Style italique général
               </label>
               <select
-                value={element.fontStyle || 'normal'}
+                value={String(element.fontStyle || 'normal')}
                 onChange={(e) => onChange(element.id, 'fontStyle', e.target.value)}
                 style={{
                   width: '100%',
@@ -292,7 +301,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                 Alignement du texte
               </label>
               <select
-                value={element.textAlign || 'left'}
+                value={String(element.textAlign || 'left')}
                 onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
                 style={{
                   width: '100%',
@@ -423,7 +432,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                     Position du libellé
                   </label>
                   <select
-                    value={element.labelPosition || 'above'}
+                    value={String(element.labelPosition || 'above')}
                     onChange={(e) => onChange(element.id, 'labelPosition', e.target.value)}
                     style={{
                       width: '100%',
@@ -686,7 +695,6 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                     </div>
                   ),
                   styles: {
-                    backgroundColor: '#ffffff',
                     borderColor: '#e5e7eb',
                     textColor: '#374151',
                     headerTextColor: '#111827',
@@ -729,7 +737,6 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                     </div>
                   ),
                   styles: {
-                    backgroundColor: 'transparent',
                     borderColor: 'transparent',
                     textColor: '#6b7280',
                     headerTextColor: '#374151',
@@ -744,7 +751,9 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                   onClick={() => {
                     // Appliquer toutes les propriétés du thème
                     Object.entries(theme.styles).forEach(([property, value]) => {
-                      onChange(element.id, property, value);
+                      if (property !== 'backgroundColor' || theme.styles.showBackground !== false) {
+                        onChange(element.id, property, value);
+                      }
                     });
                   }}
                   style={{
@@ -795,8 +804,8 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               <div style={{ marginBottom: '8px' }}>
                 <NumericPropertyInput
                   label="Taille de police"
-                  value={element.headerFontSize as number}
-                  defaultValue={(Number(element.fontSize) || 14) + 2}
+                  value={element.headerFontSize || (element.fontSize || 14) + 2}
+                  defaultValue={(element.fontSize || 14) + 2}
                   min={8}
                   max={32}
                   unit="px"
@@ -829,6 +838,11 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                   <option value="Calibri">Calibri</option>
                   <option value="Cambria">Cambria</option>
                   <option value="Segoe UI">Segoe UI</option>
+                  <option value="Courier New">Courier New</option>
+                  <option value="Impact">Impact</option>
+                  <option value="Lucida Sans">Lucida Sans</option>
+                  <option value="Comic Sans MS">Comic Sans MS</option>
+                  <option value="Lucida Console">Lucida Console</option>
                 </select>
               </div>
 
@@ -837,7 +851,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                   Épaisseur de police
                 </label>
                 <select
-                  value={element.headerFontWeight || element.fontWeight || 'bold'}
+                  value={String(element.headerFontWeight || element.fontWeight || 'bold')}
                   onChange={(e) => onChange(element.id, 'headerFontWeight', e.target.value)}
                   style={{
                     width: '100%',
@@ -847,10 +861,17 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                     fontSize: '12px'
                   }}
                 >
-                  <option value="normal">Normal (400)</option>
-                  <option value="bold">Gras (700)</option>
-                  <option value="lighter">Fin (300)</option>
-                  <option value="bolder">Très gras (900)</option>
+                  <option value="normal">Normal</option>
+                  <option value="bold">Gras</option>
+                  <option value="100">100 (Très fin)</option>
+                  <option value="200">200</option>
+                  <option value="300">300 (Fin)</option>
+                  <option value="400">400 (Normal)</option>
+                  <option value="500">500</option>
+                  <option value="600">600</option>
+                  <option value="700">700 (Gras)</option>
+                  <option value="800">800</option>
+                  <option value="900">900 (Très gras)</option>
                 </select>
               </div>
 
@@ -859,7 +880,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                   Style de police
                 </label>
                 <select
-                  value={element.headerFontStyle || element.fontStyle || 'normal'}
+                  value={String(element.headerFontStyle || element.fontStyle || 'normal')}
                   onChange={(e) => onChange(element.id, 'headerFontStyle', e.target.value)}
                   style={{
                     width: '100%',
@@ -877,7 +898,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
 
               <ColorPropertyInput
                 label="Couleur de police"
-                value={element.headerTextColor as string || element.textColor}
+                value={element.headerTextColor || element.textColor || '#111827'}
                 defaultValue="#111827"
                 onChange={(value) => onChange(element.id, 'headerTextColor', value)}
               />
@@ -889,7 +910,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             <div style={{ marginBottom: '8px' }}>
               <NumericPropertyInput
                 label="Taille de police du numéro"
-                value={element.numberFontSize}
+                value={element.numberFontSize || element.bodyFontSize || element.fontSize || 14}
                 defaultValue={element.bodyFontSize || element.fontSize || 14}
                 min={8}
                 max={24}
@@ -901,8 +922,8 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             <div style={{ marginBottom: '8px' }}>
               <NumericPropertyInput
                 label="Taille de police de la date"
-                value={element.dateFontSize}
-                defaultValue={(Number(element.bodyFontSize || element.fontSize) || 14) - 2}
+                value={element.dateFontSize || (element.bodyFontSize || element.fontSize || 14) - 2}
+                defaultValue={(element.bodyFontSize || element.fontSize || 14) - 2}
                 min={8}
                 max={24}
                 unit="px"
@@ -915,7 +936,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                 Famille de police
               </label>
               <select
-                value={element.bodyFontFamily || element.fontFamily || 'Arial'}
+                value={String(element.bodyFontFamily || element.fontFamily || 'Arial')}
                 onChange={(e) => onChange(element.id, 'bodyFontFamily', e.target.value)}
                 style={{
                   width: '100%',
@@ -935,6 +956,11 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                 <option value="Calibri">Calibri</option>
                 <option value="Cambria">Cambria</option>
                 <option value="Segoe UI">Segoe UI</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Impact">Impact</option>
+                <option value="Lucida Sans">Lucida Sans</option>
+                <option value="Comic Sans MS">Comic Sans MS</option>
+                <option value="Lucida Console">Lucida Console</option>
               </select>
             </div>
 
@@ -943,7 +969,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                 Épaisseur de police
               </label>
               <select
-                value={element.bodyFontWeight || element.fontWeight || 'normal'}
+                value={String(element.bodyFontWeight || element.fontWeight || 'normal')}
                 onChange={(e) => onChange(element.id, 'bodyFontWeight', e.target.value)}
                 style={{
                   width: '100%',
@@ -953,10 +979,17 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                   fontSize: '12px'
                 }}
               >
-                <option value="normal">Normal (400)</option>
-                <option value="bold">Gras (700)</option>
-                <option value="lighter">Fin (300)</option>
-                <option value="bolder">Très gras (900)</option>
+                <option value="normal">Normal</option>
+                <option value="bold">Gras</option>
+                <option value="100">100 (Très fin)</option>
+                <option value="200">200</option>
+                <option value="300">300 (Fin)</option>
+                <option value="400">400 (Normal)</option>
+                <option value="500">500</option>
+                <option value="600">600</option>
+                <option value="700">700 (Gras)</option>
+                <option value="800">800</option>
+                <option value="900">900 (Très gras)</option>
               </select>
             </div>
 
@@ -965,7 +998,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                 Style de police
               </label>
               <select
-                value={element.bodyFontStyle || element.fontStyle || 'normal'}
+                value={String(element.bodyFontStyle || element.fontStyle || 'normal')}
                 onChange={(e) => onChange(element.id, 'bodyFontStyle', e.target.value)}
                 style={{
                   width: '100%',
@@ -983,7 +1016,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
 
             <ColorPropertyInput
               label="Couleur de police"
-              value={element.textColor}
+              value={element.textColor || '#374151'}
               defaultValue="#374151"
               onChange={(value) => onChange(element.id, 'textColor', value)}
             />
@@ -993,32 +1026,22 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
           <Accordion title="Couleurs" defaultOpen={false}>
             <ColorPropertyInput
               label="Couleur du texte du libellé"
-              value={element.headerTextColor as string || element.textColor}
+              value={element.headerTextColor || element.textColor || '#111827'}
               defaultValue="#111827"
               onChange={(value) => onChange(element.id, 'headerTextColor', value)}
             />
 
-            <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
-                Couleur du texte du numéro
-              </label>
-              <input
-                type="color"
-                value={element.textColor || '#374151'}
-                onChange={(e) => onChange(element.id, 'textColor', e.target.value)}
-                style={{
-                  width: '100%',
-                  height: '32px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px'
-                }}
-              />
-            </div>
+            <ColorPropertyInput
+              label="Couleur du texte du numéro"
+              value={element.textColor || '#374151'}
+              defaultValue="#374151"
+              onChange={(value) => onChange(element.id, 'textColor', value)}
+            />
 
             {element.showBackground !== false && (
               <ColorPropertyInput
                 label="Couleur de fond"
-                value={element.backgroundColor === 'transparent' ? '#ffffff' : element.backgroundColor}
+                value={element.backgroundColor || '#ffffff'}
                 defaultValue="#ffffff"
                 onChange={(value) => onChange(element.id, 'backgroundColor', value)}
               />
@@ -1026,7 +1049,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
 
             <ColorPropertyInput
               label="Couleur des bordures"
-              value={element.borderColor}
+              value={element.borderColor || '#e5e7eb'}
               defaultValue="#e5e7eb"
               onChange={(value) => onChange(element.id, 'borderColor', value)}
             />
@@ -1084,7 +1107,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               Alignement du contenu
             </label>
             <select
-              value={element.contentAlign || 'left'}
+              value={String(element.contentAlign || 'left')}
               onChange={(e) => onChange(element.id, 'contentAlign', e.target.value)}
               style={{
                 width: '100%',
@@ -1105,7 +1128,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               Alignement horizontal
             </label>
             <select
-              value={element.textAlign || 'left'}
+              value={String(element.textAlign || 'left')}
               onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
               style={{
                 width: '100%',
@@ -1118,6 +1141,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
               <option value="left">Gauche</option>
               <option value="center">Centre</option>
               <option value="right">Droite</option>
+              <option value="justify">Justifié</option>
             </select>
           </div>
         </>

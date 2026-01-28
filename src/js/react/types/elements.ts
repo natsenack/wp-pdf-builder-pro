@@ -61,12 +61,19 @@ export interface OrderNumberElement extends BaseElement {
   // Propriétés d'affichage
   showHeaders?: boolean;
   showBorders?: boolean;
+  showBackground?: boolean;
   showLabel?: boolean;
   showDate?: boolean;
   // Propriétés de mise en page
   contentAlign?: 'left' | 'center' | 'right';
   labelPosition?: 'above' | 'left' | 'right' | 'below';
   labelText?: string;
+  // Propriétés de police générales
+  fontFamily?: string;
+  fontSize?: number;
+  fontWeight?: string;
+  fontStyle?: string;
+  textAlign?: string;
   // Propriétés de police pour les en-têtes (label)
   headerFontSize?: number;
   headerFontFamily?: string;
@@ -91,6 +98,8 @@ export interface OrderNumberElement extends BaseElement {
   headerTextColor?: string;
   textColor?: string;
   color?: string; // Alias pour textColor pour compatibilité
+  backgroundColor?: string;
+  borderColor?: string;
   // Propriétés de style
   theme?: string;
   // Propriétés spécifiques à l'ordre
@@ -168,6 +177,12 @@ export interface ProductTableElement extends BaseElement {
   showShipping?: boolean;
   showTax?: boolean;
   showGlobalDiscount?: boolean;
+  // Propriétés de police globale
+  globalFontSize?: number;
+  globalFontFamily?: string;
+  globalFontWeight?: string;
+  globalFontStyle?: string;
+  globalFontEnabled?: boolean;
   // Propriétés de police
   fontSize?: number;
   fontFamily?: string;
@@ -181,6 +196,14 @@ export interface ProductTableElement extends BaseElement {
   bodyFontFamily?: string;
   bodyFontWeight?: string;
   bodyFontStyle?: string;
+  rowFontSize?: number;
+  rowFontFamily?: string;
+  rowFontWeight?: string;
+  rowFontStyle?: string;
+  totalFontSize?: number;
+  totalFontFamily?: string;
+  totalFontWeight?: string;
+  totalFontStyle?: string;
   // Propriétés d'alignement
   textAlign?: 'left' | 'center' | 'right';
   headerBackgroundColor?: string;
@@ -193,6 +216,8 @@ export interface ProductTableElement extends BaseElement {
   // Propriétés de thème et style
   theme?: string;
   textColor?: string;
+  backgroundColor?: string;
+  borderColor?: string;
   currency?: string;
   // Propriétés de données
   shippingCost?: number;
@@ -479,18 +504,18 @@ export interface LineElement extends BaseElement {
   borderWidth?: number;
 }
 
-export interface DynamicTextElementProperties extends BaseTextProperties {
+export interface DynamicTextElementProperties extends BaseElementProperties {
   textTemplate?: string;
   theme?: string;
   textDecoration?: string;
 }
 
-export interface DocumentTypeElementProperties extends BaseTextProperties {
+export interface DocumentTypeElementProperties extends BaseElementProperties {
   documentType?: string;
   verticalAlign?: 'top' | 'middle' | 'bottom';
 }
 
-export interface CustomerInfoElementProperties extends BaseTextProperties {
+export interface CustomerInfoElementProperties extends BaseElementProperties {
   showName?: boolean;
   showEmail?: boolean;
   showPhone?: boolean;
@@ -521,7 +546,7 @@ export interface CustomerInfoElementProperties extends BaseTextProperties {
   verticalAlign?: 'top' | 'middle' | 'bottom';
 }
 
-export interface CompanyInfoElementProperties extends BaseTextProperties {
+export interface CompanyInfoElementProperties extends BaseElementProperties {
   showCompanyName?: boolean;
   showAddress?: boolean;
   showPhone?: boolean;
@@ -571,13 +596,12 @@ export interface ImageElement extends BaseElement {
   alt?: string;
   fit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
   position?: 'center' | 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-}
   opacity?: number;
   alignment?: 'left' | 'center' | 'right';
   maintainAspectRatio?: boolean;
 }
 
-export interface OrderNumberElementProperties extends BaseTextProperties {
+export interface OrderNumberElementProperties extends BaseElementProperties {
   // Propriétés d'affichage
   showHeaders?: boolean;
   showBorders?: boolean;
@@ -664,7 +688,6 @@ export interface CompanyInfoElement extends BaseElement {
   theme?: string;
   showHeaders?: boolean;
   showBorders?: boolean;
-  showCompanyName?: boolean;
   showSiret?: boolean;
   showVat?: boolean;
   showRcs?: boolean;

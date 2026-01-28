@@ -321,7 +321,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
               <div>
                 <NumericPropertyInput
                   label="Taille"
-                  value={element.globalFontSize}
+                  value={element.globalFontSize || 11}
                   defaultValue={11}
                   min={8}
                   max={24}
@@ -423,7 +423,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 <div style={{ marginBottom: '12px' }}>
                   <NumericPropertyInput
                     label="Taille de police de l'entête"
-                    value={element.headerFontSize}
+                    value={element.headerFontSize || element.globalFontSize || 12}
                     defaultValue={element.globalFontSize || 12}
                     min={8}
                     max={24}
@@ -517,7 +517,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
 
                 <ColorPropertyInput
                   label="Couleur du texte de l'entête"
-                  value={element.headerTextColor}
+                  value={element.headerTextColor || '#374151'}
                   defaultValue="#374151"
                   onChange={(value) => onChange(element.id, 'headerTextColor', value)}
                 />
@@ -528,7 +528,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 <div style={{ marginBottom: '12px' }}>
                   <NumericPropertyInput
                     label="Taille de police des lignes"
-                    value={element.rowFontSize}
+                    value={element.rowFontSize || element.globalFontSize || 11}
                     defaultValue={element.globalFontSize || 11}
                     min={8}
                     max={24}
@@ -622,7 +622,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
 
                 <ColorPropertyInput
                   label="Couleur du texte des lignes"
-                  value={element.rowTextColor}
+                  value={element.rowTextColor || '#111827'}
                   defaultValue="#111827"
                   onChange={(value) => onChange(element.id, 'rowTextColor', value)}
                 />
@@ -633,7 +633,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 <div style={{ marginBottom: '12px' }}>
                   <NumericPropertyInput
                     label="Taille de police des totaux"
-                    value={element.totalFontSize}
+                    value={element.totalFontSize || element.globalFontSize || 12}
                     defaultValue={element.globalFontSize || 12}
                     min={8}
                     max={24}
@@ -727,7 +727,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
 
                 <ColorPropertyInput
                   label="Couleur du texte des totaux"
-                  value={element.totalTextColor}
+                  value={element.totalTextColor || '#111827'}
                   defaultValue="#111827"
                   onChange={(value) => onChange(element.id, 'totalTextColor', value)}
                 />
@@ -1590,21 +1590,21 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
 
             <ColorPropertyInput
               label="Fond des en-têtes"
-              value={element.headerBackgroundColor}
+              value={element.headerBackgroundColor || '#f9fafb'}
               defaultValue="#f9fafb"
               onChange={(value) => onChange(element.id, 'headerBackgroundColor', value)}
             />
 
             <ColorPropertyInput
               label="Couleur lignes alternées"
-              value={element.alternateRowColor}
+              value={element.alternateRowColor || '#f9fafb'}
               defaultValue="#f9fafb"
               onChange={(value) => onChange(element.id, 'alternateRowColor', value)}
             />
 
             <ColorPropertyInput
               label="Couleur des bordures"
-              value={element.borderColor}
+              value={element.borderColor || '#e5e7eb'}
               defaultValue="#e5e7eb"
               onChange={(value) => onChange(element.id, 'borderColor', value)}
             />
