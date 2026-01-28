@@ -30,14 +30,16 @@ if (!defined('PDF_BUILDER_PREMIUM')) {
 }
 
 // VERSION ULTRA-SIMPLE - ne charger que l'essentiel
-// Charger le bootstrap dès le départ pour que les hooks soient enregistrés
-$bootstrap = PDF_BUILDER_PLUGIN_DIR . 'bootstrap.php';
-if (file_exists($bootstrap)) {
-    require_once $bootstrap;
-}
-
 if (function_exists('add_action')) {
-    add_action('plugins_loaded', 'pdf_builder_register_ajax_handlers', 5); // Enregistrer les handlers AJAX après le chargement
+    // Charger le bootstrap après que WooCommerce soit initialisé mais avant l'admin
+    add_action('plugins_loaded', function() {
+        $bootstrap = PDF_BUILDER_PLUGIN_DIR . 'bootstrap.php';
+        if (file_exists($bootstrap)) {
+            require_once $bootstrap;
+        }
+    }, 20); // Priorité 20 pour s'exécuter après WooCommerce (qui utilise généralement 10-15)
+
+    add_action('plugins_loaded', 'pdf_builder_register_ajax_handlers', 25); // Enregistrer les handlers AJAX après le chargement
 }
 
 if (function_exists('add_action') && function_exists('pdf_builder_register_ajax_handlers')) {
