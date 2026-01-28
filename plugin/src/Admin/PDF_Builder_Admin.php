@@ -17,7 +17,6 @@ use PDF_Builder\Admin\Managers\SettingsManager;
 use PDF_Builder\Admin\Handlers\AjaxHandler;
 use PDF_Builder\Admin\Utils\Permissions;
 use PDF_Builder\Admin\Utils\Validation;
-use Exception;
 use PDF_Builder\Admin\Utils\Helpers;
 use PDF_Builder\Admin\Data\DataUtils;
 use PDF_Builder\Admin\Utils\Utils;

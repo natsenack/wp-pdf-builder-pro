@@ -911,16 +911,16 @@ function pdf_builder_load_admin_components()
         }
 
         // Forcer le chargement manuel de PdfBuilderAdminNew si nécessaire
-        if (!class_exists('PDF_Builder\\Admin\\PdfBuilderAdminNew')) {
+        if (!class_exists('PdfBuilderAdminNew')) {
             $admin_file = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
             if (file_exists($admin_file)) {
                 require_once $admin_file;
             }
         }
 
-        if (class_exists('PDF_Builder\\Admin\\PdfBuilderAdminNew')) {
+        if (class_exists('PdfBuilderAdminNew')) {
             try {
-                $admin = \PDF_Builder\Admin\PdfBuilderAdminNew::getInstance($core);
+                $admin = PdfBuilderAdminNew::getInstance($core);
             } catch (Exception $e) {
                 add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
             }
@@ -930,6 +930,78 @@ function pdf_builder_load_admin_components()
     } else {
         add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
     }
+}
+
+/**
+ * Fonction de fallback pour enregistrer un menu admin simple
+ * Utilisée quand la classe PdfBuilderAdminNew ne peut pas être chargée
+ */
+function pdf_builder_register_admin_menu_simple() {
+    // Menu principal avec icône distinctive
+    add_menu_page(
+        __('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'),
+        __('PDF Builder', 'pdf-builder-pro'),
+        'manage_options',
+        'pdf-builder-pro',
+        'pdf_builder_simple_admin_page',
+        'dashicons-pdf',
+        25
+    );
+
+    // Page d'accueil (sous-menu principal)
+    add_submenu_page(
+        'pdf-builder-pro',
+        __('Accueil - PDF Builder Pro', 'pdf-builder-pro'),
+        __('🏠 Accueil', 'pdf-builder-pro'),
+        'manage_options',
+        'pdf-builder-pro', // Même slug que le menu principal
+        'pdf_builder_simple_admin_page'
+    );
+
+    // Paramètres et configuration
+    add_submenu_page(
+        'pdf-builder-pro',
+        __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'),
+        __('⚙️ Paramètres', 'pdf-builder-pro'),
+        'manage_options',
+        'pdf-builder-settings',
+        'pdf_builder_simple_settings_page'
+    );
+}
+
+/**
+ * Page admin simple de fallback
+ */
+function pdf_builder_simple_admin_page() {
+    ?>
+    <div class="wrap">
+        <h1><?php _e('PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+        <div class="notice notice-warning">
+            <p><?php _e('Le système d\'administration avancé n\'a pas pu être chargé. Utilisation du mode de secours.', 'pdf-builder-pro'); ?></p>
+        </div>
+        <p><?php _e('Bienvenue dans PDF Builder Pro. Le système d\'administration complet n\'est pas disponible pour le moment.', 'pdf-builder-pro'); ?></p>
+        <p><?php _e('Vous pouvez accéder aux paramètres via le menu latéral.', 'pdf-builder-pro'); ?></p>
+    </div>
+    <?php
+}
+
+/**
+ * Page de paramètres simple de fallback
+ */
+function pdf_builder_simple_settings_page() {
+    ?>
+    <div class="wrap">
+        <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+        <div class="notice notice-info">
+            <p><?php _e('Paramètres simplifiés - Le système avancé n\'est pas disponible.', 'pdf-builder-pro'); ?></p>
+        </div>
+        <form method="post" action="options.php">
+            <?php settings_fields('pdf_builder_settings'); ?>
+            <?php do_settings_sections('pdf_builder_settings'); ?>
+            <?php submit_button(); ?>
+        </form>
+    </div>
+    <?php
 }
 
 // Fonction pour charger les composants frontend
