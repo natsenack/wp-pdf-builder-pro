@@ -11,6 +11,8 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
 }
 
 // Activer le débogage pour capture les erreurs PHP critiques
+// TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
+/*
 if (!defined('WP_DEBUG')) {
     define('WP_DEBUG', true);
 }
@@ -20,6 +22,7 @@ if (!defined('WP_DEBUG_LOG')) {
 if (!defined('WP_DEBUG_DISPLAY')) {
     define('WP_DEBUG_DISPLAY', false); // Ne pas afficher en frontend, seulement logger
 }
+*/
 
 error_log('[BOOTSTRAP] bootstrap.php loaded at ' . microtime(true));
 
