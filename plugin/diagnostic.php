@@ -2,6 +2,7 @@
 /**
  * Diagnostic rapide pour PDF Builder Pro
  * Vérifie si le bootstrap se charge correctement
+ * Version: 1.1 - Force deployment
  */
 
 // Vérifier si on est dans WordPress
