@@ -42,6 +42,14 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
       height: Number(element.height) || 100
     } as Element;
 
+    // Ajouter les valeurs par défaut pour les propriétés obligatoires
+    if (elementType === 'order_number') {
+      // La propriété 'format' est obligatoire pour order_number
+      if (!normalized.format) {
+        (normalized as any).format = 'CMD-{order_number}';
+      }
+    }
+
     return normalized;
   });
 }
