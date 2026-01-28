@@ -40,7 +40,7 @@ $is_premium = false; // TODO: Implémenter vérification licence premium
 if ($templates_count === 0 && !$is_premium) {
     \PDF_Builder\TemplateDefaults::create_default_templates_for_user(get_current_user_id());
     // Recharger le compteur après création
-    $templates_count = \PDF_Builder\Admin\PdfBuilderAdminNew::count_user_templates(get_current_user_id());
+    $templates_count = 1; // TODO: Compter les templates utilisateur après création
 }
 
 // Fonction helper pour parser les paramètres canvas
