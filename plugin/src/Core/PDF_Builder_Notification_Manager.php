@@ -53,7 +53,7 @@ class PDF_Builder_Notification_Manager {
      */
     private function init_settings() {
         $this->settings = [
-            'enabled' => pdf_builder_get_option('pdf_builder_notifications_enabled', false),
+            'enabled' => pdf_builder_get_option('pdf_builder_notifications_enabled', true),
             'position' => pdf_builder_get_option('pdf_builder_notifications_position', 'top-right'),
             'duration' => pdf_builder_get_option('pdf_builder_notifications_duration', 5000),
             'max_notifications' => pdf_builder_get_option('pdf_builder_notifications_max', 5),

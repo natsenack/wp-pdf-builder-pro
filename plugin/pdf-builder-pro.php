@@ -31,8 +31,6 @@ if (!defined('PDF_BUILDER_PREMIUM')) {
 }
 
 // VERSION ULTRA-SIMPLE - ne charger que l'essentiel
-// COMMENTE TEMPORAIREMENT POUR DIAGNOSTIC WOO
-/*
 if (function_exists('add_action')) {
     add_action('plugins_loaded', function() {
         // Charger seulement le bootstrap minimal
@@ -43,7 +41,6 @@ if (function_exists('add_action')) {
     }, 1);
     // add_action('plugins_loaded', 'pdf_builder_register_ajax_handlers', 5); // Enregistrer les handlers AJAX après le chargement - COMMENTE TEMPORAIREMENT
 }
-*/
 
 // Enregistrer les handlers AJAX immédiatement si possible
 if (function_exists('add_action') && function_exists('pdf_builder_register_ajax_handlers')) {
