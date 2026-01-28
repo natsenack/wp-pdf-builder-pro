@@ -15,35 +15,6 @@
  * Requires PHP: 7.4
  */
 
-
-// Déclarations de classes stub pour éviter les erreurs de linting
-if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
-    class PDF_Builder_Database_Settings_Table_Manager_Stub {
-        public static function migrate_license_keys_to_separate_rows() { return 0; }
-    }
-    class_alias('PDF_Builder_Database_Settings_Table_Manager_Stub', 'PDF_Builder\Database\Settings_Table_Manager');
-}
-
-if (!class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
-    class PDF_Builder_Admin_PdfBuilderAdminNew_Stub {
-        public static function count_user_templates($user_id) { return 0; }
-        public static function getInstance() { return null; }
-    }
-    class_alias('PDF_Builder_Admin_PdfBuilderAdminNew_Stub', 'PDF_Builder\Admin\PdfBuilderAdminNew');
-}
-
-if (!class_exists('PDF_Builder_Analytics_Manager')) {
-    class PDF_Builder_Analytics_Manager {
-        public static function get_instance() { return null; }
-    }
-}
-
-if (!class_exists('PDF_Builder_Update_Manager')) {
-    class PDF_Builder_Update_Manager {
-        public static function get_instance() { return null; }
-    }
-}
-
 // Définir les constantes du plugin
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
