@@ -107,7 +107,7 @@ class PdfBuilderAdminNew
         $this->core = $core;
 
         // Initialiser les managers spécialisés avec autoloader PSR-4
-        $this->settings_manager = new SettingsManager($this);
+        $this->settings_manager = new \PDF_Builder\Managers\PDF_Builder_Settings_Manager($this);
         if ($this->settings_manager) {
             error_log('[DEBUG] PDF Builder: SettingsManager instantiated successfully');
         } else {
