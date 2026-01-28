@@ -38,6 +38,10 @@ if (function_exists('add_action')) {
             $bootstrap = PDF_BUILDER_PLUGIN_DIR . 'bootstrap.php';
             if (file_exists($bootstrap)) {
                 require_once $bootstrap;
+                // Appeler immédiatement la fonction de chargement
+                if (function_exists('pdf_builder_load_bootstrap')) {
+                    pdf_builder_load_bootstrap();
+                }
             }
         }
     }, 15); // Priorité 15 - après WooCommerce mais avant la plupart des autres plugins
@@ -48,6 +52,10 @@ if (function_exists('add_action')) {
             $bootstrap = PDF_BUILDER_PLUGIN_DIR . 'bootstrap.php';
             if (file_exists($bootstrap)) {
                 require_once $bootstrap;
+                // Appeler immédiatement la fonction de chargement
+                if (function_exists('pdf_builder_load_bootstrap')) {
+                    pdf_builder_load_bootstrap();
+                }
             }
         }
     }, 15);
