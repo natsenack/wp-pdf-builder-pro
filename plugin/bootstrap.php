@@ -197,11 +197,9 @@ if (!class_exists('Dompdf\Dompdf') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'vend
 }
 
 // ============================================================================
-// ✅ FONCTIONS WRAPPER POUR LA TABLE PERSONNALISÉE DE PARAMÈTRES - TEMPORAIREMENT COMMENTE
+// ✅ FONCTIONS WRAPPER POUR LA TABLE PERSONNALISÉE DE PARAMÈTRES
 // ============================================================================
 
-// COMMENTE TEMPORAIREMENT POUR DIAGNOSTIC WOO
-/*
 /**
  * Récupérer une option depuis la table personnalisée wp_pdf_builder_settings
  * Fallback vers wp_options si la table n'existe pas
@@ -250,7 +248,6 @@ function pdf_builder_get_all_options() {
     
     return \PDF_Builder\Database\Settings_Table_Manager::get_all_options();
 }
-// ============================================================================
 // ✅ FONCTION DE CHARGEMENT D'URGENCE DES UTILITAIRES
 // ============================================================================
 
