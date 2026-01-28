@@ -933,6 +933,42 @@ function pdf_builder_load_admin_components()
 
     // Toujours enregistrer le menu de base, indépendamment des autres conditions
     add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
+
+    // Ajouter la page de diagnostic indépendamment du menu principal
+    add_action('admin_menu', function() {
+        // Vérifier si le menu principal existe déjà
+        global $menu;
+        $menu_exists = false;
+        foreach ($menu as $item) {
+            if (isset($item[2]) && $item[2] === 'pdf-builder-pro') {
+                $menu_exists = true;
+                break;
+            }
+        }
+
+        // Si le menu principal n'existe pas, on l'ajoute
+        if (!$menu_exists) {
+            add_menu_page(
+                __('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'),
+                __('PDF Builder', 'pdf-builder-pro'),
+                'manage_options',
+                'pdf-builder-pro',
+                'pdf_builder_simple_admin_page',
+                'dashicons-pdf',
+                25
+            );
+        }
+
+        // Ajouter la page de diagnostic comme sous-menu
+        add_submenu_page(
+            'pdf-builder-pro',
+            __('Diagnostic - PDF Builder Pro', 'pdf-builder-pro'),
+            __('🔍 Diagnostic', 'pdf-builder-pro'),
+            'manage_options',
+            'pdf-builder-diagnostic',
+            'pdf_builder_diagnostic_page'
+        );
+    });
 }
 
 /**
