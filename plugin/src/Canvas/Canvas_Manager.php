@@ -2,10 +2,6 @@
 
 namespace PDF_Builder\Canvas;
 
-// Déclarations conditionnelles des fonctions WordPress pour éviter les erreurs de linting
-function add_filter($tag, $function_to_add, $priority = 10, $accepted_args = 1) { return; }
-function get_current_screen() { return null; }
-function do_action($tag, ...$args) { return; }
 
 /**
  * Canvas Manager
@@ -645,6 +641,7 @@ JS;
         return $validated;
     }
 }
+
 
 
 

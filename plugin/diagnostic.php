@@ -5,10 +5,6 @@
  * Version: 1.2 - Standalone execution
  */
 
-// Déclarations conditionnelles des fonctions WordPress pour éviter les erreurs de linting
-if (!function_exists('esc_html')) {
-    function esc_html($text) { return $text; }
-}
 
 // Essayer de charger WordPress si pas déjà fait
 if (!defined('ABSPATH')) {

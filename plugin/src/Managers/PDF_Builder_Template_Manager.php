@@ -7,26 +7,6 @@ if (!defined('ABSPATH')) {
     exit('Direct access not allowed');
 }
 
-// Déclarations conditionnelles des fonctions WordPress pour éviter les erreurs de linting
-if (!function_exists('wp_unslash')) {
-    function wp_unslash($value) { return $value; }
-}
-if (!function_exists('wp_update_post')) {
-    function wp_update_post($post_data, $wp_error = false) { return false; }
-}
-if (!function_exists('wp_insert_post')) {
-    function wp_insert_post($post_data, $wp_error = false) { return false; }
-}
-if (!function_exists('update_post_meta')) {
-    function update_post_meta($post_id, $meta_key, $meta_value, $prev_value = '') { return false; }
-}
-if (!function_exists('dbDelta')) {
-    function dbDelta($queries, $execute = true) { return array(); }
-}
-if (!defined('ABSPATH')) {
-    define('ABSPATH', dirname(dirname(dirname(dirname(__FILE__)))) . '/');
-}
-
 /**
  * PDF Builder Pro - Template Manager
  * Gestion centralisée des templates

@@ -25,67 +25,6 @@ if (file_exists($autoload_path)) {
 }
 
 // ========================================================================
-// ✅ DÉCLARATIONS DE FONCTIONS WORDPRESS POUR LINTING
-// ========================================================================
-if (!function_exists('wp_create_nonce')) {
-    function wp_create_nonce($action = -1) {}
-}
-if (!function_exists('esc_js')) {
-    function esc_js($text) {}
-}
-if (!defined('DOING_AJAX')) {
-    define('DOING_AJAX', false);
-}
-if (!defined('REST_REQUEST')) {
-    define('REST_REQUEST', false);
-}
-if (!function_exists('is_ssl')) {
-    function is_ssl() {}
-}
-if (!function_exists('wp_safe_redirect')) {
-    function wp_safe_redirect($location, $status = 302, $x_redirect_by = 'WordPress') {}
-}
-if (!function_exists('register_setting')) {
-    function register_setting($option_group, $option_name, $args = array()) {}
-}
-if (!function_exists('wp_add_inline_script')) {
-    function wp_add_inline_script($handle, $data, $position = 'after') {}
-}
-if (!function_exists('wp_localize_script')) {
-    function wp_localize_script($handle, $object_name, $l10n) {}
-}
-if (!function_exists('wp_enqueue_script')) {
-    function wp_enqueue_script($handle, $src = '', $deps = array(), $ver = false, $in_footer = false) {}
-}
-if (!function_exists('wp_doing_ajax')) {
-    function wp_doing_ajax() {}
-}
-if (!function_exists('do_settings_sections')) {
-    function do_settings_sections($page) {}
-}
-if (!function_exists('submit_button')) {
-    function submit_button($text = null, $type = 'primary', $name = 'submit', $wrap = true, $other_attributes = null) {}
-}
-if (!function_exists('add_option')) {
-    function add_option($option, $value = '', $deprecated = '', $autoload = 'yes') {}
-}
-if (!defined('ARRAY_A')) {
-    define('ARRAY_A', 2);
-}
-if (!function_exists('get_post')) {
-    function get_post($post = null, $output = OBJECT, $filter = 'raw') {}
-}
-if (!function_exists('get_post_meta')) {
-    function get_post_meta($post_id, $key = '', $single = false) {}
-}
-if (!function_exists('get_theme_mod')) {
-    function get_theme_mod($name, $default = false) {}
-}
-if (!function_exists('wp_get_attachment_image_url')) {
-    function wp_get_attachment_image_url($attachment_id, $size = 'thumbnail', $icon = false) {}
-}
-
-// ========================================================================
 // ✅ INJECTION DU NONCE DANS LE HEAD - TRÈS TÔT
 // Cela s'exécute avant admin_head et garantit que le nonce est disponible
 // ========================================================================

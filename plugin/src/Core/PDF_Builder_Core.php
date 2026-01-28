@@ -2,24 +2,6 @@
 
 namespace PDF_Builder\Core;
 
-// Déclarations des fonctions WordPress globales pour éviter les erreurs de linting
-function wp_mkdir_p($dir) { return false; }
-function esc_html($text) { return $text; }
-function date_i18n($format, $timestamp = false) { return ''; }
-function wp_script_add_data($handle, $key, $value) { return; }
-function dbDelta($queries, $execute = true) { return array(); }
-function get_bloginfo($show = '') { return ''; }
-
-if (!defined('ABSPATH')) {
-    define('ABSPATH', dirname(dirname(dirname(dirname(__FILE__)))) . '/');
-}
-
-if (!class_exists('WP_Error')) {
-    class WP_Error {
-        public function __construct($code = '', $message = '', $data = '') {}
-    }
-}
-
 /**
  * PDF Builder Core
  * Classe principale du plugin PDF Builder Pro

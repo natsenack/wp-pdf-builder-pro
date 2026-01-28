@@ -15,46 +15,6 @@
  * Requires PHP: 7.4
  */
 
-// Déclarations conditionnelles des fonctions WordPress pour éviter les erreurs de linting
-if (!function_exists('plugin_dir_url')) {
-    function plugin_dir_url($file) { return ''; }
-}
-if (!function_exists('plugin_dir_path')) {
-    function plugin_dir_path($file) { return ''; }
-}
-if (!function_exists('deactivate_plugins')) {
-    function deactivate_plugins($plugins, $silent = false, $network_wide = null) { return; }
-}
-if (!function_exists('plugin_basename')) {
-    function plugin_basename($file) { return ''; }
-}
-if (!function_exists('get_bloginfo')) {
-    function get_bloginfo($show = '') { return ''; }
-}
-if (!function_exists('dbDelta')) {
-    function dbDelta($queries, $execute = true) { return array(); }
-}
-if (!function_exists('wp_mkdir_p')) {
-    function wp_mkdir_p($dir) { return false; }
-}
-if (!function_exists('wp_date')) {
-    function wp_date($format, $timestamp = null, $timezone = null) { return ''; }
-}
-if (!function_exists('wp_timezone_string')) {
-    function wp_timezone_string() { return 'UTC'; }
-}
-if (!function_exists('maybe_unserialize')) {
-    function maybe_unserialize($data) { return $data; }
-}
-if (!function_exists('sanitize_file_name')) {
-    function sanitize_file_name($filename) { return $filename; }
-}
-if (!function_exists('wp_send_json')) {
-    function wp_send_json($response, $status_code = null, $options = 0) { return; }
-}
-if (!function_exists('load_plugin_textdomain')) {
-    function load_plugin_textdomain($domain, $deprecated = false, $plugin_rel_path = false) { return; }
-}
 
 // Déclarations de classes stub pour éviter les erreurs de linting
 if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
