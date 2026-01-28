@@ -32,7 +32,7 @@ if (!defined('PDF_BUILDER_PREMIUM')) {
 // VERSION ULTRA-SIMPLE - ne charger que l'essentiel
 if (function_exists('add_action')) {
     // Charger le bootstrap au bon moment selon le contexte
-    add_action('plugins_loaded', function() {
+    add_action('init', function() {
         // Charger pour tous les contextes (admin et frontend)
         $bootstrap = PDF_BUILDER_PLUGIN_DIR . 'bootstrap.php';
         if (file_exists($bootstrap)) {
@@ -42,7 +42,7 @@ if (function_exists('add_action')) {
                 pdf_builder_load_bootstrap();
             }
         }
-    }, 15); // Priorité 15 - après WooCommerce mais avant la plupart des autres plugins
+    }, 20); // Priorité 20 - après WooCommerce
 
     add_action('plugins_loaded', 'pdf_builder_register_ajax_handlers', 25); // Enregistrer les handlers AJAX après le chargement
 }

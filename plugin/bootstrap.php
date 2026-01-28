@@ -1034,11 +1034,8 @@ function pdf_builder_load_bootstrap()
             $core->init();
         }
 
-        // Initialiser l'interface d'administration dans l'admin OU lors d'AJAX pour nos actions
-        // DÉPLACÉ DANS LE HOOK 'init' pour que $_REQUEST soit disponible
-        add_action('init', function() use ($core) {
-            // Créer l'instance admin plus tôt pour éviter les problèmes de timing
-            // La classe gérera elle-même si elle doit s'activer
+        // Initialiser l'interface d'administration immédiatement après le core
+        if (is_admin() || wp_doing_ajax()) {
             if (class_exists('PDF_Builder\\Admin\\PdfBuilderAdminNew')) {
                 try {
                     $admin = \PDF_Builder\Admin\PdfBuilderAdminNew::getInstance($core);
@@ -1052,7 +1049,7 @@ function pdf_builder_load_bootstrap()
                 // Fallback: enregistrer un menu simple si la classe principale n'est pas disponible
                 add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
             }
-        }, 1);
+        }
     } else {
         // Fallback: enregistrer un menu simple si le core n'est pas disponible
         add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
