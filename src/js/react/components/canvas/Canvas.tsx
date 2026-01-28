@@ -905,6 +905,8 @@ const drawCustomerInfo = (
   const showPhone = props.showPhone !== false;
   const showPaymentMethod = props.showPaymentMethod !== false;
   const showTransactionId = props.showTransactionId !== false;
+  // Alignement vertical
+  const verticalAlign = props.verticalAlign || "top";
 
   // Fond
   if (props.showBackground !== false) {
@@ -923,17 +925,7 @@ const drawCustomerInfo = (
   ctx.font = `${headerFontStyle} ${headerFontWeight} ${headerFontSize}px ${headerFontFamily}`;
   ctx.textAlign = "left";
 
-  let y = showHeaders ? 25 : 15;
-
-  // En-tête
-  if (showHeaders) {
-    ctx.fillStyle = normalizeColor(props.headerTextColor || "#111827");
-    ctx.fillText("Informations Client", 10, y);
-    y += 20;
-    ctx.fillStyle = normalizeColor(props.textColor || "#000000");
-  }
-
-  // Informations client fictives ou réelles selon le mode
+  // Construire le contenu et calculer la hauteur totale
   let customerData: {
     name: string;
     address: string;
@@ -944,7 +936,6 @@ const drawCustomerInfo = (
   if (state.previewMode === "command") {
     customerData = wooCommerceManager.getCustomerInfo();
   } else {
-    // Données fictives pour le mode éditeur
     customerData = {
       name: "Marie Dupont",
       address: "15 rue des Lilas, 75001 Paris",
@@ -953,45 +944,36 @@ const drawCustomerInfo = (
     };
   }
 
-  ctx.font = `${bodyFontStyle} ${bodyFontWeight} ${bodyFontSize}px ${bodyFontFamily}`;
-
+  // Construire les lignes de texte selon le layout
+  const lines: string[] = [];
+  
   if (layout === "vertical") {
     if (showFullName) {
-      ctx.fillText(customerData.name, 10, y);
-      y += 18;
+      lines.push(customerData.name);
     }
     if (showAddress) {
-      ctx.fillText(customerData.address, 10, y);
-      y += 18;
+      lines.push(customerData.address);
     }
     if (showEmail) {
-      ctx.fillText(customerData.email, 10, y);
-      y += 18;
+      lines.push(customerData.email);
     }
     if (showPhone) {
-      ctx.fillText(customerData.phone, 10, y);
-      y += 18;
+      lines.push(customerData.phone);
     }
     if (showPaymentMethod) {
-      ctx.fillText("Paiement: Carte bancaire", 10, y);
-      y += 18;
+      lines.push("Paiement: Carte bancaire");
     }
     if (showTransactionId) {
-      ctx.fillText("ID: TXN123456789", 10, y);
+      lines.push("ID: TXN123456789");
     }
   } else if (layout === "horizontal") {
-    let text = "";
-    if (showFullName) text += customerData.name;
-    if (showEmail) text += (text ? " - " : "") + customerData.email;
-    if (text) ctx.fillText(text, 10, y);
-
-    if (showPhone) {
-      ctx.fillText(
-        customerData.phone,
-        element.width - ctx.measureText(customerData.phone).width - 10,
-        y
-      );
-    }
+    let line1 = "";
+    let line2 = "";
+    if (showFullName) line1 += customerData.name;
+    if (showEmail) line1 += (line1 ? " - " : "") + customerData.email;
+    if (showPhone) line2 = customerData.phone;
+    if (line1) lines.push(line1);
+    if (line2) lines.push(line2);
   } else if (layout === "compact") {
     let compactText = "";
     if (showFullName) compactText += customerData.name;
@@ -1002,26 +984,59 @@ const drawCustomerInfo = (
       compactText += (compactText ? " • " : "") + customerData.email;
     if (showPhone)
       compactText += (compactText ? " • " : "") + customerData.phone;
-
+    
     // Wrap text if too long
     const maxWidth = element.width - 20;
     const words = compactText.split(" ");
     let line = "";
-    let compactY = y;
-
     for (let i = 0; i < words.length; i++) {
-      const testLine = line + words[i] + " ";
+      const testLine = line + (line ? " " : "") + words[i];
       const metrics = ctx.measureText(testLine);
       if (metrics.width > maxWidth && i > 0) {
-        ctx.fillText(line, 10, compactY);
+        lines.push(line);
         line = words[i] + " ";
-        compactY += 16;
       } else {
         line = testLine;
       }
     }
-    ctx.fillText(line, 10, compactY);
+    if (line.trim()) lines.push(line);
   }
+
+  // Calculer la hauteur du contenu
+  const headerHeight = showHeaders ? 25 : 0;
+  const contentHeight = lines.length * 18; // 18px par ligne
+  const totalContentHeight = headerHeight + contentHeight;
+  
+  // Calculer l'offset Y selon l'alignement vertical
+  let startY: number;
+  switch (verticalAlign) {
+    case "middle":
+      startY = Math.max(10, (element.height - totalContentHeight) / 2);
+      break;
+    case "bottom":
+      startY = Math.max(10, element.height - totalContentHeight - 10);
+      break;
+    default: // top
+      startY = 10;
+  }
+
+  let y = startY;
+
+  // En-tête
+  if (showHeaders) {
+    ctx.fillStyle = normalizeColor(props.headerTextColor || "#111827");
+    ctx.fillText("Informations Client", 10, y);
+    y += 25;
+    ctx.fillStyle = normalizeColor(props.textColor || "#000000");
+  }
+
+  ctx.font = `${bodyFontStyle} ${bodyFontWeight} ${bodyFontSize}px ${bodyFontFamily}`;
+
+  // Dessiner les lignes
+  lines.forEach((lineText) => {
+    ctx.fillText(lineText, 10, y);
+    y += 18;
+  });
 };
 
 // Constantes pour les thèmes company_info
@@ -1561,14 +1576,27 @@ const drawDocumentType = (
 
   const displayText = DOCUMENT_TYPE_LABELS[documentType as keyof typeof DOCUMENT_TYPE_LABELS] || documentType;
 
-  // Calculer la position centrée
+  // Calculer la position X selon l'alignement horizontal
   const x = props.textAlign === "center"
     ? element.width / 2
     : props.textAlign === "right"
     ? element.width - 10
     : 10;
 
-  const y = element.height / 2 + fontConfig.size / 3; // Centrage vertical
+  // Calculer la position Y selon l'alignement vertical
+  const verticalAlign = props.verticalAlign || "top";
+  let y: number;
+  
+  switch (verticalAlign) {
+    case "middle":
+      y = element.height / 2 + fontConfig.size / 3;
+      break;
+    case "bottom":
+      y = element.height - 10 - fontConfig.size / 3;
+      break;
+    default: // top
+      y = fontConfig.size + 10;
+  }
 
   ctx.fillText(displayText, x, y);
 };
