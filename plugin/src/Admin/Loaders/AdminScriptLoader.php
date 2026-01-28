@@ -210,8 +210,36 @@ class AdminScriptLoader
             // AJOUTER UN SCRIPT DE TEST TRÈS SIMPLE
             wp_add_inline_script('jquery', 'console.log("=== PDF BUILDER TEST SCRIPT LOADED ==="); console.log("Timestamp:", Date.now()); console.log("Location:", window.location.href);', 'before');
             
+            // Define variables BEFORE loading the script
+            $preview_data = [
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('pdf_builder_order_actions'),
+                'version' => PDF_BUILDER_PRO_VERSION,
+                'timestamp' => time(),
+                'strings' => [
+                    'error_loading_preview' => __('Erreur lors du chargement de l\'aperçu', 'pdf-builder-pro'),
+                    'generating_pdf' => __('Génération du PDF en cours...', 'pdf-builder-pro'),
+                ]
+            ];
+            wp_add_inline_script('jquery', 'window.pdfBuilderData = ' . wp_json_encode($preview_data) . '; window.pdfBuilderNonce = "' . wp_create_nonce('pdf_builder_order_actions') . '";', 'after');
+            
             wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-api-client.min.js', ['jquery'], $version_param, true);
             error_log('[DEBUG] PDF Builder AdminScriptLoader: ENQUEUED pdf-preview-api-client script');
+            
+            // Debug: Add script to check if variables are defined after the main script
+            wp_add_inline_script('pdf-preview-api-client', '
+                console.log("[DEBUG] PDF Builder variables check after script load:");
+                console.log("[DEBUG] window.pdfBuilderData:", typeof window.pdfBuilderData, window.pdfBuilderData);
+                console.log("[DEBUG] window.pdfBuilderNonce:", typeof window.pdfBuilderNonce, window.pdfBuilderNonce);
+            ');
+            
+            // Debug: Add script to check if variables are defined
+            wp_add_inline_script('pdf-preview-api-client', '
+                console.log("[DEBUG] PDF Builder variables check:");
+                console.log("[DEBUG] window.pdfBuilderData:", typeof window.pdfBuilderData, window.pdfBuilderData);
+                console.log("[DEBUG] window.pdfBuilderNonce:", typeof window.pdfBuilderNonce, window.pdfBuilderNonce);
+                console.log("[DEBUG] pdfBuilderData (global):", typeof pdfBuilderData, pdfBuilderData);
+            ');
             
             $preview_integration_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-preview-integration.min.js';
             error_log('[DEBUG] PDF Builder AdminScriptLoader: Checking if preview integration exists: ' . $preview_integration_js . ' - exists: ' . (file_exists($preview_integration_js) ? 'YES' : 'NO'));
@@ -235,32 +263,6 @@ class AdminScriptLoader
         // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-developer-tools: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js'); }
         // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set')); }
         // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Current hook: ' . $hook); }
-
-        // Localize pdfBuilderAjax for API Preview scripts
-        wp_localize_script('pdf-preview-api-client', 'pdfBuilderData', [
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_order_actions'),
-            'version' => PDF_BUILDER_PRO_VERSION,
-            'timestamp' => time(),
-            'strings' => [
-                'error_loading_preview' => __('Erreur lors du chargement de l\'aperçu', 'pdf-builder-pro'),
-                'generating_pdf' => __('Génération du PDF en cours...', 'pdf-builder-pro'),
-            ]
-        ]);
-
-        // Also set global pdfBuilderNonce for backward compatibility
-        wp_add_inline_script('pdf-preview-api-client', 'window.pdfBuilderNonce = "' . wp_create_nonce('pdf_builder_order_actions') . '";');
-
-        // Debug: Add script to check if variables are defined
-        wp_add_inline_script('pdf-preview-api-client', '
-            console.log("[DEBUG] PDF Builder variables check:");
-            console.log("[DEBUG] window.pdfBuilderData:", typeof window.pdfBuilderData, window.pdfBuilderData);
-            console.log("[DEBUG] window.pdfBuilderNonce:", typeof window.pdfBuilderNonce, window.pdfBuilderNonce);
-            console.log("[DEBUG] pdfBuilderData (global):", typeof pdfBuilderData, pdfBuilderData);
-        ');
-
-        // Nonce pour les templates
-        wp_add_inline_script('pdf-preview-api-client', 'var pdfBuilderTemplatesNonce = "' . wp_create_nonce('pdf_builder_templates') . '";');
 
         // Scripts pour l'éditeur React
         if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor') {
