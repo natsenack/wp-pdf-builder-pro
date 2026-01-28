@@ -6,8 +6,6 @@
  * REFACORISÉ : Architecture modulaire avec séparation des responsabilités
  */
 
-namespace PDF_Builder\Admin;
-
 // Prevent multiple inclusions
 if (defined('PDF_BUILDER_ADMIN_LOADED')) {
     return;
@@ -108,7 +106,7 @@ class PdfBuilderAdminNew
         $this->core = $core;
 
         // Initialiser les managers spécialisés avec autoloader PSR-4
-        $this->settings_manager = new \PDF_Builder\Admin\Managers\SettingsManager($this);
+        $this->settings_manager = new SettingsManager($this);
         if ($this->settings_manager) {
             error_log('[DEBUG] PDF Builder: SettingsManager instantiated successfully');
         } else {
@@ -125,7 +123,7 @@ class PdfBuilderAdminNew
 
         // Initialiser les nouveaux modules spécialisés
         $this->html_renderer = new \PDF_Builder\Admin\Renderers\HTMLRenderer($this);
-        $this->data_utils = new \PDF_Builder\Admin\Data\DataUtils($this);
+        $this->data_utils = new DataUtils($this);
         
         // Try-catch pour la création du template_processor
         try {
@@ -183,7 +181,7 @@ class PdfBuilderAdminNew
 
         // Charger le DashboardDataProvider si nécessaire
         if (!class_exists('\PDF_Builder\Admin\Providers\DashboardDataProvider')) {
-            require_once plugin_dir_path(dirname(dirname(__FILE__))) . 'plugin/src/Admin/Providers/DashboardDataProvider.php';
+            require_once dirname(dirname(dirname(__DIR__))) . '/src/Admin/Providers/DashboardDataProvider.php';
         }
 
         $this->dashboard_data_provider = new \PDF_Builder\Admin\Providers\DashboardDataProvider();
@@ -297,65 +295,65 @@ class PdfBuilderAdminNew
             'pdf_builder_pdf'
         );
 
-        add_settings_field(
+        \add_settings_field(
             'pdf_quality',
-            __('Qualité PDF', 'pdf-builder-pro'),
+            \__('Qualité PDF', 'pdf-builder-pro'),
             array($this, 'pdf_quality_field_callback'),
             'pdf_builder_pdf',
             'pdf_builder_pdf'
         );
 
-        add_settings_field(
+        \add_settings_field(
             'pdf_compression',
-            __('Compression PDF', 'pdf-builder-pro'),
+            \__('Compression PDF', 'pdf-builder-pro'),
             array($this, 'pdf_compression_field_callback'),
             'pdf_builder_pdf',
             'pdf_builder_pdf'
         );
 
         // Section Canvas & Design
-        add_settings_section(
+        \add_settings_section(
             'pdf_builder_contenu',
-            __('Canvas & Design', 'pdf-builder-pro'),
+            \__('Canvas & Design', 'pdf-builder-pro'),
             array($this, 'contenu_section_callback'),
             'pdf_builder_contenu'
         );
 
-        add_settings_field(
+        \add_settings_field(
             'canvas_default_width',
-            __('Largeur par défaut du canvas', 'pdf-builder-pro'),
+            \__('Largeur par défaut du canvas', 'pdf-builder-pro'),
             array($this, 'canvas_default_width_field_callback'),
             'pdf_builder_contenu',
             'pdf_builder_contenu'
         );
 
         // Section Templates
-        add_settings_section(
+        \add_settings_section(
             'pdf_builder_templates',
-            __('Paramètres Templates', 'pdf-builder-pro'),
+            \__('Paramètres Templates', 'pdf-builder-pro'),
             array($this, 'templates_section_callback'),
             'pdf_builder_templates'
         );
 
-        add_settings_field(
+        \add_settings_field(
             'template_cache_enabled',
-            __('Cache des templates activé', 'pdf-builder-pro'),
+            \__('Cache des templates activé', 'pdf-builder-pro'),
             array($this, 'template_cache_enabled_field_callback'),
             'pdf_builder_templates',
             'pdf_builder_templates'
         );
 
         // Section Développeur
-        add_settings_section(
+        \add_settings_section(
             'pdf_builder_developpeur',
-            __('Paramètres Développeur', 'pdf-builder-pro'),
+            \__('Paramètres Développeur', 'pdf-builder-pro'),
             array($this, 'developpeur_section_callback'),
             'pdf_builder_developpeur'
         );
 
-        add_settings_field(
+        \add_settings_field(
             'developer_debug_mode',
-            __('Mode debug', 'pdf-builder-pro'),
+            \__('Mode debug', 'pdf-builder-pro'),
             array($this, 'developer_debug_mode_field_callback'),
             'pdf_builder_developpeur',
             'pdf_builder_developpeur'
@@ -373,20 +371,20 @@ class PdfBuilderAdminNew
 
         // Champs généraux
         if (isset($input['company_name'])) {
-            $sanitized['company_name'] = sanitize_text_field($input['company_name']);
+            $sanitized['company_name'] = \sanitize_text_field($input['company_name']);
         }
 
         if (isset($input['company_address'])) {
-            $sanitized['company_address'] = sanitize_textarea_field($input['company_address']);
+            $sanitized['company_address'] = \sanitize_textarea_field($input['company_address']);
         }
 
         // Champs système
         if (isset($input['system_memory_limit'])) {
-            $sanitized['system_memory_limit'] = sanitize_text_field($input['system_memory_limit']);
+            $sanitized['system_memory_limit'] = \sanitize_text_field($input['system_memory_limit']);
         }
 
         if (isset($input['system_max_execution_time'])) {
-            $sanitized['system_max_execution_time'] = absint($input['system_max_execution_time']);
+            $sanitized['system_max_execution_time'] = \absint($input['system_max_execution_time']);
         }
 
         // Champs sécurité
@@ -406,7 +404,7 @@ class PdfBuilderAdminNew
 
         // Champs contenu/canvas
         if (isset($input['canvas_default_width'])) {
-            $width = absint($input['canvas_default_width']);
+            $width = \absint($input['canvas_default_width']);
             $sanitized['canvas_default_width'] = max(400, min(2000, $width)); // Entre 400 et 2000
         }
 
@@ -428,7 +426,7 @@ class PdfBuilderAdminNew
      */
     public function general_section_callback()
     {
-        echo '<p>' . __('Configuration générale du générateur de PDF.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . \__('Configuration générale du générateur de PDF.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -438,7 +436,7 @@ class PdfBuilderAdminNew
     {
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['company_name']) ? $settings['company_name'] : '';
-        echo '<input type="text" name="pdf_builder_settings[company_name]" value="' . esc_attr($value) . '" class="regular-text" />';
+        echo '<input type="text" name="pdf_builder_settings[company_name]" value="' . \esc_attr($value) . '" class="regular-text" />';
     }
 
     /**
@@ -448,7 +446,7 @@ class PdfBuilderAdminNew
     {
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['company_address']) ? $settings['company_address'] : '';
-        echo '<textarea name="pdf_builder_settings[company_address]" rows="3" class="large-text">' . esc_textarea($value) . '</textarea>';
+        echo '<textarea name="pdf_builder_settings[company_address]" rows="3" class="large-text">' . \esc_textarea($value) . '</textarea>';
     }
 
     /**
@@ -456,7 +454,7 @@ class PdfBuilderAdminNew
      */
     public function licence_section_callback()
     {
-        echo '<p>' . __('Configuration de la licence du plugin.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . \__('Configuration de la licence du plugin.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -464,7 +462,7 @@ class PdfBuilderAdminNew
      */
     public function systeme_section_callback()
     {
-        echo '<p>' . __('Configuration des paramètres système pour optimiser les performances.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . \__('Configuration des paramètres système pour optimiser les performances.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -472,7 +470,7 @@ class PdfBuilderAdminNew
      */
     public function securite_section_callback()
     {
-        echo '<p>' . __('Paramètres de sécurité pour protéger vos documents PDF.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . \__('Paramètres de sécurité pour protéger vos documents PDF.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -480,7 +478,7 @@ class PdfBuilderAdminNew
      */
     public function pdf_section_callback()
     {
-        echo '<p>' . __('Configuration de la génération et de la qualité des fichiers PDF.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . \__('Configuration de la génération et de la qualité des fichiers PDF.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -488,7 +486,7 @@ class PdfBuilderAdminNew
      */
     public function contenu_section_callback()
     {
-        echo '<p>' . __('Paramètres du canvas et options de design pour vos documents.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . \__('Paramètres du canvas et options de design pour vos documents.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -496,7 +494,7 @@ class PdfBuilderAdminNew
      */
     public function templates_section_callback()
     {
-        echo '<p>' . __('Configuration des templates et options de mise en cache.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . \__('Configuration des templates et options de mise en cache.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
