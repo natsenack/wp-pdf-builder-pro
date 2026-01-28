@@ -74,7 +74,7 @@ class PDF_Builder_Template_Manager
     public function templatesPage()
     {
         if (!current_user_can('manage_options')) {
-            \\wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
+            \wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
         }
 
         global $wpdb;
@@ -286,9 +286,9 @@ class PDF_Builder_Template_Manager
                     if (isset($el['type']) && $el['type'] === 'company_logo') {
                         // Si src est vide ou absent, chercher le logo WordPress
                         if (empty($el['src']) && empty($el['logoUrl'])) {
-                            $custom_logo_id = \\get_theme_mod('custom_logo');
+                            $custom_logo_id = \get_theme_mod('custom_logo');
                             if ($custom_logo_id) {
-                                $logo_url = \\wp_get_attachment_image_url($custom_logo_id, 'full');
+                                $logo_url = \wp_get_attachment_image_url($custom_logo_id, 'full');
                                 if ($logo_url) {
                                     $el['src'] = $logo_url;
                                 }
@@ -401,7 +401,7 @@ class PDF_Builder_Template_Manager
                         KEY name (name)
                     ) $charset_collate;";
                     require_once(\ABSPATH . 'wp-admin/includes/upgrade.php');
-                    $result = \\dbDelta($sql);
+                    $result = \dbDelta($sql);
                     
                 }
 
@@ -465,7 +465,7 @@ class PDF_Builder_Template_Manager
                     // Gérer comme post WordPress (nouveau template ou migration)
                     if ($template_id > 0) {
                         // Vérifier que le post existe et est du bon type
-                        $existing_post = \\get_post($template_id);
+                        $existing_post = \get_post($template_id);
                         if (!$existing_post || $existing_post->post_type !== 'pdf_template') {
                             throw new \Exception('Template non trouvé ou type invalide');
                         }
@@ -477,7 +477,7 @@ class PDF_Builder_Template_Manager
                             'post_modified' => \current_time('mysql')
                         );
 
-                        $result = \\wp_update_post($post_data, true);
+                        $result = \wp_update_post($post_data, true);
                         if (\is_wp_error($result)) {
                             throw new \Exception('Erreur de mise à jour du post: ' . $result->get_error_message());
                         }
@@ -491,14 +491,14 @@ class PDF_Builder_Template_Manager
                             'post_modified' => \current_time('mysql')
                         );
 
-                        $template_id = \\wp_insert_post($post_data, true);
+                        $template_id = \wp_insert_post($post_data, true);
                         if (\is_wp_error($template_id)) {
                             throw new \Exception('Erreur de création du post: ' . $template_id->get_error_message());
                         }
                     }
 
                     // Sauvegarder les données du template dans les métadonnées
-                    \\update_post_meta($template_id, '_pdf_template_data', $template_data);
+                    \update_post_meta($template_id, '_pdf_template_data', $template_data);
                     
                     // Log what was actually saved (only in debug mode)
                     if (self::isDebugMode()) {
@@ -530,8 +530,8 @@ class PDF_Builder_Template_Manager
                 $element_count = isset($saved_data['elements']) ? \count($saved_data['elements']) : 0;
             } else {
                 // Vérification pour les posts WordPress
-                $saved_post = \\get_post($template_id);
-                $saved_template_data = \\get_post_meta($template_id, '_pdf_template_data', true);
+                $saved_post = \get_post($template_id);
+                $saved_template_data = \get_post_meta($template_id, '_pdf_template_data', true);
 
                 if (!$saved_post || empty($saved_template_data)) {
                     \wp_send_json_error('Erreur: Template introuvable après sauvegarde');
@@ -618,9 +618,9 @@ class PDF_Builder_Template_Manager
                 if (isset($el['type']) && $el['type'] === 'company_logo') {
                     // Si src est vide ou absent, chercher le logo WordPress
                     if (empty($el['src']) && empty($el['logoUrl'])) {
-                        $custom_logo_id = \\get_theme_mod('custom_logo');
+                        $custom_logo_id = \get_theme_mod('custom_logo');
                         if ($custom_logo_id) {
-                            $logo_url = \\wp_get_attachment_image_url($custom_logo_id, 'full');
+                            $logo_url = \wp_get_attachment_image_url($custom_logo_id, 'full');
                             if ($logo_url) {
                                 $el['src'] = $logo_url;
                             }
@@ -730,7 +730,7 @@ class PDF_Builder_Template_Manager
                 }
             } else {
                 // Fallback: chercher dans wp_posts
-                $post = \\get_post($template_id);
+                $post = \get_post($template_id);
 
                 if (!$post || $post->post_type !== 'pdf_template') {
                     \wp_send_json_error('Template non trouvé');
@@ -738,7 +738,7 @@ class PDF_Builder_Template_Manager
                 }
 
                 // Récupération des métadonnées
-                $template_data_raw = \\get_post_meta($post->ID, '_pdf_template_data', true);
+                $template_data_raw = \get_post_meta($post->ID, '_pdf_template_data', true);
 
                 if (empty($template_data_raw)) {
                     \wp_send_json_error('Données du template manquantes');
