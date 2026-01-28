@@ -922,19 +922,13 @@ function pdf_builder_load_admin_components()
             try {
                 $admin = PdfBuilderAdminNew::getInstance($core);
             } catch (Exception $e) {
-                add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
+                // Ne pas enregistrer de menu de fallback ici
             }
-        } else {
-            add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
         }
-    } else {
-        add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
+        // Ne pas enregistrer de menu de fallback dans les autres cas
     }
 
-    // Toujours enregistrer le menu de base, indépendamment des autres conditions
-    add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
-
-    // Ajouter la page de diagnostic indépendamment du menu principal
+    // Enregistrer le menu de manière centralisée et unique
     add_action('admin_menu', function() {
         // Vérifier si le menu principal existe déjà
         global $menu;
@@ -969,53 +963,6 @@ function pdf_builder_load_admin_components()
             'pdf_builder_diagnostic_page'
         );
     });
-}
-
-/**
- * Fonction de fallback pour enregistrer un menu admin simple
- * Utilisée quand la classe PdfBuilderAdminNew ne peut pas être chargée
- */
-function pdf_builder_register_admin_menu_simple() {
-    // Menu principal avec icône distinctive
-    \add_menu_page(
-        __('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'),
-        __('PDF Builder', 'pdf-builder-pro'),
-        'manage_options',
-        'pdf-builder-pro',
-        'pdf_builder_simple_admin_page',
-        'dashicons-pdf',
-        25
-    );
-
-    // Page d'accueil (sous-menu principal)
-    \add_submenu_page(
-        'pdf-builder-pro',
-        __('Accueil - PDF Builder Pro', 'pdf-builder-pro'),
-        __('🏠 Accueil', 'pdf-builder-pro'),
-        'manage_options',
-        'pdf-builder-pro', // Même slug que le menu principal
-        'pdf_builder_simple_admin_page'
-    );
-
-    // Paramètres et configuration
-    \add_submenu_page(
-        'pdf-builder-pro',
-        __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'),
-        __('⚙️ Paramètres', 'pdf-builder-pro'),
-        'manage_options',
-        'pdf-builder-settings',
-        'pdf_builder_simple_settings_page'
-    );
-
-    // Page de diagnostic des permissions
-    \add_submenu_page(
-        'pdf-builder-pro',
-        __('Diagnostic - PDF Builder Pro', 'pdf-builder-pro'),
-        __('🔍 Diagnostic', 'pdf-builder-pro'),
-        'manage_options',
-        'pdf-builder-diagnostic',
-        'pdf_builder_diagnostic_page'
-    );
 }
 
 /**
@@ -1102,8 +1049,8 @@ function pdf_builder_diagnostic_page() {
 
     $classes_to_test = [
         'PDF_Builder_Ajax_Base' => __('Classe de base pour les handlers AJAX', 'pdf-builder-pro'),
+        'PDF_Builder\AJAX\PdfBuilderTemplatesAjax' => __('Handler AJAX des templates', 'pdf-builder-pro'),
         'PDF_Builder_Settings_Ajax_Handler' => __('Handler AJAX des paramètres', 'pdf-builder-pro'),
-        'PDF_Builder_Templates_Ajax' => __('Handler AJAX des templates', 'pdf-builder-pro'),
     ];
 
     foreach ($classes_to_test as $class => $description) {
