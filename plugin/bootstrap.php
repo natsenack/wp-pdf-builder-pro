@@ -697,6 +697,15 @@ function pdf_builder_load_bootstrap()
     }
     $bootstrap_loaded = true;
 
+    // CHARGEMENT FORCÉ DE LA CLASSE ADMIN PRINCIPALE - CRITIQUE
+    // Cette classe doit être disponible dans TOUS les contextes
+    if (!class_exists('PDF_Builder\\Admin\\PdfBuilderAdminNew')) {
+        $admin_file = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
+        if (file_exists($admin_file)) {
+            require_once $admin_file;
+        }
+    }
+
     // Charger le core (toujours nécessaire)
     pdf_builder_load_core();
 
@@ -719,14 +728,6 @@ function pdf_builder_load_bootstrap()
 // Fonction pour charger les composants admin
 function pdf_builder_load_admin_components()
 {
-    // Forcer le chargement de la classe d'administration
-    if (!class_exists('PDF_Builder\\Admin\\PdfBuilderAdminNew')) {
-        $admin_file = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
-        if (file_exists($admin_file)) {
-            require_once $admin_file;
-        }
-    }
-
     // Charger manuellement le Thumbnail Manager pour s'assurer qu'il est disponible
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Thumbnail_Manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Thumbnail_Manager.php';
