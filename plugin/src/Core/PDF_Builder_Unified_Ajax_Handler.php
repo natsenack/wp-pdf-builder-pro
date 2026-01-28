@@ -8,9 +8,6 @@
 // Charger les fonctions utilitaires depuis bootstrap.php
 require_once dirname(dirname(dirname(__FILE__))) . '/bootstrap.php';
 
-// Inclure les stubs WordPress pour éviter les erreurs de linting
-require_once dirname(dirname(dirname(__FILE__))) . '/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php';
-
 /**
  * Déclarations de fonctions pour Intelephense
  * Ces fonctions sont définies dans bootstrap.php mais Intelephense ne les reconnaît pas
