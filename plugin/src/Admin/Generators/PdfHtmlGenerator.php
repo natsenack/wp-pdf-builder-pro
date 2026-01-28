@@ -7,6 +7,23 @@
 
 namespace PDF_Builder\Admin\Generators;
 
+// Déclarations des fonctions WordPress pour l'IDE
+if (!function_exists('esc_html')) {
+    function esc_html($text) { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8'); }
+}
+if (!function_exists('esc_attr')) {
+    function esc_attr($text) { return htmlspecialchars($text, ENT_COMPAT, 'UTF-8'); }
+}
+if (!function_exists('get_theme_mod')) {
+    function get_theme_mod($name, $default = false) { return $default; }
+}
+if (!function_exists('wp_get_attachment_image_url')) {
+    function wp_get_attachment_image_url($attachment_id, $size = 'thumbnail') { return ''; }
+}
+if (!function_exists('nl2br')) {
+    function nl2br($string, $is_xhtml = true) { return str_replace(["\r\n", "\r", "\n"], $is_xhtml ? "<br />\n" : "<br>\n", $string); }
+}
+
 class PdfHtmlGenerator
 {
     private $admin;

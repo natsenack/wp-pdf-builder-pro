@@ -2,6 +2,61 @@
 
 namespace PDF_Builder\Managers;
 
+// Déclarations des fonctions WordPress et constantes pour l'IDE
+if (!function_exists('wp_mkdir_p')) {
+    function wp_mkdir_p($path) { return mkdir($path, 0755, true); }
+}
+if (!function_exists('wp_kses')) {
+    function wp_kses($string, $allowed_html = []) { return $string; }
+}
+if (!function_exists('wp_unslash')) {
+    function wp_unslash($value) { return $value; }
+}
+if (!function_exists('update_post_meta')) {
+    function update_post_meta($post_id, $meta_key, $meta_value, $prev_value = '') { return true; }
+}
+if (!function_exists('get_post_meta')) {
+    function get_post_meta($post_id, $key = '', $single = false) { return $single ? '' : []; }
+}
+if (!function_exists('get_post')) {
+    function get_post($post = null, $output = OBJECT, $filter = 'raw') { return null; }
+}
+if (!function_exists('esc_url_raw')) {
+    function esc_url_raw($url, $protocols = null) { return $url; }
+}
+
+if (!defined('OBJECT')) {
+    define('OBJECT', 'OBJECT');
+}
+
+// Déclarations des classes PHP natives pour l'IDE dans le namespace
+if (!class_exists('PDF_Builder\Managers\Exception')) {
+    class_alias('Exception', 'PDF_Builder\Managers\Exception');
+}
+if (!class_exists('PDF_Builder\Managers\Error')) {
+    class_alias('Error', 'PDF_Builder\Managers\Error');
+}
+if (!class_exists('PDF_Builder\Managers\Throwable')) {
+    class_alias('Throwable', 'PDF_Builder\Managers\Throwable');
+}
+if (!class_exists('PDF_Builder\Managers\WP_Error')) {
+    class_alias('WP_Error', 'PDF_Builder\Managers\WP_Error');
+}
+
+// Fonction globale WC()
+if (!function_exists('WC')) {
+    function WC() { return null; }
+}
+
+/**
+ * @global function \wp_mkdir_p
+ * @global function \wp_kses
+ * @global function \update_post_meta
+ * @global function \get_post_meta
+ * @global function \get_post
+ * @global function \esc_url_raw
+ */
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Direct access not allowed');

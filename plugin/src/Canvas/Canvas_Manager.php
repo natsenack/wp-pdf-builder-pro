@@ -2,6 +2,28 @@
 
 namespace PDF_Builder\Canvas;
 
+// Déclarations des fonctions WordPress pour l'IDE
+if (!function_exists('add_filter')) {
+    function add_filter($tag, $function_to_add, $priority = 10, $accepted_args = 1) { return true; }
+}
+if (!function_exists('is_admin')) {
+    function is_admin() { return false; }
+}
+if (!function_exists('get_current_screen')) {
+    function get_current_screen() { return null; }
+}
+if (!function_exists('do_action')) {
+    function do_action($tag, ...$args) { return null; }
+}
+
+class_exists('\PDF_Builder\Admin\PdfBuilderAdminNew') || class_alias('stdClass', '\PDF_Builder\Admin\PdfBuilderAdminNew');
+
+/**
+ * @global function \add_filter
+ * @global function \is_admin
+ * @global function \get_current_screen
+ * @global function \do_action
+ */
 
 /**
  * Canvas Manager
