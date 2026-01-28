@@ -510,16 +510,16 @@ function pdf_builder_load_core()
     }
 
     // Charger les gestionnaires centralisés
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/security-manager.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/security-manager.php';
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/security-manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/security-manager.php';
     }
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/sanitizer.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/sanitizer.php';
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/sanitizer.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/sanitizer.php';
     }
 
     // Charger les mappings centralisés
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/mappings.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/mappings.php';
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/mappings.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/mappings.php';
     }
 
     // Charger la classe d'administration depuis src/
