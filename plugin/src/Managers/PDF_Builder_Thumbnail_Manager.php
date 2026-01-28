@@ -363,7 +363,7 @@ class PDF_Builder_Thumbnail_Manager
      */
     private function logError($message)
     {
-        PDF_Builder_Logger::get_instance()->debug_log('THUMBNAIL_ERROR: ' . $message);
+        \PDF_Builder_Logger::get_instance()->debug_log('THUMBNAIL_ERROR: ' . $message);
     }
 
     /**
@@ -371,7 +371,7 @@ class PDF_Builder_Thumbnail_Manager
      */
     private function logInfo($message)
     {
-        PDF_Builder_Logger::get_instance()->debug_log('THUMBNAIL_INFO: ' . $message);
+        \PDF_Builder_Logger::get_instance()->debug_log('THUMBNAIL_INFO: ' . $message);
     }
 }
 

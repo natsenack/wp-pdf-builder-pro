@@ -1860,7 +1860,7 @@ class PDF_Builder_WooCommerce_Integration
         }
         
         // Use WooCommerce countries if available
-        if (function_exists('WC') && WC()->countries && WC()->countries->countries) {
+        if (function_exists('WC') && WC() && WC()->countries && is_object(WC()->countries) && property_exists(WC()->countries, 'countries') && is_array(WC()->countries->countries)) {
             $countries = WC()->countries->countries;
             return isset($countries[$country_code]) ? $countries[$country_code] : $country_code;
         }
