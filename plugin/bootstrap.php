@@ -952,16 +952,6 @@ function pdf_builder_load_admin_components()
                 25
             );
         }
-
-        // Ajouter la page de diagnostic comme sous-menu
-        add_submenu_page(
-            'pdf-builder-pro',
-            __('Diagnostic - PDF Builder Pro', 'pdf-builder-pro'),
-            __('🔍 Diagnostic', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-diagnostic',
-            'pdf_builder_diagnostic_page'
-        );
     });
 }
 
@@ -998,147 +988,6 @@ function pdf_builder_simple_settings_page() {
         </form>
     </div>
     <?php
-}
-
-/**
- * Page de diagnostic des permissions
- */
-function pdf_builder_diagnostic_page() {
-    if (!current_user_can('manage_options')) {
-        wp_die(__('Vous n\'avez pas les permissions suffisantes pour accéder à cette page.', 'pdf-builder-pro'));
-    }
-
-    echo '<div class="wrap">';
-    echo '<h1>' . __('Diagnostic du système de permissions - PDF Builder Pro', 'pdf-builder-pro') . '</h1>';
-
-    echo '<div class="notice notice-info">';
-    echo '<p>' . __('Cette page diagnostique le système de permissions et de sécurité du plugin.', 'pdf-builder-pro') . '</p>';
-    echo '</div>';
-
-    echo '<h2>' . __('1. Test des fonctions WordPress', 'pdf-builder-pro') . '</h2>';
-    echo '<ul>';
-
-    $functions_to_test = [
-        'wp_verify_nonce' => __('Vérification des nonces', 'pdf-builder-pro'),
-        'current_user_can' => __('Vérification des permissions utilisateur', 'pdf-builder-pro'),
-        'wp_send_json_error' => __('Envoi de réponses JSON d\'erreur', 'pdf-builder-pro'),
-        'wp_send_json_success' => __('Envoi de réponses JSON de succès', 'pdf-builder-pro'),
-        'wp_roles' => __('Gestion des rôles WordPress', 'pdf-builder-pro'),
-        'wp_create_nonce' => __('Création de nonces', 'pdf-builder-pro'),
-        'sanitize_text_field' => __('Nettoyage des champs texte', 'pdf-builder-pro'),
-    ];
-
-    foreach ($functions_to_test as $function => $description) {
-        if (function_exists($function)) {
-            echo '<li style="color: green;">✓ ' . $description . ' (' . $function . ')</li>';
-        } else {
-            echo '<li style="color: red;">✗ ' . $description . ' (' . $function . ') - ' . __('Fonction non disponible', 'pdf-builder-pro') . '</li>';
-        }
-    }
-
-    if (defined('ARRAY_A')) {
-        echo '<li style="color: green;">✓ ' . __('Constante ARRAY_A définie', 'pdf-builder-pro') . '</li>';
-    } else {
-        echo '<li style="color: red;">✗ ' . __('Constante ARRAY_A non définie', 'pdf-builder-pro') . '</li>';
-    }
-
-    echo '</ul>';
-
-    echo '<h2>' . __('2. Test des classes de gestion AJAX', 'pdf-builder-pro') . '</h2>';
-    echo '<ul>';
-
-    $classes_to_test = [
-        'PDF_Builder_Ajax_Base' => __('Classe de base pour les handlers AJAX', 'pdf-builder-pro'),
-        'PDF_Builder\AJAX\PdfBuilderTemplatesAjax' => __('Handler AJAX des templates', 'pdf-builder-pro'),
-        'PDF_Builder_Settings_Ajax_Handler' => __('Handler AJAX des paramètres', 'pdf-builder-pro'),
-    ];
-
-    foreach ($classes_to_test as $class => $description) {
-        if (class_exists($class)) {
-            echo '<li style="color: green;">✓ ' . $description . ' (' . $class . ')</li>';
-        } else {
-            echo '<li style="color: red;">✗ ' . $description . ' (' . $class . ') - ' . __('Classe non disponible', 'pdf-builder-pro') . '</li>';
-        }
-    }
-
-    echo '</ul>';
-
-    echo '<h2>' . __('3. Test des permissions utilisateur', 'pdf-builder-pro') . '</h2>';
-    echo '<ul>';
-
-    $current_user = wp_get_current_user();
-    $user_info = $current_user ? $current_user->user_login . ' (ID: ' . $current_user->ID . ')' : 'Non connecté';
-    echo '<li>' . __('Utilisateur actuel:', 'pdf-builder-pro') . ' ' . $user_info . '</li>';
-
-    $capabilities_to_test = [
-        'manage_options' => __('Gérer les options', 'pdf-builder-pro'),
-        'edit_posts' => __('Éditer les articles', 'pdf-builder-pro'),
-        'upload_files' => __('Télécharger des fichiers', 'pdf-builder-pro'),
-    ];
-
-    foreach ($capabilities_to_test as $cap => $description) {
-        if (current_user_can($cap)) {
-            echo '<li style="color: green;">✓ ' . $description . ' (' . $cap . ')</li>';
-        } else {
-            echo '<li style="color: orange;">⚠ ' . $description . ' (' . $cap . ') - ' . __('Permission non accordée', 'pdf-builder-pro') . '</li>';
-        }
-    }
-
-    echo '</ul>';
-
-    echo '<h2>' . __('4. Test des nonces', 'pdf-builder-pro') . '</h2>';
-    echo '<ul>';
-
-    $test_nonce = wp_create_nonce('pdf_builder_test');
-    echo '<li>' . __('Nonce de test créé:', 'pdf-builder-pro') . ' ' . substr($test_nonce, 0, 10) . '...</li>';
-
-    if (wp_verify_nonce($test_nonce, 'pdf_builder_test')) {
-        echo '<li style="color: green;">✓ ' . __('Vérification du nonce réussie', 'pdf-builder-pro') . '</li>';
-    } else {
-        echo '<li style="color: red;">✗ ' . __('Échec de la vérification du nonce', 'pdf-builder-pro') . '</li>';
-    }
-
-    echo '</ul>';
-
-    echo '<h2>' . __('5. Test des namespaces', 'pdf-builder-pro') . '</h2>';
-    echo '<ul>';
-
-    $files_to_check = [
-        'src/AJAX/Ajax_Handlers.php' => __('Namespace global', 'pdf-builder-pro'),
-        'src/AJAX/PDF_Builder_Templates_Ajax.php' => 'PDF_Builder\\AJAX',
-        'src/Managers/PDF_Builder_PDF_Generator.php' => 'PDF_Builder\\Managers',
-        'src/Managers/PDF_Builder_WooCommerce_Integration.php' => 'PDF_Builder\\Managers'
-    ];
-
-    foreach ($files_to_check as $file => $expected_namespace) {
-        $file_path = PDF_BUILDER_PLUGIN_DIR . $file;
-        if (file_exists($file_path)) {
-            $content = file_get_contents($file_path);
-            $namespace_found = false;
-
-            if ($expected_namespace === __('Namespace global', 'pdf-builder-pro')) {
-                $namespace_found = strpos($content, 'namespace ') === false;
-            } else {
-                $namespace_found = strpos($content, 'namespace ' . $expected_namespace) !== false;
-            }
-
-            if ($namespace_found) {
-                echo '<li style="color: green;">✓ ' . $file . ' : ' . $expected_namespace . '</li>';
-            } else {
-                echo '<li style="color: red;">✗ ' . $file . ' : ' . __('Namespace incorrect', 'pdf-builder-pro') . '</li>';
-            }
-        } else {
-            echo '<li style="color: red;">✗ ' . $file . ' : ' . __('Fichier introuvable', 'pdf-builder-pro') . '</li>';
-        }
-    }
-
-    echo '</ul>';
-
-    echo '<div class="notice notice-success">';
-    echo '<p><strong>' . __('Diagnostic terminé.', 'pdf-builder-pro') . '</strong> ' . __('Si vous voyez des éléments en rouge, il peut y avoir des problèmes de configuration.', 'pdf-builder-pro') . '</p>';
-    echo '</div>';
-
-    echo '</div>';
 }
 
 // Fonction pour charger les composants frontend
@@ -1708,7 +1557,6 @@ if (file_exists($migration_ajax_path)) {
 // ============================================================================
 
 // ============================================================================
-// ✅ CHARGER LE SCRIPT DE DIAGNOSTIC REST API
 // FIN DU BOOTSTRAP
 // ============================================================================
 
