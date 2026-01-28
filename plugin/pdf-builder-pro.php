@@ -1127,7 +1127,8 @@ function pdf_builder_init()
     // AJAX handlers supprimés - maintenant gérés dans pdf_builder_register_ajax_handlers() sur plugins_loaded
 
     // Vérifier les mises à jour de schéma de base de données
-    add_action('admin_init', 'pdf_builder_check_database_updates');
+    // TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
+    // add_action('admin_init', 'pdf_builder_check_database_updates');
 
     // Les nouveaux systèmes avancés sont maintenant initialisés dans le hook plugins_loaded
     // ci-dessus, donc nous n'avons plus besoin de charger individuellement le moniteur de performance
@@ -2269,7 +2270,10 @@ function pdf_builder_check_advanced_systems_status() {
 /**
  * Hook d'administration pour vérifier l'état des systèmes
  */
-add_action('admin_init', function() {
+// TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
+// add_action('admin_init', function() {
+// TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
+/*
     // Vérifier l'état des systèmes une fois par jour
     $last_check = pdf_builder_get_option('pdf_builder_systems_check_timestamp', 0);
     $current_time = current_time('timestamp');
@@ -2290,6 +2294,7 @@ add_action('admin_init', function() {
         }
     }
 });
+*/
 
 
 /**
