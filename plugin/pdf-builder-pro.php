@@ -1092,8 +1092,7 @@ function pdf_builder_init()
         \PDF_Builder\Core\PdfBuilderAutoloader::init(plugin_dir_path(__FILE__));
     }
 
-    // TEST 1: Commenter tout sauf la vérification WordPress
-    /*
+    // TEST 4: Réactiver le système de nonce unifié
     // Charger le système de nonce unifié
     require_once plugin_dir_path(__FILE__) . 'src/Core/PDF_Builder_Nonce_Manager.php';
     require_once plugin_dir_path(__FILE__) . 'src/Core/PDF_Builder_Unified_Ajax_Handler.php';
@@ -1102,6 +1101,8 @@ function pdf_builder_init()
     $nonce_manager = PDF_Builder_Nonce_Manager::get_instance();
     $unified_handler = PDF_Builder_Unified_Ajax_Handler::get_instance();
 
+    // TEST 1: Commenter tout sauf la vérification WordPress
+    /*
     // Vérifier et créer les tables manquantes
     pdf_builder_check_tables();
 
