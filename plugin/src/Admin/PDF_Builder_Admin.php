@@ -109,10 +109,18 @@ class PdfBuilderAdminNew
 
         // Initialiser les managers spécialisés avec autoloader PSR-4
         $this->settings_manager = new \PDF_Builder\Admin\Managers\SettingsManager($this);
+        if ($this->settings_manager) {
+            error_log('[DEBUG] PDF Builder: SettingsManager instantiated successfully');
+        } else {
+            error_log('[ERROR] PDF Builder: SettingsManager instantiation failed');
+        }
 
         // Initialiser le template manager
         if (class_exists('PDF_Builder\Managers\PDF_Builder_Template_Manager')) {
             $this->template_manager = new \PDF_Builder\Managers\PDF_Builder_Template_Manager($this);
+            error_log('[DEBUG] PDF Builder: Template Manager instantiated successfully');
+        } else {
+            error_log('[ERROR] PDF Builder: PDF_Builder_Template_Manager class not found');
         }
 
         // Initialiser les nouveaux modules spécialisés
@@ -159,7 +167,11 @@ class PdfBuilderAdminNew
 
         // Initialiser les nouveaux services et loaders
         $this->script_loader = new \PDF_Builder\Admin\Loaders\AdminScriptLoader($this);
-        error_log('[DEBUG] PDF Builder Admin: AdminScriptLoader instantiated successfully');
+        if ($this->script_loader) {
+            error_log('[DEBUG] PDF Builder Admin: AdminScriptLoader instantiated successfully');
+        } else {
+            error_log('[ERROR] PDF Builder Admin: AdminScriptLoader instantiation failed');
+        }
         $this->style_builder = new \PDF_Builder\Admin\Builders\StyleBuilder();
         $this->table_renderer = new \PDF_Builder\Admin\Renderers\TableRenderer();
         $this->react_transformer = new \PDF_Builder\Admin\Transformers\ReactDataTransformer();
