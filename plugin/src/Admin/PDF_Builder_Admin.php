@@ -1004,12 +1004,13 @@ class PdfBuilderAdminNew
      */
     public function addAdminMenu()
     {
-        // Éviter l'ajout multiple du menu (sauf en mode diagnostic)
-        if (self::$menu_added && !isset($_GET['force_menu_reset'])) {
-            error_log('[DEBUG] PDF Builder: Menu already added, skipping. Use ?force_menu_reset to force reset.');
-            return;
-        }
-        self::$menu_added = true;
+        // Permettre l'ajout du menu à chaque fois pour éviter les conflits
+        // Ancienne logique commentée :
+        // if (self::$menu_added && !isset($_GET['force_menu_reset'])) {
+        //     error_log('[DEBUG] PDF Builder: Menu already added, skipping. Use ?force_menu_reset to force reset.');
+        //     return;
+        // }
+        // self::$menu_added = true;
 
         error_log('[DEBUG] PDF Builder: Adding admin menu...');
 
