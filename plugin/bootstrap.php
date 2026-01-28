@@ -185,18 +185,16 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
 }
 
 // ============================================================================
-// ✅ CHARGEMENT CENTRALISÉ DE L'AUTOLOADER COMPOSER - TEMPORAIREMENT COMMENTE
+// ✅ CHARGEMENT CENTRALISÉ DE L'AUTOLOADER COMPOSER
 // ============================================================================
 
 /**
  * Chargement unique et centralisé de l'autoloader Composer
  * Évite les chargements redondants dans différents fichiers
  */
-/*
 if (!class_exists('Dompdf\Dompdf') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php')) {
     require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
 }
-*/
 
 // ============================================================================
 // ✅ FONCTIONS WRAPPER POUR LA TABLE PERSONNALISÉE DE PARAMÈTRES - TEMPORAIREMENT COMMENTE
