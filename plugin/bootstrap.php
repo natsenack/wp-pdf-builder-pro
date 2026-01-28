@@ -13,6 +13,16 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
 // Le débogage est déjà configuré dans wp-config.php
 
 // ========================================================================
+// ✅ CHARGEMENT DE L'AUTOLOADER COMPOSER
+// ========================================================================
+$autoload_path = PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+if (file_exists($autoload_path)) {
+    require_once $autoload_path;
+} else {
+    error_log('[BOOTSTRAP] Composer autoloader not found at: ' . $autoload_path);
+}
+
+// ========================================================================
 // ✅ INJECTION DU NONCE DANS LE HEAD - TRÈS TÔT
 // Cela s'exécute avant admin_head et garantit que le nonce est disponible
 // ========================================================================
@@ -868,20 +878,28 @@ function pdf_builder_load_bootstrap()
     }
     $bootstrap_loaded = true;
 
-    // CHARGER L'AUTOLOADER POUR LES NOUVELLES CLASSES (PDF_Builder) - DISABLED
-    // if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php')) {
-    //     require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
-    // }
-
-    // Charger la configuration si pas déjà faite
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'config/config.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'config/config.php';
-    }
-
-    // Charger le core maintenant que l'autoloader est prêt
+    // Charger le core (toujours nécessaire)
     pdf_builder_load_core();
+
+    // Charger les nouvelles classes (toujours nécessaire)
     pdf_builder_load_new_classes();
 
+    // Charger les composants selon le contexte
+    if (is_admin() || wp_doing_ajax()) {
+        pdf_builder_load_admin_components();
+    }
+
+    if (!is_admin()) {
+        pdf_builder_load_frontend_components();
+    }
+
+    // Marquer comme chargé globalement
+    define('PDF_BUILDER_BOOTSTRAP_LOADED', true);
+}
+
+// Fonction pour charger les composants admin
+function pdf_builder_load_admin_components()
+{
     // Charger manuellement le Thumbnail Manager pour s'assurer qu'il est disponible
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Thumbnail_Manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Thumbnail_Manager.php';
@@ -913,14 +931,11 @@ function pdf_builder_load_bootstrap()
     }
 
     // CHARGER ET INITIALISER LE GESTIONNAIRE DE SAUVEGARDE/RESTAURATION
-    // Nécessaire pour l'onglet système même si la sauvegarde automatique n'est pas activée
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Backup_Restore_Manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Backup_Restore_Manager.php';
         // Initialiser l'instance
         \PDF_Builder\Managers\PDF_Builder_Backup_Restore_Manager::getInstance();
     }
-
-    // INITIALISER LE GESTIONNAIRE DE TUTORIELS - SUPPRIMÉ
 
     // ENREGISTRER LES HANDLERS AJAX POUR LE CANVAS
     if (class_exists('PDF_Builder\\Admin\\Canvas_AJAX_Handler')) {
@@ -972,20 +987,15 @@ function pdf_builder_load_bootstrap()
     }
 
     // INITIALISER LE GESTIONNAIRE D'ONBOARDING
-    // Retarder complètement le chargement et l'initialisation au hook 'init'
     add_action('init', function() {
-        // Les utilitaires sont déjà chargés ci-dessus dans le même hook 'init'
         if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
-            // Fallback: charger manuellement si la classe n'est pas trouvée
             $onboarding_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php';
             if (file_exists($onboarding_path)) {
                 require_once $onboarding_path;
             }
         }
 
-        // Utiliser la classe alias qui garantit la disponibilité
         if (class_exists('PDF_Builder_Onboarding_Manager_Alias')) {
-            // Instancier explicitement pour s'assurer que les hooks AJAX sont enregistrés
             PDF_Builder_Onboarding_Manager_Alias::get_instance();
         } elseif (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
             \PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager::get_instance();
@@ -993,11 +1003,8 @@ function pdf_builder_load_bootstrap()
     }, 5);
 
     // INITIALISER LE GESTIONNAIRE RGPD
-    // Retarder complètement le chargement et l'initialisation au hook 'init'
     add_action('init', function() {
-        // Les utilitaires sont déjà chargés ci-dessus dans le même hook 'init'
         if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_GDPR_Manager')) {
-            // Fallback: charger manuellement si la classe n'est pas trouvée
             $gdpr_path = PDF_BUILDER_PLUGIN_DIR . 'src/Utilities/PDF_Builder_GDPR_Manager.php';
             if (file_exists($gdpr_path)) {
                 require_once $gdpr_path;
@@ -1008,86 +1015,42 @@ function pdf_builder_load_bootstrap()
         }
     }, 5);
 
-    // CHARGER LES HOOKS AJAX ESSENTIELS TOUJOURS, MÊME EN MODE FALLBACK
+    // CHARGER LES HOOKS AJAX ESSENTIELS
     pdf_builder_register_essential_ajax_hooks();
 
-    // INSTANCIER L'API PREVIEW POUR LES ROUTES REST (Étape 1.4)
+    // INSTANCIER L'API PREVIEW POUR LES ROUTES REST
     add_action('init', function() {
         if (class_exists('PDF_Builder\\Api\\PreviewImageAPI')) {
             new \PDF_Builder\Api\PreviewImageAPI();
         }
     });
 
-    // Vérification que les classes essentielles sont chargées
+    // Initialiser l'interface d'administration
     if (class_exists('PDF_Builder\\Core\\PdfBuilderCore')) {
         $core = \PDF_Builder\Core\PdfBuilderCore::getInstance();
         if (method_exists($core, 'init')) {
             $core->init();
         }
 
-        // Initialiser l'interface d'administration immédiatement après le core
-        if (is_admin() || wp_doing_ajax()) {
-            if (class_exists('PDF_Builder\\Admin\\PdfBuilderAdminNew')) {
-                try {
-                    $admin = \PDF_Builder\Admin\PdfBuilderAdminNew::getInstance($core);
-                } catch (Exception $e) {
-                    // Fallback en cas d'erreur
-                    add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
-                }
-            } elseif (wp_doing_ajax()) {
-                // Ne rien faire pour les appels AJAX non-PDF
-            } else {
-                // Fallback: enregistrer un menu simple si la classe principale n'est pas disponible
+        if (class_exists('PDF_Builder\\Admin\\PdfBuilderAdminNew')) {
+            try {
+                $admin = \PDF_Builder\Admin\PdfBuilderAdminNew::getInstance($core);
+            } catch (Exception $e) {
                 add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
             }
+        } else {
+            add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
         }
     } else {
-        // Fallback: enregistrer un menu simple si le core n'est pas disponible
         add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
     }
-
-    // Marquer comme chargé globalement
-    define('PDF_BUILDER_BOOTSTRAP_LOADED', true);
 }
 
-// Fonction simple pour enregistrer le menu admin - DISABLED: Conflit avec PDF_Builder_Admin.php
-function pdf_builder_register_admin_menu_simple()
+// Fonction pour charger les composants frontend
+function pdf_builder_load_frontend_components()
 {
-    // DISABLED: Garder seulement le système principal PDF_Builder_Admin.php
-    // add_menu_page(
-    //     'PDF Builder Pro',
-    //     'PDF Builder',
-    //     'read',
-    //     'pdf-builder-pro',
-    //     'pdf_builder_admin_page_simple',
-    //     'dashicons-pdf',
-    //     30
-    // );
-    // add_submenu_page(
-    //     'pdf-builder-pro',
-    //     __('Templates', 'pdf-builder-pro'),
-    //     __('Templates', 'pdf-builder-pro'),
-    //     'read',
-    //     'pdf-builder-templates',
-    //     'pdf_builder_templates_page_simple'
-    // );
-}
-
-// Callbacks simples
-function pdf_builder_admin_page_simple()
-{
-    if (!is_user_logged_in()) {
-        wp_die(__('Vous devez être connecté.', 'pdf-builder-pro'));
-    }
-    echo '<div class="wrap"><h1>PDF Builder Pro</h1><p>Page principale en cours de développement.</p></div>';
-}
-
-function pdf_builder_templates_page_simple()
-{
-    if (!is_user_logged_in()) {
-        wp_die(__('Vous devez être connecté.', 'pdf-builder-pro'));
-    }
-    echo '<div class="wrap"><h1>Templates</h1><p>Page templates en cours de développement.</p></div>';
+    // Pour l'instant, pas de composants spécifiques au frontend
+    // Ajouter ici les chargements spécifiques au frontend si nécessaire
 }
 
 // Fonction pour enregistrer les hooks AJAX essentiels
@@ -1106,48 +1069,6 @@ function pdf_builder_register_essential_ajax_hooks()
         $template_manager = new \PDF_Builder\Managers\PDF_Builder_Template_Manager();
     }
 
-    // Enregistrer les hooks AJAX essentiels - DISABLED: Conflit avec AjaxHandler.php
-    // Garder seulement le système principal AjaxHandler.php
-    /*
-    // add_action('wp_ajax_pdf_builder_save_template', function() use ($template_manager) {
-    //     $this->debug_log('Bootstrap save handler called\');
-    //     if ($template_manager && method_exists($template_manager, 'ajaxSaveTemplateV3')) {
-    //         $template_manager->ajaxSaveTemplateV3();
-    //     } else {
-    //         $this->debug_log('Template manager not available\');
-    //         // Fallback handler
-    //         pdf_builder_fallback_ajax_save_template();
-    //     }
-    // });
-
-    // add_action('wp_ajax_pdf_builder_load_template', function() use ($template_manager) {
-    //     if ($template_manager && method_exists($template_manager, 'ajaxLoadTemplate')) {
-    //         $template_manager->ajaxLoadTemplate();
-    //     } else {
-    //         // Fallback handler
-    //         pdf_builder_fallback_ajax_load_template();
-    //     }
-    // });
-
-    // Action AJAX appelée par React pour charger un template - DISABLED: Conflit avec AjaxHandler.php
-    // add_action('wp_ajax_pdf_builder_get_template', function() use ($template_manager) {
-    //     if ($template_manager && method_exists($template_manager, 'ajaxLoadTemplate')) {
-    //         $template_manager->ajaxLoadTemplate();
-    //     } else {
-    //         // Fallback handler
-    //         pdf_builder_fallback_ajax_load_template();
-    //     }
-    // });
-
-    // add_action('wp_ajax_pdf_builder_auto_save_template', function() use ($template_manager) {
-    //     if ($template_manager && method_exists($template_manager, 'ajax_auto_save_template')) {
-    //         $template_manager->ajax_auto_save_template();
-    //     } else {
-    //         // Fallback handler
-    //         pdf_builder_fallback_ajax_auto_save_template();
-    //     }
-    // });
-    */
 }
 
 // Fonction de chargement différé (maintenant vide car les hooks sont enregistrés au bootstrap)
@@ -1155,99 +1076,6 @@ function pdf_builder_load_core_when_needed()
 {
     // Les hooks essentiels sont déjà enregistrés dans pdf_builder_load_bootstrap()
 }
-
-// Handlers AJAX de fallback - DISABLED: Plus utilisés après désactivation des actions AJAX
-/*
-function pdf_builder_fallback_ajax_save_template()
-{
-    // Vérifications de base
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-
-    // Récupérer les données
-    $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
-    $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
-
-    if (empty($template_data) || !$template_id) {
-        wp_send_json_error('Données manquantes');
-        return;
-    }
-
-    // Décoder le JSON pour vérifier les données
-    $decoded_data = json_decode($template_data, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        wp_send_json_error('Données JSON invalides');
-        return;
-    }
-
-    // Sauvegarder dans la base de données
-    global $wpdb;
-    $table = $wpdb->prefix . 'pdf_builder_templates';
-
-    $result = $wpdb->update(
-        $table,
-        ['template_data' => $template_data, 'updated_at' => current_time('mysql')],
-        ['id' => $template_id],
-        ['%s', '%s'],
-        ['%d']
-    );
-
-    if ($result !== false) {
-        wp_send_json_success(['message' => 'Template sauvegardé avec succès']);
-    } else {
-        wp_send_json_error('Erreur lors de la sauvegarde');
-    }
-}
-
-function pdf_builder_fallback_ajax_load_template()
-{
-    // Vérifications de base
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permissions insuffisantes');
-        return;
-    }
-
-    $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
-
-    if (!$template_id) {
-        wp_send_json_error('ID de template manquant');
-        return;
-    }
-
-    // Charger depuis la base de données
-    global $wpdb;
-    $table = $wpdb->prefix . 'pdf_builder_templates';
-
-    $template = $wpdb->get_row(
-        $wpdb->prepare("SELECT * FROM $table WHERE id = %d", $template_id),
-        ARRAY_A
-    );
-
-    if ($template) {
-        $template_data = json_decode($template['template_data'], true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            wp_send_json_error('Erreur de décodage JSON');
-            return;
-        }
-
-        wp_send_json_success([
-            'template' => $template_data,
-            'id' => $template['id'],
-            'name' => $template['name']
-        ]);
-    } else {
-        wp_send_json_error('Template non trouvé');
-    }
-}
-
-function pdf_builder_fallback_ajax_auto_save_template()
-{
-    // Même logique que save_template mais pour l'auto-save
-    pdf_builder_fallback_ajax_save_template();
-}
-*/
 
 // Chargement différé du core
 function pdf_builder_load_core_on_demand()

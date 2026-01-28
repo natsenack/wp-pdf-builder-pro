@@ -29,22 +29,20 @@ if (!defined('PDF_BUILDER_PREMIUM')) {
     define('PDF_BUILDER_PREMIUM', false);
 }
 
+/**
+ * Fonction principale d'initialisation du plugin
+ */
+function pdf_builder_init_plugin() {
+    $bootstrap = PDF_BUILDER_PLUGIN_DIR . 'bootstrap.php';
+    if (file_exists($bootstrap)) {
+        require_once $bootstrap;
+    }
+}
+
 // VERSION ULTRA-SIMPLE - ne charger que l'essentiel
 if (function_exists('add_action')) {
-    // Charger le bootstrap au bon moment selon le contexte
-    add_action('init', function() {
-        // Charger pour tous les contextes (admin et frontend)
-        $bootstrap = PDF_BUILDER_PLUGIN_DIR . 'bootstrap.php';
-        if (file_exists($bootstrap)) {
-            require_once $bootstrap;
-            // Appeler immédiatement la fonction de chargement
-            if (function_exists('pdf_builder_load_bootstrap')) {
-                pdf_builder_load_bootstrap();
-            }
-        }
-    }, 20); // Priorité 20 - après WooCommerce
-
-    add_action('plugins_loaded', 'pdf_builder_register_ajax_handlers', 25); // Enregistrer les handlers AJAX après le chargement
+    // Charger le bootstrap de manière unifiée
+    add_action('init', 'pdf_builder_init_plugin', 20);
 }
 
 if (function_exists('add_action') && function_exists('pdf_builder_register_ajax_handlers')) {
@@ -2312,6 +2310,3 @@ function pdf_builder_view_logs_handler() {
         wp_send_json_error('Erreur lors de la récupération des logs: ' . $e->getMessage());
     }
 }
-
-
-

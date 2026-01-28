@@ -107,57 +107,8 @@ class PdfBuilderAdminNew
     {
         $this->core = $core;
 
-        // Charger manuellement les classes nécessaires si l'autoloader est désactivé
-        if (!class_exists('PDF_Builder\Admin\Managers\SettingsManager')) {
-            $settings_manager_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Managers/SettingsManager.php';
-            if (file_exists($settings_manager_file)) {
-                require_once $settings_manager_file;
-            }
-        }
-
-        if (!class_exists('PDF_Builder\Admin\Handlers\AjaxHandler')) {
-            $ajax_handler_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Handlers/AjaxHandler.php';
-            if (file_exists($ajax_handler_file)) {
-                require_once $ajax_handler_file;
-            }
-        }
-
-        if (!class_exists('PDF_Builder\Admin\Renderers\HTMLRenderer')) {
-            $html_renderer_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Renderers/HTMLRenderer.php';
-            if (file_exists($html_renderer_file)) {
-                require_once $html_renderer_file;
-            }
-        }
-
-        if (!class_exists('PDF_Builder\Admin\Processors\TemplateProcessor')) {
-            $template_processor_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Processors/TemplateProcessor.php';
-            error_log('[DEBUG] PDF Builder: Looking for TemplateProcessor at: ' . $template_processor_file);
-            if (file_exists($template_processor_file)) {
-                error_log('[DEBUG] PDF Builder: TemplateProcessor file exists, requiring it');
-                require_once $template_processor_file;
-                error_log('[DEBUG] PDF Builder: TemplateProcessor file loaded, class exists: ' . (class_exists('PDF_Builder\Admin\Processors\TemplateProcessor') ? 'YES' : 'NO'));
-            } else {
-                error_log('[DEBUG] PDF Builder: TemplateProcessor file does not exist');
-            }
-        }
-
-        // Charger manuellement PDFGenerator et Utils si nécessaire
-        if (!class_exists('PDF_Builder\Admin\Generators\PDFGenerator')) {
-            $pdf_generator_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Generators/PDFGenerator.php';
-            if (file_exists($pdf_generator_file)) {
-                require_once $pdf_generator_file;
-            }
-        }
-
-        if (!class_exists('PDF_Builder\Admin\Utils\Utils')) {
-            $utils_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Utils/Utils.php';
-            if (file_exists($utils_file)) {
-                require_once $utils_file;
-            }
-        }
-
-        // Initialiser les managers spécialisés
-        $this->settings_manager = new SettingsManager($this);
+        // Initialiser les managers spécialisés avec autoloader PSR-4
+        $this->settings_manager = new \PDF_Builder\Admin\Managers\SettingsManager($this);
 
         // Initialiser le template manager
         if (class_exists('PDF_Builder\Managers\PDF_Builder_Template_Manager')) {
@@ -166,16 +117,7 @@ class PdfBuilderAdminNew
 
         // Initialiser les nouveaux modules spécialisés
         $this->html_renderer = new \PDF_Builder\Admin\Renderers\HTMLRenderer($this);
-
-        // Charger manuellement la classe DataUtils si nécessaire
-        if (!class_exists('PDF_Builder\Admin\Data\DataUtils')) {
-            $data_utils_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Data/DataUtils.php';
-            if (file_exists($data_utils_file)) {
-                require_once $data_utils_file;
-            }
-        }
-
-        $this->data_utils = new DataUtils($this);
+        $this->data_utils = new \PDF_Builder\Admin\Data\DataUtils($this);
         
         // Try-catch pour la création du template_processor
         try {
@@ -187,10 +129,10 @@ class PdfBuilderAdminNew
         }
 
         // Initialiser AjaxHandler APRÈS template_processor
-        $this->ajax_handler = new AjaxHandler($this);
+        $this->ajax_handler = new \PDF_Builder\Admin\Handlers\AjaxHandler($this);
         
         $this->pdf_generator = new \PDF_Builder\Admin\Generators\PDFGenerator($this);
-        $this->utils = new Utils($this);
+        $this->utils = new \PDF_Builder\Admin\Utils\Utils($this);
 
         // Initialiser l'intégration WooCommerce si disponible
         if (did_action('plugins_loaded') && defined('WC_VERSION') && class_exists('PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration')) {
@@ -235,10 +177,6 @@ class PdfBuilderAdminNew
         $this->dashboard_data_provider = new \PDF_Builder\Admin\Providers\DashboardDataProvider();
 
         // Initialiser le AdminPageRenderer
-        if (!class_exists('\PDF_Builder\Admin\Renderers\AdminPageRenderer')) {
-            require_once plugin_dir_path(dirname(dirname(__FILE__))) . 'src/Admin/Renderers/AdminPageRenderer.php';
-        }
-
         $this->admin_page_renderer = new \PDF_Builder\Admin\Renderers\AdminPageRenderer($this);
 
         $this->initHooks();
