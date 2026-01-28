@@ -29,10 +29,13 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
     const element = el as Record<string, unknown>;
 
     // Créer une copie COMPLÈTE (spread shallow)
+    // Convertir les tirets en underscores pour les types d'éléments (migration des anciennes données)
+    const elementType = (element.type as string || 'unknown').replace(/-/g, '_');
+    
     const normalized: Element = {
       ...element,
       id: element.id as string || `element-${idx}`,
-      type: element.type as string || 'unknown',
+      type: elementType,
       x: Number(element.x) || 0,
       y: Number(element.y) || 0,
       width: Number(element.width) || 100,
