@@ -23,7 +23,7 @@ class WooCommerceRenderer
     /**
      * Types d'éléments supportés par ce renderer
      */
-    const SUPPORTED_TYPES = ['woocommerce-order-date', 'woocommerce-invoice-number'];
+    const SUPPORTED_TYPES = ['woocommerce_order_date', 'woocommerce_invoice_number'];
 
     /**
      * Styles CSS par défaut pour les éléments WooCommerce

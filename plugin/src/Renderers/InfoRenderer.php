@@ -168,7 +168,7 @@ class InfoRenderer
 
         $html .= '</div>';
 // Génération des styles CSS (sans cache - génération directe)
-        $css = $this->generateInfoStyles($properties, 'customer-info');
+        $css = $this->generateInfoStyles($properties, 'customer_info');
 
         return [
             'html' => $html,

@@ -99,75 +99,63 @@ export const ELEMENT_PROPERTY_RESTRICTIONS = {
                                                                                     'progress_bar': 'special',
 
                                                                                     // Mise en page
-                                                                                    'layout-header': 'layout',
-                                                                                    'layout-footer': 'layout',
-                                                                                    'layout-sidebar': 'layout',
-                                                                                    'layout-section': 'layout',
-                                                                                    'layout-container': 'layout',
-                                                                                    'layout-section-divider': 'layout',
-                                                                                    'layout-spacer': 'layout',
-                                                                                    'layout-two-column': 'layout',
-                                                                                    'layout-three-column': 'layout',
+                                                                                    'layout_header': 'layout',
+                                                                                    'layout_footer': 'layout',
+                                                                                    'layout_sidebar': 'layout',
+                                                                                    'layout_section': 'layout',
+                                                                                    'layout_container': 'layout',
+                                                                                    'layout_section_divider': 'layout',
+                                                                                    'layout_spacer': 'layout',
+                                                                                    'layout_two_column': 'layout',
+                                                                                    'layout_three_column': 'layout',
 
                                                                                     // Texte
                                                                                     'text': 'text',
                                                                                     'dynamic_text': 'text',
-                                                                                    'conditional-text': 'text',
+                                                                                    'conditional_text': 'text',
                                                                                     'counter': 'text',
-                                                                                    'date-dynamic': 'text',
+                                                                                    'date_dynamic': 'text',
                                                                                     'currency': 'text',
                                                                                     'formula': 'text',
 
                                                                                     // Formes
                                                                                     'rectangle': 'shape',
                                                                                     'line': 'shape',
-                                                                                    'shape-rectangle': 'shape',
-                                                                                    'shape-circle': 'shape',
-                                                                                    'shape-line': 'shape',
-                                                                                    'shape-arrow': 'shape',
-                                                                                    'shape-triangle': 'shape',
-                                                                                    'shape-star': 'shape',
+                                                                                    'shape_rectangle': 'shape',
+                                                                                    'shape_circle': 'shape',
+                                                                                    'shape_line': 'shape',
+                                                                                    'shape_arrow': 'shape',
+                                                                                    'shape_triangle': 'shape',
+                                                                                    'shape_star': 'shape',
                                                                                     'divider': 'shape',
 
                                                                                     // Médias
                                                                                     'image': 'media',
-                                                                                    'image-upload': 'media',
+                                                                                    'image_upload': 'media',
                                                                                     'logo': 'media',
                                                                                     'barcode': 'media',
                                                                                     'qrcode': 'media',
-                                                                                    'qrcode-dynamic': 'media',
+                                                                                    'qrcode_dynamic': 'media',
                                                                                     'icon': 'media',
 
                                                                                     // Dynamiques
-                                                                                    'table-dynamic': 'dynamic',
-                                                                                    'gradient-box': 'dynamic',
-                                                                                    'shadow-box': 'dynamic',
-                                                                                    'rounded-box': 'dynamic',
-                                                                                    'border-box': 'dynamic',
-                                                                                    'background-pattern': 'dynamic',
+                                                                                    'table_dynamic': 'dynamic',
+                                                                                    'gradient_box': 'dynamic',
+                                                                                    'shadow_box': 'dynamic',
+                                                                                    'rounded_box': 'dynamic',
+                                                                                    'border_box': 'dynamic',
+                                                                                    'background_pattern': 'dynamic',
                                                                                     'watermark': 'dynamic',
 
                                                                                     // Factures (mélange de catégories)
-                                                                                    'invoice-header': 'layout',
-                                                                                    'invoice-address-block': 'layout',
-                                                                                    'invoice-info-block': 'layout',
-                                                                                    'invoice-products-table': 'special',
-                                                                                    'invoice-totals-block': 'layout',
-                                                                                    'invoice-payment-terms': 'layout',
-                                                                                    'invoice-legal-footer': 'layout',
-                                                                                    'invoice-signature-block': 'layout'
-                                                                            };
-
-                                                                              // Fonction pour vérifier si une propriété est autorisée pour un type d'élément
-                                                                              export const isPropertyAllowed = (elementType, propertyName) => {
-                                                                                    const category = ELEMENT_TYPE_MAPPING[elementType] || 'text'; // défaut texte
-                                                                                    const restrictions = ELEMENT_PROPERTY_RESTRICTIONS[category];
-
-                                                                                    if (!restrictions || !restrictions[propertyName]) {
-                                                                                        return true; // propriété autorisée par défaut
-                                                                                    }
-
-                                                                                    return !restrictions[propertyName].disabled;
+                                                                                    'invoice_header': 'layout',
+                                                                                    'invoice_address_block': 'layout',
+                                                                                    'invoice_info_block': 'layout',
+                                                                                    'invoice_products_table': 'special',
+                                                                                    'invoice_totals_block': 'layout',
+                                                                                    'invoice_payment_terms': 'layout',
+                                                                                    'invoice_legal_footer': 'layout',
+                                                                                    'invoice_signature_block': 'layout'
                                                                             };
 
                                                                               // Fonction pour obtenir la valeur par défaut d'une propriété

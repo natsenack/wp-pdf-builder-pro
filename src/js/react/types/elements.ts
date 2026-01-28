@@ -110,7 +110,7 @@ export interface OrderNumberElement extends BaseElement {
 }
 
 export interface WoocommerceOrderDateElement extends BaseElement {
-  type: 'woocommerce-order-date';
+  type: 'woocommerce_order_date';
   dateFormat?: string;
   showTime?: boolean;
   fontFamily?: string;
@@ -127,7 +127,7 @@ export interface WoocommerceOrderDateElement extends BaseElement {
 }
 
 export interface WoocommerceInvoiceNumberElement extends BaseElement {
-  type: 'woocommerce-invoice-number';
+  type: 'woocommerce_invoice_number';
   prefix?: string;
   suffix?: string;
   fontFamily?: string;
@@ -756,7 +756,7 @@ export interface CustomerInfoElement extends BaseElement {
 
 // Interface spécifique pour les éléments DocumentType
 export interface DocumentTypeElement extends BaseElement {
-  type: 'document-type';
+  type: 'document_type';
   documentType?: string;
   verticalAlign?: 'top' | 'middle' | 'bottom';
 }
