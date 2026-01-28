@@ -33,7 +33,7 @@ class PDF_Builder_Settings_Manager
     private function initHooks()
     {
         // Hooks pour les paramètres
-        add_action('admin_init', [$this, 'register_settings']);
+        add_action('admin_init', [$this, 'registerSettings']);
     }
 
     /**
@@ -46,7 +46,7 @@ class PDF_Builder_Settings_Manager
         }
 
         if (isset($_POST['save_settings']) && wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
-            $this->save_settings();
+            $this->saveSettings();
             echo '<div class="notice notice-success"><p>' . __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro') . '</p></div>';
         }
 
