@@ -11,8 +11,6 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
 }
 
 // Activer le débogage pour capture les erreurs PHP critiques
-// TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
-/*
 if (!defined('WP_DEBUG')) {
     define('WP_DEBUG', true);
 }
@@ -22,7 +20,6 @@ if (!defined('WP_DEBUG_LOG')) {
 if (!defined('WP_DEBUG_DISPLAY')) {
     define('WP_DEBUG_DISPLAY', false); // Ne pas afficher en frontend, seulement logger
 }
-*/
 
 error_log('[BOOTSTRAP] bootstrap.php loaded at ' . microtime(true));
 
@@ -429,38 +426,35 @@ if (function_exists('add_action')) {
     });
 
     // Force HTTPS if enabled in settings (simple redirect to https if not SSL)
-    // TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
-    /*
-        add_action('template_redirect', function() {
-            // Skip CLI, AJAX, REST requests and cron
-            if (defined('WP_CLI') && WP_CLI) return;
-            if (defined('DOING_AJAX') && DOING_AJAX) return;
-            if (defined('REST_REQUEST') && REST_REQUEST) return;
+    add_action('template_redirect', function() {
+        // Skip CLI, AJAX, REST requests and cron
+        if (defined('WP_CLI') && WP_CLI) return;
+        if (defined('DOING_AJAX') && DOING_AJAX) return;
+        if (defined('REST_REQUEST') && REST_REQUEST) return;
 
-            $force = pdf_builder_get_option('pdf_builder_force_https', '0');
-            if ($force === '1' || $force === 1) {
-                // Consider common reverse proxy headers to detect SSL
-                $is_forwarded_ssl = (
-                    (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ||
-                    (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on') ||
-                    (!empty($_SERVER['HTTP_CF_VISITOR']) && strpos($_SERVER['HTTP_CF_VISITOR'], 'https') !== false)
-                );
-                if (!is_ssl() && !$is_forwarded_ssl) {
-                    if (defined('WP_DEBUG') && WP_DEBUG) {
-                        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder HTTPS] Redirecting to HTTPS. host=' . ($_SERVER['HTTP_HOST'] ?? '') . ', uri=' . ($_SERVER['REQUEST_URI'] ?? '')); }
-                    }
-                    $host = $_SERVER['HTTP_HOST'] ?? '';
-                    $uri = $_SERVER['REQUEST_URI'] ?? '';
-                    if (!empty($host)) {
-                        $redirect = 'https://' . $host . $uri;
-                        // Preserver host and redirect safely
-                        wp_safe_redirect($redirect, 301);
-                        exit;
-                    }
+        $force = pdf_builder_get_option('pdf_builder_force_https', '0');
+        if ($force === '1' || $force === 1) {
+            // Consider common reverse proxy headers to detect SSL
+            $is_forwarded_ssl = (
+                (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ||
+                (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on') ||
+                (!empty($_SERVER['HTTP_CF_VISITOR']) && strpos($_SERVER['HTTP_CF_VISITOR'], 'https') !== false)
+            );
+            if (!is_ssl() && !$is_forwarded_ssl) {
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder HTTPS] Redirecting to HTTPS. host=' . ($_SERVER['HTTP_HOST'] ?? '') . ', uri=' . ($_SERVER['REQUEST_URI'] ?? '')); }
+                }
+                $host = $_SERVER['HTTP_HOST'] ?? '';
+                $uri = $_SERVER['REQUEST_URI'] ?? '';
+                if (!empty($host)) {
+                    $redirect = 'https://' . $host . $uri;
+                    // Preserver host and redirect safely
+                    wp_safe_redirect($redirect, 301);
+                    exit;
                 }
             }
-        }, 1);
-    */
+        }
+    }, 1);
     // Also enforce HTTPS for the administration pages if configured
     add_action('admin_init', function() {
         // Skip CLI, AJAX and REST calls

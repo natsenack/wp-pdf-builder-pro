@@ -2269,10 +2269,7 @@ function pdf_builder_check_advanced_systems_status() {
 /**
  * Hook d'administration pour vérifier l'état des systèmes
  */
-// TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
-// add_action('admin_init', function() {
-// TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
-/*
+add_action('admin_init', function() {
     // Vérifier l'état des systèmes une fois par jour
     $last_check = pdf_builder_get_option('pdf_builder_systems_check_timestamp', 0);
     $current_time = current_time('timestamp');
@@ -2293,7 +2290,6 @@ function pdf_builder_check_advanced_systems_status() {
         }
     }
 });
-*/
 
 
 /**
