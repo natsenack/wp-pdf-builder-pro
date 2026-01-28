@@ -91,7 +91,9 @@ class Canvas_Manager
         $defaults = $this->getDefaultSettings();
 
         // Vérifier si l'utilisateur est premium
-        $is_premium = class_exists('\PDF_Builder\Admin\PdfBuilderAdminNew') && \PDF_Builder\Admin\PdfBuilderAdminNew::is_premium_user();
+        $is_premium = class_exists('\PDF_Builder\Admin\PdfBuilderAdminNew') &&
+                     method_exists('\PDF_Builder\Admin\PdfBuilderAdminNew', 'is_premium_user') &&
+                     \PDF_Builder\Admin\PdfBuilderAdminNew::is_premium_user();
 
         $this->settings = [
             'default_canvas_format' => $settings['pdf_builder_canvas_format'] ?? $defaults['default_canvas_format'],
@@ -249,7 +251,7 @@ class Canvas_Manager
     private function registerHooks()
     {
         // Filtre pour appliquer les paramètres canvas à React
-        \add_filter('pdf_builder_react_settings', [$this, 'apply_canvas_settings_to_react'], 10, 1);
+        add_filter('pdf_builder_react_settings', [$this, 'apply_canvas_settings_to_react'], 10, 1);
 // Action pour initialiser les paramètres canvas côté client
         \add_action('admin_enqueue_scripts', [$this, 'enqueueCanvasSettingsScript'], 15);
     }
@@ -275,11 +277,11 @@ class Canvas_Manager
      */
     public function enqueueCanvasSettingsScript()
     {
-        if (!\is_admin()) {
+        if (!is_admin()) {
             return;
         }
 
-        $current_screen = \get_current_screen();
+        $current_screen = get_current_screen();
         if (!$current_screen || $current_screen->base !== 'pdf-builder-pro_page_pdf-builder-settings') {
             return;
         }
@@ -565,7 +567,7 @@ JS;
         pdf_builder_update_option('pdf_builder_canvas_settings', $this->settings);
 
         // La sauvegarde est considérée réussie tant qu'aucune exception n'est levée
-        \do_action('pdfBuilderCanvasSettingsUpdated', $this->settings);
+        do_action('pdfBuilderCanvasSettingsUpdated', $this->settings);
         return true;
     }
 

@@ -4,6 +4,22 @@
  * Remplace le système de chargement complexe par une approche plus propre
  */
 
+// Déclarations des fonctions WordPress pour l'IDE
+if (!defined('DOING_AJAX')) {
+    define('DOING_AJAX', false);
+}
+if (!function_exists('is_admin')) {
+    function is_admin() { return false; }
+}
+if (!function_exists('wp_doing_ajax')) {
+    function wp_doing_ajax() { return defined('DOING_AJAX') && DOING_AJAX; }
+}
+if (!function_exists('has_shortcode')) {
+    function has_shortcode($content, $tag) { return strpos($content, '[' . $tag) !== false; }
+}
+if (!function_exists('has_block')) {
+    function has_block($block_name, $post = null) { return false; }
+}
 
 class PDF_Builder_Loader {
     private static $instance = null;

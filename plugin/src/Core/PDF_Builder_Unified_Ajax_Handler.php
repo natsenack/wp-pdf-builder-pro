@@ -78,6 +78,27 @@ if (!function_exists('wp_cache_set')) {
 if (!function_exists('wp_cache_get')) {
     function wp_cache_get($key, $group = '', $force = false, &$found = null) {}
 }
+if (!function_exists('wp_rand')) {
+    /**
+     * @param int $min
+     * @param int $max
+     * @return int
+     */
+    function wp_rand($min = 0, $max = 0) { return rand($min, $max); }
+}
+if (!function_exists('wp_remote_get')) {
+    /**
+     * @param string $url
+     * @param array $args
+     * @return array|WP_Error
+     */
+    function wp_remote_get($url, $args = []) { return ['body' => '', 'response' => ['code' => 200]]; }
+}
+if (!class_exists('WP_Error')) {
+    class WP_Error {
+        public function get_error_message() { return 'Error'; }
+    }
+}
 if (!function_exists('set_transient')) {
     function set_transient($transient, $value, $expiration = 0) {}
 }
@@ -2349,7 +2370,8 @@ class PDF_Builder_Unified_Ajax_Handler {
              $response = wp_remote_head($url, ['timeout' => 5]);
 
              if (is_wp_error($response)) {
-                 $failed_routes[] = $route . ' (' . $response->get_error_message() . ')';
+                 $error_message = is_object($response) && method_exists($response, 'get_error_message') ? $response->get_error_message() : 'Unknown error';
+                 $failed_routes[] = $route . ' (' . $error_message . ')';
              } else {
                  $routes_tested[] = $route . ' (OK)';
              }

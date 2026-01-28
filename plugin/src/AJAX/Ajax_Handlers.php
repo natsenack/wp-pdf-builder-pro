@@ -44,7 +44,7 @@ function pdf_builder_save_allowed_roles($value) {
     // Filtrer et valider les rôles
     $valid_roles = array();
     $wp_roles = wp_roles();
-    $available_roles = array_keys($wp_roles->roles);
+    $available_roles = $wp_roles ? array_keys($wp_roles->roles) : array();
 
     foreach ($roles as $role) {
         if (in_array($role, $available_roles)) {
