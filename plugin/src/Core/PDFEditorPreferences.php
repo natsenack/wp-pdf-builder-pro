@@ -47,7 +47,6 @@ class PDFEditorPreferences {
         add_action('wp_ajax_pdf_editor_save_preferences', array($this, 'ajax_save_preferences'));
         add_action('wp_ajax_pdf_editor_get_preferences', array($this, 'ajax_get_preferences'));
         // Désactiver les scripts wp-preferences par défaut sur les pages admin
-        add_action('wp_enqueue_scripts', array($this, 'dequeue_wp_preferences'), 9999);
         add_action('admin_enqueue_scripts', array($this, 'dequeue_wp_preferences'), 9999);
         // Charger AVANT les scripts wp-preferences par défaut
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'), 1);

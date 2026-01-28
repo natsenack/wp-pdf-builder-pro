@@ -171,12 +171,24 @@ const setupRenderContext = (
   ctx: CanvasRenderingContext2D,
   fontConfig: ReturnType<typeof createFontConfig>,
   colorConfig: ReturnType<typeof createColorConfig>,
-  textAlign: string = "left"
+  textAlign: string = "left",
+  verticalAlign: string = "top"
 ) => {
   ctx.fillStyle = colorConfig.text;
   ctx.font = `${fontConfig.style} ${fontConfig.weight} ${fontConfig.size}px ${fontConfig.family}`;
   ctx.textAlign = textAlign as CanvasTextAlign;
-  ctx.textBaseline = "top";
+  
+  // Définir le textBaseline selon l'alignement vertical
+  switch (verticalAlign) {
+    case "middle":
+      ctx.textBaseline = "middle";
+      break;
+    case "bottom":
+      ctx.textBaseline = "bottom";
+      break;
+    default: // top
+      ctx.textBaseline = "top";
+  }
 };
 
 // Fonction helper pour configurer les couleurs des shapes
@@ -201,6 +213,32 @@ const calculateTextAlignX = (element: Element, align: string = "left") => {
       return element.width;
     default:
       return 0;
+  }
+};
+
+// Fonction helper pour calculer la position Y selon l'alignement vertical
+const calculateTextY = (element: Element, verticalAlign: string = "top", fontSize: number = 12, padding: number = 0) => {
+  switch (verticalAlign) {
+    case "middle":
+      return element.height / 2;
+    case "bottom":
+      return element.height - padding;
+    default: // top
+      return padding || fontSize;
+  }
+};
+
+// Fonction helper pour calculer Y avec padding
+const calculateTextYWithPadding = (element: Element, verticalAlign: string = "top", paddingConfig: ReturnType<typeof getPadding>) => {
+  const centerY = element.height / 2;
+  
+  switch (verticalAlign) {
+    case "middle":
+      return centerY;
+    case "bottom":
+      return element.height - paddingConfig.bottom;
+    default: // top
+      return paddingConfig.top || 10;
   }
 };
 const drawRectangle = (ctx: CanvasRenderingContext2D, element: Element) => {
@@ -240,11 +278,12 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
   const fontConfig = createFontConfig(props, 16);
   const colorConfig = createColorConfig(props);
 
-  setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign);
+  setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign, props.verticalAlign);
 
   const x = calculateTextAlignX(element, props.textAlign);
+  const y = calculateTextY(element, props.verticalAlign, fontConfig.size, 0);
 
-  ctx.fillText(props.text || "Text", x, fontConfig.size);
+  ctx.fillText(props.text || "Text", x, y);
 };
 
 const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {
@@ -1310,7 +1349,8 @@ const drawOrderNumber = (
     orderDate = wooCommerceManager.getOrderDate() || "27/10/2024";
   }
 
-  let y = 20;
+  // Calculer la position Y initiale selon l'alignement vertical
+  let y = calculateTextY(element, props.verticalAlign, fontSize, 10);
 
   // Calculer la largeur totale du contenu pour l'alignement général
   let totalContentWidth = 0;
@@ -1349,6 +1389,8 @@ const drawOrderNumber = (
       // Libellé au-dessus, numéro en-dessous - utiliser l'alignement général du contenu
       ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
       ctx.textAlign = contentAlign as CanvasTextAlign;
+      // Appliquer textBaseline selon verticalAlign
+      ctx.textBaseline = props.verticalAlign === "middle" ? "middle" : props.verticalAlign === "bottom" ? "bottom" : "top";
       const labelX =
         contentAlign === "left"
           ? 10 + contentOffsetX
@@ -1370,6 +1412,7 @@ const drawOrderNumber = (
       // Numéro au-dessus, libellé en-dessous - utiliser l'alignement général du contenu
       ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
       ctx.textAlign = contentAlign as CanvasTextAlign;
+      ctx.textBaseline = props.verticalAlign === "middle" ? "middle" : props.verticalAlign === "bottom" ? "bottom" : "top";
       const numberX =
         contentAlign === "left"
           ? 10 + contentOffsetX
@@ -1391,6 +1434,7 @@ const drawOrderNumber = (
       // Libellé à gauche, numéro à droite - avec espacement optimal et alignement général
       ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
       ctx.textAlign = "left" as CanvasTextAlign;
+      ctx.textBaseline = props.verticalAlign === "middle" ? "middle" : props.verticalAlign === "bottom" ? "bottom" : "top";
       const labelX = 10 + contentOffsetX;
       ctx.fillText(labelText, labelX, y);
 
@@ -1405,6 +1449,7 @@ const drawOrderNumber = (
       // Numéro à gauche, libellé à droite - avec espacement optimal et alignement général
       ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
       ctx.textAlign = "left" as CanvasTextAlign;
+      ctx.textBaseline = props.verticalAlign === "middle" ? "middle" : props.verticalAlign === "bottom" ? "bottom" : "top";
       const numberX = 10 + contentOffsetX;
       ctx.fillText(orderNumber, numberX, y);
 
@@ -1420,6 +1465,7 @@ const drawOrderNumber = (
     // Pas de libellé, juste le numéro avec alignement général du contenu
     ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
     ctx.textAlign = contentAlign as CanvasTextAlign;
+    ctx.textBaseline = props.verticalAlign === "middle" ? "middle" : props.verticalAlign === "bottom" ? "bottom" : "top";
     // Pour le cas sans libellé, utiliser directement calculateContentX sans contentOffsetX
     // car contentOffsetX est calculé pour centrer le contenu total, mais ici on n'a que le numéro
     if (contentAlign === "left") {
@@ -1436,6 +1482,7 @@ const drawOrderNumber = (
   if (showDate) {
     ctx.font = `${dateFontStyle} ${dateFontWeight} ${dateFontSize}px ${dateFontFamily}`;
     ctx.textAlign = contentAlign as CanvasTextAlign;
+    ctx.textBaseline = "top"; // Garder top pour la date
     // Pour la date, utiliser directement calculateContentX sans contentOffsetX
     // car contentOffsetX est calculé pour centrer le contenu total
     if (contentAlign === "left") {
@@ -1476,9 +1523,10 @@ const drawWoocommerceOrderDate = (
   const displayDate = formatOrderDate(orderDate, props.dateFormat, props.showTime);
 
   // Configurer le contexte et afficher
-  setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign);
+  setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign, props.verticalAlign);
   const x = calculateTextX(element, props.textAlign, padding);
-  ctx.fillText(displayDate, x, padding.top + 10);
+  const y = calculateTextYWithPadding(element, props.verticalAlign, padding);
+  ctx.fillText(displayDate, x, y);
 };
 
 // Fonction helper pour formater les dates de commande
@@ -1536,9 +1584,10 @@ const drawWoocommerceInvoiceNumber = (
   const displayText = `${props.prefix || ""}${invoiceNumber}${props.suffix || ""}`;
 
   // Configurer le contexte et afficher
-  setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign);
+  setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign, props.verticalAlign);
   const x = calculateTextX(element, props.textAlign, padding);
-  ctx.fillText(displayText, x, padding.top + 10);
+  const y = calculateTextYWithPadding(element, props.verticalAlign, padding);
+  ctx.fillText(displayText, x, y);
 };
 
 const drawDocumentType = (
@@ -1559,7 +1608,7 @@ const drawDocumentType = (
   }
 
   // Configurer le contexte
-  setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign);
+  setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign, props.verticalAlign);
 
   // Déterminer le type de document
   const documentType = props.documentType || "FACTURE";
@@ -1584,19 +1633,7 @@ const drawDocumentType = (
     : 10;
 
   // Calculer la position Y selon l'alignement vertical
-  const verticalAlign = props.verticalAlign || "top";
-  let y: number;
-  
-  switch (verticalAlign) {
-    case "middle":
-      y = element.height / 2 + fontConfig.size / 3;
-      break;
-    case "bottom":
-      y = element.height - 10 - fontConfig.size / 3;
-      break;
-    default: // top
-      y = fontConfig.size + 10;
-  }
+  const y = calculateTextY(element, props.verticalAlign, fontConfig.size, 5);
 
   ctx.fillText(displayText, x, y);
 };
