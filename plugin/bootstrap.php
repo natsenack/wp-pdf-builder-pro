@@ -21,8 +21,6 @@ if (!defined('WP_DEBUG_DISPLAY')) {
     define('WP_DEBUG_DISPLAY', false); // Ne pas afficher en frontend, seulement logger
 }
 
-error_log('[BOOTSTRAP] bootstrap.php loaded at ' . microtime(true));
-
 // ========================================================================
 // ✅ INJECTION DU NONCE DANS LE HEAD - TRÈS TÔT
 // Cela s'exécute avant admin_head et garantit que le nonce est disponible
@@ -66,87 +64,9 @@ function pdf_builder_inject_nonce() {
     console.log('[BOOTSTRAP] nonce =', window.pdfBuilderNonce);
     console.log('[BOOTSTRAP] ajaxUrl =', window.pdfBuilderData.ajaxUrl);
     
-    // TEST DIRECT
-    window.testPDFPreview = function() {
-        console.warn('🔴 TEST PREVIEW CALLED');
-        
-        // Vérification des données
-        console.log('[TEST] window.pdfBuilderData =', window.pdfBuilderData);
-        console.log('[TEST] window.pdfBuilderNonce =', window.pdfBuilderNonce);
-        
-        // Utiliser le nonce de bootstrap (frais) et l'ajaxUrl du pdfBuilderData (qui peut être créé par React)
-        const nonce = window.pdfBuilderNonce;  // Nonce frais de bootstrap
-        const ajaxurl = window.pdfBuilderData ? window.pdfBuilderData.ajaxUrl : undefined;  // NOTE: camelCase!
-        const templateId = window.pdfBuilderData ? window.pdfBuilderData.templateId : null;
-        
-        console.log('[TEST] nonce (from bootstrap) =', nonce);
-        console.log('[TEST] ajaxurl (from pdfBuilderData) =', ajaxurl);
-        console.log('[TEST] templateId (from pdfBuilderData) =', templateId);
-        
-        if (!ajaxurl) {
-            console.error('[TEST] ERROR: ajaxurl not found in window.pdfBuilderData!');
-            console.error('[TEST] Full pdfBuilderData:', window.pdfBuilderData);
-            return;
-        }
-        
-        const formData = new FormData();
-        formData.append('action', 'pdf_builder_generate_preview');
-        formData.append('nonce', nonce);
-        
-        // Si on a un template_id, l'envoyer au lieu de template_data
-        if (templateId && templateId > 0) {
-            console.log('[TEST] ✅ Template ID trouvé:', templateId);
-            console.log('[TEST] Récupération du template depuis la BD...');
-            formData.append('template_id', templateId);
-        } else {
-            // Sinon envoyer des données template valides
-            const templateData = {
-                elements: [],
-                styles: {},
-                settings: {
-                    pageSize: 'A4',
-                    orientation: 'portrait'
-                }
-            };
-            console.log('[TEST] ❌ Template ID vide - Sending template_data:', templateData);
-            formData.append('template_data', JSON.stringify(templateData));
-        }
-        
-        formData.append('format', 'pdf');  // Focus PDF only for now
-        formData.append('quality', '150');
-        
-        console.log('[TEST] Fetching POST to:', ajaxurl, 'with nonce:', nonce);
-        
-        fetch(ajaxurl, {
-            method: 'POST',
-            body: formData
-        })
-        .then(r => {
-            console.log('[TEST] Response status:', r.status);
-            if (!r.ok) {
-                return r.text().then(text => {
-                    console.error('[TEST] Server error (HTML):', text.substring(0, 500));
-                    throw new Error('Server error: ' + text.substring(0, 200));
-                });
-            }
-            return r.json();
-        })
-        .then(d => {
-            if (d.success) {
-                console.log('[TEST] ✅ SUCCESS - Preview data:', d.data);
-                if (d.data && d.data.image_url) {
-                    console.log('[TEST] Image URL récupérée:', d.data.image_url.substring(0, 100) + '...');
-                }
-            } else {
-                console.warn('[TEST] ⚠️ Server returned error:', d.data);
-            }
-        })
-        .catch(e => console.error('[TEST] ❌ FETCH ERROR:', e));
-    };
-    
-    console.log('🟢 testPDFPreview registered. Call: window.testPDFPreview()');
 })();
 </script>
+
 SCRIPT;
     
     // Remplacer les placeholders
@@ -157,7 +77,6 @@ SCRIPT;
     echo $script;
 }
 
-// Ajouter le hook admin_head avec priorité très haute
 add_action('admin_head', 'pdf_builder_inject_nonce', 1);
 
 // Vérifier si on est sur une page admin
@@ -1060,105 +979,6 @@ function pdf_builder_load_bootstrap()
             return $preferences->get_preferences();
         }
     }
-
-    // CHARGER LES STYLES ET SCRIPTS DES NOTIFICATIONS - DESACTIVE TEMPORAIREMENT
-    /*
-    add_action('admin_enqueue_scripts', function() {
-        // Charger le CSS des notifications
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'resources/assets/css/notifications.css')) {
-            wp_enqueue_style(
-                'pdf-builder-notifications',
-                PDF_BUILDER_PLUGIN_URL . 'resources/assets/css/notifications.css',
-                array(),
-                PDF_BUILDER_VERSION . '-' . time(),
-                'all'
-            );
-        }
-
-        // Charger le JavaScript des notifications
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'resources/assets/js/notifications.js')) {
-            wp_enqueue_script(
-                'pdf-builder-notifications',
-                PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/notifications.js',
-                array('jquery'),
-                PDF_BUILDER_VERSION . '-' . time(),
-                true
-            );
-
-            // Localiser les variables pour les notifications
-            wp_localize_script('pdf-builder-notifications', 'pdfBuilderAjax', [
-                'ajaxurl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('pdf_builder_ajax'),
-                'version' => PDF_BUILDER_VERSION,
-                'timestamp' => time(),
-                'debug' => WP_DEBUG,
-                'strings' => [
-                    'loading' => __('Chargement...', 'pdf-builder-pro'),
-                    'error' => __('Erreur', 'pdf-builder-pro'),
-                    'success' => __('Succès', 'pdf-builder-pro'),
-                ]
-            ]);
-
-            // Localiser les données de notifications pour JavaScript
-            wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('pdf_builder_notifications'),
-                'settings' => [
-                    'enabled' => true,
-                    'position' => 'top-right',
-                    'duration' => 5000,
-                    'max_notifications' => 5,
-                    'animation' => 'slide',
-                    'theme' => 'modern'
-                ],
-                'strings' => [
-                    'success' => __('Succès', 'pdf-builder-pro'),
-                    'error' => __('Erreur', 'pdf-builder-pro'),
-                    'warning' => __('Avertissement', 'pdf-builder-pro'),
-                    'info' => __('Information', 'pdf-builder-pro'),
-                    'close' => __('Fermer', 'pdf-builder-pro')
-                ]
-            ]);
-
-            // Définir les paramètres de debug JavaScript UNIQUEMENT pour notifications.js
-            $settings = pdf_builder_get_option('pdf_builder_settings', array());
-            $debug_settings = [
-                'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
-                'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
-                'php' => isset($settings['pdf_builder_debug_php']) && $settings['pdf_builder_debug_php'],
-                'ajax' => isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax']
-            ];
-            $debug_json = wp_json_encode($debug_settings);
-            if ($debug_json !== false) {
-                wp_add_inline_script('pdf-builder-notifications', 'window.pdfBuilderDebugSettings = ' . $debug_json . ';', 'before');
-            }
-        }
-
-        // Charger les outils développeur
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'resources/assets/js/developer-tools.js')) {
-            wp_enqueue_script(
-                'pdf-builder-developer-tools',
-                PDF_BUILDER_PLUGIN_URL . 'resources/assets/js/developer-tools.js',
-                array('jquery', 'pdf-builder-notifications'),
-                PDF_BUILDER_VERSION . '-' . time(),
-                true
-            );
-
-            // Définir les paramètres de debug JavaScript pour developer-tools.js
-            $settings = pdf_builder_get_option('pdf_builder_settings', array());
-            $debug_settings = [
-                'javascript' => isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'],
-                'javascript_verbose' => isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'],
-                'php' => isset($settings['pdf_builder_debug_php']) && $settings['pdf_builder_debug_php'],
-                'ajax' => isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax']
-            ];
-            $debug_json = wp_json_encode($debug_settings);
-            if ($debug_json !== false) {
-                wp_add_inline_script('pdf-builder-developer-tools', 'window.pdfBuilderDebugSettings = ' . $debug_json . ';', 'before');
-            }
-        }
-    });
-    */
 
     // INITIALISER LE GESTIONNAIRE D'ONBOARDING
     // Retarder complètement le chargement et l'initialisation au hook 'init'
