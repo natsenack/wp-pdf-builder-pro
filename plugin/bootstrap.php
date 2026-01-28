@@ -1796,7 +1796,7 @@ if (file_exists($migration_ajax_path)) {
 // ============================================================================
 
 // Initialiser le bootstrap du plugin
-add_action('plugins_loaded', 'pdf_builder_load_bootstrap', 5);
+add_action('plugins_loaded', 'pdf_builder_load_bootstrap', 5); // Force menu admin
 
 
 
