@@ -1567,5 +1567,21 @@ if (file_exists($migration_ajax_path)) {
 // Initialiser le bootstrap du plugin - maintenant géré dans pdf-builder-pro.php
 // add_action('plugins_loaded', 'pdf_builder_load_bootstrap', 5); // Supprimé - géré dans pdf-builder-pro.php
 
+// ============================================================================
+// ✅ INSTANCIATION DE LA CLASSE ADMIN PRINCIPALE
+// ============================================================================
+
+// Instancier la classe admin principale pour enregistrer les menus et hooks
+if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
+    try {
+        \PDF_Builder\Admin\PdfBuilderAdminNew::getInstance();
+        error_log('[DEBUG] PDF Builder: Admin class instantiated successfully');
+    } catch (Exception $e) {
+        error_log('[ERROR] PDF Builder: Failed to instantiate admin class: ' . $e->getMessage());
+    }
+} else {
+    error_log('[ERROR] PDF Builder: Admin class not found');
+}
+
 
 
