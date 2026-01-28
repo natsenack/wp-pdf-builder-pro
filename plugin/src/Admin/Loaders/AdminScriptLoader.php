@@ -7,6 +7,14 @@
 
 namespace PDF_Builder\Admin\Loaders;
 
+// Ensure constants are loaded
+if (!defined('PDF_BUILDER_ASSETS_DIR')) {
+    $constants_file = dirname(dirname(dirname(dirname(__FILE__)))) . '/src/Core/core/constants.php';
+    if (file_exists($constants_file)) {
+        require_once $constants_file;
+    }
+}
+
 // Import the logger class
 use PDF_Builder_Logger;
 
