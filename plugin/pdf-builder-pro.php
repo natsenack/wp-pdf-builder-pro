@@ -39,7 +39,7 @@ if (function_exists('add_action')) {
             require_once $bootstrap;
         }
     }, 1);
-    // add_action('plugins_loaded', 'pdf_builder_register_ajax_handlers', 5); // Enregistrer les handlers AJAX après le chargement - COMMENTE TEMPORAIREMENT
+    add_action('plugins_loaded', 'pdf_builder_register_ajax_handlers', 5); // Enregistrer les handlers AJAX après le chargement
 }
 
 // Enregistrer les handlers AJAX immédiatement si possible
