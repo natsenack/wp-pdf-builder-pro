@@ -2,12 +2,38 @@
 /**
  * Diagnostic rapide pour PDF Builder Pro
  * Vérifie si le bootstrap se charge correctement
- * Version: 1.1 - Force deployment
+ * Version: 1.2 - Standalone execution
  */
 
-// Vérifier si on est dans WordPress
+// Essayer de charger WordPress si pas déjà fait
 if (!defined('ABSPATH')) {
-    die('Ce script doit être exécuté dans WordPress');
+    // Essayer de trouver le répertoire WordPress
+    $wp_paths = [
+        '../../../wp-load.php',
+        '../../../../wp-load.php',
+        '../../../../../wp-load.php',
+        dirname(__FILE__) . '/../../../../wp-load.php'
+    ];
+
+    $wp_loaded = false;
+    foreach ($wp_paths as $wp_path) {
+        if (file_exists($wp_path)) {
+            require_once $wp_path;
+            $wp_loaded = true;
+            break;
+        }
+    }
+
+    if (!$wp_loaded) {
+        echo "<h1>Erreur: WordPress non trouvé</h1>";
+        echo "<p>Le script diagnostic.php doit être placé dans le répertoire plugins de WordPress.</p>";
+        echo "<p>Chemins testés :</p><ul>";
+        foreach ($wp_paths as $path) {
+            echo "<li>" . realpath(dirname(__FILE__) . '/' . $path) . " - " . (file_exists(dirname(__FILE__) . '/' . $path) ? "EXISTS" : "NOT FOUND") . "</li>";
+        }
+        echo "</ul>";
+        exit;
+    }
 }
 
 // Vérifier si la fonction existe
