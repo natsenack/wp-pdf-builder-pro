@@ -152,7 +152,7 @@ class AdminScriptLoader
 
             // Charger les styles canvas-modal pour les pages templates et settings
             if (strpos($hook, 'templates') !== false || strpos($hook, 'settings') !== false) {
-                wp_enqueue_style(
+                \wp_enqueue_style(
                     'pdf-builder-react',
                     PDF_BUILDER_PLUGIN_URL . 'assets/css/pdf-builder-react.min.css',
                     [],
@@ -168,12 +168,12 @@ class AdminScriptLoader
                 'php' => isset($settings['pdf_builder_debug_php']) && $settings['pdf_builder_debug_php'],
                 'ajax' => isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax']
             ];
-            wp_add_inline_script('pdf-builder-notifications', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings) . ';', 'before');
+            \wp_add_inline_script('pdf-builder-notifications', 'window.pdfBuilderDebugSettings = ' . \wp_json_encode($debug_settings) . ';', 'before');
 
             // Localize notifications data pour les pages de paramètres
-            wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('pdf_builder_notifications'),
+            \wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
+                'ajax_url' => \admin_url('admin-ajax.php'),
+                'nonce' => \wp_create_nonce('pdf_builder_notifications'),
                 'settings' => [
                     'enabled' => true,
                     'position' => 'top-right',

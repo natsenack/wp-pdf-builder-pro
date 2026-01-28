@@ -160,6 +160,22 @@ class PreviewAjaxHandler {
         return $template_data;
     }
 
+    /**
+     * Génère un aperçu PDF depuis l'ancien format (rétrocompatibilité)
+     */
+    private static function generatePreviewLegacy($template_data, $format = 'pdf'): array {
+        // Adapter l'ancien format au nouveau format
+        $pageOptions = (object) [
+            'template' => (object) [
+                'elements' => $template_data
+            ],
+            'format' => $format
+        ];
+
+        // Utiliser la nouvelle méthode
+        return self::generatePreviewNew($pageOptions, 'general', '');
+    }
+
     private static function generatePreviewNew($pageOptions, string $previewType = 'general', string $orderNumberToPreview = ''): array {
         require_once dirname(__FILE__) . '/../../vendor/autoload.php';
         
