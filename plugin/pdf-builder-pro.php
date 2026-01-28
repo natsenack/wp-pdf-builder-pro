@@ -278,14 +278,11 @@ function pdf_builder_deactivate()
 }
 
 // Charger le plugin de manière standard
-// TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
-/*
 if (function_exists('add_action')) {
     add_action('plugins_loaded', 'pdf_builder_init', 1); // Priorité 1 pour charger l'autoloader en premier
     add_action('plugins_loaded', 'pdf_builder_load_textdomain', 1);
     add_action('plugins_loaded', 'pdf_builder_register_ajax_handlers', 5); // Enregistrer les handlers AJAX après le chargement
 }
-*/
 
 /**
  * Enregistrer les handlers AJAX (SYSTÈME DÉPRÉCIÉ)
@@ -1124,8 +1121,7 @@ function pdf_builder_init()
     // AJAX handlers supprimés - maintenant gérés dans pdf_builder_register_ajax_handlers() sur plugins_loaded
 
     // Vérifier les mises à jour de schéma de base de données
-    // TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
-    // add_action('admin_init', 'pdf_builder_check_database_updates');
+    add_action('admin_init', 'pdf_builder_check_database_updates');
 
     // Les nouveaux systèmes avancés sont maintenant initialisés dans le hook plugins_loaded
     // ci-dessus, donc nous n'avons plus besoin de charger individuellement le moniteur de performance
