@@ -92,14 +92,8 @@ SCRIPT;
 
 add_action('admin_head', 'pdf_builder_inject_nonce', 1);
 
-// Vérifier si on est sur une page admin
-if (\is_admin()) {
-    error_log('[BOOTSTRAP] We are in admin area');
-    error_log('[BOOTSTRAP] Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'no page param'));
-    error_log('[BOOTSTRAP] REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no uri'));
-} else {
-    error_log('[BOOTSTRAP] Not in admin area');
-}
+// Supprimer les vérifications directes qui peuvent s'exécuter trop tôt
+// Les logs seront faits dans les fonctions hookées si nécessaire
 
 // Définir les constantes essentielles si elles ne sont pas déjà définies
 if (!defined('PDF_BUILDER_PLUGIN_FILE')) {

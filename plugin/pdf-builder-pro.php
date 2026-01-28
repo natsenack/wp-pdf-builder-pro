@@ -30,13 +30,15 @@ if (!defined('PDF_BUILDER_PREMIUM')) {
 }
 
 // CHARGEMENT CRITIQUE DE LA CLASSE ADMIN PRINCIPALE
-// Cette classe doit être disponible dès le chargement du plugin
-if (!class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
-    $admin_file = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
-    if (file_exists($admin_file)) {
-        require_once $admin_file;
+// Retardé au hook plugins_loaded pour éviter les conflits d'initialisation
+add_action('plugins_loaded', function() {
+    if (!class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
+        $admin_file = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
+        if (file_exists($admin_file)) {
+            require_once $admin_file;
+        }
     }
-}
+});
 
 /**
  * Fonction principale d'initialisation du plugin
@@ -47,12 +49,7 @@ function pdf_builder_init_plugin() {
     if (file_exists($bootstrap)) {
         error_log('[DEBUG] PDF Builder: Loading bootstrap.php');
         require_once $bootstrap;
-        error_log('[DEBUG] PDF Builder: Bootstrap loaded, calling pdf_builder_load_bootstrap()');
-        if (function_exists('pdf_builder_load_bootstrap')) {
-            pdf_builder_load_bootstrap();
-        } else {
-            error_log('[ERROR] PDF Builder: pdf_builder_load_bootstrap function not found');
-        }
+        error_log('[DEBUG] PDF Builder: Bootstrap loaded successfully');
     } else {
         error_log('[ERROR] PDF Builder: bootstrap.php not found at: ' . $bootstrap);
     }
@@ -60,13 +57,14 @@ function pdf_builder_init_plugin() {
 
 // VERSION ULTRA-SIMPLE - ne charger que l'essentiel
 if (function_exists('add_action')) {
-    // Charger le bootstrap de manière unifiée
-    add_action('init', 'pdf_builder_init_plugin', 20);
+    // Charger le bootstrap plus tard, après plugins_loaded
+    add_action('init', 'pdf_builder_init_plugin', 30);
 }
 
-if (function_exists('add_action') && function_exists('pdf_builder_register_ajax_handlers')) {
-    pdf_builder_register_ajax_handlers();
-}
+// Retirer l'appel immédiat aux handlers AJAX - ils seront enregistrés dans le bootstrap
+// if (function_exists('add_action') && function_exists('pdf_builder_register_ajax_handlers')) {
+//     pdf_builder_register_ajax_handlers();
+// }
 
 /**
  * Fonction d'activation
