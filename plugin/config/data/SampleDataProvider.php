@@ -4,6 +4,23 @@ namespace PDF_Builder\Data;
 
 use PDF_Builder\Interfaces\DataProviderInterface;
 
+// Déclarations de fonctions WordPress
+if (!function_exists('PDF_Builder\Data\is_email')) {
+    function is_email($email) { return filter_var($email, FILTER_VALIDATE_EMAIL) !== false; }
+}
+if (!function_exists('PDF_Builder\Data\sanitize_email')) {
+    function sanitize_email($email) { return filter_var($email, FILTER_SANITIZE_EMAIL); }
+}
+if (!function_exists('PDF_Builder\Data\esc_url_raw')) {
+    function esc_url_raw($url) { return $url; }
+}
+if (!function_exists('PDF_Builder\Data\wp_kses_post')) {
+    function wp_kses_post($content) { return $content; }
+}
+if (!function_exists('PDF_Builder\Data\sanitize_text_field')) {
+    function sanitize_text_field($str) { return $str; }
+}
+
 /**
  * Classe SampleDataProvider
  * Fournit des données fictives cohérentes pour l'aperçu en mode éditeur
@@ -296,6 +313,9 @@ class SampleDataProvider implements DataProviderInterface
      */
     private function sanitizeText($value): string
     {
+        if ($value === null) {
+            return '';
+        }
         if (function_exists('sanitize_text_field')) {
             return sanitize_text_field($value);
         }

@@ -10,6 +10,11 @@
         exit('Direct access not allowed');
     }
 
+    // Définir la constante si elle n'existe pas
+    if (!defined('PDF_BUILDER_PRO_PREMIUM')) {
+        define('PDF_BUILDER_PRO_PREMIUM', false);
+    }
+
     // Déclarations de fonctions WordPress si elles ne sont pas disponibles (pour linter)
     if (!function_exists('add_option')) {
         function add_option($option, $value = '', $deprecated = '', $autoload = 'yes') { return true; }
@@ -475,7 +480,7 @@
                         canvas_background_color: <?php echo json_encode(get_canvas_option_contenu('canvas_bg_color', '#ffffff')); ?>,
                         <?php
                         // Vérifier si l'utilisateur est premium pour les paramètres de style avancés
-                        $is_premium = defined('PDF_BUILDER_PRO_PREMIUM') && PDF_BUILDER_PRO_PREMIUM;
+                        $is_premium = defined('PDF_BUILDER_PRO_PREMIUM') ? PDF_BUILDER_PRO_PREMIUM : false;
                         if ($is_premium) {
                             // Utilisateur premium : utiliser les paramètres configurés
                             echo 'border_color: ' . json_encode(get_canvas_option_contenu('canvas_border_color', '#cccccc')) . ',' . "\n";

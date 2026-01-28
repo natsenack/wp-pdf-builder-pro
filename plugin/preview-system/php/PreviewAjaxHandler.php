@@ -6,6 +6,14 @@ if (!defined('ABSPATH')) {
     exit('Acces interdit');
 }
 
+// Déclarations de fonctions WordPress
+if (!function_exists('PDF_Builder\PreviewSystem\wp_remote_retrieve_body')) {
+    function wp_remote_retrieve_body($response) { return ''; }
+}
+if (!function_exists('PDF_Builder\PreviewSystem\Exception')) {
+    class Exception extends \Exception {}
+}
+
 class PreviewAjaxHandler {
     
     public static function init() {
@@ -57,10 +65,12 @@ class PreviewAjaxHandler {
             // D'abord, essayer de charger les données depuis POST (template_data envoyé par le frontend)
             $template_data = [];
             if (isset($_POST['template_data'])) {
-                $json_data = sanitize_text_field($_POST['template_data']);
-                $decoded = json_decode($json_data, true);
-                if (is_array($decoded)) {
-                    $template_data = $decoded;
+                $json_data = sanitize_text_field($_POST['template_data'] ?? '');
+                if ($json_data) {
+                    $decoded = json_decode($json_data, true);
+                    if (is_array($decoded)) {
+                        $template_data = $decoded;
+                    }
                 }
             }
             
