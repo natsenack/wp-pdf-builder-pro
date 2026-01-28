@@ -99,7 +99,7 @@ class PDF_Builder_WooCommerce_Integration
             return;
         }
 
-        $screen = get_current_screen();
+        $screen = \get_current_screen();
         if (!$screen) {
             return;
         }
@@ -110,7 +110,7 @@ class PDF_Builder_WooCommerce_Integration
             return;
         }
 
-        add_meta_box(
+        \add_meta_box(
             'pdf-builder-order-actions',
             __('PDF Builder Pro', 'pdf-builder-pro'),
             [$this, 'render_woocommerce_order_meta_box'],
@@ -145,7 +145,7 @@ class PDF_Builder_WooCommerce_Integration
             $order = function_exists('wc_get_order') ? \wc_get_order($order_id) : null;
         } else {
             // Try to get order ID from URL for HPOS
-            $order_id = isset($_GET['id']) ? absint($_GET['id']) : 0;
+            $order_id = isset($_GET['id']) ? \absint($_GET['id']) : 0;
             $order = function_exists('wc_get_order') ? \wc_get_order($order_id) : null;
         }
 
@@ -153,7 +153,7 @@ class PDF_Builder_WooCommerce_Integration
             echo '<div style="padding: 20px; text-align: center; color: #dc3545; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px;">
                     <div style="font-size: 48px; margin-bottom: 10px;">❌</div>
                     <strong>' . __('Commande invalide', 'pdf-builder-pro') . '</strong><br>
-                    <small>' . __('ID commande:', 'pdf-builder-pro') . ' ' . esc_html($order_id) . '</small>
+                    <small>' . __('ID commande:', 'pdf-builder-pro') . ' ' . \esc_html($order_id) . '</small>
                   </div>';
             return;
         }
@@ -164,7 +164,7 @@ class PDF_Builder_WooCommerce_Integration
         $document_type_label = $this->getDocumentTypeLabel($document_type);
 
         // Récupérer tous les templates disponibles
-        $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name ASC", ARRAY_A);
+        $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name ASC", \ARRAY_A);
 
         // Vérifier d'abord s'il y a un mapping spécifique pour ce statut de commande
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
@@ -173,7 +173,7 @@ class PDF_Builder_WooCommerce_Integration
         $selected_template = null;
 
         // Utiliser le filtre du StatusManager pour appliquer le fallback
-        $mapped_template_id = apply_filters('pdf_builder_get_template_for_status', null, $status_key);
+        $mapped_template_id = \apply_filters('pdf_builder_get_template_for_status', null, $status_key);
 
         if ($mapped_template_id) {
             // Il y a un mapping spécifique pour ce statut (ou fallback appliqué)
@@ -182,7 +182,7 @@ class PDF_Builder_WooCommerce_Integration
                     "SELECT id, name FROM $table_templates WHERE id = %d",
                     $mapped_template_id
                 ),
-                ARRAY_A
+                \ARRAY_A
             );
         } elseif (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
             // Fallback vers l'ancienne logique si le filtre ne retourne rien
@@ -191,7 +191,7 @@ class PDF_Builder_WooCommerce_Integration
                     "SELECT id, name FROM $table_templates WHERE id = %d",
                     $status_templates[$status_key]
                 ),
-                ARRAY_A
+                \ARRAY_A
             );
         }
 
@@ -226,7 +226,7 @@ class PDF_Builder_WooCommerce_Integration
             }
         }
 
-        wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
+        \wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
 
         // Récupérer le label du statut WooCommerce
         $order_statuses = function_exists('wc_get_order_statuses') ? \wc_get_order_statuses() : [];
@@ -241,12 +241,12 @@ class PDF_Builder_WooCommerce_Integration
         <div class="pdf-meta-box">
             <div class="pdf-template-section">
                 <div class="pdf-template-title">
-                    📄 <?php echo __('Template:', 'pdf-builder-pro'); ?> <?php echo esc_html($selected_template ? $selected_template['name'] : __('Aucun template disponible', 'pdf-builder-pro')); ?>
+                    📄 <?php echo __('Template:', 'pdf-builder-pro'); ?> <?php echo \esc_html($selected_template ? $selected_template['name'] : __('Aucun template disponible', 'pdf-builder-pro')); ?>
                 </div>
                 <div style="color: #6c757d; font-size: 14px; margin-bottom: 15px;">
-                    <?php echo __('Statut:', 'pdf-builder-pro'); ?> <strong><?php echo esc_html($status_label); ?></strong> |
-                    <?php echo __('Type détecté:', 'pdf-builder-pro'); ?> <strong><?php echo esc_html($document_type_label); ?></strong> |
-                    <?php echo __('Source:', 'pdf-builder-pro'); ?> <em><?php echo esc_html($template_source); ?></em>
+                    <?php echo __('Statut:', 'pdf-builder-pro'); ?> <strong><?php echo \esc_html($status_label); ?></strong> |
+                    <?php echo __('Type détecté:', 'pdf-builder-pro'); ?> <strong><?php echo \esc_html($document_type_label); ?></strong> |
+                    <?php echo __('Source:', 'pdf-builder-pro'); ?> <em><?php echo \esc_html($template_source); ?></em>
                 </div>
 
                 <div style="display: flex; gap: 10px; align-items: center;">
@@ -798,10 +798,10 @@ class PDF_Builder_WooCommerce_Integration
 
         switch ($type) {
             case 'text':
-                return esc_html($content);
+                return \esc_html($content);
 
             case 'textarea':
-                return nl2br(esc_html($content));
+                return nl2br(\esc_html($content));
 
             case 'image':
                 $src = $element['src'] ?? $element['content'] ?? '';
@@ -852,7 +852,7 @@ class PDF_Builder_WooCommerce_Integration
                 );
 
             default:
-                return esc_html($content);
+                return \esc_html($content);
         }
     }
 
@@ -983,7 +983,7 @@ class PDF_Builder_WooCommerce_Integration
 
             // Valider et sanitiser les données d'entrée
             $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
-            $canvas_data = isset($_POST['canvas_data']) ? wp_unslash($_POST['canvas_data']) : '';
+            $canvas_data = isset($_POST['canvas_data']) ? \wp_unslash($_POST['canvas_data']) : '';
 
             if (!$order_id || empty($canvas_data)) {
                 wp_send_json_error('Données manquantes: order_id et canvas_data requis');
@@ -1227,7 +1227,7 @@ class PDF_Builder_WooCommerce_Integration
                 $table_templates = $wpdb->prefix . 'pdf_builder_templates';
                 $template = $wpdb->get_row(
                     $wpdb->prepare("SELECT id, name, template_data FROM $table_templates WHERE id = %d", $template_id),
-                    ARRAY_A
+                    \ARRAY_A
                 );
 
                 if ($template && !empty($template['template_data'])) {

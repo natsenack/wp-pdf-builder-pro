@@ -50,17 +50,17 @@ class SettingsManager
     public function registerSettings()
     {
         // Enregistrer le tableau principal des paramètres
-        register_setting('pdf_builder_settings', 'pdf_builder_settings', [$this, 'sanitizeSettings']);
+        \register_setting('pdf_builder_settings', 'pdf_builder_settings', [$this, 'sanitizeSettings']);
 
         // Section principale
-        add_settings_section(
+        \add_settings_section(
             'pdf_builder_general',
             __('Paramètres Généraux', 'pdf-builder-pro'),
             [$this, 'renderGeneralSection'],
             'pdf_builder_settings'
         );
 
-        add_settings_field(
+        \add_settings_field(
             'company_info',
             __('Informations Entreprise', 'pdf-builder-pro'),
             [$this, 'renderCompanyInfoField'],
@@ -69,14 +69,14 @@ class SettingsManager
         );
 
         // Section performance
-        add_settings_section(
+        \add_settings_section(
             'pdf_builder_performance',
             __('Performance', 'pdf-builder-pro'),
             [$this, 'renderPerformanceSection'],
             'pdf_builder_settings'
         );
 
-        add_settings_field(
+        \add_settings_field(
             'cache_settings',
             __('Cache', 'pdf-builder-pro'),
             [$this, 'renderCacheField'],
@@ -84,7 +84,7 @@ class SettingsManager
             'pdf_builder_performance'
         );
 
-        add_settings_field(
+        \add_settings_field(
             'performance_limits',
             __('Limites de Performance', 'pdf-builder-pro'),
             [$this, 'renderPerformanceLimitsField'],
@@ -93,14 +93,14 @@ class SettingsManager
         );
 
         // Section canvas
-        add_settings_section(
+        \add_settings_section(
             'pdf_builder_canvas',
             __('Paramètres Canvas', 'pdf-builder-pro'),
             [$this, 'renderCanvasSection'],
             'pdf_builder_settings'
         );
 
-        add_settings_field(
+        \add_settings_field(
             'canvas_display_dimensions',
             __('🎨 Affichage & Dimensions', 'pdf-builder-pro'),
             [$this, 'renderCanvasDisplayDimensionsField'],
@@ -150,32 +150,32 @@ class SettingsManager
         echo '<table class="form-table">';
         echo '<tr>';
         echo '<th><label for="pdf_builder_company_name">' . __('Nom de l\'entreprise', 'pdf-builder-pro') . '</label></th>';
-        echo '<td><input type="text" id="pdf_builder_company_name" name="pdf_builder_company_name" value="' . esc_attr($company_name) . '" class="regular-text"></td>';
+        echo '<td><input type="text" id="pdf_builder_company_name" name="pdf_builder_company_name" value="' . \esc_attr($company_name) . '" class="regular-text"></td>';
         echo '</tr>';
 
         echo '<tr>';
         echo '<th><label for="pdf_builder_company_address">' . __('Adresse', 'pdf-builder-pro') . '</label></th>';
-        echo '<td><textarea id="pdf_builder_company_address" name="pdf_builder_company_address" rows="3" class="regular-text">' . esc_textarea($company_address) . '</textarea></td>';
+        echo '<td><textarea id="pdf_builder_company_address" name="pdf_builder_company_address" rows="3" class="regular-text">' . \esc_textarea($company_address) . '</textarea></td>';
         echo '</tr>';
 
         echo '<tr>';
         echo '<th><label for="pdf_builder_company_phone">' . __('Téléphone', 'pdf-builder-pro') . '</label></th>';
-        echo '<td><input type="tel" id="pdf_builder_company_phone" name="pdf_builder_company_phone" value="' . esc_attr($company_phone) . '" class="regular-text"></td>';
+        echo '<td><input type="tel" id="pdf_builder_company_phone" name="pdf_builder_company_phone" value="' . \esc_attr($company_phone) . '" class="regular-text"></td>';
         echo '</tr>';
 
         echo '<tr>';
         echo '<th><label for="pdf_builder_company_email">' . __('Email', 'pdf-builder-pro') . '</label></th>';
-        echo '<td><input type="email" id="pdf_builder_company_email" name="pdf_builder_company_email" value="' . esc_attr($company_email) . '" class="regular-text"></td>';
+        echo '<td><input type="email" id="pdf_builder_company_email" name="pdf_builder_company_email" value="' . \esc_attr($company_email) . '" class="regular-text"></td>';
         echo '</tr>';
 
         echo '<tr>';
         echo '<th><label for="pdf_builder_default_language">' . __('Langue par défaut', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
         echo '<select id="pdf_builder_default_language" name="pdf_builder_default_language">';
-        echo '<option value="fr" ' . selected($default_language, 'fr', false) . '>Français</option>';
-        echo '<option value="en" ' . selected($default_language, 'en', false) . '>English</option>';
-        echo '<option value="es" ' . selected($default_language, 'es', false) . '>Español</option>';
-        echo '<option value="de" ' . selected($default_language, 'de', false) . '>Deutsch</option>';
+        echo '<option value="fr" ' . \selected($default_language, 'fr', false) . '>Français</option>';
+        echo '<option value="en" ' . \selected($default_language, 'en', false) . '>English</option>';
+        echo '<option value="es" ' . \selected($default_language, 'es', false) . '>Español</option>';
+        echo '<option value="de" ' . \selected($default_language, 'de', false) . '>Deutsch</option>';
         echo '</select>';
         echo '</td>';
         echo '</tr>';
@@ -195,7 +195,7 @@ class SettingsManager
         echo '<tr>';
         echo '<th><label for="pdf_builder_enable_cache">' . __('Activer le cache', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
-        echo '<input type="checkbox" id="pdf_builder_enable_cache" name="pdf_builder_enable_cache" value="1" ' . checked($enable_cache, '1', false) . '>';
+        echo '<input type="checkbox" id="pdf_builder_enable_cache" name="pdf_builder_enable_cache" value="1" ' . \checked($enable_cache, '1', false) . '>';
         echo '<p class="description">' . __('Améliore les performances en cachant les résultats des requêtes.', 'pdf-builder-pro') . '</p>';
         echo '</td>';
         echo '</tr>';
@@ -203,7 +203,7 @@ class SettingsManager
         echo '<tr>';
         echo '<th><label for="pdf_builder_cache_timeout">' . __('Timeout du cache (secondes)', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
-        echo '<input type="number" id="pdf_builder_cache_timeout" name="pdf_builder_cache_timeout" value="' . esc_attr($cache_timeout) . '" min="60" max="86400" step="60">';
+        echo '<input type="number" id="pdf_builder_cache_timeout" name="pdf_builder_cache_timeout" value="' . \esc_attr($cache_timeout) . '" min="60" max="86400" step="60">';
         echo '<p class="description">' . __('Durée avant expiration du cache (3600 = 1 heure).', 'pdf-builder-pro') . '</p>';
         echo '</td>';
         echo '</tr>';
@@ -224,7 +224,7 @@ class SettingsManager
         echo '<tr>';
         echo '<th><label for="pdf_builder_compression_level">' . __('Niveau de compression', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
-        echo '<input type="number" id="pdf_builder_compression_level" name="pdf_builder_compression_level" value="' . esc_attr($compression_level) . '" min="0" max="9">';
+        echo '<input type="number" id="pdf_builder_compression_level" name="pdf_builder_compression_level" value="' . \esc_attr($compression_level) . '" min="0" max="9">';
         echo '<p class="description">' . __('Niveau de compression des images (0-9, 6 recommandé).', 'pdf-builder-pro') . '</p>';
         echo '</td>';
         echo '</tr>';
@@ -232,7 +232,7 @@ class SettingsManager
         echo '<tr>';
         echo '<th><label for="pdf_builder_memory_limit">' . __('Limite mémoire (MB)', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
-        echo '<input type="number" id="pdf_builder_memory_limit" name="pdf_builder_memory_limit" value="' . esc_attr($memory_limit) . '" min="64" max="1024" step="64">';
+        echo '<input type="number" id="pdf_builder_memory_limit" name="pdf_builder_memory_limit" value="' . \esc_attr($memory_limit) . '" min="64" max="1024" step="64">';
         echo '<p class="description">' . __('Mémoire maximale allouée pour la génération PDF.', 'pdf-builder-pro') . '</p>';
         echo '</td>';
         echo '</tr>';

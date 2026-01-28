@@ -106,14 +106,14 @@ function pdf_builder_ajax_get_element_styles()
 
     try {
         if (!current_user_can('manage_options')) {
-            wp_send_json_error('Permissions insuffisantes');
+            \wp_send_json_error('Permissions insuffisantes');
         }
 
         // Récupérer les éléments depuis le POST
-        $elements_json = isset($_POST['elements']) ? wp_unslash($_POST['elements']) : '[]';
-        $elements = json_decode($elements_json, true);
-        if (!is_array($elements)) {
-            wp_send_json_error('Éléments invalides');
+        $elements_json = isset($_POST['elements']) ? \wp_unslash($_POST['elements']) : '[]';
+        $elements = \json_decode($elements_json, true);
+        if (!\is_array($elements)) {
+            \wp_send_json_error('Éléments invalides');
         }
 
         $element_styles = [];

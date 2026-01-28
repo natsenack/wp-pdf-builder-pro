@@ -23,14 +23,14 @@ function pdf_builder_ajax_render_template_html_handler()
         }
 
         // Vérification du nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates')) {
-            wp_send_json_error('Sécurité: Nonce invalide');
+        if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates')) {
+            \wp_send_json_error('Sécurité: Nonce invalide');
         }
 
         // Récupération des données du template
-        $template_data_json = isset($_POST['template_data']) ? wp_unslash($_POST['template_data']) : '';
+        $template_data_json = isset($_POST['template_data']) ? \wp_unslash($_POST['template_data']) : '';
         if (empty($template_data_json)) {
-            wp_send_json_error('Données du template manquantes');
+            \wp_send_json_error('Données du template manquantes');
         }
 
         $template_data = json_decode($template_data_json, true);

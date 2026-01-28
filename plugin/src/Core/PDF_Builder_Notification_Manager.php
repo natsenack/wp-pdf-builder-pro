@@ -94,9 +94,9 @@ class PDF_Builder_Notification_Manager {
         }
 
         // Charger les styles et scripts seulement si les fichiers existent
-        $notifications_css = plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/css/notifications.css';
+        $notifications_css = \plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/css/notifications.css';
         if (file_exists($notifications_css)) {
-            wp_enqueue_style(
+            \wp_enqueue_style(
                 'pdf-builder-notifications',
                 plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/css/notifications.css',
                 [],
@@ -104,7 +104,7 @@ class PDF_Builder_Notification_Manager {
             );
         }
 
-        $notifications_js = plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/js/notifications.js';
+        $notifications_js = \plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/js/notifications.js';
         if (file_exists($notifications_js)) {
             wp_enqueue_script(
                 'pdf-builder-notifications',

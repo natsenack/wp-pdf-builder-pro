@@ -31,7 +31,7 @@ if (file_exists($autoload_path)) {
 // Fonction d'injection du nonce
 function pdf_builder_inject_nonce() {
     // Vérifier qu'on est sur la bonne page
-    if (!is_admin()) {
+    if (!\is_admin()) {
         return; // Pas sur une page admin
     }
     
@@ -73,8 +73,8 @@ function pdf_builder_inject_nonce() {
 SCRIPT;
     
     // Remplacer les placeholders
-    $script = str_replace('%NONCE%', esc_js($nonce), $script);
-    $script = str_replace('%AJAX_URL%', esc_js($ajax_url), $script);
+    $script = str_replace('%NONCE%', $nonce ? \esc_js($nonce) : '', $script);
+    $script = str_replace('%AJAX_URL%', $ajax_url ? \esc_js($ajax_url) : '', $script);
     $script = str_replace('%TIMESTAMP%', time(), $script);
     
     echo $script;
@@ -83,7 +83,7 @@ SCRIPT;
 add_action('admin_head', 'pdf_builder_inject_nonce', 1);
 
 // Vérifier si on est sur une page admin
-if (is_admin()) {
+if (\is_admin()) {
     error_log('[BOOTSTRAP] We are in admin area');
     error_log('[BOOTSTRAP] Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'no page param'));
     error_log('[BOOTSTRAP] REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no uri'));
@@ -400,7 +400,7 @@ if (function_exists('add_action')) {
                 (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on') ||
                 (!empty($_SERVER['HTTP_CF_VISITOR']) && strpos($_SERVER['HTTP_CF_VISITOR'], 'https') !== false)
             );
-            if (!is_ssl() && !$is_forwarded_ssl) {
+            if (!\is_ssl() && !$is_forwarded_ssl) {
                 if (defined('WP_DEBUG') && WP_DEBUG) {
                     // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder HTTPS] Redirecting to HTTPS. host=' . ($_SERVER['HTTP_HOST'] ?? '') . ', uri=' . ($_SERVER['REQUEST_URI'] ?? '')); }
                 }
@@ -409,7 +409,7 @@ if (function_exists('add_action')) {
                 if (!empty($host)) {
                     $redirect = 'https://' . $host . $uri;
                     // Preserver host and redirect safely
-                    wp_safe_redirect($redirect, 301);
+                    \wp_safe_redirect($redirect, 301);
                     exit;
                 }
             }
@@ -429,7 +429,7 @@ if (function_exists('add_action')) {
                 (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on') ||
                 (!empty($_SERVER['HTTP_CF_VISITOR']) && strpos($_SERVER['HTTP_CF_VISITOR'], 'https') !== false)
             );
-            if (!is_ssl() && !$is_forwarded_ssl) {
+            if (!\is_ssl() && !$is_forwarded_ssl) {
                 if (defined('WP_DEBUG') && WP_DEBUG) {
                     // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder HTTPS] Admin redirecting to HTTPS. host=' . ($_SERVER['HTTP_HOST'] ?? '') . ', uri=' . ($_SERVER['REQUEST_URI'] ?? '')); }
                 }
@@ -437,7 +437,7 @@ if (function_exists('add_action')) {
                 $uri = $_SERVER['REQUEST_URI'] ?? '';
                 if (!empty($host)) {
                     $redirect = 'https://' . $host . $uri;
-                    wp_safe_redirect($redirect, 301);
+                    \wp_safe_redirect($redirect, 301);
                     exit;
                 }
             }
@@ -447,7 +447,7 @@ if (function_exists('add_action')) {
 
 // Enregistrer les paramètres principaux
 add_action('admin_init', function() {
-    register_setting('pdf_builder_settings', 'pdf_builder_settings', array(
+    \register_setting('pdf_builder_settings', 'pdf_builder_settings', array(
         'type' => 'array',
         'description' => 'Paramètres principaux PDF Builder Pro',
         'sanitize_callback' => function($input) {
@@ -655,13 +655,13 @@ function pdf_builder_load_core()
     add_action('admin_enqueue_scripts', function() {
         if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-settings') {
             // Le JavaScript est inclus directement dans les templates, pas besoin de fichier séparé
-            wp_localize_script('jquery', 'pdf_builder_ajax', array(
+            \wp_localize_script('jquery', 'pdf_builder_ajax', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('pdf_builder_ajax')
             ));
 
             // Localisation pour settings-page.js qui utilise pdfBuilderAjax
-            wp_localize_script('jquery', 'pdfBuilderAjax', array(
+            \wp_localize_script('jquery', 'pdfBuilderAjax', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('pdf_builder_ajax'),
                 'debug' => array(
@@ -683,8 +683,8 @@ function pdf_builder_load_core()
     // 🚀 CHARGEMENT OPTIMISÉ DE REACT POUR L'ÉDITEUR
     add_action('admin_enqueue_scripts', function($hook) {
         // Charger React sur TOUTES les pages admin pour éviter les problèmes de dépendances
-        wp_enqueue_script('react', false, [], false, true);
-        wp_enqueue_script('react-dom', false, ['react'], false, true);
+        \wp_enqueue_script('react', false, [], false, true);
+        \wp_enqueue_script('react-dom', false, ['react'], false, true);
 
         // Charger seulement le bundle sur la page de l'éditeur React
         if ($hook === 'pdf-builder_page_pdf-builder-react-editor' || (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor')) {
@@ -692,7 +692,7 @@ function pdf_builder_load_core()
 
             // Charger le bundle PDF Builder (optimisé avec code splitting)
             $bundle_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-wrapper.min.js';
-            wp_enqueue_script(
+            \wp_enqueue_script(
                 'pdf-builder-react-bundle',
                 $bundle_url,
                 ['react', 'react-dom', 'jquery'],
@@ -723,7 +723,7 @@ function pdf_builder_load_core()
                 // Les données seront chargées via AJAX dans l'app React
             }
 
-            wp_localize_script('pdf-builder-react-bundle', 'pdfBuilderAjax', $localize_data);
+            \wp_localize_script('pdf-builder-react-bundle', 'pdfBuilderAjax', $localize_data);
         }
     });
     // Les handlers AJAX sont maintenant chargés automatiquement par autoloader PSR-4
@@ -770,11 +770,11 @@ function pdf_builder_load_bootstrap()
     pdf_builder_load_new_classes();
 
     // Charger les composants selon le contexte
-    if (is_admin() || wp_doing_ajax()) {
+    if (\is_admin() || \wp_doing_ajax()) {
         pdf_builder_load_admin_components();
     }
 
-    if (!is_admin()) {
+    if (!\is_admin()) {
         pdf_builder_load_frontend_components();
     }
 
@@ -938,7 +938,7 @@ function pdf_builder_load_admin_components()
  */
 function pdf_builder_register_admin_menu_simple() {
     // Menu principal avec icône distinctive
-    add_menu_page(
+    \add_menu_page(
         __('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'),
         __('PDF Builder', 'pdf-builder-pro'),
         'manage_options',
@@ -949,7 +949,7 @@ function pdf_builder_register_admin_menu_simple() {
     );
 
     // Page d'accueil (sous-menu principal)
-    add_submenu_page(
+    \add_submenu_page(
         'pdf-builder-pro',
         __('Accueil - PDF Builder Pro', 'pdf-builder-pro'),
         __('🏠 Accueil', 'pdf-builder-pro'),
@@ -959,7 +959,7 @@ function pdf_builder_register_admin_menu_simple() {
     );
 
     // Paramètres et configuration
-    add_submenu_page(
+    \add_submenu_page(
         'pdf-builder-pro',
         __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'),
         __('⚙️ Paramètres', 'pdf-builder-pro'),
@@ -975,12 +975,12 @@ function pdf_builder_register_admin_menu_simple() {
 function pdf_builder_simple_admin_page() {
     ?>
     <div class="wrap">
-        <h1><?php _e('PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+        <h1><?php \_e('PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
         <div class="notice notice-warning">
-            <p><?php _e('Le système d\'administration avancé n\'a pas pu être chargé. Utilisation du mode de secours.', 'pdf-builder-pro'); ?></p>
+            <p><?php \_e('Le système d\'administration avancé n\'a pas pu être chargé. Utilisation du mode de secours.', 'pdf-builder-pro'); ?></p>
         </div>
-        <p><?php _e('Bienvenue dans PDF Builder Pro. Le système d\'administration complet n\'est pas disponible pour le moment.', 'pdf-builder-pro'); ?></p>
-        <p><?php _e('Vous pouvez accéder aux paramètres via le menu latéral.', 'pdf-builder-pro'); ?></p>
+        <p><?php \_e('Bienvenue dans PDF Builder Pro. Le système d\'administration complet n\'est pas disponible pour le moment.', 'pdf-builder-pro'); ?></p>
+        <p><?php \_e('Vous pouvez accéder aux paramètres via le menu latéral.', 'pdf-builder-pro'); ?></p>
     </div>
     <?php
 }
@@ -991,14 +991,14 @@ function pdf_builder_simple_admin_page() {
 function pdf_builder_simple_settings_page() {
     ?>
     <div class="wrap">
-        <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+        <h1><?php \_e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
         <div class="notice notice-info">
-            <p><?php _e('Paramètres simplifiés - Le système avancé n\'est pas disponible.', 'pdf-builder-pro'); ?></p>
+            <p><?php \_e('Paramètres simplifiés - Le système avancé n\'est pas disponible.', 'pdf-builder-pro'); ?></p>
         </div>
         <form method="post" action="options.php">
-            <?php settings_fields('pdf_builder_settings'); ?>
-            <?php do_settings_sections('pdf_builder_settings'); ?>
-            <?php submit_button(); ?>
+            <?php \settings_fields('pdf_builder_settings'); ?>
+            <?php \do_settings_sections('pdf_builder_settings'); ?>
+            <?php \submit_button(); ?>
         </form>
     </div>
     <?php
@@ -1048,7 +1048,7 @@ function pdf_builder_load_core_on_demand()
 
     // Détection ultra-rapide
     $load_core = false;
-    if (is_admin() && isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') === 0) {
+    if (\is_admin() && isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') === 0) {
         $load_core = true;
     } elseif (isset($_REQUEST['action']) && strpos($_REQUEST['action'], 'pdf_builder') === 0) {
         $load_core = true;
@@ -1102,7 +1102,7 @@ function pdf_builder_init_canvas_defaults()
 
     foreach ($defaults as $option => $default_value) {
         if (get_option($option) === false) {
-            add_option($option, $default_value);
+            \add_option($option, $default_value);
         }
     }
 }
@@ -1129,7 +1129,7 @@ function pdf_builder_ajax_get_fresh_nonce()
 function pdf_builder_ajax_get_template()
 {
     // Vérifier le nonce de sécurité
-    if (!isset($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], 'pdf_builder_ajax')) {
+    if (!isset($_GET['nonce']) || !\wp_verify_nonce($_GET['nonce'], 'pdf_builder_ajax')) {
         wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
         return;
     }
@@ -1150,13 +1150,13 @@ function pdf_builder_ajax_get_template()
     // Récupérer le template depuis la table personnalisée
     global $wpdb;
     $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-    $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
+    $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), \ARRAY_A);
 
     // Si le template n'est pas trouvé dans la table personnalisée, chercher dans wp_posts
     if (!$template) {
-        $post = get_post($template_id);
+        $post = \get_post($template_id);
         if ($post && $post->post_type === 'pdf_template') {
-            $template_data_raw = get_post_meta($post->ID, '_pdf_template_data', true);
+            $template_data_raw = \get_post_meta($post->ID, '_pdf_template_data', true);
             if (!empty($template_data_raw)) {
                 $template = array(
                     'id' => $post->ID,
@@ -1338,16 +1338,16 @@ function pdf_builder_ajax_get_template()
     foreach ($elements as &$el) {
         if (isset($el['type']) && $el['type'] === 'company_logo') {
             if (empty($el['src']) && empty($el['logoUrl'])) {
-                $custom_logo_id = get_theme_mod('custom_logo');
+                $custom_logo_id = \get_theme_mod('custom_logo');
                 if ($custom_logo_id) {
-                    $logo_url = wp_get_attachment_image_url($custom_logo_id, 'full');
+                    $logo_url = \wp_get_attachment_image_url($custom_logo_id, 'full');
                     if ($logo_url) {
                         $el['src'] = $logo_url;
                     }
                 } else {
-                    $site_logo_id = get_option('site_logo');
+                    $site_logo_id = \get_option('site_logo');
                     if ($site_logo_id) {
-                        $logo_url = wp_get_attachment_image_url($site_logo_id, 'full');
+                        $logo_url = \wp_get_attachment_image_url($site_logo_id, 'full');
                         if ($logo_url) {
                             $el['src'] = $logo_url;
                         }
@@ -1473,7 +1473,7 @@ add_action('init', 'pdf_builder_initialize_canvas_defaults');
 // CHARGER LE LOADER DES STYLES DE LA PAGE DE PARAMÈTRES
 // ============================================================================
 // Charge le CSS de settings au moment approprié (admin_print_styles)
-if (is_admin() && isset($_GET['page']) && $_GET['page'] === 'pdf-builder-settings') {
+if (\is_admin() && isset($_GET['page']) && $_GET['page'] === 'pdf-builder-settings') {
     require_once __DIR__ . '/templates/admin/settings-loader.php';
 }
 
@@ -1491,7 +1491,7 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
 
         // Vérifier le nonce
         $nonce_value = sanitize_text_field($_POST['nonce'] ?? '');
-        $nonce_valid = wp_verify_nonce($nonce_value, 'pdf_builder_ajax');
+        $nonce_valid = \wp_verify_nonce($nonce_value, 'pdf_builder_ajax');
         // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder Développeur: Résultat de vérification du nonce: ' . ($nonce_valid ? 'VALIDE' : 'INVALIDE')); }
 
         if (!$nonce_valid) {

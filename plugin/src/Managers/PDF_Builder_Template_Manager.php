@@ -74,16 +74,16 @@ class PDF_Builder_Template_Manager
     public function templatesPage()
     {
         if (!current_user_can('manage_options')) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
+            \wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
         }
 
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
         // Récupérer tous les templates
-        $templates = $wpdb->get_results("SELECT * FROM $table_templates ORDER BY updated_at DESC", ARRAY_A);
+        $templates = $wpdb->get_results("SELECT * FROM $table_templates ORDER BY updated_at DESC", \ARRAY_A);
 
-        include plugin_dir_path(dirname(__FILE__)) . '../../resources/templates/admin/templates-page.php';
+        include \plugin_dir_path(dirname(__FILE__)) . '../../resources/templates/admin/templates-page.php';
     }
 
     /**
@@ -348,6 +348,10 @@ class PDF_Builder_Template_Manager
                     return;
                 }
             }            // Validation du JSON
+            if ($template_data === null) {
+                \wp_send_json_error('Données template manquantes');
+                return;
+            }
             $decoded_test = \json_decode($template_data, true);
             if (\json_last_error() !== JSON_ERROR_NONE) {
                 $json_error = \json_last_error_msg();
@@ -396,8 +400,8 @@ class PDF_Builder_Template_Manager
                         PRIMARY KEY (id),
                         KEY name (name)
                     ) $charset_collate;";
-                    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-                    $result = dbDelta($sql);
+                    require_once(\ABSPATH . 'wp-admin/includes/upgrade.php');
+                    $result = \dbDelta($sql);
                     
                 }
 
@@ -406,7 +410,7 @@ class PDF_Builder_Template_Manager
                 if ($template_id > 0) {
                     $existing_template = $wpdb->get_row(
                         $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
-                        ARRAY_A
+                        \ARRAY_A
                     );
                     
                 }
@@ -514,7 +518,7 @@ class PDF_Builder_Template_Manager
                 // Vérification pour la table personnalisée
                 $saved_template = $wpdb->get_row(
                     $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
-                    ARRAY_A
+                    \ARRAY_A
                 );
 
                 if (!$saved_template) {
@@ -596,7 +600,7 @@ class PDF_Builder_Template_Manager
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
             $template_row = $wpdb->get_row(
                 $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
-                ARRAY_A
+                \ARRAY_A
             );
 
             if (!$template_row) {
@@ -707,7 +711,7 @@ class PDF_Builder_Template_Manager
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
             $template_row = $wpdb->get_row(
                 $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
-                ARRAY_A
+                \ARRAY_A
             );
 
             $template_data = null;
@@ -726,7 +730,7 @@ class PDF_Builder_Template_Manager
                 }
             } else {
                 // Fallback: chercher dans wp_posts
-                $post = get_post($template_id);
+                $post = \get_post($template_id);
 
                 if (!$post || $post->post_type !== 'pdf_template') {
                     \wp_send_json_error('Template non trouvé');
@@ -734,7 +738,7 @@ class PDF_Builder_Template_Manager
                 }
 
                 // Récupération des métadonnées
-                $template_data_raw = get_post_meta($post->ID, '_pdf_template_data', true);
+                $template_data_raw = \get_post_meta($post->ID, '_pdf_template_data', true);
 
                 if (empty($template_data_raw)) {
                     \wp_send_json_error('Données du template manquantes');
@@ -834,7 +838,7 @@ class PDF_Builder_Template_Manager
 
             $template = $wpdb->get_row(
                 $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
-                ARRAY_A
+                \ARRAY_A
             );
 
             // file_put_contents($log_file, date('Y-m-d H:i:s') . " - SQL Result: " . ($template ? 'FOUND' : 'NOT FOUND') . "\n", FILE_APPEND);

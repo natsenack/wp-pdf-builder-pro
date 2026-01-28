@@ -245,8 +245,8 @@ class PdfBuilderProGenerator
 
                 $src = $element['imageUrl'] ?? $element['src'] ?? '';
                 if (!$src && $type === 'company_logo') {
-                    $custom_logo_id = get_theme_mod('custom_logo');
-                    $src = $custom_logo_id ? wp_get_attachment_image_url($custom_logo_id, 'full') : '';
+                    $custom_logo_id = \get_theme_mod('custom_logo');
+                    $src = $custom_logo_id ? \wp_get_attachment_image_url($custom_logo_id, 'full') : '';
                 }
 
 
