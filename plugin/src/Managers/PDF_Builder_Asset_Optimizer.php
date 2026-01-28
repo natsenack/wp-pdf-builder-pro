@@ -526,13 +526,14 @@ class PDF_Builder_Asset_Optimizer
         $js_files = [];
 
         // Assets du plugin
-        $assets_js = glob(WP_PLUGIN_DIR . '/pdf-builder-pro/resources/assets/js/*.js');
+        $plugin_dir = plugin_dir_path(dirname(dirname(dirname(__FILE__))));
+        $assets_js = glob($plugin_dir . 'resources/assets/js/*.js');
         if ($assets_js) {
             $js_files = array_merge($js_files, $assets_js);
         }
 
         // Resources JS
-        $resources_js = glob(WP_PLUGIN_DIR . '/pdf-builder-pro/resources/js/*.js');
+        $resources_js = glob($plugin_dir . 'resources/js/*.js');
         if ($resources_js) {
             $js_files = array_merge($js_files, $resources_js);
         }

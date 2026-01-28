@@ -678,7 +678,7 @@ class AdminScriptLoader
                     } else {
                         error_log('[DEBUG] PDF Builder: Predefined template not found or invalid: ' . $predefined_slug);
                     }
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     error_log('[DEBUG] PDF Builder: Error loading predefined template: ' . $e->getMessage());
                 }
             } else {

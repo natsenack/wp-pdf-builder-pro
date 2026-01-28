@@ -68,7 +68,7 @@ class Utils
 
         return array(
             'success' => true,
-            'message' => sprintf(__('Cache nettoyé. %d transients supprimés.', 'pdf-builder-pro'), ($result1 + $result2))
+            'message' => sprintf(__('Cache nettoyé. %d transients supprimés.', 'pdf-builder-pro'), ($result1 + $result2)) ?: __('Cache nettoyé.', 'pdf-builder-pro')
         );
     }
 
