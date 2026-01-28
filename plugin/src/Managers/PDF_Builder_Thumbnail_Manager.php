@@ -49,7 +49,26 @@ class PDF_Builder_Thumbnail_Manager
             $generator_manager = new \PDF_Builder\Generators\GeneratorManager();
 
             // Créer un data provider basique pour les thumbnails
-            $data_provider = new \PDF_Builder\Config\Data\SampleDataProvider();
+            $data_provider = new class implements \PDF_Builder\Interfaces\DataProviderInterface {
+                public function getVariableValue(string $variable): string {
+                    return 'Sample ' . $variable;
+                }
+                public function hasVariable(string $variable): bool {
+                    return true;
+                }
+                public function getAllVariables(): array {
+                    return ['name', 'date', 'title'];
+                }
+                public function isSampleData(): bool {
+                    return true;
+                }
+                public function getContext(): string {
+                    return 'thumbnail';
+                }
+                public function validateAndSanitizeData(array $data): array {
+                    return $data;
+                }
+            };
 
             $preview_result = $generator_manager->generatePreview(
                 $template_data,
