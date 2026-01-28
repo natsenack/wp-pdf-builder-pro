@@ -29,6 +29,15 @@ if (!defined('PDF_BUILDER_PREMIUM')) {
     define('PDF_BUILDER_PREMIUM', false);
 }
 
+// CHARGEMENT CRITIQUE DE LA CLASSE ADMIN PRINCIPALE
+// Cette classe doit être disponible dès le chargement du plugin
+if (!class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
+    $admin_file = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
+    if (file_exists($admin_file)) {
+        require_once $admin_file;
+    }
+}
+
 /**
  * Fonction principale d'initialisation du plugin
  */
