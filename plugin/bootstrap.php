@@ -252,8 +252,6 @@ function pdf_builder_get_all_options() {
     
     return \PDF_Builder\Database\Settings_Table_Manager::get_all_options();
 }
-*/
-
 // ============================================================================
 // ✅ FONCTION DE CHARGEMENT D'URGENCE DES UTILITAIRES
 // ============================================================================
