@@ -1085,14 +1085,15 @@ function pdf_builder_init()
         require_once $autoload_path;
     }
 
-    // TEST 1: Commenter tout sauf la vérification WordPress
-    /*
+    // TEST 3: Réactiver l'autoloader personnalisé
     // Initialiser notre autoloader personnalisé
     require_once plugin_dir_path(__FILE__) . 'src/Core/core/autoloader.php';
     if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
         \PDF_Builder\Core\PdfBuilderAutoloader::init(plugin_dir_path(__FILE__));
     }
 
+    // TEST 1: Commenter tout sauf la vérification WordPress
+    /*
     // Charger le système de nonce unifié
     require_once plugin_dir_path(__FILE__) . 'src/Core/PDF_Builder_Nonce_Manager.php';
     require_once plugin_dir_path(__FILE__) . 'src/Core/PDF_Builder_Unified_Ajax_Handler.php';
