@@ -166,7 +166,7 @@ export interface DynamicTextElement extends BaseElement {
 }
 
 export interface ProductTableElement extends BaseElement {
-  type: 'product-table';
+  type: 'product_table';
   // Propriétés d'affichage
   showHeaders?: boolean;
   showBorders?: boolean;
@@ -707,7 +707,7 @@ export interface CompanyInfoElement extends BaseElement {
 
 // Interface spécifique pour les éléments CompanyLogo
 export interface CompanyLogoElement extends BaseElement {
-  type: 'company-logo';
+  type: 'company_logo';
   // Propriétés d'image
   src?: string;
   logoUrl?: string;

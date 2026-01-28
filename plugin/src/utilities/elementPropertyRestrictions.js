@@ -96,7 +96,7 @@ export const ELEMENT_PROPERTY_RESTRICTIONS = {
                                                                                     'company_info': 'special',
                                                                                     'order_number': 'special',
                                                                                     'document_type': 'special',
-                                                                                    'progress-bar': 'special',
+                                                                                    'progress_bar': 'special',
 
                                                                                     // Mise en page
                                                                                     'layout-header': 'layout',

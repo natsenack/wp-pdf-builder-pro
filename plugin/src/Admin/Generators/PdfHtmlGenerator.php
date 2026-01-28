@@ -405,7 +405,7 @@ class PdfHtmlGenerator
                 $html = sprintf('<div class="pdf-element watermark" style="%s">%s</div>', $style, esc_html($watermark_text));
                 break;
 
-            case 'progress-bar':
+            case 'progress_bar':
                 $progress = $element['progress'] ?? 50;
                 $progress_style = $style . sprintf('background: #f0f0f0; border: 1px solid #ccc; border-radius: 10px; overflow: hidden;');
                 $bar_style = sprintf('width: %d%%; height: 100%%; background: #007cba; border-radius: 8px;', $progress);

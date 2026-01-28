@@ -22,7 +22,7 @@ class TableRenderer
     /**
      * Types d'éléments supportés par ce renderer
      */
-    const SUPPORTED_TYPES = ['product-table'];
+    const SUPPORTED_TYPES = ['product_table'];
 /**
      * Styles CSS par défaut pour les tableaux
      */
@@ -62,11 +62,11 @@ class TableRenderer
             ];
         }
 
-        $type = $elementData['type'] ?? 'product-table';
+        $type = $elementData['type'] ?? 'product_table';
         $properties = $elementData['properties'] ?? [];
 // Rendu selon le type d'élément
         switch ($type) {
-            case 'product-table':
+            case 'product_table':
                 return $this->renderProductTable($properties, $context);
             default:
                 return [
