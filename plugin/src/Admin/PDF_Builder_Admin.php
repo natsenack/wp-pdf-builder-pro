@@ -142,7 +142,7 @@ class PdfBuilderAdminNew
         $this->utils = new \PDF_Builder\Admin\Utils\Utils($this);
 
         // Initialiser l'intégration WooCommerce si disponible
-        if (did_action('plugins_loaded') && defined('WC_VERSION') && class_exists('PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration')) {
+        if (\did_action('plugins_loaded') && defined('WC_VERSION') && class_exists('PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration')) {
             $this->woocommerce_integration = new \PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration($this->core);
         }
 
@@ -213,18 +213,18 @@ class PdfBuilderAdminNew
      */
     public function register_settings()
     {
-        // REMOVED: register_setting déplacé vers SettingsManager.php pour éviter les conflits
-        // register_setting('pdf_builder_settings', 'pdf_builder_settings', array($this, 'sanitize_settings'));
+        // REMOVED: \register_setting déplacé vers SettingsManager.php pour éviter les conflits
+        // \register_setting('pdf_builder_settings', 'pdf_builder_settings', array($this, 'sanitize_settings'));
 
         // Section Général
-        add_settings_section(
+        \add_settings_section(
             'pdf_builder_general',
             __('Paramètres Généraux', 'pdf-builder-pro'),
             array($this, 'general_section_callback'),
             'pdf_builder_general'
         );
 
-        add_settings_field(
+        \add_settings_field(
             'company_name',
             __('Nom de l\'entreprise', 'pdf-builder-pro'),
             array($this, 'company_name_field_callback'),
@@ -232,7 +232,7 @@ class PdfBuilderAdminNew
             'pdf_builder_general'
         );
 
-        add_settings_field(
+        \add_settings_field(
             'company_address',
             __('Adresse', 'pdf-builder-pro'),
             array($this, 'company_address_field_callback'),
@@ -241,7 +241,7 @@ class PdfBuilderAdminNew
         );
 
         // Section Licence
-        add_settings_section(
+        \add_settings_section(
             'pdf_builder_licence',
             __('Paramètres de Licence', 'pdf-builder-pro'),
             array($this, 'licence_section_callback'),
@@ -249,14 +249,14 @@ class PdfBuilderAdminNew
         );
 
         // Section Système
-        add_settings_section(
+        \add_settings_section(
             'pdf_builder_systeme',
             __('Paramètres Système', 'pdf-builder-pro'),
             array($this, 'systeme_section_callback'),
             'pdf_builder_systeme'
         );
 
-        add_settings_field(
+        \add_settings_field(
             'system_memory_limit',
             __('Limite mémoire PHP', 'pdf-builder-pro'),
             array($this, 'system_memory_limit_field_callback'),
@@ -264,7 +264,7 @@ class PdfBuilderAdminNew
             'pdf_builder_systeme'
         );
 
-        add_settings_field(
+        \add_settings_field(
             'system_max_execution_time',
             __('Temps d\'exécution maximum', 'pdf-builder-pro'),
             array($this, 'system_max_execution_time_field_callback'),
@@ -273,14 +273,14 @@ class PdfBuilderAdminNew
         );
 
         // Section Sécurité
-        add_settings_section(
+        \add_settings_section(
             'pdf_builder_securite',
             __('Paramètres de Sécurité', 'pdf-builder-pro'),
             array($this, 'securite_section_callback'),
             'pdf_builder_securite'
         );
 
-        add_settings_field(
+        \add_settings_field(
             'security_file_validation',
             __('Validation des fichiers', 'pdf-builder-pro'),
             array($this, 'security_file_validation_field_callback'),
@@ -289,14 +289,14 @@ class PdfBuilderAdminNew
         );
 
         // Section Configuration PDF
-        add_settings_section(
+        \add_settings_section(
             'pdf_builder_pdf',
             __('Configuration PDF', 'pdf-builder-pro'),
             array($this, 'pdf_section_callback'),
             'pdf_builder_pdf'
         );
 
-        \add_settings_field(
+        \\add_settings_field(
             'pdf_quality',
             \__('Qualité PDF', 'pdf-builder-pro'),
             array($this, 'pdf_quality_field_callback'),
@@ -304,7 +304,7 @@ class PdfBuilderAdminNew
             'pdf_builder_pdf'
         );
 
-        \add_settings_field(
+        \\add_settings_field(
             'pdf_compression',
             \__('Compression PDF', 'pdf-builder-pro'),
             array($this, 'pdf_compression_field_callback'),
@@ -313,14 +313,14 @@ class PdfBuilderAdminNew
         );
 
         // Section Canvas & Design
-        \add_settings_section(
+        \\add_settings_section(
             'pdf_builder_contenu',
             \__('Canvas & Design', 'pdf-builder-pro'),
             array($this, 'contenu_section_callback'),
             'pdf_builder_contenu'
         );
 
-        \add_settings_field(
+        \\add_settings_field(
             'canvas_default_width',
             \__('Largeur par défaut du canvas', 'pdf-builder-pro'),
             array($this, 'canvas_default_width_field_callback'),
@@ -329,14 +329,14 @@ class PdfBuilderAdminNew
         );
 
         // Section Templates
-        \add_settings_section(
+        \\add_settings_section(
             'pdf_builder_templates',
             \__('Paramètres Templates', 'pdf-builder-pro'),
             array($this, 'templates_section_callback'),
             'pdf_builder_templates'
         );
 
-        \add_settings_field(
+        \\add_settings_field(
             'template_cache_enabled',
             \__('Cache des templates activé', 'pdf-builder-pro'),
             array($this, 'template_cache_enabled_field_callback'),
@@ -345,14 +345,14 @@ class PdfBuilderAdminNew
         );
 
         // Section Développeur
-        \add_settings_section(
+        \\add_settings_section(
             'pdf_builder_developpeur',
             \__('Paramètres Développeur', 'pdf-builder-pro'),
             array($this, 'developpeur_section_callback'),
             'pdf_builder_developpeur'
         );
 
-        \add_settings_field(
+        \\add_settings_field(
             'developer_debug_mode',
             \__('Mode debug', 'pdf-builder-pro'),
             array($this, 'developer_debug_mode_field_callback'),
@@ -376,7 +376,7 @@ class PdfBuilderAdminNew
         }
 
         if (isset($input['company_address'])) {
-            $sanitized['company_address'] = \sanitize_textarea_field($input['company_address']);
+            $sanitized['company_address'] = \\sanitize_textarea_field($input['company_address']);
         }
 
         // Champs système
@@ -385,7 +385,7 @@ class PdfBuilderAdminNew
         }
 
         if (isset($input['system_max_execution_time'])) {
-            $sanitized['system_max_execution_time'] = \absint($input['system_max_execution_time']);
+            $sanitized['system_max_execution_time'] = \\absint($input['system_max_execution_time']);
         }
 
         // Champs sécurité
@@ -405,7 +405,7 @@ class PdfBuilderAdminNew
 
         // Champs contenu/canvas
         if (isset($input['canvas_default_width'])) {
-            $width = \absint($input['canvas_default_width']);
+            $width = \\absint($input['canvas_default_width']);
             $sanitized['canvas_default_width'] = max(400, min(2000, $width)); // Entre 400 et 2000
         }
 
@@ -447,7 +447,7 @@ class PdfBuilderAdminNew
     {
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['company_address']) ? $settings['company_address'] : '';
-        echo '<textarea name="pdf_builder_settings[company_address]" rows="3" class="large-text">' . \esc_textarea($value) . '</textarea>';
+        echo '<textarea name="pdf_builder_settings[company_address]" rows="3" class="large-text">' . \\esc_textarea($value) . '</textarea>';
     }
 
     /**
@@ -629,7 +629,7 @@ class PdfBuilderAdminNew
         // Vérifier les rôles autorisés par défaut
         $allowed_roles = ['administrator', 'editor', 'shop_manager'];
 
-        $user = wp_get_current_user();
+        $user = \wp_get_current_user();
         $user_roles = $user ? $user->roles : [];
 
         foreach ($user_roles as $role) {
@@ -671,7 +671,7 @@ class PdfBuilderAdminNew
 
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
+            \wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
         }
 
         // Récupérer l'onglet actuel depuis le formulaire
@@ -684,7 +684,7 @@ class PdfBuilderAdminNew
         // Vérifier le nonce selon l'onglet
         $nonce_name = 'pdf_builder_save_settings';
         if (!isset($_POST[$nonce_name]) || !wp_verify_nonce($_POST[$nonce_name], $nonce_name)) {
-            wp_die(__('Nonce de sécurité invalide.', 'pdf-builder-pro'));
+            \wp_die(__('Nonce de sécurité invalide.', 'pdf-builder-pro'));
         }
 
         // Récupérer les paramètres existants
@@ -695,7 +695,7 @@ class PdfBuilderAdminNew
             case 'general':
                 // Paramètres généraux
                 $settings['pdf_builder_company_name'] = sanitize_text_field($_POST['pdf_builder_company_name'] ?? '');
-                $settings['pdf_builder_company_address'] = sanitize_textarea_field($_POST['pdf_builder_company_address'] ?? '');
+                $settings['pdf_builder_company_address'] = \sanitize_textarea_field($_POST['pdf_builder_company_address'] ?? '');
                 $settings['pdf_builder_company_phone'] = sanitize_text_field($_POST['pdf_builder_company_phone'] ?? '');
                 $settings['pdf_builder_company_email'] = sanitize_email($_POST['pdf_builder_company_email'] ?? '');
                 $settings['pdf_builder_company_phone_manual'] = sanitize_text_field($_POST['pdf_builder_company_phone_manual'] ?? '');
@@ -861,7 +861,7 @@ class PdfBuilderAdminNew
         // Hooks WooCommerce - Délégation vers le manager
         // Différer l'enregistrement jusqu'à ce que WooCommerce soit complètement chargé
         add_action('init', function() {
-            if (did_action('plugins_loaded') && defined('WC_VERSION') && $this->woocommerce_integration !== null) {
+            if (\did_action('plugins_loaded') && defined('WC_VERSION') && $this->woocommerce_integration !== null) {
                 add_action('add_meta_boxes_shop_order', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
                 // Le hook HPOS peut ne pas exister dans toutes les versions, on l'enregistre seulement si WC_VERSION est défini et >= 7.1
                 if (defined('WC_VERSION') && version_compare(WC_VERSION, '7.1', '>=')) {
@@ -1011,7 +1011,7 @@ class PdfBuilderAdminNew
         error_log('[DEBUG] PDF Builder: addAdminMenu() method called');
 
         // Vérifier les permissions de l'utilisateur actuel
-        $current_user = wp_get_current_user();
+        $current_user = \wp_get_current_user();
         $user_id = $current_user ? $current_user->ID : 'null';
         $user_roles = $current_user ? implode(',', $current_user->roles) : 'none';
         error_log('[DEBUG] PDF Builder: Current user ID: ' . $user_id . ', roles: ' . $user_roles);
@@ -1085,7 +1085,7 @@ class PdfBuilderAdminNew
     public function adminPage()
     {
         if (!$this->checkAdminPermissions()) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+            \wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
         // Utiliser le renderer pour afficher la page d'administration
@@ -1106,7 +1106,7 @@ class PdfBuilderAdminNew
     public function reactEditorPage()
     {
         if (!$this->checkAdminPermissions()) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+            \wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
         // Récupération des paramètres
@@ -1126,7 +1126,7 @@ class PdfBuilderAdminNew
     public function templatesPage()
     {
         if (!$this->checkAdminPermissions()) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+            \wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
         // Inclure la page dédiée de gestion des templates
@@ -1148,7 +1148,7 @@ class PdfBuilderAdminNew
     public function settings_page()
     {
         if (!$this->checkAdminPermissions()) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+            \wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
         // Traitement des formulaires personnalisés des templates
@@ -1156,7 +1156,7 @@ class PdfBuilderAdminNew
 
         // Récupération des paramètres généraux
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
-        $current_user = wp_get_current_user();
+        $current_user = \wp_get_current_user();
 
         // Gestion des onglets via URL
         $current_tab = sanitize_text_field($_GET['tab'] ?? 'general');

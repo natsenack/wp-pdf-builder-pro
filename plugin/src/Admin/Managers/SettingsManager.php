@@ -7,40 +7,6 @@
 
 namespace PDF_Builder\Admin\Managers;
 
-use Exception;
-
-
-# Déclarations de fonctions WordPress pour éviter les erreurs de linter
-if (!function_exists('register_setting')) {
-    function register_setting($option_group, $option_name, $args = []) { return true; }
-}
-if (!function_exists('add_settings_section')) {
-    function add_settings_section($id, $title, $callback, $page, $args = []) { return true; }
-}
-if (!function_exists('add_settings_field')) {
-    function add_settings_field($id, $title, $callback, $page, $section = 'default', $args = []) { return true; }
-}
-if (!function_exists('esc_textarea')) {
-    function esc_textarea($text) { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8'); }
-}
-if (!function_exists('is_user_logged_in')) {
-    function is_user_logged_in() { return true; }
-}
-if (!function_exists('current_user_can')) {
-    function current_user_can($capability) { return true; }
-}
-if (!function_exists('sanitize_textarea_field')) {
-    function sanitize_textarea_field($str) { return $str; }
-}
-if (!function_exists('sanitize_email')) {
-    function sanitize_email($email) { return $email; }
-}
-if (!function_exists('is_email')) {
-    function is_email($email) { return filter_var($email, FILTER_VALIDATE_EMAIL) !== false; }
-}
-if (!function_exists('plugin_dir_url')) {
-    function plugin_dir_url($file) { return ''; }
-}
 
 /**
  * Classe responsable de la gestion des paramètres
@@ -67,13 +33,13 @@ class SettingsManager
     private function registerHooks()
     {
         // Hooks pour les paramètres - seulement l'enregistrement, pas la page
-        add_action('admin_init', [$this, 'registerSettings']);
+        \add_action('admin_init', [$this, 'registerSettings']);
 
         // Charger les styles pour les pages d'administration
-        add_action('admin_enqueue_scripts', [$this, 'enqueueAdminStyles']);
+        \add_action('admin_enqueue_scripts', [$this, 'enqueueAdminStyles']);
 
         // Hook pour vérifier la sauvegarde des paramètres
-        add_action('update_option_pdf_builder_settings', [$this, 'onSettingsUpdated'], 10, 3);
+        \add_action('update_option_pdf_builder_settings', [$this, 'onSettingsUpdated'], 10, 3);
     }
 
     /**
@@ -272,7 +238,7 @@ class SettingsManager
         echo '<tr>';
         echo '<th><label for="pdf_builder_max_execution_time">' . __('Temps d\'exécution max (secondes)', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
-        echo '<input type="number" id="pdf_builder_max_execution_time" name="pdf_builder_max_execution_time" value="' . esc_attr($max_execution_time) . '" min="10" max="300" step="5">';
+        echo '<input type="number" id="pdf_builder_max_execution_time" name="pdf_builder_max_execution_time" value="' . \esc_attr($max_execution_time) . '" min="10" max="300" step="5">';
         echo '<p class="description">' . __('Temps maximum pour générer un PDF.', 'pdf-builder-pro') . '</p>';
         echo '</td>';
         echo '</tr>';
@@ -286,36 +252,36 @@ class SettingsManager
     {
         try {
             // Vérifier les permissions
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
+            if (!\is_user_logged_in() || !\current_user_can('manage_options')) {
+                \wp_send_json_error('Permissions insuffisantes');
                 return;
             }
 
             // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
-                wp_send_json_error('Nonce invalide');
+            if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
+                \wp_send_json_error('Nonce invalide');
                 return;
             }
 
             // Paramètres généraux
             $settings = [
-                'pdf_builder_company_name' => sanitize_text_field($_POST['company_name'] ?? ''),
-                'pdf_builder_company_address' => sanitize_textarea_field($_POST['company_address'] ?? ''),
-                'pdf_builder_company_phone' => sanitize_text_field($_POST['company_phone'] ?? ''),
-                'pdf_builder_company_email' => sanitize_email($_POST['company_email'] ?? ''),
-                'pdf_builder_default_language' => sanitize_text_field($_POST['default_language'] ?? 'fr'),
+                'pdf_builder_company_name' => \sanitize_text_field($_POST['company_name'] ?? ''),
+                'pdf_builder_company_address' => \sanitize_textarea_field($_POST['company_address'] ?? ''),
+                'pdf_builder_company_phone' => \sanitize_text_field($_POST['company_phone'] ?? ''),
+                'pdf_builder_company_email' => \sanitize_email($_POST['company_email'] ?? ''),
+                'pdf_builder_default_language' => \sanitize_text_field($_POST['default_language'] ?? 'fr'),
             ];
 
             foreach ($settings as $key => $value) {
-                update_option($key, $value);
+                \update_option($key, $value);
             }
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'message' => 'Paramètres généraux sauvegardés'
             ]);
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
+            \wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
 
@@ -326,14 +292,14 @@ class SettingsManager
     {
         try {
             // Vérifier les permissions
-            if (!is_user_logged_in() || !current_user_can('manage_options')) {
-                wp_send_json_error('Permissions insuffisantes');
+            if (!\is_user_logged_in() || !\current_user_can('manage_options')) {
+                \wp_send_json_error('Permissions insuffisantes');
                 return;
             }
 
             // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
-                wp_send_json_error('Nonce invalide');
+            if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
+                \wp_send_json_error('Nonce invalide');
                 return;
             }
 
@@ -347,15 +313,15 @@ class SettingsManager
             ];
 
             foreach ($settings as $key => $value) {
-                update_option($key, $value);
+                \update_option($key, $value);
             }
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'message' => 'Paramètres de performance sauvegardés'
             ]);
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
+            \wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
 
@@ -385,12 +351,12 @@ class SettingsManager
         echo '<legend style="font-weight: 600; margin-bottom: 10px;">' . __('Autorisations d\'orientation du canvas', 'pdf-builder-pro') . '</legend>';
         
         echo '<label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">';
-        echo '<input type="checkbox" name="pdf_builder_canvas_allow_portrait" value="1" ' . checked($allow_portrait, '1', false) . '>';
+        echo '<input type="checkbox" name="pdf_builder_canvas_allow_portrait" value="1" ' . \checked($allow_portrait, '1', false) . '>';
         echo __('Autoriser l\'orientation Portrait (794×1123 px)', 'pdf-builder-pro');
         echo '</label>';
 
         echo '<label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">';
-        echo '<input type="checkbox" name="pdf_builder_canvas_allow_landscape" value="1" ' . checked($allow_landscape, '1', false) . '>';
+        echo '<input type="checkbox" name="pdf_builder_canvas_allow_landscape" value="1" ' . \checked($allow_landscape, '1', false) . '>';
         echo __('Autoriser l\'orientation Paysage (1123×794 px)', 'pdf-builder-pro');
         echo '</label>';
 
@@ -399,8 +365,8 @@ class SettingsManager
         echo '<strong>' . __('Orientation par défaut', 'pdf-builder-pro') . '</strong>';
         echo '</label>';
         echo '<select name="pdf_builder_canvas_default_orientation" style="padding: 6px 8px;">';
-        echo '<option value="portrait" ' . selected($default_orientation, 'portrait', false) . '>' . __('Portrait', 'pdf-builder-pro') . '</option>';
-        echo '<option value="landscape" ' . selected($default_orientation, 'landscape', false) . '>' . __('Paysage', 'pdf-builder-pro') . '</option>';
+        echo '<option value="portrait" ' . \selected($default_orientation, 'portrait', false) . '>' . __('Portrait', 'pdf-builder-pro') . '</option>';
+        echo '<option value="landscape" ' . \selected($default_orientation, 'landscape', false) . '>' . __('Paysage', 'pdf-builder-pro') . '</option>';
         echo '</select>';
         echo '<p class="description">' . __('Cette orientation sera appliquée par défaut lors de la création d\'un nouveau template.', 'pdf-builder-pro') . '</p>';
         echo '</div>';
@@ -535,19 +501,19 @@ class SettingsManager
 
         // Sanitisation des paramètres généraux
         if (isset($input['pdf_builder_company_phone_manual'])) {
-            $sanitized['pdf_builder_company_phone_manual'] = sanitize_text_field($input['pdf_builder_company_phone_manual']);
+            $sanitized['pdf_builder_company_phone_manual'] = \sanitize_text_field($input['pdf_builder_company_phone_manual']);
         }
         if (isset($input['pdf_builder_company_siret'])) {
-            $sanitized['pdf_builder_company_siret'] = sanitize_text_field($input['pdf_builder_company_siret']);
+            $sanitized['pdf_builder_company_siret'] = \sanitize_text_field($input['pdf_builder_company_siret']);
         }
         if (isset($input['pdf_builder_company_vat'])) {
-            $sanitized['pdf_builder_company_vat'] = sanitize_text_field($input['pdf_builder_company_vat']);
+            $sanitized['pdf_builder_company_vat'] = \sanitize_text_field($input['pdf_builder_company_vat']);
         }
         if (isset($input['pdf_builder_company_rcs'])) {
-            $sanitized['pdf_builder_company_rcs'] = sanitize_text_field($input['pdf_builder_company_rcs']);
+            $sanitized['pdf_builder_company_rcs'] = \sanitize_text_field($input['pdf_builder_company_rcs']);
         }
         if (isset($input['pdf_builder_company_capital'])) {
-            $sanitized['pdf_builder_company_capital'] = sanitize_text_field($input['pdf_builder_company_capital']);
+            $sanitized['pdf_builder_company_capital'] = \sanitize_text_field($input['pdf_builder_company_capital']);
         }
 
         // Sanitisation des paramètres système/cache
@@ -581,7 +547,7 @@ class SettingsManager
             $sanitized['pdf_builder_developer_enabled'] = $input['pdf_builder_developer_enabled'] ? '1' : '0';
         }
         if (isset($input['pdf_builder_developer_password'])) {
-            $sanitized['pdf_builder_developer_password'] = sanitize_text_field($input['pdf_builder_developer_password']);
+            $sanitized['pdf_builder_developer_password'] = \sanitize_text_field($input['pdf_builder_developer_password']);
         }
         if (isset($input['pdf_builder_license_test_mode_enabled'])) {
             $sanitized['pdf_builder_license_test_mode_enabled'] = $input['pdf_builder_license_test_mode_enabled'] ? '1' : '0';
@@ -645,7 +611,7 @@ class SettingsManager
             // Vérifications RGPD pour l'adresse email
             if (!empty($email)) {
                 // 1. Validation de l'email
-                if (!is_email($email)) {
+                if (!\is_email($email)) {
                     // Email invalide - ne pas sauvegarder
                     if (class_exists('\PDF_Builder_Logger')) {
                         \PDF_Builder_Logger::get_instance()->debug_log('[RGPD] Email invalide fourni pour les rappels: ' . $email);
@@ -653,7 +619,7 @@ class SettingsManager
                     $email = '';
                 } else {
                     // 2. Sanitisation de l'email
-                    $email = sanitize_email($email);
+                    $email = \sanitize_email($email);
 
                     // 3. Vérification du consentement (case cochée)
                     $consent_given = isset($input['pdf_builder_license_email_reminders']) && $input['pdf_builder_license_email_reminders'] === '1';
@@ -715,12 +681,12 @@ class SettingsManager
             'pdf_builder_canvas_width' => 'intval',
             'pdf_builder_canvas_height' => 'intval',
             'pdf_builder_canvas_dpi' => 'intval',
-            'pdf_builder_canvas_format' => 'sanitize_text_field',
-            'pdf_builder_canvas_bg_color' => 'sanitize_hex_color',
-            'pdf_builder_canvas_border_color' => 'sanitize_hex_color',
+            'pdf_builder_canvas_format' => '\sanitize_text_field',
+            'pdf_builder_canvas_bg_color' => '\sanitize_hex_color',
+            'pdf_builder_canvas_border_color' => '\sanitize_hex_color',
             'pdf_builder_canvas_border_width' => 'intval',
             'pdf_builder_canvas_shadow_enabled' => 'bool',
-            'pdf_builder_canvas_container_bg_color' => 'sanitize_hex_color',
+            'pdf_builder_canvas_container_bg_color' => '\sanitize_hex_color',
             'pdf_builder_canvas_grid_enabled' => 'bool',
             'pdf_builder_canvas_grid_size' => 'intval',
             'pdf_builder_canvas_guides_enabled' => 'bool',
@@ -730,13 +696,13 @@ class SettingsManager
             'pdf_builder_canvas_zoom_default' => 'intval',
             'pdf_builder_canvas_zoom_step' => 'intval',
             'pdf_builder_canvas_export_quality' => 'intval',
-            'pdf_builder_canvas_export_format' => 'sanitize_text_field',
+            'pdf_builder_canvas_export_format' => '\sanitize_text_field',
             'pdf_builder_canvas_export_transparent' => 'bool',
             'pdf_builder_canvas_drag_enabled' => 'bool',
             'pdf_builder_canvas_resize_enabled' => 'bool',
             'pdf_builder_canvas_rotate_enabled' => 'bool',
             'pdf_builder_canvas_multi_select' => 'bool',
-            'pdf_builder_canvas_selection_mode' => 'sanitize_text_field',
+            'pdf_builder_canvas_selection_mode' => '\sanitize_text_field',
             'pdf_builder_canvas_keyboard_shortcuts' => 'bool',
             'pdf_builder_canvas_fps_target' => 'intval',
             'pdf_builder_canvas_memory_limit_js' => 'intval',
@@ -761,11 +727,11 @@ class SettingsManager
                     case 'bool':
                         $sanitized[$field] = $input[$field] ? '1' : '0';
                         break;
-                    case 'sanitize_hex_color':
-                        $sanitized[$field] = sanitize_hex_color($input[$field]) ?: $input[$field];
+                    case '\sanitize_hex_color':
+                        $sanitized[$field] = \sanitize_hex_color($input[$field]) ?: $input[$field];
                         break;
                     default:
-                        $sanitized[$field] = sanitize_text_field($input[$field]);
+                        $sanitized[$field] = \sanitize_text_field($input[$field]);
                         break;
                 }
             }
@@ -773,16 +739,16 @@ class SettingsManager
 
         // Sanitisation du paramètre des templates par statut
         if (isset($input['pdf_builder_order_status_templates']) && is_array($input['pdf_builder_order_status_templates'])) {
-            $sanitized['pdf_builder_order_status_templates'] = array_map('sanitize_text_field', $input['pdf_builder_order_status_templates']);
+            $sanitized['pdf_builder_order_status_templates'] = array_map('\sanitize_text_field', $input['pdf_builder_order_status_templates']);
         }
 
         // Pour l'instant, on accepte les autres valeurs telles quelles mais sanitizées
         foreach ($input as $key => $value) {
             if (!isset($sanitized[$key])) {
                 if (is_array($value)) {
-                    $sanitized[$key] = array_map('sanitize_text_field', $value);
+                    $sanitized[$key] = array_map('\sanitize_text_field', $value);
                 } else {
-                    $sanitized[$key] = sanitize_text_field($value);
+                    $sanitized[$key] = \sanitize_text_field($value);
                 }
             }
         }
@@ -813,7 +779,7 @@ class SettingsManager
 
         foreach ($general_fields as $field) {
             if (isset($input[$field])) {
-                pdf_builder_update_option($field, sanitize_text_field($input[$field]));
+                pdf_builder_update_option($field, \sanitize_text_field($input[$field]));
                 if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] Saved general field '$field' = '" . $input[$field] . "'"); }
             }
         }
@@ -858,12 +824,12 @@ class SettingsManager
     {
         // Charger les styles seulement sur les pages d'administration du plugin
         if (strpos($hook, 'pdf-builder') !== false || strpos($hook, 'settings_page_pdf_builder') !== false) {
-            $css_file = plugin_dir_url(dirname(dirname(dirname(__FILE__)))) . 'assets/css/settings.css';
-            $css_path = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'assets/css/settings.css';
+            $css_file = \plugin_dir_url(dirname(dirname(dirname(__FILE__)))) . 'assets/css/settings.css';
+            $css_path = \plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'assets/css/settings.css';
 
             // Vérifier que le fichier existe avant de le charger
             if (file_exists($css_path)) {
-                wp_enqueue_style(
+                \wp_enqueue_style(
                     'pdf-builder-settings',
                     $css_file,
                     array(),

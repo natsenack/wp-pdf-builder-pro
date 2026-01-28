@@ -37,14 +37,14 @@ class AdminScriptLoader
 
         // Ensure logger is loaded
         if (!class_exists('PDF_Builder_Logger')) {
-            $logger_file = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'src/Core/PDF_Builder_Core_Logger.php';
+            $logger_file = \plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'src/Core/PDF_Builder_Core_Logger.php';
             if (file_exists($logger_file)) {
                 require_once $logger_file;
             }
         }
 
         // Enregistrer le hook pour charger les scripts admin
-        add_action('admin_enqueue_scripts', [$this, 'loadAdminScripts'], 20);
+        \add_action('admin_enqueue_scripts', [$this, 'loadAdminScripts'], 20);
     }
 
     /**
@@ -62,18 +62,18 @@ class AdminScriptLoader
 
         // Ajouter un filtre pour corriger les templates Elementor qui sont chargés comme des scripts JavaScript
         // Appliquer toujours, pas seulement sur les pages PDF Builder
-        add_filter('script_loader_tag', [$this, 'fixElementorTemplates'], 10, 3);
+        \add_filter('script_loader_tag', [$this, 'fixElementorTemplates'], 10, 3);
 
         // Pour la page des paramètres PDF Builder, utiliser le buffering de sortie pour filtrer les scripts inline
         if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-settings') {
-            add_action('init', [$this, 'startOutputBuffering'], 1);
-            add_action('shutdown', [$this, 'endOutputBuffering'], 999);
+            \add_action('init', [$this, 'startOutputBuffering'], 1);
+            \add_action('shutdown', [$this, 'endOutputBuffering'], 999);
         }
 
         // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . $hook); }
 
         // Styles CSS de base
-        wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
+        \wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
 
         // Charger SETTINGS CSS et JS pour les pages settings
         // Simplifier la condition - charger pour toutes les pages admin contenant pdf-builder
@@ -84,7 +84,7 @@ class AdminScriptLoader
             // Charger les utilitaires PDF Builder en premier (PerformanceMetrics, LocalCache, etc.) - seulement si le fichier existe
             $utils_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-utils.js';
             if (file_exists($utils_js)) {
-                wp_enqueue_script(
+                \wp_enqueue_script(
                     'pdf-builder-utils',
                     PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-utils.js',
                     [],
@@ -93,7 +93,7 @@ class AdminScriptLoader
                 );
             }
 
-            wp_enqueue_style(
+            \wp_enqueue_style(
                 'pdf-builder-settings-tabs',
                 PDF_BUILDER_PRO_ASSETS_URL . 'css/settings-tabs.css',
                 [],
@@ -102,7 +102,7 @@ class AdminScriptLoader
 
             // Charger settings-tabs.min.js pour TOUTES les pages PDF Builder
             if (!wp_script_is('pdf-builder-settings-tabs', 'enqueued')) {
-                wp_enqueue_script(
+                \wp_enqueue_script(
                     'pdf-builder-settings-tabs',
                     PDF_BUILDER_PRO_ASSETS_URL . 'js/settings-tabs.min.js',
                     ['jquery'],
@@ -117,7 +117,7 @@ class AdminScriptLoader
 
             // Charger settings-main.min.js pour les fonctions de licence
             if (!wp_script_is('pdf-builder-settings-main', 'enqueued')) {
-                wp_enqueue_script(
+                \wp_enqueue_script(
                     'pdf-builder-settings-main',
                     PDF_BUILDER_PRO_ASSETS_URL . 'js/settings-main.min.js',
                     ['jquery'],
@@ -130,7 +130,7 @@ class AdminScriptLoader
             // Charger le système de notifications pour les pages de paramètres - seulement si le fichier existe
             $notifications_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/notifications.min.js';
             if (file_exists($notifications_js)) {
-                wp_enqueue_script(
+                \wp_enqueue_script(
                     'pdf-builder-notifications',
                     PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.min.js',
                     ['jquery'],
@@ -142,7 +142,7 @@ class AdminScriptLoader
             // Charger le CSS des notifications - seulement si le fichier existe
             $notifications_css = PDF_BUILDER_PRO_ASSETS_PATH . 'css/notifications.min.css';
             if (file_exists($notifications_css)) {
-                wp_enqueue_style(
+                \wp_enqueue_style(
                     'pdf-builder-notifications',
                     PDF_BUILDER_PRO_ASSETS_URL . 'css/notifications.min.css',
                     [],
@@ -192,9 +192,9 @@ class AdminScriptLoader
             ]);
 
             // Localiser les variables AJAX
-            wp_localize_script('pdf-builder-settings-tabs', 'pdfBuilderAjax', [
-                'ajaxurl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('pdf_builder_settings')
+            \wp_localize_script('pdf-builder-settings-tabs', 'pdfBuilderAjax', [
+                'ajaxurl' => \admin_url('admin-ajax.php'),
+                'nonce' => \wp_create_nonce('pdf_builder_settings')
             ]);
 
             // Définir les paramètres de debug JavaScript UNIQUEMENT pour settings-tabs
@@ -220,8 +220,8 @@ class AdminScriptLoader
             
             // Define variables BEFORE loading the script
             $preview_data = [
-                'ajaxurl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('pdf_builder_order_actions'),
+                'ajaxurl' => \admin_url('admin-ajax.php'),
+                'nonce' => \wp_create_nonce('pdf_builder_order_actions'),
                 'version' => PDF_BUILDER_PRO_VERSION,
                 'timestamp' => time(),
                 'strings' => [
@@ -229,9 +229,9 @@ class AdminScriptLoader
                     'generating_pdf' => __('Génération du PDF en cours...', 'pdf-builder-pro'),
                 ]
             ];
-            wp_add_inline_script('jquery', 'window.pdfBuilderData = ' . wp_json_encode($preview_data) . '; window.pdfBuilderNonce = "' . wp_create_nonce('pdf_builder_order_actions') . '";', 'after');
+            wp_add_inline_script('jquery', 'window.pdfBuilderData = ' . wp_json_encode($preview_data) . '; window.pdfBuilderNonce = "' . \wp_create_nonce('pdf_builder_order_actions') . '";', 'after');
             
-            wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-api-client.min.js', ['jquery'], $version_param, true);
+            \wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-api-client.min.js', ['jquery'], $version_param, true);
             error_log('[DEBUG] PDF Builder AdminScriptLoader: ENQUEUED pdf-preview-api-client script');
             
             // Debug: Add script to check if variables are defined after the main script
@@ -252,13 +252,13 @@ class AdminScriptLoader
             $preview_integration_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-preview-integration.min.js';
             error_log('[DEBUG] PDF Builder AdminScriptLoader: Checking if preview integration exists: ' . $preview_integration_js . ' - exists: ' . (file_exists($preview_integration_js) ? 'YES' : 'NO'));
             if (file_exists($preview_integration_js)) {
-                wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-integration.min.js', ['pdf-preview-api-client'], $version_param, true);
+                \wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-integration.min.js', ['pdf-preview-api-client'], $version_param, true);
                 error_log('[DEBUG] PDF Builder AdminScriptLoader: ENQUEUED pdf-preview-integration script');
 
                 // Localize ajaxurl for integration script
-                wp_localize_script('pdf-preview-integration', 'pdfBuilderAjax', [
-                    'ajaxurl' => admin_url('admin-ajax.php'),
-                    'nonce' => wp_create_nonce('pdf_builder_order_actions')
+                \wp_localize_script('pdf-preview-integration', 'pdfBuilderAjax', [
+                    'ajaxurl' => \admin_url('admin-ajax.php'),
+                    'nonce' => \wp_create_nonce('pdf_builder_order_actions')
                 ]);
             }
         }
@@ -266,7 +266,7 @@ class AdminScriptLoader
         // Outils développeur asynchrones - seulement si le fichier existe
         $developer_tools_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/developer-tools.js';
         if (file_exists($developer_tools_js)) {
-            wp_enqueue_script('pdf-builder-developer-tools', PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js', ['jquery', 'pdf-preview-api-client'], $version_param, true);
+            \wp_enqueue_script('pdf-builder-developer-tools', PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js', ['jquery', 'pdf-preview-api-client'], $version_param, true);
         }
         // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-developer-tools: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js'); }
         // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set')); }
@@ -279,7 +279,7 @@ class AdminScriptLoader
             $this->loadReactEditorScripts($hook);
 
             // Add footer DOM check only once
-            add_action('admin_footer-pdf-builder_page_pdf-builder-react-editor', function() {
+            \add_action('admin_footer-pdf-builder_page_pdf-builder-react-editor', function() {
                 ?>
                 <script>
                 console.log('🔍 [FOOTER DOM CHECK] Starting DOM script check...');
@@ -368,23 +368,23 @@ class AdminScriptLoader
 
         // AJAX throttle manager
         $throttle_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/ajax-throttle.min.js';
-        wp_enqueue_script('pdf-builder-ajax-throttle', $throttle_url, [], $cache_bust, true);
+        \wp_enqueue_script('pdf-builder-ajax-throttle', $throttle_url, [], $cache_bust, true);
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-ajax-throttle: ' . $throttle_url . ' with cache_bust: ' . $cache_bust); }
 
         // Notifications system
         $notifications_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.min.js';
-        wp_enqueue_script('pdf-builder-notifications', $notifications_url, ['jquery'], $cache_bust, true);
+        \wp_enqueue_script('pdf-builder-notifications', $notifications_url, ['jquery'], $cache_bust, true);
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications: ' . $notifications_url . ' with cache_bust: ' . $cache_bust); }
 
         // Notifications CSS
         $notifications_css_url = PDF_BUILDER_PRO_ASSETS_URL . 'css/notifications.min.css';
-        wp_enqueue_style('pdf-builder-notifications', $notifications_css_url, [], $cache_bust);
+        \wp_enqueue_style('pdf-builder-notifications', $notifications_css_url, [], $cache_bust);
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications CSS: ' . $notifications_css_url . ' with cache_bust: ' . $cache_bust); }
 
         // Localize notifications data
-        wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_notifications'),
+        \wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
+            'ajax_url' => \admin_url('admin-ajax.php'),
+            'nonce' => \wp_create_nonce('pdf_builder_notifications'),
             'settings' => [
                 'enabled' => true,
                 'position' => 'top-right',
@@ -414,7 +414,7 @@ class AdminScriptLoader
 
         // Wrapper script
         $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.min.js';
-        wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle', 'pdf-builder-notifications'], $cache_bust, true);
+        \wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle', 'pdf-builder-notifications'], $cache_bust, true);
         // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url); }
 
         // FORCE COMPLETE RELOAD - Use ULTRA NUCLEAR aggressive version parameters to bypass ALL caching
@@ -427,30 +427,30 @@ class AdminScriptLoader
 
         // Load React vendors bundle (React, ReactDOM, dependencies)
         $react_vendors_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/react-vendor.min.js' . $random_param;
-        wp_enqueue_script('pdf-builder-react-vendors', $react_vendors_url, ['pdf-builder-wrap'], $version_param . $nuclear_suffix, true);
+        \wp_enqueue_script('pdf-builder-react-vendors', $react_vendors_url, ['pdf-builder-wrap'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react-vendors', 'type', 'text/javascript');
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-vendors'); }
 
         // Runtime script
         $runtime_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/runtime.min.js' . $random_param;
-        wp_enqueue_script('pdf-builder-runtime', $runtime_url, ['pdf-builder-react-vendors'], $version_param . $nuclear_suffix, true);
+        \wp_enqueue_script('pdf-builder-runtime', $runtime_url, ['pdf-builder-react-vendors'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-runtime', 'type', 'text/javascript');
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-runtime'); }
 
         // CSS pour l'éditeur React
         $react_css_url = PDF_BUILDER_PLUGIN_URL . 'assets/css/pdf-builder-react.min.css';
-        wp_enqueue_style('pdf-builder-react', $react_css_url, [], $version_param . $nuclear_suffix);
+        \wp_enqueue_style('pdf-builder-react', $react_css_url, [], $version_param . $nuclear_suffix);
 
         // Main React app bundle (dépend du runtime, vendors et de la médiathèque WordPress)
         $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js' . $random_param;
-        wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-runtime', 'media-views'], $version_param . $nuclear_suffix, true);
+        \wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-runtime', 'media-views'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-main with media-views dependency'); }
         
         // Localize script data BEFORE enqueuing
         $localize_data = [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_ajax'),
+            'ajaxUrl' => \admin_url('admin-ajax.php'),
+            'nonce' => \wp_create_nonce('pdf_builder_ajax'),
             'version' => PDF_BUILDER_PRO_VERSION,
             'templateId' => isset($_GET['template_id']) ? intval($_GET['template_id']) : 0,
             'isEdit' => isset($_GET['template_id']) && intval($_GET['template_id']) > 0,
@@ -490,17 +490,17 @@ class AdminScriptLoader
         }
         if (empty($company_data['address'])) {
             // Récupérer l'adresse complète depuis WooCommerce
-            $store_address = get_option('woocommerce_store_address', '');
-            $store_address_2 = get_option('woocommerce_store_address_2', '');
-            $store_city = get_option('woocommerce_store_city', '');
-            $store_postcode = get_option('woocommerce_store_postcode', '');
-            $store_country = get_option('woocommerce_store_country', '');
+            $store_address = \get_option('woocommerce_store_address', '');
+            $store_address_2 = \get_option('woocommerce_store_address_2', '');
+            $store_city = \get_option('woocommerce_store_city', '');
+            $store_postcode = \get_option('woocommerce_store_postcode', '');
+            $store_country = \get_option('woocommerce_store_country', '');
             
             $full_address = array_filter([$store_address, $store_address_2, $store_postcode . ' ' . $store_city, $store_country]);
             $company_data['address'] = implode(', ', $full_address);
         }
         if (empty($company_data['email'])) {
-            $company_data['email'] = get_option('admin_email', '');
+            $company_data['email'] = \get_option('admin_email', '');
         }
         
         // Si après tous les fallbacks les valeurs sont encore vides, indiquer "Non indiqué"
@@ -694,8 +694,8 @@ class AdminScriptLoader
             }
         }
 
-        wp_localize_script('pdf-builder-react-main', 'pdfBuilderData', $localize_data);
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] wp_localize_script called for pdf-builder-react-main with data: ' . json_encode($localize_data)); }
+        \wp_localize_script('pdf-builder-react-main', 'pdfBuilderData', $localize_data);
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] \wp_localize_script called for pdf-builder-react-main with data: ' . json_encode($localize_data)); }
 
         // Also set window.pdfBuilderData directly before React initializes
         wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
@@ -737,13 +737,13 @@ class AdminScriptLoader
 
         // Init helper
         $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.min.js';
-        wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react-main'], $cache_bust, true);
+        \wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react-main'], $cache_bust, true);
         // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-init: ' . $init_helper_url); }
 
         // React initialization script - initializes PDFBuilderReact component
         $react_init_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-init.min.js' . $random_param;
         error_log('[DEBUG] PDF Builder AdminScriptLoader: ENQUEUING pdf-builder-react-initializer with URL: ' . $react_init_url);
-        wp_enqueue_script('pdf-builder-react-initializer', $react_init_url, ['pdf-builder-react-main'], $version_param . $nuclear_suffix, true);
+        \wp_enqueue_script('pdf-builder-react-initializer', $react_init_url, ['pdf-builder-react-main'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react-initializer', 'type', 'text/javascript');
         error_log('[DEBUG] PDF Builder AdminScriptLoader: AFTER ENQUEUE - checking if script is registered: ' . (wp_script_is('pdf-builder-react-initializer', 'enqueued') ? 'YES' : 'NO'));
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-initializer'); }
@@ -753,8 +753,8 @@ class AdminScriptLoader
         $preview_client_mtime = file_exists($preview_client_path) ? filemtime($preview_client_path) : time();
         $version_param_api = PDF_BUILDER_PRO_VERSION . '-' . $preview_client_mtime;
         
-        wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-api-client.min.js', ['jquery'], $version_param_api, true);
-        wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-integration.min.js', ['pdf-preview-api-client'], $version_param_api, true);
+        \wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-api-client.min.js', ['jquery'], $version_param_api, true);
+        \wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-integration.min.js', ['pdf-preview-api-client'], $version_param_api, true);
 
         // Script d'initialisation avec debug - exécuté immédiatement après la localisation
         $init_script = "
