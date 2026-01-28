@@ -10,16 +10,7 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit('Direct access not allowed');
 }
 
-// Activer le débogage pour capture les erreurs PHP critiques
-if (!defined('WP_DEBUG')) {
-    define('WP_DEBUG', true);
-}
-if (!defined('WP_DEBUG_LOG')) {
-    define('WP_DEBUG_LOG', true);
-}
-if (!defined('WP_DEBUG_DISPLAY')) {
-    define('WP_DEBUG_DISPLAY', false); // Ne pas afficher en frontend, seulement logger
-}
+// Le débogage est déjà configuré dans wp-config.php
 
 // ========================================================================
 // ✅ INJECTION DU NONCE DANS LE HEAD - TRÈS TÔT
