@@ -427,6 +427,8 @@ if (function_exists('add_action')) {
     }, 0);
 
     // Initialiser l'API Preview après que WordPress soit chargé
+    // TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
+    /*
     add_action('init', function() {
         if (class_exists('\\PDF_Builder\\Api\\PreviewImageAPI')) {
             new \PDF_Builder\Api\PreviewImageAPI();
@@ -436,8 +438,11 @@ if (function_exists('add_action')) {
             \PDF_Builder\PreviewSystem\PreviewAjaxHandler::init();
         }
     });
+    */
 
     // Force HTTPS if enabled in settings (simple redirect to https if not SSL)
+    // TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
+    /*
         add_action('template_redirect', function() {
             // Skip CLI, AJAX, REST requests and cron
             if (defined('WP_CLI') && WP_CLI) return;
@@ -467,6 +472,7 @@ if (function_exists('add_action')) {
                 }
             }
         }, 1);
+    */
     // Also enforce HTTPS for the administration pages if configured
     add_action('admin_init', function() {
         // Skip CLI, AJAX and REST calls
@@ -1174,6 +1180,8 @@ function pdf_builder_load_bootstrap()
 
     // INITIALISER LE GESTIONNAIRE D'ONBOARDING
     // Retarder complètement le chargement et l'initialisation au hook 'init'
+    // TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
+    /*
     add_action('init', function() {
         // Les utilitaires sont déjà chargés ci-dessus dans le même hook 'init'
         if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
@@ -1192,9 +1200,12 @@ function pdf_builder_load_bootstrap()
             \PDF_Builder\Utilities\PDF_Builder_Onboarding_Manager::get_instance();
         }
     }, 5);
+    */
 
     // INITIALISER LE GESTIONNAIRE RGPD
     // Retarder complètement le chargement et l'initialisation au hook 'init'
+    // TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
+    /*
     add_action('init', function() {
         // Les utilitaires sont déjà chargés ci-dessus dans le même hook 'init'
         if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_GDPR_Manager')) {
@@ -1208,18 +1219,24 @@ function pdf_builder_load_bootstrap()
             \PDF_Builder\Utilities\PDF_Builder_GDPR_Manager::get_instance();
         }
     }, 5);
+    */
 
     // CHARGER LES HOOKS AJAX ESSENTIELS TOUJOURS, MÊME EN MODE FALLBACK
     pdf_builder_register_essential_ajax_hooks();
 
     // INSTANCIER L'API PREVIEW POUR LES ROUTES REST (Étape 1.4)
+    // TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
+    /*
     add_action('init', function() {
         if (class_exists('PDF_Builder\\Api\\PreviewImageAPI')) {
             new \PDF_Builder\Api\PreviewImageAPI();
         }
     });
+    */
 
     // Vérification que les classes essentielles sont chargées
+    // TEMPORAIREMENT COMMENTE POUR DIAGNOSTIC WOO
+    /*
     if (class_exists('PDF_Builder\\Core\\PdfBuilderCore')) {
         $core = \PDF_Builder\Core\PdfBuilderCore::getInstance();
         if (method_exists($core, 'init')) {
@@ -1249,6 +1266,7 @@ function pdf_builder_load_bootstrap()
         // Fallback: enregistrer un menu simple si le core n'est pas disponible
         add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
     }
+    */
 
     // Marquer comme chargé globalement
     define('PDF_BUILDER_BOOTSTRAP_LOADED', true);
