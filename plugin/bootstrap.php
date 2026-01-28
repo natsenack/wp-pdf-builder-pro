@@ -1513,6 +1513,12 @@ if (file_exists($ajax_handlers_path)) {
     require_once $ajax_handlers_path;
 }
 
+// Inclure le handler des templates prédéfinis
+$templates_ajax_path = PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/PDF_Builder_Templates_Ajax.php';
+if (file_exists($templates_ajax_path)) {
+    require_once $templates_ajax_path;
+}
+
 // ============================================================================
 // INITIALISER LES PARAMÈTRES CANVAS PAR DÉFAUT
 // ============================================================================
