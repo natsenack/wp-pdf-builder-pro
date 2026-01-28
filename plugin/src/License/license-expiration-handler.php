@@ -15,8 +15,8 @@ class License_Expiration_Handler
     public static function init()
     {
         // Schedule daily expiration check
-        add_action('init', [__CLASS__, 'scheduleExpirationCheck']);
-        add_action('pdf_builder_checkLicenseExpiration', [__CLASS__, 'checkLicenseExpiration']);
+        \add_action('init', [__CLASS__, 'scheduleExpirationCheck']);
+        \add_action('pdf_builder_checkLicenseExpiration', [__CLASS__, 'checkLicenseExpiration']);
     }
 
     /**
@@ -24,8 +24,8 @@ class License_Expiration_Handler
      */
     public static function scheduleExpirationCheck()
     {
-        if (!wp_next_scheduled('pdf_builder_checkLicenseExpiration')) {
-            wp_schedule_event(current_time('timestamp'), 'daily', 'pdf_builder_checkLicenseExpiration');
+        if (!\wp_next_scheduled('pdf_builder_checkLicenseExpiration')) {
+            \wp_schedule_event(\current_time('timestamp'), 'daily', 'pdf_builder_checkLicenseExpiration');
         }
     }
 
@@ -104,8 +104,8 @@ class License_Expiration_Handler
     private static function sendExpirationNotification($expiration_date, $days_remaining)
     {
         // Legacy notification emails are disabled: record the event in logs/DB for audit purposes
-        $site_name = get_option('blogname');
-        $site_url = get_option('siteurl');
+        $site_name = \get_option('blogname');
+        $site_url = \get_option('siteurl');
         if (class_exists('PDF_Builder_Logger')) {
             PDF_Builder_Logger::get_instance()->info('License nearing expiration: ' . $site_name . ' (remaining ' . $days_remaining . ' days)', ['license_expires' => $expiration_date]);
         }
@@ -125,7 +125,7 @@ class License_Expiration_Handler
      */
     public static function clearScheduledExpirationCheck()
     {
-        $timestamp = wp_next_scheduled('pdf_builder_checkLicenseExpiration');
+        $timestamp = \wp_next_scheduled('pdf_builder_checkLicenseExpiration');
         if ($timestamp) {
             wp_unschedule_event($timestamp, 'pdf_builder_checkLicenseExpiration');
         }

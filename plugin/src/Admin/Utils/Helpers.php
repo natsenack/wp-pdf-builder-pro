@@ -145,7 +145,7 @@ class Helpers
      */
     public static function generateUniqueFilename($prefix = 'pdf_builder', $extension = 'pdf')
     {
-        return $prefix . '_' . time() . '_' . wp_generate_password(6, false) . '.' . $extension;
+        return $prefix . '_' . time() . '_' . \wp_generate_password(6, false) . '.' . $extension;
     }
 
     /**
@@ -154,7 +154,7 @@ class Helpers
     public static function ensureDirectoryExists($path)
     {
         if (!file_exists($path)) {
-            wp_mkdir_p($path);
+            \wp_mkdir_p($path);
             return is_dir($path);
         }
         return true;
@@ -165,7 +165,7 @@ class Helpers
      */
     public static function getUploadsPath()
     {
-        $upload_dir = wp_upload_dir();
+        $upload_dir = \wp_upload_dir();
         $pdf_path = $upload_dir['basedir'] . '/pdf-builder';
 
         if (self::ensureDirectoryExists($pdf_path)) {
@@ -180,7 +180,7 @@ class Helpers
      */
     public static function getUploadsUrl()
     {
-        $upload_dir = wp_upload_dir();
+        $upload_dir = \wp_upload_dir();
         return $upload_dir['baseurl'] . '/pdf-builder';
     }
 
@@ -221,7 +221,7 @@ class Helpers
     {
         return [
             'php_version' => PHP_VERSION,
-            'wp_version' => get_bloginfo('version'),
+            'wp_version' => \get_bloginfo('version'),
             'memory_limit' => ini_get('memory_limit'),
             'max_execution_time' => ini_get('max_execution_time'),
             'upload_max_filesize' => ini_get('upload_max_filesize'),
@@ -236,7 +236,7 @@ class Helpers
     public static function logDebug($message, $data = null)
     {
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            $log_message = '[' . current_time('Y-m-d H:i:s') . '] ' . $message;
+            $log_message = '[' . \current_time('Y-m-d H:i:s') . '] ' . $message;
             if ($data !== null) {
                 $log_message .= ' - Data: ' . wp_json_encode($data);
             }

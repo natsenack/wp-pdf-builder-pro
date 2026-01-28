@@ -183,11 +183,11 @@ class AdminScriptLoader
                     'theme' => 'modern'
                 ],
                 'strings' => [
-                    'success' => __('Succès', 'pdf-builder-pro'),
-                    'error' => __('Erreur', 'pdf-builder-pro'),
-                    'warning' => __('Avertissement', 'pdf-builder-pro'),
-                    'info' => __('Information', 'pdf-builder-pro'),
-                    'close' => __('Fermer', 'pdf-builder-pro')
+                    'success' => \__('Succès', 'pdf-builder-pro'),
+                    'error' => \__('Erreur', 'pdf-builder-pro'),
+                    'warning' => \__('Avertissement', 'pdf-builder-pro'),
+                    'info' => \__('Information', 'pdf-builder-pro'),
+                    'close' => \__('Fermer', 'pdf-builder-pro')
                 ]
             ]);
 
@@ -225,8 +225,8 @@ class AdminScriptLoader
                 'version' => PDF_BUILDER_PRO_VERSION,
                 'timestamp' => time(),
                 'strings' => [
-                    'error_loading_preview' => __('Erreur lors du chargement de l\'aperçu', 'pdf-builder-pro'),
-                    'generating_pdf' => __('Génération du PDF en cours...', 'pdf-builder-pro'),
+                    'error_loading_preview' => \__('Erreur lors du chargement de l\'aperçu', 'pdf-builder-pro'),
+                    'generating_pdf' => \__('Génération du PDF en cours...', 'pdf-builder-pro'),
                 ]
             ];
             wp_add_inline_script('jquery', 'window.pdfBuilderData = ' . wp_json_encode($preview_data) . '; window.pdfBuilderNonce = "' . \wp_create_nonce('pdf_builder_order_actions') . '";', 'after');
@@ -394,11 +394,11 @@ class AdminScriptLoader
                 'theme' => 'modern'
             ],
             'strings' => [
-                'success' => __('Succès', 'pdf-builder-pro'),
-                'error' => __('Erreur', 'pdf-builder-pro'),
-                'warning' => __('Avertissement', 'pdf-builder-pro'),
-                'info' => __('Information', 'pdf-builder-pro'),
-                'close' => __('Fermer', 'pdf-builder-pro')
+                'success' => \__('Succès', 'pdf-builder-pro'),
+                'error' => \__('Erreur', 'pdf-builder-pro'),
+                'warning' => \__('Avertissement', 'pdf-builder-pro'),
+                'info' => \__('Information', 'pdf-builder-pro'),
+                'close' => \__('Fermer', 'pdf-builder-pro')
             ]
         ]);
 
@@ -452,8 +452,8 @@ class AdminScriptLoader
             'ajaxUrl' => \admin_url('admin-ajax.php'),
             'nonce' => \wp_create_nonce('pdf_builder_ajax'),
             'version' => PDF_BUILDER_PRO_VERSION,
-            'templateId' => isset($_GET['template_id']) ? intval($_GET['template_id']) : 0,
-            'isEdit' => isset($_GET['template_id']) && intval($_GET['template_id']) > 0,
+            'templateId' => isset($_GET['template_id']) ? \intval($_GET['template_id']) : 0,
+            'isEdit' => isset($_GET['template_id']) && \intval($_GET['template_id']) > 0,
         ];
 
         // Ajouter les informations de licence
@@ -627,8 +627,8 @@ class AdminScriptLoader
         // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Localize data prepared: ' . print_r($localize_data, true)); }
 
         // Charger les données du template si template_id est fourni
-        if (isset($_GET['template_id']) && intval($_GET['template_id']) > 0) {
-            $template_id = intval($_GET['template_id']);
+        if (isset($_GET['template_id']) && \intval($_GET['template_id']) > 0) {
+            $template_id = \intval($_GET['template_id']);
             error_log('[DEBUG] PDF Builder: Template ID detected: ' . $template_id);
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Loading template data for ID: ' . $template_id . ', REQUEST_URI: ' . $_SERVER['REQUEST_URI']); }
 

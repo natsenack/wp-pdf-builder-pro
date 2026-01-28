@@ -148,7 +148,7 @@ class DashboardDataProvider
                     'backgroundColor' => '#ffffff'
                 ]
             ],
-            'created_at' => current_time('mysql'),
+            'created_at' => \current_time('mysql'),
         ];
 
         return $default_template;

@@ -46,7 +46,7 @@ class ParameterValidator
         $text_params = ['template_name', 'background_color'];
         foreach ($text_params as $param) {
             if (isset($post_data[$param])) {
-                $filtered[$param] = sanitize_text_field($post_data[$param]);
+                $filtered[$param] = \sanitize_text_field($post_data[$param]);
             }
         }
 
@@ -140,7 +140,7 @@ class ParameterValidator
 
         foreach ($allowed_styles as $style) {
             if (isset($styles[$style])) {
-                $validated[$style] = sanitize_text_field($styles[$style]);
+                $validated[$style] = \sanitize_text_field($styles[$style]);
             }
         }
 

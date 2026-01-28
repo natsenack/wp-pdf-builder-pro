@@ -58,7 +58,7 @@ class PDF_Builder_License_Manager
         $this->license_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
         $this->license_data = pdf_builder_get_option('pdf_builder_license_data', []);
 
-        add_action('admin_init', array($this, 'check_license_status'));
+        \add_action('admin_init', array($this, 'check_license_status'));
     }
 
     /**

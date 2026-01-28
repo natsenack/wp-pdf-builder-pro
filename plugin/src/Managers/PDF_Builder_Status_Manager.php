@@ -43,20 +43,20 @@ class PDF_Builder_Status_Manager
     private function initHooks()
     {
         // Détection automatique des statuts lors de l'activation de plugins
-        add_action('activated_plugin', [$this, 'check_for_new_statuses']);
-        add_action('deactivated_plugin', [$this, 'check_for_removed_statuses']);
+        \add_action('activated_plugin', [$this, 'check_for_new_statuses']);
+        \add_action('deactivated_plugin', [$this, 'check_for_removed_statuses']);
 
         // Hook pour étendre les paramètres
-        add_filter('pdf_builder_order_status_settings', [$this, 'extend_status_settings']);
+        \add_filter('pdf_builder_order_status_settings', [$this, 'extend_status_settings']);
 
         // Vérification périodique des statuts (une fois par jour)
-        if (!wp_next_scheduled('pdf_builder_daily_status_check')) {
-            wp_schedule_event(time(), 'daily', 'pdf_builder_daily_status_check');
+        if (!\wp_next_scheduled('pdf_builder_daily_status_check')) {
+            \wp_schedule_event(time(), 'daily', 'pdf_builder_daily_status_check');
         }
-        add_action('pdf_builder_daily_status_check', [$this, 'daily_status_check']);
+        \add_action('pdf_builder_daily_status_check', [$this, 'daily_status_check']);
 
         // Hook pour la génération PDF avec fallback
-        add_filter('pdf_builder_get_template_for_status', [$this, 'get_template_with_fallback'], 10, 2);
+        \add_filter('pdf_builder_get_template_for_status', [$this, 'get_template_with_fallback'], 10, 2);
     }
 
     /**
@@ -72,20 +72,20 @@ class PDF_Builder_Status_Manager
 
         // Statuts par défaut WooCommerce
         $default_statuses = [
-            'wc-pending' => __('En attente', 'pdf-builder-pro'),
-            'wc-processing' => __('En cours', 'pdf-builder-pro'),
-            'wc-on-hold' => __('En attente', 'pdf-builder-pro'),
-            'wc-completed' => __('Terminée', 'pdf-builder-pro'),
-            'wc-cancelled' => __('Annulée', 'pdf-builder-pro'),
-            'wc-refunded' => __('Remboursée', 'pdf-builder-pro'),
-            'wc-failed' => __('Échec', 'pdf-builder-pro')
+            'wc-pending' => \__('En attente', 'pdf-builder-pro'),
+            'wc-processing' => \__('En cours', 'pdf-builder-pro'),
+            'wc-on-hold' => \__('En attente', 'pdf-builder-pro'),
+            'wc-completed' => \__('Terminée', 'pdf-builder-pro'),
+            'wc-cancelled' => \__('Annulée', 'pdf-builder-pro'),
+            'wc-refunded' => \__('Remboursée', 'pdf-builder-pro'),
+            'wc-failed' => \__('Échec', 'pdf-builder-pro')
         ];
 
         // Fusionner avec les statuts par défaut
         $statuses = array_merge($statuses, $default_statuses);
 
         // Détecter les statuts personnalisés via WooCommerce UNIQUEMENT si WooCommerce est complètement chargé
-        if (did_action('plugins_loaded') && function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active() && function_exists('wc_get_order_statuses')) {
+        if (\did_action('plugins_loaded') && function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active() && function_exists('wc_get_order_statuses')) {
             $wc_statuses = wc_get_order_statuses();
             foreach ($wc_statuses as $status_key => $status_name) {
                 // WooCommerce retourne les clés avec 'wc-' préfixe
@@ -108,27 +108,27 @@ class PDF_Builder_Status_Manager
         // Liste des plugins qui ajoutent des statuts personnalisés
         $plugin_statuses = [
             // Additional Custom Order Status for WooCommerce
-            'wc-devis' => __('Devis', 'pdf-builder-pro'),
-            'wc-quote' => __('Devis', 'pdf-builder-pro'),
-            'wc-estimate' => __('Estimation', 'pdf-builder-pro'),
-            'wc-partial-payment' => __('Paiement partiel', 'pdf-builder-pro'),
-            'wc-quotation' => __('Devis', 'pdf-builder-pro'),
+            'wc-devis' => \__('Devis', 'pdf-builder-pro'),
+            'wc-quote' => \__('Devis', 'pdf-builder-pro'),
+            'wc-estimate' => \__('Estimation', 'pdf-builder-pro'),
+            'wc-partial-payment' => \__('Paiement partiel', 'pdf-builder-pro'),
+            'wc-quotation' => \__('Devis', 'pdf-builder-pro'),
 
             // WooCommerce Quote
-            'wc-quote-sent' => __('Devis envoyé', 'pdf-builder-pro'),
-            'wc-quote-accepted' => __('Devis accepté', 'pdf-builder-pro'),
-            'wc-quote-rejected' => __('Devis rejeté', 'pdf-builder-pro'),
+            'wc-quote-sent' => \__('Devis envoyé', 'pdf-builder-pro'),
+            'wc-quote-accepted' => \__('Devis accepté', 'pdf-builder-pro'),
+            'wc-quote-rejected' => \__('Devis rejeté', 'pdf-builder-pro'),
 
             // WooCommerce Order Status Manager
-            'wc-custom-status' => __('Statut personnalisé', 'pdf-builder-pro'),
-            'wc-awaiting-shipment' => __('En attente d\'expédition', 'pdf-builder-pro'),
-            'wc-shipped' => __('Expédié', 'pdf-builder-pro'),
-            'wc-delivered' => __('Livré', 'pdf-builder-pro'),
+            'wc-custom-status' => \__('Statut personnalisé', 'pdf-builder-pro'),
+            'wc-awaiting-shipment' => \__('En attente d\'expédition', 'pdf-builder-pro'),
+            'wc-shipped' => \__('Expédié', 'pdf-builder-pro'),
+            'wc-delivered' => \__('Livré', 'pdf-builder-pro'),
 
             // Autres plugins courants
-            'wc-backordered' => __('En rupture de stock', 'pdf-builder-pro'),
-            'wc-pre-ordered' => __('Pré-commandé', 'pdf-builder-pro'),
-            'wc-disputed' => __('Contesté', 'pdf-builder-pro'),
+            'wc-backordered' => \__('En rupture de stock', 'pdf-builder-pro'),
+            'wc-pre-ordered' => \__('Pré-commandé', 'pdf-builder-pro'),
+            'wc-disputed' => \__('Contesté', 'pdf-builder-pro'),
         ];
 
         // Vérifier si ces statuts existent réellement

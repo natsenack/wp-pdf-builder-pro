@@ -477,18 +477,18 @@ class HTMLRenderer
         // Sinon, récupérer automatiquement depuis WooCommerce/WordPress
         $company_parts = [];
 // Nom de la société (nom du site WordPress)
-        $company_name = get_bloginfo('name');
+        $company_name = \get_bloginfo('name');
         if (!empty($company_name)) {
             $company_parts[] = $company_name;
         }
 
         // Adresse depuis WooCommerce
         $address_parts = [];
-        $address1 = get_option('woocommerce_store_address');
-        $address2 = get_option('woocommerce_store_address_2');
-        $city = get_option('woocommerce_store_city');
-        $postcode = get_option('woocommerce_store_postcode');
-        $country = get_option('woocommerce_store_country');
+        $address1 = \get_option('woocommerce_store_address');
+        $address2 = \get_option('woocommerce_store_address_2');
+        $city = \get_option('woocommerce_store_city');
+        $postcode = \get_option('woocommerce_store_postcode');
+        $country = \get_option('woocommerce_store_country');
         if (!empty($address1)) {
             $address_parts[] = $address1;
         }
@@ -520,7 +520,7 @@ class HTMLRenderer
         }
 
         // Email depuis WordPress
-        $email = get_bloginfo('admin_email');
+        $email = \get_bloginfo('admin_email');
         if (!empty($email)) {
             $company_parts[] = 'Email: ' . $email;
         }
@@ -632,9 +632,9 @@ class HTMLRenderer
         }
 
         // Use get_option instead of WC()->countries to avoid autoloading
-        $countries = get_option('woocommerce_countries', []);
+        $countries = \get_option('woocommerce_countries', []);
         if (empty($countries)) {
-            $countries = get_option('woocommerce_allowed_countries', []);
+            $countries = \get_option('woocommerce_allowed_countries', []);
         }
         return isset($countries[$country_code]) ? $countries[$country_code] : $country_code;
     }

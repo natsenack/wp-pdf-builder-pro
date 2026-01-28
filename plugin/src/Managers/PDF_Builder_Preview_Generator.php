@@ -493,7 +493,7 @@ class PDF_Builder_Preview_Generator
         $cache_dir = $this->getCacheDirectory();
 // Crée le répertoire de cache s'il n'existe pas
         if (!file_exists($cache_dir)) {
-            wp_mkdir_p($cache_dir);
+            \wp_mkdir_p($cache_dir);
         }
 
         // Génère le PDF avec Dompdf

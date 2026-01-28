@@ -22,12 +22,12 @@ class LoggerService
     public function logRolePermissionsChange($old_roles, $new_roles)
     {
         $log_entry = [
-            'timestamp' => current_time('mysql'),
+            'timestamp' => \current_time('mysql'),
             'event' => 'role_permissions_changed',
             'old_roles' => $old_roles,
             'new_roles' => $new_roles,
-            'changed_by' => get_current_user_id(),
-            'user_login' => wp_get_current_user()->user_login ?? 'system'
+            'changed_by' => \get_current_user_id(),
+            'user_login' => \wp_get_current_user()->user_login ?? 'system'
         ];
 
         // Ajouter au log
@@ -57,7 +57,7 @@ class LoggerService
          * @param array $old_roles Anciens rôles
          * @param array $new_roles Nouveaux rôles
          */
-        do_action('pdf_builder_roles_changed', $old_roles, $new_roles);
+        \do_action('pdf_builder_roles_changed', $old_roles, $new_roles);
     }
 
     /**
@@ -84,7 +84,7 @@ class LoggerService
      */
     public function clearRoleChangeHistory()
     {
-        return delete_option('pdf_builder_role_change_logs');
+        return \delete_option('pdf_builder_role_change_logs');
     }
 }
 

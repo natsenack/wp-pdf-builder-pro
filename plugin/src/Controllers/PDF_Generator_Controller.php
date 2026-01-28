@@ -109,8 +109,8 @@ class PdfBuilderProGenerator
     private function generateHtmlFromElements($elements)
     {
         // Récupérer les paramètres canvas dynamiquement depuis les options WordPress
-        $canvas_width = intval(get_option('pdf_builder_canvas_width', 794));
-        $canvas_height = intval(get_option('pdf_builder_canvas_height', 1123));
+        $canvas_width = \intval(\get_option('pdf_builder_canvas_width', 794));
+        $canvas_height = \intval(\get_option('pdf_builder_canvas_height', 1123));
         $canvas_bg_color = $this->config['canvas_background_color'] ?? '#ffffff';
         $canvas_border_color = $this->config['canvas_border_color'] ?? '#cccccc';
         $canvas_border_width = $this->config['canvas_border_width'] ?? 1;
@@ -175,8 +175,8 @@ class PdfBuilderProGenerator
         }
 
         // CONTRAINTE: S'assurer que l'élément reste dans les limites du canvas configuré
-        $canvas_width = intval(get_option('pdf_builder_canvas_width', 794));
-        $canvas_height = intval(get_option('pdf_builder_canvas_height', 1123));
+        $canvas_width = \intval(\get_option('pdf_builder_canvas_width', 794));
+        $canvas_height = \intval(\get_option('pdf_builder_canvas_height', 1123));
         $coords['x'] = max(0, min($canvas_width - $coords['width'], $coords['x']));
         $coords['y'] = max(0, min($canvas_height - $coords['height'], $coords['y']));
 
@@ -191,23 +191,23 @@ class PdfBuilderProGenerator
         // Appliquer seulement les styles essentiels pour la couleur du texte et la taille de police
         if (isset($element['properties'])) {
             if (isset($element['properties']['color'])) {
-                $style .= ' color: ' . esc_attr($element['properties']['color']) . ';';
+                $style .= ' color: ' . \esc_attr($element['properties']['color']) . ';';
             }
             if (isset($element['properties']['fontSize'])) {
-                $style .= ' font-size: ' . intval($element['properties']['fontSize']) . 'px;';
+                $style .= ' font-size: ' . \intval($element['properties']['fontSize']) . 'px;';
             }
             if (isset($element['properties']['fontFamily'])) {
-                $style .= ' font-family: ' . esc_attr($element['properties']['fontFamily']) . ';';
+                $style .= ' font-family: ' . \esc_attr($element['properties']['fontFamily']) . ';';
             }
             if (isset($element['properties']['fontWeight'])) {
-                $style .= ' font-weight: ' . esc_attr($element['properties']['fontWeight']) . ';';
+                $style .= ' font-weight: ' . \esc_attr($element['properties']['fontWeight']) . ';';
             }
         }
 
         try {
             return $this->renderElementContent($element, $style, $type);
         } catch (Exception $e) {
-            return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #ffe6e6; border: 1px solid #ff0000; display: flex; align-items: center; justify-content: center; color: #ff0000;'>Erreur: {$type}</div>";
+            return "<div class='canvas-element' style='" . \esc_attr($style) . "; background: #ffe6e6; border: 1px solid #ff0000; display: flex; align-items: center; justify-content: center; color: #ff0000;'>Erreur: {$type}</div>";
         }
     }
 
@@ -235,7 +235,7 @@ class PdfBuilderProGenerator
                     $original_content = $content;
                     $content = $this->replaceOrderVariables($content, $this->order);
                 }
-                return "<div class='canvas-element' style='" . esc_attr($style) . "'>" . wp_kses_post($content) . "</div>";
+                return "<div class='canvas-element' style='" . \esc_attr($style) . "'>" . \wp_kses_post($content) . "</div>";
 
             case 'image':
             case 'company_logo':
@@ -252,22 +252,22 @@ class PdfBuilderProGenerator
 
 
                 if ($src) {
-                    return "<img class='canvas-element' src='" . esc_url($src) . "' style='" . esc_attr($style) . "' />";
+                    return "<img class='canvas-element' src='" . esc_url($src) . "' style='" . \esc_attr($style) . "' />";
                 }
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;'>Logo</div>";
+                return "<div class='canvas-element' style='" . \esc_attr($style) . "; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;'>Logo</div>";
 
             case 'rectangle':
-                return "<div class='canvas-element' style='" . esc_attr($style) . "'></div>";
+                return "<div class='canvas-element' style='" . \esc_attr($style) . "'></div>";
 
             case 'divider':
             case 'line':
-                return "<div class='canvas-element' style='" . esc_attr($style) . "'></div>";
+                return "<div class='canvas-element' style='" . \esc_attr($style) . "'></div>";
 
             case 'product_table':
                 $table_html = '';
                 $table_html = $this->generateTableHtmlFromCanvasTemplate($element);
 
-                return "<div class='canvas-element' style='" . esc_attr($style) . "'>" . $table_html . "</div>";
+                return "<div class='canvas-element' style='" . \esc_attr($style) . "'>" . $table_html . "</div>";
 
             case 'customer_info':
                 // LOG DES PROPRIÉTÉS CUSTOMER INFO
@@ -402,7 +402,7 @@ class PdfBuilderProGenerator
 
                     $customer_info = implode('<br>', $customer_parts);
                 }
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($customer_info ?: 'Informations client') . "</div>";
+                return "<div class='canvas-element' style='" . \esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . \wp_kses_post($customer_info ?: 'Informations client') . "</div>";
 
             case 'company_info':
                 // Récupération des données d'entreprise
@@ -411,7 +411,7 @@ class PdfBuilderProGenerator
                 // Formatage selon le template choisi
                 $company_info = $this->formatCompanyInfoByTemplate($element, $company_data);
 
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($company_info ?: '[company_info]') . "</div>";
+                return "<div class='canvas-element' style='" . \esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . \wp_kses_post($company_info ?: '[company_info]') . "</div>";
 
             case 'order_number':
                 // LOG DES PROPRIÉTÉS ORDER NUMBER
@@ -429,10 +429,10 @@ class PdfBuilderProGenerator
                     $order_number = $this->replaceOrderVariables($format, $this->order);
 
                     if ($show_label && $label_text) {
-                        $order_number = '<strong>' . esc_html($label_text) . '</strong><br>' . $order_number;
+                        $order_number = '<strong>' . \esc_html($label_text) . '</strong><br>' . $order_number;
                     }
                 }
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 14px; font-weight: bold; text-align: right;'>" . wp_kses_post($order_number ?: 'Texte') . "</div>";
+                return "<div class='canvas-element' style='" . \esc_attr($style) . "; font-size: 14px; font-weight: bold; text-align: right;'>" . \wp_kses_post($order_number ?: 'Texte') . "</div>";
 
             case 'document_type':
                 // LOG DES PROPRIÉTÉS DOCUMENT TYPE
@@ -443,7 +443,7 @@ class PdfBuilderProGenerator
 
 
 
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 18px; font-weight: bold; text-align: center;'>" . esc_html($doc_label) . "</div>";
+                return "<div class='canvas-element' style='" . \esc_attr($style) . "; font-size: 18px; font-weight: bold; text-align: center;'>" . \esc_html($doc_label) . "</div>";
 
             case 'mentions':
                 // LOG DES PROPRIÉTÉS MENTIONS
@@ -474,52 +474,52 @@ class PdfBuilderProGenerator
                     if ($show_email) {
                         $email = pdf_builder_get_option('pdf_builder_company_email', '');
                         if ($email) {
-                            $mention_parts[] = esc_html($email);
+                            $mention_parts[] = \esc_html($email);
                         }
                     }
 
                     if ($show_phone) {
                         $phone = pdf_builder_get_option('pdf_builder_company_phone', '');
                         if ($phone) {
-                            $mention_parts[] = esc_html($phone);
+                            $mention_parts[] = \esc_html($phone);
                         }
                     }
 
                     if ($show_siret) {
                         $siret = pdf_builder_get_option('pdf_builder_company_siret', '');
                         if ($siret) {
-                            $mention_parts[] = 'SIRET ' . esc_html($siret);
+                            $mention_parts[] = 'SIRET ' . \esc_html($siret);
                         }
                     }
 
                     if ($show_vat) {
                         $vat = pdf_builder_get_option('pdf_builder_company_vat', '');
                         if ($vat) {
-                            $mention_parts[] = 'TVA ' . esc_html($vat);
+                            $mention_parts[] = 'TVA ' . \esc_html($vat);
                         }
                     }
 
                     if ($show_address) {
                         $address = pdf_builder_get_option('pdf_builder_company_address', '');
                         if ($address) {
-                            $mention_parts[] = esc_html($address);
+                            $mention_parts[] = \esc_html($address);
                         }
                     }
 
                     if ($show_website) {
-                        $website = get_option('home');
+                        $website = \get_option('home');
                         if ($website) {
-                            $mention_parts[] = esc_html($website);
+                            $mention_parts[] = \esc_html($website);
                         }
                     }
 
                     if ($show_custom_text && $custom_text) {
-                        $mention_parts[] = esc_html($custom_text);
+                        $mention_parts[] = \esc_html($custom_text);
                     }
 
                     $mentions = implode($separator, $mention_parts);
                 }
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 8px; text-align: center;'>" . esc_html($mentions ?: 'Texte') . "</div>";
+                return "<div class='canvas-element' style='" . \esc_attr($style) . "; font-size: 8px; text-align: center;'>" . \esc_html($mentions ?: 'Texte') . "</div>";
         }
     }
 
@@ -532,47 +532,47 @@ class PdfBuilderProGenerator
 
         // Couleur de fond
         if (isset($properties['backgroundColor'])) {
-            $styles[] = 'background-color: ' . esc_attr($properties['backgroundColor']);
+            $styles[] = 'background-color: ' . \esc_attr($properties['backgroundColor']);
         }
 
         // Couleur du texte
         if (isset($properties['color'])) {
-            $styles[] = 'color: ' . esc_attr($properties['color']);
+            $styles[] = 'color: ' . \esc_attr($properties['color']);
         }
 
         // Taille de police
         if (isset($properties['fontSize'])) {
-            $styles[] = 'font-size: ' . intval($properties['fontSize']) . 'px';
+            $styles[] = 'font-size: ' . \intval($properties['fontSize']) . 'px';
         }
 
         // Poids de la police
         if (isset($properties['fontWeight'])) {
-            $styles[] = 'font-weight: ' . esc_attr($properties['fontWeight']);
+            $styles[] = 'font-weight: ' . \esc_attr($properties['fontWeight']);
         }
 
         // Style de la police
         if (isset($properties['fontStyle'])) {
-            $styles[] = 'font-style: ' . esc_attr($properties['fontStyle']);
+            $styles[] = 'font-style: ' . \esc_attr($properties['fontStyle']);
         }
 
         // Famille de police
         if (isset($properties['fontFamily'])) {
-            $styles[] = 'font-family: ' . esc_attr($properties['fontFamily']);
+            $styles[] = 'font-family: ' . \esc_attr($properties['fontFamily']);
         }
 
         // Alignement du texte
         if (isset($properties['textAlign'])) {
-            $styles[] = 'text-align: ' . esc_attr($properties['textAlign']);
+            $styles[] = 'text-align: ' . \esc_attr($properties['textAlign']);
         }
 
         // Décoration du texte
         if (isset($properties['textDecoration'])) {
-            $styles[] = 'text-decoration: ' . esc_attr($properties['textDecoration']);
+            $styles[] = 'text-decoration: ' . \esc_attr($properties['textDecoration']);
         }
 
         // Hauteur de ligne
         if (isset($properties['lineHeight'])) {
-            $styles[] = 'line-height: ' . esc_attr($properties['lineHeight']);
+            $styles[] = 'line-height: ' . \esc_attr($properties['lineHeight']);
         }
 
         // Opacité
@@ -606,7 +606,7 @@ class PdfBuilderProGenerator
         // Transformations
         $transforms = [];
         if (isset($properties['rotation']) && $properties['rotation'] != 0 && pdf_builder_get_option('pdf_builder_canvas_rotate_enabled', '0') == '1') {
-            $transforms[] = 'rotate(' . intval($properties['rotation']) . 'deg)';
+            $transforms[] = 'rotate(' . \intval($properties['rotation']) . 'deg)';
         }
         if (isset($properties['scale']) && $properties['scale'] != 1) {
             $transforms[] = 'scale(' . floatval($properties['scale']) . ')';
@@ -658,21 +658,21 @@ class PdfBuilderProGenerator
     {
         switch ($property) {
             case 'color':
-                return 'color: ' . esc_attr($value);
+                return 'color: ' . \esc_attr($value);
             case 'backgroundColor':
-                return 'background-color: ' . esc_attr($value);
+                return 'background-color: ' . \esc_attr($value);
             case 'fontSize':
-                return 'font-size: ' . intval($value) . 'px';
+                return 'font-size: ' . \intval($value) . 'px';
             case 'fontWeight':
-                return 'font-weight: ' . esc_attr($value);
+                return 'font-weight: ' . \esc_attr($value);
             case 'fontStyle':
-                return 'font-style: ' . esc_attr($value);
+                return 'font-style: ' . \esc_attr($value);
             case 'textAlign':
-                return 'text-align: ' . esc_attr($value);
+                return 'text-align: ' . \esc_attr($value);
             case 'fontFamily':
-                return 'font-family: ' . esc_attr($value);
+                return 'font-family: ' . \esc_attr($value);
             case 'textDecoration':
-                return 'text-decoration: ' . esc_attr($value);
+                return 'text-decoration: ' . \esc_attr($value);
             case 'opacity':
                 return 'opacity: ' . floatval($value);
             case 'border':
@@ -779,7 +779,7 @@ class PdfBuilderProGenerator
     {
         // Variables de compagnie (toujours disponibles)
         $company_replacements = array(
-            '{{company_name}}' => get_bloginfo('name'),
+            '{{company_name}}' => \get_bloginfo('name'),
             '{{company_email}}' => pdf_builder_get_option('pdf_builder_company_email', ''),
             '{{company_phone}}' => pdf_builder_get_option('pdf_builder_company_phone', ''),
             '{{company_siret}}' => pdf_builder_get_option('pdf_builder_company_siret', ''),
@@ -882,7 +882,7 @@ class PdfBuilderProGenerator
         }
 
         $company_parts = [];
-        $company_name = get_bloginfo('name');
+        $company_name = \get_bloginfo('name');
         if (!empty($company_name)) {
             $company_parts[] = $company_name;
         }
@@ -936,7 +936,7 @@ class PdfBuilderProGenerator
     private function getCompanyData()
     {
         return [
-            'name' => get_bloginfo('name') ?: '',
+            'name' => \get_bloginfo('name') ?: '',
             'address' => pdf_builder_get_option('pdf_builder_company_address', ''),
             'city' => pdf_builder_get_option('pdf_builder_company_city', ''),
             'postcode' => pdf_builder_get_option('pdf_builder_company_postcode', ''),
@@ -951,12 +951,12 @@ class PdfBuilderProGenerator
             'legal_form' => pdf_builder_get_option('pdf_builder_company_legal_form', ''),
             'registration_city' => pdf_builder_get_option('pdf_builder_company_registration_city', ''),
             // Données WooCommerce si disponibles
-            'woocommerce_store_address' => get_option('woocommerce_store_address', ''),
-            'woocommerce_store_city' => get_option('woocommerce_store_city', ''),
-            'woocommerce_store_postcode' => get_option('woocommerce_store_postcode', ''),
-            'woocommerce_store_country' => get_option('woocommerce_store_country', ''),
-            'woocommerce_store_email' => get_option('woocommerce_store_email', ''),
-            'woocommerce_store_phone' => get_option('woocommerce_store_phone', '')
+            'woocommerce_store_address' => \get_option('woocommerce_store_address', ''),
+            'woocommerce_store_city' => \get_option('woocommerce_store_city', ''),
+            'woocommerce_store_postcode' => \get_option('woocommerce_store_postcode', ''),
+            'woocommerce_store_country' => \get_option('woocommerce_store_country', ''),
+            'woocommerce_store_email' => \get_option('woocommerce_store_email', ''),
+            'woocommerce_store_phone' => \get_option('woocommerce_store_phone', '')
         ];
     }
 
@@ -974,55 +974,55 @@ class PdfBuilderProGenerator
             case 'commercial':
                 // Template commercial : focus sur contact et présentation
                 if (in_array('name', $fields) && !empty($company_data['name'])) {
-                    $parts[] = '<strong>' . esc_html($company_data['name']) . '</strong>';
+                    $parts[] = '<strong>' . \esc_html($company_data['name']) . '</strong>';
                 }
                 if (in_array('address', $fields) && $this->hasAddressData($company_data)) {
                     $parts[] = $this->formatAddress($company_data);
                 }
                 if (in_array('phone', $fields) && !empty($company_data['phone'])) {
-                    $parts[] = '📞 ' . esc_html($company_data['phone']);
+                    $parts[] = '📞 ' . \esc_html($company_data['phone']);
                 }
                 if (in_array('email', $fields) && !empty($company_data['email'])) {
-                    $parts[] = '✉️ ' . esc_html($company_data['email']);
+                    $parts[] = '✉️ ' . \esc_html($company_data['email']);
                 }
                 if (in_array('website', $fields) && !empty($company_data['website'])) {
-                    $parts[] = '🌐 ' . esc_html($company_data['website']);
+                    $parts[] = '🌐 ' . \esc_html($company_data['website']);
                 }
                 break;
 
             case 'legal':
                 // Template juridique : focus sur informations légales
                 if (in_array('name', $fields) && !empty($company_data['name'])) {
-                    $parts[] = '<strong>' . esc_html($company_data['name']) . '</strong>';
+                    $parts[] = '<strong>' . \esc_html($company_data['name']) . '</strong>';
                 }
                 if (in_array('address', $fields) && $this->hasAddressData($company_data)) {
                     $parts[] = $this->formatAddress($company_data);
                 }
                 if (in_array('siret', $fields) && !empty($company_data['siret'])) {
-                    $parts[] = 'SIRET: ' . esc_html($company_data['siret']);
+                    $parts[] = 'SIRET: ' . \esc_html($company_data['siret']);
                 }
                 if (in_array('vat', $fields) && !empty($company_data['vat'])) {
-                    $parts[] = 'N° TVA: ' . esc_html($company_data['vat']);
+                    $parts[] = 'N° TVA: ' . \esc_html($company_data['vat']);
                 }
                 if (in_array('rcs', $fields) && !empty($company_data['rcs'])) {
-                    $parts[] = 'RCS: ' . esc_html($company_data['rcs']);
+                    $parts[] = 'RCS: ' . \esc_html($company_data['rcs']);
                 }
                 if (in_array('capital', $fields) && !empty($company_data['capital'])) {
-                    $parts[] = 'Capital: ' . esc_html($company_data['capital']) . ' €';
+                    $parts[] = 'Capital: ' . \esc_html($company_data['capital']) . ' €';
                 }
                 break;
 
             case 'minimal':
                 // Template minimal : nom et contact essentiel
                 if (in_array('name', $fields) && !empty($company_data['name'])) {
-                    $parts[] = esc_html($company_data['name']);
+                    $parts[] = \esc_html($company_data['name']);
                 }
                 $contact_parts = [];
                 if (in_array('phone', $fields) && !empty($company_data['phone'])) {
-                    $contact_parts[] = esc_html($company_data['phone']);
+                    $contact_parts[] = \esc_html($company_data['phone']);
                 }
                 if (in_array('email', $fields) && !empty($company_data['email'])) {
-                    $contact_parts[] = esc_html($company_data['email']);
+                    $contact_parts[] = \esc_html($company_data['email']);
                 }
                 if (!empty($contact_parts)) {
                     $parts[] = implode(' • ', $contact_parts);
@@ -1032,28 +1032,28 @@ class PdfBuilderProGenerator
             default: // 'default'
                 // Template par défaut : tous les champs demandés
                 if (in_array('name', $fields) && !empty($company_data['name'])) {
-                    $parts[] = '<strong>' . esc_html($company_data['name']) . '</strong>';
+                    $parts[] = '<strong>' . \esc_html($company_data['name']) . '</strong>';
                 }
                 if (in_array('address', $fields) && $this->hasAddressData($company_data)) {
                     $parts[] = $this->formatAddress($company_data);
                 }
                 if (in_array('phone', $fields) && !empty($company_data['phone'])) {
-                    $parts[] = 'Téléphone: ' . esc_html($company_data['phone']);
+                    $parts[] = 'Téléphone: ' . \esc_html($company_data['phone']);
                 }
                 if (in_array('email', $fields) && !empty($company_data['email'])) {
-                    $parts[] = 'Email: ' . esc_html($company_data['email']);
+                    $parts[] = 'Email: ' . \esc_html($company_data['email']);
                 }
                 if (in_array('website', $fields) && !empty($company_data['website'])) {
-                    $parts[] = 'Site web: ' . esc_html($company_data['website']);
+                    $parts[] = 'Site web: ' . \esc_html($company_data['website']);
                 }
                 if (in_array('vat', $fields) && !empty($company_data['vat'])) {
-                    $parts[] = 'N° TVA: ' . esc_html($company_data['vat']);
+                    $parts[] = 'N° TVA: ' . \esc_html($company_data['vat']);
                 }
                 if (in_array('siret', $fields) && !empty($company_data['siret'])) {
-                    $parts[] = 'SIRET: ' . esc_html($company_data['siret']);
+                    $parts[] = 'SIRET: ' . \esc_html($company_data['siret']);
                 }
                 if (in_array('rcs', $fields) && !empty($company_data['rcs'])) {
-                    $parts[] = 'RCS: ' . esc_html($company_data['rcs']);
+                    $parts[] = 'RCS: ' . \esc_html($company_data['rcs']);
                 }
                 break;
         }
@@ -1080,7 +1080,7 @@ class PdfBuilderProGenerator
         $address_parts = [];
 
         if (!empty($company_data['address'])) {
-            $address_parts[] = esc_html($company_data['address']);
+            $address_parts[] = \esc_html($company_data['address']);
         }
 
         $city_parts = [];
@@ -1095,7 +1095,7 @@ class PdfBuilderProGenerator
         }
 
         if (!empty($company_data['country'])) {
-            $address_parts[] = esc_html($company_data['country']);
+            $address_parts[] = \esc_html($company_data['country']);
         }
 
         return nl2br(implode("\n", $address_parts));
@@ -1700,34 +1700,34 @@ class PdfBuilderProGenerator
 
         // Couleur de fond générale du tableau
         if (isset($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
-            $table_css .= ' background-color: ' . esc_attr($element['backgroundColor']) . ';';
+            $table_css .= ' background-color: ' . \esc_attr($element['backgroundColor']) . ';';
         }
 
         // Couleur du texte générale
         if (isset($element['color'])) {
-            $table_css .= ' color: ' . esc_attr($element['color']) . ';';
+            $table_css .= ' color: ' . \esc_attr($element['color']) . ';';
         }
 
         // Taille de police
         if (isset($element['fontSize'])) {
-            $table_css .= ' font-size: ' . intval($element['fontSize']) . 'px;';
+            $table_css .= ' font-size: ' . \intval($element['fontSize']) . 'px;';
         } else {
             $table_css .= ' font-size: 12px;'; // Valeur par défaut
         }
 
         // Famille de police
         if (isset($element['fontFamily'])) {
-            $table_css .= ' font-family: ' . esc_attr($element['fontFamily']) . ';';
+            $table_css .= ' font-family: ' . \esc_attr($element['fontFamily']) . ';';
         }
 
         // Poids de la police
         if (isset($element['fontWeight'])) {
-            $table_css .= ' font-weight: ' . esc_attr($element['fontWeight']) . ';';
+            $table_css .= ' font-weight: ' . \esc_attr($element['fontWeight']) . ';';
         }
 
         // Style de la police
         if (isset($element['fontStyle'])) {
-            $table_css .= ' font-style: ' . esc_attr($element['fontStyle']) . ';';
+            $table_css .= ' font-style: ' . \esc_attr($element['fontStyle']) . ';';
         }
 
         // Bordures générales - ajouter une bordure par défaut si aucune n'est spécifiée
@@ -2054,9 +2054,9 @@ class PdfBuilderProGenerator
         }
 
         // Use get_option instead of WC()->countries to avoid autoloading
-        $countries = get_option('woocommerce_countries', []);
+        $countries = \get_option('woocommerce_countries', []);
         if (empty($countries)) {
-            $countries = get_option('woocommerce_allowed_countries', []);
+            $countries = \get_option('woocommerce_allowed_countries', []);
         }
         return isset($countries[$country_code]) ? $countries[$country_code] : $country_code;
     }

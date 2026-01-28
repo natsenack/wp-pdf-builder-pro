@@ -44,30 +44,30 @@ class AjaxHandler
     private function registerHooks()
     {
         // Hook AJAX unifié principal - point d'entrée unique pour toutes les actions de sauvegarde
-        add_action('wp_ajax_pdf_builder_ajax_handler', [$this, 'ajaxUnifiedHandler']);
+        \add_action('wp_ajax_pdf_builder_ajax_handler', [$this, 'ajaxUnifiedHandler']);
 
         // Hooks AJAX principaux (génération PDF, templates)
-        add_action('wp_ajax_pdf_builder_generate_pdf_from_canvas', [$this, 'ajaxGeneratePdfFromCanvas']);
-        add_action('wp_ajax_pdf_builder_download_pdf', [$this, 'ajaxDownloadPdf']);
-        add_action('wp_ajax_pdf_builder_save_template_v3', [$this, 'ajaxSaveTemplateV3']);
-        add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
-        add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajaxLoadTemplate']);
-        add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajaxGetTemplate']);
-        add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajaxGenerateOrderPdf']);
-        add_action('wp_ajax_pdf_builder_get_fresh_nonce', [$this, 'ajaxGetFreshNonce']);
+        \add_action('wp_ajax_pdf_builder_generate_pdf_from_canvas', [$this, 'ajaxGeneratePdfFromCanvas']);
+        \add_action('wp_ajax_pdf_builder_download_pdf', [$this, 'ajaxDownloadPdf']);
+        \add_action('wp_ajax_pdf_builder_save_template_v3', [$this, 'ajaxSaveTemplateV3']);
+        \add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
+        \add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajaxLoadTemplate']);
+        \add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajaxGetTemplate']);
+        \add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajaxGenerateOrderPdf']);
+        \add_action('wp_ajax_pdf_builder_get_fresh_nonce', [$this, 'ajaxGetFreshNonce']);
 
         // Hooks AJAX de maintenance
-        add_action('wp_ajax_pdf_builder_check_database', [$this, 'ajaxCheckDatabase']);
-        add_action('wp_ajax_pdf_builder_repair_database', [$this, 'ajaxRepairDatabase']);
-        add_action('wp_ajax_pdf_builder_execute_sql_repair', [$this, 'ajaxExecuteSqlRepair']);
-        add_action('wp_ajax_pdf_builder_check_integrity', [$this, 'ajaxCheckIntegrity']);
-        add_action('wp_ajax_pdf_builder_check_template_limit', [$this, 'ajaxCheckTemplateLimit']);
+        \add_action('wp_ajax_pdf_builder_check_database', [$this, 'ajaxCheckDatabase']);
+        \add_action('wp_ajax_pdf_builder_repair_database', [$this, 'ajaxRepairDatabase']);
+        \add_action('wp_ajax_pdf_builder_execute_sql_repair', [$this, 'ajaxExecuteSqlRepair']);
+        \add_action('wp_ajax_pdf_builder_check_integrity', [$this, 'ajaxCheckIntegrity']);
+        \add_action('wp_ajax_pdf_builder_check_template_limit', [$this, 'ajaxCheckTemplateLimit']);
 
         // Hooks AJAX canvas
-        add_action('wp_ajax_pdf_builder_save_order_status_templates', [$this, 'ajaxSaveOrderStatusTemplates']);
-        add_action('wp_ajax_pdf_builder_get_template_mappings', [$this, 'handleGetTemplateMappings']);
-        add_action('wp_ajax_pdf_builder_get_canvas_orientations', [$this, 'ajaxGetCanvasOrientations']);
-        add_action('wp_ajax_pdf_builder_save_canvas_modal_settings', [$this, 'ajaxSaveCanvasModalSettings']);
+        \add_action('wp_ajax_pdf_builder_save_order_status_templates', [$this, 'ajaxSaveOrderStatusTemplates']);
+        \add_action('wp_ajax_pdf_builder_get_template_mappings', [$this, 'handleGetTemplateMappings']);
+        \add_action('wp_ajax_pdf_builder_get_canvas_orientations', [$this, 'ajaxGetCanvasOrientations']);
+        \add_action('wp_ajax_pdf_builder_save_canvas_modal_settings', [$this, 'ajaxSaveCanvasModalSettings']);
     }
 
     /**
@@ -91,10 +91,10 @@ class AjaxHandler
             $template_data_raw = $_POST['template_data'] ?? '';
             $template_data_json = \PDF_Builder\Admin\Utils\Utils::sanitizeJsonInput($template_data_raw);
             $template_data = json_decode($template_data_json, true);
-            $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : null;
+            $order_id = isset($_POST['order_id']) ? \intval($_POST['order_id']) : null;
 
             if (!$template_data) {
-                wp_send_json_error('Données de template manquantes');
+                \wp_send_json_error('Données de template manquantes');
                 return;
             }
 
@@ -102,7 +102,7 @@ class AjaxHandler
             $pdf_content = $this->admin->generateUnifiedHtml($template_data, $order_id);
 
             if (!$pdf_content) {
-                wp_send_json_error('Erreur lors de la génération du PDF');
+                \wp_send_json_error('Erreur lors de la génération du PDF');
                 return;
             }
 
@@ -111,18 +111,18 @@ class AjaxHandler
             $pdf_file = $pdf_generator->generateFromHtml($pdf_content, 'canvas_template_' . time() . '.pdf');
 
             if (!$pdf_file) {
-                wp_send_json_error('Erreur lors de la création du fichier PDF');
+                \wp_send_json_error('Erreur lors de la création du fichier PDF');
                 return;
             }
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'pdf_url' => $pdf_file['url'],
                 'pdf_path' => $pdf_file['path'],
                 'message' => 'PDF généré avec succès'
             ]);
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
+            \wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
 
@@ -143,10 +143,10 @@ class AjaxHandler
                 return;
             }
 
-            $pdf_path = isset($_POST['pdf_path']) ? sanitize_text_field($_POST['pdf_path']) : '';
+            $pdf_path = isset($_POST['pdf_path']) ? \sanitize_text_field($_POST['pdf_path']) : '';
 
             if (empty($pdf_path) || !file_exists($pdf_path)) {
-                wp_send_json_error('Fichier PDF introuvable');
+                \wp_send_json_error('Fichier PDF introuvable');
                 return;
             }
 
@@ -158,7 +158,7 @@ class AjaxHandler
             exit;
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors du téléchargement: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors du téléchargement: ' . $e->getMessage());
         }
     }
 
@@ -183,7 +183,7 @@ class AjaxHandler
         
         NonceManager::logInfo('Nonce frais généré avec succès');
 
-        wp_send_json_success([
+        \wp_send_json_success([
             'nonce' => $fresh_nonce,
             'message' => 'Nouveau nonce généré avec succès'
         ]);
@@ -218,29 +218,29 @@ class AjaxHandler
             $template_data_raw = $_POST['template_data'] ?? '';
             $template_data_json = \PDF_Builder\Admin\Utils\Utils::sanitizeJsonInput($template_data_raw);
             $template_data = json_decode($template_data_json, true);
-            $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
-            $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
+            $template_name = isset($_POST['template_name']) ? \sanitize_text_field($_POST['template_name']) : '';
+            $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : null;
 
             if (!$template_data || empty($template_name)) {
-                wp_send_json_error('Données de template ou nom manquant');
+                \wp_send_json_error('Données de template ou nom manquant');
                 return;
             }
 
             // Sauvegarder le template
             // Note: Template manager should be available, this fallback shouldn't be reached
-            wp_send_json_error('Erreur: Template manager non disponible pour la sauvegarde');
+            \wp_send_json_error('Erreur: Template manager non disponible pour la sauvegarde');
 
             if ($result) {
-                wp_send_json_success([
+                \wp_send_json_success([
                     'template_id' => $result,
                     'message' => 'Template sauvegardé avec succès'
                 ]);
             } else {
-                wp_send_json_error('Erreur lors de la sauvegarde du template');
+                \wp_send_json_error('Erreur lors de la sauvegarde du template');
             }
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
+            \wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
 
@@ -275,10 +275,10 @@ class AjaxHandler
                 return;
             }
 
-            $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
+            $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : null;
 
             if (!$template_id) {
-                wp_send_json_error('ID de template manquant');
+                \wp_send_json_error('ID de template manquant');
                 return;
             }
 
@@ -286,16 +286,16 @@ class AjaxHandler
             $template = $this->admin->loadTemplate($template_id);
 
             if ($template) {
-                wp_send_json_success([
+                \wp_send_json_success([
                     'template' => $template,
                     'message' => 'Template chargé avec succès'
                 ]);
             } else {
-                wp_send_json_error('Template introuvable');
+                \wp_send_json_error('Template introuvable');
             }
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());
         }
     }
 
@@ -306,7 +306,7 @@ class AjaxHandler
     {
         try {
             // Debug logging
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ajaxGetTemplate called at ' . current_time('Y-m-d H:i:s')); }
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ajaxGetTemplate called at ' . \current_time('Y-m-d H:i:s')); }
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] REQUEST_METHOD: ' . (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'UNKNOWN')); }
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] template_id GET: ' . (isset($_GET['template_id']) ? $_GET['template_id'] : 'NOT SET')); }
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] template_id POST: ' . (isset($_POST['template_id']) ? $_POST['template_id'] : 'NOT SET')); }
@@ -327,11 +327,11 @@ class AjaxHandler
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Nonce validation passed'); }
 
             // Récupérer le template_id depuis GET ou POST
-            $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : (isset($_POST['template_id']) ? intval($_POST['template_id']) : null);
+            $template_id = isset($_GET['template_id']) ? \intval($_GET['template_id']) : (isset($_POST['template_id']) ? \intval($_POST['template_id']) : null);
 
             if (!$template_id) {
                 if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] No template_id provided'); }
-                wp_send_json_error('ID de template manquant');
+                \wp_send_json_error('ID de template manquant');
                 return;
             }
 
@@ -381,7 +381,7 @@ class AjaxHandler
                 // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ajaxGetTemplate - DB template name: ' . ($db_template && isset($db_template['name']) ? $db_template['name'] : 'NO DB RECORD')); }
                 // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ajaxGetTemplate - Final template_name: ' . $template_name); }
 
-                wp_send_json_success([
+                \wp_send_json_success([
                     'template' => $template,
                     'template_name' => $template_name,
                     'message' => 'Template chargé avec succès'
@@ -392,7 +392,7 @@ class AjaxHandler
             }
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors du chargement: ' . $e->getMessage());
         }
     }
 
@@ -414,7 +414,7 @@ class AjaxHandler
             }
 
             if (!$order_id || !$template_id) {
-                wp_send_json_error('ID de commande ou template manquant');
+                \wp_send_json_error('ID de commande ou template manquant');
                 return;
             }
 
@@ -422,16 +422,16 @@ class AjaxHandler
             $result = $this->admin->generateOrderPdf($order_id, $template_id);
 
             if ($result && isset($result['url'])) {
-                wp_send_json_success([
+                \wp_send_json_success([
                     'pdf_url' => $result['url'],
                     'message' => 'PDF de commande généré avec succès'
                 ]);
             } else {
-                wp_send_json_error('Erreur lors de la génération du PDF de commande');
+                \wp_send_json_error('Erreur lors de la génération du PDF de commande');
             }
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
+            \wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
 
@@ -467,14 +467,14 @@ class AjaxHandler
                 }
             }
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'checks' => $checks,
                 'issues' => $issues,
                 'message' => empty($issues) ? 'Base de données OK' : 'Problèmes détectés'
             ]);
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors de la vérification: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors de la vérification: ' . $e->getMessage());
         }
     }
 
@@ -498,13 +498,13 @@ class AjaxHandler
             // Réparations de base de données
             $result = $this->admin->repairDatabase();
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'result' => $result,
                 'message' => 'Base de données réparée'
             ]);
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors de la réparation: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors de la réparation: ' . $e->getMessage());
         }
     }
 
@@ -525,10 +525,10 @@ class AjaxHandler
                 return;
             }
 
-            $sql = isset($_POST['sql']) ? sanitize_textarea_field($_POST['sql']) : '';
+            $sql = isset($_POST['sql']) ? \sanitize_textarea_field($_POST['sql']) : '';
 
             if (empty($sql)) {
-                wp_send_json_error('Requête SQL manquante');
+                \wp_send_json_error('Requête SQL manquante');
                 return;
             }
 
@@ -536,13 +536,13 @@ class AjaxHandler
             global $wpdb;
             $result = $wpdb->query($sql);
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'result' => $result,
                 'message' => 'Requête exécutée avec succès'
             ]);
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors de l\'exécution SQL: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors de l\'exécution SQL: ' . $e->getMessage());
         }
     }
 
@@ -566,19 +566,19 @@ class AjaxHandler
             // Sauvegarder les paramètres généraux
             $settings = [
                 'pdf_builder_enable_debug' => isset($_POST['enable_debug']) ? '1' : '0',
-                'pdf_builder_max_file_size' => intval($_POST['max_file_size'] ?? 10),
+                'pdf_builder_max_file_size' => \intval($_POST['max_file_size'] ?? 10),
             ];
 
             foreach ($settings as $key => $value) {
-                update_option($key, $value);
+                \update_option($key, $value);
             }
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'message' => 'Paramètres sauvegardés avec succès'
             ]);
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
         }
     }
 
@@ -595,21 +595,21 @@ class AjaxHandler
             $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
             if (!$validation['success']) {
                 if ($validation['code'] === 'nonce_invalid') {
-                    wp_send_json_error(['message' => 'Nonce invalide', 'nonce' => NonceManager::createNonce()]);
+                    \wp_send_json_error(['message' => 'Nonce invalide', 'nonce' => NonceManager::createNonce()]);
                 } else {
-                    wp_send_json_error(['message' => 'Permissions insuffisantes']);
+                    \wp_send_json_error(['message' => 'Permissions insuffisantes']);
                 }
                 return;
             }
 
             // Validation de taille des données
             if (!$this->validateRequestSize()) {
-                wp_send_json_error(['message' => 'Données trop volumineuses']);
+                \wp_send_json_error(['message' => 'Données trop volumineuses']);
                 return;
             }
 
             // Déterminer l'action à effectuer
-            $action = isset($_POST['action_type']) ? sanitize_text_field($_POST['action_type']) : '';
+            $action = isset($_POST['action_type']) ? \sanitize_text_field($_POST['action_type']) : '';
 
             // Router vers la bonne méthode selon l'action
             switch ($action) {
@@ -672,7 +672,7 @@ class AjaxHandler
 
         } catch (Exception $e) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Erreur handler unifié: ' . $e->getMessage()); }
-            wp_send_json_error(['message' => 'Erreur serveur: ' . $e->getMessage()]);
+            \wp_send_json_error(['message' => 'Erreur serveur: ' . $e->getMessage()]);
         }
     }
 
@@ -720,7 +720,7 @@ class AjaxHandler
             }
 
             if (empty($settings_to_save) && empty($templates_data)) {
-                wp_send_json_error(['message' => 'Aucune donnée valide à sauvegarder']);
+                \wp_send_json_error(['message' => 'Aucune donnée valide à sauvegarder']);
                 return;
             }
 
@@ -745,7 +745,7 @@ class AjaxHandler
 
                     // Rollback en cas d'échec
                     $this->rollbackSettings($backup_key);
-                    wp_send_json_error(['message' => 'Erreur lors de la sauvegarde en base de données']);
+                    \wp_send_json_error(['message' => 'Erreur lors de la sauvegarde en base de données']);
                     return;
                 }
             }
@@ -753,7 +753,7 @@ class AjaxHandler
             // Supprimer le backup si succès
             pdf_builder_delete_option($backup_key);
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'message' => 'Paramètres sauvegardés avec succès',
                 'saved_settings' => $settings_to_save,
                 'saved_templates' => $templates_data,
@@ -765,7 +765,7 @@ class AjaxHandler
             // Rollback en cas d'exception
             $this->rollbackSettings($backup_key);
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Erreur sauvegarde: ' . $e->getMessage()); }
-            wp_send_json_error(['message' => 'Erreur lors du traitement des données']);
+            \wp_send_json_error(['message' => 'Erreur lors du traitement des données']);
         }
     }
 
@@ -795,12 +795,12 @@ class AjaxHandler
 
         foreach ($general_fields as $field) {
             if (isset($_POST[$field])) {
-                $general_settings[$field] = sanitize_text_field($_POST[$field]);
+                $general_settings[$field] = \sanitize_text_field($_POST[$field]);
             }
         }
 
         if (empty($general_settings)) {
-            wp_send_json_error(['message' => 'Aucun paramètre général à sauvegarder']);
+            \wp_send_json_error(['message' => 'Aucun paramètre général à sauvegarder']);
             return;
         }
 
@@ -810,13 +810,13 @@ class AjaxHandler
         $saved = pdf_builder_update_option('pdf_builder_settings', $updated_settings);
 
         if ($saved) {
-            wp_send_json_success([
+            \wp_send_json_success([
                 'message' => 'Paramètres généraux sauvegardés',
                 'saved_settings' => $general_settings,
                 'action' => 'save_general_settings'
             ]);
         } else {
-            wp_send_json_error(['message' => 'Erreur lors de la sauvegarde']);
+            \wp_send_json_error(['message' => 'Erreur lors de la sauvegarde']);
         }
     }
 
@@ -833,12 +833,12 @@ class AjaxHandler
 
         foreach ($performance_fields as $field) {
             if (isset($_POST[$field])) {
-                $performance_settings[$field] = sanitize_text_field($_POST[$field]);
+                $performance_settings[$field] = \sanitize_text_field($_POST[$field]);
             }
         }
 
         if (empty($performance_settings)) {
-            wp_send_json_error(['message' => 'Aucun paramètre de performance à sauvegarder']);
+            \wp_send_json_error(['message' => 'Aucun paramètre de performance à sauvegarder']);
             return;
         }
 
@@ -848,13 +848,13 @@ class AjaxHandler
         $saved = pdf_builder_update_option('pdf_builder_settings', $updated_settings);
 
         if ($saved) {
-            wp_send_json_success([
+            \wp_send_json_success([
                 'message' => 'Paramètres de performance sauvegardés',
                 'saved_settings' => $performance_settings,
                 'action' => 'save_performance_settings'
             ]);
         } else {
-            wp_send_json_error(['message' => 'Erreur lors de la sauvegarde']);
+            \wp_send_json_error(['message' => 'Erreur lors de la sauvegarde']);
         }
     }
 
@@ -864,7 +864,7 @@ class AjaxHandler
     private function handleGetSettings()
     {
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
-        wp_send_json_success([
+        \wp_send_json_success([
             'settings' => $settings,
             'action' => 'get_settings'
         ]);
@@ -922,7 +922,7 @@ class AjaxHandler
             $canvas_settings[$key] = $value ?? '';
         }
 
-        wp_send_json_success([
+        \wp_send_json_success([
             'canvas_settings' => $canvas_settings,
             'action' => 'get_canvas_settings'
         ]);
@@ -951,14 +951,14 @@ class AjaxHandler
         }
 
         if (empty($errors)) {
-            wp_send_json_success([
+            \wp_send_json_success([
                 'valid' => true,
                 'message' => 'Paramètres valides',
                 'warnings' => $warnings,
                 'action' => 'validate_settings'
             ]);
         } else {
-            wp_send_json_error([
+            \wp_send_json_error([
                 'valid' => false,
                 'errors' => $errors,
                 'warnings' => $warnings,
@@ -1014,14 +1014,14 @@ class AjaxHandler
             // Fusionner tous les templates
             $templates = array_merge($wp_templates, $custom_templates);
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'mappings' => $mappings,
                 'templates' => $templates,
                 'action' => 'get_template_mappings'
             ]);
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors de la récupération des mappings: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors de la récupération des mappings: ' . $e->getMessage());
         }
     }
 
@@ -1036,7 +1036,7 @@ class AjaxHandler
         } elseif (strpos($_POST['action'] ?? '', 'save_settings_page') !== false) {
             $this->handleSaveSettingsPage();
         } else {
-            wp_send_json_error(['message' => 'Action non reconnue: ' . $action]);
+            \wp_send_json_error(['message' => 'Action non reconnue: ' . $action]);
         }
     }
 
@@ -1059,23 +1059,23 @@ class AjaxHandler
 
             // Paramètres généraux
             $settings = [
-                'pdf_builder_company_name' => sanitize_text_field($_POST['company_name'] ?? ''),
-                'pdf_builder_company_address' => sanitize_textarea_field($_POST['company_address'] ?? ''),
-                'pdf_builder_company_phone' => sanitize_text_field($_POST['company_phone'] ?? ''),
-                'pdf_builder_company_email' => sanitize_email($_POST['company_email'] ?? ''),
-                'pdf_builder_default_language' => sanitize_text_field($_POST['default_language'] ?? 'fr'),
+                'pdf_builder_company_name' => \sanitize_text_field($_POST['company_name'] ?? ''),
+                'pdf_builder_company_address' => \sanitize_textarea_field($_POST['company_address'] ?? ''),
+                'pdf_builder_company_phone' => \sanitize_text_field($_POST['company_phone'] ?? ''),
+                'pdf_builder_company_email' => \sanitize_email($_POST['company_email'] ?? ''),
+                'pdf_builder_default_language' => \sanitize_text_field($_POST['default_language'] ?? 'fr'),
             ];
 
             foreach ($settings as $key => $value) {
-                update_option($key, $value);
+                \update_option($key, $value);
             }
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'message' => 'Paramètres généraux sauvegardés'
             ]);
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
+            \wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
 
@@ -1098,21 +1098,21 @@ class AjaxHandler
 
             // Paramètres de performance
             $settings = [
-                'pdf_builder_compression_level' => intval($_POST['compression_level'] ?? 6),
-                'pdf_builder_memory_limit' => intval($_POST['memory_limit'] ?? 256),
-                'pdf_builder_max_execution_time' => intval($_POST['max_execution_time'] ?? 30),
+                'pdf_builder_compression_level' => \intval($_POST['compression_level'] ?? 6),
+                'pdf_builder_memory_limit' => \intval($_POST['memory_limit'] ?? 256),
+                'pdf_builder_max_execution_time' => \intval($_POST['max_execution_time'] ?? 30),
             ];
 
             foreach ($settings as $key => $value) {
-                update_option($key, $value);
+                \update_option($key, $value);
             }
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'message' => 'Paramètres de performance sauvegardés'
             ]);
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
+            \wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
 
@@ -1128,12 +1128,12 @@ class AjaxHandler
         
         // Vérification permissions
         if (!current_user_can(NonceManager::MIN_CAPABILITY)) {
-            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            \wp_send_json_error(['message' => 'Permissions insuffisantes']);
         }
 
         $can_create = $this->admin->can_create_template();
 
-        wp_send_json_success([
+        \wp_send_json_success([
             'can_create' => $can_create,
             'current_count' => $this->admin->count_user_templates(get_current_user_id()),
             'limit' => 1
@@ -1145,17 +1145,17 @@ class AjaxHandler
      */
     public function ajaxCheckIntegrity()
     {
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_check_integrity')) {
-            wp_send_json_error(['message' => __('Nonce invalide.', 'pdf-builder-pro')]);
+        if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_check_integrity')) {
+            \wp_send_json_error(['message' => \__('Nonce invalide.', 'pdf-builder-pro')]);
             return;
         }
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
+            \wp_send_json_error(['message' => \__('Permissions insuffisantes.', 'pdf-builder-pro')]);
             return;
         }
         try {
             $checks = [];
-            $upload_dir = wp_upload_dir();
+            $upload_dir = \wp_upload_dir();
             $checks['upload_dir_writable'] = is_writable($upload_dir['basedir']);
             global $wpdb;
             $tables = ['pdf_builder_templates', 'pdf_builder_pdfs'];
@@ -1167,13 +1167,13 @@ class AjaxHandler
             $all_ok = array_filter($checks, function($v) {
                 return $v === true || $v === 'OK' || strpos($v, 'OK') === 0;
             });
-            wp_send_json([
+            \wp_send_json([
                 'success' => true,
-                'message' => count($all_ok) === count($checks) ? __('Intégrité vérifiée - OK.', 'pdf-builder-pro') : __('Problèmes détectés.', 'pdf-builder-pro'),
+                'message' => count($all_ok) === count($checks) ? \__('Intégrité vérifiée - OK.', 'pdf-builder-pro') : \__('Problèmes détectés.', 'pdf-builder-pro'),
                 'checks' => $checks
             ]);
         } catch (Exception $e) {
-            wp_send_json(['success' => false, 'message' => $e->getMessage()]);
+            \wp_send_json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -1190,7 +1190,7 @@ class AjaxHandler
             // Vérifier que la table existe
             if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
                 if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Templates table does not exist: ' . $table_templates); }
-                wp_send_json_error('Table des templates introuvable');
+                \wp_send_json_error('Table des templates introuvable');
                 return;
             }
 
@@ -1198,7 +1198,7 @@ class AjaxHandler
             $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
             if (!$template) {
                 if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Template not found in database'); }
-                wp_send_json_error('Template introuvable');
+                \wp_send_json_error('Template introuvable');
                 return;
             }
 
@@ -1264,7 +1264,7 @@ class AjaxHandler
             $this->sendTemplateSuccessResponse($default_template, ['name' => 'Template par défaut']);
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors du chargement du template: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors du chargement du template: ' . $e->getMessage());
         }
     }
 
@@ -1287,7 +1287,7 @@ class AjaxHandler
             $template_name = 'Template ' . (isset($template_info['id']) ? $template_info['id'] : 'inconnu');
         }
 
-        wp_send_json_success([
+        \wp_send_json_success([
             'template' => $template_data,
             'template_name' => $template_name,
             'message' => 'Template chargé avec succès'
@@ -1409,7 +1409,7 @@ class AjaxHandler
             }
 
             if (empty($settings_to_save)) {
-                wp_send_json_error(['message' => 'Aucune donnée à sauvegarder']);
+                \wp_send_json_error(['message' => 'Aucune donnée à sauvegarder']);
                 return;
             }
 
@@ -1423,17 +1423,17 @@ class AjaxHandler
             $saved = pdf_builder_update_option('pdf_builder_settings', $updated_settings);
 
             if ($saved) {
-                wp_send_json_success([
+                \wp_send_json_success([
                     'message' => 'Paramètres sauvegardés avec succès',
                     'saved_settings' => $settings_to_save
                 ]);
             } else {
-                wp_send_json_error(['message' => 'Erreur lors de la sauvegarde en base de données']);
+                \wp_send_json_error(['message' => 'Erreur lors de la sauvegarde en base de données']);
             }
 
         } catch (Exception $e) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Erreur sauvegarde unifiée: ' . $e->getMessage()); }
-            wp_send_json_error(['message' => 'Erreur serveur: ' . $e->getMessage()]);
+            \wp_send_json_error(['message' => 'Erreur serveur: ' . $e->getMessage()]);
         }
     }
 
@@ -1455,7 +1455,7 @@ class AjaxHandler
      */
     private function rollbackSettings($backup_key)
     {
-        $backup = get_option($backup_key, false);
+        $backup = \get_option($backup_key, false);
         if ($backup !== false) {
             pdf_builder_update_option('pdf_builder_settings', $backup);
             delete_option($backup_key);
@@ -1501,7 +1501,7 @@ class AjaxHandler
             set_transient($transient_key, 1, 60); // 1 minute
         } elseif ($attempts >= 30) {
             // Trop de tentatives
-            wp_send_json_error(['message' => 'Trop de requêtes. Veuillez patienter.']);
+            \wp_send_json_error(['message' => 'Trop de requêtes. Veuillez patienter.']);
             exit;
         } else {
             // Incrémenter le compteur
@@ -1558,8 +1558,8 @@ class AjaxHandler
             if (is_array($templates_data)) {
                 foreach ($templates_data as $status_key => $template_id) {
                     // Nettoyer les clés et valeurs
-                    $clean_status = sanitize_text_field($status_key);
-                    $clean_template = sanitize_text_field($template_id);
+                    $clean_status = \sanitize_text_field($status_key);
+                    $clean_template = \sanitize_text_field($template_id);
 
                     // Ne sauvegarder que si un template est sélectionné
                     if (!empty($clean_template)) {
@@ -1573,13 +1573,13 @@ class AjaxHandler
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PHP: Saved to DB in ajaxSaveOrderStatusTemplates: ' . print_r($clean_templates, true)); }
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PHP: DB content after save: ' . print_r(pdf_builder_get_option('pdf_builder_order_status_templates', []), true)); }
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'message' => 'Mappings de templates sauvegardés avec succès',
                 'saved_count' => count($clean_templates)
             ]);
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
+            \wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
         }
     }
 
@@ -1618,8 +1618,8 @@ class AjaxHandler
             if (is_array($value)) {
                 $clean_array = [];
                 foreach ($value as $status_key => $template_id) {
-                    $clean_status = sanitize_text_field($status_key);
-                    $clean_template = sanitize_text_field($template_id);
+                    $clean_status = \sanitize_text_field($status_key);
+                    $clean_template = \sanitize_text_field($template_id);
                     if (!empty($clean_template)) {
                         $clean_array[$clean_status] = $clean_template;
                     }
@@ -1631,7 +1631,7 @@ class AjaxHandler
 
         // Déterminer le type de champ d'après le nom
         if (strpos($key, '_email') !== false) {
-            return sanitize_email($value);
+            return \sanitize_email($value);
         } elseif (strpos($key, '_url') !== false) {
             return esc_url_raw($value);
         } elseif (strpos($key, '_number') !== false || strpos($key, '_size') !== false || strpos($key, '_ttl') !== false) {
@@ -1647,7 +1647,7 @@ class AjaxHandler
             return '';
         } else {
             // Texte standard
-            return sanitize_text_field($value);
+            return \sanitize_text_field($value);
         }
     }
 
@@ -1662,7 +1662,7 @@ class AjaxHandler
             
             // Vérifier les permissions
             if (!current_user_can(NonceManager::MIN_CAPABILITY)) {
-                wp_send_json_error('Permissions insuffisantes');
+                \wp_send_json_error('Permissions insuffisantes');
                 return;
             }
 
@@ -1680,9 +1680,9 @@ class AjaxHandler
                 $orientations['allowPortrait'] = true; // Portrait par défaut
             }
 
-            wp_send_json_success($orientations);
+            \wp_send_json_success($orientations);
         } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
+            \wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
 
@@ -1704,7 +1704,7 @@ class AjaxHandler
             }
 
             // Récupérer les paramètres depuis la requête
-            $category = sanitize_text_field($_POST['category'] ?? '');
+            $category = \sanitize_text_field($_POST['category'] ?? '');
             $settings_to_save = [];
 
             if (class_exists('PDF_Builder_Logger')) {
@@ -1725,7 +1725,7 @@ class AjaxHandler
                     $settings_to_save[$key] = implode(',', array_map('sanitize_text_field', $value));
                 } else {
                     // Pour les valeurs simples, utiliser sanitize_text_field
-                    $settings_to_save[$key] = sanitize_text_field($value);
+                    $settings_to_save[$key] = \sanitize_text_field($value);
                 }
             }
 
@@ -1737,7 +1737,7 @@ class AjaxHandler
                 if (class_exists('PDF_Builder_Logger')) {
                     PDF_Builder_Logger::get_instance()->debug_log("[AJAX SAVE] ERROR: No data to save");
                 }
-                wp_send_json_error(['message' => 'Aucune donnée à sauvegarder']);
+                \wp_send_json_error(['message' => 'Aucune donnée à sauvegarder']);
                 return;
             }
 
@@ -1765,7 +1765,7 @@ class AjaxHandler
             }
 
             if ($saved) {
-                wp_send_json_success([
+                \wp_send_json_success([
                     'message' => 'Paramètres sauvegardés avec succès',
                     'category' => $category,
                     'updated_count' => $updated_count
@@ -1774,11 +1774,11 @@ class AjaxHandler
                 if (class_exists('PDF_Builder_Logger')) {
                     PDF_Builder_Logger::get_instance()->debug_log("[AJAX SAVE] ERROR: Failed to save to database");
                 }
-                wp_send_json_error(['message' => 'Erreur lors de la sauvegarde en base de données']);
+                \wp_send_json_error(['message' => 'Erreur lors de la sauvegarde en base de données']);
             }
 
         } catch (Exception $e) {
-            wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
+            \wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
         }
     }
 
@@ -1854,7 +1854,7 @@ class AjaxHandler
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Remaining license keys: ' . implode(', ', $remaining_license_keys)); }
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Final settings count: ' . count($updated_settings)); }
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'message' => 'Nettoyage complet réussi. ' . $removed_count . ' clés de licence supprimées.',
                 'removed_count' => $removed_count,
                 'remaining_keys' => $remaining_license_keys
@@ -1862,7 +1862,7 @@ class AjaxHandler
 
         } catch (Exception $e) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Error: ' . $e->getMessage()); }
-            wp_send_json_error(['message' => 'Erreur lors du nettoyage: ' . $e->getMessage()]);
+            \wp_send_json_error(['message' => 'Erreur lors du nettoyage: ' . $e->getMessage()]);
         }
     }
 
@@ -1893,14 +1893,14 @@ class AjaxHandler
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleLicenseTestMode - Toggled from ' . $current_mode . ' to ' . $new_mode); }
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleLicenseTestMode - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED')); }
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'message' => 'Mode test ' . ($new_mode === '1' ? 'activé' : 'désactivé') . ' avec succès',
                 'new_mode' => $new_mode
             ]);
 
         } catch (Exception $e) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleLicenseTestMode - Error: ' . $e->getMessage()); }
-            wp_send_json_error(['message' => 'Erreur lors du basculement: ' . $e->getMessage()]);
+            \wp_send_json_error(['message' => 'Erreur lors du basculement: ' . $e->getMessage()]);
         }
     }
 
@@ -1925,14 +1925,14 @@ class AjaxHandler
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleGenerateLicenseKey - Generated key: ' . $test_key); }
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleGenerateLicenseKey - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED')); }
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'message' => 'Clé de test générée avec succès',
                 'test_key' => $test_key
             ]);
 
         } catch (Exception $e) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleGenerateLicenseKey - Error: ' . $e->getMessage()); }
-            wp_send_json_error(['message' => 'Erreur lors de la génération: ' . $e->getMessage()]);
+            \wp_send_json_error(['message' => 'Erreur lors de la génération: ' . $e->getMessage()]);
         }
     }
 
@@ -1958,13 +1958,13 @@ class AjaxHandler
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleDeleteLicenseKey - Deleted key: ' . $old_key); }
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleDeleteLicenseKey - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED')); }
 
-            wp_send_json_success([
+            \wp_send_json_success([
                 'message' => 'Clé de test supprimée avec succès'
             ]);
 
         } catch (Exception $e) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleDeleteLicenseKey - Error: ' . $e->getMessage()); }
-            wp_send_json_error(['message' => 'Erreur lors de la suppression: ' . $e->getMessage()]);
+            \wp_send_json_error(['message' => 'Erreur lors de la suppression: ' . $e->getMessage()]);
         }
     }
 
@@ -1981,7 +1981,7 @@ class AjaxHandler
             $test_key = $settings['pdf_builder_license_test_key'] ?? '';
 
             if (empty($test_key)) {
-                wp_send_json_error(['message' => 'Aucune clé de test à valider']);
+                \wp_send_json_error(['message' => 'Aucune clé de test à valider']);
                 return;
             }
 
@@ -1991,17 +1991,17 @@ class AjaxHandler
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleValidateLicenseKey - Key: ' . $test_key . ', Valid: ' . ($is_valid ? 'YES' : 'NO')); }
 
             if ($is_valid) {
-                wp_send_json_success([
+                \wp_send_json_success([
                     'message' => 'Clé de test validée avec succès',
                     'valid' => true
                 ]);
             } else {
-                wp_send_json_error(['message' => 'Clé de test invalide']);
+                \wp_send_json_error(['message' => 'Clé de test invalide']);
             }
 
         } catch (Exception $e) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleValidateLicenseKey - Error: ' . $e->getMessage()); }
-            wp_send_json_error(['message' => 'Erreur lors de la validation: ' . $e->getMessage()]);
+            \wp_send_json_error(['message' => 'Erreur lors de la validation: ' . $e->getMessage()]);
         }
     }
 
@@ -2014,7 +2014,7 @@ class AjaxHandler
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleManageDatabaseTable - Starting'); }
 
             // Récupérer la sous-action
-            $sub_action = isset($_POST['sub_action']) ? sanitize_text_field($_POST['sub_action']) : '';
+            $sub_action = isset($_POST['sub_action']) ? \sanitize_text_field($_POST['sub_action']) : '';
 
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleManageDatabaseTable - Sub-action: ' . $sub_action); }
 
@@ -2023,7 +2023,7 @@ class AjaxHandler
             
             if (!file_exists($table_manager_file)) {
                 if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleManageDatabaseTable - Settings_Table_Manager not found at: ' . $table_manager_file); }
-                wp_send_json_error(['message' => 'Gestionnaire de table non trouvé']);
+                \wp_send_json_error(['message' => 'Gestionnaire de table non trouvé']);
                 return;
             }
 
@@ -2049,13 +2049,13 @@ class AjaxHandler
 
                 default:
                     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleManageDatabaseTable - Unknown sub-action: ' . $sub_action); }
-                    wp_send_json_error(['message' => 'Sous-action non reconnue: ' . $sub_action]);
+                    \wp_send_json_error(['message' => 'Sous-action non reconnue: ' . $sub_action]);
                     break;
             }
 
         } catch (Exception $e) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleManageDatabaseTable - Error: ' . $e->getMessage()); }
-            wp_send_json_error(['message' => 'Erreur lors de la gestion de la BD: ' . $e->getMessage()]);
+            \wp_send_json_error(['message' => 'Erreur lors de la gestion de la BD: ' . $e->getMessage()]);
         }
     }
 
@@ -2072,15 +2072,15 @@ class AjaxHandler
 
             if ($result) {
                 if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCreateTable - Table created successfully'); }
-                wp_send_json_success(['message' => 'Table wp_pdf_builder_settings créée avec succès']);
+                \wp_send_json_success(['message' => 'Table wp_pdf_builder_settings créée avec succès']);
             } else {
                 if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCreateTable - Table creation failed'); }
-                wp_send_json_error(['message' => 'Erreur lors de la création de la table']);
+                \wp_send_json_error(['message' => 'Erreur lors de la création de la table']);
             }
 
         } catch (Exception $e) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCreateTable - Error: ' . $e->getMessage()); }
-            wp_send_json_error(['message' => 'Erreur lors de la création: ' . $e->getMessage()]);
+            \wp_send_json_error(['message' => 'Erreur lors de la création: ' . $e->getMessage()]);
         }
     }
 
@@ -2099,18 +2099,18 @@ class AjaxHandler
 
             if ($result && isset($result['success']) && $result['success']) {
                 if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleMigrateData - Data migration completed successfully'); }
-                wp_send_json_success([
+                \wp_send_json_success([
                     'message' => 'Migration des données effectuée: ' . ($result['migrated'] ?? 0) . ' paramètres migrés',
                     'migrated' => $result['migrated'] ?? 0
                 ]);
             } else {
                 if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleMigrateData - Data migration failed: ' . json_encode($result)); }
-                wp_send_json_error(['message' => 'Erreur lors de la migration: ' . ($result['message'] ?? 'Erreur inconnue')]);
+                \wp_send_json_error(['message' => 'Erreur lors de la migration: ' . ($result['message'] ?? 'Erreur inconnue')]);
             }
 
         } catch (Exception $e) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleMigrateData - Error: ' . $e->getMessage()); }
-            wp_send_json_error(['message' => 'Erreur lors de la migration: ' . $e->getMessage()]);
+            \wp_send_json_error(['message' => 'Erreur lors de la migration: ' . $e->getMessage()]);
         }
     }
 
@@ -2143,7 +2143,7 @@ class AjaxHandler
                 $response['columns_count'] = count($columns);
 
                 // Compter les enregistrements
-                $response['records_count'] = intval($wpdb->get_var("SELECT COUNT(*) FROM $table_name"));
+                $response['records_count'] = \intval($wpdb->get_var("SELECT COUNT(*) FROM $table_name"));
 
                 // Vérifier l'état de migration
                 $response['is_migrated'] = $table_manager->is_migrated();
@@ -2151,11 +2151,11 @@ class AjaxHandler
 
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCheckDatabaseStatus - Status: ' . json_encode($response)); }
 
-            wp_send_json_success($response);
+            \wp_send_json_success($response);
 
         } catch (Exception $e) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCheckDatabaseStatus - Error: ' . $e->getMessage()); }
-            wp_send_json_error(['message' => 'Erreur lors de la vérification: ' . $e->getMessage()]);
+            \wp_send_json_error(['message' => 'Erreur lors de la vérification: ' . $e->getMessage()]);
         }
     }
 }

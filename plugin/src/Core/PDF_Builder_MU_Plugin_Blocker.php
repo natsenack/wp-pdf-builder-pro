@@ -24,13 +24,13 @@ class PDFBuilderMuPluginBlocker {
      */
     public static function init() {
         // Bloquer les MU-plugins non autorisés
-        add_action('init', [self::class, 'block_unauthorized_mu_plugins'], 1);
+        \add_action('init', [self::class, 'block_unauthorized_mu_plugins'], 1);
         
         // Aussi au chargement du plugin
-        add_action('plugins_loaded', [self::class, 'block_unauthorized_mu_plugins'], 1);
+        \add_action('plugins_loaded', [self::class, 'block_unauthorized_mu_plugins'], 1);
         
         // Et lors de l'accès à l'admin
-        add_action('admin_init', [self::class, 'block_unauthorized_mu_plugins'], 1);
+        \add_action('admin_init', [self::class, 'block_unauthorized_mu_plugins'], 1);
     }
     
     /**

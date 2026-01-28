@@ -237,23 +237,23 @@ class PdfHtmlGenerator
             $base_style .= ' text-decoration: ' . $element['textDecoration'] . ';';
         }
         if (isset($element['lineHeight']) && $element['lineHeight']) {
-            $base_style .= ' line-height: ' . floatval($element['lineHeight']) . ';';
+            $base_style .= ' line-height: ' . \floatval($element['lineHeight']) . ';';
         }
         if (isset($element['borderStyle']) && $element['borderStyle'] !== 'solid') {
             $base_style .= ' border-style: ' . $element['borderStyle'] . ';';
         }
         if (isset($element['shadow']) && $element['shadow']) {
-            $offsetX = floatval($element['shadowOffsetX'] ?? 2);
-            $offsetY = floatval($element['shadowOffsetY'] ?? 2);
+            $offsetX = \floatval($element['shadowOffsetX'] ?? 2);
+            $offsetY = \floatval($element['shadowOffsetY'] ?? 2);
             $shadowColor = $element['shadowColor'] ?? 'rgba(0,0,0,0.2)';
             $base_style .= ' box-shadow: ' . $offsetX . 'px ' . $offsetY . 'px 4px ' . $shadowColor . ';';
         }
         if (isset($element['rotation']) && $element['rotation'] !== 0 && pdf_builder_get_option('pdf_builder_canvas_rotate_enabled', '0') == '1') {
-            $rotation = floatval($element['rotation']);
+            $rotation = \floatval($element['rotation']);
             $base_style .= ' transform: rotate(' . $rotation . 'deg);';
         }
         if (isset($element['scale']) && $element['scale'] !== 100) {
-            $scale = floatval($element['scale']) / 100;
+            $scale = \floatval($element['scale']) / 100;
             $base_style .= ' transform: scale(' . $scale . ');';
         }
 
@@ -375,7 +375,7 @@ class PdfHtmlGenerator
                     }
                 }
                 if ($logo_url) {
-                    $html = sprintf('<div class="pdf-element image-element" style="%s"><img src="%s" style="width: 100%%; height: 100%%; object-fit: contain;" alt="Logo" /></div>', $style, esc_url($logo_url));
+                    $html = sprintf('<div class="pdf-element image-element" style="%s"><img src="%s" style="width: 100%%; height: 100%%; object-fit: contain;" alt="Logo" /></div>', $style, \esc_url($logo_url));
                 } else {
                     $html = sprintf('<div class="pdf-element image-element" style="%s"><div style="width: 100%%; height: 100%%; background-color: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #666; font-size: 12px;">🏢 Logo</div></div>', $style);
                 }

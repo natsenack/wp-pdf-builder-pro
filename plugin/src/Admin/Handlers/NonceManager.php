@@ -95,12 +95,12 @@ class NonceManager
      */
     public static function checkPermissions(string $capability = self::MIN_CAPABILITY): bool
     {
-        if (!is_user_logged_in()) {
+        if (!\is_user_logged_in()) {
             self::logError('Utilisateur non connecté');
             return false;
         }
 
-        if (!current_user_can($capability)) {
+        if (!\current_user_can($capability)) {
             self::logError("Permissions insuffisantes pour la capacité: {$capability}");
             return false;
         }
@@ -148,7 +148,7 @@ class NonceManager
      */
     public static function sendNonceErrorResponse(): void
     {
-        wp_send_json_error([
+        \wp_send_json_error([
             'message' => 'Nonce invalide',
             'code' => 'nonce_invalid',
             'nonce' => self::createNonce() // Fournir un nonce frais pour correction
@@ -162,7 +162,7 @@ class NonceManager
      */
     public static function sendPermissionErrorResponse(): void
     {
-        wp_send_json_error([
+        \wp_send_json_error([
             'message' => 'Permissions insuffisantes',
             'code' => 'permission_denied'
         ]);

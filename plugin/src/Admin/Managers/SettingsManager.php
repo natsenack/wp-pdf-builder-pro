@@ -53,14 +53,14 @@ class SettingsManager
         // Section principale
         \add_settings_section(
             'pdf_builder_general',
-            __('Paramètres Généraux', 'pdf-builder-pro'),
+            \__('Paramètres Généraux', 'pdf-builder-pro'),
             [$this, 'renderGeneralSection'],
             'pdf_builder_settings'
         );
 
         \add_settings_field(
             'company_info',
-            __('Informations Entreprise', 'pdf-builder-pro'),
+            \__('Informations Entreprise', 'pdf-builder-pro'),
             [$this, 'renderCompanyInfoField'],
             'pdf_builder_settings',
             'pdf_builder_general'
@@ -69,14 +69,14 @@ class SettingsManager
         // Section performance
         \add_settings_section(
             'pdf_builder_performance',
-            __('Performance', 'pdf-builder-pro'),
+            \__('Performance', 'pdf-builder-pro'),
             [$this, 'renderPerformanceSection'],
             'pdf_builder_settings'
         );
 
         \add_settings_field(
             'cache_settings',
-            __('Cache', 'pdf-builder-pro'),
+            \__('Cache', 'pdf-builder-pro'),
             [$this, 'renderCacheField'],
             'pdf_builder_settings',
             'pdf_builder_performance'
@@ -84,7 +84,7 @@ class SettingsManager
 
         \add_settings_field(
             'performance_limits',
-            __('Limites de Performance', 'pdf-builder-pro'),
+            \__('Limites de Performance', 'pdf-builder-pro'),
             [$this, 'renderPerformanceLimitsField'],
             'pdf_builder_settings',
             'pdf_builder_performance'
@@ -93,14 +93,14 @@ class SettingsManager
         // Section canvas
         \add_settings_section(
             'pdf_builder_canvas',
-            __('Paramètres Canvas', 'pdf-builder-pro'),
+            \__('Paramètres Canvas', 'pdf-builder-pro'),
             [$this, 'renderCanvasSection'],
             'pdf_builder_settings'
         );
 
         \add_settings_field(
             'canvas_display_dimensions',
-            __('🎨 Affichage & Dimensions', 'pdf-builder-pro'),
+            \__('🎨 Affichage & Dimensions', 'pdf-builder-pro'),
             [$this, 'renderCanvasDisplayDimensionsField'],
             'pdf_builder_settings',
             'pdf_builder_canvas'
@@ -114,7 +114,7 @@ class SettingsManager
      */
     public function renderGeneralSection()
     {
-        echo '<p>' . __('Configurez les paramètres généraux du plugin PDF Builder Pro.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . \__('Configurez les paramètres généraux du plugin PDF Builder Pro.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -122,7 +122,7 @@ class SettingsManager
      */
     public function renderPerformanceSection()
     {
-        echo '<p>' . __('Paramètres de performance et optimisation.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . \__('Paramètres de performance et optimisation.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -130,7 +130,7 @@ class SettingsManager
      */
     public function renderCanvasSection()
     {
-        echo '<p>' . __('Paramètres par défaut du canvas d\'édition.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . \__('Paramètres par défaut du canvas d\'édition.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -147,27 +147,27 @@ class SettingsManager
 
         echo '<table class="form-table">';
         echo '<tr>';
-        echo '<th><label for="pdf_builder_company_name">' . __('Nom de l\'entreprise', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_company_name">' . \__('Nom de l\'entreprise', 'pdf-builder-pro') . '</label></th>';
         echo '<td><input type="text" id="pdf_builder_company_name" name="pdf_builder_company_name" value="' . \esc_attr($company_name) . '" class="regular-text"></td>';
         echo '</tr>';
 
         echo '<tr>';
-        echo '<th><label for="pdf_builder_company_address">' . __('Adresse', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_company_address">' . \__('Adresse', 'pdf-builder-pro') . '</label></th>';
         echo '<td><textarea id="pdf_builder_company_address" name="pdf_builder_company_address" rows="3" class="regular-text">' . \esc_textarea($company_address) . '</textarea></td>';
         echo '</tr>';
 
         echo '<tr>';
-        echo '<th><label for="pdf_builder_company_phone">' . __('Téléphone', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_company_phone">' . \__('Téléphone', 'pdf-builder-pro') . '</label></th>';
         echo '<td><input type="tel" id="pdf_builder_company_phone" name="pdf_builder_company_phone" value="' . \esc_attr($company_phone) . '" class="regular-text"></td>';
         echo '</tr>';
 
         echo '<tr>';
-        echo '<th><label for="pdf_builder_company_email">' . __('Email', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_company_email">' . \__('Email', 'pdf-builder-pro') . '</label></th>';
         echo '<td><input type="email" id="pdf_builder_company_email" name="pdf_builder_company_email" value="' . \esc_attr($company_email) . '" class="regular-text"></td>';
         echo '</tr>';
 
         echo '<tr>';
-        echo '<th><label for="pdf_builder_default_language">' . __('Langue par défaut', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_default_language">' . \__('Langue par défaut', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
         echo '<select id="pdf_builder_default_language" name="pdf_builder_default_language">';
         echo '<option value="fr" ' . \selected($default_language, 'fr', false) . '>Français</option>';
@@ -191,18 +191,18 @@ class SettingsManager
 
         echo '<table class="form-table">';
         echo '<tr>';
-        echo '<th><label for="pdf_builder_enable_cache">' . __('Activer le cache', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_enable_cache">' . \__('Activer le cache', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
         echo '<input type="checkbox" id="pdf_builder_enable_cache" name="pdf_builder_enable_cache" value="1" ' . \checked($enable_cache, '1', false) . '>';
-        echo '<p class="description">' . __('Améliore les performances en cachant les résultats des requêtes.', 'pdf-builder-pro') . '</p>';
+        echo '<p class="description">' . \__('Améliore les performances en cachant les résultats des requêtes.', 'pdf-builder-pro') . '</p>';
         echo '</td>';
         echo '</tr>';
 
         echo '<tr>';
-        echo '<th><label for="pdf_builder_cache_timeout">' . __('Timeout du cache (secondes)', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_cache_timeout">' . \__('Timeout du cache (secondes)', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
         echo '<input type="number" id="pdf_builder_cache_timeout" name="pdf_builder_cache_timeout" value="' . \esc_attr($cache_timeout) . '" min="60" max="86400" step="60">';
-        echo '<p class="description">' . __('Durée avant expiration du cache (3600 = 1 heure).', 'pdf-builder-pro') . '</p>';
+        echo '<p class="description">' . \__('Durée avant expiration du cache (3600 = 1 heure).', 'pdf-builder-pro') . '</p>';
         echo '</td>';
         echo '</tr>';
         echo '</table>';
@@ -220,26 +220,26 @@ class SettingsManager
 
         echo '<table class="form-table">';
         echo '<tr>';
-        echo '<th><label for="pdf_builder_compression_level">' . __('Niveau de compression', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_compression_level">' . \__('Niveau de compression', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
         echo '<input type="number" id="pdf_builder_compression_level" name="pdf_builder_compression_level" value="' . \esc_attr($compression_level) . '" min="0" max="9">';
-        echo '<p class="description">' . __('Niveau de compression des images (0-9, 6 recommandé).', 'pdf-builder-pro') . '</p>';
+        echo '<p class="description">' . \__('Niveau de compression des images (0-9, 6 recommandé).', 'pdf-builder-pro') . '</p>';
         echo '</td>';
         echo '</tr>';
 
         echo '<tr>';
-        echo '<th><label for="pdf_builder_memory_limit">' . __('Limite mémoire (MB)', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_memory_limit">' . \__('Limite mémoire (MB)', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
         echo '<input type="number" id="pdf_builder_memory_limit" name="pdf_builder_memory_limit" value="' . \esc_attr($memory_limit) . '" min="64" max="1024" step="64">';
-        echo '<p class="description">' . __('Mémoire maximale allouée pour la génération PDF.', 'pdf-builder-pro') . '</p>';
+        echo '<p class="description">' . \__('Mémoire maximale allouée pour la génération PDF.', 'pdf-builder-pro') . '</p>';
         echo '</td>';
         echo '</tr>';
 
         echo '<tr>';
-        echo '<th><label for="pdf_builder_max_execution_time">' . __('Temps d\'exécution max (secondes)', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_max_execution_time">' . \__('Temps d\'exécution max (secondes)', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
         echo '<input type="number" id="pdf_builder_max_execution_time" name="pdf_builder_max_execution_time" value="' . \esc_attr($max_execution_time) . '" min="10" max="300" step="5">';
-        echo '<p class="description">' . __('Temps maximum pour générer un PDF.', 'pdf-builder-pro') . '</p>';
+        echo '<p class="description">' . \__('Temps maximum pour générer un PDF.', 'pdf-builder-pro') . '</p>';
         echo '</td>';
         echo '</tr>';
         echo '</table>';
@@ -306,10 +306,10 @@ class SettingsManager
             // Paramètres de performance
             $settings = [
                 'pdf_builder_enable_cache' => isset($_POST['enable_cache']) ? '1' : '0',
-                'pdf_builder_cache_timeout' => intval($_POST['cache_timeout'] ?? 3600),
-                'pdf_builder_compression_level' => intval($_POST['compression_level'] ?? 6),
-                'pdf_builder_memory_limit' => intval($_POST['memory_limit'] ?? 256),
-                'pdf_builder_max_execution_time' => intval($_POST['max_execution_time'] ?? 30),
+                'pdf_builder_cache_timeout' => \intval($_POST['cache_timeout'] ?? 3600),
+                'pdf_builder_compression_level' => \intval($_POST['compression_level'] ?? 6),
+                'pdf_builder_memory_limit' => \intval($_POST['memory_limit'] ?? 256),
+                'pdf_builder_max_execution_time' => \intval($_POST['max_execution_time'] ?? 30),
             ];
 
             foreach ($settings as $key => $value) {
@@ -348,27 +348,27 @@ class SettingsManager
         $default_orientation = $settings['pdf_builder_canvas_default_orientation'] ?? 'portrait';
 
         echo '<fieldset>';
-        echo '<legend style="font-weight: 600; margin-bottom: 10px;">' . __('Autorisations d\'orientation du canvas', 'pdf-builder-pro') . '</legend>';
+        echo '<legend style="font-weight: 600; margin-bottom: 10px;">' . \__('Autorisations d\'orientation du canvas', 'pdf-builder-pro') . '</legend>';
         
         echo '<label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">';
         echo '<input type="checkbox" name="pdf_builder_canvas_allow_portrait" value="1" ' . \checked($allow_portrait, '1', false) . '>';
-        echo __('Autoriser l\'orientation Portrait (794×1123 px)', 'pdf-builder-pro');
+        echo \__('Autoriser l\'orientation Portrait (794×1123 px)', 'pdf-builder-pro');
         echo '</label>';
 
         echo '<label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">';
         echo '<input type="checkbox" name="pdf_builder_canvas_allow_landscape" value="1" ' . \checked($allow_landscape, '1', false) . '>';
-        echo __('Autoriser l\'orientation Paysage (1123×794 px)', 'pdf-builder-pro');
+        echo \__('Autoriser l\'orientation Paysage (1123×794 px)', 'pdf-builder-pro');
         echo '</label>';
 
         echo '<div style="margin-top: 12px; padding: 10px; background-color: #f0f0f0; border-left: 3px solid #0073aa; border-radius: 3px;">';
         echo '<label style="display: block; margin-bottom: 8px;">';
-        echo '<strong>' . __('Orientation par défaut', 'pdf-builder-pro') . '</strong>';
+        echo '<strong>' . \__('Orientation par défaut', 'pdf-builder-pro') . '</strong>';
         echo '</label>';
         echo '<select name="pdf_builder_canvas_default_orientation" style="padding: 6px 8px;">';
-        echo '<option value="portrait" ' . \selected($default_orientation, 'portrait', false) . '>' . __('Portrait', 'pdf-builder-pro') . '</option>';
-        echo '<option value="landscape" ' . \selected($default_orientation, 'landscape', false) . '>' . __('Paysage', 'pdf-builder-pro') . '</option>';
+        echo '<option value="portrait" ' . \selected($default_orientation, 'portrait', false) . '>' . \__('Portrait', 'pdf-builder-pro') . '</option>';
+        echo '<option value="landscape" ' . \selected($default_orientation, 'landscape', false) . '>' . \__('Paysage', 'pdf-builder-pro') . '</option>';
         echo '</select>';
-        echo '<p class="description">' . __('Cette orientation sera appliquée par défaut lors de la création d\'un nouveau template.', 'pdf-builder-pro') . '</p>';
+        echo '<p class="description">' . \__('Cette orientation sera appliquée par défaut lors de la création d\'un nouveau template.', 'pdf-builder-pro') . '</p>';
         echo '</div>';
 
         echo '</fieldset>';
@@ -402,10 +402,10 @@ class SettingsManager
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
         return [
             'enable_cache' => ($settings['pdf_builder_cache_enabled'] ?? '0') === '1',
-            'cache_timeout' => intval($settings['pdf_builder_cache_ttl'] ?? 3600),
-            'compression_level' => intval($settings['pdf_builder_compression_level'] ?? 6),
-            'memory_limit' => intval($settings['pdf_builder_memory_limit'] ?? 256),
-            'max_execution_time' => intval($settings['pdf_builder_max_execution_time'] ?? 30),
+            'cache_timeout' => \intval($settings['pdf_builder_cache_ttl'] ?? 3600),
+            'compression_level' => \intval($settings['pdf_builder_compression_level'] ?? 6),
+            'memory_limit' => \intval($settings['pdf_builder_memory_limit'] ?? 256),
+            'max_execution_time' => \intval($settings['pdf_builder_max_execution_time'] ?? 30),
         ];
     }
 
@@ -418,9 +418,9 @@ class SettingsManager
         return [
             'format' => $settings['pdf_builder_canvas_format'] ?? 'A4',
             'orientation' => $settings['pdf_builder_canvas_default_orientation'] ?? 'portrait',
-            'dpi' => intval($settings['pdf_builder_canvas_dpi'] ?? 96),
-            'width' => intval($settings['pdf_builder_canvas_width'] ?? 794),
-            'height' => intval($settings['pdf_builder_canvas_height'] ?? 1123),
+            'dpi' => \intval($settings['pdf_builder_canvas_dpi'] ?? 96),
+            'width' => \intval($settings['pdf_builder_canvas_width'] ?? 794),
+            'height' => \intval($settings['pdf_builder_canvas_height'] ?? 1123),
             'drag_enabled' => ($settings['pdf_builder_canvas_drag_enabled'] ?? '1') === '1',
             'resize_enabled' => ($settings['pdf_builder_canvas_resize_enabled'] ?? '1') === '1',
             'rotate_enabled' => ($settings['pdf_builder_canvas_rotate_enabled'] ?? '1') === '1',
@@ -428,12 +428,12 @@ class SettingsManager
             'selection_mode' => $settings['pdf_builder_canvas_selection_mode'] ?? 'click',
             'keyboard_shortcuts' => ($settings['pdf_builder_canvas_keyboard_shortcuts'] ?? '1') === '1',
             'grid_enabled' => ($settings['pdf_builder_canvas_grid_enabled'] ?? '1') === '1',
-            'grid_size' => intval($settings['pdf_builder_canvas_grid_size'] ?? 20),
+            'grid_size' => \intval($settings['pdf_builder_canvas_grid_size'] ?? 20),
             'snap_to_grid' => ($settings['pdf_builder_canvas_snap_to_grid'] ?? '1') === '1',
             'navigation_enabled' => ($settings['pdf_builder_canvas_navigation_enabled'] ?? '1') === '1',
-            'zoom_default' => intval($settings['pdf_builder_canvas_zoom_default'] ?? 100),
+            'zoom_default' => \intval($settings['pdf_builder_canvas_zoom_default'] ?? 100),
             'export_format' => $settings['pdf_builder_canvas_export_format'] ?? 'png',
-            'export_quality' => intval($settings['pdf_builder_canvas_export_quality'] ?? 90),
+            'export_quality' => \intval($settings['pdf_builder_canvas_export_quality'] ?? 90),
         ];
     }
 
@@ -575,11 +575,11 @@ class SettingsManager
             $sanitized['pdf_builder_log_level'] = in_array($input['pdf_builder_log_level'], $allowed_levels) ? $input['pdf_builder_log_level'] : 'warning';
         }
         if (isset($input['pdf_builder_log_file_size'])) {
-            $sanitized['pdf_builder_log_file_size'] = intval($input['pdf_builder_log_file_size']);
+            $sanitized['pdf_builder_log_file_size'] = \intval($input['pdf_builder_log_file_size']);
             $sanitized['pdf_builder_log_file_size'] = max(1, min(100, $sanitized['pdf_builder_log_file_size']));
         }
         if (isset($input['pdf_builder_log_retention'])) {
-            $sanitized['pdf_builder_log_retention'] = intval($input['pdf_builder_log_retention']);
+            $sanitized['pdf_builder_log_retention'] = \intval($input['pdf_builder_log_retention']);
             $sanitized['pdf_builder_log_retention'] = max(1, min(365, $sanitized['pdf_builder_log_retention']));
         }
         if (isset($input['pdf_builder_force_https'])) {
@@ -722,7 +722,7 @@ class SettingsManager
             if (isset($input[$field])) {
                 switch ($type) {
                     case 'intval':
-                        $sanitized[$field] = intval($input[$field]);
+                        $sanitized[$field] = \intval($input[$field]);
                         break;
                     case 'bool':
                         $sanitized[$field] = $input[$field] ? '1' : '0';

@@ -58,7 +58,7 @@ class PDF_Builder_Secure_Shell_Manager
      */
     private static function logSecurityEvent($command, $output, $success)
     {
-        $security_log = sprintf("[SECURITY] Shell command executed - Time: %s - Command: %s - Success: %s - IP: %s - User: %s", date('Y-m-d H:i:s'), $command, $success ? 'YES' : 'NO', $_SERVER['REMOTE_ADDR'] ?? 'CLI', get_current_user_id());
+        $security_log = sprintf("[SECURITY] Shell command executed - Time: %s - Command: %s - Success: %s - IP: %s - User: %s", date('Y-m-d H:i:s'), $command, $success ? 'YES' : 'NO', $_SERVER['REMOTE_ADDR'] ?? 'CLI', \get_current_user_id());
 // Log dans un fichier séparé pour la sécurité
         $security_log_file = WP_CONTENT_DIR . '/pdf-builder-security.log';
         $log_entry = date('Y-m-d H:i:s') . ' - ' . $security_log . "\n";

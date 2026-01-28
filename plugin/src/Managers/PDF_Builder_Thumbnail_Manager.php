@@ -36,7 +36,7 @@ class PDF_Builder_Thumbnail_Manager
      */
     private function initHooks()
     {
-        add_action('admin_init', [$this, 'runDatabaseMigrations']);
+        \add_action('admin_init', [$this, 'runDatabaseMigrations']);
     }
 
     /**
@@ -96,11 +96,11 @@ class PDF_Builder_Thumbnail_Manager
     {
         try {
             // Créer un thumbnail simple basé sur les données du template
-            $upload_dir = wp_upload_dir();
+            $upload_dir = \wp_upload_dir();
             $thumbnail_dir = $upload_dir['basedir'] . '/pdf-builder-thumbnails/';
 
             if (!file_exists($thumbnail_dir)) {
-                wp_mkdir_p($thumbnail_dir);
+                \wp_mkdir_p($thumbnail_dir);
             }
 
             $thumbnail_filename = 'template-' . $template_id . '-thumb.png';
@@ -275,7 +275,7 @@ class PDF_Builder_Thumbnail_Manager
         $thumbnail_url = $this->getTemplateThumbnail($template_id);
         if (!empty($thumbnail_url)) {
             // Supprimer le fichier physique
-            $upload_dir = wp_upload_dir();
+            $upload_dir = \wp_upload_dir();
             $relative_path = str_replace($upload_dir['baseurl'], '', $thumbnail_url);
             $file_path = $upload_dir['basedir'] . $relative_path;
 
@@ -327,7 +327,7 @@ class PDF_Builder_Thumbnail_Manager
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
-        $upload_dir = wp_upload_dir();
+        $upload_dir = \wp_upload_dir();
         $thumbnail_dir = $upload_dir['basedir'] . '/pdf-builder-thumbnails/';
 
         if (!file_exists($thumbnail_dir)) {

@@ -208,33 +208,33 @@ class PDF_Builder_Screenshot_Renderer
 
         // Positionnement
         if (isset($props['x'])) {
-            $style[] = 'left: ' . intval($props['x']) . 'px';
+            $style[] = 'left: ' . \intval($props['x']) . 'px';
         }
         if (isset($props['y'])) {
-            $style[] = 'top: ' . intval($props['y']) . 'px';
+            $style[] = 'top: ' . \intval($props['y']) . 'px';
         }
 
         // Dimensions
         if (isset($props['width'])) {
-            $style[] = 'width: ' . intval($props['width']) . 'px';
+            $style[] = 'width: ' . \intval($props['width']) . 'px';
         }
         if (isset($props['height'])) {
-            $style[] = 'height: ' . intval($props['height']) . 'px';
+            $style[] = 'height: ' . \intval($props['height']) . 'px';
         }
 
         // Rotation
         if (isset($props['rotation']) && $props['rotation'] != 0) {
-            $style[] = 'transform: rotate(' . intval($props['rotation']) . 'deg)';
+            $style[] = 'transform: rotate(' . \intval($props['rotation']) . 'deg)';
         }
 
         // Opacité
         if (isset($props['opacity']) && $props['opacity'] < 1) {
-            $style[] = 'opacity: ' . floatval($props['opacity']);
+            $style[] = 'opacity: ' . \floatval($props['opacity']);
         }
 
         // Z-index
         if (isset($props['zIndex'])) {
-            $style[] = 'z-index: ' . intval($props['zIndex']);
+            $style[] = 'z-index: ' . \intval($props['zIndex']);
         }
 
         return implode('; ', $style);
@@ -264,7 +264,7 @@ class PDF_Builder_Screenshot_Renderer
      */
     private function isWkhtmltopdfAvailable()
     {
-        require_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
+        require_once \plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
         return \PDF_Builder\Managers\PdfBuilderSecureShellManager::is_command_available('wkhtmltopdf');
     }
 
@@ -273,7 +273,7 @@ class PDF_Builder_Screenshot_Renderer
      */
     private function generateWithWkhtmltopdf($html_file, $pdf_path)
     {
-        require_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
+        require_once \plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
         return \PDF_Builder\Managers\PdfBuilderSecureShellManager::execute_wkhtmltopdf($html_file, $pdf_path);
     }
 
@@ -283,14 +283,14 @@ class PDF_Builder_Screenshot_Renderer
     private function isPuppeteerAvailable()
     {
         // Vérifier si Node.js est disponible via le gestionnaire sécurisé
-        require_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
+        require_once \plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
         $node_available = \PDF_Builder\Managers\PdfBuilderSecureShellManager::is_command_available('node');
         if (!$node_available) {
             return false;
         }
 
         // Vérifier si le script puppeteer existe et est sécurisé
-        $script_path = plugin_dir_path(__FILE__) . '../../tools/pdf-screenshot.js';
+        $script_path = \plugin_dir_path(__FILE__) . '../../tools/pdf-screenshot.js';
         return file_exists($script_path) && \PDF_Builder\Managers\PdfBuilderSecureShellManager::is_secure_file_path($script_path);
     }
 
@@ -299,9 +299,9 @@ class PDF_Builder_Screenshot_Renderer
      */
     private function generateWithPuppeteer($html_file, $pdf_path)
     {
-        $script_path = plugin_dir_path(__FILE__) . '../../tools/pdf-screenshot.js';
+        $script_path = \plugin_dir_path(__FILE__) . '../../tools/pdf-screenshot.js';
 
-        require_once plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
+        require_once \plugin_dir_path(__FILE__) . 'PDF_Builder_Secure_Shell_Manager.php';
         $output = \PDF_Builder\Managers\PdfBuilderSecureShellManager::execute_node($script_path, [$html_file, $pdf_path]);
 
         return $output !== false && file_exists($pdf_path) && filesize($pdf_path) > 0;

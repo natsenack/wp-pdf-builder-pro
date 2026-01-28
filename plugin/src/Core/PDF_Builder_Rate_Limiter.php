@@ -48,7 +48,7 @@ class PdfBuilderRateLimiter
     {
         // Utilisation de l'ID utilisateur ou de la session
         if ($user_id === null) {
-            $user_id = get_current_user_id();
+            $user_id = \get_current_user_id();
             if (!$user_id) {
                 // Pour les utilisateurs non connectés, utiliser l'IP
                 $user_id = 'ip_' . self::getClientIpHash();
@@ -83,7 +83,7 @@ class PdfBuilderRateLimiter
     public static function getRemainingRequests($action = 'pdf_generation', $user_id = null)
     {
         if ($user_id === null) {
-            $user_id = get_current_user_id();
+            $user_id = \get_current_user_id();
             if (!$user_id) {
                 $user_id = 'ip_' . self::getClientIpHash();
             }
@@ -106,7 +106,7 @@ class PdfBuilderRateLimiter
     public static function getResetTime($action = 'pdf_generation', $user_id = null)
     {
         if ($user_id === null) {
-            $user_id = get_current_user_id();
+            $user_id = \get_current_user_id();
             if (!$user_id) {
                 $user_id = 'ip_' . self::getClientIpHash();
             }
@@ -133,14 +133,14 @@ class PdfBuilderRateLimiter
     public static function resetCounter($action = 'pdf_generation', $user_id = null)
     {
         if ($user_id === null) {
-            $user_id = get_current_user_id();
+            $user_id = \get_current_user_id();
             if (!$user_id) {
                 $user_id = 'ip_' . self::getClientIpHash();
             }
         }
 
         $key = self::buildCacheKey($action, $user_id);
-        delete_transient($key);
+        \delete_transient($key);
 
         self::logRateLimitReset($action, $user_id);
 
@@ -324,8 +324,8 @@ class PdfBuilderRateLimiter
         foreach ($custom_limits as $action => $limits) {
             if (isset($limits['max_requests']) && isset($limits['window'])) {
                 $validated_limits[$action] = [
-                    'max_requests' => max(1, intval($limits['max_requests'])),
-                    'window' => max(10, intval($limits['window']))
+                    'max_requests' => max(1, \intval($limits['max_requests'])),
+                    'window' => max(10, \intval($limits['window']))
                 ];
             }
         }

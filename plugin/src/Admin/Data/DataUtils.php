@@ -38,11 +38,11 @@ class DataUtils
     public function getDocumentTypeLabel($document_type)
     {
         $labels = [
-            'facture' => __('Facture', 'pdf-builder-pro'),
-            'devis' => __('Devis', 'pdf-builder-pro'),
-            'commande' => __('Commande', 'pdf-builder-pro'),
-            'contrat' => __('Contrat', 'pdf-builder-pro'),
-            'bon_livraison' => __('Bon de livraison', 'pdf-builder-pro'),
+            'facture' => \__('Facture', 'pdf-builder-pro'),
+            'devis' => \__('Devis', 'pdf-builder-pro'),
+            'commande' => \__('Commande', 'pdf-builder-pro'),
+            'contrat' => \__('Contrat', 'pdf-builder-pro'),
+            'bon_livraison' => \__('Bon de livraison', 'pdf-builder-pro'),
         ];
         return isset($labels[$document_type]) ? $labels[$document_type] : ucfirst($document_type);
     }
@@ -56,7 +56,7 @@ class DataUtils
         } elseif (is_numeric($value)) {
             return is_float($value + 0) ? (float) $value : (int) $value;
         } else {
-            return sanitize_text_field($value);
+            return \sanitize_text_field($value);
         }
     }
 

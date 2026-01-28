@@ -31,26 +31,26 @@ class Canvas_AJAX_Handler
     {
         try {
 // Vérifier les permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error(['message' => __('Permissions insuffisantes', 'pdf-builder-pro')]);
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error(['message' => \__('Permissions insuffisantes', 'pdf-builder-pro')]);
                 return;
             }
 
             // Vérifier le nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings')) {
-                wp_send_json_error(['message' => __('Nonce de sécurité invalide', 'pdf-builder-pro')]);
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings')) {
+                \wp_send_json_error(['message' => \__('Nonce de sécurité invalide', 'pdf-builder-pro')]);
                 return;
             }
 
             $canvas_manager = Canvas_Manager::get_instance();
             $settings = $canvas_manager->getAllSettings();
-            wp_send_json_success([
+            \wp_send_json_success([
                 'settings' => $settings,
-                'message' => __('Paramètres du canvas récupérés avec succès', 'pdf-builder-pro')
+                'message' => \__('Paramètres du canvas récupérés avec succès', 'pdf-builder-pro')
             ]);
         } catch (\Exception $e) {
-            wp_send_json_error([
-                'message' => sprintf(__('Erreur: %s', 'pdf-builder-pro'), $e->getMessage())
+            \wp_send_json_error([
+                'message' => sprintf(\__('Erreur: %s', 'pdf-builder-pro'), $e->getMessage())
             ]);
         }
     }
@@ -62,39 +62,39 @@ class Canvas_AJAX_Handler
     {
         try {
 // Vérifier les permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error(['message' => __('Permissions insuffisantes', 'pdf-builder-pro')]);
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error(['message' => \__('Permissions insuffisantes', 'pdf-builder-pro')]);
                 return;
             }
 
             // Vérifier le nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings')) {
-                wp_send_json_error(['message' => __('Nonce de sécurité invalide', 'pdf-builder-pro')]);
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings')) {
+                \wp_send_json_error(['message' => \__('Nonce de sécurité invalide', 'pdf-builder-pro')]);
                 return;
             }
 
             // Récupérer les paramètres
             $settings = isset($_POST['settings']) && is_array($_POST['settings']) ? $_POST['settings'] : [];
             if (empty($settings)) {
-                wp_send_json_error(['message' => __('Aucun paramètre à sauvegarder', 'pdf-builder-pro')]);
+                \wp_send_json_error(['message' => \__('Aucun paramètre à sauvegarder', 'pdf-builder-pro')]);
                 return;
             }
 
             $canvas_manager = Canvas_Manager::get_instance();
             $saved = $canvas_manager->save_settings($settings);
             if ($saved) {
-                wp_send_json_success([
-                    'message' => __('Paramètres du canvas sauvegardés avec succès', 'pdf-builder-pro'),
+                \wp_send_json_success([
+                    'message' => \__('Paramètres du canvas sauvegardés avec succès', 'pdf-builder-pro'),
                     'settings' => $canvas_manager->getAllSettings()
                 ]);
             } else {
-                wp_send_json_error([
-                    'message' => __('Erreur lors de la sauvegarde des paramètres', 'pdf-builder-pro')
+                \wp_send_json_error([
+                    'message' => \__('Erreur lors de la sauvegarde des paramètres', 'pdf-builder-pro')
                 ]);
             }
         } catch (\Exception $e) {
-            wp_send_json_error([
-                'message' => sprintf(__('Erreur: %s', 'pdf-builder-pro'), $e->getMessage())
+            \wp_send_json_error([
+                'message' => sprintf(\__('Erreur: %s', 'pdf-builder-pro'), $e->getMessage())
             ]);
         }
     }
@@ -106,34 +106,34 @@ class Canvas_AJAX_Handler
     {
         try {
 // Vérifier les permissions
-            if (!current_user_can('manage_options')) {
-                wp_send_json_error(['message' => __('Permissions insuffisantes', 'pdf-builder-pro')]);
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error(['message' => \__('Permissions insuffisantes', 'pdf-builder-pro')]);
                 return;
             }
 
             // Vérifier le nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings')) {
-                wp_send_json_error(['message' => __('Nonce de sécurité invalide', 'pdf-builder-pro')]);
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings')) {
+                \wp_send_json_error(['message' => \__('Nonce de sécurité invalide', 'pdf-builder-pro')]);
                 return;
             }
 
             // Confirmer que l'utilisateur veut réinitialiser
             if (!isset($_POST['confirm']) || $_POST['confirm'] !== 'yes') {
-                wp_send_json_error([
-                    'message' => __('Action non confirmée', 'pdf-builder-pro')
+                \wp_send_json_error([
+                    'message' => \__('Action non confirmée', 'pdf-builder-pro')
                 ]);
                 return;
             }
 
             $canvas_manager = Canvas_Manager::get_instance();
             $canvas_manager->reset_to_defaults();
-            wp_send_json_success([
-                'message' => __('Paramètres du canvas réinitialisés aux valeurs par défaut', 'pdf-builder-pro'),
+            \wp_send_json_success([
+                'message' => \__('Paramètres du canvas réinitialisés aux valeurs par défaut', 'pdf-builder-pro'),
                 'settings' => $canvas_manager->getAllSettings()
             ]);
         } catch (\Exception $e) {
-            wp_send_json_error([
-                'message' => sprintf(__('Erreur: %s', 'pdf-builder-pro'), $e->getMessage())
+            \wp_send_json_error([
+                'message' => sprintf(\__('Erreur: %s', 'pdf-builder-pro'), $e->getMessage())
             ]);
         }
     }

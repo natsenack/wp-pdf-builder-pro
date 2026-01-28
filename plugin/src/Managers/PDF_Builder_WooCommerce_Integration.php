@@ -402,7 +402,7 @@ class PDF_Builder_WooCommerce_Integration
         jQuery(document).ready(function($) {
             var orderId = <?php echo intval($order_id); ?>;
             var templateId = <?php echo intval($selected_template ? $selected_template['id'] : 0); ?>;
-            var nonce = '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>';
+            var nonce = '<?php echo \wp_create_nonce('pdf_builder_order_actions'); ?>';
 
             // Passer les IDs globalement pour PreviewImageAPI
             if (!window.pdf_builder) {
@@ -460,14 +460,14 @@ class PDF_Builder_WooCommerce_Integration
 
         // 1. Vérification des permissions utilisateur
         if (!PDF_Builder_Security_Validator::checkPermissions('manage_woocommerce')) {
-            wp_send_json_error(['message' => 'Permissions insuffisantes', 'code' => 'insufficient_permissions']);
+            \wp_send_json_error(['message' => 'Permissions insuffisantes', 'code' => 'insufficient_permissions']);
             return;
         }
 
         // 2. Vérification du rate limiting
         if (!PDF_Builder_Rate_Limiter::check_rate_limit('pdf_generation')) {
             $remaining_time = PDF_Builder_Rate_Limiter::get_reset_time('pdf_generation');
-            wp_send_json_error(
+            \wp_send_json_error(
                 [
                 'message' => 'Trop de requêtes. Veuillez réessayer dans ' . ceil($remaining_time / 60) . ' minutes.',
                 'code' => 'rate_limit_exceeded',
@@ -478,9 +478,9 @@ class PDF_Builder_WooCommerce_Integration
         }
 
         // 3. Validation du nonce
-        $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
+        $nonce = isset($_POST['nonce']) ? \sanitize_text_field($_POST['nonce']) : '';
         if (!PDF_Builder_Security_Validator::validateNonce($nonce, 'pdf_builder_order_actions')) {
-            wp_send_json_error(['message' => 'Sécurité: Nonce invalide', 'code' => 'invalid_nonce']);
+            \wp_send_json_error(['message' => 'Sécurité: Nonce invalide', 'code' => 'invalid_nonce']);
             return;
         }
 
@@ -493,7 +493,7 @@ class PDF_Builder_WooCommerce_Integration
 
         // Validation de l'order_id
         if (!$order_id || $order_id <= 0) {
-            wp_send_json_error(['message' => 'ID commande invalide', 'code' => 'invalid_order_id']);
+            \wp_send_json_error(['message' => 'ID commande invalide', 'code' => 'invalid_order_id']);
             return;
         }
 
@@ -501,7 +501,7 @@ class PDF_Builder_WooCommerce_Integration
         if (!empty($custom_content)) {
             $custom_content = PDF_Builder_Security_Validator::sanitizeHtmlContent($custom_content);
             if (empty($custom_content)) {
-                wp_send_json_error(['message' => 'Contenu HTML invalide', 'code' => 'invalid_html_content']);
+                \wp_send_json_error(['message' => 'Contenu HTML invalide', 'code' => 'invalid_html_content']);
                 return;
             }
         }
@@ -509,7 +509,7 @@ class PDF_Builder_WooCommerce_Integration
         // Validation du chemin d'image si fourni
         if (!empty($image_path)) {
             if (!PDF_Builder_Path_Validator::validate_file_path($image_path)) {
-                wp_send_json_error(['message' => 'Chemin de fichier invalide', 'code' => 'invalid_file_path']);
+                \wp_send_json_error(['message' => 'Chemin de fichier invalide', 'code' => 'invalid_file_path']);
                 return;
             }
         }
@@ -518,7 +518,7 @@ class PDF_Builder_WooCommerce_Integration
             // Charger la commande WooCommerce
             $order = function_exists('wc_get_order') ? \wc_get_order($order_id) : null;
             if (!$order) {
-                wp_send_json_error('Commande introuvable');
+                \wp_send_json_error('Commande introuvable');
                 return;
             }
 
@@ -563,7 +563,7 @@ class PDF_Builder_WooCommerce_Integration
             $valid_statuses = array_merge($valid_statuses, $configured_statuses);
 
             if (!in_array($normalized_current, $valid_statuses) && !in_array($current_status, $valid_statuses)) {
-                wp_send_json_error(['message' => 'Statut de commande non valide pour le traitement', 'code' => 'invalid_order_status']);
+                \wp_send_json_error(['message' => 'Statut de commande non valide pour le traitement', 'code' => 'invalid_order_status']);
                 return;
             }
 
@@ -591,7 +591,7 @@ class PDF_Builder_WooCommerce_Integration
             }
 
             if (!$template_data) {
-                wp_send_json_error('Template non trouvé');
+                \wp_send_json_error('Template non trouvé');
             }
 
             // Extraire les éléments du template
@@ -624,7 +624,7 @@ class PDF_Builder_WooCommerce_Integration
 
             // Sauvegarder le HTML dans le fichier
             if (file_put_contents($file_path, $html_content) === false) {
-                wp_send_json_error('Erreur lors de la création du fichier HTML');
+                \wp_send_json_error('Erreur lors de la création du fichier HTML');
             }
 
             // Créer l'URL de téléchargement
@@ -650,11 +650,11 @@ class PDF_Builder_WooCommerce_Integration
                 ]);
             }
         } catch (Exception $e) {
-            wp_send_json_error('Erreur Exception: ' . $e->getMessage());
+            \wp_send_json_error('Erreur Exception: ' . $e->getMessage());
         } catch (Error $e) {
-            wp_send_json_error('Erreur PHP: ' . $e->getMessage());
+            \wp_send_json_error('Erreur PHP: ' . $e->getMessage());
         } catch (Throwable $e) {
-            wp_send_json_error('Erreur Throwable: ' . $e->getMessage());
+            \wp_send_json_error('Erreur Throwable: ' . $e->getMessage());
         }
     }
 
@@ -663,7 +663,7 @@ class PDF_Builder_WooCommerce_Integration
      */
     private function getNonce()
     {
-        return wp_create_nonce('pdf_builder_order_actions');
+        return \wp_create_nonce('pdf_builder_order_actions');
     }
 
     /**
@@ -671,7 +671,7 @@ class PDF_Builder_WooCommerce_Integration
      */
     private function getAjaxUrl()
     {
-        return admin_url('admin-ajax.php');
+        return \admin_url('admin-ajax.php');
     }
 
     /**
@@ -1109,14 +1109,14 @@ class PDF_Builder_WooCommerce_Integration
     {
         try {
             // Vérifier les permissions utilisateur
-            if (!current_user_can('manage_woocommerce') && !current_user_can('edit_shop_orders')) {
-                wp_send_json_error('Permissions insuffisantes pour sauvegarder le canvas');
+            if (!\current_user_can('manage_woocommerce') && !\current_user_can('edit_shop_orders')) {
+                \wp_send_json_error('Permissions insuffisantes pour sauvegarder le canvas');
                 return;
             }
 
             // Vérifier le nonce de sécurité
             if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
-                wp_send_json_error('Sécurité: Nonce invalide');
+                \wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
 
@@ -1125,21 +1125,21 @@ class PDF_Builder_WooCommerce_Integration
             $canvas_data = isset($_POST['canvas_data']) ? \wp_unslash($_POST['canvas_data']) : '';
 
             if (!$order_id || empty($canvas_data)) {
-                wp_send_json_error('Données manquantes: order_id et canvas_data requis');
+                \wp_send_json_error('Données manquantes: order_id et canvas_data requis');
                 return;
             }
 
             // Valider que la commande existe
             $order = function_exists('wc_get_order') ? \wc_get_order($order_id) : null;
             if (!$order) {
-                wp_send_json_error('Commande introuvable');
+                \wp_send_json_error('Commande introuvable');
                 return;
             }
 
             // Valider le format JSON des données canvas
             $canvas_elements = json_decode($canvas_data, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                wp_send_json_error('Format JSON invalide pour les données canvas');
+                \wp_send_json_error('Format JSON invalide pour les données canvas');
                 return;
             }
 
@@ -1151,7 +1151,7 @@ class PDF_Builder_WooCommerce_Integration
             $save_result = \update_post_meta($order_id, $meta_key, $sanitized_elements);
 
             if ($save_result === false) {
-                wp_send_json_error('Erreur lors de la sauvegarde des données canvas');
+                \wp_send_json_error('Erreur lors de la sauvegarde des données canvas');
                 return;
             }
 
@@ -1163,7 +1163,7 @@ class PDF_Builder_WooCommerce_Integration
                 ]
             );
         } catch (Exception $e) {
-            wp_send_json_error('Erreur interne lors de la sauvegarde');
+            \wp_send_json_error('Erreur interne lors de la sauvegarde');
         }
     }
 
@@ -1185,7 +1185,7 @@ class PDF_Builder_WooCommerce_Integration
             $sanitized_element = [];
 
             // Sanitiser les champs de base
-            $sanitized_element['id'] = isset($element['id']) ? sanitize_text_field($element['id']) : '';
+            $sanitized_element['id'] = isset($element['id']) ? \sanitize_text_field($element['id']) : '';
             // NE PAS sanitizer le type avec sanitize_text_field car il enlève les underscores
             // Simplement le valider
             $sanitized_element['type'] = isset($element['type']) && is_string($element['type']) ? $element['type'] : '';
@@ -1230,7 +1230,7 @@ class PDF_Builder_WooCommerce_Integration
             case 'image':
                 return \esc_url_raw($content);
             default:
-                return sanitize_text_field($content);
+                return \sanitize_text_field($content);
         }
     }
 
@@ -1253,7 +1253,7 @@ class PDF_Builder_WooCommerce_Integration
                 } elseif (strpos($key, 'fontSize') !== false || strpos($key, 'borderWidth') !== false) {
                     $sanitized[$key] = floatval($value);
                 } else {
-                    $sanitized[$key] = sanitize_text_field($value);
+                    $sanitized[$key] = \sanitize_text_field($value);
                 }
             }
         }
@@ -1268,14 +1268,14 @@ class PDF_Builder_WooCommerce_Integration
     {
         try {
             // Vérifier les permissions utilisateur
-            if (!current_user_can('manage_woocommerce') && !current_user_can('edit_shop_orders')) {
-                wp_send_json_error('Permissions insuffisantes pour charger le canvas');
+            if (!\current_user_can('manage_woocommerce') && !\current_user_can('edit_shop_orders')) {
+                \wp_send_json_error('Permissions insuffisantes pour charger le canvas');
                 return;
             }
 
             // Vérifier le nonce de sécurité
             if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
-                wp_send_json_error('Sécurité: Nonce invalide');
+                \wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
 
@@ -1283,14 +1283,14 @@ class PDF_Builder_WooCommerce_Integration
             $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
 
             if (!$order_id) {
-                wp_send_json_error('ID commande manquant');
+                \wp_send_json_error('ID commande manquant');
                 return;
             }
 
             // Valider que la commande existe
             $order = function_exists('wc_get_order') ? \wc_get_order($order_id) : null;
             if (!$order) {
-                wp_send_json_error('Commande introuvable');
+                \wp_send_json_error('Commande introuvable');
                 return;
             }
 
@@ -1311,7 +1311,7 @@ class PDF_Builder_WooCommerce_Integration
 
             // Valider que les données sont un tableau
             if (!is_array($canvas_data)) {
-                wp_send_json_error('Format de données canvas invalide');
+                \wp_send_json_error('Format de données canvas invalide');
                 return;
             }
 
@@ -1323,7 +1323,7 @@ class PDF_Builder_WooCommerce_Integration
                 ]
             );
         } catch (Exception $e) {
-            wp_send_json_error('Erreur interne lors du chargement');
+            \wp_send_json_error('Erreur interne lors du chargement');
         }
     }
 
@@ -1334,14 +1334,14 @@ class PDF_Builder_WooCommerce_Integration
     {
         try {
             // Vérifier les permissions utilisateur
-            if (!current_user_can('manage_woocommerce') && !current_user_can('edit_shop_orders')) {
-                wp_send_json_error('Permissions insuffisantes pour accéder aux éléments canvas');
+            if (!\current_user_can('manage_woocommerce') && !\current_user_can('edit_shop_orders')) {
+                \wp_send_json_error('Permissions insuffisantes pour accéder aux éléments canvas');
                 return;
             }
 
             // Vérifier le nonce de sécurité
             if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
-                wp_send_json_error('Sécurité: Nonce invalide');
+                \wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
 
@@ -1349,7 +1349,7 @@ class PDF_Builder_WooCommerce_Integration
             $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
 
             if (!$template_id || $template_id <= 0) {
-                wp_send_json_error('ID template invalide ou manquant');
+                \wp_send_json_error('ID template invalide ou manquant');
                 return;
             }
 
@@ -1377,7 +1377,7 @@ class PDF_Builder_WooCommerce_Integration
             }
 
             if (!$template_exists) {
-                wp_send_json_error('Template introuvable');
+                \wp_send_json_error('Template introuvable');
                 return;
             }
 
@@ -1437,7 +1437,7 @@ class PDF_Builder_WooCommerce_Integration
                 ]
             );
         } catch (Exception $e) {
-            wp_send_json_error('Erreur interne lors de la récupération des éléments');
+            \wp_send_json_error('Erreur interne lors de la récupération des éléments');
         }
     }
 
@@ -1509,7 +1509,7 @@ class PDF_Builder_WooCommerce_Integration
         switch ($field) {
             case 'id':
             case 'type':
-                return sanitize_text_field($value);
+                return \sanitize_text_field($value);
             case 'x':
             case 'y':
             case 'width':
@@ -1523,7 +1523,7 @@ class PDF_Builder_WooCommerce_Integration
             case 'style':
                 return is_array($value) ? $this->sanitizeElementStyles($value) : [];
             default:
-                return sanitize_text_field($value);
+                return \sanitize_text_field($value);
         }
     }
 
@@ -1534,29 +1534,29 @@ class PDF_Builder_WooCommerce_Integration
     {
         // Vérifier que WooCommerce est actif
         if (!function_exists('wc_get_order')) {
-            return new WP_Error('woocommerce_not_active', 'WooCommerce n\'est pas actif');
+            return new \WP_Error('woocommerce_not_active', 'WooCommerce n\'est pas actif');
         }
 
         // Récupérer la commande
         $order = \wc_get_order($order_id);
         if (!$order) {
-            return new WP_Error('order_not_found', 'Commande introuvable');
+            return new \WP_Error('order_not_found', 'Commande introuvable');
         }
 
         // Vérifier que c'est bien une commande WooCommerce
         if (!function_exists('pdf_builder_is_woocommerce_active') || !pdf_builder_is_woocommerce_active() || !function_exists('is_a') || !is_a($order, 'WC_Order')) {
-            return new WP_Error('invalid_order_type', 'Type d\'objet invalide');
+            return new \WP_Error('invalid_order_type', 'Type d\'objet invalide');
         }
 
         // Vérifier les permissions d'accès à cette commande spécifique
-        if (!current_user_can('manage_woocommerce')) {
+        if (!\current_user_can('manage_woocommerce')) {
             // Pour les utilisateurs non-admin, vérifier qu'ils ont accès à cette commande
             $user_id = get_current_user_id();
             $order_user_id = $order->get_customer_id();
 
             // Si l'utilisateur n'est pas le propriétaire et n'a pas les droits d'édition
-            if ($user_id !== $order_user_id && !current_user_can('edit_shop_orders')) {
-                return new WP_Error('access_denied', 'Accès non autorisé à cette commande');
+            if ($user_id !== $order_user_id && !\current_user_can('edit_shop_orders')) {
+                return new \WP_Error('access_denied', 'Accès non autorisé à cette commande');
             }
         }
 
@@ -1579,7 +1579,7 @@ class PDF_Builder_WooCommerce_Integration
         $valid_statuses = array_merge($valid_statuses, $configured_statuses);
 
         if (!in_array($normalized_current, $valid_statuses) && !in_array($current_status, $valid_statuses)) {
-            return new WP_Error('invalid_order_status', 'Statut de commande non valide pour le traitement');
+            return new \WP_Error('invalid_order_status', 'Statut de commande non valide pour le traitement');
         }
 
         return $order;
@@ -1633,7 +1633,7 @@ class PDF_Builder_WooCommerce_Integration
                             ]
                         );
 
-                        $attribute_label = $attribute_terms && !is_wp_error($attribute_terms) && !empty($attribute_terms)
+                        $attribute_label = $attribute_terms && !\is_wp_error($attribute_terms) && !empty($attribute_terms)
                             ? $attribute_terms[0]->name
                             : ucfirst($attribute_name_clean);
 
@@ -1665,14 +1665,14 @@ class PDF_Builder_WooCommerce_Integration
     {
         try {
             // Vérifier les permissions utilisateur
-            if (!current_user_can('manage_woocommerce') && !current_user_can('edit_shop_orders')) {
-                wp_send_json_error('Permissions insuffisantes pour accéder aux données de commande');
+            if (!\current_user_can('manage_woocommerce') && !\current_user_can('edit_shop_orders')) {
+                \wp_send_json_error('Permissions insuffisantes pour accéder aux données de commande');
                 return;
             }
 
             // Vérifier le nonce de sécurité
             if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
-                wp_send_json_error('Sécurité: Nonce invalide');
+                \wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
 
@@ -1680,7 +1680,7 @@ class PDF_Builder_WooCommerce_Integration
             $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
 
             if (!$order_id) {
-                wp_send_json_error('ID commande manquant');
+                \wp_send_json_error('ID commande manquant');
                 return;
             }
 
@@ -1688,7 +1688,7 @@ class PDF_Builder_WooCommerce_Integration
             /** @var \WC_Order $order */
             $order = wc_get_order($order_id);
             if (!$order) {
-                wp_send_json_error('Commande introuvable');
+                \wp_send_json_error('Commande introuvable');
                 return;
             }
 
@@ -1710,7 +1710,7 @@ class PDF_Builder_WooCommerce_Integration
                 ]
             );
         } catch (Exception $e) {
-            wp_send_json_error('Erreur interne lors de la récupération des données de commande');
+            \wp_send_json_error('Erreur interne lors de la récupération des données de commande');
         }
     }
 
@@ -1721,14 +1721,14 @@ class PDF_Builder_WooCommerce_Integration
     {
         try {
             // Vérifier les permissions utilisateur
-            if (!current_user_can('manage_woocommerce') && !current_user_can('edit_shop_orders')) {
-                wp_send_json_error('Permissions insuffisantes pour accéder à cette commande');
+            if (!\current_user_can('manage_woocommerce') && !\current_user_can('edit_shop_orders')) {
+                \wp_send_json_error('Permissions insuffisantes pour accéder à cette commande');
                 return;
             }
 
             // Vérifier le nonce de sécurité
             if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
-                wp_send_json_error('Sécurité: Nonce invalide');
+                \wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
 
@@ -1736,14 +1736,14 @@ class PDF_Builder_WooCommerce_Integration
             $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
 
             if (!$order_id) {
-                wp_send_json_error('ID commande manquant');
+                \wp_send_json_error('ID commande manquant');
                 return;
             }
 
             // Récupération et validation de la commande
             $order = $this->getAndValidateOrder($order_id);
-            if (is_wp_error($order)) {
-                wp_send_json_error($order->get_error_message());
+            if (\is_wp_error($order)) {
+                \wp_send_json_error($order->get_error_message());
                 return;
             }
 
@@ -1754,7 +1754,7 @@ class PDF_Builder_WooCommerce_Integration
                 ]
             );
         } catch (Exception $e) {
-            wp_send_json_error('Erreur interne lors de la validation d\'accès');
+            \wp_send_json_error('Erreur interne lors de la validation d\'accès');
         }
     }
 
@@ -1765,14 +1765,14 @@ class PDF_Builder_WooCommerce_Integration
     {
         try {
             // Vérifier les permissions utilisateur
-            if (!current_user_can('manage_woocommerce') && !current_user_can('edit_shop_orders')) {
-                wp_send_json_error('Permissions insuffisantes pour accéder aux données entreprise');
+            if (!\current_user_can('manage_woocommerce') && !\current_user_can('edit_shop_orders')) {
+                \wp_send_json_error('Permissions insuffisantes pour accéder aux données entreprise');
                 return;
             }
 
             // Vérifier le nonce de sécurité
             if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
-                wp_send_json_error('Sécurité: Nonce invalide');
+                \wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
 
@@ -1804,7 +1804,7 @@ class PDF_Builder_WooCommerce_Integration
                 'company' => $company_data
             ]);
         } catch (Exception $e) {
-            wp_send_json_error('Erreur interne lors de la récupération des données entreprise');
+            \wp_send_json_error('Erreur interne lors de la récupération des données entreprise');
         }
     }
 

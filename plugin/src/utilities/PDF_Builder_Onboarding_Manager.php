@@ -80,8 +80,8 @@ class PDF_Builder_Onboarding_Manager {
             'current_step' => 0,
             'steps_completed' => [],
             'skipped' => false,
-            'first_login' => current_time('timestamp'),
-            'last_activity' => current_time('timestamp')
+            'first_login' => \current_time('timestamp'),
+            'last_activity' => \current_time('timestamp')
         ]);
     }
     /**
@@ -481,7 +481,7 @@ class PDF_Builder_Onboarding_Manager {
                     </div>
                 ';
             case 'woocommerce_setup':
-                if (did_action('init') && defined('WC_VERSION')) {
+                if (\did_action('init') && defined('WC_VERSION')) {
                     return '
                         <div class="woocommerce-setup">
                             <div class="setup-notice success">
@@ -758,7 +758,7 @@ class PDF_Builder_Onboarding_Manager {
     public function render_onboarding_wizard() {
         $steps = $this->get_onboarding_steps();
         // Vérifier si une étape spécifique est demandée via URL
-        $forced_step = isset($_GET['pdf_onboarding_step']) ? intval($_GET['pdf_onboarding_step']) : null;
+        $forced_step = isset($_GET['pdf_onboarding_step']) ? \intval($_GET['pdf_onboarding_step']) : null;
         if ($forced_step && $forced_step >= 1 && $forced_step <= count($steps)) {
             // Forcer l'étape et sauvegarder
             $this->onboarding_options['current_step'] = $forced_step;
@@ -805,7 +805,7 @@ class PDF_Builder_Onboarding_Manager {
                         </button>
                         <?php else: ?>
                         <button class="button button-secondary" data-action="skip-onboarding">
-                            <?php _e('Ignorer l\'assistant', 'pdf-builder-pro'); ?>
+                            <?php \_e('Ignorer l\'assistant', 'pdf-builder-pro'); ?>
                         </button>
                         <?php endif; ?>
                         <?php if ($current_step_data['action']): ?>
@@ -865,7 +865,7 @@ class PDF_Builder_Onboarding_Manager {
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
-        $step = intval($_POST['step']);
+        $step = \intval($_POST['step']);
         $action = sanitize_text_field($_POST['step_action'] ?? '');
         $selected_template = sanitize_text_field($_POST['selected_template'] ?? '');
         // Validation des étapes avant de passer à la suivante
@@ -882,7 +882,7 @@ class PDF_Builder_Onboarding_Manager {
         if ($step < $max_step) {
             $this->onboarding_options['current_step'] = $step + 1;
         }
-        $this->onboarding_options['last_activity'] = current_time('timestamp');
+        $this->onboarding_options['last_activity'] = \current_time('timestamp');
         // Nettoyer la redirection précédente
         unset($this->onboarding_options['redirect_to']);
         // Actions spécifiques selon l'étape
@@ -917,7 +917,7 @@ class PDF_Builder_Onboarding_Manager {
                     break;
                 case 'completed':
                     $this->onboarding_options['completed'] = true;
-                    $this->onboarding_options['completed_at'] = current_time('timestamp');
+                    $this->onboarding_options['completed_at'] = \current_time('timestamp');
                     // Rediriger vers l'éditeur après completion de l'onboarding
                     $this->onboarding_options['redirect_to'] = admin_url('admin.php?page=pdf-builder-react-editor');
                     break;
@@ -943,7 +943,7 @@ class PDF_Builder_Onboarding_Manager {
         }
         $selected_template = sanitize_text_field($_POST['selected_template'] ?? '');
         $this->onboarding_options['selected_template'] = $selected_template;
-        $this->onboarding_options['last_activity'] = current_time('timestamp');
+        $this->onboarding_options['last_activity'] = \current_time('timestamp');
         $this->save_onboarding_options();
         wp_send_json_success();
     }
@@ -962,7 +962,7 @@ class PDF_Builder_Onboarding_Manager {
             return;
         }
         $this->onboarding_options['selected_mode'] = $selected_mode;
-        $this->onboarding_options['last_activity'] = current_time('timestamp');
+        $this->onboarding_options['last_activity'] = \current_time('timestamp');
         $this->save_onboarding_options();
         wp_send_json_success();
     }
@@ -974,9 +974,9 @@ class PDF_Builder_Onboarding_Manager {
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
-        $step = intval($_POST['step']);
+        $step = \intval($_POST['step']);
         $this->onboarding_options['current_step'] = $step;
-        $this->onboarding_options['last_activity'] = current_time('timestamp');
+        $this->onboarding_options['last_activity'] = \current_time('timestamp');
         $this->save_onboarding_options();
         wp_send_json_success();
     }
@@ -989,7 +989,7 @@ class PDF_Builder_Onboarding_Manager {
             wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
         $this->onboarding_options['completed'] = true;
-        $this->onboarding_options['completed_at'] = current_time('timestamp');
+        $this->onboarding_options['completed_at'] = \current_time('timestamp');
         $this->save_onboarding_options();
         wp_send_json_success();
     }
@@ -1035,7 +1035,7 @@ class PDF_Builder_Onboarding_Manager {
             wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
         $this->onboarding_options['skipped'] = true;
-        $this->onboarding_options['skipped_at'] = current_time('timestamp');
+        $this->onboarding_options['skipped_at'] = \current_time('timestamp');
         $this->save_onboarding_options();
         wp_send_json_success();
     }
@@ -1052,9 +1052,9 @@ class PDF_Builder_Onboarding_Manager {
             'current_step' => 0,
             'steps_completed' => [],
             'skipped' => false,
-            'first_login' => current_time('timestamp'),
-            'last_activity' => current_time('timestamp'),
-            'reset_at' => current_time('timestamp')
+            'first_login' => \current_time('timestamp'),
+            'last_activity' => \current_time('timestamp'),
+            'reset_at' => \current_time('timestamp')
         ];
         $this->save_onboarding_options();
         wp_send_json_success();
@@ -1085,7 +1085,7 @@ class PDF_Builder_Onboarding_Manager {
         if (!current_user_can('manage_options')) {
             wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
-        $step = intval($_POST['step']);
+        $step = \intval($_POST['step']);
         $steps = $this->get_onboarding_steps();
         if (!isset($steps[$step])) {
             wp_send_json_error(__('Étape non trouvée', 'pdf-builder-pro'));
@@ -1119,9 +1119,9 @@ class PDF_Builder_Onboarding_Manager {
             'current_step' => 0,
             'steps_completed' => [],
             'skipped' => false,
-            'first_login' => current_time('timestamp'),
-            'last_activity' => current_time('timestamp'),
-            'reset_at' => current_time('timestamp')
+            'first_login' => \current_time('timestamp'),
+            'last_activity' => \current_time('timestamp'),
+            'reset_at' => \current_time('timestamp')
         ];
         $this->save_onboarding_options();
         return true;
@@ -1159,7 +1159,7 @@ class PDF_Builder_Onboarding_Manager {
             'custom_description' => sanitize_textarea_field($assignment_data['custom_description'] ?? ''),
             'assigned_statuses' => array_map('sanitize_text_field', $assignment_data['assigned_statuses'] ?? []),
             'template_actions' => array_map('sanitize_text_field', $assignment_data['template_actions'] ?? []),
-            'assigned_at' => current_time('mysql')
+            'assigned_at' => \current_time('mysql')
         ];
         // Marquer l'étape 4 comme complétée
         if (!in_array(4, $this->onboarding_options['steps_completed'])) {
@@ -1197,7 +1197,7 @@ class PDF_Builder_Onboarding_Manager {
                     'email_attach' => in_array('email_attach', $assignment_data['template_actions']),
                     'download_link' => in_array('download_link', $assignment_data['template_actions']),
                     'created_by_onboarding' => true,
-                    'created_at' => current_time('mysql')
+                    'created_at' => \current_time('mysql')
                 ];
             }
         }

@@ -17,7 +17,7 @@ class Rate_Limiter
      */
     public static function init()
     {
-        add_action('plugins_loaded', [__CLASS__, 'checkRateLimit'], 10);
+        \add_action('plugins_loaded', [__CLASS__, 'checkRateLimit'], 10);
     }
 
     /**
@@ -30,7 +30,7 @@ class Rate_Limiter
             return;
         }
 
-        $action = sanitize_text_field($_REQUEST['action']);
+        $action = \sanitize_text_field($_REQUEST['action']);
         if (strpos($action, 'pdf_builder') !== 0) {
             return;
         }

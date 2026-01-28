@@ -83,7 +83,7 @@ class ReactDataTransformer
         }
 
         // Vérifier le logo du site WordPress
-        $site_logo_id = get_option('site_logo');
+        $site_logo_id = \get_option('site_logo');
         if ($site_logo_id) {
             $logo_url = wp_get_attachment_image_url($site_logo_id, 'full');
             if ($logo_url) {

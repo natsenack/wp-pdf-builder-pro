@@ -82,7 +82,7 @@ class PDF_Builder_Canvas_Save_Logger
             return;
         }
 
-        $timestamp = current_time('Y-m-d H:i:s');
+        $timestamp = \current_time('Y-m-d H:i:s');
         $log_entry = "[$timestamp] [$level] $message";
         if ($data !== null) {
             $log_entry .= "\n" . json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);

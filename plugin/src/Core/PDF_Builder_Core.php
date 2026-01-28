@@ -213,7 +213,7 @@ class PdfBuilderCore
     {
         try {
             // Obtenir le répertoire d'upload WordPress
-            $upload_dir = wp_upload_dir();
+            $upload_dir = \wp_upload_dir();
             if (isset($upload_dir['error']) && $upload_dir['error']) {
                 
                 return;
@@ -396,12 +396,12 @@ class PdfBuilderCore
     public function templatesPage()
     {
         // Vérifier les permissions - utiliser manage_options comme capacité principale
-        if (!current_user_can('manage_options')) {
+        if (!\current_user_can('manage_options')) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
         // Inclure la page templates comme dans PDF_Builder_Admin
-        $templates_page_path = plugin_dir_path(__FILE__) . '../resources/templates/admin/templates-page.php';
+        $templates_page_path = \plugin_dir_path(__FILE__) . '../resources/templates/admin/templates-page.php';
         if (file_exists($templates_page_path)) {
             include $templates_page_path;
         } else {
@@ -425,7 +425,7 @@ class PdfBuilderCore
      */
     public function templateEditorPage()
     {
-        include plugin_dir_path(__FILE__) . '../template-editor.php';
+        include \plugin_dir_path(__FILE__) . '../template-editor.php';
     }
 
     /**
@@ -708,8 +708,8 @@ class PdfBuilderCore
     public function ajaxSaveSettings()
     {
         // Vérifier le nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
-            wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
+        if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
+            \wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
             exit;
         }
 
@@ -717,86 +717,86 @@ class PdfBuilderCore
         $settings = [
             'debug_mode' => isset($_POST['debug_mode']),
             'cache_enabled' => isset($_POST['cache_enabled']),
-            'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
-            'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
-            'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
-            'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
-            'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
-            'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
-            'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
-            'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
+            'cache_ttl' => \intval($_POST['cache_ttl'] ?? 3600),
+            'max_execution_time' => \intval($_POST['max_execution_time'] ?? 300),
+            'memory_limit' => \sanitize_text_field($_POST['memory_limit'] ?? '256M'),
+            'pdf_quality' => \sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
+            'default_format' => \sanitize_text_field($_POST['default_format'] ?? 'A4'),
+            'default_orientation' => \sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
+            'log_level' => \sanitize_text_field($_POST['log_level'] ?? 'info'),
+            'max_template_size' => \intval($_POST['max_template_size'] ?? 52428800),
             // Notification settings removed
             // Paramètres Canvas - anciens
             'canvas_element_borders_enabled' => isset($_POST['canvas_element_borders_enabled']),
-            'canvas_border_width' => isset($_POST['canvas_border_width']) ? floatval($_POST['canvas_border_width']) : 1,
-            'canvas_border_color' => isset($_POST['canvas_border_color']) ? sanitize_text_field($_POST['canvas_border_color']) : '#007cba',
-            'canvas_border_spacing' => isset($_POST['canvas_border_spacing']) ? intval($_POST['canvas_border_spacing']) : 2,
+            'canvas_border_width' => isset($_POST['canvas_border_width']) ? \floatval($_POST['canvas_border_width']) : 1,
+            'canvas_border_color' => isset($_POST['canvas_border_color']) ? \sanitize_text_field($_POST['canvas_border_color']) : '#007cba',
+            'canvas_border_spacing' => isset($_POST['canvas_border_spacing']) ? \intval($_POST['canvas_border_spacing']) : 2,
             'canvas_resize_handles_enabled' => isset($_POST['canvas_resize_handles_enabled']),
-            'canvas_handle_size' => isset($_POST['canvas_handle_size']) ? intval($_POST['canvas_handle_size']) : 8,
-            'canvas_handle_color' => isset($_POST['canvas_handle_color']) ? sanitize_text_field($_POST['canvas_handle_color']) : '#007cba',
-            'canvas_handle_hover_color' => isset($_POST['canvas_handle_hover_color']) ? sanitize_text_field($_POST['canvas_handle_hover_color']) : '#005a87',
+            'canvas_handle_size' => isset($_POST['canvas_handle_size']) ? \intval($_POST['canvas_handle_size']) : 8,
+            'canvas_handle_color' => isset($_POST['canvas_handle_color']) ? \sanitize_text_field($_POST['canvas_handle_color']) : '#007cba',
+            'canvas_handle_hover_color' => isset($_POST['canvas_handle_hover_color']) ? \sanitize_text_field($_POST['canvas_handle_hover_color']) : '#005a87',
             // Paramètres Canvas - nouveaux sous-onglets
-            'default_canvas_width' => isset($_POST['default_canvas_width']) ? intval($_POST['default_canvas_width']) : 794,
-            'default_canvas_height' => isset($_POST['default_canvas_height']) ? intval($_POST['default_canvas_height']) : 1123,
-            'default_canvas_unit' => isset($_POST['default_canvas_unit']) ? sanitize_text_field($_POST['default_canvas_unit']) : 'px',
-            'canvas_background_color' => isset($_POST['canvas_background_color']) ? sanitize_text_field($_POST['canvas_background_color']) : '#ffffff',
+            'default_canvas_width' => isset($_POST['default_canvas_width']) ? \intval($_POST['default_canvas_width']) : 794,
+            'default_canvas_height' => isset($_POST['default_canvas_height']) ? \intval($_POST['default_canvas_height']) : 1123,
+            'default_canvas_unit' => isset($_POST['default_canvas_unit']) ? \sanitize_text_field($_POST['default_canvas_unit']) : 'px',
+            'canvas_background_color' => isset($_POST['canvas_background_color']) ? \sanitize_text_field($_POST['canvas_background_color']) : '#ffffff',
             'canvas_show_transparency' => isset($_POST['canvas_show_transparency']),
-            'container_background_color' => isset($_POST['container_background_color']) ? sanitize_text_field($_POST['container_background_color']) : '#f8f9fa',
+            'container_background_color' => isset($_POST['container_background_color']) ? \sanitize_text_field($_POST['container_background_color']) : '#f8f9fa',
             'container_show_transparency' => isset($_POST['container_show_transparency']),
             'show_margins' => isset($_POST['show_margins']),
-            'margin_top' => isset($_POST['margin_top']) ? intval($_POST['margin_top']) : 28,
-            'margin_right' => isset($_POST['margin_right']) ? intval($_POST['margin_right']) : 28,
-            'margin_bottom' => isset($_POST['margin_bottom']) ? intval($_POST['margin_bottom']) : 28,
-            'margin_left' => isset($_POST['margin_left']) ? intval($_POST['margin_left']) : 28,
+            'margin_top' => isset($_POST['margin_top']) ? \intval($_POST['margin_top']) : 28,
+            'margin_right' => isset($_POST['margin_right']) ? \intval($_POST['margin_right']) : 28,
+            'margin_bottom' => isset($_POST['margin_bottom']) ? \intval($_POST['margin_bottom']) : 28,
+            'margin_left' => isset($_POST['margin_left']) ? \intval($_POST['margin_left']) : 28,
             'show_grid' => isset($_POST['show_grid']),
-            'grid_size' => isset($_POST['grid_size']) ? intval($_POST['grid_size']) : 10,
-            'grid_color' => isset($_POST['grid_color']) ? sanitize_text_field($_POST['grid_color']) : '#e0e0e0',
-            'grid_opacity' => isset($_POST['grid_opacity']) ? intval($_POST['grid_opacity']) : 30,
+            'grid_size' => isset($_POST['grid_size']) ? \intval($_POST['grid_size']) : 10,
+            'grid_color' => isset($_POST['grid_color']) ? \sanitize_text_field($_POST['grid_color']) : '#e0e0e0',
+            'grid_opacity' => isset($_POST['grid_opacity']) ? \intval($_POST['grid_opacity']) : 30,
             'snap_to_grid' => isset($_POST['snap_to_grid']),
             'snap_to_elements' => isset($_POST['snap_to_elements']),
             'snap_to_margins' => isset($_POST['snap_to_margins']),
-            'snap_tolerance' => isset($_POST['snap_tolerance']) ? intval($_POST['snap_tolerance']) : 5,
+            'snap_tolerance' => isset($_POST['snap_tolerance']) ? \intval($_POST['snap_tolerance']) : 5,
             'show_guides' => isset($_POST['show_guides']),
             'lock_guides' => isset($_POST['lock_guides']),
-            'default_zoom' => isset($_POST['default_zoom']) ? sanitize_text_field($_POST['default_zoom']) : '100',
-            'zoom_step' => isset($_POST['zoom_step']) ? intval($_POST['zoom_step']) : 25,
-            'min_zoom' => isset($_POST['min_zoom']) ? intval($_POST['min_zoom']) : 10,
-            'max_zoom' => isset($_POST['max_zoom']) ? intval($_POST['max_zoom']) : 500,
+            'default_zoom' => isset($_POST['default_zoom']) ? \sanitize_text_field($_POST['default_zoom']) : '100',
+            'zoom_step' => isset($_POST['zoom_step']) ? \intval($_POST['zoom_step']) : 25,
+            'min_zoom' => isset($_POST['min_zoom']) ? \intval($_POST['min_zoom']) : 10,
+            'max_zoom' => isset($_POST['max_zoom']) ? \intval($_POST['max_zoom']) : 500,
             'pan_with_mouse' => isset($_POST['pan_with_mouse']),
             'smooth_zoom' => isset($_POST['smooth_zoom']),
             'show_zoom_indicator' => isset($_POST['show_zoom_indicator']),
             'zoom_with_wheel' => isset($_POST['zoom_with_wheel']),
             'zoom_to_selection' => isset($_POST['zoom_to_selection']),
             'show_resize_handles' => isset($_POST['show_resize_handles']),
-            'handle_size' => isset($_POST['handle_size']) ? intval($_POST['handle_size']) : 8,
-            'handle_color' => isset($_POST['handle_color']) ? sanitize_text_field($_POST['handle_color']) : '#007cba',
+            'handle_size' => isset($_POST['handle_size']) ? \intval($_POST['handle_size']) : 8,
+            'handle_color' => isset($_POST['handle_color']) ? \sanitize_text_field($_POST['handle_color']) : '#007cba',
             'enable_rotation' => isset($_POST['enable_rotation']),
-            'rotation_step' => isset($_POST['rotation_step']) ? intval($_POST['rotation_step']) : 15,
+            'rotation_step' => isset($_POST['rotation_step']) ? \intval($_POST['rotation_step']) : 15,
             'rotation_snap' => isset($_POST['rotation_snap']),
             'multi_select' => isset($_POST['multi_select']),
             'select_all_shortcut' => isset($_POST['select_all_shortcut']),
             'show_selection_bounds' => isset($_POST['show_selection_bounds']),
             'copy_paste_enabled' => isset($_POST['copy_paste_enabled']),
             'duplicate_on_drag' => isset($_POST['duplicate_on_drag']),
-            'export_quality' => isset($_POST['export_quality']) ? sanitize_text_field($_POST['export_quality']) : 'print',
-            'export_format' => isset($_POST['export_format']) ? sanitize_text_field($_POST['export_format']) : 'pdf',
+            'export_quality' => isset($_POST['export_quality']) ? \sanitize_text_field($_POST['export_quality']) : 'print',
+            'export_format' => isset($_POST['export_format']) ? \sanitize_text_field($_POST['export_format']) : 'pdf',
             'compress_images' => isset($_POST['compress_images']),
-            'image_quality' => isset($_POST['image_quality']) ? intval($_POST['image_quality']) : 85,
-            'max_image_size' => isset($_POST['max_image_size']) ? intval($_POST['max_image_size']) : 2048,
+            'image_quality' => isset($_POST['image_quality']) ? \intval($_POST['image_quality']) : 85,
+            'max_image_size' => isset($_POST['max_image_size']) ? \intval($_POST['max_image_size']) : 2048,
             'include_metadata' => isset($_POST['include_metadata']),
-            'pdf_author' => isset($_POST['pdf_author']) ? sanitize_text_field($_POST['pdf_author']) : get_bloginfo('name'),
-            'pdf_subject' => isset($_POST['pdf_subject']) ? sanitize_text_field($_POST['pdf_subject']) : '',
+            'pdf_author' => isset($_POST['pdf_author']) ? \sanitize_text_field($_POST['pdf_author']) : get_bloginfo('name'),
+            'pdf_subject' => isset($_POST['pdf_subject']) ? \sanitize_text_field($_POST['pdf_subject']) : '',
             'auto_crop' => isset($_POST['auto_crop']),
             'embed_fonts' => isset($_POST['embed_fonts']),
             'optimize_for_web' => isset($_POST['optimize_for_web']),
             'enable_hardware_acceleration' => isset($_POST['enable_hardware_acceleration']),
             'limit_fps' => isset($_POST['limit_fps']),
-            'max_fps' => isset($_POST['max_fps']) ? intval($_POST['max_fps']) : 60,
+            'max_fps' => isset($_POST['max_fps']) ? \intval($_POST['max_fps']) : 60,
             'auto_save_enabled' => isset($_POST['auto_save_enabled']),
-            'auto_save_interval' => isset($_POST['auto_save_interval']) ? intval($_POST['auto_save_interval']) : 5,
-            'auto_save_versions' => isset($_POST['auto_save_versions']) ? intval($_POST['auto_save_versions']) : 10,
-            'undo_levels' => isset($_POST['undo_levels']) ? intval($_POST['undo_levels']) : 50,
-            'redo_levels' => isset($_POST['redo_levels']) ? intval($_POST['redo_levels']) : 50,
+            'auto_save_interval' => isset($_POST['auto_save_interval']) ? \intval($_POST['auto_save_interval']) : 5,
+            'auto_save_versions' => isset($_POST['auto_save_versions']) ? \intval($_POST['auto_save_versions']) : 10,
+            'undo_levels' => isset($_POST['undo_levels']) ? \intval($_POST['undo_levels']) : 50,
+            'redo_levels' => isset($_POST['redo_levels']) ? \intval($_POST['redo_levels']) : 50,
             'enable_keyboard_shortcuts' => isset($_POST['enable_keyboard_shortcuts']),
             'debug_mode' => isset($_POST['debug_mode']),
             'show_fps' => isset($_POST['show_fps']),
@@ -809,21 +809,21 @@ class PdfBuilderCore
 
         // Traiter les paramètres de sauvegarde automatique
         if (isset($_POST['pdf_builder_backup_frequency'])) {
-            pdf_builder_update_option('pdf_builder_backup_frequency', sanitize_text_field($_POST['pdf_builder_backup_frequency']));
+            pdf_builder_update_option('pdf_builder_backup_frequency', \sanitize_text_field($_POST['pdf_builder_backup_frequency']));
         }
 
         // Traiter les informations entreprise spécifiques
         if (isset($_POST['company_vat'])) {
-            pdf_builder_update_option('pdf_builder_company_vat', sanitize_text_field($_POST['company_vat']));
+            pdf_builder_update_option('pdf_builder_company_vat', \sanitize_text_field($_POST['company_vat']));
         }
         if (isset($_POST['company_rcs'])) {
-            pdf_builder_update_option('pdf_builder_company_rcs', sanitize_text_field($_POST['company_rcs']));
+            pdf_builder_update_option('pdf_builder_company_rcs', \sanitize_text_field($_POST['company_rcs']));
         }
         if (isset($_POST['company_siret'])) {
-            pdf_builder_update_option('pdf_builder_company_siret', sanitize_text_field($_POST['company_siret']));
+            pdf_builder_update_option('pdf_builder_company_siret', \sanitize_text_field($_POST['company_siret']));
         }
         if (isset($_POST['company_phone'])) {
-            pdf_builder_update_option('pdf_builder_company_phone', sanitize_text_field($_POST['company_phone']));
+            pdf_builder_update_option('pdf_builder_company_phone', \sanitize_text_field($_POST['company_phone']));
         }
 
         // Traiter les rôles autorisés
@@ -839,16 +839,16 @@ class PdfBuilderCore
         if (isset($_POST['order_status_templates']) && is_array($_POST['order_status_templates'])) {
             $template_mappings = [];
             foreach ($_POST['order_status_templates'] as $status => $template_id) {
-                $template_id = intval($template_id);
+                $template_id = \intval($template_id);
                 if ($template_id > 0) {
-                    $template_mappings[sanitize_text_field($status)] = $template_id;
+                    $template_mappings[\sanitize_text_field($status)] = $template_id;
                 }
             }
             pdf_builder_update_option('pdf_builder_settings', array_merge(pdf_builder_get_option('pdf_builder_settings', array()), ['pdf_builder_order_status_templates' => $template_mappings]));
         }
 
         // Retourner le succès
-        wp_send_json_success(
+        \wp_send_json_success(
             array(
             'message' => __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro'),
             'spacing' => $settings['canvas_border_spacing']
@@ -863,8 +863,8 @@ class PdfBuilderCore
     public function ajaxGetSettings()
     {
         // Vérifier le nonce
-        if (!isset($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], 'pdf_builder_settings')) {
-            wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
+        if (!isset($_GET['nonce']) || !\wp_verify_nonce($_GET['nonce'], 'pdf_builder_settings')) {
+            \wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
             exit;
         }
 
@@ -872,7 +872,7 @@ class PdfBuilderCore
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
 
         // Retourner les paramètres
-        wp_send_json_success($settings);
+        \wp_send_json_success($settings);
         exit;
     }
 
@@ -957,8 +957,8 @@ class PdfBuilderCore
     public function renderReactEditorPage()
     {
         // Récupérer le template_id depuis l'URL si présent
-        $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : null;
-        $transient_key = isset($_GET['transient_key']) ? sanitize_text_field($_GET['transient_key']) : null;
+        $template_id = isset($_GET['template_id']) ? \intval($_GET['template_id']) : null;
+        $transient_key = isset($_GET['transient_key']) ? \sanitize_text_field($_GET['transient_key']) : null;
 
         $template_data = null;
 

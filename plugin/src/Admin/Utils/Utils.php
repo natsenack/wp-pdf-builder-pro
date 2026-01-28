@@ -41,7 +41,7 @@ class Utils
         $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like('_transient_timeout_pdf_builder_user_access_') . '%'));
         return array(
             'success' => true,
-            'message' => __('Cache des permissions vidé avec succès.', 'pdf-builder-pro')
+            'message' => \__('Cache des permissions vidé avec succès.', 'pdf-builder-pro')
         );
     }
 
@@ -60,7 +60,7 @@ class Utils
         wp_cache_flush();
 
         // Supprimer les fichiers temporaires si ils existent
-        $upload_dir = wp_upload_dir();
+        $upload_dir = \wp_upload_dir();
         $temp_dir = $upload_dir['basedir'] . '/pdf-builder-temp';
         if (is_dir($temp_dir)) {
             $this->removeDirectory($temp_dir);
@@ -68,7 +68,7 @@ class Utils
 
         return array(
             'success' => true,
-            'message' => sprintf(__('Cache nettoyé. %d transients supprimés.', 'pdf-builder-pro'), ($result1 + $result2)) ?: __('Cache nettoyé.', 'pdf-builder-pro')
+            'message' => sprintf(\__('Cache nettoyé. %d transients supprimés.', 'pdf-builder-pro'), ($result1 + $result2)) ?: \__('Cache nettoyé.', 'pdf-builder-pro')
         );
     }
 

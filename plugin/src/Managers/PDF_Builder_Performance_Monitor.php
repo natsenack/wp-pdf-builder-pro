@@ -42,14 +42,14 @@ class PDF_Builder_Performance_Monitor
         self::$start_time = microtime(true);
         self::$memory_start = memory_get_usage(true);
 // Hook pour mesurer les performances des pages admin
-        add_action('admin_footer', [__CLASS__, 'track_admin_page_performance']);
-        add_action('wp_footer', [__CLASS__, 'track_frontend_performance']);
+        \add_action('admin_footer', [__CLASS__, 'track_admin_page_performance']);
+        \add_action('wp_footer', [__CLASS__, 'track_frontend_performance']);
 // Hook pour mesurer les performances des AJAX
-        add_action('wp_ajax_pdf_builder_action', [__CLASS__, 'start_ajax_tracking'], 1);
-        add_action('wp_ajax_nopriv_pdf_builder_action', [__CLASS__, 'start_ajax_tracking'], 1);
+        \add_action('wp_ajax_pdf_builder_action', [__CLASS__, 'start_ajax_tracking'], 1);
+        \add_action('wp_ajax_nopriv_pdf_builder_action', [__CLASS__, 'start_ajax_tracking'], 1);
 // Hook de fin pour AJAX
-        add_action('wp_ajax_pdf_builder_action', [__CLASS__, 'end_ajax_tracking'], 999);
-        add_action('wp_ajax_nopriv_pdf_builder_action', [__CLASS__, 'end_ajax_tracking'], 999);
+        \add_action('wp_ajax_pdf_builder_action', [__CLASS__, 'end_ajax_tracking'], 999);
+        \add_action('wp_ajax_nopriv_pdf_builder_action', [__CLASS__, 'end_ajax_tracking'], 999);
     }
 
     /**
@@ -100,7 +100,7 @@ class PDF_Builder_Performance_Monitor
             'query_time' => $query_time
         ]);
 // Afficher les métriques en mode debug
-        if (defined('WP_DEBUG') && WP_DEBUG && current_user_can('manage_options')) {
+        if (defined('WP_DEBUG') && WP_DEBUG && \current_user_can('manage_options')) {
             echo '<!-- PDF Builder Performance Metrics: ';
             echo 'Time: ' . number_format($execution_time, 4) . 's, ';
             echo 'Memory: ' . size_format($memory_used) . ', ';

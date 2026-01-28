@@ -57,17 +57,17 @@ class PDF_Builder_Backup_Restore_Manager
 
         // Créer le dossier de sauvegarde s'il n'existe pas
         if (!file_exists($this->backup_dir)) {
-            wp_mkdir_p($this->backup_dir);
+            \wp_mkdir_p($this->backup_dir);
         }
 
         // Hooks AJAX
-        add_action('wp_ajax_pdf_builder_export_templates', [$this, 'exportTemplates']);
-        add_action('wp_ajax_pdf_builder_import_templates', [$this, 'importTemplates']);
-        add_action('wp_ajax_pdf_builder_create_backup', [$this, 'ajaxCreateBackup']);
-        add_action('wp_ajax_pdf_builder_restore_backup', [$this, 'ajaxRestoreBackup']);
-        // add_action('wp_ajax_pdf_builder_list_backups', [$this, 'ajaxListBackups']); // Commented out - using main implementation
-        add_action('wp_ajax_pdf_builder_delete_backup', [$this, 'ajaxDeleteBackup']);
-        add_action('wp_ajax_pdf_builder_download_backup', [$this, 'ajaxDownloadBackup']);
+        \add_action('wp_ajax_pdf_builder_export_templates', [$this, 'exportTemplates']);
+        \add_action('wp_ajax_pdf_builder_import_templates', [$this, 'importTemplates']);
+        \add_action('wp_ajax_pdf_builder_create_backup', [$this, 'ajaxCreateBackup']);
+        \add_action('wp_ajax_pdf_builder_restore_backup', [$this, 'ajaxRestoreBackup']);
+        // \add_action('wp_ajax_pdf_builder_list_backups', [$this, 'ajaxListBackups']); // Commented out - using main implementation
+        \add_action('wp_ajax_pdf_builder_delete_backup', [$this, 'ajaxDeleteBackup']);
+        \add_action('wp_ajax_pdf_builder_download_backup', [$this, 'ajaxDownloadBackup']);
     }
 
     /**
@@ -512,7 +512,7 @@ class PDF_Builder_Backup_Restore_Manager
         try {
             if (!file_exists($this->backup_dir)) {
                 // Créer le répertoire s'il n'existe pas
-                if (!wp_mkdir_p($this->backup_dir)) {
+                if (!\wp_mkdir_p($this->backup_dir)) {
                     
                     return $backups;
                 }

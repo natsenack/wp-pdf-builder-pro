@@ -240,7 +240,7 @@ class PdfBuilderJsonOptimizer
     public static function setCompressionThreshold($threshold)
     {
         if (is_numeric($threshold) && $threshold > 0) {
-            self::$compression_threshold = intval($threshold);
+            self::$compression_threshold = \intval($threshold);
         }
     }
 }

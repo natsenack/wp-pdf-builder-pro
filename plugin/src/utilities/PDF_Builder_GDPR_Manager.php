@@ -51,29 +51,29 @@ class PDF_Builder_GDPR_Manager {
      */
     private function init_hooks() {
         // Hooks d'administration - intégré dans la page settings
-        add_action('admin_enqueue_scripts', [$this, 'enqueue_gdpr_scripts']);
+        \add_action('admin_enqueue_scripts', [$this, 'enqueue_gdpr_scripts']);
 
         // Hooks AJAX pour la gestion des consentements
-        add_action('wp_ajax_pdf_builder_save_consent', [$this, 'ajax_save_consent']);
-        add_action('wp_ajax_pdf_builder_revoke_consent', [$this, 'ajax_revoke_consent']);
-        add_action('wp_ajax_pdf_builder_load_gdpr_preferences', [$this, 'ajax_load_gdpr_preferences']);
-        add_action('wp_ajax_pdf_builder_save_gdpr_preferences', [$this, 'ajax_save_gdpr_preferences']);
-        add_action('wp_ajax_pdf_builder_export_user_data', [$this, 'ajax_export_user_data']);
-        add_action('wp_ajax_pdf_builder_delete_user_data', [$this, 'ajax_delete_user_data']);
+        \add_action('wp_ajax_pdf_builder_save_consent', [$this, 'ajax_save_consent']);
+        \add_action('wp_ajax_pdf_builder_revoke_consent', [$this, 'ajax_revoke_consent']);
+        \add_action('wp_ajax_pdf_builder_load_gdpr_preferences', [$this, 'ajax_load_gdpr_preferences']);
+        \add_action('wp_ajax_pdf_builder_save_gdpr_preferences', [$this, 'ajax_save_gdpr_preferences']);
+        \add_action('wp_ajax_pdf_builder_export_user_data', [$this, 'ajax_export_user_data']);
+        \add_action('wp_ajax_pdf_builder_delete_user_data', [$this, 'ajax_delete_user_data']);
 
         // Hooks pour les données utilisateur
-        add_action('wp_ajax_pdf_builder_request_data_portability', [$this, 'ajax_request_data_portability']);
-        add_action('wp_ajax_pdf_builder_get_consent_status', [$this, 'ajax_get_consent_status']);
-        add_action('wp_ajax_pdf_builder_save_gdpr_settings', [$this, 'ajax_save_gdpr_settings']);
-        add_action('wp_ajax_pdf_builder_view_consent_status', [$this, 'ajax_view_consent_status']);
-        add_action('wp_ajax_pdf_builder_refresh_audit_log', [$this, 'ajax_refresh_audit_log']);
-        add_action('wp_ajax_pdf_builder_export_audit_log', [$this, 'ajax_export_audit_log']);
+        \add_action('wp_ajax_pdf_builder_request_data_portability', [$this, 'ajax_request_data_portability']);
+        \add_action('wp_ajax_pdf_builder_get_consent_status', [$this, 'ajax_get_consent_status']);
+        \add_action('wp_ajax_pdf_builder_save_gdpr_settings', [$this, 'ajax_save_gdpr_settings']);
+        \add_action('wp_ajax_pdf_builder_view_consent_status', [$this, 'ajax_view_consent_status']);
+        \add_action('wp_ajax_pdf_builder_refresh_audit_log', [$this, 'ajax_refresh_audit_log']);
+        \add_action('wp_ajax_pdf_builder_export_audit_log', [$this, 'ajax_export_audit_log']);
 
         // Hooks de nettoyage automatique
-        add_action('wp_scheduled_delete', [$this, 'cleanup_expired_data']);
+        \add_action('wp_scheduled_delete', [$this, 'cleanup_expired_data']);
 
         // Hooks pour les logs d'audit
-        add_action('init', [$this, 'init_audit_logging']);
+        \add_action('init', [$this, 'init_audit_logging']);
     }
 
     /**
@@ -150,7 +150,7 @@ class PDF_Builder_GDPR_Manager {
         // Logger l'action
         $this->log_audit_action($user_id, $granted ? 'consent_granted' : 'consent_revoked', 'consent', $consent_type);
 
-        wp_send_json_success(['message' => __('Consentement sauvegardé.', 'pdf-builder-pro')]);
+        \wp_send_json_success(['message' => __('Consentement sauvegardé.', 'pdf-builder-pro')]);
     }
 
     /**
@@ -168,7 +168,7 @@ class PDF_Builder_GDPR_Manager {
         // Logger l'action
         $this->log_audit_action($user_id, 'consent_revoked', 'consent', $consent_type);
 
-        wp_send_json_success(['message' => __('Consentement révoqué.', 'pdf-builder-pro')]);
+        \wp_send_json_success(['message' => __('Consentement révoqué.', 'pdf-builder-pro')]);
     }
 
     /**
@@ -188,7 +188,7 @@ class PDF_Builder_GDPR_Manager {
             $preferences[$consent_type] = $this->is_consent_granted($user_id, $consent_type);
         }
 
-        wp_send_json_success(['preferences' => $preferences]);
+        \wp_send_json_success(['preferences' => $preferences]);
     }
 
     /**
@@ -213,7 +213,7 @@ class PDF_Builder_GDPR_Manager {
         // Logger l'action
         $this->log_audit_action($user_id, 'preferences_saved', 'gdpr_preferences', count($preferences) . ' preferences');
 
-        wp_send_json_success(['message' => __('Préférences sauvegardées.', 'pdf-builder-pro')]);
+        \wp_send_json_success(['message' => __('Préférences sauvegardées.', 'pdf-builder-pro')]);
     }
 
     /**
@@ -231,7 +231,7 @@ class PDF_Builder_GDPR_Manager {
         // Créer le fichier selon le format demandé
         $export_result = $this->create_user_data_export($user_data, $user_id, $format);
 
-        if (is_wp_error($export_result)) {
+        if (\is_wp_error($export_result)) {
             
             wp_send_json_error(['message' => $export_result->get_error_message()]);
             return;
@@ -242,7 +242,7 @@ class PDF_Builder_GDPR_Manager {
 
         
 
-        wp_send_json_success([
+        \wp_send_json_success([
             'message' => sprintf(__('Données exportées avec succès au format %s.', 'pdf-builder-pro'), strtoupper($format)),
             'download_url' => $export_result['download_url'],
             'filename' => $export_result['filename'],
@@ -759,7 +759,7 @@ class PDF_Builder_GDPR_Manager {
         // Logger l'action
         $this->log_audit_action($user_id, 'data_deleted', 'user_data', 'all');
 
-        wp_send_json_success(['message' => __('Toutes vos données ont été supprimées.', 'pdf-builder-pro')]);
+        \wp_send_json_success(['message' => __('Toutes vos données ont été supprimées.', 'pdf-builder-pro')]);
     }
 
     /**
@@ -774,7 +774,7 @@ class PDF_Builder_GDPR_Manager {
         // Créer un export dans le format demandé
         $export_data = $this->get_user_data_portable($user_id, $format);
 
-        if (is_wp_error($export_data)) {
+        if (\is_wp_error($export_data)) {
             wp_send_json_error(['message' => $export_data->get_error_message()]);
             return;
         }
@@ -782,7 +782,7 @@ class PDF_Builder_GDPR_Manager {
         // Logger l'action
         $this->log_audit_action($user_id, 'data_portability_requested', 'user_data', $format);
 
-        wp_send_json_success([
+        \wp_send_json_success([
             'message' => __('Demande de portabilité traitée.', 'pdf-builder-pro'),
             'data' => $export_data
         ]);
@@ -819,7 +819,7 @@ class PDF_Builder_GDPR_Manager {
      * Récupérer les données d'un utilisateur
      */
     private function get_user_data($user_id) {
-        $user = get_userdata($user_id);
+        $user = \get_userdata($user_id);
         $consent_data = [];
 
         // Récupérer tous les consentements
@@ -839,7 +839,7 @@ class PDF_Builder_GDPR_Manager {
         // Récupérer les métadonnées des templates
         $template_meta = [];
         foreach ($templates as $template) {
-            $meta = get_post_meta($template['ID']);
+            $meta = \get_post_meta($template['ID']);
             $template_meta[$template['ID']] = $meta;
         }
 
@@ -1081,8 +1081,8 @@ class PDF_Builder_GDPR_Manager {
      * Programmer le nettoyage automatique
      */
     public function schedule_data_cleanup() {
-        if (!wp_next_scheduled('pdf_builder_gdpr_cleanup')) {
-            wp_schedule_event(time(), 'daily', 'pdf_builder_gdpr_cleanup');
+        if (!\wp_next_scheduled('pdf_builder_gdpr_cleanup')) {
+            \wp_schedule_event(time(), 'daily', 'pdf_builder_gdpr_cleanup');
         }
     }
 
@@ -1214,7 +1214,7 @@ class PDF_Builder_GDPR_Manager {
             ];
         }
 
-        wp_send_json_success(['consents' => $consents]);
+        \wp_send_json_success(['consents' => $consents]);
     }
 
     /**
@@ -1285,7 +1285,7 @@ class PDF_Builder_GDPR_Manager {
         <?php
 
         $html = ob_get_clean();
-        wp_send_json_success(['consent_html' => $html]);
+        \wp_send_json_success(['consent_html' => $html]);
     }
 
     /**
@@ -1294,8 +1294,8 @@ class PDF_Builder_GDPR_Manager {
     public function ajax_save_gdpr_settings() {
         check_ajax_referer('pdf_builder_gdpr', 'nonce');
 
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+        if (!\current_user_can('manage_options')) {
+            \wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
 
         // Sauvegarder les paramètres de consentement
@@ -1308,7 +1308,7 @@ class PDF_Builder_GDPR_Manager {
 
         $this->save_gdpr_options();
 
-        wp_send_json_success(['message' => __('Paramètres RGPD sauvegardés.', 'pdf-builder-pro')]);
+        \wp_send_json_success(['message' => __('Paramètres RGPD sauvegardés.', 'pdf-builder-pro')]);
     }
 
     /**
@@ -1317,18 +1317,18 @@ class PDF_Builder_GDPR_Manager {
     public function ajax_save_gdpr_security() {
         check_ajax_referer('pdf_builder_gdpr', 'nonce');
 
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+        if (!\current_user_can('manage_options')) {
+            \wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
 
         // Sauvegarder les paramètres de sécurité
         $this->gdpr_options['encryption_enabled'] = isset($_POST['encryption_enabled']);
-        $this->gdpr_options['data_retention_days'] = intval($_POST['data_retention_days'] ?? 2555);
+        $this->gdpr_options['data_retention_days'] = \intval($_POST['data_retention_days'] ?? 2555);
         $this->gdpr_options['audit_enabled'] = isset($_POST['audit_enabled']);
 
         $this->save_gdpr_options();
 
-        wp_send_json_success(['message' => __('Paramètres de sécurité sauvegardés.', 'pdf-builder-pro')]);
+        \wp_send_json_success(['message' => __('Paramètres de sécurité sauvegardés.', 'pdf-builder-pro')]);
     }
 
     /**
@@ -1337,8 +1337,8 @@ class PDF_Builder_GDPR_Manager {
     public function ajax_refresh_audit_log() {
         check_ajax_referer('pdf_builder_gdpr', 'nonce');
 
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+        if (!\current_user_can('manage_options')) {
+            \wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
 
         global $wpdb;
@@ -1357,7 +1357,7 @@ class PDF_Builder_GDPR_Manager {
             foreach ($audit_logs as $log) {
                 echo '<tr>';
                 echo '<td>' . esc_html(date_i18n('d/m/Y H:i', strtotime($log['created_at']))) . '</td>';
-                echo '<td>' . esc_html($log['user_id'] ? get_userdata($log['user_id'])->display_name : 'Système') . '</td>';
+                echo '<td>' . esc_html($log['user_id'] ? \get_userdata($log['user_id'])->display_name : 'Système') . '</td>';
                 echo '<td>' . esc_html($log['action']) . '</td>';
                 echo '<td>' . esc_html($log['data_type']) . '</td>';
                 echo '<td>' . esc_html($log['ip_address']) . '</td>';
@@ -1366,7 +1366,7 @@ class PDF_Builder_GDPR_Manager {
         }
         $html = ob_get_clean();
 
-        wp_send_json_success(['html' => $html]);
+        \wp_send_json_success(['html' => $html]);
     }
 
     /**
@@ -1375,7 +1375,7 @@ class PDF_Builder_GDPR_Manager {
     public function ajax_export_audit_log() {
         check_ajax_referer('pdf_builder_gdpr', 'nonce');
 
-        if (!current_user_can('manage_options')) {
+        if (!\current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('Permissions insuffisantes', 'pdf-builder-pro')]);
             return;
         }
@@ -1421,7 +1421,7 @@ class PDF_Builder_GDPR_Manager {
             $csv_content .= sprintf(
                 "%s,%s,%s,%s,%s\n",
                 $log['created_at'],
-                $log['user_id'] ? get_userdata($log['user_id'])->display_name : 'Système',
+                $log['user_id'] ? \get_userdata($log['user_id'])->display_name : 'Système',
                 $log['action'],
                 $log['data_type'],
                 $log['ip_address']
@@ -1437,7 +1437,7 @@ class PDF_Builder_GDPR_Manager {
         // Logger l'action
         $this->log_audit_action(get_current_user_id(), 'audit_log_exported', 'audit_logs', 'csv');
 
-        wp_send_json_success([
+        \wp_send_json_success([
             'message' => __('Logs d\'audit exportés avec succès.', 'pdf-builder-pro'),
             'download_url' => $upload_dir['baseurl'] . '/pdf-builder-exports/' . $filename,
             'filename' => $filename

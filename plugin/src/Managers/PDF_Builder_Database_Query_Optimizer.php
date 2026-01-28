@@ -365,7 +365,7 @@ class PDF_Builder_Database_Query_Optimizer
         $start_time = microtime(true);
 
         // Exécuter la requête et mesurer le temps
-        add_action(
+        \add_action(
             'shutdown',
             function () use ($query, $start_time) {
                 $end_time = microtime(true);
@@ -375,7 +375,7 @@ class PDF_Builder_Database_Query_Optimizer
                     $this->query_stats['slow_queries'][] = [
                     'query' => $query,
                     'time' => $execution_time,
-                    'timestamp' => current_time('mysql')
+                    'timestamp' => \current_time('mysql')
                     ];
                 }
             }

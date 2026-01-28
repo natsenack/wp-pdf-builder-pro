@@ -29,12 +29,12 @@ class PDF_Builder_Preview_Generator
     {
         // Pour l'instant, retournons une URL temporaire
         // TODO: Implémenter la vraie génération d'aperçu
-        $upload_dir = wp_upload_dir();
+        $upload_dir = \wp_upload_dir();
         $preview_dir = $upload_dir['basedir'] . '/pdf-builder-previews';
 
         // Créer le dossier s'il n'existe pas
         if (!file_exists($preview_dir)) {
-            wp_mkdir_p($preview_dir);
+            \wp_mkdir_p($preview_dir);
         }
 
         $filename = 'preview-' . $this->cache_key . '.png';

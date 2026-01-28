@@ -178,7 +178,7 @@ class PdfBuilderPathValidator
      */
     private static function isSafeAbsolutePath($path)
     {
-        $upload_dir = wp_upload_dir();
+        $upload_dir = \wp_upload_dir();
         $allowed_base_paths = [
             $upload_dir['basedir'],
             WP_CONTENT_DIR,
@@ -247,7 +247,7 @@ class PdfBuilderPathValidator
      */
     private static function isInAllowedDirectory($path)
     {
-        $upload_dir = wp_upload_dir();
+        $upload_dir = \wp_upload_dir();
 
         // Pour les chemins relatifs, vérifier par rapport à uploads
         foreach (self::ALLOWED_DIRECTORIES as $allowed_dir) {
@@ -275,7 +275,7 @@ class PdfBuilderPathValidator
      */
     public static function buildSafePath($filename, $subdirectory = '')
     {
-        $upload_dir = wp_upload_dir();
+        $upload_dir = \wp_upload_dir();
 
         // Sanitisation du nom de fichier
         $filename = sanitize_file_name($filename);

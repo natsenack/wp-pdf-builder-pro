@@ -270,18 +270,18 @@ class PDF_Builder_PDF_Generator
                 switch ($element['type']) {
                     case 'text':
                         $final_content = $order ? $this->replaceOrderVariables($content, $order) : $content;
-                        $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($final_content));
+                        $html .= sprintf('<div style="%s">%s</div>', $style, \esc_html($final_content));
                         break;
 
                     case 'invoice_number':
                         if ($order) {
                             $invoice_number = $order->get_id() . '-' . time();
-                            $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($invoice_number));
+                            $html .= sprintf('<div style="%s">%s</div>', $style, \esc_html($invoice_number));
                         }
                         break;
 
                     default:
-                        $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($content));
+                        $html .= sprintf('<div style="%s">%s</div>', $style, \esc_html($content));
                         break;
                 }
             }
@@ -423,7 +423,7 @@ class PDF_Builder_PDF_Generator
                 }
                 
                 $style .= 'white-space: pre-wrap; word-wrap: break-word; ';
-                return "<div class='canvas-element' style='" . esc_attr($style) . "'>" . \wp_kses_post($content) . "</div>";
+                return "<div class='canvas-element' style='" . \esc_attr($style) . "'>" . \wp_kses_post($content) . "</div>";
 
             case 'image':
             case 'company_logo':
@@ -434,23 +434,23 @@ class PDF_Builder_PDF_Generator
                 }
                 if ($src) {
                     $style .= 'object-fit: contain; ';
-                    return "<img class='canvas-element' src='" . esc_url($src) . "' style='" . esc_attr($style) . "' />";
+                    return "<img class='canvas-element' src='" . \esc_url($src) . "' style='" . \esc_attr($style) . "' />";
                 }
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;'>Image</div>";
+                return "<div class='canvas-element' style='" . \esc_attr($style) . "; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;'>Image</div>";
 
             case 'rectangle':
                 $style .= 'border: 1px solid #ccc; ';
-                return "<div class='canvas-element' style='" . esc_attr($style) . "'></div>";
+                return "<div class='canvas-element' style='" . \esc_attr($style) . "'></div>";
 
             case 'divider':
             case 'line':
                 $line_color = $element['lineColor'] ?? '#64748b';
                 $line_width = $element['lineWidth'] ?? 2;
                 $style .= "border-bottom: {$line_width}px solid {$line_color}; height: {$line_width}px;";
-                return "<div class='canvas-element' style='" . esc_attr($style) . "'></div>";
+                return "<div class='canvas-element' style='" . \esc_attr($style) . "'></div>";
 
             default:
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #ffe6e6; border: 1px solid #ff0000; display: flex; align-items: center; justify-content: center; color: #ff0000;'>{$type}</div>";
+                return "<div class='canvas-element' style='" . \esc_attr($style) . "; background: #ffe6e6; border: 1px solid #ff0000; display: flex; align-items: center; justify-content: center; color: #ff0000;'>{$type}</div>";
         }
     }
 
@@ -524,7 +524,7 @@ class PDF_Builder_PDF_Generator
             return $this->savePdf($dompdf, $filename, $context);
         } catch (Exception $e) {
             // Déclencher le hook d'erreur de génération PDF
-            do_action('pdf_builder_pdf_generation_error', $context['order_id'] ?? 0, $e->getMessage());
+            \do_action('pdf_builder_pdf_generation_error', $context['order_id'] ?? 0, $e->getMessage());
 
             return null;
         }
@@ -555,7 +555,7 @@ class PDF_Builder_PDF_Generator
             }
 
             // Déclencher le hook de succès de génération PDF
-            do_action('pdf_builder_pdf_generated', $context['order_id'] ?? 0, $context['template_id'] ?? 0);
+            \do_action('pdf_builder_pdf_generated', $context['order_id'] ?? 0, $context['template_id'] ?? 0);
 
             return $pdf_path;
         } catch (Exception $e) {

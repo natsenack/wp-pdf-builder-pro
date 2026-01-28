@@ -535,7 +535,7 @@ class PdfBuilderAdminNew
     {
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['security_file_validation']) ? $settings['security_file_validation'] : '1';
-        echo '<input type="checkbox" name="pdf_builder_settings[security_file_validation]" value="1" ' . checked($value, '1', false) . ' />';
+        echo '<input type="checkbox" name="pdf_builder_settings[security_file_validation]" value="1" ' . \checked($value, '1', false) . ' />';
         echo '<label>Activer la validation des fichiers uploadés</label>';
         echo '<p class="description">Vérifie les types et tailles des fichiers pour la sécurité.</p>';
     }
@@ -548,9 +548,9 @@ class PdfBuilderAdminNew
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['pdf_quality']) ? $settings['pdf_quality'] : 'high';
         echo '<select name="pdf_builder_settings[pdf_quality]">';
-        echo '<option value="low" ' . selected($value, 'low', false) . '>Faible (72 DPI)</option>';
-        echo '<option value="medium" ' . selected($value, 'medium', false) . '>Moyenne (150 DPI)</option>';
-        echo '<option value="high" ' . selected($value, 'high', false) . '>Haute (300 DPI)</option>';
+        echo '<option value="low" ' . \selected($value, 'low', false) . '>Faible (72 DPI)</option>';
+        echo '<option value="medium" ' . \selected($value, 'medium', false) . '>Moyenne (150 DPI)</option>';
+        echo '<option value="high" ' . \selected($value, 'high', false) . '>Haute (300 DPI)</option>';
         echo '</select>';
         echo '<p class="description">Qualité d\'export des images dans le PDF.</p>';
     }
@@ -562,7 +562,7 @@ class PdfBuilderAdminNew
     {
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['pdf_compression']) ? $settings['pdf_compression'] : '1';
-        echo '<input type="checkbox" name="pdf_builder_settings[pdf_compression]" value="1" ' . checked($value, '1', false) . ' />';
+        echo '<input type="checkbox" name="pdf_builder_settings[pdf_compression]" value="1" ' . \checked($value, '1', false) . ' />';
         echo '<label>Activer la compression des images</label>';
         echo '<p class="description">Réduit la taille du fichier PDF en compressant les images.</p>';
     }
@@ -585,7 +585,7 @@ class PdfBuilderAdminNew
     {
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['template_cache_enabled']) ? $settings['template_cache_enabled'] : '1';
-        echo '<input type="checkbox" name="pdf_builder_settings[template_cache_enabled]" value="1" ' . checked($value, '1', false) . ' />';
+        echo '<input type="checkbox" name="pdf_builder_settings[template_cache_enabled]" value="1" ' . \checked($value, '1', false) . ' />';
         echo '<label>Activer le cache des templates</label>';
         echo '<p class="description">Améliore les performances en mettant en cache les templates compilés.</p>';
     }
@@ -597,7 +597,7 @@ class PdfBuilderAdminNew
     {
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
         $value = isset($settings['developer_debug_mode']) ? $settings['developer_debug_mode'] : '0';
-        echo '<input type="checkbox" name="pdf_builder_settings[developer_debug_mode]" value="1" ' . checked($value, '1', false) . ' />';
+        echo '<input type="checkbox" name="pdf_builder_settings[developer_debug_mode]" value="1" ' . \checked($value, '1', false) . ' />';
         echo '<label>Activer le mode debug développeur</label>';
         echo '<p class="description">Affiche des informations de debug pour le développement.</p>';
     }
@@ -653,7 +653,7 @@ class PdfBuilderAdminNew
         }
 
         // Compter templates existants de l'utilisateur
-        $user_id = get_current_user_id();
+        $user_id = \get_current_user_id();
         $templates_count = self::count_user_templates($user_id);
 
         // Limite : 1 template gratuit
@@ -670,7 +670,7 @@ class PdfBuilderAdminNew
         }
 
         // Vérifier les permissions
-        if (!current_user_can('manage_options')) {
+        if (!\current_user_can('manage_options')) {
             \wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
         }
 
@@ -683,7 +683,7 @@ class PdfBuilderAdminNew
 
         // Vérifier le nonce selon l'onglet
         $nonce_name = 'pdf_builder_save_settings';
-        if (!isset($_POST[$nonce_name]) || !wp_verify_nonce($_POST[$nonce_name], $nonce_name)) {
+        if (!isset($_POST[$nonce_name]) || !\wp_verify_nonce($_POST[$nonce_name], $nonce_name)) {
             \wp_die(__('Nonce de sécurité invalide.', 'pdf-builder-pro'));
         }
 
@@ -741,7 +741,7 @@ class PdfBuilderAdminNew
         );
 
         // Rediriger pour éviter la resoumission du formulaire
-        wp_redirect(add_query_arg(['page' => 'pdf-builder-settings', 'tab' => $current_tab, 'updated' => 'true']));
+        \wp_redirect(add_query_arg(['page' => 'pdf-builder-settings', 'tab' => $current_tab, 'updated' => 'true']));
         exit;
     }
 
@@ -814,7 +814,7 @@ class PdfBuilderAdminNew
 
         // Toujours enregistrer le hook admin_menu, même en dehors du contexte admin
         // car WordPress l'appelle pendant la construction du menu
-        add_action('admin_menu', [$this, 'addAdminMenu']);
+        \add_action('admin_menu', [$this, 'addAdminMenu']);
         error_log('[DEBUG] PDF Builder: admin_menu hook registered');
 
         // N'enregistrer les autres hooks admin que si nécessaire
@@ -828,25 +828,25 @@ class PdfBuilderAdminNew
         error_log('[DEBUG] PDF Builder: Registering admin hooks');
 
         // Enregistrer les paramètres
-        add_action('admin_init', array($this, 'register_settings'));
+        \add_action('admin_init', array($this, 'register_settings'));
 
         // 🔧 MISE À JOUR DES NOMS DE TEMPLATES (TEMPORAIRE)
         // Désactiver temporairement la mise à jour automatique des noms
-        // add_action('admin_init', [$this, 'update_template_names']);
+        // \add_action('admin_init', [$this, 'update_template_names']);
 
         // Enregistrer le custom post type pour les templates
-        add_action('init', [$this, 'register_template_post_type']);
+        \add_action('init', [$this, 'register_template_post_type']);
 
         // Script loading is handled by AdminScriptLoader
-        // add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
+        // \add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
 
         // Désactiver les préférences WordPress problématiques sur notre page
-        add_action('admin_enqueue_scripts', [$this, 'disable_problematic_preferences'], 1);
+        \add_action('admin_enqueue_scripts', [$this, 'disable_problematic_preferences'], 1);
 
         // Les scripts React sont gérés par AdminScriptLoader
 
         // Inclure le gestionnaire de modèles prédéfinis
-        include_once plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/predefined-templates-manager.php';
+        include_once \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/predefined-templates-manager.php';
 
         // Instancier le gestionnaire de modèles prédéfinis
         // new PDF_Builder_Predefined_Templates_Manager();
@@ -860,18 +860,18 @@ class PdfBuilderAdminNew
 
         // Hooks WooCommerce - Délégation vers le manager
         // Différer l'enregistrement jusqu'à ce que WooCommerce soit complètement chargé
-        add_action('init', function() {
+        \add_action('init', function() {
             if (\did_action('plugins_loaded') && defined('WC_VERSION') && $this->woocommerce_integration !== null) {
-                add_action('add_meta_boxes_shop_order', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
+                \add_action('add_meta_boxes_shop_order', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
                 // Le hook HPOS peut ne pas exister dans toutes les versions, on l'enregistre seulement si WC_VERSION est défini et >= 7.1
                 if (defined('WC_VERSION') && version_compare(WC_VERSION, '7.1', '>=')) {
-                    add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
+                    \add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
                 }
             }
         });
 
         // Hook pour la compatibilité avec les anciens liens template_id
-        add_action('admin_init', [$this, 'handleLegacyTemplateLinks']);
+        \add_action('admin_init', [$this, 'handleLegacyTemplateLinks']);
     }
 
     /**
@@ -1017,7 +1017,7 @@ class PdfBuilderAdminNew
         error_log('[DEBUG] PDF Builder: Current user ID: ' . $user_id . ', roles: ' . $user_roles);
 
         // Vérifier la capacité manage_options
-        $has_manage_options = current_user_can('manage_options');
+        $has_manage_options = \current_user_can('manage_options');
         error_log('[DEBUG] PDF Builder: User has manage_options capability: ' . ($has_manage_options ? 'YES' : 'NO'));
 
         if (!$has_manage_options) {
@@ -1032,7 +1032,7 @@ class PdfBuilderAdminNew
         error_log('[DEBUG] PDF Builder: add_menu_page result: ' . ($menu_result ? 'SUCCESS' : 'FAILED'));
 
         // Page d'accueil (sous-menu principal masqué)
-        add_submenu_page(
+        \add_submenu_page(
             'pdf-builder-pro',
             __('Accueil - PDF Builder Pro', 'pdf-builder-pro'),
             __('🏠 Accueil', 'pdf-builder-pro'),
@@ -1042,11 +1042,11 @@ class PdfBuilderAdminNew
         );
 
         // Éditeur React unique (accessible via lien direct, masqué du menu)
-        add_submenu_page('pdf-builder-pro', __('Éditeur PDF', 'pdf-builder-pro'), __('🎨 Éditeur PDF', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'reactEditorPage']);
+        \add_submenu_page('pdf-builder-pro', __('Éditeur PDF', 'pdf-builder-pro'), __('🎨 Éditeur PDF', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'reactEditorPage']);
 
         // Le menu de l'éditeur React est maintenant visible
         // Ancien code commenté :
-        // add_action('admin_enqueue_scripts', function() {
+        // \add_action('admin_enqueue_scripts', function() {
         //     echo '<style>
         //         li a[href*="page=pdf-builder-react-editor"] {
         //             display: none !important;
@@ -1058,14 +1058,14 @@ class PdfBuilderAdminNew
         // });
 
         // Gestion des templates
-        add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-templates', [$this, 'templatesPage']);
+        \add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-templates', [$this, 'templatesPage']);
 
         // Paramètres et configuration
-        add_submenu_page('pdf-builder-pro', __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'), __('⚙️ Paramètres', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-settings', [$this, 'settings_page']);
+        \add_submenu_page('pdf-builder-pro', __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'), __('⚙️ Paramètres', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-settings', [$this, 'settings_page']);
 
         // Galerie de modèles (mode développeur uniquement)
         if (!empty(pdf_builder_get_option('pdf_builder_settings')['pdf_builder_developer_enabled'])) {
-            add_submenu_page(
+            \add_submenu_page(
                 'pdf-builder-pro',
                 __('Galerie de Modèles - PDF Builder Pro', 'pdf-builder-pro'),
                 __('🖼️ Galerie', 'pdf-builder-pro'),
@@ -1130,7 +1130,7 @@ class PdfBuilderAdminNew
         }
 
         // Inclure la page dédiée de gestion des templates
-        $templates_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/templates-page.php';
+        $templates_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/templates-page.php';
         if (file_exists($templates_file)) {
             include $templates_file;
         } else {
@@ -1224,7 +1224,7 @@ class PdfBuilderAdminNew
                     switch ($current_tab) {
                         case 'general':
                             echo '<div id="pdf-builder-tab-general">';
-                            $general_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-general.php';
+                            $general_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-general.php';
                             if (file_exists($general_file)) {
                                 include $general_file;
                             } else {
@@ -1235,7 +1235,7 @@ class PdfBuilderAdminNew
 
                         case 'licence':
                             echo '<div id="pdf-builder-tab-licence">';
-                            $licence_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-licence.php';
+                            $licence_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-licence.php';
                             if (file_exists($licence_file)) {
                                 include $licence_file;
                             } else {
@@ -1246,7 +1246,7 @@ class PdfBuilderAdminNew
 
                         case 'systeme':
                             echo '<div id="pdf-builder-tab-systeme">';
-                            $systeme_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-systeme.php';
+                            $systeme_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-systeme.php';
                             if (file_exists($systeme_file)) {
                                 include $systeme_file;
                             } else {
@@ -1257,7 +1257,7 @@ class PdfBuilderAdminNew
 
                         case 'securite':
                             echo '<div id="pdf-builder-tab-securite">';
-                            $securite_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-securite.php';
+                            $securite_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-securite.php';
                             if (file_exists($securite_file)) {
                                 include $securite_file;
                             } else {
@@ -1268,7 +1268,7 @@ class PdfBuilderAdminNew
 
                         case 'pdf':
                             echo '<div id="pdf-builder-tab-pdf">';
-                            $pdf_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-pdf.php';
+                            $pdf_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-pdf.php';
                             if (file_exists($pdf_file)) {
                                 include $pdf_file;
                             } else {
@@ -1279,7 +1279,7 @@ class PdfBuilderAdminNew
 
                         case 'contenu':
                             echo '<div id="pdf-builder-tab-contenu">';
-                            $contenu_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-contenu.php';
+                            $contenu_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-contenu.php';
                             if (file_exists($contenu_file)) {
                                 include $contenu_file;
                             } else {
@@ -1290,7 +1290,7 @@ class PdfBuilderAdminNew
 
                         case 'templates':
                             echo '<div id="pdf-builder-tab-templates">';
-                            $templates_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-templates.php';
+                            $templates_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-templates.php';
                             if (file_exists($templates_file)) {
                                 include $templates_file;
                             } else {
@@ -1301,7 +1301,7 @@ class PdfBuilderAdminNew
 
                         case 'developpeur':
                             echo '<div id="pdf-builder-tab-developpeur">';
-                            $developpeur_file = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-developpeur.php';
+                            $developpeur_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-developpeur.php';
                             if (file_exists($developpeur_file)) {
                                 include $developpeur_file;
                             } else {

@@ -61,10 +61,10 @@ class PDFGenerator
     public function generatePdfFromTemplateData($template, $filename)
     {
         // Créer le répertoire de stockage s'il n'existe pas
-        $upload_dir = wp_upload_dir();
+        $upload_dir = \wp_upload_dir();
         $pdf_dir = $upload_dir['basedir'] . '/pdf-builder';
         if (!file_exists($pdf_dir)) {
-            wp_mkdir_p($pdf_dir);
+            \wp_mkdir_p($pdf_dir);
         }
 
         $pdf_path = $pdf_dir . '/' . $filename;
@@ -100,10 +100,10 @@ class PDFGenerator
     public function generateOrderPdfPrivate($order, $template_data, $filename)
     {
         // Créer le répertoire de stockage s'il n'existe pas
-        $upload_dir = wp_upload_dir();
+        $upload_dir = \wp_upload_dir();
         $pdf_dir = $upload_dir['basedir'] . '/pdf-builder/orders';
         if (!file_exists($pdf_dir)) {
-            wp_mkdir_p($pdf_dir);
+            \wp_mkdir_p($pdf_dir);
         }
 
         $pdf_path = $pdf_dir . '/' . $filename;

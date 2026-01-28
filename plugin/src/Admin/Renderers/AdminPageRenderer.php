@@ -31,7 +31,7 @@ class AdminPageRenderer
                     <h1>📄 PDF Builder Pro</h1>
                     <p class="dashboard-subtitle">Constructeur de PDF professionnel avec éditeur visuel avancé</p>
                     <div class="dashboard-meta">
-                        <span class="version-info">Version <?php echo esc_html($plugin_version); ?></span>
+                        <span class="version-info">Version <?php echo \esc_html($plugin_version); ?></span>
                         <span class="last-update">Dernière mise à jour: <?php echo date('d/m/Y'); ?></span>
                     </div>
                 </div>

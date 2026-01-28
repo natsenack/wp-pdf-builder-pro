@@ -222,7 +222,7 @@ class TemplateProcessor
         pdf_builder_update_option('pdf_builder_templates', $templates);
         return array(
             'success' => true,
-            'message' => sprintf(__('Templates réparés. %d templates corrompus supprimés.', 'pdf-builder-pro'), $repaired_count)
+            'message' => sprintf(\__('Templates réparés. %d templates corrompus supprimés.', 'pdf-builder-pro'), $repaired_count)
         );
     }
 
