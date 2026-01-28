@@ -1105,12 +1105,13 @@ function pdf_builder_init()
     // Vérifier et créer les tables manquantes
     pdf_builder_check_tables();
 
-    // TEST 1: Commenter tout sauf la vérification WordPress
-    /*
+    // TEST 6: Réactiver les headers de cache pour les assets
     // Ajouter les headers de cache pour les assets
     add_action('wp_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
     add_action('admin_enqueue_scripts', 'pdf_builder_add_asset_cache_headers', 1);
 
+    // TEST 1: Commenter tout sauf la vérification WordPress
+    /*
     // Charger le bootstrap (version complète pour la production)
     $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
     if (file_exists($bootstrap_path)) {
