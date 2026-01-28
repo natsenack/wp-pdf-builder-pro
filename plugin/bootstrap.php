@@ -34,17 +34,27 @@ function pdf_builder_inject_nonce() {
     if (!\is_admin()) {
         return; // Pas sur une page admin
     }
-    
+
     $page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
     if ($page !== 'pdf-builder-react-editor') {
         return; // Pas sur la page de l'éditeur
     }
-    
+
+    // Vérifier que l'utilisateur est correctement initialisé
+    if (!function_exists('wp_get_current_user') || !function_exists('current_user_can')) {
+        return; // Fonctions pas disponibles
+    }
+
+    $current_user = wp_get_current_user();
+    if (!$current_user || !isset($current_user->ID) || $current_user->ID == 0) {
+        return; // Utilisateur pas initialisé
+    }
+
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
         return; // Pas de permission
     }
-    
+
     // Créer le nonce
     $nonce = wp_create_nonce('pdf_builder_ajax');
     
