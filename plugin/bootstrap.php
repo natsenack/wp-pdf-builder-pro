@@ -833,10 +833,18 @@ function pdf_builder_load_admin_components()
     // Charger manuellement car pas dans PSR-4
     $notification_manager_file = PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php';
     if (file_exists($notification_manager_file)) {
+        error_log('[BOOTSTRAP] Loading notification manager file: ' . $notification_manager_file);
         require_once $notification_manager_file;
+        error_log('[BOOTSTRAP] Notification manager file loaded');
+    } else {
+        error_log('[BOOTSTRAP] ERROR: Notification manager file not found: ' . $notification_manager_file);
     }
     if (class_exists('PDF_Builder_Notification_Manager')) {
+        error_log('[BOOTSTRAP] PDF_Builder_Notification_Manager class exists, instantiating...');
         PDF_Builder_Notification_Manager::get_instance();
+        error_log('[BOOTSTRAP] Notification manager instantiated successfully');
+    } else {
+        error_log('[BOOTSTRAP] ERROR: PDF_Builder_Notification_Manager class not found');
     }
 
     // CHARGER LE GESTIONNAIRE DE PRÉFÉRENCES DE L'ÉDITEUR PDF
