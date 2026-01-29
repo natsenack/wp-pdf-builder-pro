@@ -1549,6 +1549,19 @@ function displayTemplateSettings(template) {
         </form>
     `;
     
+    // Ajouter le footer avec les boutons
+    var footer = document.createElement('div');
+    footer.className = 'template-modal-footer';
+    footer.style.cssText = 'display: flex; justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;';
+    footer.innerHTML = `
+        <button onclick="closeTemplateSettingsModal()" class="button button-secondary" style="padding: 10px 20px;">Annuler</button>
+        <button onclick="saveTemplateSettings()" class="button button-primary" style="padding: 10px 20px; background: #007cba; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            <span class="dashicons dashicons-yes" style="margin-right: 5px;"></span>
+            Enregistrer
+        </button>
+    `;
+    modalContent.appendChild(footer);
+    
     // Remplir le select DPI avec les options disponibles
     var dpiSelect = document.getElementById('template-dpi');
     var dpiWarning = document.getElementById('template-dpi-warning');
