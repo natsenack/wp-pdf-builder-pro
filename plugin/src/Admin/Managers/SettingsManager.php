@@ -338,40 +338,121 @@ class SettingsManager
     }
 
     /**
-     * Champ Affichage & Dimensions du Canvas
+     * Champ affichage et dimensions du canvas
      */
     public function renderCanvasDisplayDimensionsField()
     {
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
-        $allow_portrait = $settings['pdf_builder_canvas_allow_portrait'] ?? '1';
-        $allow_landscape = $settings['pdf_builder_canvas_allow_landscape'] ?? '1';
-        $default_orientation = $settings['pdf_builder_canvas_default_orientation'] ?? 'portrait';
 
-        echo '<fieldset>';
-        echo '<legend style="font-weight: 600; margin-bottom: 10px;">' . \__('Autorisations d\'orientation du canvas', 'pdf-builder-pro') . '</legend>';
-        
-        echo '<label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">';
-        echo '<input type="checkbox" name="pdf_builder_canvas_allow_portrait" value="1" ' . \checked($allow_portrait, '1', false) . '>';
-        echo \__('Autoriser l\'orientation Portrait (794×1123 px)', 'pdf-builder-pro');
+        // Formats disponibles
+        $format_a3_enabled = $settings['pdf_builder_canvas_format_a3_enabled'] ?? '1';
+        $format_a4_enabled = $settings['pdf_builder_canvas_format_a4_enabled'] ?? '1';
+        $format_a5_enabled = $settings['pdf_builder_canvas_format_a5_enabled'] ?? '1';
+        $format_letter_enabled = $settings['pdf_builder_canvas_format_letter_enabled'] ?? '1';
+        $format_legal_enabled = $settings['pdf_builder_canvas_format_legal_enabled'] ?? '1';
+
+        // Orientations disponibles
+        $orientation_portrait_enabled = $settings['pdf_builder_canvas_orientation_portrait_enabled'] ?? '1';
+        $orientation_landscape_enabled = $settings['pdf_builder_canvas_orientation_landscape_enabled'] ?? '1';
+
+        // Résolutions DPI disponibles
+        $dpi_72_enabled = $settings['pdf_builder_canvas_dpi_72_enabled'] ?? '1';
+        $dpi_96_enabled = $settings['pdf_builder_canvas_dpi_96_enabled'] ?? '1';
+        $dpi_150_enabled = $settings['pdf_builder_canvas_dpi_150_enabled'] ?? '1';
+        $dpi_300_enabled = $settings['pdf_builder_canvas_dpi_300_enabled'] ?? '1';
+        $dpi_600_enabled = $settings['pdf_builder_canvas_dpi_600_enabled'] ?? '1';
+
+        echo '<div style="max-width: 800px;">';
+
+        // Formats de papier disponibles
+        echo '<div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border: 1px solid #e1e8ed; border-radius: 6px;">';
+        echo '<h4 style="margin: 0 0 15px 0; color: #23282d;">📄 Formats de papier disponibles</h4>';
+        echo '<p class="description" style="margin-bottom: 15px;">Sélectionnez les formats de papier que les utilisateurs pourront choisir dans les paramètres des templates.</p>';
+
+        echo '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">';
+        echo '<label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border: 1px solid #ddd; border-radius: 4px;">';
+        echo '<input type="checkbox" name="pdf_builder_canvas_format_a3_enabled" value="1" ' . checked($format_a3_enabled, '1', false) . '>';
+        echo '<span>A3 (297×420 mm)</span>';
         echo '</label>';
 
-        echo '<label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">';
-        echo '<input type="checkbox" name="pdf_builder_canvas_allow_landscape" value="1" ' . \checked($allow_landscape, '1', false) . '>';
-        echo \__('Autoriser l\'orientation Paysage (1123×794 px)', 'pdf-builder-pro');
+        echo '<label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border: 1px solid #ddd; border-radius: 4px;">';
+        echo '<input type="checkbox" name="pdf_builder_canvas_format_a4_enabled" value="1" ' . checked($format_a4_enabled, '1', false) . '>';
+        echo '<span>A4 (210×297 mm)</span>';
         echo '</label>';
 
-        echo '<div style="margin-top: 12px; padding: 10px; background-color: #f0f0f0; border-left: 3px solid #0073aa; border-radius: 3px;">';
-        echo '<label style="display: block; margin-bottom: 8px;">';
-        echo '<strong>' . \__('Orientation par défaut', 'pdf-builder-pro') . '</strong>';
+        echo '<label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border: 1px solid #ddd; border-radius: 4px;">';
+        echo '<input type="checkbox" name="pdf_builder_canvas_format_a5_enabled" value="1" ' . checked($format_a5_enabled, '1', false) . '>';
+        echo '<span>A5 (148×210 mm)</span>';
         echo '</label>';
-        echo '<select name="pdf_builder_canvas_default_orientation" style="padding: 6px 8px;">';
-        echo '<option value="portrait" ' . \selected($default_orientation, 'portrait', false) . '>' . \__('Portrait', 'pdf-builder-pro') . '</option>';
-        echo '<option value="landscape" ' . \selected($default_orientation, 'landscape', false) . '>' . \__('Paysage', 'pdf-builder-pro') . '</option>';
-        echo '</select>';
-        echo '<p class="description">' . \__('Cette orientation sera appliquée par défaut lors de la création d\'un nouveau template.', 'pdf-builder-pro') . '</p>';
+
+        echo '<label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border: 1px solid #ddd; border-radius: 4px;">';
+        echo '<input type="checkbox" name="pdf_builder_canvas_format_letter_enabled" value="1" ' . checked($format_letter_enabled, '1', false) . '>';
+        echo '<span>Letter (8.5×11")</span>';
+        echo '</label>';
+
+        echo '<label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border: 1px solid #ddd; border-radius: 4px;">';
+        echo '<input type="checkbox" name="pdf_builder_canvas_format_legal_enabled" value="1" ' . checked($format_legal_enabled, '1', false) . '>';
+        echo '<span>Legal (8.5×14")</span>';
+        echo '</label>';
+        echo '</div>';
         echo '</div>';
 
-        echo '</fieldset>';
+        // Orientations disponibles
+        echo '<div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border: 1px solid #e1e8ed; border-radius: 6px;">';
+        echo '<h4 style="margin: 0 0 15px 0; color: #23282d;">🔄 Orientations disponibles</h4>';
+        echo '<p class="description" style="margin-bottom: 15px;">Sélectionnez les orientations que les utilisateurs pourront choisir dans les paramètres des templates.</p>';
+
+        echo '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">';
+        echo '<label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border: 1px solid #ddd; border-radius: 4px;">';
+        echo '<input type="checkbox" name="pdf_builder_canvas_orientation_portrait_enabled" value="1" ' . checked($orientation_portrait_enabled, '1', false) . '>';
+        echo '<span>Portrait</span>';
+        echo '</label>';
+
+        echo '<label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border: 1px solid #ddd; border-radius: 4px;">';
+        echo '<input type="checkbox" name="pdf_builder_canvas_orientation_landscape_enabled" value="1" ' . checked($orientation_landscape_enabled, '1', false) . '>';
+        echo '<span>Paysage</span>';
+        echo '</label>';
+        echo '</div>';
+        echo '</div>';
+
+        // Résolutions DPI disponibles
+        echo '<div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border: 1px solid #e1e8ed; border-radius: 6px;">';
+        echo '<h4 style="margin: 0 0 15px 0; color: #23282d;">🎯 Résolutions DPI disponibles</h4>';
+        echo '<p class="description" style="margin-bottom: 15px;">Sélectionnez les résolutions DPI que les utilisateurs pourront choisir dans les paramètres des templates.</p>';
+
+        echo '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">';
+        echo '<label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border: 1px solid #ddd; border-radius: 4px;">';
+        echo '<input type="checkbox" name="pdf_builder_canvas_dpi_72_enabled" value="1" ' . checked($dpi_72_enabled, '1', false) . '>';
+        echo '<span>72 DPI (Écran)</span>';
+        echo '</label>';
+
+        echo '<label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border: 1px solid #ddd; border-radius: 4px;">';
+        echo '<input type="checkbox" name="pdf_builder_canvas_dpi_96_enabled" value="1" ' . checked($dpi_96_enabled, '1', false) . '>';
+        echo '<span>96 DPI (Web)</span>';
+        echo '</label>';
+
+        echo '<label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border: 1px solid #ddd; border-radius: 4px;">';
+        echo '<input type="checkbox" name="pdf_builder_canvas_dpi_150_enabled" value="1" ' . checked($dpi_150_enabled, '1', false) . '>';
+        echo '<span>150 DPI (Impression)</span>';
+        echo '</label>';
+
+        echo '<label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border: 1px solid #ddd; border-radius: 4px;">';
+        echo '<input type="checkbox" name="pdf_builder_canvas_dpi_300_enabled" value="1" ' . checked($dpi_300_enabled, '1', false) . '>';
+        echo '<span>300 DPI (Haute qualité)</span>';
+        echo '</label>';
+
+        echo '<label style="display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border: 1px solid #ddd; border-radius: 4px;">';
+        echo '<input type="checkbox" name="pdf_builder_canvas_dpi_600_enabled" value="1" ' . checked($dpi_600_enabled, '1', false) . '>';
+        echo '<span>600 DPI (Très haute qualité)</span>';
+        echo '</label>';
+        echo '</div>';
+        echo '</div>';
+
+        echo '<div style="padding: 15px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; color: #856404;">';
+        echo '<strong>ℹ️ Note :</strong> Ces paramètres contrôlent uniquement les options disponibles dans les paramètres des templates individuels. Ils n\'affectent pas les fonctionnalités générales du canvas.';
+        echo '</div>';
+
+        echo '</div>';
     }
 
     /**
@@ -716,6 +797,19 @@ class SettingsManager
             'pdf_builder_canvas_memory_limit_php' => 'intval',
             'pdf_builder_canvas_allow_portrait' => 'bool',
             'pdf_builder_canvas_allow_landscape' => 'bool',
+            // Nouveaux champs pour les options disponibles dans les templates
+            'pdf_builder_canvas_format_a3_enabled' => 'bool',
+            'pdf_builder_canvas_format_a4_enabled' => 'bool',
+            'pdf_builder_canvas_format_a5_enabled' => 'bool',
+            'pdf_builder_canvas_format_letter_enabled' => 'bool',
+            'pdf_builder_canvas_format_legal_enabled' => 'bool',
+            'pdf_builder_canvas_orientation_portrait_enabled' => 'bool',
+            'pdf_builder_canvas_orientation_landscape_enabled' => 'bool',
+            'pdf_builder_canvas_dpi_72_enabled' => 'bool',
+            'pdf_builder_canvas_dpi_96_enabled' => 'bool',
+            'pdf_builder_canvas_dpi_150_enabled' => 'bool',
+            'pdf_builder_canvas_dpi_300_enabled' => 'bool',
+            'pdf_builder_canvas_dpi_600_enabled' => 'bool',
         ];
 
         foreach ($canvas_fields as $field => $type) {

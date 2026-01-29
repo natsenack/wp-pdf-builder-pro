@@ -289,20 +289,50 @@ class PdfBuilderTemplatesAjax
             $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::getInstance();
             $canvas_settings = $canvas_manager->getAllSettings();
 
-            // Récupérer les options disponibles depuis les paramètres WordPress
-            $settings_options = pdf_builder_get_option('pdf_builder_settings', array());
+            // Récupérer les paramètres du plugin pour les options disponibles
+            $plugin_settings = pdf_builder_get_option('pdf_builder_settings', array());
 
-            // Options disponibles pour les formats (peuvent être configurées dans les paramètres)
-            $available_formats = isset($settings_options['pdf_builder_available_formats']) && is_array($settings_options['pdf_builder_available_formats']) ?
-                $settings_options['pdf_builder_available_formats'] : ['A3', 'A4', 'A5', 'Letter', 'Legal'];
+            // Formats disponibles (ceux qui sont activés dans les paramètres)
+            $available_formats = [];
+            $format_options = ['A3', 'A4', 'A5', 'Letter', 'Legal'];
+            foreach ($format_options as $format) {
+                $setting_key = 'pdf_builder_canvas_format_' . strtolower($format) . '_enabled';
+                if (($plugin_settings[$setting_key] ?? '1') === '1') { // Par défaut activé
+                    $available_formats[] = $format;
+                }
+            }
+            // Si aucun format n'est activé, utiliser au moins A4
+            if (empty($available_formats)) {
+                $available_formats = ['A4'];
+            }
 
-            // Options disponibles pour les orientations
-            $available_orientations = isset($settings_options['pdf_builder_available_orientations']) && is_array($settings_options['pdf_builder_available_orientations']) ?
-                $settings_options['pdf_builder_available_orientations'] : ['portrait', 'landscape'];
+            // Orientations disponibles
+            $available_orientations = [];
+            $orientation_options = ['portrait', 'landscape'];
+            foreach ($orientation_options as $orientation) {
+                $setting_key = 'pdf_builder_canvas_orientation_' . $orientation . '_enabled';
+                if (($plugin_settings[$setting_key] ?? '1') === '1') { // Par défaut activé
+                    $available_orientations[] = $orientation;
+                }
+            }
+            // Si aucune orientation n'est activée, utiliser au moins portrait
+            if (empty($available_orientations)) {
+                $available_orientations = ['portrait'];
+            }
 
-            // Options disponibles pour les DPI
-            $available_dpi = isset($settings_options['pdf_builder_available_dpi']) && is_array($settings_options['pdf_builder_available_dpi']) ?
-                $settings_options['pdf_builder_available_dpi'] : [72, 96, 150, 300, 600];
+            // Résolutions DPI disponibles
+            $available_dpi = [];
+            $dpi_options = [72, 96, 150, 300, 600];
+            foreach ($dpi_options as $dpi) {
+                $setting_key = 'pdf_builder_canvas_dpi_' . $dpi . '_enabled';
+                if (($plugin_settings[$setting_key] ?? '1') === '1') { // Par défaut activé
+                    $available_dpi[] = $dpi;
+                }
+            }
+            // Si aucune résolution n'est activée, utiliser au moins 96
+            if (empty($available_dpi)) {
+                $available_dpi = [96];
+            }
 
             $settings = array(
                 'id' => $template['id'],
