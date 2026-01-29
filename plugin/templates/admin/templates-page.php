@@ -1233,9 +1233,6 @@ function closeTemplateSettingsModal() {
 function loadTemplateSettings(templateId) {
     
     
-    // Afficher un indicateur de chargement
-    document.querySelector('.template-modal-body').innerHTML = '<div style="text-align: center; padding: 40px;"><div style="font-size: 2rem; margin-bottom: 20px;">⏳</div><p>Chargement des paramètres...</p></div>';
-    
     // Préparer les données AJAX
     var data = {
         action: 'pdf_builder_load_template_settings',
@@ -1254,7 +1251,32 @@ function loadTemplateSettings(templateId) {
                 displayTemplateSettings(response.data.template);
             } else {
                 var errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du chargement des paramètres';
-                document.querySelector('.template-modal-body').innerHTML = '<div style="text-align: center; padding: 40px; color: #dc3545;"><div style="font-size: 2rem; margin-bottom: 20px;">❌</div><p>' + errorMsg + '</p></div>';
+                
+                // Créer une modale d'erreur
+                var modalContent = document.createElement('div');
+                modalContent.className = 'template-modal-content';
+                modalContent.style.cssText = 'background: #fff; border-radius: 12px; padding: 0; max-width: 600px; width: 95%; max-height: 80vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
+                modalContent.innerHTML = `
+                    <div class="template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                        <div>
+                            <h2 style="margin: 0; font-size: 24px; font-weight: 600;">⚙️ Erreur de chargement</h2>
+                            <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Impossible de charger les paramètres</p>
+                        </div>
+                        <button onclick="closeTemplateSettingsModal()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
+                    </div>
+                    <div class="template-modal-body" style="padding: 30px; text-align: center; color: #dc3545;">
+                        <div style="font-size: 2rem; margin-bottom: 20px;">❌</div>
+                        <p>${errorMsg}</p>
+                    </div>
+                    <div class="template-modal-footer" style="display: flex; justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;">
+                        <button onclick="closeTemplateSettingsModal()" class="button button-secondary" style="padding: 10px 20px;">Fermer</button>
+                    </div>
+                `;
+                
+                var modal = document.getElementById('template-settings-modal');
+                modal.innerHTML = '';
+                modal.appendChild(modalContent);
+                modal.style.display = 'flex';
                 
                 // Afficher une notification d'erreur
                 if (typeof window.showErrorNotification !== 'undefined') {
@@ -1264,7 +1286,31 @@ function loadTemplateSettings(templateId) {
         },
         error: function(xhr, status, error) {
             
-            document.querySelector('.template-modal-body').innerHTML = '<div style="text-align: center; padding: 40px; color: #dc3545;"><div style="font-size: 2rem; margin-bottom: 20px;">❌</div><p>Erreur de communication avec le serveur</p></div>';
+            // Créer une modale d'erreur
+            var modalContent = document.createElement('div');
+            modalContent.className = 'template-modal-content';
+            modalContent.style.cssText = 'background: #fff; border-radius: 12px; padding: 0; max-width: 600px; width: 95%; max-height: 80vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
+            modalContent.innerHTML = `
+                <div class="template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <div>
+                        <h2 style="margin: 0; font-size: 24px; font-weight: 600;">⚙️ Erreur de chargement</h2>
+                        <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Impossible de charger les paramètres</p>
+                    </div>
+                    <button onclick="closeTemplateSettingsModal()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
+                </div>
+                <div class="template-modal-body" style="padding: 30px; text-align: center; color: #dc3545;">
+                    <div style="font-size: 2rem; margin-bottom: 20px;">❌</div>
+                    <p>Erreur de communication avec le serveur</p>
+                </div>
+                <div class="template-modal-footer" style="display: flex; justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;">
+                    <button onclick="closeTemplateSettingsModal()" class="button button-secondary" style="padding: 10px 20px;">Fermer</button>
+                </div>
+            `;
+            
+            var modal = document.getElementById('template-settings-modal');
+            modal.innerHTML = '';
+            modal.appendChild(modalContent);
+            modal.style.display = 'flex';
             
             // Afficher une notification d'erreur
             if (typeof window.showErrorNotification !== 'undefined') {
@@ -1277,7 +1323,33 @@ function loadTemplateSettings(templateId) {
 // Fonction pour afficher les paramètres du template dans la modale
 function displayTemplateSettings(template) {
 
-    var content = document.querySelector('.template-modal-body');
+    // Créer la modale complète avec indicateur de chargement
+    var modal = document.getElementById('template-settings-modal');
+    var modalContent = document.createElement('div');
+    modalContent.className = 'template-modal-content';
+    modalContent.style.cssText = 'background: #fff; border-radius: 12px; padding: 0; max-width: 600px; width: 95%; max-height: 80vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
+    modalContent.innerHTML = `
+        <div class="template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <div>
+                <h2 style="margin: 0; font-size: 24px; font-weight: 600;">⚙️ Paramètres du Template</h2>
+                <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Configuration de "${template.name || 'Template'}"</p>
+            </div>
+            <button onclick="closeTemplateSettingsModal()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
+        </div>
+        <div class="template-modal-body" style="padding: 30px; max-height: calc(80vh - 140px); overflow-y: auto;">
+            <div style="text-align: center; padding: 40px;">
+                <div style="font-size: 2rem; margin-bottom: 20px;">⏳</div>
+                <p>Chargement des paramètres...</p>
+            </div>
+        </div>
+    `;
+    
+    modal.innerHTML = '';
+    modal.appendChild(modalContent);
+    modal.style.display = 'flex';
+
+    // Maintenant traiter les données et remplacer le contenu
+    var content = modalContent.querySelector('.template-modal-body');
 
     // Valeurs par défaut depuis les paramètres du canvas
     var canvasFormat = template.canvas_settings?.default_canvas_format || 'A4';
