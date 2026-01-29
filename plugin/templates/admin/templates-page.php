@@ -1478,12 +1478,14 @@ function displayTemplateSettings(template) {
             <div class="settings-field" style="margin-bottom: 20px;">
                 <label for="template-name" style="display: block; font-weight: bold; margin-bottom: 8px; color: #23282d;">📝 Nom du template</label>
                 <input type="text" id="template-name" name="template_name" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s ease;" placeholder="Entrez le nom du template" value="${template.name || ''}">
+                <div style="margin-top: 5px; font-size: 11px; color: #666;">[DEBUG] Valeur insérée: ${template.name || 'VIDE'}</div>
             </div>
 
             <!-- Description du template -->
             <div class="settings-field" style="margin-bottom: 20px;">
                 <label for="template-description" style="display: block; font-weight: bold; margin-bottom: 8px; color: #23282d;">📖 Description</label>
                 <textarea id="template-description" name="template_description" rows="3" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical; transition: border-color 0.3s ease;" placeholder="Entrez une description pour ce template">${template.description || ''}</textarea>
+                <div style="margin-top: 5px; font-size: 11px; color: #666;">[DEBUG] Valeur insérée: ${template.description || 'VIDE'}</div>
             </div>
 
             <!-- Paramètres avancés -->
