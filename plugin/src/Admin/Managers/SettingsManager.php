@@ -872,18 +872,28 @@ class SettingsManager
             $valid_formats = ['A3', 'A4', 'A5', 'Letter', 'Legal', 'Tabloid', 'Executive'];
             $sanitized['pdf_builder_available_formats'] = array_intersect($input['pdf_builder_available_formats'], $valid_formats);
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Sanitized available_formats: ' . implode(', ', $sanitized['pdf_builder_available_formats'])); }
+        } else {
+            // Si aucune checkbox n'est cochée, définir un array vide
+            $sanitized['pdf_builder_available_formats'] = [];
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] No available_formats checkboxes checked, setting empty array'); }
         }
 
         if (isset($input['pdf_builder_available_orientations']) && is_array($input['pdf_builder_available_orientations'])) {
             $valid_orientations = ['portrait', 'landscape'];
             $sanitized['pdf_builder_available_orientations'] = array_intersect($input['pdf_builder_available_orientations'], $valid_orientations);
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Sanitized available_orientations: ' . implode(', ', $sanitized['pdf_builder_available_orientations'])); }
+        } else {
+            $sanitized['pdf_builder_available_orientations'] = [];
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] No available_orientations checkboxes checked, setting empty array'); }
         }
 
         if (isset($input['pdf_builder_available_dpi']) && is_array($input['pdf_builder_available_dpi'])) {
             $valid_dpi = [72, 96, 150, 200, 300, 600, 1200];
             $sanitized['pdf_builder_available_dpi'] = array_map('intval', array_intersect($input['pdf_builder_available_dpi'], $valid_dpi));
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Sanitized available_dpi: ' . implode(', ', $sanitized['pdf_builder_available_dpi'])); }
+        } else {
+            $sanitized['pdf_builder_available_dpi'] = [];
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] No available_dpi checkboxes checked, setting empty array'); }
         }
 
         // Save to custom table instead of wp_options
