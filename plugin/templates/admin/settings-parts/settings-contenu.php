@@ -662,7 +662,7 @@
                                 action: 'pdf_builder_show_notification',
                                 message: message,
                                 type: type,
-                                nonce: '<?php echo \PDF_Builder\Admin\Handlers\NonceManager::createNonce(); ?>'
+                                nonce: '<?php echo wp_create_nonce('pdf_builder_notifications'); ?>'
                             },
                             success: function(response) {
                                 if (response.success) {
