@@ -246,12 +246,8 @@ class PDF_Builder_Notification_Manager {
      * Handler AJAX pour afficher une notification
      */
     public function ajax_show_notification() {
-        // Log pour déboguer
-        error_log('[PDF Builder] ajax_show_notification called');
-
         // Vérifier le nonce spécifique aux notifications
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_notifications')) {
-            error_log('[PDF Builder] ajax_show_notification: Nonce invalide');
             wp_send_json_error('Nonce invalide');
             return;
         }
@@ -260,17 +256,13 @@ class PDF_Builder_Notification_Manager {
         $type = sanitize_text_field($_POST['type'] ?? 'info');
         $duration = intval($_POST['duration'] ?? $this->settings['duration']);
 
-        error_log("[PDF Builder] ajax_show_notification: message='$message', type='$type'");
-
         if (empty($message)) {
-            error_log('[PDF Builder] ajax_show_notification: Message requis');
             wp_send_json_error('Message requis');
             return;
         }
 
         $notification = $this->show_notification($message, $type, ['duration' => $duration]);
 
-        error_log('[PDF Builder] ajax_show_notification: Success');
         wp_send_json_success([
             'notification' => $notification
         ]);

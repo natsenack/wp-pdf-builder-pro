@@ -69,6 +69,13 @@ add_action('plugins_loaded', function() {
  * Fonction principale d'initialisation du plugin
  */
 function pdf_builder_init_plugin() {
+    // Garder contre les initialisations multiples
+    static $initialized = false;
+    if ($initialized) {
+        return;
+    }
+    $initialized = true;
+
     error_log('[DEBUG] PDF Builder: pdf_builder_init_plugin() called');
     $bootstrap = PDF_BUILDER_PLUGIN_DIR . 'bootstrap.php';
     if (file_exists($bootstrap)) {
