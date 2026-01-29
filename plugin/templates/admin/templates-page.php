@@ -782,9 +782,17 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
     outline: none;
 }
 
-</style>
+/* Styles spécifiques pour la modale des paramètres de template */
+#template-settings-modal .canvas-modal-container {
+    min-height: 500px; /* S'assurer qu'il y a assez d'espace pour le contenu et le footer */
+}
 
-<!-- Modal d'upgrade pour templates freemium -->
+#template-settings-modal .canvas-modal-footer {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+</style>
 <div id="upgrade-modal-template" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center;">
     <div class="modal-content" style="background: white; border-radius: 12px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
         <div class="modal-header" style="padding: 20px 30px; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">

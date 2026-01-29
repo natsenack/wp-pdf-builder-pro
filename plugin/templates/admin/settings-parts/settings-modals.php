@@ -576,6 +576,7 @@ function get_canvas_modal_value($key, $default = '') {
     max-width: 90vw;
     max-height: 90vh;
     width: 800px;
+    min-height: 400px; /* Hauteur minimale pour s'assurer qu'il y a de l'espace pour le footer */
     overflow: hidden;
     animation: modalSlideIn 0.3s ease-out;
     border: 1px solid rgba(0, 0, 0, 0.05);
@@ -649,6 +650,7 @@ function get_canvas_modal_value($key, $default = '') {
     overflow-x: hidden;
     background: #ffffff;
     min-height: 0; /* Permet au flex item de shrink */
+    max-height: none; /* Permet au body de prendre l'espace nécessaire */
 }
 
 /* Grille de paramètres harmonieuse */
@@ -776,6 +778,8 @@ function get_canvas_modal_value($key, $default = '') {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
+    flex-shrink: 0; /* Empêche le footer d'être compressé */
+    min-height: 80px; /* Hauteur minimale pour le footer */
 }
 
 .canvas-modal-footer .button {
@@ -787,6 +791,37 @@ function get_canvas_modal_value($key, $default = '') {
     border: none;
     cursor: pointer;
     min-width: 100px;
+}
+
+.canvas-modal-btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    min-width: 100px;
+}
+
+.canvas-modal-btn-secondary {
+    background: #6c757d;
+    color: #ffffff;
+}
+
+.canvas-modal-btn-secondary:hover {
+    background: #5a6268;
+    color: #ffffff;
+}
+
+.canvas-modal-btn-primary {
+    background: #007cba;
+    color: #ffffff;
+}
+
+.canvas-modal-btn-primary:hover {
+    background: #005a87;
+    color: #ffffff;
 }
 
 .canvas-modal-cancel {
