@@ -129,7 +129,15 @@ function pdf_builder_get_option($option_name, $default = false) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
     }
     
-    return \PDF_Builder\Database\Settings_Table_Manager::get_option($option_name, $default);
+    $result = \PDF_Builder\Database\Settings_Table_Manager::get_option($option_name, $default);
+    
+    if (class_exists('PDF_Builder_Logger')) {
+        \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] pdf_builder_get_option called for: ' . $option_name);
+        \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] pdf_builder_get_option result type: ' . gettype($result));
+        \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] pdf_builder_get_option result: ' . print_r($result, true));
+    }
+    
+    return $result;
 }
 
 /**
