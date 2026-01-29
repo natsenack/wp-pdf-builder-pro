@@ -191,7 +191,7 @@ class AdminScriptLoader
             // Localiser les variables AJAX
             \wp_localize_script('pdf-builder-settings-tabs', 'pdfBuilderAjax', [
                 'ajaxurl' => \admin_url('admin-ajax.php'),
-                'nonce' => \wp_create_nonce('pdf_builder_settings')
+                'nonce' => \wp_create_nonce('pdf_builder_ajax')
             ]);
 
             // Définir les paramètres de debug JavaScript UNIQUEMENT pour settings-tabs
