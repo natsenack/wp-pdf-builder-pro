@@ -457,27 +457,52 @@ class PdfBuilderTemplatesAjax
     public function deleteTemplate()
     {
         try {
-// Vérification des permissions
-            if (!\current_user_can('manage_options')) {
-                \wp_send_json_error('Permissions insuffisantes');
+            if (class_exists('PDF_Builder_Logger')) {
+                PDF_Builder_Logger::get_instance()->debug_log("DELETE_TEMPLATE_START - Début de la suppression du template - template_id: " . ($_POST['template_id'] ?? 'not_set') . ", nonce: " . ($_POST['nonce'] ?? 'not_set') . ", user_can: " . (current_user_can('manage_options') ? 'yes' : 'no'));
+            }
+
+// Vérification des permissions - permettre aux utilisateurs connectés de supprimer leurs templates
+            if (!is_user_logged_in()) {
+                if (class_exists('PDF_Builder_Logger')) {
+                    PDF_Builder_Logger::get_instance()->error_log("DELETE_TEMPLATE_ERROR - Utilisateur non connecté");
+                }
+                \wp_send_json_error('Utilisateur non connecté');
             }
 
             // Vérification du nonce
             if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+                if (class_exists('PDF_Builder_Logger')) {
+                    PDF_Builder_Logger::get_instance()->error_log("DELETE_TEMPLATE_ERROR - Nonce invalide - received: " . ($_POST['nonce'] ?? 'not_set'));
+                }
                 \wp_send_json_error('Nonce invalide');
             }
 
             $template_id = intval($_POST['template_id'] ?? 0);
             if (empty($template_id)) {
+                if (class_exists('PDF_Builder_Logger')) {
+                    PDF_Builder_Logger::get_instance()->error_log("DELETE_TEMPLATE_ERROR - ID du template manquant");
+                }
                 \wp_send_json_error('ID du template manquant');
             }
 
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-// Vérifier que le template existe et récupérer son nom
-            $template = $wpdb->get_row($wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
+// Vérifier que le template existe et appartient à l'utilisateur actuel
+            $template = $wpdb->get_row($wpdb->prepare("SELECT id, name, user_id FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
             if (!$template) {
+                if (class_exists('PDF_Builder_Logger')) {
+                    PDF_Builder_Logger::get_instance()->error_log("DELETE_TEMPLATE_ERROR - Template non trouvé - template_id: $template_id");
+                }
                 \wp_send_json_error('Template non trouvé');
+            }
+
+            // Vérifier que l'utilisateur est propriétaire du template ou admin
+            $current_user_id = get_current_user_id();
+            if ($template['user_id'] != $current_user_id && !current_user_can('manage_options')) {
+                if (class_exists('PDF_Builder_Logger')) {
+                    PDF_Builder_Logger::get_instance()->error_log("DELETE_TEMPLATE_ERROR - Permissions insuffisantes - template_user_id: {$template['user_id']}, current_user_id: $current_user_id");
+                }
+                \wp_send_json_error('Permissions insuffisantes');
             }
 
             $template_name = $template['name'];
@@ -485,7 +510,14 @@ class PdfBuilderTemplatesAjax
             // Supprimer le template
             $result = $wpdb->delete($table_templates, array('id' => $template_id), array('%d'));
             if ($result === false) {
+                if (class_exists('PDF_Builder_Logger')) {
+                    PDF_Builder_Logger::get_instance()->error_log("DELETE_TEMPLATE_ERROR - Erreur lors de la suppression du template - template_id: $template_id, db_error: " . $wpdb->last_error);
+                }
                 \wp_send_json_error('Erreur lors de la suppression du template');
+            }
+
+            if (class_exists('PDF_Builder_Logger')) {
+                PDF_Builder_Logger::get_instance()->info_log("DELETE_TEMPLATE_SUCCESS - Template supprimé avec succès - template_id: $template_id, template_name: $template_name");
             }
 // Déclencher le hook de suppression de template
             \do_action('pdf_builder_template_deleted', $template_id, $template_name ?: 'Template #' . $template_id);
@@ -493,6 +525,9 @@ class PdfBuilderTemplatesAjax
                 'message' => 'Template supprimé avec succès'
             ));
         } catch (Exception $e) {
+            if (class_exists('PDF_Builder_Logger')) {
+                PDF_Builder_Logger::get_instance()->error_log("DELETE_TEMPLATE_EXCEPTION - Exception lors de la suppression - template_id: " . ($_POST['template_id'] ?? 'not_set') . ", error: " . $e->getMessage());
+            }
             \wp_send_json_error('Erreur lors de la suppression: ' . $e->getMessage());
         }
     }

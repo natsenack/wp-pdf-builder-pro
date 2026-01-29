@@ -290,7 +290,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                     // Déterminer si c'est un template "en trop" pour les utilisateurs gratuits
                     $is_excess_template = (!$is_premium && $template_counter > 1);
 
-                    echo '<div class="template-card template-type-' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; padding: 20px; background: ' . ($is_excess_template ? '#f8f8f8' : '#fff') . '; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; ' . ($is_excess_template ? 'opacity: 0.6; pointer-events: none;' : 'cursor: pointer;') . ' min-height: 350px; position: relative;" ' . ($is_excess_template ? '' : 'onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';"') . '>';
+                    echo '<div class="template-card template-type-' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; padding: 20px; background: ' . ($is_excess_template ? '#f8f8f8' : '#fff') . '; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; ' . ($is_excess_template ? 'opacity: 0.6;' : 'cursor: pointer;') . ' min-height: 350px; position: relative;" ' . ($is_excess_template ? '' : 'onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';"') . '>';
 
                     // Conteneur pour organiser le contenu de la carte
                     echo '<div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; flex-direction: column; -webkit-flex-direction: column; -moz-flex-direction: column; -ms-flex-direction: column; -o-flex-direction: column; height: 100%;">';
@@ -352,7 +352,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                     if ($is_excess_template) {
                         // Template en trop pour utilisateur gratuit - gros bouton supprimer au centre
                         echo '<div style="flex: 1; text-align: center;">';
-                        echo '<button class="button button-danger" style="width: 100%; padding: 15px; font-size: 18px; background-color: #dc3545; border-color: #dc3545; color: white; pointer-events: auto;" onclick="handleDeleteClick(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Supprimer ce template (limite gratuite dépassée)">🚫 SUPPRIMER</button>';
+                        echo '<button class="button button-danger" style="width: 100%; padding: 15px; font-size: 18px; background-color: #dc3545; border-color: #dc3545; color: white;" onclick="handleDeleteClick(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Supprimer ce template (limite gratuite dépassée)">🚫 SUPPRIMER</button>';
                         echo '</div>';
                     } else {
                         // Boutons normaux
@@ -1136,6 +1136,7 @@ function confirmDeleteTemplate(templateId, templateName) {
         console.log('[DEBUG] pdfBuilderTemplatesNonce:', pdfBuilderTemplatesNonce);
 
         // Utiliser jQuery AJAX au lieu de fetch pour la compatibilité
+        console.log('[DEBUG] Envoi de la requête AJAX...');
         jQuery.ajax({
             url: ajaxurl,
             type: 'POST',
@@ -1157,6 +1158,9 @@ function confirmDeleteTemplate(templateId, templateName) {
             },
             error: function(xhr, status, error) {
                 console.error('[DEBUG] Erreur AJAX:', xhr, status, error);
+                console.error('[DEBUG] Status:', status);
+                console.error('[DEBUG] Error:', error);
+                console.error('[DEBUG] Response text:', xhr.responseText);
                 alert('Erreur lors de la suppression du template: ' + error);
             }
         });
