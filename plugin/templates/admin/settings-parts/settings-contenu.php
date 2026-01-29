@@ -656,7 +656,7 @@
                     function showNotification(message, type) {
                         // Utiliser le système de notification unifié du plugin
                         jQuery.ajax({
-                            url: ajaxurl,
+                            url: pdfBuilderAjax.ajaxurl,
                             type: 'POST',
                             data: {
                                 action: 'pdf_builder_show_notification',
