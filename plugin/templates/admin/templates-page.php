@@ -1370,33 +1370,79 @@ function loadTemplateSettings(templateId) {
 // Fonction pour afficher les paramètres du template dans la modale
 function displayTemplateSettings(template) {
     console.log('[DEBUG] displayTemplateSettings appelée avec:', template);
-    
+
     var content = document.querySelector('.template-modal-body');
-    
+
     // Valeurs par défaut depuis les paramètres du canvas
     var canvasFormat = template.canvas_settings?.default_canvas_format || 'A4';
     var canvasOrientation = template.canvas_settings?.default_canvas_orientation || 'portrait';
     var canvasDpi = template.canvas_settings?.default_canvas_dpi || 96;
-    
-    // Valeurs depuis template_data si elles existent
-    var templateFormat = template.template_data?.canvas_format || canvasFormat;
-    var templateOrientation = template.template_data?.canvas_orientation || canvasOrientation;
-    var templateDpi = template.template_data?.canvas_dpi || canvasDpi;
-    
-    console.log('[DEBUG] Valeurs calculées:', {
-        canvasFormat: canvasFormat,
-        canvasOrientation: canvasOrientation,
-        canvasDpi: canvasDpi,
+
+    // Valeurs depuis template_data - gérer les deux formats (ancien et nouveau)
+    var templateData = template.template_data || {};
+
+    // Déterminer le format des données (ancien: canvasWidth/canvasHeight, nouveau: canvas_format/canvas_orientation)
+    var templateFormat, templateOrientation, templateDpi;
+
+    if (templateData.canvas_format && templateData.canvas_orientation && templateData.canvas_dpi) {
+        // Nouveau format
+        templateFormat = templateData.canvas_format;
+        templateOrientation = templateData.canvas_orientation;
+        templateDpi = templateData.canvas_dpi;
+        console.log('[DEBUG] Utilisation du nouveau format de données');
+    } else if (templateData.canvasWidth && templateData.canvasHeight) {
+        // Ancien format - convertir les dimensions en format et orientation
+        var width = parseFloat(templateData.canvasWidth);
+        var height = parseFloat(templateData.canvasHeight);
+
+        // Déterminer le format basé sur les dimensions (en mm approximatives)
+        if (Math.abs(width - 210) < 10 && Math.abs(height - 297) < 10) {
+            templateFormat = 'A4';
+            templateOrientation = 'portrait';
+        } else if (Math.abs(width - 297) < 10 && Math.abs(height - 210) < 10) {
+            templateFormat = 'A4';
+            templateOrientation = 'landscape';
+        } else if (Math.abs(width - 148) < 10 && Math.abs(height - 210) < 10) {
+            templateFormat = 'A5';
+            templateOrientation = 'portrait';
+        } else if (Math.abs(width - 210) < 10 && Math.abs(height - 148) < 10) {
+            templateFormat = 'A5';
+            templateOrientation = 'landscape';
+        } else if (Math.abs(width - 216) < 10 && Math.abs(height - 279) < 10) { // 8.5*25.4 ≈ 216mm, 11*25.4 ≈ 279mm
+            templateFormat = 'Letter';
+            templateOrientation = 'portrait';
+        } else if (Math.abs(width - 279) < 10 && Math.abs(height - 216) < 10) {
+            templateFormat = 'Letter';
+            templateOrientation = 'landscape';
+        } else {
+            // Format personnalisé ou inconnu - utiliser les valeurs par défaut
+            templateFormat = canvasFormat;
+            templateOrientation = canvasOrientation;
+        }
+
+        // Utiliser le DPI depuis template_data ou la valeur par défaut
+        templateDpi = templateData.canvasDpi || canvasDpi;
+
+        console.log('[DEBUG] Utilisation de l\'ancien format de données - conversion effectuée:', {
+            width: width,
+            height: height,
+            detectedFormat: templateFormat,
+            detectedOrientation: templateOrientation
+        });
+    } else {
+        // Aucune donnée spécifique - utiliser les valeurs par défaut
+        templateFormat = canvasFormat;
+        templateOrientation = canvasOrientation;
+        templateDpi = canvasDpi;
+        console.log('[DEBUG] Aucune donnée canvas trouvée - utilisation des valeurs par défaut');
+    }
+
+    console.log('[DEBUG] Valeurs finales utilisées:', {
         templateFormat: templateFormat,
         templateOrientation: templateOrientation,
         templateDpi: templateDpi,
-        templateData: template.template_data
+        templateData: templateData
     });
-    
-    // Valeurs par défaut depuis les paramètres du canvas
-    var canvasFormat = template.canvas_settings?.default_canvas_format || 'A4';
-    var canvasOrientation = template.canvas_settings?.default_canvas_orientation || 'portrait';
-    var canvasDpi = template.canvas_settings?.default_canvas_dpi || 96;
     
     // Valeurs depuis template_data si elles existent
     var templateFormat = template.template_data?.canvas_format || canvasFormat;
