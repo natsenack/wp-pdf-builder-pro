@@ -157,11 +157,7 @@ class Canvas_Manager
             'enable_keyboard_shortcuts' => ($settings['pdf_builder_canvas_keyboard_shortcuts'] ?? ($defaults['enable_keyboard_shortcuts'] ? '1' : '0')) == '1',
             'canvas_selection_mode' => $settings['pdf_builder_canvas_selection_mode'] ?? $defaults['canvas_selection_mode'],
             'debug_mode' => ($settings['pdf_builder_canvas_debug_mode'] ?? ($defaults['debug_mode'] ? '1' : '0')) == '1',
-            'show_fps' => ($settings['pdf_builder_canvas_show_fps'] ?? ($defaults['show_fps'] ? '1' : '0')) == '1',
-            // Paramètres des options disponibles
-            'available_formats' => $settings['pdf_builder_available_formats'] ?? $defaults['available_formats'],
-            'available_orientations' => $settings['pdf_builder_available_orientations'] ?? $defaults['available_orientations'],
-            'available_dpi' => $settings['pdf_builder_available_dpi'] ?? $defaults['available_dpi']
+            'show_fps' => ($settings['pdf_builder_canvas_show_fps'] ?? ($defaults['show_fps'] ? '1' : '0')) == '1'
         ];
     }
 
@@ -233,11 +229,7 @@ class Canvas_Manager
             'enable_keyboard_shortcuts' => true,
             'canvas_selection_mode' => 'click',
             'debug_mode' => false,
-            'show_fps' => false,
-            // Options disponibles par défaut
-            'available_formats' => ['A3', 'A4', 'A5', 'Letter', 'Legal'],
-            'available_orientations' => ['portrait', 'landscape'],
-            'available_dpi' => [72, 96, 150, 300, 600]
+            'show_fps' => false
         ];
     }
 
