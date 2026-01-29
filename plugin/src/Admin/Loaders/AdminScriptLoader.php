@@ -318,7 +318,6 @@ class AdminScriptLoader
             $this->loadReactEditorScripts($hook);
         }
     }
-    }
 
     /**
      * Charge les scripts spécifiques à l'éditeur React
