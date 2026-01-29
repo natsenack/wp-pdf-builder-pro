@@ -778,8 +778,8 @@ function get_canvas_modal_value($key, $default = '') {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    flex-shrink: 0; /* Empêche le footer d'être compressé */
-    min-height: 80px; /* Hauteur minimale pour le footer */
+    flex-shrink: 0;
+    min-height: 80px;
 }
 
 .canvas-modal-footer .button {

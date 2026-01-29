@@ -551,7 +551,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                     </div>
                 </div>
 
-                <div class="canvas-modal-footer">
+                <div class="canvas-modal-footer template-settings-modal-footer">
                     <div class="template-settings-footer-content">
                         <div class="template-settings-footer-title">
                             <span class="template-settings-icon">⚙️</span>
@@ -805,10 +805,15 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
     justify-content: space-between !important;
     align-items: center !important;
     padding: 20px 32px !important;
+    background: #f8f9fa !important;
+    border-top: 1px solid #e1e5e9 !important;
+    flex-shrink: 0 !important;
+    min-height: 80px !important;
 }
 
 .template-settings-footer-content {
     flex: 1;
+    padding-right: 20px;
 }
 
 .template-settings-footer-title {
@@ -834,6 +839,23 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
 .template-settings-footer-actions {
     display: flex;
     gap: 12px;
+    flex-shrink: 0;
+}
+
+/* Styles spécifiques pour forcer l'affichage du footer */
+.template-settings-modal-footer {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 20px 32px !important;
+    background: #f8f9fa !important;
+    border-top: 1px solid #e1e5e9 !important;
+    flex-shrink: 0 !important;
+    min-height: 80px !important;
+    position: relative !important;
+    z-index: 10 !important;
 }
 </style>
 
