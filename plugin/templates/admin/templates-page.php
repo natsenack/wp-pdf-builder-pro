@@ -1383,10 +1383,10 @@ function displayTemplateSettings(template) {
     var templateOrientation = template.template_data?.canvas_orientation || canvasOrientation;
     var templateDpi = template.template_data?.canvas_dpi || canvasDpi;
     
-    // Options disponibles depuis les paramètres du plugin
-    var availableFormats = template.canvas_settings?.available_formats || ['A4'];
+    // Options disponibles
+    var availableFormats = template.canvas_settings?.available_formats || ['A3', 'A4', 'A5', 'Letter', 'Legal'];
     var availableOrientations = template.canvas_settings?.available_orientations || ['portrait', 'landscape'];
-    var availableDpis = template.canvas_settings?.available_dpi || [96];
+    var availableDpis = template.canvas_settings?.available_dpi || [72, 96, 150, 300, 600];
     
     // Labels pour les options
     var formatOptions = {

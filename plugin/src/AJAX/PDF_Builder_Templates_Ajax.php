@@ -289,36 +289,26 @@ class PdfBuilderTemplatesAjax
             $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::getInstance();
             $canvas_settings = $canvas_manager->getAllSettings();
 
-            // Récupérer les options disponibles depuis les paramètres
-            $available_formats_string = pdf_builder_get_option('pdf_builder_canvas_formats', 'A4');
-            if (is_string($available_formats_string) && strpos($available_formats_string, ',') !== false) {
-                $available_formats = explode(',', $available_formats_string);
-            } elseif (is_array($available_formats_string)) {
-                $available_formats = $available_formats_string;
-            } else {
-                $available_formats = [$available_formats_string];
-            }
-            $available_formats = array_map('strval', $available_formats);
+            // Déterminer les options disponibles selon les paramètres premium et activés
+            $is_premium = defined('PDF_BUILDER_PRO_PREMIUM') && PDF_BUILDER_PRO_PREMIUM;
 
-            $available_orientations_string = pdf_builder_get_option('pdf_builder_canvas_orientations', 'portrait,landscape');
-            if (is_string($available_orientations_string) && strpos($available_orientations_string, ',') !== false) {
-                $available_orientations = explode(',', $available_orientations_string);
-            } elseif (is_array($available_orientations_string)) {
-                $available_orientations = $available_orientations_string;
-            } else {
-                $available_orientations = [$available_orientations_string];
+            // Formats de base (toujours disponibles)
+            $available_formats = ['A4'];
+            if ($is_premium || ($canvas_settings['enable_additional_formats'] ?? true)) {
+                $available_formats = array_merge($available_formats, ['A3', 'A5', 'Letter', 'Legal']);
             }
-            $available_orientations = array_map('strval', $available_orientations);
 
-            $available_dpis_string = pdf_builder_get_option('pdf_builder_canvas_dpi', '72,96,150,300,600');
-            if (is_string($available_dpis_string) && strpos($available_dpis_string, ',') !== false) {
-                $available_dpis = explode(',', $available_dpis_string);
-            } elseif (is_array($available_dpis_string)) {
-                $available_dpis = $available_dpis_string;
-            } else {
-                $available_dpis = [$available_dpis_string];
+            // Orientations (toujours disponibles pour premium, sinon seulement portrait)
+            $available_orientations = ['portrait'];
+            if ($is_premium || ($canvas_settings['enable_landscape'] ?? true)) {
+                $available_orientations[] = 'landscape';
             }
-            $available_dpis = array_map('intval', $available_dpis);
+
+            // Résolutions DPI (base 96, premium pour les autres)
+            $available_dpis = [96];
+            if ($is_premium || ($canvas_settings['enable_high_dpi'] ?? false)) {
+                $available_dpis = array_merge($available_dpis, [72, 150, 300, 600]);
+            }
 
             $settings = array(
                 'id' => $template['id'],
