@@ -1410,10 +1410,25 @@ function displayTemplateSettings(template) {
             </div>
             <button onclick="closeTemplateSettingsModal()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
         </div>
-        <div class="template-modal-body" style="padding: 30px; max-height: calc(80vh - 140px); overflow-y: auto;">
+        <div class="template-modal-body" style="padding: 30px; max-height: calc(80vh - 200px); overflow-y: auto;">
             <div style="text-align: center; padding: 40px;">
                 <div style="font-size: 2rem; margin-bottom: 20px;">⏳</div>
                 <p>Chargement des paramètres...</p>
+            </div>
+        </div>
+        <div class="template-modal-footer template-settings-modal-footer" style="padding: 20px 32px; border-top: 1px solid #e1e5e9; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; min-height: 80px;">
+            <div class="template-settings-footer-content" style="flex: 1; padding-right: 20px;">
+                <div class="template-settings-footer-title" style="font-size: 16px; font-weight: 600; color: #23282d; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+                    <span class="template-settings-icon">⚙️</span>
+                    Paramètres du Template
+                </div>
+                <div class="template-settings-footer-subtitle" style="font-size: 14px; color: #6c757d; font-style: italic;">
+                    Configuration de "Template par défaut"
+                </div>
+            </div>
+            <div class="template-settings-footer-actions" style="display: flex; gap: 12px; flex-shrink: 0;">
+                <button onclick="closeTemplateSettingsModal()" class="canvas-modal-btn canvas-modal-btn-secondary" style="padding: 12px 24px; border-radius: 8px; font-weight: 500; font-size: 14px; border: none; cursor: pointer; min-width: 100px; background: #6c757d; color: #ffffff;">Annuler</button>
+                <button onclick="saveTemplateSettings()" class="canvas-modal-btn canvas-modal-btn-primary" style="padding: 12px 24px; border-radius: 8px; font-weight: 500; font-size: 14px; border: none; cursor: pointer; min-width: 100px; background: #007cba; color: #ffffff;">💾 Enregistrer</button>
             </div>
         </div>
     `;
