@@ -1383,6 +1383,33 @@ function displayTemplateSettings(template) {
     var templateOrientation = template.template_data?.canvas_orientation || canvasOrientation;
     var templateDpi = template.template_data?.canvas_dpi || canvasDpi;
     
+    // Options disponibles depuis les paramètres du plugin
+    var availableFormats = template.canvas_settings?.available_formats || ['A4'];
+    var availableOrientations = template.canvas_settings?.available_orientations || ['portrait', 'landscape'];
+    var availableDpis = template.canvas_settings?.available_dpi || [96];
+    
+    // Labels pour les options
+    var formatOptions = {
+        'A3': 'A3 (297 × 420 mm)',
+        'A4': 'A4 (210 × 297 mm)',
+        'A5': 'A5 (148 × 210 mm)',
+        'Letter': 'Letter (8.5 × 11 pouces)',
+        'Legal': 'Legal (8.5 × 14 pouces)'
+    };
+    
+    var orientationOptions = {
+        'portrait': 'Portrait',
+        'landscape': 'Paysage'
+    };
+    
+    var dpiOptions = {
+        72: '72 DPI (Web - faible qualité)',
+        96: '96 DPI (Écran - qualité moyenne)',
+        150: '150 DPI (Impression - bonne qualité)',
+        300: '300 DPI (Haute qualité)',
+        600: '600 DPI (Qualité professionnelle)'
+    };
+    
     // Créer le formulaire HTML
     content.innerHTML = `
         <form id="template-settings-form">
@@ -1439,12 +1466,12 @@ function displayTemplateSettings(template) {
             <div class="settings-field" style="margin-bottom: 20px;">
                 <label for="template-category" style="display: block; font-weight: bold; margin-bottom: 8px; color: #23282d;">🏷️ Catégorie</label>
                 <select id="template-category" name="template_category" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; background: white; transition: border-color 0.3s ease;">
-                    <option value="facture">🧾 Facture</option>
-                    <option value="devis">📋 Devis</option>
-                    <option value="commande">📦 Commande</option>
-                    <option value="contrat">📑 Contrat</option>
-                    <option value="newsletter">📰 Newsletter</option>
-                    <option value="autre">📄 Autre</option>
+                    <option value="facture" ${template.category === 'facture' ? 'selected' : ''}>🧾 Facture</option>
+                    <option value="devis" ${template.category === 'devis' ? 'selected' : ''}>📋 Devis</option>
+                    <option value="commande" ${template.category === 'commande' ? 'selected' : ''}>📦 Commande</option>
+                    <option value="contrat" ${template.category === 'contrat' ? 'selected' : ''}>📑 Contrat</option>
+                    <option value="newsletter" ${template.category === 'newsletter' ? 'selected' : ''}>📰 Newsletter</option>
+                    <option value="autre" ${template.category === 'autre' ? 'selected' : ''}>📄 Autre</option>
                 </select>
             </div>
 

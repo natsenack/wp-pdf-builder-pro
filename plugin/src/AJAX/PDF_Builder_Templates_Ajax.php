@@ -289,6 +289,37 @@ class PdfBuilderTemplatesAjax
             $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::getInstance();
             $canvas_settings = $canvas_manager->getAllSettings();
 
+            // Récupérer les options disponibles depuis les paramètres
+            $available_formats_string = pdf_builder_get_option('pdf_builder_canvas_formats', 'A4');
+            if (is_string($available_formats_string) && strpos($available_formats_string, ',') !== false) {
+                $available_formats = explode(',', $available_formats_string);
+            } elseif (is_array($available_formats_string)) {
+                $available_formats = $available_formats_string;
+            } else {
+                $available_formats = [$available_formats_string];
+            }
+            $available_formats = array_map('strval', $available_formats);
+
+            $available_orientations_string = pdf_builder_get_option('pdf_builder_canvas_orientations', 'portrait,landscape');
+            if (is_string($available_orientations_string) && strpos($available_orientations_string, ',') !== false) {
+                $available_orientations = explode(',', $available_orientations_string);
+            } elseif (is_array($available_orientations_string)) {
+                $available_orientations = $available_orientations_string;
+            } else {
+                $available_orientations = [$available_orientations_string];
+            }
+            $available_orientations = array_map('strval', $available_orientations);
+
+            $available_dpis_string = pdf_builder_get_option('pdf_builder_canvas_dpi', '72,96,150,300,600');
+            if (is_string($available_dpis_string) && strpos($available_dpis_string, ',') !== false) {
+                $available_dpis = explode(',', $available_dpis_string);
+            } elseif (is_array($available_dpis_string)) {
+                $available_dpis = $available_dpis_string;
+            } else {
+                $available_dpis = [$available_dpis_string];
+            }
+            $available_dpis = array_map('intval', $available_dpis);
+
             $settings = array(
                 'id' => $template['id'],
                 'name' => $template['name'],
@@ -303,9 +334,9 @@ class PdfBuilderTemplatesAjax
                     'default_canvas_format' => $canvas_settings['default_canvas_format'] ?? 'A4',
                     'default_canvas_orientation' => $canvas_settings['default_canvas_orientation'] ?? 'portrait',
                     'default_canvas_dpi' => $canvas_settings['default_canvas_dpi'] ?? 96,
-                    'available_formats' => ['A3', 'A4', 'A5', 'Letter', 'Legal'],
-                    'available_orientations' => ['portrait', 'landscape'],
-                    'available_dpi' => [72, 96, 150, 300, 600]
+                    'available_formats' => $available_formats,
+                    'available_orientations' => $available_orientations,
+                    'available_dpi' => $available_dpis
                 )
             );
 
