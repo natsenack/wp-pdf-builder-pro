@@ -669,20 +669,15 @@
                                     
                                 } else {
                                     
-                        var modalId = modalConfig[category];
-                        if (!modalId) {
-                            console.error('No modalId found for category:', category);
-                            return;
-                        }
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                
+                            }
+                        });
+                    }
 
-                        var modal = document.getElementById(modalId);
-                        if (!modal) {
-                            console.error('Modal not found:', modalId);
-                            return;
-                        }
-
-                        // Collecter les données à sauvegarder
-                        var formData = new FormData();
+                    function applyModalSettings(category) {
                         formData.append('action', 'pdf_builder_save_canvas_modal_settings');
                         formData.append('nonce', '<?php echo \PDF_Builder\Admin\Handlers\NonceManager::createNonce(); ?>');
                         formData.append('category', category);
