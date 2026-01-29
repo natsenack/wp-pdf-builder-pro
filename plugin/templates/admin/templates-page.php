@@ -1324,101 +1324,273 @@ function closeTemplateSettingsModal() {
 
 // Fonction pour charger les paramètres du template via AJAX
 function loadTemplateSettings(templateId) {
-    console.log('[DEBUG] loadTemplateSettings appelée avec templateId:', templateId);
-
-    // Afficher un indicateur de chargement sans remplacer le formulaire
-    var modalBody = document.querySelector('.template-modal-body');
-    if (modalBody) {
-        // Sauvegarder le contenu original du formulaire
-        var originalContent = modalBody.innerHTML;
-
-        // Afficher l'indicateur de chargement
-        modalBody.innerHTML = '<div style="text-align: center; padding: 40px;"><div style="font-size: 2rem; margin-bottom: 20px;">⏳</div><p>Chargement des paramètres...</p></div>';
-
-        // Préparer les données AJAX
-        var data = {
-            action: 'pdf_builder_load_template_settings',
-            template_id: templateId,
-            nonce: pdfBuilderTemplatesNonce
-        };
-
-        console.log('[DEBUG] Envoi requête AJAX avec data:', data);
-
-        // Faire la requête AJAX
-        jQuery.ajax({
-            url: ajaxurl,
-            type: 'POST',
-            data: data,
-            success: function(response) {
-                console.log('[DEBUG] Réponse AJAX reçue:', response);
-
-                if (response.success && response.data && response.data.template) {
-                    // Restaurer le formulaire et remplir les données
-                    modalBody.innerHTML = originalContent;
-                    displayTemplateSettings(response.data.template);
-                } else {
-                    var errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du chargement des paramètres';
-                    console.error('[DEBUG] Erreur dans la réponse:', errorMsg);
-                    modalBody.innerHTML = '<div style="text-align: center; padding: 40px; color: #dc3545;"><div style="font-size: 2rem; margin-bottom: 20px;">❌</div><p>' + errorMsg + '</p></div>';
-
-                    // Afficher une notification d'erreur
-                    if (typeof window.showErrorNotification !== 'undefined') {
-                        window.showErrorNotification('Erreur lors du chargement des paramètres: ' + errorMsg);
-                    }
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('[DEBUG] Erreur AJAX:', xhr, status, error);
-
-                // Restaurer le formulaire en cas d'erreur
-                modalBody.innerHTML = originalContent;
-
-                modalBody.innerHTML = '<div style="text-align: center; padding: 40px; color: #dc3545;"><div style="font-size: 2rem; margin-bottom: 20px;">❌</div><p>Erreur de communication avec le serveur</p></div>';
-
+    
+    
+    // Afficher un indicateur de chargement
+    document.querySelector('.template-modal-body').innerHTML = '<div style="text-align: center; padding: 40px;"><div style="font-size: 2rem; margin-bottom: 20px;">⏳</div><p>Chargement des paramètres...</p></div>';
+    
+    // Préparer les données AJAX
+    var data = {
+        action: 'pdf_builder_load_template_settings',
+        template_id: templateId,
+        nonce: pdfBuilderTemplatesNonce
+    };
+    
+    // Faire la requête AJAX
+    jQuery.ajax({
+        url: ajaxurl,
+        type: 'POST',
+        data: data,
+        success: function(response) {
+            
+            if (response.success && response.data && response.data.template) {
+                displayTemplateSettings(response.data.template);
+            } else {
+                var errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du chargement des paramètres';
+                document.querySelector('.template-modal-body').innerHTML = '<div style="text-align: center; padding: 40px; color: #dc3545;"><div style="font-size: 2rem; margin-bottom: 20px;">❌</div><p>' + errorMsg + '</p></div>';
+                
                 // Afficher une notification d'erreur
                 if (typeof window.showErrorNotification !== 'undefined') {
-                    window.showErrorNotification('Erreur de communication lors du chargement des paramètres');
+                    window.showErrorNotification('Erreur lors du chargement des paramètres: ' + errorMsg);
                 }
             }
-        });
-    } else {
-        console.error('[DEBUG] Élément .template-modal-body non trouvé');
-    }
+        },
+        error: function(xhr, status, error) {
+            
+            document.querySelector('.template-modal-body').innerHTML = '<div style="text-align: center; padding: 40px; color: #dc3545;"><div style="font-size: 2rem; margin-bottom: 20px;">❌</div><p>Erreur de communication avec le serveur</p></div>';
+            
+            // Afficher une notification d'erreur
+            if (typeof window.showErrorNotification !== 'undefined') {
+                window.showErrorNotification('Erreur de communication lors du chargement des paramètres');
+            }
+        }
+    });
 }
 
 // Fonction pour afficher les paramètres du template dans la modale
 function displayTemplateSettings(template) {
-    console.log('[DEBUG] displayTemplateSettings appelée avec:', template);
+    
+    
+    var content = document.querySelector('.template-modal-body');
+    
+    // Valeurs par défaut depuis les paramètres du canvas
+    var canvasFormat = template.canvas_settings?.default_canvas_format || 'A4';
+    var canvasOrientation = template.canvas_settings?.default_canvas_orientation || 'portrait';
+    var canvasDpi = template.canvas_settings?.default_canvas_dpi || 96;
+    
+    // Valeurs depuis template_data si elles existent
+    var templateFormat = template.template_data?.canvas_format || canvasFormat;
+    var templateOrientation = template.template_data?.canvas_orientation || canvasOrientation;
+    var templateDpi = template.template_data?.canvas_dpi || canvasDpi;
+    
+    // Options disponibles depuis les paramètres canvas
+    var availableFormats = template.canvas_settings?.available_formats || ['A3', 'A4', 'A5', 'Letter', 'Legal'];
+    var availableOrientations = template.canvas_settings?.available_orientations || ['portrait', 'landscape'];
+    var availableDpis = template.canvas_settings?.available_dpi || [72, 96, 150, 300, 600];
+    
+    // Options d'affichage pour les selects
+    var formatOptions = {
+        'A3': 'A3 (297 × 420 mm)',
+        'A4': 'A4 (210 × 297 mm)',
+        'A5': 'A5 (148 × 210 mm)',
+        'Letter': 'Letter (8.5 × 11 pouces)',
+        'Legal': 'Legal (8.5 × 14 pouces)'
+    };
+    
+    var orientationOptions = {
+        'portrait': 'Portrait',
+        'landscape': 'Paysage'
+    };
+    
+    var dpiOptions = {
+        72: '72 DPI (Écran)',
+        96: '96 DPI (Web)',
+        150: '150 DPI (Impression)',
+        300: '300 DPI (Haute qualité)',
+        600: '600 DPI (Très haute qualité)'
+    };
+    
+    // Créer le formulaire HTML
+    content.innerHTML = `
+        <form id="template-settings-form">
+            <!-- Nom du template -->
+            <div class="settings-field" style="margin-bottom: 20px;">
+                <label for="template-name" style="display: block; font-weight: bold; margin-bottom: 8px; color: #23282d;">📝 Nom du template</label>
+                <input type="text" id="template-name" name="template_name" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s ease;" placeholder="Entrez le nom du template" value="${template.name || ''}">
+            </div>
 
-    // Remplir les champs du formulaire existant au lieu de remplacer le HTML
-    document.getElementById('settings-template-id').value = template.id || '';
-    document.getElementById('template-name').value = template.name || '';
-    document.getElementById('template-description').value = template.description || '';
+            <!-- Description du template -->
+            <div class="settings-field" style="margin-bottom: 20px;">
+                <label for="template-description" style="display: block; font-weight: bold; margin-bottom: 8px; color: #23282d;">📖 Description</label>
+                <textarea id="template-description" name="template_description" rows="3" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical; transition: border-color 0.3s ease;" placeholder="Entrez une description pour ce template">${template.description || ''}</textarea>
+            </div>
 
-    // Sélectionner la catégorie
-    var categorySelect = document.getElementById('template-category');
-    if (categorySelect && template.category) {
-        categorySelect.value = template.category;
+            <!-- Paramètres avancés -->
+            <div class="settings-section" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 6px; border: 1px solid #e1e8ed;">
+                <h4 style="margin: 0 0 15px 0; color: #23282d; font-size: 14px; font-weight: 600;">⚙️ Paramètres avancés</h4>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <!-- Format de papier -->
+                    <div>
+                        <label for="template-format" style="display: block; font-weight: 600; margin-bottom: 5px; color: #555; font-size: 12px;">📄 FORMAT DE PAPIER</label>
+                        <select id="template-format" name="canvas_format" style="width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; background: white;">
+                        </select>
+                        <div id="template-format-warning" style="margin-top: 5px; color: #dc3545; font-size: 11px; display: none;">
+                            ⚠️ Aucun format configuré dans les paramètres canvas
+                        </div>
+                    </div>
+
+                    <!-- Orientation -->
+                    <div>
+                        <label for="template-orientation" style="display: block; font-weight: 600; margin-bottom: 5px; color: #555; font-size: 12px;">🔄 ORIENTATION</label>
+                        <select id="template-orientation" name="canvas_orientation" style="width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; background: white;">
+                        </select>
+                        <div id="template-orientation-warning" style="margin-top: 5px; color: #dc3545; font-size: 11px; display: none;">
+                            ⚠️ Aucune orientation configurée dans les paramètres canvas
+                        </div>
+                    </div>
+
+                    <!-- Résolution DPI -->
+                    <div style="grid-column: span 2;">
+                        <label for="template-dpi" style="display: block; font-weight: 600; margin-bottom: 5px; color: #555; font-size: 12px;">🎯 RÉSOLUTION (DPI)</label>
+                        <select id="template-dpi" name="canvas_dpi" style="width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; background: white;">
+                        </select>
+                        <div id="template-dpi-warning" style="margin-top: 5px; color: #dc3545; font-size: 11px; display: none;">
+                            ⚠️ Aucune résolution DPI configurée dans les paramètres canvas
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Catégorie du template -->
+            <div class="settings-field" style="margin-bottom: 20px;">
+                <label for="template-category" style="display: block; font-weight: bold; margin-bottom: 8px; color: #23282d;">🏷️ Catégorie</label>
+                <select id="template-category" name="template_category" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; background: white; transition: border-color 0.3s ease;">
+                    <option value="facture" ${template.category === 'facture' ? 'selected' : ''}>🧾 Facture</option>
+                    <option value="devis" ${template.category === 'devis' ? 'selected' : ''}>📋 Devis</option>
+                    <option value="commande" ${template.category === 'commande' ? 'selected' : ''}>📦 Commande</option>
+                    <option value="contrat" ${template.category === 'contrat' ? 'selected' : ''}>📑 Contrat</option>
+                    <option value="newsletter" ${template.category === 'newsletter' ? 'selected' : ''}>📰 Newsletter</option>
+                    <option value="autre" ${template.category === 'autre' ? 'selected' : ''}>📄 Autre</option>
+                </select>
+            </div>
+
+            <!-- Template par défaut -->
+            <div class="settings-field" style="margin-bottom: 20px;">
+                <label style="display: flex; align-items: center; cursor: pointer; font-weight: 600; color: #23282d;">
+                    <input type="checkbox" id="template-is-default" name="is_default" value="1" style="margin-right: 10px; transform: scale(1.2);" ${template.is_default ? 'checked' : ''}>
+                    ⭐ Définir comme template par défaut
+                </label>
+                <p style="margin: 5px 0 0 26px; color: #666; font-size: 12px;">Ce template sera sélectionné par défaut pour ce type de document</p>
+            </div>
+
+            <!-- Informations système (readonly) -->
+            <div class="settings-section" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e1e8ed;">
+                <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">ℹ️ Informations Système</h3>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #666; font-size: 12px;">DATE DE CRÉATION</label>
+                        <span id="template-created-date" style="color: #23282d; font-size: 14px;">${template.created_at ? new Date(template.created_at).toLocaleDateString('fr-FR') : '-'}</span>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #666; font-size: 12px;">DERNIÈRE MODIFICATION</label>
+                        <span id="template-updated-date" style="color: #23282d; font-size: 14px;">${template.updated_at ? new Date(template.updated_at).toLocaleDateString('fr-FR') : '-'}</span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    `;
+    
+    // Remplir le select DPI avec les options disponibles
+    var dpiSelect = document.getElementById('template-dpi');
+    var dpiWarning = document.getElementById('template-dpi-warning');
+    
+    if (dpiSelect) {
+        dpiSelect.innerHTML = ''; // Vider les options existantes
+        
+        if (availableDpis && availableDpis.length > 0) {
+            availableDpis.forEach(function(dpiValue) {
+                if (dpiOptions && dpiOptions[dpiValue]) {
+                    var option = document.createElement('option');
+                    option.value = dpiValue;
+                    option.textContent = dpiOptions[dpiValue];
+                    if (templateDpi == dpiValue) {
+                        option.selected = true;
+                    }
+                    dpiSelect.appendChild(option);
+                }
+            });
+            dpiWarning.style.display = 'none';
+        } else {
+            // Aucune option disponible
+            var option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'Aucune résolution disponible';
+            dpiSelect.appendChild(option);
+            dpiWarning.style.display = 'block';
+        }
     }
 
-    // Checkbox template par défaut
-    var defaultCheckbox = document.getElementById('template-is-default');
-    if (defaultCheckbox) {
-        defaultCheckbox.checked = template.is_default ? true : false;
+    // Remplir le select Format avec les options disponibles
+    var formatSelect = document.getElementById('template-format');
+    var formatWarning = document.getElementById('template-format-warning');
+    
+    if (formatSelect) {
+        formatSelect.innerHTML = ''; // Vider les options existantes
+        
+        if (availableFormats && availableFormats.length > 0) {
+            availableFormats.forEach(function(formatValue) {
+                if (formatOptions && formatOptions[formatValue]) {
+                    var option = document.createElement('option');
+                    option.value = formatValue;
+                    option.textContent = formatOptions[formatValue];
+                    if (templateFormat == formatValue) {
+                        option.selected = true;
+                    }
+                    formatSelect.appendChild(option);
+                }
+            });
+            formatWarning.style.display = 'none';
+        } else {
+            // Aucune option disponible
+            var option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'Aucun format disponible';
+            formatSelect.appendChild(option);
+            formatWarning.style.display = 'block';
+        }
     }
 
-    // Informations système
-    var createdDateSpan = document.getElementById('template-created-date');
-    if (createdDateSpan) {
-        createdDateSpan.textContent = template.created_at ? new Date(template.created_at).toLocaleDateString('fr-FR') : '-';
+    // Remplir le select Orientation avec les options disponibles
+    var orientationSelect = document.getElementById('template-orientation');
+    var orientationWarning = document.getElementById('template-orientation-warning');
+    
+    if (orientationSelect) {
+        orientationSelect.innerHTML = ''; // Vider les options existantes
+        
+        if (availableOrientations && availableOrientations.length > 0) {
+            availableOrientations.forEach(function(orientationValue) {
+                if (orientationOptions && orientationOptions[orientationValue]) {
+                    var option = document.createElement('option');
+                    option.value = orientationValue;
+                    option.textContent = orientationOptions[orientationValue];
+                    if (templateOrientation == orientationValue) {
+                        option.selected = true;
+                    }
+                    orientationSelect.appendChild(option);
+                }
+            });
+            orientationWarning.style.display = 'none';
+        } else {
+            // Aucune option disponible
+            var option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'Aucune orientation disponible';
+            orientationSelect.appendChild(option);
+            orientationWarning.style.display = 'block';
+        }
     }
-
-    var updatedDateSpan = document.getElementById('template-updated-date');
-    if (updatedDateSpan) {
-        updatedDateSpan.textContent = template.updated_at ? new Date(template.updated_at).toLocaleDateString('fr-FR') : '-';
-    }
-
-    console.log('[DEBUG] Champs remplis avec succès');
 }
 
 // Fonction pour sauvegarder les paramètres du template

@@ -467,6 +467,7 @@ class PdfBuilderTemplatesAjax
             }
 
             // Mettre à jour les données du template avec les nouveaux paramètres canvas
+            $template_data['description'] = $template_description;
             $template_data['category'] = $template_category;
             $template_data['canvas_format'] = $canvas_format;
             $template_data['canvas_orientation'] = $canvas_orientation;
