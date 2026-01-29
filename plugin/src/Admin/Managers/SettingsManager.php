@@ -868,9 +868,9 @@ class SettingsManager
         }
 
         // Sanitize les options disponibles (tableaux)
-        if (isset($input['pdf_builder_available_formats']) && is_array($input['pdf_builder_available_formats'])) {
+        if (isset($input['pdf_builder_canvas_formats']) && is_array($input['pdf_builder_canvas_formats'])) {
             $valid_formats = ['A3', 'A4', 'A5', 'Letter', 'Legal', 'Tabloid', 'Executive'];
-            $sanitized['pdf_builder_available_formats'] = array_intersect($input['pdf_builder_available_formats'], $valid_formats);
+            $sanitized['pdf_builder_available_formats'] = array_intersect($input['pdf_builder_canvas_formats'], $valid_formats);
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Sanitized available_formats: ' . implode(', ', $sanitized['pdf_builder_available_formats'])); }
         } else {
             // Si aucune checkbox n'est cochée, définir un array vide
@@ -878,18 +878,18 @@ class SettingsManager
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] No available_formats checkboxes checked, setting empty array'); }
         }
 
-        if (isset($input['pdf_builder_available_orientations']) && is_array($input['pdf_builder_available_orientations'])) {
+        if (isset($input['pdf_builder_canvas_orientations']) && is_array($input['pdf_builder_canvas_orientations'])) {
             $valid_orientations = ['portrait', 'landscape'];
-            $sanitized['pdf_builder_available_orientations'] = array_intersect($input['pdf_builder_available_orientations'], $valid_orientations);
+            $sanitized['pdf_builder_available_orientations'] = array_intersect($input['pdf_builder_canvas_orientations'], $valid_orientations);
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Sanitized available_orientations: ' . implode(', ', $sanitized['pdf_builder_available_orientations'])); }
         } else {
             $sanitized['pdf_builder_available_orientations'] = [];
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] No available_orientations checkboxes checked, setting empty array'); }
         }
 
-        if (isset($input['pdf_builder_available_dpi']) && is_array($input['pdf_builder_available_dpi'])) {
+        if (isset($input['pdf_builder_canvas_dpi']) && is_array($input['pdf_builder_canvas_dpi'])) {
             $valid_dpi = [72, 96, 150, 200, 300, 600, 1200];
-            $sanitized['pdf_builder_available_dpi'] = array_map('intval', array_intersect($input['pdf_builder_available_dpi'], $valid_dpi));
+            $sanitized['pdf_builder_available_dpi'] = array_map('intval', array_intersect($input['pdf_builder_canvas_dpi'], $valid_dpi));
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Sanitized available_dpi: ' . implode(', ', $sanitized['pdf_builder_available_dpi'])); }
         } else {
             $sanitized['pdf_builder_available_dpi'] = [];
