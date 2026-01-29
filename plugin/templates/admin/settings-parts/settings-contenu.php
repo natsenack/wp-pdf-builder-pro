@@ -652,7 +652,6 @@
                         }
                     }
 
-                    // Appliquer les paramètres d'une modal
                     // Fonction utilitaire pour afficher des notifications via le système unifié
                     function showNotification(message, type) {
                         // Utiliser le système de notification unifié du plugin
@@ -663,7 +662,7 @@
                                 action: 'pdf_builder_show_notification',
                                 message: message,
                                 type: type,
-                                nonce: '<?php echo wp_create_nonce("pdf_builder_notifications"); ?>'
+                                nonce: '<?php echo \PDF_Builder\Admin\Handlers\NonceManager::createNonce(); ?>'
                             },
                             success: function(response) {
                                 if (response.success) {
