@@ -847,6 +847,37 @@ function pdf_builder_load_admin_components()
         error_log('[BOOTSTRAP] ERROR: PDF_Builder_Notification_Manager class not found');
     }
 
+    // TEST AJAX HANDLER - AJOUTER UN HANDLER SIMPLE POUR TESTER
+    add_action('wp_ajax_pdf_builder_show_notification', 'pdf_builder_test_notification_handler');
+    add_action('wp_ajax_nopriv_pdf_builder_show_notification', 'pdf_builder_test_notification_handler');
+    
+    function pdf_builder_test_notification_handler() {
+        error_log('[TEST HANDLER] pdf_builder_show_notification called');
+        error_log('[TEST HANDLER] POST data: ' . print_r($_POST, true));
+        
+        // Vérifier le nonce
+        $nonce_valid = wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings') ||
+                      wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax') ||
+                      wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_notifications');
+        
+        if (!$nonce_valid) {
+            error_log('[TEST HANDLER] Nonce invalid');
+            wp_send_json_error('Nonce invalide');
+            return;
+        }
+        
+        $message = sanitize_text_field($_POST['message'] ?? '');
+        $type = sanitize_text_field($_POST['type'] ?? 'info');
+        
+        error_log('[TEST HANDLER] Message: ' . $message . ', Type: ' . $type);
+        
+        wp_send_json_success([
+            'message' => $message,
+            'type' => $type,
+            'test' => true
+        ]);
+    }
+
     // CHARGER LE GESTIONNAIRE DE PRÉFÉRENCES DE L'ÉDITEUR PDF
     // Maintenant chargé automatiquement par autoloader PSR-4
     if (class_exists('PDF_Builder\\Core\\PDFEditorPreferences')) {
