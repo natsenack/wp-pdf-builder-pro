@@ -292,6 +292,20 @@ class PdfBuilderTemplatesAjax
             // Récupérer les paramètres des options disponibles depuis la base de données
             $settings = pdf_builder_get_option('pdf_builder_settings', array());
 
+            // Si les paramètres n'existent pas encore, les initialiser avec les valeurs par défaut
+            if (empty($settings)) {
+                $default_settings = array(
+                    'pdf_builder_available_formats' => ['A3', 'A4', 'A5', 'Letter', 'Legal'],
+                    'pdf_builder_available_orientations' => ['portrait', 'landscape'],
+                    'pdf_builder_available_dpi' => [72, 96, 150, 300, 600]
+                );
+                pdf_builder_update_option('pdf_builder_settings', $default_settings);
+                $settings = $default_settings;
+                if (class_exists('PDF_Builder_Logger')) {
+                    PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Initialized default settings for available options');
+                }
+            }
+
             // Debug logs
             if (class_exists('PDF_Builder_Logger')) {
                 PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Full settings from database: ' . print_r($settings, true));
