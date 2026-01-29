@@ -1204,6 +1204,22 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
     });
 }
 
+function openTemplateSettings(templateId, templateName) {
+    console.log('[DEBUG] openTemplateSettings appelée avec:', templateId, templateName);
+    
+    // Stocker l'ID du template actuel
+    currentTemplateId = templateId;
+    
+    // Mettre à jour le titre du modal
+    document.getElementById('template-settings-title').textContent = 'Configuration de "' + templateName + '"';
+    
+    // Afficher le modal
+    document.getElementById('template-settings-modal').style.display = 'flex';
+    
+    // Charger les paramètres du template
+    loadTemplateSettings(templateId);
+}
+
 function selectPredefinedTemplate(templateSlug) {
     // Rediriger vers l'éditeur avec le template prédéfini sélectionné
     const editorUrl = pdfBuilderAjax.editor_url + '&predefined_template=' + encodeURIComponent(templateSlug);
@@ -1311,7 +1327,7 @@ function loadTemplateSettings(templateId) {
     
     
     // Afficher un indicateur de chargement
-    document.getElementById('template-settings-content').innerHTML = '<div style="text-align: center; padding: 40px;"><div style="font-size: 2rem; margin-bottom: 20px;">⏳</div><p>Chargement des paramètres...</p></div>';
+    document.querySelector('.template-modal-body').innerHTML = '<div style="text-align: center; padding: 40px;"><div style="font-size: 2rem; margin-bottom: 20px;">⏳</div><p>Chargement des paramètres...</p></div>';
     
     // Préparer les données AJAX
     var data = {
@@ -1331,7 +1347,7 @@ function loadTemplateSettings(templateId) {
                 displayTemplateSettings(response.data.template);
             } else {
                 var errorMsg = response.data && response.data.message ? response.data.message : 'Erreur lors du chargement des paramètres';
-                document.getElementById('template-settings-content').innerHTML = '<div style="text-align: center; padding: 40px; color: #dc3545;"><div style="font-size: 2rem; margin-bottom: 20px;">❌</div><p>' + errorMsg + '</p></div>';
+                document.querySelector('.template-modal-body').innerHTML = '<div style="text-align: center; padding: 40px; color: #dc3545;"><div style="font-size: 2rem; margin-bottom: 20px;">❌</div><p>' + errorMsg + '</p></div>';
                 
                 // Afficher une notification d'erreur
                 if (typeof window.showErrorNotification !== 'undefined') {
@@ -1341,7 +1357,7 @@ function loadTemplateSettings(templateId) {
         },
         error: function(xhr, status, error) {
             
-            document.getElementById('template-settings-content').innerHTML = '<div style="text-align: center; padding: 40px; color: #dc3545;"><div style="font-size: 2rem; margin-bottom: 20px;">❌</div><p>Erreur de communication avec le serveur</p></div>';
+            document.querySelector('.template-modal-body').innerHTML = '<div style="text-align: center; padding: 40px; color: #dc3545;"><div style="font-size: 2rem; margin-bottom: 20px;">❌</div><p>Erreur de communication avec le serveur</p></div>';
             
             // Afficher une notification d'erreur
             if (typeof window.showErrorNotification !== 'undefined') {
@@ -1355,7 +1371,7 @@ function loadTemplateSettings(templateId) {
 function displayTemplateSettings(template) {
     
     
-    var content = document.getElementById('template-settings-content');
+    var content = document.querySelector('.template-modal-body');
     
     // Valeurs par défaut depuis les paramètres du canvas
     var canvasFormat = template.canvas_settings?.default_canvas_format || 'A4';
