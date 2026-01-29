@@ -579,6 +579,8 @@ function get_canvas_modal_value($key, $default = '') {
     overflow: hidden;
     animation: modalSlideIn 0.3s ease-out;
     border: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
 }
 
 /* Animations d'entrée */
@@ -642,10 +644,11 @@ function get_canvas_modal_value($key, $default = '') {
 /* Corps du modal */
 .canvas-modal-body {
     padding: 15px;
-    max-height: 65vh;
+    flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
     background: #ffffff;
+    min-height: 0; /* Permet au flex item de shrink */
 }
 
 /* Grille de paramètres harmonieuse */
