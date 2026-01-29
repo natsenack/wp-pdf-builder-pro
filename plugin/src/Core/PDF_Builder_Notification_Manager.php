@@ -246,8 +246,11 @@ class PDF_Builder_Notification_Manager {
      * Handler AJAX pour afficher une notification
      */
     public function ajax_show_notification() {
-        // Vérifier le nonce spécifique aux notifications
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_notifications')) {
+        // Vérifier le nonce (accepter le nonce général ajax ou spécifique aux notifications)
+        $nonce_valid = wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_notifications') || 
+                      wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax');
+        
+        if (!$nonce_valid) {
             wp_send_json_error('Nonce invalide');
             return;
         }
