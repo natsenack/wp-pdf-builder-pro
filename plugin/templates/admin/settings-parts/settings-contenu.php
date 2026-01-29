@@ -662,23 +662,13 @@
                                 action: 'pdf_builder_show_notification',
                                 message: message,
                                 type: type,
-                                nonce: window.pdfBuilderNonce
+                                nonce: '<?php echo \PDF_Builder\Admin\Handlers\NonceManager::createNonce(); ?>'
                             },
                             success: function(response) {
                                 if (response.success) {
                                     
                                 } else {
                                     
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                
-                            }
-                        });
-                    }
-
-                    function applyModalSettings(category) {
-                        console.log('applyModalSettings called with category:', category);
                         var modalId = modalConfig[category];
                         if (!modalId) {
                             console.error('No modalId found for category:', category);
