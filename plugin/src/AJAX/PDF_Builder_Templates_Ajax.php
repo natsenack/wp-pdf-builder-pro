@@ -20,14 +20,14 @@ class PdfBuilderTemplatesAjax
     public function __construct()
     {
         // Actions pour les templates prédéfinis - géré dans predefined-templates-manager.php
-        add_action('wp_ajax_pdf_builder_create_from_predefined', array($this, 'createFromPredefined'));
-        add_action('wp_ajax_pdf_builder_load_predefined_into_editor', array($this, 'loadPredefinedIntoEditor'));
+        \add_action('wp_ajax_pdf_builder_create_from_predefined', array($this, 'createFromPredefined'));
+        \add_action('wp_ajax_pdf_builder_load_predefined_into_editor', array($this, 'loadPredefinedIntoEditor'));
         // Actions pour les templates personnalisés
-        add_action('wp_ajax_pdf_builder_load_template_settings', array($this, 'loadTemplateSettings'));
-        add_action('wp_ajax_pdf_builder_save_template_settings', array($this, 'saveTemplateSettings'));
-        add_action('wp_ajax_pdf_builder_set_default_template', array($this, 'setDefaultTemplate'));
-        add_action('wp_ajax_pdf_builder_delete_template', array($this, 'deleteTemplate'));
-        add_action('wp_ajax_pdf_builder_save_order_status_templates', array($this, 'saveOrderStatusTemplates'));
+        \add_action('wp_ajax_pdf_builder_load_template_settings', array($this, 'loadTemplateSettings'));
+        \add_action('wp_ajax_pdf_builder_save_template_settings', array($this, 'saveTemplateSettings'));
+        \add_action('wp_ajax_pdf_builder_set_default_template', array($this, 'setDefaultTemplate'));
+        \add_action('wp_ajax_pdf_builder_delete_template', array($this, 'deleteTemplate'));
+        \add_action('wp_ajax_pdf_builder_save_order_status_templates', array($this, 'saveOrderStatusTemplates'));
     }
 
     /**
