@@ -289,51 +289,6 @@ class PdfBuilderTemplatesAjax
             $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::getInstance();
             $canvas_settings = $canvas_manager->getAllSettings();
 
-            // Récupérer les paramètres du plugin pour les options disponibles
-            $plugin_settings = pdf_builder_get_option('pdf_builder_settings', array());
-
-            // Formats disponibles (ceux qui sont activés dans les paramètres)
-            $available_formats = [];
-            $format_options = ['A3', 'A4', 'A5', 'Letter', 'Legal'];
-            foreach ($format_options as $format) {
-                $setting_key = 'pdf_builder_canvas_format_' . strtolower($format) . '_enabled';
-                if (($plugin_settings[$setting_key] ?? '1') === '1') { // Par défaut activé
-                    $available_formats[] = $format;
-                }
-            }
-            // Si aucun format n'est activé, utiliser au moins A4
-            if (empty($available_formats)) {
-                $available_formats = ['A4'];
-            }
-
-            // Orientations disponibles
-            $available_orientations = [];
-            $orientation_options = ['portrait', 'landscape'];
-            foreach ($orientation_options as $orientation) {
-                $setting_key = 'pdf_builder_canvas_orientation_' . $orientation . '_enabled';
-                if (($plugin_settings[$setting_key] ?? '1') === '1') { // Par défaut activé
-                    $available_orientations[] = $orientation;
-                }
-            }
-            // Si aucune orientation n'est activée, utiliser au moins portrait
-            if (empty($available_orientations)) {
-                $available_orientations = ['portrait'];
-            }
-
-            // Résolutions DPI disponibles
-            $available_dpi = [];
-            $dpi_options = [72, 96, 150, 300, 600];
-            foreach ($dpi_options as $dpi) {
-                $setting_key = 'pdf_builder_canvas_dpi_' . $dpi . '_enabled';
-                if (($plugin_settings[$setting_key] ?? '1') === '1') { // Par défaut activé
-                    $available_dpi[] = $dpi;
-                }
-            }
-            // Si aucune résolution n'est activée, utiliser au moins 96
-            if (empty($available_dpi)) {
-                $available_dpi = [96];
-            }
-
             $settings = array(
                 'id' => $template['id'],
                 'name' => $template['name'],
@@ -348,9 +303,9 @@ class PdfBuilderTemplatesAjax
                     'default_canvas_format' => $canvas_settings['default_canvas_format'] ?? 'A4',
                     'default_canvas_orientation' => $canvas_settings['default_canvas_orientation'] ?? 'portrait',
                     'default_canvas_dpi' => $canvas_settings['default_canvas_dpi'] ?? 96,
-                    'available_formats' => $available_formats,
-                    'available_orientations' => $available_orientations,
-                    'available_dpi' => $available_dpi
+                    'available_formats' => $canvas_settings['available_formats'] ?? ['A3', 'A4', 'A5', 'Letter', 'Legal'],
+                    'available_orientations' => $canvas_settings['available_orientations'] ?? ['portrait', 'landscape'],
+                    'available_dpi' => $canvas_settings['available_dpi'] ?? [72, 96, 150, 300, 600]
                 )
             );
 

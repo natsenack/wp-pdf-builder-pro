@@ -105,6 +105,14 @@ class SettingsManager
             'pdf_builder_settings',
             'pdf_builder_canvas'
         );
+
+        \add_settings_field(
+            'canvas_available_options',
+            \__('📋 Options Disponibles', 'pdf-builder-pro'),
+            [$this, 'renderCanvasAvailableOptionsField'],
+            'pdf_builder_settings',
+            'pdf_builder_canvas'
+        );
     }
 
 
@@ -859,6 +867,25 @@ class SettingsManager
             if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] Final '$field' = '$final_value'"); }
         }
 
+        // Sanitize les options disponibles (tableaux)
+        if (isset($input['pdf_builder_available_formats']) && is_array($input['pdf_builder_available_formats'])) {
+            $valid_formats = ['A3', 'A4', 'A5', 'Letter', 'Legal', 'Tabloid', 'Executive'];
+            $sanitized['pdf_builder_available_formats'] = array_intersect($input['pdf_builder_available_formats'], $valid_formats);
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Sanitized available_formats: ' . implode(', ', $sanitized['pdf_builder_available_formats'])); }
+        }
+
+        if (isset($input['pdf_builder_available_orientations']) && is_array($input['pdf_builder_available_orientations'])) {
+            $valid_orientations = ['portrait', 'landscape'];
+            $sanitized['pdf_builder_available_orientations'] = array_intersect($input['pdf_builder_available_orientations'], $valid_orientations);
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Sanitized available_orientations: ' . implode(', ', $sanitized['pdf_builder_available_orientations'])); }
+        }
+
+        if (isset($input['pdf_builder_available_dpi']) && is_array($input['pdf_builder_available_dpi'])) {
+            $valid_dpi = [72, 96, 150, 200, 300, 600, 1200];
+            $sanitized['pdf_builder_available_dpi'] = array_map('intval', array_intersect($input['pdf_builder_available_dpi'], $valid_dpi));
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Sanitized available_dpi: ' . implode(', ', $sanitized['pdf_builder_available_dpi'])); }
+        }
+
         // Save to custom table instead of wp_options
         pdf_builder_update_option('pdf_builder_settings', $sanitized);
 
@@ -932,6 +959,76 @@ class SettingsManager
                 );
             }
         }
+    }
+
+    /**
+     * Champ options disponibles canvas
+     */
+    public function renderCanvasAvailableOptionsField()
+    {
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
+
+        // Formats disponibles
+        $available_formats = $settings['pdf_builder_available_formats'] ?? ['A3', 'A4', 'A5', 'Letter', 'Legal'];
+        $all_formats = ['A3', 'A4', 'A5', 'Letter', 'Legal', 'Tabloid', 'Executive'];
+
+        // Orientations disponibles
+        $available_orientations = $settings['pdf_builder_available_orientations'] ?? ['portrait', 'landscape'];
+        $all_orientations = ['portrait', 'landscape'];
+
+        // DPI disponibles
+        $available_dpi = $settings['pdf_builder_available_dpi'] ?? [72, 96, 150, 300, 600];
+        $all_dpi = [72, 96, 150, 200, 300, 600, 1200];
+
+        echo '<div style="max-width: 600px;">';
+
+        // Formats
+        echo '<div style="margin-bottom: 20px;">';
+        echo '<h4 style="margin: 0 0 10px 0; color: #23282d;">📄 Formats de papier disponibles</h4>';
+        echo '<div style="display: flex; flex-wrap: wrap; gap: 10px;">';
+        foreach ($all_formats as $format) {
+            $checked = in_array($format, $available_formats) ? 'checked' : '';
+            echo '<label style="display: flex; align-items: center; margin: 0;">';
+            echo '<input type="checkbox" name="pdf_builder_available_formats[]" value="' . esc_attr($format) . '" ' . $checked . ' style="margin-right: 5px;">';
+            echo esc_html($format);
+            echo '</label>';
+        }
+        echo '</div>';
+        echo '<p class="description">Sélectionnez les formats de papier que les utilisateurs peuvent choisir pour leurs templates.</p>';
+        echo '</div>';
+
+        // Orientations
+        echo '<div style="margin-bottom: 20px;">';
+        echo '<h4 style="margin: 0 0 10px 0; color: #23282d;">🔄 Orientations disponibles</h4>';
+        echo '<div style="display: flex; flex-wrap: wrap; gap: 10px;">';
+        foreach ($all_orientations as $orientation) {
+            $checked = in_array($orientation, $available_orientations) ? 'checked' : '';
+            $label = $orientation === 'portrait' ? 'Portrait' : 'Paysage';
+            echo '<label style="display: flex; align-items: center; margin: 0;">';
+            echo '<input type="checkbox" name="pdf_builder_available_orientations[]" value="' . esc_attr($orientation) . '" ' . $checked . ' style="margin-right: 5px;">';
+            echo esc_html($label);
+            echo '</label>';
+        }
+        echo '</div>';
+        echo '<p class="description">Sélectionnez les orientations que les utilisateurs peuvent choisir pour leurs templates.</p>';
+        echo '</div>';
+
+        // DPI
+        echo '<div style="margin-bottom: 20px;">';
+        echo '<h4 style="margin: 0 0 10px 0; color: #23282d;">🎯 Résolutions DPI disponibles</h4>';
+        echo '<div style="display: flex; flex-wrap: wrap; gap: 10px;">';
+        foreach ($all_dpi as $dpi) {
+            $checked = in_array($dpi, $available_dpi) ? 'checked' : '';
+            echo '<label style="display: flex; align-items: center; margin: 0;">';
+            echo '<input type="checkbox" name="pdf_builder_available_dpi[]" value="' . esc_attr($dpi) . '" ' . $checked . ' style="margin-right: 5px;">';
+            echo esc_html($dpi) . ' DPI';
+            echo '</label>';
+        }
+        echo '</div>';
+        echo '<p class="description">Sélectionnez les résolutions DPI que les utilisateurs peuvent choisir pour leurs templates.</p>';
+        echo '</div>';
+
+        echo '</div>';
     }
 }
 
