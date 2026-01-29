@@ -654,25 +654,55 @@
 
                     // Fonction utilitaire pour afficher des notifications via le système unifié
                     function showNotification(message, type) {
+                        console.log('[DEBUG] showNotification called with:', { message: message, type: type });
+                        
+                        // Vérifier si pdfBuilderAjax est disponible
+                        if (typeof pdfBuilderAjax === 'undefined') {
+                            console.error('[ERROR] pdfBuilderAjax is not defined!');
+                            return;
+                        }
+                        
+                        console.log('[DEBUG] pdfBuilderAjax:', pdfBuilderAjax);
+                        
+                        var ajaxData = {
+                            action: 'pdf_builder_show_notification',
+                            message: message,
+                            type: type,
+                            nonce: pdfBuilderAjax.nonce
+                        };
+                        
+                        console.log('[DEBUG] Sending AJAX data:', ajaxData);
+                        
                         // Utiliser le système de notification unifié du plugin
                         jQuery.ajax({
                             url: pdfBuilderAjax.ajaxurl,
                             type: 'POST',
-                            data: {
-                                action: 'pdf_builder_show_notification',
-                                message: message,
-                                type: type,
-                                nonce: pdfBuilderAjax.nonce
-                            },
+                            data: ajaxData,
                             success: function(response) {
+                                console.log('[DEBUG] Notification AJAX success:', response);
                                 if (response.success) {
-                                    
+                                    console.log('[SUCCESS] Notification displayed successfully');
                                 } else {
-                                    
+                                    console.warn('[WARN] Notification response not successful:', response);
                                 }
                             },
                             error: function(xhr, status, error) {
+                                console.error('[ERROR] Notification AJAX error:', {
+                                    status: xhr.status,
+                                    statusText: xhr.statusText,
+                                    responseText: xhr.responseText,
+                                    readyState: xhr.readyState,
+                                    statusCode: status,
+                                    error: error
+                                });
                                 
+                                // Essayer de parser la réponse JSON si possible
+                                try {
+                                    var responseJson = JSON.parse(xhr.responseText);
+                                    console.error('[ERROR] Parsed error response:', responseJson);
+                                } catch (e) {
+                                    console.error('[ERROR] Could not parse error response as JSON:', xhr.responseText);
+                                }
                             }
                         });
                     }
