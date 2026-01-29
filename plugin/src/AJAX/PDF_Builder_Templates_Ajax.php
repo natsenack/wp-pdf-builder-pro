@@ -456,6 +456,9 @@ class PdfBuilderTemplatesAjax
      */
     public function deleteTemplate()
     {
+        // Log immédiat pour vérifier que la fonction est appelée
+        error_log('[PDF Builder] deleteTemplate() appelée avec POST: ' . print_r($_POST, true));
+
         try {
             if (class_exists('PDF_Builder_Logger')) {
                 PDF_Builder_Logger::get_instance()->debug_log("DELETE_TEMPLATE_START - Début de la suppression du template - template_id: " . ($_POST['template_id'] ?? 'not_set') . ", nonce: " . ($_POST['nonce'] ?? 'not_set') . ", user_can: " . (current_user_can('manage_options') ? 'yes' : 'no'));
