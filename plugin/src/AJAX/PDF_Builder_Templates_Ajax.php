@@ -310,6 +310,7 @@ class PdfBuilderTemplatesAjax
             );
 
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Settings to return: ' . print_r($settings, true)); }
+            error_log('[DEBUG] PDF Builder: Settings to return: ' . print_r($settings, true));
             \wp_send_json_success(array('template' => $settings));
         } catch (Exception $e) {
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Exception in loadTemplateSettings: ' . $e->getMessage()); }

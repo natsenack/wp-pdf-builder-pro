@@ -1369,9 +1369,29 @@ function loadTemplateSettings(templateId) {
 
 // Fonction pour afficher les paramètres du template dans la modale
 function displayTemplateSettings(template) {
-    
+    console.log('[DEBUG] displayTemplateSettings appelée avec:', template);
     
     var content = document.querySelector('.template-modal-body');
+    
+    // Valeurs par défaut depuis les paramètres du canvas
+    var canvasFormat = template.canvas_settings?.default_canvas_format || 'A4';
+    var canvasOrientation = template.canvas_settings?.default_canvas_orientation || 'portrait';
+    var canvasDpi = template.canvas_settings?.default_canvas_dpi || 96;
+    
+    // Valeurs depuis template_data si elles existent
+    var templateFormat = template.template_data?.canvas_format || canvasFormat;
+    var templateOrientation = template.template_data?.canvas_orientation || canvasOrientation;
+    var templateDpi = template.template_data?.canvas_dpi || canvasDpi;
+    
+    console.log('[DEBUG] Valeurs calculées:', {
+        canvasFormat: canvasFormat,
+        canvasOrientation: canvasOrientation,
+        canvasDpi: canvasDpi,
+        templateFormat: templateFormat,
+        templateOrientation: templateOrientation,
+        templateDpi: templateDpi,
+        templateData: template.template_data
+    });
     
     // Valeurs par défaut depuis les paramètres du canvas
     var canvasFormat = template.canvas_settings?.default_canvas_format || 'A4';
