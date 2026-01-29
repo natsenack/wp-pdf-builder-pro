@@ -52,13 +52,10 @@ class AdminScriptLoader
      */
     public function loadAdminScripts($hook = null)
     {
-        error_log('[DEBUG] PDF Builder AdminScriptLoader: loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url'));
-        error_log('[DEBUG] PDF Builder AdminScriptLoader: GET params: ' . print_r($_GET, true));
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url')); }
 
         // AJOUTER UN SCRIPT DE TEST AU DÉBUT, PEU IMPORTE LA CONDITION
         wp_add_inline_script('jquery', 'console.log("=== PDF BUILDER TEST SCRIPT LOADED AT START ==="); console.log("Timestamp:", Date.now()); console.log("Location:", window.location.href); console.log("Hook:", "' . $hook . '");', 'before');
-        error_log('[DEBUG] PDF Builder AdminScriptLoader: TEST SCRIPT ADDED AT START');
 
         // Ajouter un filtre pour corriger les templates Elementor qui sont chargés comme des scripts JavaScript
         // Appliquer toujours, pas seulement sur les pages PDF Builder
@@ -213,7 +210,6 @@ class AdminScriptLoader
 
         // Scripts de l'API Preview 1.4 - seulement si les fichiers existent
         $preview_client_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-preview-api-client.min.js';
-        error_log('[DEBUG] PDF Builder AdminScriptLoader: Checking if preview client exists: ' . $preview_client_js . ' - exists: ' . (file_exists($preview_client_js) ? 'YES' : 'NO'));
         if (file_exists($preview_client_js)) {
             // AJOUTER UN SCRIPT DE TEST TRÈS SIMPLE
             wp_add_inline_script('jquery', 'console.log("=== PDF BUILDER TEST SCRIPT LOADED ==="); console.log("Timestamp:", Date.now()); console.log("Location:", window.location.href);', 'before');
@@ -232,7 +228,6 @@ class AdminScriptLoader
             wp_add_inline_script('jquery', 'window.pdfBuilderData = ' . wp_json_encode($preview_data) . '; window.pdfBuilderNonce = "' . \wp_create_nonce('pdf_builder_order_actions') . '";', 'after');
             
             \wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-api-client.min.js', ['jquery'], $version_param, true);
-            error_log('[DEBUG] PDF Builder AdminScriptLoader: ENQUEUED pdf-preview-api-client script');
             
             // Debug: Add script to check if variables are defined after the main script
             wp_add_inline_script('pdf-preview-api-client', '
@@ -250,10 +245,8 @@ class AdminScriptLoader
             ');
             
             $preview_integration_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-preview-integration.min.js';
-            error_log('[DEBUG] PDF Builder AdminScriptLoader: Checking if preview integration exists: ' . $preview_integration_js . ' - exists: ' . (file_exists($preview_integration_js) ? 'YES' : 'NO'));
             if (file_exists($preview_integration_js)) {
                 \wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-integration.min.js', ['pdf-preview-api-client'], $version_param, true);
-                error_log('[DEBUG] PDF Builder AdminScriptLoader: ENQUEUED pdf-preview-integration script');
 
                 // Localize ajaxurl for integration script
                 \wp_localize_script('pdf-preview-integration', 'pdfBuilderAjax', [
@@ -274,7 +267,6 @@ class AdminScriptLoader
 
         // Scripts pour l'éditeur React
         if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor') {
-            error_log('[DEBUG] PDF Builder AdminScriptLoader: CONDITION 1 MET - page=pdf-builder-react-editor, calling loadReactEditorScripts');
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Loading React editor scripts for page: ' . $_GET['page']); }
             $this->loadReactEditorScripts($hook);
 
@@ -317,18 +309,15 @@ class AdminScriptLoader
                 <?php
             });
         } else {
-            error_log('[DEBUG] PDF Builder AdminScriptLoader: CONDITION 1 NOT MET - page=' . (isset($_GET['page']) ? $_GET['page'] : 'NOT SET') . ', hook=' . ($hook ?: 'null'));
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] NOT loading React editor scripts, page is: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set') . ', hook: ' . $hook); }
         }
 
         // Charger aussi les scripts React si on est sur une page qui contient "react-editor" dans l'URL
         if (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'pdf-builder-react-editor') !== false) {
-            error_log('[DEBUG] PDF Builder AdminScriptLoader: CONDITION 2 MET - REQUEST_URI contains pdf-builder-react-editor, calling loadReactEditorScripts');
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Loading React editor scripts from REQUEST_URI: ' . $_SERVER['REQUEST_URI']); }
             $this->loadReactEditorScripts($hook);
-        } else {
-            error_log('[DEBUG] PDF Builder AdminScriptLoader: CONDITION 2 NOT MET - REQUEST_URI=' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'NOT SET'));
         }
+    }
     }
 
     /**
@@ -336,8 +325,6 @@ class AdminScriptLoader
      */
     private function loadReactEditorScripts($hook = null)
     {
-        error_log('[DEBUG] PDF Builder AdminScriptLoader: loadReactEditorScripts STARTED at ' . date('Y-m-d H:i:s') . ' - HOOK: ' . ($hook ?: 'null'));
-        error_log('[DEBUG] PDF Builder AdminScriptLoader: 🚀🚀🚀 REACT EDITOR SCRIPTS LOADING STARTED 🚀🚀🚀');
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] loadReactEditorScripts called at ' . date('Y-m-d H:i:s') . ' for page: ' . (isset($_GET['page']) ? $_GET['page'] : 'unknown')); }
 
         // VÉRIFICATION DES FICHIERS AVANT CHARGEMENT
@@ -347,12 +334,6 @@ class AdminScriptLoader
         $react_main_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-react.min.js';
         $react_init_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-react-init.min.js';
 
-        error_log('[DEBUG] PDF Builder AdminScriptLoader: FILE CHECKS:');
-        error_log('[DEBUG] PDF Builder AdminScriptLoader: - ajax-throttle.min.js: ' . (file_exists($throttle_file) ? 'EXISTS' : 'MISSING') . ' at ' . $throttle_file);
-        error_log('[DEBUG] PDF Builder AdminScriptLoader: - react-vendor.min.js: ' . (file_exists($react_vendors_file) ? 'EXISTS' : 'MISSING') . ' at ' . $react_vendors_file);
-        error_log('[DEBUG] PDF Builder AdminScriptLoader: - runtime.min.js: ' . (file_exists($runtime_file) ? 'EXISTS' : 'MISSING') . ' at ' . $runtime_file);
-        error_log('[DEBUG] PDF Builder AdminScriptLoader: - pdf-builder-react.min.js: ' . (file_exists($react_main_file) ? 'EXISTS' : 'MISSING') . ' at ' . $react_main_file);
-        error_log('[DEBUG] PDF Builder AdminScriptLoader: - pdf-builder-react-init.min.js: ' . (file_exists($react_init_file) ? 'EXISTS' : 'MISSING') . ' at ' . $react_init_file);
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set')); }
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Current URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set')); }
 
@@ -742,10 +723,8 @@ class AdminScriptLoader
 
         // React initialization script - initializes PDFBuilderReact component
         $react_init_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-init.min.js' . $random_param;
-        error_log('[DEBUG] PDF Builder AdminScriptLoader: ENQUEUING pdf-builder-react-initializer with URL: ' . $react_init_url);
         \wp_enqueue_script('pdf-builder-react-initializer', $react_init_url, ['pdf-builder-react-main'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react-initializer', 'type', 'text/javascript');
-        error_log('[DEBUG] PDF Builder AdminScriptLoader: AFTER ENQUEUE - checking if script is registered: ' . (wp_script_is('pdf-builder-react-initializer', 'enqueued') ? 'YES' : 'NO'));
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-initializer'); }
 
         // Scripts de l'API Preview
@@ -879,7 +858,7 @@ class AdminScriptLoader
             })();
         ');
 
-        error_log('[DEBUG] PDF Builder AdminScriptLoader: loadReactEditorScripts COMPLETED - all React scripts should be enqueued now');
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] loadReactEditorScripts completed successfully'); }
     }
 
     /**

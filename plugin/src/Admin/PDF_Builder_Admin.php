@@ -108,16 +108,10 @@ class PdfBuilderAdminNew
 
         // Initialiser les managers spécialisés avec autoloader PSR-4
         $this->settings_manager = new \PDF_Builder\Managers\PDF_Builder_Settings_Manager($this);
-        if ($this->settings_manager) {
-            error_log('[DEBUG] PDF Builder: SettingsManager instantiated successfully');
-        } else {
-            error_log('[ERROR] PDF Builder: SettingsManager instantiation failed');
-        }
 
         // Initialiser le template manager
         if (class_exists('PDF_Builder\Managers\PDF_Builder_Template_Manager')) {
             $this->template_manager = new \PDF_Builder\Managers\PDF_Builder_Template_Manager($this);
-            error_log('[DEBUG] PDF Builder: Template Manager instantiated successfully');
         } else {
             error_log('[ERROR] PDF Builder: PDF_Builder_Template_Manager class not found');
         }
@@ -129,9 +123,7 @@ class PdfBuilderAdminNew
         // Try-catch pour la création du template_processor
         try {
             $this->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this);
-            error_log('[DEBUG] PDF Builder: TemplateProcessor created successfully');
         } catch (Exception $e) {
-            error_log('[DEBUG] PDF Builder: TemplateProcessor creation failed: ' . $e->getMessage());
             $this->template_processor = null;
         }
 
@@ -166,11 +158,6 @@ class PdfBuilderAdminNew
 
         // Initialiser les nouveaux services et loaders
         $this->script_loader = new \PDF_Builder\Admin\Loaders\AdminScriptLoader($this);
-        if ($this->script_loader) {
-            error_log('[DEBUG] PDF Builder Admin: AdminScriptLoader instantiated successfully');
-        } else {
-            error_log('[ERROR] PDF Builder Admin: AdminScriptLoader instantiation failed');
-        }
         $this->style_builder = new \PDF_Builder\Admin\Builders\StyleBuilder();
         $this->table_renderer = new \PDF_Builder\Admin\Renderers\TableRenderer();
         $this->react_transformer = new \PDF_Builder\Admin\Transformers\ReactDataTransformer();
@@ -810,22 +797,16 @@ class PdfBuilderAdminNew
      */
     private function initHooks()
     {
-        error_log('[DEBUG] PDF Builder: initHooks() called');
-
         // Toujours enregistrer le hook admin_menu, même en dehors du contexte admin
         // car WordPress l'appelle pendant la construction du menu
         \add_action('admin_menu', [$this, 'addAdminMenu']);
-        error_log('[DEBUG] PDF Builder: admin_menu hook registered');
 
         // N'enregistrer les autres hooks admin que si nécessaire
         $is_admin_or_pdf_ajax = is_admin() || (isset($_REQUEST['action']) && strpos($_REQUEST['action'], 'pdf_builder') !== false);
 
         if (!$is_admin_or_pdf_ajax) {
-            error_log('[DEBUG] PDF Builder: Not in admin context, skipping other hooks');
             return; // Ne pas enregistrer les autres hooks si pas dans l'admin
         }
-
-        error_log('[DEBUG] PDF Builder: Registering admin hooks');
 
         // Enregistrer les paramètres
         \add_action('admin_init', array($this, 'register_settings'));
@@ -1008,28 +989,17 @@ class PdfBuilderAdminNew
      */
     public function addAdminMenu()
     {
-        error_log('[DEBUG] PDF Builder: addAdminMenu() method called');
-
         // Vérifier les permissions de l'utilisateur actuel
         $current_user = \wp_get_current_user();
         $user_id = $current_user ? $current_user->ID : 'null';
         $user_roles = $current_user ? implode(',', $current_user->roles) : 'none';
-        error_log('[DEBUG] PDF Builder: Current user ID: ' . $user_id . ', roles: ' . $user_roles);
 
         // Vérifier la capacité manage_options
         $has_manage_options = \current_user_can('manage_options');
-        error_log('[DEBUG] PDF Builder: User has manage_options capability: ' . ($has_manage_options ? 'YES' : 'NO'));
 
         if (!$has_manage_options) {
-            error_log('[DEBUG] PDF Builder: User does not have manage_options capability, skipping menu creation');
             return;
         }
-
-        error_log('[DEBUG] PDF Builder: Adding admin menu...');
-
-        // Menu principal avec icône distinctive - position remontée
-        $menu_result = add_menu_page(__('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'), __('PDF Builder', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-pro', [$this, 'adminPage'], 'dashicons-pdf', 25);
-        error_log('[DEBUG] PDF Builder: add_menu_page result: ' . ($menu_result ? 'SUCCESS' : 'FAILED'));
 
         // Page d'accueil (sous-menu principal masqué)
         \add_submenu_page(

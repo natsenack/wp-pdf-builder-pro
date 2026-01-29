@@ -5,14 +5,9 @@
  * Chargement différé des fonctionnalités du plugin
  */
 
-error_log('[DEBUG] PDF Builder: bootstrap.php loaded');
-
-// Empêcher l'accès direct (sauf pour les tests)
 if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit('Direct access not allowed');
 }
-
-// Le débogage est déjà configuré dans wp-config.php
 
 // ========================================================================
 // ✅ CHARGEMENT DE L'AUTOLOADER COMPOSER

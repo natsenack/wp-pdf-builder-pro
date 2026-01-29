@@ -37,7 +37,6 @@ add_action('plugins_loaded', function() {
     if (file_exists($autoloader_file)) {
         require_once $autoloader_file;
         \PDF_Builder\Core\PdfBuilderAutoloader::init(PDF_BUILDER_PLUGIN_DIR);
-        error_log('[DEBUG] PDF Builder: Custom autoloader initialized successfully');
     } else {
         error_log('[ERROR] PDF Builder: Custom autoloader file not found: ' . $autoloader_file);
     }
@@ -46,7 +45,6 @@ add_action('plugins_loaded', function() {
         $admin_file = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
         if (file_exists($admin_file)) {
             require_once $admin_file;
-            error_log('[DEBUG] PDF Builder: Admin class loaded successfully');
         } else {
             error_log('[ERROR] PDF Builder: Admin class file not found: ' . $admin_file);
         }
@@ -56,7 +54,6 @@ add_action('plugins_loaded', function() {
     if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
         try {
             \PDF_Builder\Admin\PdfBuilderAdminNew::getInstance();
-            error_log('[DEBUG] PDF Builder: Admin class instantiated successfully');
         } catch (Exception $e) {
             error_log('[ERROR] PDF Builder: Failed to instantiate admin class: ' . $e->getMessage());
         }
@@ -76,12 +73,9 @@ function pdf_builder_init_plugin() {
     }
     $initialized = true;
 
-    error_log('[DEBUG] PDF Builder: pdf_builder_init_plugin() called');
     $bootstrap = PDF_BUILDER_PLUGIN_DIR . 'bootstrap.php';
     if (file_exists($bootstrap)) {
-        error_log('[DEBUG] PDF Builder: Loading bootstrap.php');
         require_once $bootstrap;
-        error_log('[DEBUG] PDF Builder: Bootstrap loaded successfully');
     } else {
         error_log('[ERROR] PDF Builder: bootstrap.php not found at: ' . $bootstrap);
     }
