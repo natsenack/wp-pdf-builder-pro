@@ -297,6 +297,13 @@ class PdfBuilderTemplatesAjax
             $available_orientations = $settings['pdf_builder_available_orientations'] ?? ['portrait', 'landscape'];
             $available_dpi = $settings['pdf_builder_available_dpi'] ?? [72, 96, 150, 300, 600];
 
+            // Debug logs
+            if (class_exists('PDF_Builder_Logger')) {
+                PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Available formats from settings: ' . print_r($available_formats, true));
+                PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Available orientations from settings: ' . print_r($available_orientations, true));
+                PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Available DPI from settings: ' . print_r($available_dpi, true));
+            }
+
             $settings = array(
                 'id' => $template['id'],
                 'name' => $template['name'],
