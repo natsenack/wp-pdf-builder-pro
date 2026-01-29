@@ -1207,16 +1207,7 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
 function openTemplateSettings(templateId, templateName) {
     console.log('[DEBUG] openTemplateSettings appelée avec:', templateId, templateName);
     
-    // Stocker l'ID du template actuel
-    currentTemplateId = templateId;
-    
-    // Mettre à jour le titre du modal
-    document.getElementById('template-settings-title').textContent = 'Configuration de "' + templateName + '"';
-    
-    // Afficher le modal
-    document.getElementById('template-settings-modal').style.display = 'flex';
-    
-    // Charger les paramètres du template
+    // Ouvrir la modale et charger les paramètres
     loadTemplateSettings(templateId);
 }
 
@@ -1227,92 +1218,8 @@ function selectPredefinedTemplate(templateSlug) {
 }
 </script>
 
-<!-- Modal des paramètres du template -->
+<!-- Modal des paramètres du template (dynamique - créée par JavaScript) -->
 <div id="template-settings-modal" class="template-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center;">
-    <div class="template-modal-content" style="background: #fff; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; padding: 0; max-width: 600px; width: 95%; max-height: 80vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3); -webkit-box-shadow: 0 20px 60px rgba(0,0,0,0.3); -moz-box-shadow: 0 20px 60px rgba(0,0,0,0.3); -ms-box-shadow: 0 20px 60px rgba(0,0,0,0.3); -o-box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
-
-        <!-- Header du modal -->
-        <div class="template-modal-header" style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; justify-content: space-between; -webkit-justify-content: space-between; -moz-justify-content: space-between; -ms-justify-content: space-between; -o-justify-content: space-between; align-items: center; -webkit-align-items: center; -moz-align-items: center; -ms-align-items: center; -o-align-items: center; padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-            <div>
-                <h2 style="margin: 0; font-size: 24px; font-weight: 600;">⚙️ Paramètres du Template</h2>
-                <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;" id="template-settings-title">Configuration du template</p>
-            </div>
-            <button onclick="closeTemplateSettingsModal()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; -webkit-border-radius: 50%; -moz-border-radius: 50%; -ms-border-radius: 50%; -o-border-radius: 50%; width: 40px; height: 40px; display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; align-items: center; -webkit-align-items: center; -moz-align-items: center; -ms-align-items: center; -o-align-items: center; justify-content: center; -webkit-justify-content: center; -moz-justify-content: center; -ms-justify-content: center; -o-justify-content: center;">×</button>
-        </div>
-
-        <!-- Corps du modal -->
-        <div class="template-modal-body" style="padding: 30px; max-height: calc(80vh - 140px); overflow-y: auto;">
-
-            <!-- Formulaire des paramètres -->
-            <form id="template-settings-form">
-
-                <!-- ID caché du template -->
-                <input type="hidden" id="settings-template-id" name="template_id" value="">
-
-                <!-- Nom du template -->
-                <div class="settings-field" style="margin-bottom: 20px;">
-                    <label for="template-name" style="display: block; margin-bottom: 8px; font-weight: 600; color: #23282d;">📝 Nom du Template</label>
-                    <input type="text" id="template-name" name="template_name" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; -webkit-border-radius: 6px; -moz-border-radius: 6px; -ms-border-radius: 6px; -o-border-radius: 6px; font-size: 14px; transition: border-color 0.3s ease; -webkit-transition: border-color 0.3s ease; -moz-transition: border-color 0.3s ease; -o-transition: border-color 0.3s ease;" placeholder="Entrez le nom du template">
-                </div>
-
-                <!-- Description du template -->
-                <div class="settings-field" style="margin-bottom: 20px;">
-                    <label for="template-description" style="display: block; margin-bottom: 8px; font-weight: 600; color: #23282d;">📖 Description</label>
-                    <textarea id="template-description" name="template_description" rows="3" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; -webkit-border-radius: 6px; -moz-border-radius: 6px; -ms-border-radius: 6px; -o-border-radius: 6px; font-size: 14px; resize: vertical; transition: border-color 0.3s ease; -webkit-transition: border-color 0.3s ease; -moz-transition: border-color 0.3s ease; -o-transition: border-color 0.3s ease;" placeholder="Entrez une description pour ce template"></textarea>
-                </div>
-
-                <!-- Catégorie du template -->
-                <div class="settings-field" style="margin-bottom: 20px;">
-                    <label for="template-category" style="display: block; margin-bottom: 8px; font-weight: 600; color: #23282d;">🏷️ Catégorie</label>
-                    <select id="template-category" name="template_category" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; -webkit-border-radius: 6px; -moz-border-radius: 6px; -ms-border-radius: 6px; -o-border-radius: 6px; font-size: 14px; background: white; transition: border-color 0.3s ease; -webkit-transition: border-color 0.3s ease; -moz-transition: border-color 0.3s ease; -o-transition: border-color 0.3s ease;">
-                        <option value="facture">🧾 Facture</option>
-                        <option value="devis">📋 Devis</option>
-                        <option value="commande">📦 Commande</option>
-                        <option value="contrat">📑 Contrat</option>
-                        <option value="newsletter">📰 Newsletter</option>
-                        <option value="autre">📄 Autre</option>
-                    </select>
-                </div>
-
-                <!-- Template par défaut -->
-                <div class="settings-field" style="margin-bottom: 20px;">
-                    <label style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; align-items: center; -webkit-align-items: center; -moz-align-items: center; -ms-align-items: center; -o-align-items: center; cursor: pointer; font-weight: 600; color: #23282d;">
-                        <input type="checkbox" id="template-is-default" name="is_default" value="1" style="margin-right: 10px; transform: scale(1.2); -webkit-transform: scale(1.2); -moz-transform: scale(1.2); -ms-transform: scale(1.2); -o-transform: scale(1.2);">
-                        ⭐ Définir comme template par défaut
-                    </label>
-                    <p style="margin: 5px 0 0 26px; color: #666; font-size: 12px;">Ce template sera sélectionné par défaut pour ce type de document</p>
-                </div>
-
-                <!-- Informations système (readonly) -->
-                <div class="settings-section" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e1e8ed;">
-                    <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">ℹ️ Informations Système</h3>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div>
-                            <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #666; font-size: 12px;">DATE DE CRÉATION</label>
-                            <span id="template-created-date" style="color: #23282d; font-size: 14px;">-</span>
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #666; font-size: 12px;">DERNIÈRE MODIFICATION</label>
-                            <span id="template-updated-date" style="color: #23282d; font-size: 14px;">-</span>
-                        </div>
-                    </div>
-                </div>
-
-            </form>
-
-        </div>
-
-        <!-- Footer du modal -->
-        <div class="template-modal-footer" style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; justify-content: flex-end; -webkit-justify-content: flex-end; -moz-justify-content: flex-end; -ms-justify-content: flex-end; -o-justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;">
-            <button onclick="closeTemplateSettingsModal()" class="button button-secondary" style="padding: 10px 20px;">Annuler</button>
-            <button onclick="saveTemplateSettings()" class="button button-primary" style="padding: 10px 30px; background: #667eea; border-color: #667eea;">
-                <span class="dashicons dashicons-yes" style="margin-right: 5px;"></span>
-                Sauvegarder
-            </button>
-        </div>
-
-    </div>
 </div>
 
 <script>
@@ -1369,7 +1276,6 @@ function loadTemplateSettings(templateId) {
 
 // Fonction pour afficher les paramètres du template dans la modale
 function displayTemplateSettings(template) {
-    console.log('[DEBUG] displayTemplateSettings appelée avec:', template);
 
     var content = document.querySelector('.template-modal-body');
 
@@ -1478,14 +1384,12 @@ function displayTemplateSettings(template) {
             <div class="settings-field" style="margin-bottom: 20px;">
                 <label for="template-name" style="display: block; font-weight: bold; margin-bottom: 8px; color: #23282d;">📝 Nom du template</label>
                 <input type="text" id="template-name" name="template_name" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s ease;" placeholder="Entrez le nom du template" value="${template.name || ''}">
-                <div style="margin-top: 5px; font-size: 11px; color: #666;">[DEBUG] Valeur insérée: ${template.name || 'VIDE'}</div>
             </div>
 
             <!-- Description du template -->
             <div class="settings-field" style="margin-bottom: 20px;">
                 <label for="template-description" style="display: block; font-weight: bold; margin-bottom: 8px; color: #23282d;">📖 Description</label>
                 <textarea id="template-description" name="template_description" rows="3" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical; transition: border-color 0.3s ease;" placeholder="Entrez une description pour ce template">${template.description || ''}</textarea>
-                <div style="margin-top: 5px; font-size: 11px; color: #666;">[DEBUG] Valeur insérée: ${template.description || 'VIDE'}</div>
             </div>
 
             <!-- Paramètres avancés -->
@@ -1654,6 +1558,9 @@ function displayTemplateSettings(template) {
             orientationWarning.style.display = 'block';
         }
     }
+
+    // Afficher la modale
+    document.getElementById('template-settings-modal').style.display = 'flex';
 }
 
 // Fonction pour sauvegarder les paramètres du template
