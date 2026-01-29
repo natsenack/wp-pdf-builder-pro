@@ -460,28 +460,39 @@ class PdfBuilderTemplatesAjax
         error_log('[PDF Builder] deleteTemplate() appelée avec POST: ' . print_r($_POST, true));
 
         try {
+            error_log('[PDF Builder] deleteTemplate() - Après log initial, user logged in: ' . (is_user_logged_in() ? 'YES' : 'NO') . ', current_user_id: ' . get_current_user_id());
+
             if (class_exists('PDF_Builder_Logger')) {
                 PDF_Builder_Logger::get_instance()->debug_log("DELETE_TEMPLATE_START - Début de la suppression du template - template_id: " . ($_POST['template_id'] ?? 'not_set') . ", nonce: " . ($_POST['nonce'] ?? 'not_set') . ", user_can: " . (current_user_can('manage_options') ? 'yes' : 'no'));
             }
 
+            error_log('[PDF Builder] deleteTemplate() - Après PDF_Builder_Logger check');
+
 // Vérification des permissions - permettre aux utilisateurs connectés de supprimer leurs templates
             if (!is_user_logged_in()) {
+                error_log('[PDF Builder] deleteTemplate() - Utilisateur NON connecté');
                 if (class_exists('PDF_Builder_Logger')) {
                     PDF_Builder_Logger::get_instance()->error_log("DELETE_TEMPLATE_ERROR - Utilisateur non connecté");
                 }
                 \wp_send_json_error('Utilisateur non connecté');
             }
 
+            error_log('[PDF Builder] deleteTemplate() - Utilisateur connecté, vérification nonce');
+
             // Vérification du nonce
             if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+                error_log('[PDF Builder] deleteTemplate() - Nonce invalide: ' . ($_POST['nonce'] ?? 'not_set'));
                 if (class_exists('PDF_Builder_Logger')) {
                     PDF_Builder_Logger::get_instance()->error_log("DELETE_TEMPLATE_ERROR - Nonce invalide - received: " . ($_POST['nonce'] ?? 'not_set'));
                 }
                 \wp_send_json_error('Nonce invalide');
             }
 
+            error_log('[PDF Builder] deleteTemplate() - Nonce valide, récupération template_id');
+
             $template_id = intval($_POST['template_id'] ?? 0);
             if (empty($template_id)) {
+                error_log('[PDF Builder] deleteTemplate() - Template ID manquant');
                 if (class_exists('PDF_Builder_Logger')) {
                     PDF_Builder_Logger::get_instance()->error_log("DELETE_TEMPLATE_ERROR - ID du template manquant");
                 }
