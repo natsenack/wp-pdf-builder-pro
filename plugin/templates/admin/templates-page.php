@@ -552,8 +552,19 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                 </div>
 
                 <div class="canvas-modal-footer">
-                    <button onclick="closeTemplateSettingsModal()" class="canvas-modal-btn canvas-modal-btn-secondary">Annuler</button>
-                    <button onclick="saveTemplateSettings()" class="canvas-modal-btn canvas-modal-btn-primary">💾 Enregistrer</button>
+                    <div class="template-settings-footer-content">
+                        <div class="template-settings-footer-title">
+                            <span class="template-settings-icon">⚙️</span>
+                            Paramètres du Template
+                        </div>
+                        <div class="template-settings-footer-subtitle">
+                            Configuration de "Template par défaut"
+                        </div>
+                    </div>
+                    <div class="template-settings-footer-actions">
+                        <button onclick="closeTemplateSettingsModal()" class="canvas-modal-btn canvas-modal-btn-secondary">Annuler</button>
+                        <button onclick="saveTemplateSettings()" class="canvas-modal-btn canvas-modal-btn-primary">💾 Enregistrer</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -790,9 +801,42 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
 #template-settings-modal .canvas-modal-footer {
     visibility: visible !important;
     opacity: 1 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 20px 32px !important;
 }
 
-</style>
+.template-settings-footer-content {
+    flex: 1;
+}
+
+.template-settings-footer-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #23282d;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.template-settings-icon {
+    font-size: 18px;
+}
+
+.template-settings-footer-subtitle {
+    font-size: 14px;
+    color: #6c757d;
+    font-style: italic;
+}
+
+.template-settings-footer-actions {
+    display: flex;
+    gap: 12px;
+}
+
+
 <div id="upgrade-modal-template" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center;">
     <div class="modal-content" style="background: white; border-radius: 12px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
         <div class="modal-header" style="padding: 20px 30px; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
@@ -1548,19 +1592,6 @@ function displayTemplateSettings(template) {
             </div>
         </form>
     `;
-    
-    // Ajouter le footer avec les boutons
-    var footer = document.createElement('div');
-    footer.className = 'template-modal-footer';
-    footer.style.cssText = 'display: flex; justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;';
-    footer.innerHTML = `
-        <button onclick="closeTemplateSettingsModal()" class="button button-secondary" style="padding: 10px 20px;">Annuler</button>
-        <button onclick="saveTemplateSettings()" class="button button-primary" style="padding: 10px 20px; background: #007cba; color: white; border: none; border-radius: 4px; cursor: pointer;">
-            <span class="dashicons dashicons-yes" style="margin-right: 5px;"></span>
-            Enregistrer
-        </button>
-    `;
-    modalContent.appendChild(footer);
     
     // Remplir le select DPI avec les options disponibles
     var dpiSelect = document.getElementById('template-dpi');
