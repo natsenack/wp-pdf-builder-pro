@@ -1142,7 +1142,7 @@ function confirmDeleteTemplate(templateId, templateName) {
             nonce: pdfBuilderTemplatesNonce
         };
         console.log('[DEBUG] Données à envoyer:', postData);
-        alert('[DEBUG] Envoi AJAX - Template ID: ' + templateId + ', Nonce: ' + pdfBuilderTemplatesNonce.substring(0, 10) + '...');
+        // alert('[DEBUG] Envoi AJAX - Template ID: ' + templateId + ', Nonce: ' + pdfBuilderTemplatesNonce.substring(0, 10) + '...');
 
         // Utiliser jQuery AJAX au lieu de fetch pour la compatibilité
         console.log('[DEBUG] Envoi de la requête AJAX...');
@@ -1152,10 +1152,10 @@ function confirmDeleteTemplate(templateId, templateName) {
             data: postData,
             success: function(response) {
                 console.log('[DEBUG] Réponse AJAX reçue:', response);
-                alert('[DEBUG] Réponse AJAX reçue: ' + JSON.stringify(response));
+                // alert('[DEBUG] Réponse AJAX reçue: ' + JSON.stringify(response));
                 if (response.success) {
                     console.log('[DEBUG] Suppression réussie');
-                    alert('Template supprimé avec succès !');
+                    // alert('Template supprimé avec succès !');
                     location.reload();
                 } else {
                     console.error('[DEBUG] Erreur dans la réponse:', response);
