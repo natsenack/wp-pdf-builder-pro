@@ -26,6 +26,7 @@ class PdfBuilderTemplatesAjax
         \add_action('wp_ajax_pdf_builder_load_template_settings', array($this, 'loadTemplateSettings'));
         \add_action('wp_ajax_pdf_builder_save_template_settings', array($this, 'saveTemplateSettings'));
         \add_action('wp_ajax_pdf_builder_set_default_template', array($this, 'setDefaultTemplate'));
+        \add_action('wp_ajax_pdf_builder_toggle_default_template', array($this, 'toggleDefaultTemplate'));
         \add_action('wp_ajax_pdf_builder_delete_template', array($this, 'deleteTemplate'));
         \add_action('wp_ajax_pdf_builder_save_order_status_templates', array($this, 'saveOrderStatusTemplates'));
     }
@@ -360,6 +361,59 @@ class PdfBuilderTemplatesAjax
             $message = $is_default ? 'Template défini comme par défaut' : 'Statut par défaut retiré';
             \wp_send_json_success(array(
                 'message' => $message
+            ));
+        } catch (Exception $e) {
+            \wp_send_json_error('Erreur lors de la modification du statut: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Bascule le statut par défaut d'un template
+     */
+    public function toggleDefaultTemplate()
+    {
+        try {
+            // Vérification des permissions
+            if (!\current_user_can('manage_options')) {
+                \wp_send_json_error('Permissions insuffisantes');
+            }
+
+            // Vérification du nonce
+            if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+                \wp_send_json_error('Nonce invalide');
+            }
+
+            $template_id = intval($_POST['template_id'] ?? 0);
+            if (empty($template_id)) {
+                \wp_send_json_error('ID du template manquant');
+            }
+
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+            // Récupérer le statut actuel du template
+            $current_status = $wpdb->get_var($wpdb->prepare("SELECT is_default FROM $table_templates WHERE id = %d", $template_id));
+            if ($current_status === null) {
+                \wp_send_json_error('Template non trouvé');
+            }
+
+            $new_status = $current_status ? 0 : 1;
+
+            // Si on définit comme défaut, retirer le statut par défaut des autres templates
+            if ($new_status) {
+                $wpdb->update($table_templates, array('is_default' => 0), array('is_default' => 1), array('%d'), array('%d'));
+            }
+
+            // Mettre à jour le statut du template
+            $result = $wpdb->update($table_templates, array('is_default' => $new_status), array('id' => $template_id), array('%d'), array('%d'));
+            if ($result === false) {
+                \wp_send_json_error('Erreur lors de la mise à jour du statut par défaut');
+            }
+
+            $message = $new_status ? 'Template défini comme par défaut' : 'Statut par défaut retiré';
+            \wp_send_json_success(array(
+                'message' => $message,
+                'is_default' => $new_status
             ));
         } catch (Exception $e) {
             \wp_send_json_error('Erreur lors de la modification du statut: ' . $e->getMessage());
