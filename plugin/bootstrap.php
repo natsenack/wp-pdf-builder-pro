@@ -830,8 +830,12 @@ function pdf_builder_load_admin_components()
     }
 
     // CHARGER LE GESTIONNAIRE DE NOTIFICATIONS
-    // Maintenant chargé automatiquement par autoloader PSR-4
-    if (class_exists('PDF_Builder\\Core\\PDF_Builder_Notification_Manager')) {
+    // Charger manuellement car pas dans PSR-4
+    $notification_manager_file = PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php';
+    if (file_exists($notification_manager_file)) {
+        require_once $notification_manager_file;
+    }
+    if (class_exists('PDF_Builder_Notification_Manager')) {
         PDF_Builder_Notification_Manager::get_instance();
     }
 
