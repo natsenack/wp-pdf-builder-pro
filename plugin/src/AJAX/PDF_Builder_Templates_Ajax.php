@@ -293,27 +293,9 @@ class PdfBuilderTemplatesAjax
             $settings = \get_option('pdf_builder_settings', array());
 
             // Construire les arrays des options disponibles dynamiquement
-            $available_formats = [];
-            $available_orientations = [];
-            $available_dpi = [];
-
-            // Formats disponibles
-            if (($settings['pdf_builder_canvas_format_a3_enabled'] ?? '1') === '1') $available_formats[] = 'A3';
-            if (($settings['pdf_builder_canvas_format_a4_enabled'] ?? '1') === '1') $available_formats[] = 'A4';
-            if (($settings['pdf_builder_canvas_format_a5_enabled'] ?? '1') === '1') $available_formats[] = 'A5';
-            if (($settings['pdf_builder_canvas_format_letter_enabled'] ?? '1') === '1') $available_formats[] = 'Letter';
-            if (($settings['pdf_builder_canvas_format_legal_enabled'] ?? '1') === '1') $available_formats[] = 'Legal';
-
-            // Orientations disponibles
-            if (($settings['pdf_builder_canvas_orientation_portrait_enabled'] ?? '1') === '1') $available_orientations[] = 'portrait';
-            if (($settings['pdf_builder_canvas_orientation_landscape_enabled'] ?? '1') === '1') $available_orientations[] = 'landscape';
-
-            // Résolutions DPI disponibles
-            if (($settings['pdf_builder_canvas_dpi_72_enabled'] ?? '1') === '1') $available_dpi[] = 72;
-            if (($settings['pdf_builder_canvas_dpi_96_enabled'] ?? '1') === '1') $available_dpi[] = 96;
-            if (($settings['pdf_builder_canvas_dpi_150_enabled'] ?? '1') === '1') $available_dpi[] = 150;
-            if (($settings['pdf_builder_canvas_dpi_300_enabled'] ?? '1') === '1') $available_dpi[] = 300;
-            if (($settings['pdf_builder_canvas_dpi_600_enabled'] ?? '1') === '1') $available_dpi[] = 600;
+            $available_formats = $settings['pdf_builder_available_formats'] ?? ['A3', 'A4', 'A5', 'Letter', 'Legal'];
+            $available_orientations = $settings['pdf_builder_available_orientations'] ?? ['portrait', 'landscape'];
+            $available_dpi = $settings['pdf_builder_available_dpi'] ?? [72, 96, 150, 300, 600];
 
             $settings = array(
                 'id' => $template['id'],
