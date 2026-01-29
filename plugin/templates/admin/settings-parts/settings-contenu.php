@@ -662,7 +662,7 @@
                                 action: 'pdf_builder_show_notification',
                                 message: message,
                                 type: type,
-                                nonce: '<?php echo \PDF_Builder\Admin\Handlers\NonceManager::createNonce(); ?>'
+                                nonce: window.pdfBuilderNonce
                             },
                             success: function(response) {
                                 if (response.success) {
