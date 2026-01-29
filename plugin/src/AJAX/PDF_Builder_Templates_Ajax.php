@@ -289,6 +289,21 @@ class PdfBuilderTemplatesAjax
             $canvas_manager = \PDF_Builder\Canvas\Canvas_Manager::getInstance();
             $canvas_settings = $canvas_manager->getAllSettings();
 
+            // Récupérer les options disponibles depuis les paramètres WordPress
+            $settings_options = pdf_builder_get_option('pdf_builder_settings', array());
+
+            // Options disponibles pour les formats (peuvent être configurées dans les paramètres)
+            $available_formats = isset($settings_options['pdf_builder_available_formats']) && is_array($settings_options['pdf_builder_available_formats']) ?
+                $settings_options['pdf_builder_available_formats'] : ['A3', 'A4', 'A5', 'Letter', 'Legal'];
+
+            // Options disponibles pour les orientations
+            $available_orientations = isset($settings_options['pdf_builder_available_orientations']) && is_array($settings_options['pdf_builder_available_orientations']) ?
+                $settings_options['pdf_builder_available_orientations'] : ['portrait', 'landscape'];
+
+            // Options disponibles pour les DPI
+            $available_dpi = isset($settings_options['pdf_builder_available_dpi']) && is_array($settings_options['pdf_builder_available_dpi']) ?
+                $settings_options['pdf_builder_available_dpi'] : [72, 96, 150, 300, 600];
+
             $settings = array(
                 'id' => $template['id'],
                 'name' => $template['name'],
@@ -303,9 +318,9 @@ class PdfBuilderTemplatesAjax
                     'default_canvas_format' => $canvas_settings['default_canvas_format'] ?? 'A4',
                     'default_canvas_orientation' => $canvas_settings['default_canvas_orientation'] ?? 'portrait',
                     'default_canvas_dpi' => $canvas_settings['default_canvas_dpi'] ?? 96,
-                    'available_formats' => ['A3', 'A4', 'A5', 'Letter', 'Legal'],
-                    'available_orientations' => ['portrait', 'landscape'],
-                    'available_dpi' => [72, 96, 150, 300, 600]
+                    'available_formats' => $available_formats,
+                    'available_orientations' => $available_orientations,
+                    'available_dpi' => $available_dpi
                 )
             );
 
