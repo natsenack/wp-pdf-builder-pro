@@ -290,7 +290,7 @@ class PdfBuilderTemplatesAjax
             $canvas_settings = $canvas_manager->getAllSettings();
 
             // Récupérer les paramètres des options disponibles depuis la base de données
-            $settings = \get_option('pdf_builder_settings', array());
+            $settings = pdf_builder_get_option('pdf_builder_settings', array());
 
             // Construire les arrays des options disponibles dynamiquement
             $available_formats = $settings['pdf_builder_available_formats'] ?? ['A3', 'A4', 'A5', 'Letter', 'Legal'];
