@@ -161,7 +161,7 @@ add_action('admin_enqueue_scripts', function() {
                     } else {
                         $('#pdf-builder-btn-proceed').css({
                             'cursor': 'not-allowed',
-                            'opacity': '0.6'
+                            'opacity': '0.8'
                         });
                     }
                 });
