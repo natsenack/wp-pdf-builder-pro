@@ -32,8 +32,7 @@ class SettingsManager
      */
     private function registerHooks()
     {
-        // Hooks pour les paramètres - seulement l'enregistrement, pas la page
-        \add_action('admin_init', [$this, 'registerSettings']);
+        // Tous les hooks de paramètres ont été déplacés vers settings-main.php
 
         // Charger les styles pour les pages d'administration
         \add_action('admin_enqueue_scripts', [$this, 'enqueueAdminStyles']);

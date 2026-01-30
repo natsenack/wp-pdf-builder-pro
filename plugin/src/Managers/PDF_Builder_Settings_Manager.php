@@ -32,8 +32,7 @@ class PDF_Builder_Settings_Manager
      */
     private function initHooks()
     {
-        // Hooks pour les paramètres
-        add_action('admin_init', [$this, 'registerSettings']);
+        // Tous les hooks de paramètres ont été déplacés vers settings-main.php
     }
 
     /**
