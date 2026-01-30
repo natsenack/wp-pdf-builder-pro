@@ -46,7 +46,7 @@
     };
 
     // Debug floating save button
-    $(document).on('click', '#pdf-builder-save-floating-btn', function(e) {
+    $(document).on('click', '#pdf-builder-floating-save', function(e) {
         console.log('[PDF Builder] Floating save button clicked');
         console.log('[PDF Builder] Event:', e);
         console.log('[PDF Builder] Button:', this);
