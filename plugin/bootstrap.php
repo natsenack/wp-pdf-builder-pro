@@ -164,57 +164,65 @@ if (!class_exists('Dompdf\Dompdf') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'vend
  * Récupérer une option depuis la table personnalisée wp_pdf_builder_settings
  * Fallback vers wp_options si la table n'existe pas
  */
-function pdf_builder_get_option($option_name, $default = false) {
-    // Charger le Settings Table Manager
-    if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
-    }
-    
-    $result = \PDF_Builder\Database\Settings_Table_Manager::get_option($option_name, $default);
-    
-    if (class_exists('PDF_Builder_Logger')) {
+if (!function_exists('pdf_builder_get_option')) {
+    function pdf_builder_get_option($option_name, $default = false) {
+        // Charger le Settings Table Manager
+        if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+        }
+        
+        $result = \PDF_Builder\Database\Settings_Table_Manager::get_option($option_name, $default);
+        
+        if (class_exists('PDF_Builder_Logger')) {
         \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] pdf_builder_get_option called for: ' . $option_name);
         \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] pdf_builder_get_option result type: ' . gettype($result));
         \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] pdf_builder_get_option result: ' . print_r($result, true));
     }
     
     return $result;
+    }
 }
 
 /**
  * Mettre à jour une option dans la table personnalisée wp_pdf_builder_settings
  */
-function pdf_builder_update_option($option_name, $option_value, $autoload = 'yes') {
-    // Charger le Settings Table Manager
-    if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+if (!function_exists('pdf_builder_update_option')) {
+    function pdf_builder_update_option($option_name, $option_value, $autoload = 'yes') {
+        // Charger le Settings Table Manager
+        if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+        }
+        
+        return \PDF_Builder\Database\Settings_Table_Manager::update_option($option_name, $option_value, $autoload);
     }
-    
-    return \PDF_Builder\Database\Settings_Table_Manager::update_option($option_name, $option_value, $autoload);
 }
 
 /**
  * Supprimer une option depuis la table personnalisée wp_pdf_builder_settings
  */
-function pdf_builder_delete_option($option_name) {
-    // Charger le Settings Table Manager
-    if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+if (!function_exists('pdf_builder_delete_option')) {
+    function pdf_builder_delete_option($option_name) {
+        // Charger le Settings Table Manager
+        if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+        }
+        
+        return \PDF_Builder\Database\Settings_Table_Manager::delete_option($option_name);
     }
-    
-    return \PDF_Builder\Database\Settings_Table_Manager::delete_option($option_name);
 }
 
 /**
  * Récupérer tous les paramètres PDF Builder
  */
-function pdf_builder_get_all_options() {
-    // Charger le Settings Table Manager
-    if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+if (!function_exists('pdf_builder_get_all_options')) {
+    function pdf_builder_get_all_options() {
+        // Charger le Settings Table Manager
+        if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+        }
+        
+        return \PDF_Builder\Database\Settings_Table_Manager::get_all_options();
     }
-    
-    return \PDF_Builder\Database\Settings_Table_Manager::get_all_options();
 }
 // ✅ FONCTION DE CHARGEMENT D'URGENCE DES UTILITAIRES
 // ============================================================================
