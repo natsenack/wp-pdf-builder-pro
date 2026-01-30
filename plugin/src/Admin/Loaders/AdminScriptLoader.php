@@ -158,7 +158,43 @@ class AdminScriptLoader
                         PDF_BUILDER_PRO_VERSION,
                         true
                     );
+                } else {
+                    // Fallback: injecter le script inline si le fichier n'existe pas
+                    \wp_add_inline_script('jquery', "
+                    (function($) {
+                        $(document).ready(function() {
+                            var floatingBtn = $('#pdf-builder-save-floating-btn');
+                            var form = $('form[action=\"options.php\"]');
+                            if (floatingBtn.length > 0 && form.length > 0) {
+                                floatingBtn.on('click', function(e) {
+                                    e.preventDefault();
+                                    $(this).addClass('loading');
+                                    form.submit();
+                                });
+                            }
+                        });
+                    })(jQuery);
+                    ", 'before');
                 }
+                
+                // Ajouter un script inline supplémentaire pour s'assurer que ça marche
+                \wp_add_inline_script('jquery', "
+                (function($) {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var floatingBtn = document.getElementById('pdf-builder-save-floating-btn');
+                        if (floatingBtn) {
+                            floatingBtn.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                var form = document.querySelector('form[action=\"options.php\"]');
+                                if (form) {
+                                    this.classList.add('loading');
+                                    form.submit();
+                                }
+                            });
+                        }
+                    });
+                })(jQuery);
+                ", 'after');
             }
 
             // Charger les styles canvas-modal pour les pages templates et settings
