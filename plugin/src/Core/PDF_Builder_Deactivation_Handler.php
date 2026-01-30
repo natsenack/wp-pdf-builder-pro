@@ -114,7 +114,7 @@ add_action('admin_enqueue_scripts', function() {
                     <button id="pdf-builder-btn-skip" type="button" class="button" style="padding: 10px 20px; cursor: pointer; background: transparent; border: 1px solid transparent; color: #aaa; opacity: 0.4; font-size: 12px; font-weight: normal;">Passer & Désactiver</button>
                     <div style="display: flex; gap: 10px;">
                         <button id="pdf-builder-btn-cancel" type="button" class="button button-secondary" style="padding: 10px 20px; cursor: pointer;">Annuler</button>
-                        <button id="pdf-builder-btn-proceed" type="button" class="button button-primary" style="padding: 10px 20px; background: #667eea; border-color: #667eea; color: white; cursor: pointer;">Désactiver</button>
+                        <button id="pdf-builder-btn-proceed" type="button" class="button button-primary" style="padding: 10px 20px; background: #667eea; border-color: #667eea; color: white; cursor: pointer; pointer-events: none;">Désactiver</button>
                     </div>
                 </div>
             </div>
