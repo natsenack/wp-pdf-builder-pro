@@ -5837,67 +5837,238 @@ body.modal-open {
 }
 
 /* === BOUTON FLOTTANT === */
-/* === STYLES POUR LE BOUTON FLOTTANT DE SAUVEGARDE === */
-.pdf-builder-floating-save {
+/* === BOUTON FLOTTANT DE SAUVEGARDE OPTIMISÉ === */
+.pdf-builder-floating-save-container {
     position: fixed;
-    bottom: 40px; /* Plus haut pour éviter le footer WordPress */
-    right: 20px;
-    z-index: 99999; /* Z-index très élevé pour être au-dessus du footer WordPress */
+    bottom: 24px;
+    right: 24px;
+    z-index: 10000;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pdf-builder-floating-save-container.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.pdf-builder-floating-save-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.pdf-builder-floating-save-btn {
     background: #007cba;
     color: white;
     border: none;
     border-radius: 50px;
-    padding: 12px 24px;
+    padding: 12px 20px;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 124, 186, 0.3);
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 124, 186, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     gap: 8px;
+    min-width: 140px;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    outline: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.pdf-builder-floating-save:hover {
+.pdf-builder-floating-save-btn:hover {
     background: #005a87;
-    box-shadow: 0 6px 16px rgba(0, 124, 186, 0.4);
+    box-shadow: 0 8px 30px rgba(0, 124, 186, 0.4);
     transform: translateY(-2px);
 }
 
-.pdf-builder-floating-save:active {
+.pdf-builder-floating-save-btn:active {
     transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(0, 124, 186, 0.3);
+    box-shadow: 0 2px 10px rgba(0, 124, 186, 0.3);
 }
 
-.pdf-builder-floating-save::before {
-    content: "💾";
-    font-size: 16px;
+.pdf-builder-floating-save-btn:focus {
+    box-shadow: 0 4px 20px rgba(0, 124, 186, 0.3), 0 0 0 3px rgba(0, 124, 186, 0.3);
 }
 
-.pdf-builder-floating-save.loading {
-    opacity: 0.7;
+.pdf-builder-floating-save-btn.saving {
+    background: #f39c12;
+    cursor: not-allowed;
+    transform: scale(0.98);
+}
+
+.pdf-builder-floating-save-btn.saved {
+    background: #27ae60;
+    cursor: default;
+}
+
+.pdf-builder-floating-save-btn.error {
+    background: #e74c3c;
     cursor: not-allowed;
 }
 
-.pdf-builder-floating-save.loading::after {
-    content: "";
-    width: 16px;
-    height: 16px;
-    border: 2px solid #ffffff;
-    border-top: 2px solid transparent;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-left: 8px;
+.pdf-builder-save-icon {
+    font-size: 16px;
+    line-height: 1;
+    transition: transform 0.3s ease;
 }
 
-@keyframes spin {
+.pdf-builder-floating-save-btn:hover .pdf-builder-save-icon {
+    transform: scale(1.1);
+}
+
+.pdf-builder-save-text {
+    font-weight: 600;
+    letter-spacing: 0.025em;
+}
+
+.pdf-builder-save-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pdf-builder-save-spinner svg {
+    animation: pdf-builder-spin 1s linear infinite;
+}
+
+@keyframes pdf-builder-spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
+/* Indicateur de statut */
+.pdf-builder-save-status {
+    background: rgba(39, 174, 96, 0.95);
+    color: white;
+    border-radius: 50px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: 0 4px 20px rgba(39, 174, 96, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    opacity: 0;
+    transform: translateY(10px) scale(0.9);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pdf-builder-save-status.show {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.pdf-builder-save-status.error {
+    background: rgba(231, 76, 60, 0.95);
+    box-shadow: 0 4px 20px rgba(231, 76, 60, 0.3);
+}
+
+.pdf-builder-save-status-content {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pdf-builder-status-icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.pdf-builder-status-text {
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 782px) {
+    .pdf-builder-floating-save-container {
+        bottom: 16px;
+        right: 16px;
+    }
+
+    .pdf-builder-floating-save-btn {
+        padding: 10px 16px;
+        font-size: 13px;
+        min-width: 120px;
+    }
+
+    .pdf-builder-save-text {
+        display: none;
+    }
+
+    .pdf-builder-save-icon {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pdf-builder-floating-save-container {
+        bottom: 12px;
+        right: 12px;
+    }
+
+    .pdf-builder-floating-save-btn {
+        padding: 8px 12px;
+        min-width: 48px;
+        width: 48px;
+        height: 48px;
+    }
+
+    .pdf-builder-save-status {
+        max-width: 160px;
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+}
+
+/* Animation d'entrée */
+@keyframes pdf-builder-fade-in-up {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pdf-builder-floating-save-container.show {
+    animation: pdf-builder-fade-in-up 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* États d'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+    .pdf-builder-floating-save-container,
+    .pdf-builder-floating-save-btn,
+    .pdf-builder-save-status {
+        transition: none;
+        animation: none;
+    }
+
+    .pdf-builder-save-spinner svg {
+        animation: none;
+    }
+}
 
 /* Masquer le bouton original de WordPress */
 .form-table + p.submit {
+    display: none !important;
+}
     display: none !important;
 }
 

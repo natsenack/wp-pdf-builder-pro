@@ -119,7 +119,7 @@ class PdfBuilderAdminNew
         // Initialiser les nouveaux modules spécialisés
         $this->html_renderer = new \PDF_Builder\Admin\Renderers\HTMLRenderer($this);
         $this->data_utils = new DataUtils($this);
-
+        
         // Try-catch pour la création du template_processor
         try {
             $this->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this);
@@ -129,7 +129,7 @@ class PdfBuilderAdminNew
 
         // Initialiser AjaxHandler APRÈS template_processor
         $this->ajax_handler = new \PDF_Builder\Admin\Handlers\AjaxHandler($this);
-
+        
         $this->pdf_generator = new \PDF_Builder\Admin\Generators\PDFGenerator($this);
         $this->utils = new \PDF_Builder\Admin\Utils\Utils($this);
 
@@ -1136,6 +1136,109 @@ class PdfBuilderAdminNew
 
     /**
      * Get template processor instance
+     */
+    public function getTemplateProcessor()
+    {
+        if ($this->template_processor === null) {
+            error_log('[DEBUG] PDF Builder: TemplateProcessor not available, creating it now in getter');
+            try {
+                $this->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this);
+                error_log('[DEBUG] PDF Builder: TemplateProcessor created successfully in getter');
+            } catch (Exception $e) {
+                error_log('[DEBUG] PDF Builder: TemplateProcessor creation failed in getter: ' . $e->getMessage());
+                $this->template_processor = null;
+            }
+        }
+        return $this->template_processor;
+    }
+}
+                            $systeme_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-systeme.php';
+                            if (file_exists($systeme_file)) {
+                                include $systeme_file;
+                            } else {
+                                echo '<p>' . __('Fichier de paramètres système manquant.', 'pdf-builder-pro') . '</p>';
+                            }
+                            echo '</div>';
+                            break;
+
+                        case 'securite':
+                            echo '<div id="pdf-builder-tab-securite">';
+                            $securite_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-securite.php';
+                            if (file_exists($securite_file)) {
+                                include $securite_file;
+                            } else {
+                                echo '<p>' . __('Fichier de paramètres sécurité manquant.', 'pdf-builder-pro') . '</p>';
+                            }
+                            echo '</div>';
+                            break;
+
+                        case 'pdf':
+                            echo '<div id="pdf-builder-tab-pdf">';
+                            $pdf_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-pdf.php';
+                            if (file_exists($pdf_file)) {
+                                include $pdf_file;
+                            } else {
+                                echo '<p>' . __('Fichier de paramètres PDF manquant.', 'pdf-builder-pro') . '</p>';
+                            }
+                            echo '</div>';
+                            break;
+
+                        case 'contenu':
+                            echo '<div id="pdf-builder-tab-contenu">';
+                            $contenu_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-contenu.php';
+                            if (file_exists($contenu_file)) {
+                                include $contenu_file;
+                            } else {
+                                echo '<p>' . __('Fichier de paramètres canvas manquant.', 'pdf-builder-pro') . '</p>';
+                            }
+                            echo '</div>';
+                            break;
+
+                        case 'templates':
+                            echo '<div id="pdf-builder-tab-templates">';
+                            $templates_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-templates.php';
+                            if (file_exists($templates_file)) {
+                                include $templates_file;
+                            } else {
+                                echo '<p>' . __('Fichier de paramètres templates manquant.', 'pdf-builder-pro') . '</p>';
+                            }
+                            echo '</div>';
+                            break;
+
+                        case 'developpeur':
+                            echo '<div id="pdf-builder-tab-developpeur">';
+                            $developpeur_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-developpeur.php';
+                            if (file_exists($developpeur_file)) {
+                                include $developpeur_file;
+                            } else {
+                                echo '<p>' . __('Fichier de paramètres développeur manquant.', 'pdf-builder-pro') . '</p>';
+                            }
+                            echo '</div>';
+                            break;
+
+                        default:
+                            echo '<p>' . __('Onglet non valide.', 'pdf-builder-pro') . '</p>';
+                            break;
+                    }
+                    ?>
+
+                    <!-- Bouton flottant personnalisé -->
+                    <button type="submit" name="submit" id="pdf-builder-floating-save" class="pdf-builder-floating-save">
+                        <?php _e('Enregistrer', 'pdf-builder-pro'); ?>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Containers fictifs pour éviter les erreurs JS -->
+            <div id="pdf-builder-tabs" style="display: none;"></div>
+            <div id="pdf-builder-tab-content" style="display: none;"></div>
+
+        </div> <!-- Fin du .wrap -->
+        <?php
+    }
+
+    /**
+     * Getter pour le TemplateProcessor avec création à la demande
      */
     public function getTemplateProcessor()
     {

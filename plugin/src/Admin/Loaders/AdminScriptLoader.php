@@ -149,11 +149,11 @@ class AdminScriptLoader
 
             // Charger le script du bouton flottant de sauvegarde - seulement pour la page des paramètres
             if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-settings') {
-                $floating_save_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/floating-save.min.js';
+                $floating_save_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/floating-save-manager.js';
                 if (file_exists($floating_save_js)) {
                     \wp_enqueue_script(
                         'pdf-builder-floating-save',
-                        PDF_BUILDER_PRO_ASSETS_URL . 'js/floating-save.min.js',
+                        PDF_BUILDER_PRO_ASSETS_URL . 'js/floating-save-manager.js',
                         ['jquery'],
                         PDF_BUILDER_PRO_VERSION,
                         true
@@ -163,20 +163,20 @@ class AdminScriptLoader
                     \wp_add_inline_script('jquery', "
                     (function($) {
                         $(document).ready(function() {
-                            var floatingBtn = $('#pdf-builder-save-floating-btn');
-                            var form = $('form[action=\"options.php\"]');
+                            var floatingBtn = $('#pdf-builder-floating-save-btn');
+                            var form = $('#pdf-builder-settings-form');
                             if (floatingBtn.length > 0 && form.length > 0) {
                                 floatingBtn.on('click', function(e) {
                                     // Ne pas preventDefault - laisser le bouton submit fonctionner normalement
-                                    $(this).addClass('loading');
-                                    // La soumission se fera automatiquement via le type='submit'
+                                    $(this).addClass('saving');
+                                    $(this).find('.pdf-builder-save-text').text('Sauvegarde...');
                                 });
                             }
                         });
                     })(jQuery);
                     ", 'before');
                 }
-                
+
                 // Le fallback inline suffit maintenant
             }
 

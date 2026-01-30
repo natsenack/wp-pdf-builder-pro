@@ -314,11 +314,34 @@
 
         <?php submit_button(); ?>
 
-        <!-- Bouton flottant de sauvegarde - DANS le formulaire -->
-        <div id="pdf-builder-save-floating" class="pdf-builder-save-floating-container">
-            <button type="submit" name="submit" id="pdf-builder-save-floating-btn" class="pdf-builder-floating-save">
-                💾 Enregistrer
-            </button>
+        <!-- Bouton flottant de sauvegarde optimisé -->
+        <div id="pdf-builder-floating-save-container" class="pdf-builder-floating-save-container">
+            <div class="pdf-builder-floating-save-wrapper">
+                <button type="submit"
+                        name="pdf_builder_save_settings"
+                        id="pdf-builder-floating-save-btn"
+                        class="pdf-builder-floating-save-btn"
+                        data-action="save"
+                        data-nonce="<?php echo wp_create_nonce('pdf_builder_save_settings'); ?>"
+                        title="<?php esc_attr_e('Enregistrer tous les paramètres', 'pdf-builder-pro'); ?>">
+                    <span class="pdf-builder-save-icon">💾</span>
+                    <span class="pdf-builder-save-text"><?php _e('Enregistrer', 'pdf-builder-pro'); ?></span>
+                    <span class="pdf-builder-save-spinner" style="display: none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" opacity="0.3"></circle>
+                            <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor"></path>
+                        </svg>
+                    </span>
+                </button>
+
+                <!-- Indicateur de statut -->
+                <div class="pdf-builder-save-status" id="pdf-builder-save-status">
+                    <div class="pdf-builder-save-status-content">
+                        <span class="pdf-builder-status-icon">✓</span>
+                        <span class="pdf-builder-status-text"><?php _e('Paramètres enregistrés', 'pdf-builder-pro'); ?></span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     </form>
