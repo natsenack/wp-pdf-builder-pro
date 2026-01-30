@@ -8,11 +8,15 @@ if (defined('PDF_BUILDER_DEACTIVATION_HANDLER_LOADED')) {
 define('PDF_BUILDER_DEACTIVATION_HANDLER_LOADED', true);
 
 // Register deactivation hook
-register_deactivation_hook(PDF_BUILDER_PRO_FILE, function() {
-    if (get_option('pdf_builder_delete_on_deactivate', false)) {
-        do_action('pdf_builder_deactivate');
+add_action('plugins_loaded', function() {
+    if (function_exists('register_deactivation_hook')) {
+        register_deactivation_hook(dirname(dirname(dirname(__FILE__))) . '/pdf-builder-pro.php', function() {
+            if (get_option('pdf_builder_delete_on_deactivate', false)) {
+                do_action('pdf_builder_deactivate');
+            }
+        });
     }
-});
+}, 0);
 
 // Handle deactivation parameters
 add_action('plugins_loaded', function() {
