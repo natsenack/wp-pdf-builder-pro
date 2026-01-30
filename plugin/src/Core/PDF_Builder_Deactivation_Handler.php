@@ -133,83 +133,120 @@ if (!function_exists('pdf_builder_add_deactivation_modal')) {
             
             let deactivationLink = null;
             let selectedAction = 'keep'; // Par défaut: conserver les données
+            let modalShown = false;
 
-            // Attendre que jQuery soit disponible
-            var checkJQuery = setInterval(function() {
+            // Fonction pour initialiser le modal
+            function initializeModal() {
                 if (typeof jQuery === 'undefined') {
+                    return false;
+                }
+                
+                var $ = jQuery;
+
+                // Trouver le lien de désactivation pour PDF Builder Pro
+                // Chercher tous les liens de déactivation
+                var foundLink = null;
+                
+                // Chercher par le plugin slug dans l'attribut href ou data
+                $('a[href*="action=deactivate"]').each(function() {
+                    var href = $(this).attr('href');
+                    var $row = $(this).closest('tr');
+                    var pluginName = $row.find('[data-plugin]').attr('data-plugin') || '';
+                    var rowText = $row.text();
+                    
+                    // Vérifier si c'est notre plugin
+                    if (href.indexOf('wp-pdf-builder-pro/pdf-builder-pro.php') > -1 || 
+                        pluginName.indexOf('pdf-builder-pro') > -1 ||
+                        pluginName.indexOf('wp-pdf-builder-pro') > -1 ||
+                        rowText.indexOf('PDF Builder') > -1) {
+                        foundLink = $(this);
+                        deactivationLink = href;
+                        return false; // break
+                    }
+                });
+
+                if (!foundLink || !deactivationLink) {
+                    console.warn('[PDF Builder] Lien de désactivation non trouvé');
+                    return false;
+                }
+
+                // Intercepter le clic sur le lien de désactivation
+                foundLink.on('click', function(e) {
+                    if (modalShown) return; // Éviter les clics multiples
+                    
+                    e.preventDefault();
+                    e.stopPropagation();
+                    modalShown = true;
+                    $('#pdf-builder-deactivation-modal').css('display', 'flex');
+                    
+                    console.log('[PDF Builder] Modal de désactivation affichée');
+                });
+
+                // Bouton "Annuler"
+                $('#pdf-builder-deactivation-cancel').on('click', function() {
+                    $('#pdf-builder-deactivation-modal').css('display', 'none');
+                    modalShown = false;
+                });
+
+                // Bouton "Fermer" (X)
+                $('#pdf-builder-deactivation-close').on('click', function() {
+                    $('#pdf-builder-deactivation-modal').css('display', 'none');
+                    modalShown = false;
+                });
+
+                // Bouton "Continuer la désactivation"
+                $('#pdf-builder-deactivation-proceed').on('click', function() {
+                    selectedAction = $('input[name="pdf_builder_db_action"]:checked').val() || 'keep';
+                    
+                    // Modifier l'URL de désactivation pour inclure notre paramètre
+                    var finalUrl = deactivationLink;
+                    var separator = (finalUrl.indexOf('?') === -1) ? '?' : '&';
+                    finalUrl += separator + 'pdf_builder_db_action=' + encodeURIComponent(selectedAction);
+                    
+                    console.log('[PDF Builder] Désactivation avec action:', selectedAction);
+                    console.log('[PDF Builder] URL de désactivation:', finalUrl);
+                    
+                    // Rediriger vers la désactivation
+                    window.location.href = finalUrl;
+                });
+
+                // Mettre à jour la valeur sélectionnée
+                $('input[name="pdf_builder_db_action"]').on('change', function() {
+                    selectedAction = $(this).val();
+                });
+
+                // Fermer le modal en cliquant sur le fond
+                $('#pdf-builder-deactivation-modal').on('click', function(e) {
+                    if (e.target === this) {
+                        $(this).css('display', 'none');
+                        modalShown = false;
+                    }
+                });
+                
+                return true;
+            }
+
+            // Attendre que jQuery soit disponible - avec timeout court
+            var attempts = 0;
+            var checkJQuery = setInterval(function() {
+                attempts++;
+                if (typeof jQuery === 'undefined') {
+                    if (attempts > 100) { // Timeout après 5 secondes
+                        clearInterval(checkJQuery);
+                        console.warn('[PDF Builder] jQuery non disponible après timeout');
+                    }
                     return;
                 }
                 
                 clearInterval(checkJQuery);
 
                 jQuery(document).ready(function($) {
-                    // Trouver le lien de désactivation pour PDF Builder Pro
-                    // Chercher dans la colonne "Description"
-                    var foundLink = null;
-                    
-                    // Stratégie 1: Chercher par aria-label
-                    var links = $('tr').filter(function() {
-                        var text = $(this).find('strong').text();
-                        return text.indexOf('PDF Builder') > -1;
-                    }).find('a');
-                    
-                    links.each(function() {
-                        var href = $(this).attr('href');
-                        var label = $(this).attr('aria-label') || '';
-                        
-                        if (href && href.indexOf('action=deactivate') > -1 && 
-                            (label.indexOf('PDF Builder') > -1 || label.indexOf('Désactiver') > -1)) {
-                            foundLink = $(this);
-                            deactivationLink = href;
-                            return false; // break
-                        }
-                    });
-
-                    if (!foundLink || !deactivationLink) {
-                        return; // Lien non trouvé
+                    if (!initializeModal()) {
+                        // Si la première tentative échoue, réessayer après 500ms
+                        setTimeout(function() {
+                            initializeModal();
+                        }, 500);
                     }
-
-                    // Intercepter le clic sur le lien de désactivation
-                    foundLink.on('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        $('#pdf-builder-deactivation-modal').css('display', 'flex');
-                    });
-
-                    // Bouton "Annuler"
-                    $('#pdf-builder-deactivation-cancel').on('click', function() {
-                        $('#pdf-builder-deactivation-modal').css('display', 'none');
-                    });
-
-                    // Bouton "Fermer" (X)
-                    $('#pdf-builder-deactivation-close').on('click', function() {
-                        $('#pdf-builder-deactivation-modal').css('display', 'none');
-                    });
-
-                    // Bouton "Continuer la désactivation"
-                    $('#pdf-builder-deactivation-proceed').on('click', function() {
-                        selectedAction = $('input[name="pdf_builder_db_action"]:checked').val() || 'keep';
-                        
-                        // Modifier l'URL de désactivation pour inclure notre paramètre
-                        var finalUrl = deactivationLink;
-                        var separator = (finalUrl.indexOf('?') === -1) ? '?' : '&';
-                        finalUrl += separator + 'pdf_builder_db_action=' + encodeURIComponent(selectedAction);
-                        
-                        // Rediriger vers la désactivation
-                        window.location.href = finalUrl;
-                    });
-
-                    // Mettre à jour la valeur sélectionnée
-                    $('input[name="pdf_builder_db_action"]').on('change', function() {
-                        selectedAction = $(this).val();
-                    });
-
-                    // Fermer le modal en cliquant sur le fond
-                    $('#pdf-builder-deactivation-modal').on('click', function(e) {
-                        if (e.target === this) {
-                            $(this).css('display', 'none');
-                        }
-                    });
                 });
             }, 50);
         })();
