@@ -29,8 +29,8 @@ add_action('admin_enqueue_scripts', function() {
     }
     add_action('admin_footer', function() {
         ?>
-        <div id="pdf-builder-deactivation-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center;">
-            <div style="background: white; border-radius: 8px; max-width: 500px; width: 90%; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+        <div id="pdf-builder-deactivation-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
+            <div style="background: white; border-radius: 8px; max-width: 600px; width: 90%; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h2 style="margin: 0; font-size: 24px; color: #333;">Avant de désactiver...</h2>
                     <button id="pdf-builder-deactivation-close" type="button" style="background: none; border: none; font-size: 28px; cursor: pointer; color: #666;">×</button>
@@ -57,6 +57,55 @@ add_action('admin_enqueue_scripts', function() {
                         </label>
                     </div>
                 </div>
+
+                <!-- Section Feedback -->
+                <div style="background: #f0f4ff; border: 1px solid #d0e0ff; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
+                    <p style="margin: 0 0 15px 0; font-size: 13px; color: #333;"><strong>Si vous avez un moment, veuillez nous indiquer pourquoi vous désactivez :</strong></p>
+                    <div style="max-height: 200px; overflow-y: auto;">
+                        <label style="display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; font-size: 13px;">
+                            <input type="radio" name="pdf_builder_reason" value="not_working" style="margin-right: 8px; cursor: pointer;">
+                            <span>Le plugin ne fonctionne pas</span>
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; font-size: 13px;">
+                            <input type="radio" name="pdf_builder_reason" value="not_as_expected" style="margin-right: 8px; cursor: pointer;">
+                            <span>Le plugin n'a pas fonctionné comme prévu</span>
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; font-size: 13px;">
+                            <input type="radio" name="pdf_builder_reason" value="stopped_working" style="margin-right: 8px; cursor: pointer;">
+                            <span>Le plugin a soudainement cessé de fonctionner</span>
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; font-size: 13px;">
+                            <input type="radio" name="pdf_builder_reason" value="broke_site" style="margin-right: 8px; cursor: pointer;">
+                            <span>Le plugin a cassé mon site</span>
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; font-size: 13px;">
+                            <input type="radio" name="pdf_builder_reason" value="didnt_understand" style="margin-right: 8px; cursor: pointer;">
+                            <span>Je n'ai pas compris comment le faire fonctionner</span>
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; font-size: 13px;">
+                            <input type="radio" name="pdf_builder_reason" value="better_plugin" style="margin-right: 8px; cursor: pointer;">
+                            <span>J'ai trouvé un meilleur plugin</span>
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; font-size: 13px;">
+                            <input type="radio" name="pdf_builder_reason" value="missing_feature" style="margin-right: 8px; cursor: pointer;">
+                            <span>Le plugin est génial, mais j'ai besoin d'une fonctionnalité spécifique</span>
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; font-size: 13px;">
+                            <input type="radio" name="pdf_builder_reason" value="no_longer_need" style="margin-right: 8px; cursor: pointer;">
+                            <span>Je n'ai plus besoin du plugin</span>
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; font-size: 13px;">
+                            <input type="radio" name="pdf_builder_reason" value="temporary" style="margin-right: 8px; cursor: pointer;">
+                            <span>C'est une désactivation temporaire, je débogue un problème</span>
+                        </label>
+                        <label style="display: flex; align-items: center; margin-bottom: 0; cursor: pointer; font-size: 13px;">
+                            <input type="radio" name="pdf_builder_reason" value="other" style="margin-right: 8px; cursor: pointer;">
+                            <span>Autre</span>
+                        </label>
+                    </div>
+                    <p style="margin: 12px 0 0 0; font-size: 12px; color: #999;">Vos retours nous aident à améliorer le produit.</p>
+                </div>
+
                 <div style="display: flex; gap: 10px; justify-content: flex-end;">
                     <button id="pdf-builder-deactivation-cancel" type="button" class="button button-secondary" style="padding: 8px 20px;">Annuler</button>
                     <button id="pdf-builder-deactivation-proceed" type="button" class="button button-primary" style="padding: 8px 20px; background: #667eea; border-color: #667eea; color: white; cursor: pointer;">Continuer</button>
