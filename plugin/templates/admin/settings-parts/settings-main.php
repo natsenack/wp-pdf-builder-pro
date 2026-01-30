@@ -24,6 +24,7 @@
     $current_user = wp_get_current_user();
 
     // LOG pour déboguer la soumission du formulaire
+    error_log('[PDF Builder] === SETTINGS PAGE LOADED - DIRECT ERROR_LOG ===');
     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === SETTINGS PAGE LOADED ==='); }
     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Settings page loaded - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']); }
     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Current tab: ' . $current_tab); }
