@@ -35,8 +35,14 @@ add_action('plugins_loaded', function() {
     // Initialiser l'autoloader personnalisé
     $autoloader_file = PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/autoloader.php';
     if (file_exists($autoloader_file)) {
-        require_once $autoloader_file;
-        \PDF_Builder\Core\PdfBuilderAutoloader::init(PDF_BUILDER_PLUGIN_DIR);
+        try {
+            require_once $autoloader_file;
+            if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
+                \PDF_Builder\Core\PdfBuilderAutoloader::init(PDF_BUILDER_PLUGIN_DIR);
+            }
+        } catch (Exception $e) {
+            error_log('[ERROR] PDF Builder: Autoloader init failed: ' . $e->getMessage());
+        }
     } else {
         error_log('[ERROR] PDF Builder: Custom autoloader file not found: ' . $autoloader_file);
     }
