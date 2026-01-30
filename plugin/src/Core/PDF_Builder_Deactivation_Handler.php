@@ -30,7 +30,7 @@ add_action('admin_enqueue_scripts', function() {
     add_action('admin_footer', function() {
         ?>
         <!-- PDF Builder Pro Deactivation Modal v2.0 -->
-        <div id="pdf-builder-deactivation-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
+        <div id="pdf-builder-deactivation-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; flex-wrap: wrap; align-content: center; justify-content: center;">
             <div style="background: white; border-radius: 8px; max-width: 600px; width: 90%; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h2 style="margin: 0; font-size: 24px; color: #333;">Avant de désactiver...</h2>
@@ -113,6 +113,14 @@ add_action('admin_enqueue_scripts', function() {
                 </div>
             </div>
         </div>
+        <style>
+        #pdf-builder-deactivation-modal {
+            display: none !important;
+        }
+        #pdf-builder-deactivation-modal.show {
+            display: flex !important;
+        }
+        </style>
         <script>
         (function() {
             if (typeof jQuery === 'undefined') return;
@@ -124,13 +132,13 @@ add_action('admin_enqueue_scripts', function() {
                         $(this).on('click', function(e) {
                             e.preventDefault();
                             e.stopPropagation();
-                            $('#pdf-builder-deactivation-modal').fadeIn();
+                            $('#pdf-builder-deactivation-modal').addClass('show');
                             return false;
                         });
                     }
                 });
                 $('#pdf-builder-deactivation-cancel, #pdf-builder-deactivation-close').on('click', function() {
-                    $('#pdf-builder-deactivation-modal').fadeOut();
+                    $('#pdf-builder-deactivation-modal').removeClass('show');
                 });
                 $('#pdf-builder-deactivation-proceed').on('click', function() {
                     var action = $('input[name="pdf_builder_db_action"]:checked').val() || 'keep';
