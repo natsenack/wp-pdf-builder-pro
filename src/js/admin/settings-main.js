@@ -41,6 +41,22 @@
         form.submit();
     };
 
+    // Debug floating save button
+    $(document).on('click', '#pdf-builder-save-floating-btn', function(e) {
+        console.log('[PDF Builder] Floating save button clicked');
+        console.log('[PDF Builder] Event:', e);
+        console.log('[PDF Builder] Button:', this);
+        console.log('[PDF Builder] Form:', $(this).closest('form'));
+        
+        // Don't prevent default, just log
+    });
+
+    // Debug form submission
+    $(document).on('submit', 'form[action="options.php"]', function(e) {
+        console.log('[PDF Builder] Form submitted');
+        console.log('[PDF Builder] Form data:', $(this).serialize());
+    });
+
     // Only initialize modal functionality if we're on the license tab
     var currentUrl = window.location.href;
     if (currentUrl.indexOf('tab=licence') !== -1) {
