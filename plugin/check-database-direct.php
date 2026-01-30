@@ -4,24 +4,32 @@
  * Diagnostique les tables de base de données
  */
 
-// Configuration directe
-$db_config = parse_url('mysql://' . (getenv('DB_USER') ?: 'root') . ':' . (getenv('DB_PASSWORD') ?: '') . '@' . (getenv('DB_HOST') ?: 'localhost') . '/' . (getenv('DB_NAME') ?: 'wp_pdf_builder'));
+// Trouver et charger wp-config.php
+$path = __DIR__;
+$found = false;
+for ($i = 0; $i < 5; $i++) {
+    $path = dirname($path);
+    if (file_exists($path . '/wp-config.php')) {
+        require_once($path . '/wp-config.php');
+        $found = true;
+        break;
+    }
+}
 
-// Pour test: charger wp-config.php s'il existe
-if (file_exists(__DIR__ . '/../../wp-config.php')) {
-    require_once(__DIR__ . '/../../wp-config.php');
+if (!$found) {
+    die('Cannot find wp-config.php');
 }
 
 // Connexion directe
-$mysqli = new mysqli(
-    defined('DB_HOST') ? DB_HOST : 'localhost',
-    defined('DB_USER') ? DB_USER : 'root',
-    defined('DB_PASSWORD') ? DB_PASSWORD : '',
-    defined('DB_NAME') ? DB_NAME : 'wordpress'
-);
+if (!defined('DB_HOST')) die('DB_HOST not defined');
+if (!defined('DB_USER')) die('DB_USER not defined');
+if (!defined('DB_PASSWORD')) die('DB_PASSWORD not defined');
+if (!defined('DB_NAME')) die('DB_NAME not defined');
+
+$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
 if ($mysqli->connect_error) {
-    die('Erreur de connexion: ' . $mysqli->connect_error);
+    die('Connexion erreur: ' . $mysqli->connect_error);
 }
 
 $prefix = defined('$table_prefix') ? $table_prefix : 'wp_';
