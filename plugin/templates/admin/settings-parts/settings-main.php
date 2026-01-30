@@ -19,15 +19,27 @@ if (!in_array($current_tab, $valid_tabs)) {
     $current_tab = 'general';
 }
 
-// Enregistrer les paramètres
-add_action('admin_init', function() {
-    register_setting('pdf_builder_settings', 'pdf_builder_settings');
-});
+// Enregistrer les paramètres - UTILISE LE SYSTÈME PERSONNALISÉ
+if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings'])) {
+    if (!wp_verify_nonce($_POST['_wpnonce'] ?? '', 'pdf_builder_settings-options')) {
+        wp_die('Sécurité: Nonce invalide');
+    }
 
-// Déterminer le nom de la page de paramètres selon l'onglet
-$page_name = 'pdf_builder_' . $current_tab;
-if ($current_tab === 'general') {
-    $page_name = 'pdf_builder_general';
+    if (!current_user_can('manage_options')) {
+        wp_die('Accès refusé');
+    }
+
+    $settings = array_map('sanitize_text_field', $_POST['pdf_builder_settings']);
+    pdf_builder_update_option('pdf_builder_settings', $settings);
+
+    // Message de succès
+    add_action('admin_notices', function() {
+        echo '<div class="notice notice-success is-dismissible"><p>Paramètres sauvegardés avec succès !</p></div>';
+    });
+
+    // Redirection pour éviter la resoumission
+    wp_redirect(add_query_arg('updated', '1', wp_get_referer()));
+    exit;
 }
 
 ?>
@@ -35,8 +47,8 @@ if ($current_tab === 'general') {
 <div class="wrap">
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
-    <form method="post" action="options.php" id="pdf-builder-settings-form">
-        <?php settings_fields($page_name); ?>
+    <form method="post" action="" id="pdf-builder-settings-form">
+        <?php wp_nonce_field('pdf_builder_settings-options'); ?>
 
         <!-- Navigation par onglets -->
         <h2 class="nav-tab-wrapper">
@@ -80,7 +92,7 @@ if ($current_tab === 'general') {
             <?php
             switch ($current_tab) {
                 case 'general':
-                    do_settings_sections('pdf_builder_general');
+                    include __DIR__ . '/settings-general.php';
                     break;
                 case 'licence':
                     do_settings_sections('pdf_builder_licence');
@@ -111,7 +123,7 @@ if ($current_tab === 'general') {
 
             <?php submit_button(); ?>
 
-            <!-- Bouton flottant de sauvegarde pour tous les onglets -->
+            <!-- Bouton flottant de sauvegarde - TOUJOURS visible -->
             <div id="pdf-builder-save-floating" class="pdf-builder-save-floating-container">
                 <button type="submit" name="submit" id="pdf-builder-save-floating-btn" class="pdf-builder-floating-save">
                     💾 Enregistrer
