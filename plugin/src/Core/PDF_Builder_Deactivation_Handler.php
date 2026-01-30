@@ -29,6 +29,7 @@ add_action('admin_enqueue_scripts', function() {
     }
     add_action('admin_footer', function() {
         ?>
+        <!-- PDF Builder Pro Deactivation Modal v2.0 -->
         <div id="pdf-builder-deactivation-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
             <div style="background: white; border-radius: 8px; max-width: 600px; width: 90%; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
