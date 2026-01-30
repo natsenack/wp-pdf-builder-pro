@@ -111,10 +111,10 @@ add_action('admin_enqueue_scripts', function() {
                 
                 <!-- Buttons -->
                 <div style="display: flex; gap: 10px; justify-content: space-between;">
-                    <button id="pdf-builder-btn-skip" type="button" class="button" style="padding: 10px 20px; cursor: pointer; background: #f0f0f0; border-color: #f0f0f0; color: #333;">Passer & Désactiver</button>
+                    <button id="pdf-builder-btn-skip" type="button" class="button" style="padding: 10px 20px; cursor: pointer; background: #e8e8e8; border-color: #ccc; color: #666; opacity: 0.7;">Passer & Désactiver</button>
                     <div style="display: flex; gap: 10px;">
                         <button id="pdf-builder-btn-cancel" type="button" class="button button-secondary" style="padding: 10px 20px; cursor: pointer;">Annuler</button>
-                        <button id="pdf-builder-btn-proceed" type="button" class="button button-primary" style="padding: 10px 20px; background: #667eea; border-color: #667eea; color: white; cursor: pointer;">Désactiver</button>
+                        <button id="pdf-builder-btn-proceed" type="button" class="button button-primary" disabled style="padding: 10px 20px; background: #667eea; border-color: #667eea; color: white; cursor: not-allowed; opacity: 0.6;">Désactiver</button>
                     </div>
                 </div>
             </div>
@@ -150,7 +150,25 @@ add_action('admin_enqueue_scripts', function() {
                     } else {
                         $('#pdf-builder-other-reason').hide();
                     }
+                    // Enable proceed button when any reason is selected
+                    enableProceedButton();
                 });
+                
+                // Function to enable/disable proceed button
+                function enableProceedButton() {
+                    var reasonSelected = $('input[name="pdf_builder_reason"]:checked').length > 0;
+                    if (reasonSelected) {
+                        $('#pdf-builder-btn-proceed').prop('disabled', false).css({
+                            'opacity': '1',
+                            'cursor': 'pointer'
+                        });
+                    } else {
+                        $('#pdf-builder-btn-proceed').prop('disabled', true).css({
+                            'opacity': '0.6',
+                            'cursor': 'not-allowed'
+                        });
+                    }
+                }
                 
                 // Close handlers
                 $('#pdf-builder-modal-close, #pdf-builder-btn-cancel').on('click', function() {
@@ -165,6 +183,8 @@ add_action('admin_enqueue_scripts', function() {
                 
                 // Proceed handler
                 $('#pdf-builder-btn-proceed').on('click', function() {
+                    if ($(this).prop('disabled')) return; // Prevent action if disabled
+                    
                     var reason = $('input[name="pdf_builder_reason"]:checked').val() || 'not_specified';
                     
                     // If "Autre" is selected, use custom reason
