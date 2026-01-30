@@ -175,7 +175,7 @@
                 💾 Enregistrer
             </button>
         </div>
-        <?php if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Floating save button rendered'); ?>
+        <?php if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Floating save button rendered'); } ?>
     </div>
     </form>
 
