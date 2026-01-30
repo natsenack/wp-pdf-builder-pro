@@ -42,9 +42,13 @@
     };
 
     // Debug floating save button
-    $(document).on('click', '#pdf-builder-floating-save', function(e) {
-        
-        // Don't prevent default, just log
+    $(document).on('click', '#pdf-builder-save-floating-btn', function(e) {
+        // Add a hidden field to indicate floating save was used
+        var form = $(this).closest('form');
+        if (form.length && !form.find('input[name="pdf_builder_floating_save"]').length) {
+            form.append('<input type="hidden" name="pdf_builder_floating_save" value="1">');
+        }
+        // Don't prevent default, let the form submit
     });
 
     // Debug form submission
