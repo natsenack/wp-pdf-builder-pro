@@ -56,25 +56,6 @@ add_action('admin_enqueue_scripts', function() {
                 <h2 style="margin: 0 0 10px 0; font-size: 26px; color: #222; font-weight: 600;">Avant de désactiver</h2>
                 <p style="margin: 0 0 30px 0; color: #666; font-size: 14px; line-height: 1.6;">Aidez-nous à améliorer le plugin en nous indiquant votre décision.</p>
                 
-                <!-- Data Preservation Section -->
-                <div style="background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
-                    <p style="margin: 0 0 15px 0; font-weight: 600; color: #333; font-size: 14px;">Voulez-vous conserver vos données ?</p>
-                    
-                    <label style="display: block; margin-bottom: 12px; cursor: pointer;">
-                        <input type="radio" name="pdf_builder_keep_data" value="keep" checked style="margin-right: 10px; cursor: pointer; width: 16px; height: 16px; vertical-align: middle;">
-                        <span style="font-size: 14px; color: #333; vertical-align: middle;">
-                            <strong>Conserver les données</strong> - Les templates et réglages seront sauvegardés
-                        </span>
-                    </label>
-                    
-                    <label style="display: block; cursor: pointer;">
-                        <input type="radio" name="pdf_builder_keep_data" value="delete" style="margin-right: 10px; cursor: pointer; width: 16px; height: 16px; vertical-align: middle;">
-                        <span style="font-size: 14px; color: #333; vertical-align: middle;">
-                            <strong>Supprimer toutes les données</strong> - Impossible à annuler
-                        </span>
-                    </label>
-                </div>
-                
                 <!-- Feedback Section -->
                 <div style="background: #f0f4ff; border: 1px solid #d0e0ff; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
                     <p style="margin: 0 0 15px 0; font-weight: 600; color: #333; font-size: 14px;">Pourquoi désactivez-vous ? (optionnel)</p>
@@ -121,12 +102,17 @@ add_action('admin_enqueue_scripts', function() {
                             Autre
                         </label>
                     </div>
+                    
+                    <!-- Textarea for custom reason -->
+                    <div id="pdf-builder-other-reason" style="display: none; margin-top: 15px;">
+                        <textarea id="pdf-builder-custom-reason" placeholder="Veuillez nous expliquer..." style="width: 100%; min-height: 100px; padding: 10px; border: 1px solid #d0e0ff; border-radius: 4px; font-family: Arial, sans-serif; font-size: 13px; resize: vertical;"></textarea>
+                    </div>
                 </div>
                 
                 <!-- Buttons -->
                 <div style="display: flex; gap: 10px; justify-content: flex-end;">
                     <button id="pdf-builder-btn-cancel" type="button" class="button button-secondary" style="padding: 10px 20px; cursor: pointer;">Annuler</button>
-                    <button id="pdf-builder-btn-proceed" type="button" class="button button-primary" style="padding: 10px 20px; background: #667eea; border-color: #667eea; color: white; cursor: pointer;">Continuer la désactivation</button>
+                    <button id="pdf-builder-btn-proceed" type="button" class="button button-primary" style="padding: 10px 20px; background: #667eea; border-color: #667eea; color: white; cursor: pointer;">Passer & Désactiver</button>
                 </div>
             </div>
         </div>
@@ -154,6 +140,15 @@ add_action('admin_enqueue_scripts', function() {
                     }
                 });
                 
+                // Toggle textarea when "Autre" is selected
+                $('input[name="pdf_builder_reason"]').on('change', function() {
+                    if ($(this).val() === 'other') {
+                        $('#pdf-builder-other-reason').show();
+                    } else {
+                        $('#pdf-builder-other-reason').hide();
+                    }
+                });
+                
                 // Close handlers
                 $('#pdf-builder-modal-close, #pdf-builder-btn-cancel').on('click', function() {
                     $('#pdf-builder-deactivation-modal').css('display', 'none');
@@ -161,13 +156,17 @@ add_action('admin_enqueue_scripts', function() {
                 
                 // Proceed handler
                 $('#pdf-builder-btn-proceed').on('click', function() {
-                    var keepData = $('input[name="pdf_builder_keep_data"]:checked').val() || 'keep';
                     var reason = $('input[name="pdf_builder_reason"]:checked').val() || 'not_specified';
+                    
+                    // If "Autre" is selected, use custom reason
+                    if (reason === 'other') {
+                        reason = $('#pdf-builder-custom-reason').val().trim() || 'other';
+                    }
                     
                     if (!deactivateLink) return;
                     
                     var separator = deactivateLink.indexOf('?') === -1 ? '?' : '&';
-                    var finalUrl = deactivateLink + separator + 'pdf_builder_db_action=' + keepData + '&pdf_builder_reason=' + reason;
+                    var finalUrl = deactivateLink + separator + 'pdf_builder_reason=' + encodeURIComponent(reason);
                     
                     window.location.href = finalUrl;
                 });
