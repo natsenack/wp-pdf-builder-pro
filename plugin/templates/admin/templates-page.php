@@ -1305,6 +1305,8 @@ function closeTemplateSettingsModal() {
 
 // Fonction pour charger les paramètres du template via AJAX
 function loadTemplateSettings(templateId) {
+    // Définir le template actuel pour la sauvegarde
+    currentTemplateId = templateId;
     
     
     // Préparer les données AJAX
