@@ -65,7 +65,7 @@ class PDF_Builder_Logger
      * @param string $message Le message à logger
      * @return void
      */
-
+    public function error_log($message)
     {
         
     }
