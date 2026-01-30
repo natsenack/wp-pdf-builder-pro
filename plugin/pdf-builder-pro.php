@@ -24,6 +24,9 @@ define('PDF_BUILDER_PRO_ASSETS_PATH', plugin_dir_path(__FILE__) . 'assets/');
 define('PDF_BUILDER_VERSION', '1.0.1.0');
 define('PDF_BUILDER_PRO_VERSION', '1.0.1.0');
 
+// Log simple pour vérifier si le plugin se charge
+error_log('[PDF BUILDER] Plugin file loaded: ' . __FILE__);
+
 // Premium features constant (set to false for free version)
 if (!defined('PDF_BUILDER_PREMIUM')) {
     define('PDF_BUILDER_PREMIUM', false);
