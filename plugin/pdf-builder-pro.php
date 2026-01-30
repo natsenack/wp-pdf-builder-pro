@@ -57,12 +57,24 @@ add_action('plugins_loaded', function() {
         $settings_url = admin_url('admin.php?page=pdf-builder-settings');
         $settings_link = '<a href="' . esc_url($settings_url) . '" style="color: #0073aa; text-decoration: none;">Paramètres</a>';
         
-        // Bouton Passer en Pro
-        $pro_url = 'https://threeaxe.fr/pdf-builder-pro';
-        $pro_link = '<a href="' . esc_url($pro_url) . '" target="_blank" style="color: #27ae60; font-weight: bold; text-decoration: none;">⭐ Passer en Pro</a>';
+        // Bouton Passer en Pro - uniquement si pas de licence activée (pas les licences test)
+        $show_pro_button = true;
+        if (class_exists('PDF_Builder\Managers\PDF_Builder_License_Manager')) {
+            $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+            // Afficher le bouton seulement si ce n'est pas une licence premium active
+            if ($license_manager->is_premium() && $license_manager->get_license_status() === 'active') {
+                $show_pro_button = false;
+            }
+        }
         
         // Ajouter les nouveaux liens avant les liens existants
-        array_unshift($links, $pro_link, $settings_link);
+        if ($show_pro_button) {
+            $pro_url = 'https://threeaxe.fr/pdf-builder-pro';
+            $pro_link = '<a href="' . esc_url($pro_url) . '" target="_blank" style="color: #27ae60; font-weight: bold; text-decoration: none;">⭐ Passer en Pro</a>';
+            array_unshift($links, $pro_link);
+        }
+        
+        array_unshift($links, $settings_link);
         
         return $links;
     });
