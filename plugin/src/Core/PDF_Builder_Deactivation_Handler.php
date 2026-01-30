@@ -110,9 +110,12 @@ add_action('admin_enqueue_scripts', function() {
                 </div>
                 
                 <!-- Buttons -->
-                <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                    <button id="pdf-builder-btn-cancel" type="button" class="button button-secondary" style="padding: 10px 20px; cursor: pointer;">Annuler</button>
-                    <button id="pdf-builder-btn-proceed" type="button" class="button button-primary" style="padding: 10px 20px; background: #667eea; border-color: #667eea; color: white; cursor: pointer;">Passer & Désactiver</button>
+                <div style="display: flex; gap: 10px; justify-content: space-between;">
+                    <button id="pdf-builder-btn-skip" type="button" class="button" style="padding: 10px 20px; cursor: pointer; background: #f0f0f0; border-color: #f0f0f0; color: #333;">Passer & Désactiver</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button id="pdf-builder-btn-cancel" type="button" class="button button-secondary" style="padding: 10px 20px; cursor: pointer;">Annuler</button>
+                        <button id="pdf-builder-btn-proceed" type="button" class="button button-primary" style="padding: 10px 20px; background: #667eea; border-color: #667eea; color: white; cursor: pointer;">Désactiver</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -152,6 +155,12 @@ add_action('admin_enqueue_scripts', function() {
                 // Close handlers
                 $('#pdf-builder-modal-close, #pdf-builder-btn-cancel').on('click', function() {
                     $('#pdf-builder-deactivation-modal').css('display', 'none');
+                });
+                
+                // Skip button (directly deactivate without feedback)
+                $('#pdf-builder-btn-skip').on('click', function() {
+                    if (!deactivateLink) return;
+                    window.location.href = deactivateLink;
                 });
                 
                 // Proceed handler
