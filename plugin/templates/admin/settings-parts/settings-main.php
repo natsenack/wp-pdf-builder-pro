@@ -24,13 +24,19 @@ add_action('admin_init', function() {
     register_setting('pdf_builder_settings', 'pdf_builder_settings');
 });
 
+// Déterminer le nom de la page de paramètres selon l'onglet
+$page_name = 'pdf_builder_' . $current_tab;
+if ($current_tab === 'general') {
+    $page_name = 'pdf_builder_general';
+}
+
 ?>
 
 <div class="wrap">
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
     <form method="post" action="options.php" id="pdf-builder-settings-form">
-        <?php settings_fields('pdf_builder_settings'); ?>
+        <?php settings_fields($page_name); ?>
 
         <!-- Navigation par onglets -->
         <h2 class="nav-tab-wrapper">
@@ -74,7 +80,7 @@ add_action('admin_init', function() {
             <?php
             switch ($current_tab) {
                 case 'general':
-                    include __DIR__ . '/settings-general.php';
+                    do_settings_sections('pdf_builder_general');
                     break;
                 case 'licence':
                     do_settings_sections('pdf_builder_licence');
@@ -105,14 +111,12 @@ add_action('admin_init', function() {
 
             <?php submit_button(); ?>
 
-            <!-- Bouton flottant de sauvegarde simplifié - masqué dans l'onglet général -->
-            <?php if ($current_tab !== 'general'): ?>
+            <!-- Bouton flottant de sauvegarde pour tous les onglets -->
             <div id="pdf-builder-save-floating" class="pdf-builder-save-floating-container">
                 <button type="submit" name="submit" id="pdf-builder-save-floating-btn" class="pdf-builder-floating-save">
                     💾 Enregistrer
                 </button>
             </div>
-            <?php endif; ?>
         </div>
     </form>
 </div>
