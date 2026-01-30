@@ -51,6 +51,22 @@ add_action('plugins_loaded', function() {
     add_action('wp_ajax_pdf_builder_show_notification', 'pdf_builder_test_notification_handler');
     add_action('wp_ajax_nopriv_pdf_builder_show_notification', 'pdf_builder_test_notification_handler');
     
+    // Add action links to plugin list (Paramètres et Passer en Pro)
+    add_filter('plugin_action_links_wp-pdf-builder-pro/pdf-builder-pro.php', function($links) {
+        // Bouton Paramètres
+        $settings_url = admin_url('admin.php?page=pdf-builder-settings');
+        $settings_link = '<a href="' . esc_url($settings_url) . '" style="color: #0073aa; text-decoration: none;">Paramètres</a>';
+        
+        // Bouton Passer en Pro
+        $pro_url = 'https://threeaxe.fr/pdf-builder-pro';
+        $pro_link = '<a href="' . esc_url($pro_url) . '" target="_blank" style="color: #27ae60; font-weight: bold; text-decoration: none;">⭐ Passer en Pro</a>';
+        
+        // Ajouter les nouveaux liens avant les liens existants
+        array_unshift($links, $pro_link, $settings_link);
+        
+        return $links;
+    });
+    
     function pdf_builder_test_notification_handler() {
         error_log('[TEST HANDLER] pdf_builder_show_notification called');
         error_log('[TEST HANDLER] POST data: ' . print_r($_POST, true));
