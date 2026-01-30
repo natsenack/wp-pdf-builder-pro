@@ -4,6 +4,10 @@
 (function($) {
     'use strict';
 
+    console.log('[PDF Builder JS] === SETTINGS SCRIPT LOADED ===');
+    console.log('[PDF Builder JS] Current URL:', window.location.href);
+    console.log('[PDF Builder JS] jQuery version:', $.fn.jquery);
+
     
 
     // Define global functions immediately for modal control
@@ -87,6 +91,15 @@
             }
         });
     }
+
+    // Debug when DOM is ready
+    $(document).ready(function() {
+        console.log('[PDF Builder JS] DOM ready');
+        console.log('[PDF Builder JS] Floating button exists:', $('#pdf-builder-save-floating-btn').length > 0);
+        console.log('[PDF Builder JS] Form exists:', $('form[action="options.php"]').length > 0);
+    });
+
+    console.log('[PDF Builder JS] === SCRIPT INITIALIZATION COMPLETE ===');
 
 })(jQuery);
 

@@ -90,6 +90,8 @@ class PDF_Builder_Settings_Manager
      */
     private function saveSettings()
     {
+        error_log('[PDF Builder] === SAVE SETTINGS METHOD CALLED ===');
+        error_log('[PDF Builder] POST data in saveSettings: ' . json_encode($_POST));
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === SAVE SETTINGS CALLED ==='); }
         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] POST data: ' . json_encode($_POST)); }
         // Rôles autorisés

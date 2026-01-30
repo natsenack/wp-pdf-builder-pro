@@ -15,6 +15,11 @@
         exit('Direct access not allowed');
     }
 
+    // LOG AU DÉBUT DU FICHIER
+    error_log('[PDF Builder] === SETTINGS FILE LOADED - BEGINNING ===');
+    error_log('[PDF Builder] REQUEST_METHOD: ' . (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'NOT SET'));
+    error_log('[PDF Builder] Current URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'NOT SET'));
+
     if (!is_user_logged_in() || !current_user_can('manage_options')) {
         wp_die(__('Accès refusé. Vous devez être administrateur pour accéder à cette page.', 'pdf-builder-pro'));
     }
