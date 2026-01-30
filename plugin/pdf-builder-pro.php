@@ -2392,13 +2392,3 @@ function pdf_builder_view_logs_handler() {
 
 // Enregistrer la fonction d'activation du plugin
 register_activation_hook(__FILE__, 'pdf_builder_activate');
-
-// Optionnel : Enregistrer la fonction de déactivation
-register_deactivation_hook(__FILE__, 'pdf_builder_deactivate');
-
-/**
- * Fonction de déactivation du plugin
- */
-function pdf_builder_deactivate() {
-    error_log('[PDF Builder] Plugin déactivé');
-}
