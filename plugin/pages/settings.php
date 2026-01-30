@@ -68,6 +68,14 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
             </div>
         <?php endif; ?>
     </div>
+
+    <!-- Section de débogage temporaire -->
+    <div style="margin-top: 30px; padding: 20px; background: #f0f0f0; border: 2px solid #ff6b35; border-radius: 5px;">
+        <h3 style="color: #ff6b35; margin-top: 0;">🔍 DÉBOGAGE - Logs PDF Builder</h3>
+        <p><strong>Les logs sont maintenant écrits dans wp-content/debug.log</strong></p>
+        <p>Pour voir les logs, vérifiez le fichier <code>wp-content/debug.log</code> sur votre serveur.</p>
+        <p>Cette section sera supprimée une fois le problème résolu.</p>
+    </div>
 </div>
     background: white;
     padding: 20px;

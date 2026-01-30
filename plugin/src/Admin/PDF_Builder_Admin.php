@@ -23,6 +23,15 @@ use PDF_Builder\Admin\Utils\Helpers;
 use PDF_Builder\Admin\Data\DataUtils;
 use PDF_Builder\Admin\Utils\Utils;
 
+// Fonction globale de débogage pour PDF Builder
+if (!function_exists('pdf_builder_debug_add_log')) {
+    function pdf_builder_debug_add_log($message) {
+        $log_file = WP_CONTENT_DIR . '/debug.log';
+        $log_message = '[' . date('Y-m-d H:i:s') . '] [PDF Builder Debug] ' . $message . "\n";
+        @file_put_contents($log_file, $log_message, FILE_APPEND | LOCK_EX);
+    }
+}
+
 /**
  * Classe principale d'administration du PDF Builder Pro
  * RESPONSABILITÉS : Orchestration des managers, interface principale
@@ -653,7 +662,21 @@ class PdfBuilderAdminNew
     private function handle_settings_form_submission()
     {
         // LOG DÉTAILLÉ DE LA SOUMISSION
-        if (class_exists('PDF_Builder_Logger')) {
+        if (function_exists('pdf_builder_debug_add_log')) {
+            pdf_builder_debug_add_log('=== FORM SUBMISSION CHECK ===');
+            pdf_builder_debug_add_log('REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
+            pdf_builder_debug_add_log('POST data count: ' . count($_POST));
+            pdf_builder_debug_add_log('POST keys: ' . implode(', ', array_keys($_POST)));
+            if (isset($_POST['current_tab'])) {
+                pdf_builder_debug_add_log('Current tab: ' . $_POST['current_tab']);
+            }
+            if (isset($_POST['submit'])) {
+                pdf_builder_debug_add_log('Submit button clicked: ' . $_POST['submit']);
+            }
+            if (isset($_POST['pdf_builder_save_settings'])) {
+                pdf_builder_debug_add_log('Nonce present: ' . $_POST['pdf_builder_save_settings']);
+            }
+        } elseif (class_exists('PDF_Builder_Logger')) {
             PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === FORM SUBMISSION CHECK ===');
             PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
             PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] POST data count: ' . count($_POST));
@@ -670,25 +693,33 @@ class PdfBuilderAdminNew
         }
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            if (class_exists('PDF_Builder_Logger')) {
+            if (function_exists('pdf_builder_debug_add_log')) {
+                pdf_builder_debug_add_log('Not a POST request, skipping');
+            } elseif (class_exists('PDF_Builder_Logger')) {
                 PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Not a POST request, skipping');
             }
             return;
         }
 
-        if (class_exists('PDF_Builder_Logger')) {
+        if (function_exists('pdf_builder_debug_add_log')) {
+            pdf_builder_debug_add_log('POST request detected, checking permissions');
+        } elseif (class_exists('PDF_Builder_Logger')) {
             PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] POST request detected, checking permissions');
         }
 
         // Vérifier les permissions
         if (!\current_user_can('manage_options')) {
-            if (class_exists('PDF_Builder_Logger')) {
+            if (function_exists('pdf_builder_debug_add_log')) {
+                pdf_builder_debug_add_log('Insufficient permissions');
+            } elseif (class_exists('PDF_Builder_Logger')) {
                 PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Insufficient permissions');
             }
             \wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
         }
 
-        if (class_exists('PDF_Builder_Logger')) {
+        if (function_exists('pdf_builder_debug_add_log')) {
+            pdf_builder_debug_add_log('Permissions OK, checking current_tab');
+        } elseif (class_exists('PDF_Builder_Logger')) {
             PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Permissions OK, checking current_tab');
         }
 
@@ -1210,7 +1241,21 @@ class PdfBuilderAdminNew
     public function settings_page()
     {
         // LOG DÉTAILLÉ DE LA PAGE SETTINGS
-        if (class_exists('PDF_Builder_Logger')) {
+        if (function_exists('pdf_builder_debug_add_log')) {
+            pdf_builder_debug_add_log('=== SETTINGS PAGE LOADED ===');
+            pdf_builder_debug_add_log('REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
+            pdf_builder_debug_add_log('GET params: ' . json_encode($_GET));
+            pdf_builder_debug_add_log('POST params count: ' . count($_POST));
+            if (count($_POST) > 0) {
+                pdf_builder_debug_add_log('POST keys: ' . implode(', ', array_keys($_POST)));
+            }
+            if (isset($_POST['submit'])) {
+                pdf_builder_debug_add_log('Submit button detected: ' . $_POST['submit']);
+            }
+            if (isset($_POST['current_tab'])) {
+                pdf_builder_debug_add_log('Current tab in POST: ' . $_POST['current_tab']);
+            }
+        } elseif (class_exists('PDF_Builder_Logger')) {
             PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === SETTINGS PAGE LOADED ===');
             PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
             PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] GET params: ' . json_encode($_GET));
@@ -1227,20 +1272,26 @@ class PdfBuilderAdminNew
         }
 
         if (!$this->checkAdminPermissions()) {
-            if (class_exists('PDF_Builder_Logger')) {
+            if (function_exists('pdf_builder_debug_add_log')) {
+                pdf_builder_debug_add_log('Access denied - insufficient permissions');
+            } elseif (class_exists('PDF_Builder_Logger')) {
                 PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Access denied - insufficient permissions');
             }
             \wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
-        if (class_exists('PDF_Builder_Logger')) {
+        if (function_exists('pdf_builder_debug_add_log')) {
+            pdf_builder_debug_add_log('Permissions OK, calling handle_settings_form_submission');
+        } elseif (class_exists('PDF_Builder_Logger')) {
             PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Permissions OK, calling handle_settings_form_submission');
         }
 
         // Traitement des formulaires personnalisés des templates
         $this->handle_settings_form_submission();
 
-        if (class_exists('PDF_Builder_Logger')) {
+        if (function_exists('pdf_builder_debug_add_log')) {
+            pdf_builder_debug_add_log('handle_settings_form_submission completed, loading settings');
+        } elseif (class_exists('PDF_Builder_Logger')) {
             PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handle_settings_form_submission completed, loading settings');
         }
 
