@@ -114,17 +114,11 @@ add_action('admin_enqueue_scripts', function() {
                     <button id="pdf-builder-btn-skip" type="button" class="button" style="padding: 10px 20px; cursor: pointer; background: transparent; border: 1px solid transparent; color: #aaa; opacity: 0.4; font-size: 12px; font-weight: normal;">Passer & Désactiver</button>
                     <div style="display: flex; gap: 10px;">
                         <button id="pdf-builder-btn-cancel" type="button" class="button button-secondary" style="padding: 10px 20px; cursor: pointer;">Annuler</button>
-                        <button id="pdf-builder-btn-proceed" type="button" class="button button-primary" style="padding: 10px 20px; background: #667eea; border-color: #667eea; color: white; cursor: pointer; pointer-events: none;">Désactiver</button>
+                        <button id="pdf-builder-btn-proceed" type="button" class="button button-primary" style="padding: 10px 20px; background: #667eea; border-color: #667eea; color: white; cursor: not-allowed; opacity: 0.6;">Désactiver</button>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <style>
-        #pdf-builder-btn-proceed {
-            cursor: pointer !important;
-        }
-        </style>
         
         <script>
         (function() {
@@ -149,12 +143,26 @@ add_action('admin_enqueue_scripts', function() {
                     }
                 });
                 
-                // Toggle textarea when "Autre" is selected
+                // Toggle textarea when "Autre" is selected + Update button style
                 $('input[name="pdf_builder_reason"]').on('change', function() {
                     if ($(this).val() === 'other') {
                         $('#pdf-builder-other-reason').show();
                     } else {
                         $('#pdf-builder-other-reason').hide();
+                    }
+                    
+                    // Change button cursor and opacity when reason is selected
+                    var reasonSelected = $('input[name="pdf_builder_reason"]:checked').length > 0;
+                    if (reasonSelected) {
+                        $('#pdf-builder-btn-proceed').css({
+                            'cursor': 'pointer',
+                            'opacity': '1'
+                        });
+                    } else {
+                        $('#pdf-builder-btn-proceed').css({
+                            'cursor': 'not-allowed',
+                            'opacity': '0.6'
+                        });
                     }
                 });
                 
@@ -171,8 +179,12 @@ add_action('admin_enqueue_scripts', function() {
                 
                 // Proceed button - SIMPLE ET DIRECT
                 $('#pdf-builder-btn-proceed').on('click', function() {
-                    // Pas de vérification, pas de conditions
-                    // Simplement récupérer la raison sélectionnée
+                    // Vérifier qu'une raison est sélectionnée
+                    var reasonSelected = $('input[name="pdf_builder_reason"]:checked').length > 0;
+                    if (!reasonSelected) {
+                        return false;
+                    }
+                    
                     var reason = $('input[name="pdf_builder_reason"]:checked').val() || 'no_reason';
                     
                     // Si "Autre" est sélectionné, utiliser le texte personnalisé
