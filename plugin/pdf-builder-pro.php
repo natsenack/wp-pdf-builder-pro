@@ -142,6 +142,34 @@ if (function_exists('add_action')) {
 //     pdf_builder_register_ajax_handlers();
 // }
 
+// ========================================================================
+// FONCTIONS UTILITAIRES - DOIVENT ÊTRE DISPONIBLES À L'ACTIVATION
+// ========================================================================
+
+/**
+ * Fonction utilitaire pour mettre à jour les options
+ */
+if (!function_exists('pdf_builder_update_option')) {
+    function pdf_builder_update_option($option_name, $option_value, $autoload = 'yes') {
+        if (function_exists('update_option')) {
+            return update_option($option_name, $option_value);
+        }
+        return false;
+    }
+}
+
+/**
+ * Fonction de logging
+ */
+if (!function_exists('pdf_builder_log')) {
+    function pdf_builder_log($message, $level = 'info') {
+        if (function_exists('error_log')) {
+            $prefix = strtoupper($level);
+            error_log('[PDF Builder] ' . $prefix . ': ' . $message);
+        }
+    }
+}
+
 /**
  * Fonction d'activation du plugin
  * Crée toutes les tables nécessaires
