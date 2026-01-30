@@ -176,16 +176,18 @@ if (function_exists('add_action')) {
 
 /**
  * Fonction utilitaire pour mettre à jour les options
- * REMOVED: Conflit avec bootstrap.php - utiliser la version de bootstrap.php
+ * REMOVED: Conflit avec bootstrap.php - fonction supprimée, utiliser la version de bootstrap.php
  */
-if (!function_exists('pdf_builder_update_option')) {
-    function pdf_builder_update_option($option_name, $option_value, $autoload = 'yes') {
-        if (function_exists('update_option')) {
-            return update_option($option_name, $option_value);
-        }
-        return false;
-    }
-}
+
+// Fonction supprimée pour éviter le conflit avec bootstrap.php
+// if (!function_exists('pdf_builder_update_option')) {
+//     function pdf_builder_update_option($option_name, $option_value, $autoload = 'yes') {
+//         if (function_exists('update_option')) {
+//             return update_option($option_name, $option_value);
+//         }
+//         return false;
+//     }
+// }
 
 /**
  * Fonction de logging
