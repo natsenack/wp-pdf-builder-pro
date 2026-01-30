@@ -40,8 +40,16 @@ add_action('plugins_loaded', function() {
     if (file_exists($autoloader_file)) {
         require_once $autoloader_file;
         \PDF_Builder\Core\PdfBuilderAutoloader::init(PDF_BUILDER_PLUGIN_DIR);
-    } else {
+        error_log('[PDF BUILDER] Autoloader initialized successfully');
         
+        // Test si la classe PDF_Builder_Logger peut être chargée
+        if (class_exists('PDF_Builder_Logger')) {
+            error_log('[PDF BUILDER] PDF_Builder_Logger class is available');
+        } else {
+            error_log('[PDF BUILDER] PDF_Builder_Logger class NOT found - autoloader issue');
+        }
+    } else {
+        error_log('[PDF BUILDER] Autoloader file not found: ' . $autoloader_file);
     }
 
     // ENREGISTRER LES ACTIONS AJAX TRÈS TÔT
