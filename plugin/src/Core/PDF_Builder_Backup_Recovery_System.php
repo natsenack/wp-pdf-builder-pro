@@ -713,7 +713,7 @@ class PDF_Builder_Backup_Recovery_System {
                 'trace' => $exception->getTraceAsString()
             ]);
         } else {
-            // // error_log("[PDF Builder Backup Error] $operation: " . $exception->getMessage());
+
         }
     }
 
@@ -841,4 +841,5 @@ function pdf_builder_check_integrity() {
 add_action('plugins_loaded', function() {
     PDF_Builder_Backup_Recovery_System::get_instance();
 });
+
 

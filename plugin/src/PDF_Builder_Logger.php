@@ -44,8 +44,8 @@ class PDF_Builder_Logger
      */
     public function debug_log($message)
     {
-        // Utiliser error_log de PHP avec un préfixe pour identifier les logs PDF Builder
-        error_log('[PDF Builder Debug] ' . $message);
+        // Logging disabled
+        
     }
 
     /**
@@ -56,7 +56,7 @@ class PDF_Builder_Logger
      */
     public function info_log($message)
     {
-        error_log('[PDF Builder Info] ' . $message);
+        
     }
 
     /**
@@ -65,9 +65,9 @@ class PDF_Builder_Logger
      * @param string $message Le message à logger
      * @return void
      */
-    public function error_log($message)
+
     {
-        error_log('[PDF Builder Error] ' . $message);
+        
     }
 
     /**
@@ -78,6 +78,7 @@ class PDF_Builder_Logger
      */
     public function warning_log($message)
     {
-        error_log('[PDF Builder Warning] ' . $message);
+        
     }
 }
+

@@ -1470,7 +1470,7 @@ class PDF_Builder_Reporting_Analytics {
                 'trace' => $exception->getTraceAsString()
             ]);
         } else {
-            // // error_log("[PDF Builder Report Error] $operation: " . $exception->getMessage());
+
         }
     }
 
@@ -1652,4 +1652,5 @@ function pdf_builder_get_reports() {
 add_action('plugins_loaded', function() {
     PDF_Builder_Reporting_Analytics::get_instance();
 });
+
 

@@ -40,3 +40,4 @@ class AjaxHandler
         wp_send_json_success(['message' => 'Test réussi', 'category' => $_POST['category'] ?? 'unknown']);
     }
 }
+

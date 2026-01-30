@@ -313,3 +313,4 @@ function exportCanvasSettings() {
 <parameter name="filePath">i:\pdf-builder-pro\plugin\resources\templates\admin\canvas-monitor-diagnostic.php
 
 
+

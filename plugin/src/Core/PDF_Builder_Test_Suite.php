@@ -1027,7 +1027,7 @@ class PDF_Builder_Test_Suite {
                 'trace' => $exception->getTraceAsString()
             ]);
         } else {
-            // // error_log("[PDF Builder Test Error] $operation: " . $exception->getMessage());
+
         }
     }
 
@@ -1130,4 +1130,5 @@ function pdf_builder_get_test_results($limit = 50) {
 add_action('plugins_loaded', function() {
     PDF_Builder_Test_Suite::get_instance();
 });
+
 

@@ -39,3 +39,4 @@ add_action('wp_footer', function () {
     <?php
 }, 10);
 
+

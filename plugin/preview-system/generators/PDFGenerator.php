@@ -1027,3 +1027,4 @@ class PDFGenerator extends BaseGenerator
         return $this->generatePlaceholderImage($format);
     }
 }
+

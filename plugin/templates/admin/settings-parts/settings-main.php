@@ -16,10 +16,8 @@
     }
 
     // LOG AU DÉBUT DU FICHIER
-    error_log('[PDF Builder] === SETTINGS FILE LOADED - BEGINNING ===');
-    error_log('[PDF Builder] REQUEST_METHOD: ' . (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'NOT SET'));
-    error_log('[PDF Builder] Current URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'NOT SET'));
-
+    
+    
     if (!is_user_logged_in() || !current_user_can('manage_options')) {
         wp_die(__('Accès refusé. Vous devez être administrateur pour accéder à cette page.', 'pdf-builder-pro'));
     }
@@ -29,7 +27,8 @@
     $current_user = wp_get_current_user();
 
     // LOG pour déboguer la soumission du formulaire
-    error_log('[PDF Builder] === SETTINGS PAGE LOADED - DIRECT ERROR_LOG ===');
+    
+    
     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === SETTINGS PAGE LOADED ==='); }
     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Settings page loaded - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']); }
     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Current tab: ' . $current_tab); }
@@ -198,3 +197,4 @@ require_once __DIR__ . '/settings-modals.php';
 
 </body>
 </html>
+

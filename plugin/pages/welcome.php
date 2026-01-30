@@ -12,3 +12,4 @@ if (!current_user_can('manage_options')) {
 wp_redirect(admin_url('admin.php?page=pdf-builder-react-editor'));
 exit;
 
+

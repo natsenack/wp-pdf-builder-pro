@@ -166,7 +166,7 @@ class PDF_Builder_PDF_Generator
                 $options->set('defaultMediaType', 'print');
             }
         } catch (\Throwable $e) {
-            error_log('[PDF Builder] Error setting Dompdf options: ' . $e->getMessage());
+            
             // Fallback avec options minimales
             $options = new Options();
             // Avoid setting any options that might cause errors
@@ -182,7 +182,7 @@ class PDF_Builder_PDF_Generator
             // Sauvegarder le PDF
             file_put_contents($pdf_path, $dompdf->output());
         } catch (\Throwable $e) {
-            error_log('[PDF Builder] Error during PDF generation: ' . $e->getMessage());
+            
             return false; // Or handle error appropriately
         }
 
@@ -675,6 +675,7 @@ class PDF_Builder_PDF_Generator
         return $html_content;
     }
 }
+
 
 
 

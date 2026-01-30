@@ -45,7 +45,7 @@ class PDF_Builder_Notification_Manager {
      * Constructeur privé pour le pattern Singleton
      */
     private function __construct() {
-        error_log('[NOTIFICATION MANAGER] Constructor called');
+        
         $this->init_settings();
         $this->init_hooks();
     }
@@ -84,12 +84,12 @@ class PDF_Builder_Notification_Manager {
      * Initialiser les hooks WordPress
      */
     private function init_hooks() {
-        error_log('[NOTIFICATION MANAGER] Initializing hooks');
+        
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_scripts']);
         add_action('wp_ajax_pdf_builder_show_notification', [$this, 'ajax_show_notification']);
         add_action('wp_ajax_nopriv_pdf_builder_show_notification', [$this, 'ajax_show_notification']);
-        error_log('[NOTIFICATION MANAGER] Hooks initialized successfully');
+        
 
         // Hooks pour les notifications automatiques
         add_action('pdf_builder_template_saved', [$this, 'notify_template_saved']);
@@ -249,8 +249,8 @@ class PDF_Builder_Notification_Manager {
      * Handler AJAX pour afficher une notification
      */
     public function ajax_show_notification() {
-        error_log('[NOTIFICATION MANAGER] ajax_show_notification called');
-        error_log('[NOTIFICATION MANAGER] POST data: ' . print_r($_POST, true));
+        
+        
         // Vérifier le nonce (accepter le nonce général ajax, spécifique aux notifications, ou aux paramètres)
         $nonce_valid = wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_notifications') || 
                       wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax') ||
@@ -383,6 +383,7 @@ function pdf_builder_notify_warning($message, $options = []) {
 function pdf_builder_notify_info($message, $options = []) {
     return pdf_builder_notifications()->info($message, $options);
 }
+
 
 
 

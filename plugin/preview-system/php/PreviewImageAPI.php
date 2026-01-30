@@ -15,3 +15,4 @@ if (!defined('ABSPATH')) {
 class PreviewImageAPI
 {
 }
+

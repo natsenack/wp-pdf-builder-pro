@@ -138,3 +138,4 @@ function pdf_builder_ajax_get_element_styles()
 
 add_action('wp_ajax_pdf_builder_get_element_styles', 'pdf_builder_ajax_get_element_styles');
 
+

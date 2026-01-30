@@ -613,3 +613,4 @@ class AdminPageRenderer
     }
 }
 
+

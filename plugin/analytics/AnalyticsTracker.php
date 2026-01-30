@@ -340,7 +340,7 @@ class AnalyticsTracker implements AnalyticsInterface
     private function logInfo(string $message): void
     {
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            // error_log('[PDF Builder Analytics] ' . $message);
+
         }
     }
 
@@ -437,6 +437,7 @@ class AnalyticsTracker implements AnalyticsInterface
         return true;
     }
 }
+
 
 
 

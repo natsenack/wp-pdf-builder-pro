@@ -142,3 +142,4 @@ class WooCommerceRenderer
         return implode(';', $styleParts);
     }
 }
+

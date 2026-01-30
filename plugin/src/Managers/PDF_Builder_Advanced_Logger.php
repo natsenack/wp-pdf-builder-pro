@@ -91,7 +91,7 @@ class PDF_Builder_Advanced_Logger {
 
         // Log aussi les erreurs critiques dans error_log de PHP
         if ($level >= self::LEVEL_ERROR) {
-            // // error_log('[PDF Builder] ' . $message);
+
         }
     }
 
@@ -126,7 +126,7 @@ class PDF_Builder_Advanced_Logger {
         $debug_php_errors = isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'];
 
         if ($debug_php_errors) {
-            // // error_log('[PDF Builder Debug] ' . $message);
+
         }
     }
 
@@ -389,5 +389,6 @@ function pdf_builder_log_critical($message, $context = []) {
 add_action('plugins_loaded', function() {
     PDF_Builder_Advanced_Logger::get_instance();
 });
+
 
 

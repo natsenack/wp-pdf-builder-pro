@@ -104,8 +104,8 @@ class TemplateProcessor
             return $this->getDefaultInvoiceTemplate();
 
         } catch (Exception $e) {
-            // error_log('[PDF Builder] loadTemplateRobust Exception: ' . $e->getMessage());
-            // error_log('[PDF Builder] loadTemplateRobust Trace: ' . $e->getTraceAsString());
+
+
             return $this->getDefaultInvoiceTemplate();
         }
     }
@@ -277,5 +277,6 @@ class TemplateProcessor
         return $template;
     }
 }
+
 
 

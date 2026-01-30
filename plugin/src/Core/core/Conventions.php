@@ -313,3 +313,4 @@ function isValidElementType(string $type): bool
     return in_array($type, ELEMENT_TYPES);
 }
 
+

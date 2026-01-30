@@ -26,3 +26,4 @@ function pdf_builder_get_pending_migrations() {
     // TODO: Implémenter
     return ['status' => 'not_implemented'];
 }
+

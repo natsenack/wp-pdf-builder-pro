@@ -22,7 +22,7 @@ CanvasMonitoringDashboard.showDashboard()
 // Get all changes for a specific element
 const elementId = "your-element-id-here";
 const elementHistory = CanvasMonitoringDashboard.getElementHistory(elementId);
-console.table(elementHistory);
+
 
 // See how many times this element changed
 
@@ -87,11 +87,11 @@ const recentChanges = elementChangeTracker.getChangesBetween(now - 5000, now);
 
 // Get first 10 changes of the session
 const firstChanges = CanvasMonitoringDashboard.getHistory().slice(0, 10);
-console.table(firstChanges);
+
 
 // Get last 10 changes
 const lastChanges = CanvasMonitoringDashboard.getHistory().slice(-10);
-console.table(lastChanges);
+
 
 
 // ============================================
@@ -166,7 +166,7 @@ const allProps = CanvasMonitoringDashboard.getElementHistory("your-element-id")
     new: c.newValue,
     time: new Date(c.timestamp).toLocaleTimeString()
   }));
-console.table(allProps);
+
 
 // Check if element was deleted
 const deletions = CanvasMonitoringDashboard.getHistory()
@@ -287,15 +287,15 @@ function identifyExpensiveOperations(maxChanges = 5) {
 }
 
 // Usage:
-console.table(identifyExpensiveOperations());
+);
 
 
 // ============================================
 // TIPS & TRICKS
 // ============================================
 
-// Tip 1: Use console.table() for better formatting
-console.table(CanvasMonitoringDashboard.getHistory().slice(-5));
+// Tip 1: Use  for better formatting
+.slice(-5));
 
 // Tip 2: Filter and count
 const textElements = CanvasMonitoringDashboard.getHistory()

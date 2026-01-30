@@ -18,3 +18,4 @@ require_once plugin_dir_path(__FILE__) . 'settings-parts/settings-main.php';
 
 // All JavaScript moved to settings-main.php to avoid conflicts
 
+

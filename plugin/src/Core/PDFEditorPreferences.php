@@ -307,7 +307,7 @@ class PDFEditorPreferences {
         wp_dequeue_style('wp-preferences');
         wp_deregister_style('wp-preferences');
 
-        error_log('[PDF Editor Preferences] Dequeued and deregistered wp-preferences scripts');
+
     }
 
     /**
@@ -494,3 +494,4 @@ class PDFEditorPreferences {
         return ob_get_clean();
     }
 }
+

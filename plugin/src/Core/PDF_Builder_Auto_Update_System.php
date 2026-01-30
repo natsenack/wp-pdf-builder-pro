@@ -734,7 +734,7 @@ class PDF_Builder_Auto_Update_System {
                 'trace' => $exception->getTraceAsString()
             ]);
         } else {
-            // // error_log("[PDF Builder Update Error] $operation: " . $exception->getMessage());
+
         }
     }
 
@@ -876,5 +876,6 @@ function pdf_builder_get_updates() {
 add_action('plugins_loaded', function() {
     PDF_Builder_Auto_Update_System::get_instance();
 });
+
 
 

@@ -16,3 +16,4 @@ function pdf_builder_run_updates() {
     // TODO: Implémenter
     return false;
 }
+

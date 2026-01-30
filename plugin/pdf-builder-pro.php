@@ -15,11 +15,6 @@
  * Requires PHP: 7.4
  */
 
-// LOG AU DÉBUT DU PLUGIN PRINCIPAL
-error_log('[PDF BUILDER] === PLUGIN FILE LOADED - MAIN FILE ===');
-error_log('[PDF BUILDER] Plugin dir: ' . dirname(__FILE__));
-error_log('[PDF BUILDER] Current file: ' . __FILE__);
-
 // Définir les constantes du plugin
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
@@ -43,7 +38,7 @@ add_action('plugins_loaded', function() {
         require_once $autoloader_file;
         \PDF_Builder\Core\PdfBuilderAutoloader::init(PDF_BUILDER_PLUGIN_DIR);
     } else {
-        error_log('[ERROR] PDF Builder: Custom autoloader file not found: ' . $autoloader_file);
+        
     }
 
     // ENREGISTRER LES ACTIONS AJAX TRÈS TÔT
@@ -51,24 +46,22 @@ add_action('plugins_loaded', function() {
     add_action('wp_ajax_nopriv_pdf_builder_show_notification', 'pdf_builder_test_notification_handler');
     
     function pdf_builder_test_notification_handler() {
-        error_log('[TEST HANDLER] pdf_builder_show_notification called');
-        error_log('[TEST HANDLER] POST data: ' . print_r($_POST, true));
+        
         
         // TEST: Vérifier le nonce de différentes manières
         $nonce = $_POST['nonce'] ?? '';
-        error_log('[TEST HANDLER] Checking nonce: ' . $nonce);
+        
         
         $check1 = wp_verify_nonce($nonce, 'pdf_builder_settings');
         $check2 = wp_verify_nonce($nonce, 'pdf_builder_ajax');
         $check3 = wp_verify_nonce($nonce, 'pdf_builder_notifications');
         
-        error_log('[TEST HANDLER] Nonce checks - settings: ' . ($check1 ? 'VALID' : 'INVALID') . ', ajax: ' . ($check2 ? 'VALID' : 'INVALID') . ', notifications: ' . ($check3 ? 'VALID' : 'INVALID'));
         
         // Pour le test, acceptons tous les nonces
         $nonce_valid = $check1 || $check2 || $check3;
         
         if (!$nonce_valid) {
-            error_log('[TEST HANDLER] All nonce checks failed - accepting anyway for test');
+            
             // Pour le test, on accepte quand même
             $nonce_valid = true;
         }
@@ -76,7 +69,6 @@ add_action('plugins_loaded', function() {
         $message = sanitize_text_field($_POST['message'] ?? '');
         $type = sanitize_text_field($_POST['type'] ?? 'info');
         
-        error_log('[TEST HANDLER] Message: ' . $message . ', Type: ' . $type);
         
         wp_send_json_success([
             'message' => $message,
@@ -95,7 +87,8 @@ add_action('plugins_loaded', function() {
         if (file_exists($admin_file)) {
             require_once $admin_file;
         } else {
-            error_log('[ERROR] PDF Builder: Admin class file not found: ' . $admin_file);
+           
+            
         }
     }
 
@@ -104,10 +97,10 @@ add_action('plugins_loaded', function() {
         try {
             \PDF_Builder\Admin\PdfBuilderAdminNew::getInstance();
         } catch (Exception $e) {
-            error_log('[ERROR] PDF Builder: Failed to instantiate admin class: ' . $e->getMessage());
+            
         }
     } else {
-        error_log('[ERROR] PDF Builder: Admin class not found after loading attempt');
+        
     }
 });
 
@@ -126,7 +119,7 @@ function pdf_builder_init_plugin() {
     if (file_exists($bootstrap)) {
         require_once $bootstrap;
     } else {
-        error_log('[ERROR] PDF Builder: bootstrap.php not found at: ' . $bootstrap);
+        
     }
 }
 
@@ -170,7 +163,7 @@ function pdf_builder_activate()
         $migrated_count = \PDF_Builder\Database\Settings_Table_Manager::migrate_license_keys_to_separate_rows();
         if ($migrated_count > 0) {
             update_option('pdf_builder_license_keys_migrated', true);
-            error_log('[PDF Builder] Activation: Clés de licence migrées vers lignes séparées (' . $migrated_count . ' clés)');
+            
         }
     }
     // ================================================================
@@ -673,7 +666,7 @@ function pdf_builder_restore_backup_ajax() {
 function pdf_builder_register_ajax_handlers() {
     static $handlers_registered = false;
     
-    // error_log('PDF Builder: [AJAX REGISTRATION] Function called at ' . current_time('Y-m-d H:i:s'));
+
     
     if ($handlers_registered) {
         return;
@@ -905,7 +898,7 @@ function pdf_builder_ajax_handler_dispatch() {
             return;
         }
 
-        // error_log('PDF BUILDER AJAX DISPATCHER: Processing action: ' . $action);
+
 
         // Dispatcher vers le handler approprié selon l'action
         switch ($action) {
@@ -1005,7 +998,7 @@ function pdf_builder_ajax_handler_dispatch() {
         }
 
     } catch (Exception $e) {
-        // error_log('PDF Builder AJAX Error: ' . $e->getMessage());
+
         wp_send_json_error('Erreur interne du serveur');
     }
 }
@@ -1242,7 +1235,7 @@ function pdf_builder_get_fresh_nonce_ajax() {
     // Générer un nouveau nonce
     $fresh_nonce = wp_create_nonce('pdf_builder_ajax');
 
-    // error_log('PDF Builder AJAX: Generated fresh nonce: ' . substr($fresh_nonce, 0, 10) . '..., User ID: ' . get_current_user_id());
+
 
     wp_send_json_success(array(
         'nonce' => $fresh_nonce,
@@ -1576,77 +1569,77 @@ function pdf_builder_auto_clear_cache() {
  */
 function pdf_builder_save_template_handler() {
     // Log détaillé du début de la requête
-    // error_log('[PDF Builder SAVE] ===== DÉBUT SAUVEGARDE =====');
-    // error_log('[PDF Builder SAVE] Timestamp: ' . current_time('mysql'));
-    // error_log('[PDF Builder SAVE] User ID: ' . get_current_user_id());
-    // error_log('[PDF Builder SAVE] User capabilities: ' . (current_user_can('manage_options') ? 'HAS_MANAGE_OPTIONS' : 'NO_MANAGE_OPTIONS'));
-    // error_log('[PDF Builder SAVE] REQUEST_METHOD: ' . ($_SERVER['REQUEST_METHOD'] ?? 'UNKNOWN'));
-    // error_log('[PDF Builder SAVE] Content-Type: ' . ($_SERVER['CONTENT_TYPE'] ?? 'UNKNOWN'));
-    // error_log('[PDF Builder SAVE] POST data keys: ' . implode(', ', array_keys($_POST)));
+
+
+
+
+
+
+
 
     // Check permissions
     if (!current_user_can('manage_options')) {
-        // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Permissions insuffisantes pour user: ' . get_current_user_id());
+
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
-    // error_log('[PDF Builder SAVE] ✅ Permissions OK');
+
 
     // Check nonce
     $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
-    // error_log('[PDF Builder SAVE] Nonce reçu: ' . substr($nonce, 0, 10) . '...');
+
     if (empty($nonce) || !wp_verify_nonce($nonce, 'pdf_builder_save_template_nonce')) {
-        // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Nonce invalide ou manquant');
-        // error_log('[PDF Builder SAVE] Nonce attendu: pdf_builder_save_template_nonce');
+
+
         wp_send_json_error('Nonce invalide');
         return;
     }
-    // error_log('[PDF Builder SAVE] ✅ Nonce OK');
+
 
     try {
         $template_id = intval($_POST['template_id'] ?? 0);
         $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
         $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
 
-        // error_log('[PDF Builder SAVE] Template ID: ' . $template_id);
-        // error_log('[PDF Builder SAVE] Template data length: ' . strlen($template_data));
-        // error_log('[PDF Builder SAVE] Template name: ' . $template_name);
+
+
+
 
         if (!$template_id || empty($template_data)) {
-            // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Données manquantes - template_id: ' . $template_id . ', template_data length: ' . strlen($template_data));
+
             wp_send_json_error('Données manquantes');
             return;
         }
-        // error_log('[PDF Builder SAVE] ✅ Données de base OK');
+
 
         // Decode and validate JSON
         $decoded_data = json_decode($template_data, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Erreur JSON: ' . json_last_error_msg());
-            // error_log('[PDF Builder SAVE] Données JSON (début): ' . substr($template_data, 0, 500) . '...');
+
+
             wp_send_json_error('Données JSON invalides');
             return;
         }
-        // error_log('[PDF Builder SAVE] ✅ JSON valide, éléments: ' . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'N/A'));
+
 
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-        // error_log('[PDF Builder SAVE] Table templates: ' . $table_templates);
+
 
         // Check if template exists
         $existing = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_templates WHERE id = %d", $template_id));
         if (!$existing) {
-            // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Template non trouvé: ' . $template_id);
+
             // Log all existing templates for debugging
             $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates", ARRAY_A);
-            // error_log('[PDF Builder SAVE] Templates existants: ' . json_encode($all_templates));
+
             wp_send_json_error('Template non trouvé');
             return;
         }
-        // error_log('[PDF Builder SAVE] ✅ Template trouvé');
+
 
         // Log before update
-        // error_log('[PDF Builder SAVE] Tentative de mise à jour...');
+
 
         // Update template
         $result = $wpdb->update(
@@ -1661,15 +1654,15 @@ function pdf_builder_save_template_handler() {
         );
 
         if ($result === false) {
-            // error_log('[PDF Builder SAVE] ❌ ÉCHEC: Mise à jour DB échouée pour template ' . $template_id);
-            // error_log('[PDF Builder SAVE] Erreur DB: ' . $wpdb->last_error);
-            // error_log('[PDF Builder SAVE] Dernière requête: ' . $wpdb->last_query);
+
+
+
             wp_send_json_error('Erreur lors de la sauvegarde');
             return;
         }
 
-        // error_log('[PDF Builder SAVE] ✅ Sauvegarde réussie: template ' . $template_id . ', lignes affectées: ' . $result);
-        // error_log('[PDF Builder SAVE] ===== FIN SAUVEGARDE =====');
+
+
 
         wp_send_json_success([
             'message' => 'Template sauvegardé avec succès',
@@ -1678,8 +1671,8 @@ function pdf_builder_save_template_handler() {
         ]);
 
     } catch (Exception $e) {
-        // error_log('[PDF Builder SAVE] ❌ EXCEPTION: ' . $e->getMessage());
-        // error_log('[PDF Builder SAVE] Trace: ' . $e->getTraceAsString());
+
+
         wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
     }
 }
@@ -2168,7 +2161,7 @@ function pdf_builder_check_advanced_systems_status() {
 
     if (!$all_systems_loaded) {
         $failed_systems = array_keys(array_filter($systems_status, function($status) { return !$status; }));
-        // error_log('PDF Builder: Certains systèmes avancés n\'ont pas été chargés: ' . implode(', ', $failed_systems));
+
     }
 
     return array(
@@ -2402,3 +2395,4 @@ function pdf_builder_view_logs_handler() {
         wp_send_json_error('Erreur lors de la récupération des logs: ' . $e->getMessage());
     }
 }
+

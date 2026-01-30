@@ -11,9 +11,9 @@ if (!current_user_can('manage_options')) {
 }
 
 // Inclure les assets React
-error_log('[ADMIN-EDITOR] Including ReactAssetsV2.php...');
+
 require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/ReactAssetsV2.php';
-error_log('[ADMIN-EDITOR] ReactAssetsV2.php included successfully');
+
 ?>
 
 <div class="wrap pdf-builder-admin-container">
@@ -78,4 +78,5 @@ error_log('[ADMIN-EDITOR] ReactAssetsV2.php included successfully');
     100% { transform: rotate(360deg); }
 }
 </style>
+
 

@@ -226,7 +226,7 @@ class PDF_Builder_Error_Handler {
             ]);
         } else {
             // Fallback vers error_log
-            // // error_log('[PDF Builder Error] ' . json_encode($error_data));
+
         }
 
         // Stocker en base pour les erreurs critiques
@@ -509,4 +509,5 @@ function pdf_builder_handle_exception($exception) {
 add_action('plugins_loaded', function() {
     PDF_Builder_Error_Handler::get_instance();
 });
+
 

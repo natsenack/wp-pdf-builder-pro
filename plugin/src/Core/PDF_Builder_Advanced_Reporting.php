@@ -1428,3 +1428,4 @@ add_action('plugins_loaded', function() {
     PDF_Builder_Advanced_Reporting::get_instance();
 });
 
+

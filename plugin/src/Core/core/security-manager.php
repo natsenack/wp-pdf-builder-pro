@@ -16,7 +16,7 @@ class PDF_Builder_Security_Manager {
      */
     public static function verify_nonce($nonce, $action) {
         if (!wp_verify_nonce($nonce, $action)) {
-            // error_log("PDF Builder: Invalid nonce for action '{$action}'");
+
             return false;
         }
         return true;
@@ -114,9 +114,10 @@ class PDF_Builder_Security_Manager {
                 return is_string($arg) ? $arg : print_r($arg, true);
             }, $args));
 
-            // error_log($message);
+
         }
     }
 }
+
 
 

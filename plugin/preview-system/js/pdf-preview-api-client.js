@@ -13,9 +13,9 @@
         endpoint: 'pdf_builder_generate_preview'
     };
 
-    console.log('[PDF PREVIEW API CLIENT] Initializing - Config:', config);
-    console.log('[PDF PREVIEW API CLIENT] pdfBuilderData:', window.pdfBuilderData);
-    console.log('[PDF PREVIEW API CLIENT] pdfBuilderNonce:', window.pdfBuilderNonce);
+    
+    
+    
 
     /**
      * Appelle le backend pour générer un aperçu PDF
@@ -24,17 +24,17 @@
      * @returns {Promise<Object>} Résultat avec image_url ou erreur
      */
     async function callGeneratorBackend(templateData, options = {}) {
-        console.log('[PDF PREVIEW API] Calling backend generator');
-        console.log('[PDF PREVIEW API] - templateData:', templateData);
-        console.log('[PDF PREVIEW API] - options:', options);
+        
+        
+        
 
         try {
             // Extraire template_id s'il est dans templateData (pour compatibilité)
             const template_id = templateData?.template_id || null;
             
-            console.log('[PDF PREVIEW API] Config nonce:', config.nonce);
-            console.log('[PDF PREVIEW API] Config nonce length:', config.nonce ? config.nonce.length : 0);
-            console.log('[PDF PREVIEW API] Config nonce is empty?', !config.nonce || config.nonce === '');
+            
+            
+            
             
             const params = {
                 action: config.endpoint,
@@ -53,20 +53,15 @@
             // Ajouter template_id s'il existe (pour compatibilité)
             if (template_id) {
                 params.template_id = template_id;
-                console.log('[PDF PREVIEW API] Template ID to send:', template_id);
+                
             }
 
-            console.log('[PDF PREVIEW API] Params before send:', {
-                action: params.action,
-                nonce: params.nonce ? params.nonce.substring(0, 20) + '...' : 'MISSING',
-                format: params.format,
-                quality: params.quality
-            });
+            
 
             // Ajouter template_id s'il existe
             if (template_id) {
                 params.template_id = template_id;
-                console.log('[PDF PREVIEW API] Template ID to send:', template_id);
+                
             }
 
             const response = await fetch(config.ajaxUrl, {
@@ -77,7 +72,7 @@
                 body: new URLSearchParams(params)
             });
 
-            console.log('[PDF PREVIEW API] Backend response status:', response.status);
+            
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -88,25 +83,25 @@
             if (format === 'pdf') {
                 // For PDF, expect binary content and create a blob URL
                 const pdfBlob = await response.blob();
-                console.log('[PDF PREVIEW API] PDF blob created, size:', pdfBlob.size, 'type:', pdfBlob.type);
+                
 
                 // Check if blob has content
                 if (pdfBlob.size === 0) {
-                    console.error('[PDF PREVIEW API] PDF blob is empty!');
+                    
                     throw new Error('Le PDF généré est vide');
                 }
 
                 // Check if it's actually a PDF
                 if (!pdfBlob.type.includes('pdf') && !pdfBlob.type.includes('application/octet-stream')) {
-                    console.warn('[PDF PREVIEW API] Blob type is not PDF:', pdfBlob.type);
+                    
                 }
 
                 const pdfUrl = URL.createObjectURL(pdfBlob);
-                console.log('[PDF PREVIEW API] PDF blob URL created:', pdfUrl);
+                
 
                 // Verify URL is valid
                 if (!pdfUrl || pdfUrl === 'blob:') {
-                    console.error('[PDF PREVIEW API] Invalid blob URL created');
+                    
                     throw new Error('URL blob invalide créée');
                 }
 
@@ -120,7 +115,7 @@
             } else {
                 // For images (PNG/JPG), expect JSON response
                 const result = await response.json();
-                console.log('[PDF PREVIEW API] Backend response:', result);
+                
 
                 if (!result.success) {
                     throw new Error(result.error || 'Erreur lors de la génération du PDF');
@@ -135,7 +130,7 @@
                 };
             }
         } catch (error) {
-            console.error('[PDF PREVIEW API] Backend call failed:', error);
+            
             throw new Error(`Erreur backend: ${error.message}`);
         }
     }
@@ -146,7 +141,7 @@
      * @returns {string} Data URL de l'image
      */
     function generatePlaceholderImage(format = 'png') {
-        console.log('[PDF PREVIEW API] Generating placeholder image - Format:', format);
+        
 
         const canvas = document.createElement('canvas');
         canvas.width = 800;
@@ -154,7 +149,7 @@
 
         const ctx = canvas.getContext('2d');
         if (!ctx) {
-            console.error('[PDF PREVIEW API] Could not get canvas context');
+            
             return null;
         }
 
@@ -178,7 +173,7 @@
 
         // Convertir en data URL
         const dataUrl = canvas.toDataURL(format === 'jpg' ? 'image/jpeg' : 'image/png');
-        console.log('[PDF PREVIEW API] Placeholder image generated, size:', dataUrl.length);
+        
 
         return dataUrl;
     }
@@ -186,7 +181,7 @@
     // API publique
     window.pdfPreviewApiClient = {
         generatePreview: function(data, callback) {
-            console.log('[PDF PREVIEW API CLIENT] generatePreview called');
+            
             callGeneratorBackend(data).then(result => {
                 if (callback) callback(result);
             }).catch(error => {
@@ -200,18 +195,16 @@
          * Génère un aperçu à partir des données d'éditeur
          */
         generateEditorPreview: async function(templateData, options = {}) {
-            console.log('[PDF PREVIEW API] generateEditorPreview called');
-            console.log('[PDF PREVIEW API] - templateData has elements:', Array.isArray(templateData.elements));
-            console.log('[PDF PREVIEW API] - elements count:', (templateData.elements || []).length);
+            
 
             try {
                 // Essayer d'abord le backend réel
                 const result = await callGeneratorBackend(templateData, options);
-                console.log('[PDF PREVIEW API] generateEditorPreview succeeded');
+                
                 return result;
             } catch (error) {
-                console.error('[PDF PREVIEW API] generateEditorPreview backend failed:', error.message);
-                console.log('[PDF PREVIEW API] Falling back to placeholder image');
+                
+                
 
                 // Fallback: placeholder image
                 const placeholderUrl = generatePlaceholderImage(options.format || 'png');
@@ -234,7 +227,7 @@
          * Génère un aperçu pour une commande
          */
         generateOrderPreview: async function(templateData, orderId, options = {}) {
-            console.log('[PDF PREVIEW API] generateOrderPreview called for order:', orderId);
+            
 
             const data = {
                 ...templateData,
@@ -245,6 +238,6 @@
         }
     };
 
-    console.log('[PDF PREVIEW API CLIENT] Initialization complete');
+    
 
 })(jQuery);

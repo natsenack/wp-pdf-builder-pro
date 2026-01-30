@@ -437,7 +437,7 @@ class AdminScriptLoader
         ];
 
         // Ajouter les informations de licence
-        error_log("[DEBUG] Checking License_Manager class: " . (class_exists('\PDF_Builder\Managers\PDF_Builder_License_Manager') ? 'exists' : 'not exists'));
+
         if (class_exists('\PDF_Builder\Managers\PDF_Builder_License_Manager')) {
             $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
             $license_data = [
@@ -447,8 +447,7 @@ class AdminScriptLoader
             ];
             
             // DEBUG: Log license data being sent to JS
-            error_log('[PHP DEBUG] License data sent to JS: ' . print_r($license_data, true));
-            
+
             $localize_data['license'] = $license_data;
         }
 
@@ -512,7 +511,6 @@ class AdminScriptLoader
         $localize_data['company'] = $company_data;
         
         // DEBUG: Log company data being sent to JS
-        error_log('[PHP DEBUG] Company data sent to JS: ' . print_r($company_data, true));
 
         // Ajouter les paramètres canvas
         if (class_exists('\PDF_Builder\Canvas\Canvas_Manager')) {
@@ -609,30 +607,30 @@ class AdminScriptLoader
         // Charger les données du template si template_id est fourni
         if (isset($_GET['template_id']) && \intval($_GET['template_id']) > 0) {
             $template_id = \intval($_GET['template_id']);
-            error_log('[DEBUG] PDF Builder: Template ID detected: ' . $template_id);
+
             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Loading template data for ID: ' . $template_id . ', REQUEST_URI: ' . $_SERVER['REQUEST_URI']); }
 
             // Utiliser le getter pour obtenir le TemplateProcessor (avec création à la demande)
             $template_processor = $this->admin->getTemplateProcessor();
             if ($template_processor) {
-                error_log('[DEBUG] PDF Builder: template_processor is available via getter, calling loadTemplateRobust');
+
                 if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] template_processor is available via getter, calling loadTemplateRobust'); }
                 $existing_template_data = $template_processor->loadTemplateRobust($template_id);
-                error_log('[DEBUG] PDF Builder: loadTemplateRobust returned: ' . (is_array($existing_template_data) ? 'array with ' . count($existing_template_data) . ' keys' : gettype($existing_template_data)));
+
                 if ($existing_template_data && isset($existing_template_data['elements'])) {
                     $localize_data['initialElements'] = $existing_template_data['elements'];
                     $localize_data['existingTemplate'] = $existing_template_data;
                     $localize_data['hasExistingData'] = true;
-                    error_log('[DEBUG] PDF Builder: Template data loaded successfully, hasExistingData set to true');
+
                     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Template data loaded successfully for template ID: ' . $template_id); }
                     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Template name in data: ' . ($existing_template_data['name'] ?? 'NOT FOUND')); }
                     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Full template data structure: ' . json_encode($existing_template_data)); }
                 } else {
-                    error_log('[DEBUG] PDF Builder: Failed to load template data or no elements found');
+
                     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Failed to load template data for template ID: ' . $template_id . ', data: ' . print_r($existing_template_data, true)); }
                 }
             } else {
-                error_log('[DEBUG] PDF Builder: template_processor not available even after getter attempt');
+
                 if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] template_processor not available even after getter attempt, skipping template data loading'); }
             }
         }
@@ -640,7 +638,7 @@ class AdminScriptLoader
         // Charger les données du template prédéfini si predefined_template est fourni
         if (isset($_GET['predefined_template']) && !empty($_GET['predefined_template'])) {
             $predefined_slug = sanitize_key($_GET['predefined_template']);
-            error_log('[DEBUG] PDF Builder: Predefined template slug detected: ' . $predefined_slug);
+
 
             // Charger le template prédéfini
             if ($this->admin->predefined_templates_manager) {
@@ -656,21 +654,21 @@ class AdminScriptLoader
                             $localize_data['hasExistingData'] = true;
                             $localize_data['isPredefinedTemplate'] = true;
                             $localize_data['predefinedTemplateName'] = $template_data['name'] ?? 'Template prédéfini';
-                            error_log('[DEBUG] PDF Builder: Predefined template data loaded successfully');
+
                             if (class_exists('PDF_Builder_Logger')) {
                                 PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Predefined template loaded successfully: ' . $predefined_slug);
                             }
                         } else {
-                            error_log('[DEBUG] PDF Builder: Failed to parse predefined template JSON data');
+
                         }
                     } else {
-                        error_log('[DEBUG] PDF Builder: Predefined template not found or invalid: ' . $predefined_slug);
+
                     }
                 } catch (\Exception $e) {
-                    error_log('[DEBUG] PDF Builder: Error loading predefined template: ' . $e->getMessage());
+
                 }
             } else {
-                error_log('[DEBUG] PDF Builder: Predefined templates manager not available');
+
             }
         }
 
@@ -954,6 +952,7 @@ class AdminScriptLoader
         return $content;
     }
 }
+
 
 
 

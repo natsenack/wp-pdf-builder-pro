@@ -4,10 +4,6 @@
 (function($) {
     'use strict';
 
-    console.log('[PDF Builder JS] === SETTINGS SCRIPT LOADED ===');
-    console.log('[PDF Builder JS] Current URL:', window.location.href);
-    console.log('[PDF Builder JS] jQuery version:', $.fn.jquery);
-
     
 
     // Define global functions immediately for modal control
@@ -47,18 +43,13 @@
 
     // Debug floating save button
     $(document).on('click', '#pdf-builder-floating-save', function(e) {
-        console.log('[PDF Builder] Floating save button clicked');
-        console.log('[PDF Builder] Event:', e);
-        console.log('[PDF Builder] Button:', this);
-        console.log('[PDF Builder] Form:', $(this).closest('form'));
         
         // Don't prevent default, just log
     });
 
     // Debug form submission
     $(document).on('submit', 'form[action="options.php"]', function(e) {
-        console.log('[PDF Builder] Form submitted');
-        console.log('[PDF Builder] Form data:', $(this).serialize());
+        
     });
 
     // Only initialize modal functionality if we're on the license tab
@@ -94,12 +85,10 @@
 
     // Debug when DOM is ready
     $(document).ready(function() {
-        console.log('[PDF Builder JS] DOM ready');
-        console.log('[PDF Builder JS] Floating button exists:', $('#pdf-builder-save-floating-btn').length > 0);
-        console.log('[PDF Builder JS] Form exists:', $('form[action="options.php"]').length > 0);
+        
     });
 
-    console.log('[PDF Builder JS] === SCRIPT INITIALIZATION COMPLETE ===');
+    
 
 })(jQuery);
 

@@ -17,3 +17,4 @@ if (!defined('ABSPATH')) {
 
 // Preview system disabled - all generation removed
 // UI elements (buttons, metabox, modals) remain intact
+

@@ -237,3 +237,4 @@ $is_premium = $license_manager->isPremium();
 
 
 
+

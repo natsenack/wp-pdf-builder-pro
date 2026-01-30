@@ -59,3 +59,4 @@ function pdf_builder_media_diagnostic_ajax() {
 
 add_action('wp_ajax_pdf_builder_media_diagnostic', 'pdf_builder_media_diagnostic_ajax');
 
+

@@ -113,7 +113,7 @@ class PdfBuilderAdminNew
         if (class_exists('PDF_Builder\Managers\PDF_Builder_Template_Manager')) {
             $this->template_manager = new \PDF_Builder\Managers\PDF_Builder_Template_Manager($this);
         } else {
-            error_log('[ERROR] PDF Builder: PDF_Builder_Template_Manager class not found');
+            
         }
 
         // Initialiser les nouveaux modules spécialisés
@@ -355,14 +355,6 @@ class PdfBuilderAdminNew
      */
     public function sanitize_settings($input)
     {
-        // LOG pour déboguer la sauvegarde
-        if (class_exists('PDF_Builder_Logger')) { 
-            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === SANITIZE_SETTINGS CALLED ===');
-            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Input data: ' . print_r($input, true));
-            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
-            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] POST submit: ' . ($_POST['submit'] ?? 'NOT SET'));
-        }
-
         $sanitized = array();
 
         // Champs généraux
@@ -412,12 +404,6 @@ class PdfBuilderAdminNew
         // Champs développeur
         if (isset($input['developer_debug_mode'])) {
             $sanitized['developer_debug_mode'] = $input['developer_debug_mode'] ? '1' : '0';
-        }
-
-        // LOG pour déboguer la fin de la sanitisation
-        if (class_exists('PDF_Builder_Logger')) { 
-            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Sanitized data: ' . print_r($sanitized, true));
-            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === SANITIZE_SETTINGS END ===');
         }
 
         return $sanitized;
@@ -1332,18 +1318,19 @@ class PdfBuilderAdminNew
     public function getTemplateProcessor()
     {
         if ($this->template_processor === null) {
-            error_log('[DEBUG] PDF Builder: TemplateProcessor not available, creating it now in getter');
+            
             try {
                 $this->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this);
-                error_log('[DEBUG] PDF Builder: TemplateProcessor created successfully in getter');
+                
             } catch (Exception $e) {
-                error_log('[DEBUG] PDF Builder: TemplateProcessor creation failed in getter: ' . $e->getMessage());
+                
                 $this->template_processor = null;
             }
         }
         return $this->template_processor;
     }
 }
+
 
 
 

@@ -173,40 +173,33 @@ abstract class BaseGenerator
     protected function generateContent(): string
     {
         $content = '';
-        
-        error_log('[PDF GENERATOR] ===== generateContent - STARTING CONTENT GENERATION =====');
-        error_log('[PDF GENERATOR] generateContent - template_data keys: ' . implode(', ', array_keys($this->template_data)));
-        error_log('[PDF GENERATOR] generateContent - isset elements directly: ' . (isset($this->template_data['elements']) ? 'YES' : 'NO'));
-        error_log('[PDF GENERATOR] generateContent - isset template.elements: ' . (isset($this->template_data['template']['elements']) ? 'YES' : 'NO'));
-        
+
+
+
         // Déterminer où sont les éléments (nouvelle ou ancienne structure)
         $elements = null;
         if (isset($this->template_data['elements']) && is_array($this->template_data['elements'])) {
             $elements = $this->template_data['elements'];
-            error_log('[PDF GENERATOR] generateContent - USING DIRECT ELEMENTS');
+
         } elseif (isset($this->template_data['template']['elements']) && is_array($this->template_data['template']['elements'])) {
             $elements = $this->template_data['template']['elements'];
-            error_log('[PDF GENERATOR] generateContent - USING NESTED ELEMENTS');
+
         }
         
         if (!$elements) {
-            error_log('[PDF GENERATOR] generateContent - NO ELEMENTS FOUND, returning empty content');
+
             return $content;
         }
-
-        error_log('[PDF GENERATOR] generateContent - FOUND ELEMENTS, processing ' . count($elements) . ' elements');
 
         foreach ($elements as $index => $element) {
             // Convert stdClass to array if necessary
             $elementArray = is_array($element) ? $element : (array) $element;
-            error_log('[PDF GENERATOR] generateContent - Processing element ' . $index . ' type: ' . ($elementArray['type'] ?? 'unknown'));
+
             $html = $this->renderElement($elementArray);
-            error_log('[PDF GENERATOR] generateContent - Element ' . $index . ' rendered HTML length: ' . strlen($html));
+
             $content .= $html;
         }
 
-        error_log('[PDF GENERATOR] generateContent - FINAL CONTENT LENGTH: ' . strlen($content));
-        
         return $content;
     }
 
@@ -219,22 +212,19 @@ abstract class BaseGenerator
     protected function renderElement(array $element): string
     {
         $type = $element['type'] ?? 'unknown';
-        
-        error_log("[PDF] Rendering element type: {$type}");
-        error_log("[PDF] Element keys: " . implode(', ', array_keys($element)));
-        
+
         // Convert underscore notation to camelCase (e.g., customer_info -> CustomerInfo)
         $camelCaseType = $this->convertToCamelCase($type);
         $method = 'render' . $camelCaseType . 'Element';
         
         if (method_exists($this, $method)) {
-            error_log("[PDF] Calling method: {$method}");
+
             $result = $this->$method($element);
-            error_log("[PDF] Rendered HTML length: " . strlen($result));
+
             return $result;
         }
 
-        error_log("[PDF] Unknown element type: {$type}");
+
         return '';
     }
 
@@ -262,8 +252,7 @@ abstract class BaseGenerator
      */
     protected function renderTextElement(array $element): string
     {
-        error_log('[PDF] Text element - keys: ' . implode(', ', array_keys($element)) . ', text: ' . ($element['text'] ?? 'empty'));
-        
+
         // Use real element data with flexible property names
         $text = $element['text'] ?? $element['content'] ?? $element['value'] ?? '';
         
@@ -280,7 +269,7 @@ abstract class BaseGenerator
         
         $text = $this->injectVariables($text);
         $style = $this->buildElementStyle($element);
-        error_log('[PDF] Text element - FINAL text: "' . $text . '", style length: ' . strlen($style));
+
         return "<div class=\"pdf-element text-element\" data-element-type=\"text\" style=\"{$style}\">{$text}</div>";
     }
 
@@ -292,8 +281,7 @@ abstract class BaseGenerator
      */
     protected function renderImageElement(array $element): string
     {
-        error_log('[PDF] Image element - keys: ' . implode(', ', array_keys($element)) . ', src: ' . ($element['src'] ?? 'empty'));
-        
+
         // Use real element data with flexible property names
         $src = $element['src'] ?? $element['url'] ?? $element['imageUrl'] ?? '';
         $alt = $element['alt'] ?? $element['altText'] ?? $element['title'] ?? '';
@@ -324,7 +312,7 @@ abstract class BaseGenerator
         }
 
         $style = $this->buildElementStyle($element);
-        error_log('[PDF] Image element - FINAL src: "' . $src . '", alt: "' . $alt . '", style length: ' . strlen($style));
+
         return "<img class=\"pdf-element image-element\" data-element-type=\"image\" src=\"{$src}\" alt=\"{$alt}\" style=\"{$style}\" />";
     }
 
@@ -336,8 +324,7 @@ abstract class BaseGenerator
      */
     protected function renderRectangleElement(array $element): string
     {
-        error_log('[PDF] Rectangle element - keys: ' . implode(', ', array_keys($element)));
-        
+
         $style = $this->buildElementStyle($element);
         
         // Use real element data with flexible property names
@@ -353,7 +340,7 @@ abstract class BaseGenerator
         }
         
         $style .= "border: {$borderWidth}px solid {$borderColor}; background-color: {$backgroundColor};";
-        error_log('[PDF] Rectangle element - FINAL borderColor: "' . $borderColor . '", borderWidth: ' . $borderWidth . ', backgroundColor: "' . $backgroundColor . '"');
+
         return "<div class=\"pdf-element rectangle-element\" data-element-type=\"rectangle\" style=\"{$style}\"></div>";
     }
 
@@ -363,8 +350,7 @@ abstract class BaseGenerator
      */
     protected function renderCustomerInfoElement(array $element): string
     {
-        error_log('[PDF] Customer info - keys: ' . implode(', ', array_keys($element)));
-        
+
         $style = $this->buildElementStyle($element);
         
         // Récupérer les propriétés d'affichage
@@ -375,9 +361,7 @@ abstract class BaseGenerator
         $showEmail = $properties['showEmail'] ?? true;
         $showPhone = $properties['showPhone'] ?? true;
         $layout = $properties['layout'] ?? 'vertical';
-        
-        error_log('[PDF] Customer info - showHeaders value: ' . var_export($showHeaders, true) . ' (type: ' . gettype($showHeaders) . ')');
-        
+
         // Récupérer les données depuis le data provider pour l'aperçu
         $customerName = $this->data_provider->getVariableValue('customer_full_name');
         $customerAddress = $this->data_provider->getVariableValue('billing_address_1') . ', ' . 
@@ -445,8 +429,7 @@ abstract class BaseGenerator
                 $content .= (!empty($field['label']) ? $field['label'] . ': ' : '') . $field['value'];
             }
         }
-        
-        error_log('[PDF] Customer info - FINAL name: "' . $customerName . '", address: "' . $customerAddress . '", email: "' . $customerEmail . '", phone: "' . $customerPhone . '", showHeaders: ' . ($showHeaders ? 'YES' : 'NO'));
+
         return "<div class=\"pdf-element\" data-element-type=\"customer_info\" style=\"{$style}\">" . nl2br($content) . "</div>";
     }
 
@@ -456,8 +439,7 @@ abstract class BaseGenerator
      */
     protected function renderCompanyInfoElement(array $element): string
     {
-        error_log('[PDF] Company info - keys: ' . implode(', ', array_keys($element)));
-        
+
         $style = $this->buildElementStyle($element);
         
         // Récupérer les propriétés d'affichage
@@ -582,8 +564,7 @@ abstract class BaseGenerator
                 $content .= (!empty($field['label']) ? $field['label'] . ': ' : '') . $field['value'];
             }
         }
-        
-        error_log('[PDF] Company info - FINAL name: "' . $companyName . '", address: "' . $companyAddress . '", email: "' . $companyEmail . '", phone: "' . $companyPhone . '", siret: "' . $companySiret . '", showHeaders: ' . ($showHeaders ? 'YES' : 'NO'));
+
         return "<div class=\"pdf-element\" data-element-type=\"company_info\" style=\"{$style}\">" . nl2br($content) . "</div>";
     }
 
@@ -598,11 +579,11 @@ abstract class BaseGenerator
         $style = 'position: absolute; ';
 
         // Debug: Log element structure
-        error_log("[PDF] buildElementStyle - Element keys: " . implode(', ', array_keys($element)));
+
         if (isset($element['properties']) && is_array($element['properties'])) {
-            error_log("[PDF] buildElementStyle - Properties keys: " . implode(', ', array_keys($element['properties'])));
+
         } else {
-            error_log("[PDF] buildElementStyle - No properties array found");
+
         }
 
         // Helper function to get CSS property value from element or properties array
@@ -612,7 +593,7 @@ abstract class BaseGenerator
                 if (isset($element['properties'][$propertyName])) {
                     $value = $element['properties'][$propertyName];
                     if ($value !== null && $value !== '' && $value !== false) {
-                        error_log("[PDF] getCssProperty - Found '{$propertyName}' in properties: '{$value}'");
+
                         return $value;
                     }
                 }
@@ -621,7 +602,7 @@ abstract class BaseGenerator
                 if (isset($element['properties'][$hyphenated])) {
                     $value = $element['properties'][$hyphenated];
                     if ($value !== null && $value !== '' && $value !== false) {
-                        error_log("[PDF] getCssProperty - Found hyphenated '{$hyphenated}' in properties: '{$value}'");
+
                         return $value;
                     }
                 }
@@ -630,7 +611,7 @@ abstract class BaseGenerator
             if (isset($element[$propertyName])) {
                 $value = $element[$propertyName];
                 if ($value !== null && $value !== '' && $value !== false) {
-                    error_log("[PDF] getCssProperty - Found '{$propertyName}' directly in element: '{$value}'");
+
                     return $value;
                 }
             }
@@ -639,7 +620,7 @@ abstract class BaseGenerator
             if (isset($element[$hyphenated])) {
                 $value = $element[$hyphenated];
                 if ($value !== null && $value !== '' && $value !== false) {
-                    error_log("[PDF] getCssProperty - Found hyphenated '{$hyphenated}' directly in element: '{$value}'");
+
                     return $value;
                 }
             }
@@ -682,7 +663,7 @@ abstract class BaseGenerator
                 if (isset($element['properties'][$variation])) {
                     $value = $element['properties'][$variation];
                     if ($value !== null && $value !== '' && $value !== false) {
-                        error_log("[PDF] getCssProperty - Found variation '{$variation}' in properties: '{$value}' for '{$propertyName}'");
+
                         return $value;
                     }
                 }
@@ -690,13 +671,13 @@ abstract class BaseGenerator
                 if (isset($element[$variation])) {
                     $value = $element[$variation];
                     if ($value !== null && $value !== '' && $value !== false) {
-                        error_log("[PDF] getCssProperty - Found variation '{$variation}' directly in element: '{$value}' for '{$propertyName}'");
+
                         return $value;
                     }
                 }
             }
 
-            error_log("[PDF] getCssProperty - Property '{$propertyName}' not found anywhere");
+
             return null;
         };
 
@@ -728,7 +709,7 @@ abstract class BaseGenerator
 
         // Debug log for positioning
         if ((isset($element['x']) && $element['x'] !== null && $element['x'] !== '') || (isset($element['y']) && $element['y'] !== null && $element['y'] !== '')) {
-            error_log("[PDF] Element positioning - original x: " . ($element['x'] ?? 'not set') . ", y: " . ($element['y'] ?? 'not set') . " | adjusted x: {$x}, y: {$y} | is_preview: " . ($this->is_preview ? 'true' : 'false'));
+
         }
 
         // Apply CSS properties using the helper function
@@ -835,9 +816,9 @@ abstract class BaseGenerator
         }
         if (!empty($transforms)) {
             $style .= "transform: " . implode(' ', $transforms) . "; ";
-            error_log("[PDF] buildElementStyle - Applied transforms: " . implode(' ', $transforms));
+
         } else {
-            error_log("[PDF] buildElementStyle - No transforms applied");
+
         }
         if (($value = $getCssProperty('wordSpacing', $element)) !== null) {
             $style .= "word-spacing: {$value}px; ";
@@ -950,7 +931,7 @@ abstract class BaseGenerator
         }
 
         // Debug: Log final style
-        error_log("[PDF] buildElementStyle - Final style: '{$style}'");
+
 
         return $style;
     }
@@ -960,8 +941,7 @@ abstract class BaseGenerator
      */
     protected function renderOrderNumberElement(array $element): string
     {
-        error_log('[PDF] Order number - keys: ' . implode(', ', array_keys($element)) . ', number: ' . ($element['orderNumber'] ?? $element['number'] ?? 'empty'));
-        
+
         $style = $this->buildElementStyle($element);
         
         // Use real element data with flexible property names
@@ -972,7 +952,7 @@ abstract class BaseGenerator
             $orderNumber = $element['properties']['orderNumber'];
         }
         
-        error_log('[PDF] Order number - FINAL number: "' . $orderNumber . '"');
+
         return "<div class=\"pdf-element\" style=\"{$style}\">{$orderNumber}</div>";
     }
 
@@ -981,15 +961,14 @@ abstract class BaseGenerator
      */
     protected function renderCompanyLogoElement(array $element): string
     {
-        error_log('[PDF] Company logo - keys: ' . implode(', ', array_keys($element)) . ', src: ' . ($element['src'] ?? 'empty'));
-        
+
         $style = $this->buildElementStyle($element);
         $src = $element['src'] ?? $element['logoUrl'] ?? $element['url'] ?? '';
         if (empty($src)) {
-            error_log('[PDF] Company logo - FINAL src: empty, using placeholder');
+
             return "<div class=\"pdf-element image-element\" style=\"{$style}; background-color: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #666;\">🏢 Logo</div>";
         }
-        error_log('[PDF] Company logo - FINAL src: "' . $src . '"');
+
         return "<img class=\"pdf-element image-element\" src=\"{$src}\" style=\"{$style}; max-width: 100%; height: auto;\" alt=\"Logo\" />";
     }
 
@@ -998,8 +977,7 @@ abstract class BaseGenerator
      */
     protected function renderProductTableElement(array $element): string
     {
-        error_log('[PDF] Product table - keys: ' . implode(', ', array_keys($element)) . ', has products: ' . (isset($element['products']) || isset($element['items']) ? 'YES' : 'NO'));
-        
+
         $style = $this->buildElementStyle($element);
         
         // Use real element data with flexible property names
@@ -1084,12 +1062,10 @@ abstract class BaseGenerator
         }
         
         $content .= "<tbody>";
-        
-        error_log('[PDF] Product table - processing ' . count($products) . ' products');
-        
+
         if (empty($products)) {
             // Sample data if no products provided
-            error_log('[PDF] Product table - using sample data (no products found)');
+
             $content .= "<tr" . ($showAlternatingRows ? " style='background-color: #fafafa; {$rowStyleBase}'" : " style='{$rowStyleBase}'") . ">";
             $content .= "<td style='{$borderStyle} padding: 8px;'>Produit Exemple</td>";
             if ($showSku) {
@@ -1138,8 +1114,7 @@ abstract class BaseGenerator
         }
         
         $content .= "</tbody></table>";
-        
-        error_log('[PDF] Product table - FINAL products count: ' . count($products) . ', showHeaders: ' . ($showHeaders ? 'YES' : 'NO') . ', showBorders: ' . ($showBorders ? 'YES' : 'NO') . ', showAlternatingRows: ' . ($showAlternatingRows ? 'YES' : 'NO') . ', showSku: ' . ($showSku ? 'YES' : 'NO') . ', showDescription: ' . ($showDescription ? 'YES' : 'NO') . ', showQuantity: ' . ($showQuantity ? 'YES' : 'NO') . ', showShipping: ' . ($showShipping ? 'YES' : 'NO') . ', showTax: ' . ($showTax ? 'YES' : 'NO') . ', showGlobalDiscount: ' . ($showGlobalDiscount ? 'YES' : 'NO') . ', globalFontSize: ' . $globalFontSize . ', globalFontFamily: ' . $globalFontFamily);
+
         return "<div class=\"pdf-element table-element\" style=\"{$style}\">{$content}</div>";
     }
 
@@ -1167,8 +1142,7 @@ abstract class BaseGenerator
     protected function renderDocumentTypeElement(array $element): string
     {
         // Log all element properties for debugging
-        error_log('[PDF] Document type - keys: ' . implode(', ', array_keys($element)) . ', title: ' . ($element['title'] ?? 'empty'));
-        
+
         $style = $this->buildElementStyle($element);
         
         // Use real element data with flexible property names
@@ -1185,7 +1159,7 @@ abstract class BaseGenerator
             $title = $element['properties']['type'];
         }
         
-        error_log('[PDF] Document type - FINAL title: "' . $title . '"');
+
         return "<div class=\"pdf-element\" style=\"{$style}\">{$title}</div>";
     }
 
@@ -1194,8 +1168,7 @@ abstract class BaseGenerator
      */
     protected function renderDynamicTextElement(array $element): string
     {
-        error_log('[PDF] Dynamic text - keys: ' . implode(', ', array_keys($element)) . ', text: ' . ($element['text'] ?? 'empty'));
-        
+
         $style = $this->buildElementStyle($element);
         
         // Use real element data with flexible property names
@@ -1213,7 +1186,7 @@ abstract class BaseGenerator
         }
         
         $text = $this->injectVariables($text);
-        error_log('[PDF] Dynamic text - FINAL text: "' . $text . '"');
+
         return "<div class=\"pdf-element text-element\" style=\"{$style}\">{$text}</div>";
     }
 
@@ -1222,8 +1195,7 @@ abstract class BaseGenerator
      */
     protected function renderMentionsElement(array $element): string
     {
-        error_log('[PDF] Mentions - keys: ' . implode(', ', array_keys($element)) . ', showEmail: ' . ($element['showEmail'] ?? 'false'));
-        
+
         $style = $this->buildElementStyle($element);
         
         // Use real element data with flexible property names
@@ -1259,7 +1231,7 @@ abstract class BaseGenerator
         if ($showVat) $mentions[] = 'TVA: ' . $vat;
         
         $content = implode($separator, $mentions);
-        error_log('[PDF] Mentions - FINAL content: "' . $content . '", shows: email=' . ($showEmail ? 'YES' : 'NO') . ', phone=' . ($showPhone ? 'YES' : 'NO') . ', siret=' . ($showSiret ? 'YES' : 'NO') . ', vat=' . ($showVat ? 'YES' : 'NO'));
+
         return "<div class=\"pdf-element\" style=\"{$style}\">{$content}</div>";
     }
 
@@ -1283,7 +1255,7 @@ abstract class BaseGenerator
         $style .= "margin-top: {$centerOffset}px; ";
         $style .= "background-color: {$strokeColor}; ";
 
-        error_log('[PDF] Line element - FINAL strokeColor: "' . $strokeColor . '", strokeWidth: ' . $strokeWidth . ', centerOffset: ' . $centerOffset);
+
         return "<div class=\"pdf-element line\" style=\"{$style}\"></div>";
     }
 
@@ -1386,13 +1358,12 @@ abstract class BaseGenerator
             return '<html><body><h1>Erreur: Aucun élément trouvé</h1></body></html>';
         }
 
-        error_log('[HTML PREVIEW] Found ' . count($elements) . ' elements');
         foreach ($elements as $index => $element) {
-            error_log('[HTML PREVIEW] Element ' . $index . ' keys: ' . implode(', ', array_keys($element)));
+
             if (isset($element['properties'])) {
-                error_log('[HTML PREVIEW] Element ' . $index . ' properties keys: ' . implode(', ', array_keys($element['properties'])));
+
             } else {
-                error_log('[HTML PREVIEW] Element ' . $index . ' has NO properties array');
+
             }
         }
 
@@ -1495,3 +1466,4 @@ abstract class BaseGenerator
         return $html;
     }
 }
+

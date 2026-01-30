@@ -63,3 +63,4 @@ class PDFBuilderMuPluginBlocker {
 // Initialiser automatiquement
 PDFBuilderMuPluginBlocker::init();
 
+

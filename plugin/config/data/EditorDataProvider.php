@@ -223,3 +223,4 @@ class EditorDataProvider implements DataProviderInterface
         return $sanitized;
     }
 }
+

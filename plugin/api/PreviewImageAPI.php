@@ -18,3 +18,4 @@ require_once dirname(__DIR__) . '/preview-system/php/PreviewImageAPI.php';
 class PreviewImageAPI extends \PDF_Builder\PreviewSystem\PreviewImageAPI
 {
 }
+

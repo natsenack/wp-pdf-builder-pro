@@ -35,7 +35,7 @@ class TemplateManager
     private function debug_log($message)
     {
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            // error_log('PDF Builder TemplateManager: ' . $message);
+
         }
     }
 
@@ -467,4 +467,5 @@ class TemplateManager
         return $new_id;
     }
 }
+
 

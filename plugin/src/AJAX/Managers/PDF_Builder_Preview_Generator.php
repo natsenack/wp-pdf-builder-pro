@@ -101,3 +101,4 @@ class PDF_Builder_Preview_Generator
         return $this->cache_key;
     }
 }
+

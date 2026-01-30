@@ -16,7 +16,7 @@ $autoload_path = PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
 if (file_exists($autoload_path)) {
     require_once $autoload_path;
 } else {
-    error_log('[BOOTSTRAP] Composer autoloader not found at: ' . $autoload_path);
+
 }
 
 // ========================================================================
@@ -181,11 +181,11 @@ function pdf_builder_load_utilities_emergency() {
     static $utilities_loaded = false;
 
     if ($utilities_loaded) {
-        error_log('[DEBUG] PDF Builder: Utilities already loaded, skipping');
+
         return;
     }
 
-    error_log('[DEBUG] PDF Builder: Loading utilities emergency mode');
+
 
     $utilities = array(
         'PDF_Builder_Onboarding_Manager.php',
@@ -195,23 +195,23 @@ function pdf_builder_load_utilities_emergency() {
     foreach ($utilities as $utility) {
         $utility_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/' . $utility;
         if (file_exists($utility_path) && !class_exists('PDF_Builder\\Utilities\\' . str_replace('.php', '', $utility))) {
-            error_log('[DEBUG] PDF Builder: Loading utility: ' . $utility);
+
             require_once $utility_path;
             $class_name = 'PDF_Builder\\Utilities\\' . str_replace('.php', '', $utility);
             if (class_exists($class_name)) {
-                error_log('[DEBUG] PDF Builder: Utility loaded successfully: ' . $class_name);
+
             } else {
-                error_log('[WARN] PDF Builder: Utility class not found after loading: ' . $class_name);
+
             }
         } elseif (class_exists('PDF_Builder\\Utilities\\' . str_replace('.php', '', $utility))) {
-            error_log('[DEBUG] PDF Builder: Utility already loaded: ' . $utility);
+
         } else {
-            error_log('[ERROR] PDF Builder: Utility file not found: ' . $utility_path);
+
         }
     }
 
     $utilities_loaded = true;
-    error_log('[DEBUG] PDF Builder: Utilities emergency loading completed');
+
 }
 
 // ============================================================================
@@ -224,24 +224,24 @@ function pdf_builder_load_utilities_emergency() {
  */
 function pdf_builder_ensure_onboarding_manager() {
     if (!class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
-        error_log('[DEBUG] PDF Builder: Onboarding Manager class not found, attempting emergency load');
+
         pdf_builder_load_utilities_emergency();
 
         // Double vérification avec chargement manuel
         $onboarding_path = PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php';
         if (file_exists($onboarding_path)) {
-            error_log('[DEBUG] PDF Builder: Loading Onboarding Manager from: ' . $onboarding_path);
+
             require_once $onboarding_path;
             if (class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager')) {
-                error_log('[DEBUG] PDF Builder: Onboarding Manager loaded successfully');
+
             } else {
-                error_log('[ERROR] PDF Builder: Onboarding Manager class still not found after manual loading');
+
             }
         } else {
-            error_log('[ERROR] PDF Builder: Onboarding Manager file not found at: ' . $onboarding_path);
+
         }
     } else {
-        error_log('[DEBUG] PDF Builder: Onboarding Manager class already available');
+
     }
 
     return class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager');
@@ -276,12 +276,9 @@ function pdf_builder_diagnose_onboarding_manager() {
     $standalone_exists = class_exists('PDF_Builder_Onboarding_Manager_Standalone');
     $file_exists = file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/utilities/PDF_Builder_Onboarding_Manager.php');
 
-    error_log('[DEBUG] PDF Builder: === DIAGNOSTIC Onboarding Manager ===');
-    error_log('[DEBUG] PDF Builder: Real class exists: ' . ($class_exists ? 'YES' : 'NO'));
-    error_log('[DEBUG] PDF Builder: Alias class exists: ' . ($alias_exists ? 'YES' : 'NO'));
-    error_log('[DEBUG] PDF Builder: Standalone class exists: ' . ($standalone_exists ? 'YES' : 'NO'));
-    error_log('[DEBUG] PDF Builder: File exists: ' . ($file_exists ? 'YES' : 'NO'));
-    error_log('[DEBUG] PDF Builder: Plugin dir defined: ' . (defined('PDF_BUILDER_PLUGIN_DIR') ? 'YES' : 'NO'));
+
+
+
 
     $message = "=== DIAGNOSTIC PDF_Builder_Onboarding_Manager ===\n";
     $message .= "Classe réelle existe: " . ($class_exists ? 'OUI' : 'NON') . "\n";
@@ -292,14 +289,14 @@ function pdf_builder_diagnose_onboarding_manager() {
     $message .= "Bootstrap chargé: " . (function_exists('pdf_builder_load_utilities_emergency') ? 'OUI' : 'NON') . "\n";
 
     if (!$class_exists) {
-        error_log('[DEBUG] PDF Builder: Attempting emergency loading of Onboarding Manager');
+
         $message .= "Tentative de chargement d'urgence...\n";
         pdf_builder_ensure_onboarding_manager();
         $after_load = class_exists('PDF_Builder\\Utilities\\PDF_Builder_Onboarding_Manager');
-        error_log('[DEBUG] PDF Builder: After emergency load: ' . ($after_load ? 'SUCCESS' : 'FAILED'));
+
         $message .= "Après chargement: " . ($after_load ? 'SUCCÈS' : 'ÉCHEC') . "\n";
     } else {
-        error_log('[DEBUG] PDF Builder: Onboarding Manager already available');
+
     }
 
     $message .= "===========================================\n";
@@ -558,34 +555,34 @@ function pdf_builder_load_core()
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/security-manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/security-manager.php';
         if (class_exists('PDF_Builder_Security_Manager')) {
-            error_log('[DEBUG] PDF Builder: PDF_Builder_Security_Manager loaded successfully');
+
         } else {
-            error_log('[ERROR] PDF Builder: PDF_Builder_Security_Manager class not found after loading');
+
         }
     } else {
-        error_log('[ERROR] PDF Builder: security-manager.php file not found at: ' . PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/security-manager.php');
+
     }
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/sanitizer.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/sanitizer.php';
         if (function_exists('pdf_builder_sanitize_input')) {
-            error_log('[DEBUG] PDF Builder: Sanitizer functions loaded successfully');
+
         } else {
-            error_log('[WARN] PDF Builder: Sanitizer functions not available after loading');
+
         }
     } else {
-        error_log('[ERROR] PDF Builder: sanitizer.php file not found at: ' . PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/sanitizer.php');
+
     }
 
     // Charger les mappings centralisés
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/mappings.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/mappings.php';
         if (defined('PDF_BUILDER_MAPPINGS_LOADED')) {
-            error_log('[DEBUG] PDF Builder: Mappings loaded successfully');
+
         } else {
-            error_log('[WARN] PDF Builder: Mappings constant not defined after loading');
+
         }
     } else {
-        error_log('[ERROR] PDF Builder: mappings.php file not found at: ' . PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/mappings.php');
+
     }
 
     // Charger la classe d'administration depuis src/
@@ -695,7 +692,6 @@ function pdf_builder_load_core()
 
         // Charger seulement le bundle sur la page de l'éditeur React
         if ($hook === 'pdf-builder_page_pdf-builder-react-editor' || (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor')) {
-            error_log('[BOOTSTRAP] Loading React scripts for hook: ' . $hook . ', page: ' . (isset($_GET['page']) ? $_GET['page'] : 'none'));
 
             // Charger le bundle PDF Builder (optimisé avec code splitting)
             $bundle_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-wrapper.min.js';
@@ -758,17 +754,16 @@ function pdf_builder_load_new_classes()
 // Fonction principale de chargement du bootstrap
 function pdf_builder_load_bootstrap()
 {
-    error_log('[DEBUG] PDF Builder: pdf_builder_load_bootstrap() called');
 
     // Protection globale contre les chargements multiples
     static $bootstrap_loaded = false;
     if ($bootstrap_loaded || (defined('PDF_BUILDER_BOOTSTRAP_LOADED') && PDF_BUILDER_BOOTSTRAP_LOADED)) {
-        error_log('[DEBUG] PDF Builder: Bootstrap already loaded, skipping');
+
         return;
     }
     $bootstrap_loaded = true;
 
-    error_log('[DEBUG] PDF Builder: Starting bootstrap loading process');
+
 
     // Charger le core (toujours nécessaire)
     pdf_builder_load_core();
@@ -833,18 +828,18 @@ function pdf_builder_load_admin_components()
     // Charger manuellement car pas dans PSR-4
     $notification_manager_file = PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Notification_Manager.php';
     if (file_exists($notification_manager_file)) {
-        error_log('[BOOTSTRAP] Loading notification manager file: ' . $notification_manager_file);
+
         require_once $notification_manager_file;
-        error_log('[BOOTSTRAP] Notification manager file loaded');
+
     } else {
-        error_log('[BOOTSTRAP] ERROR: Notification manager file not found: ' . $notification_manager_file);
+
     }
     if (class_exists('PDF_Builder_Notification_Manager')) {
-        error_log('[BOOTSTRAP] PDF_Builder_Notification_Manager class exists, instantiating...');
+
         PDF_Builder_Notification_Manager::get_instance();
-        error_log('[BOOTSTRAP] Notification manager instantiated successfully');
+
     } else {
-        error_log('[BOOTSTRAP] ERROR: PDF_Builder_Notification_Manager class not found');
+
     }
 
     // CHARGER LE GESTIONNAIRE DE PRÉFÉRENCES DE L'ÉDITEUR PDF
@@ -1520,6 +1515,7 @@ if (file_exists($migration_ajax_path)) {
 
 // Initialiser le bootstrap du plugin - maintenant géré dans pdf-builder-pro.php
 // add_action('plugins_loaded', 'pdf_builder_load_bootstrap', 5); // Supprimé - géré dans pdf-builder-pro.php
+
 
 
 

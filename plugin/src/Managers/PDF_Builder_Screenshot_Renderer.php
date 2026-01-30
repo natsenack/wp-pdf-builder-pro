@@ -328,7 +328,7 @@ class PDF_Builder_Screenshot_Renderer
 
                 $dompdf = new Dompdf($options);
             } catch (\Throwable $e) {
-                error_log('[PDF Builder] Error setting Dompdf options in screenshot renderer: ' . $e->getMessage());
+                
                 // Fallback
                 $options = new Options();
                 // Avoid setting any options that might cause errors
@@ -345,7 +345,7 @@ class PDF_Builder_Screenshot_Renderer
                 file_put_contents($pdf_path, $dompdf->output());
                 return file_exists($pdf_path);
             } catch (\Throwable $e) {
-                error_log('[PDF Builder] Error during PDF generation in screenshot renderer: ' . $e->getMessage());
+                
                 return false;
             }
         } catch (Exception $e) {
@@ -365,6 +365,7 @@ class PDF_Builder_Screenshot_Renderer
         ];
     }
 }
+
 
 
 
