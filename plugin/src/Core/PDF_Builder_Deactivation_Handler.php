@@ -120,6 +120,12 @@ add_action('admin_enqueue_scripts', function() {
             </div>
         </div>
         
+        <style>
+        #pdf-builder-btn-proceed {
+            cursor: pointer !important;
+        }
+        </style>
+        
         <script>
         (function() {
             if (typeof jQuery === 'undefined') return;
