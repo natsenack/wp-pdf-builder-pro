@@ -47,8 +47,7 @@ class SettingsManager
      */
     public function registerSettings()
     {
-        // Enregistrer le tableau principal des paramètres
-        \register_setting('pdf_builder_settings', 'pdf_builder_settings', [$this, 'sanitizeSettings']);
+        // Tous les register_setting ont été déplacés vers settings-main.php
 
         // Section principale
         \add_settings_section(

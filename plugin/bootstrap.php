@@ -506,40 +506,6 @@ if (function_exists('add_action')) {
     }, 1);
 }
 
-// Enregistrer les paramètres principaux
-add_action('admin_init', function() {
-    \register_setting('pdf_builder_settings', 'pdf_builder_settings', array(
-        'type' => 'array',
-        'description' => 'Paramètres principaux PDF Builder Pro',
-        'sanitize_callback' => function($input) {
-            // Log détaillé pour déboguer la sauvegarde
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] SANITIZE CALLBACK - Input type: ' . gettype($input)); }
-            if (is_array($input)) {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] SANITIZE CALLBACK - Input count: ' . count($input)); }
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] SANITIZE CALLBACK - Input keys: ' . implode(', ', array_keys($input))); }
-                
-                // Log spécifique pour les paramètres templates
-                if (isset($input['pdf_builder_default_template'])) {
-                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Template par défaut: ' . $input['pdf_builder_default_template']); }
-                }
-                if (isset($input['pdf_builder_template_library_enabled'])) {
-                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Bibliothèque templates: ' . $input['pdf_builder_template_library_enabled']); }
-                }
-            } else {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] SANITIZE CALLBACK - Input is not array: ' . print_r($input, true)); }
-            }
-            
-            // Validation et nettoyage des données
-            if (!is_array($input)) {
-                return array();
-            }
-            
-            return $input;
-        },
-        'default' => array()
-    ));
-});
-
 // Initialiser les variables $_SERVER manquantes pour éviter les erreurs PHP 8.1+
 if (!isset($_SERVER['HTTP_B701CD7'])) {
     $_SERVER['HTTP_B701CD7'] = '';

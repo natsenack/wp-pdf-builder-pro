@@ -75,37 +75,6 @@ class PDF_Builder_Localization {
     }
 
     /**
-     * Enregistre les paramètres de localisation
-     */
-    public function register_settings() {
-        register_setting('pdf_builder_settings', 'pdf_builder_default_locale', [
-            'type' => 'string',
-            'default' => 'en_US',
-            'sanitize_callback' => [$this, 'sanitize_locale']
-        ]);
-
-        register_setting('pdf_builder_settings', 'pdf_builder_rtl_support', [
-            'type' => 'boolean',
-            'default' => true
-        ]);
-
-        register_setting('pdf_builder_settings', 'pdf_builder_date_format', [
-            'type' => 'string',
-            'default' => 'Y-m-d'
-        ]);
-
-        register_setting('pdf_builder_settings', 'pdf_builder_time_format', [
-            'type' => 'string',
-            'default' => 'H:i:s'
-        ]);
-
-        register_setting('pdf_builder_settings', 'pdf_builder_number_format', [
-            'type' => 'string',
-            'default' => 'en_US'
-        ]);
-    }
-
-    /**
      * Filtre la locale
      */
     public function filter_locale($locale) {

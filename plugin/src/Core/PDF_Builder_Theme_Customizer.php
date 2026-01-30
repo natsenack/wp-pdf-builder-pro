@@ -92,51 +92,6 @@ class PDF_Builder_Theme_Customizer {
     }
 
     /**
-     * Enregistre les paramètres du thème
-     */
-    public function register_theme_settings() {
-        register_setting('pdf_builder_theme', 'pdf_builder_theme_preset', [
-            'type' => 'string',
-            'default' => self::THEME_DEFAULT,
-            'sanitize_callback' => [$this, 'sanitize_theme_preset']
-        ]);
-
-        register_setting('pdf_builder_theme', 'pdf_builder_custom_colors', [
-            'type' => 'array',
-            'default' => [],
-            'sanitize_callback' => [$this, 'sanitize_color_array']
-        ]);
-
-        register_setting('pdf_builder_theme', 'pdf_builder_font_family', [
-            'type' => 'string',
-            'default' => 'system',
-            'sanitize_callback' => [$this, 'sanitize_font_family']
-        ]);
-
-        register_setting('pdf_builder_theme', 'pdf_builder_font_size', [
-            'type' => 'string',
-            'default' => 'base',
-            'sanitize_callback' => [$this, 'sanitize_font_size']
-        ]);
-
-        register_setting('pdf_builder_theme', 'pdf_builder_border_radius', [
-            'type' => 'string',
-            'default' => '4px',
-            'sanitize_callback' => 'sanitize_text_field'
-        ]);
-
-        register_setting('pdf_builder_theme', 'pdf_builder_enable_animations', [
-            'type' => 'boolean',
-            'default' => true
-        ]);
-
-        register_setting('pdf_builder_theme', 'pdf_builder_enable_shadows', [
-            'type' => 'boolean',
-            'default' => true
-        ]);
-    }
-
-    /**
      * Ajoute le menu du thème
      */
     public function add_theme_menu() {

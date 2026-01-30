@@ -200,8 +200,6 @@ class PdfBuilderAdminNew
      */
     public function register_settings()
     {
-        // REMOVED: \register_setting déplacé vers SettingsManager.php pour éviter les conflits
-        // \register_setting('pdf_builder_settings', 'pdf_builder_settings', array($this, 'sanitize_settings'));
 
         // Section Général
         \add_settings_section(

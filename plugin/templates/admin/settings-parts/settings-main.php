@@ -44,6 +44,166 @@
         'time' => current_time('mysql')
     ] : null;
 
+    // === LOGIQUE DE SAUVEGARDE CENTRALISÉE ===
+    
+    // Enregistrer les paramètres principaux
+    add_action('admin_init', function() {
+        // Paramètre principal pour les settings
+        \register_setting('pdf_builder_settings', 'pdf_builder_settings', array(
+            'type' => 'array',
+            'description' => 'Paramètres principaux PDF Builder Pro',
+            'sanitize_callback' => function($input) {
+                // Log détaillé pour déboguer la sauvegarde
+                if (class_exists('PDF_Builder_Logger')) { 
+                    PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] SANITIZE CALLBACK - Input type: ' . gettype($input)); 
+                }
+                if (is_array($input)) {
+                    if (class_exists('PDF_Builder_Logger')) { 
+                        PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] SANITIZE CALLBACK - Input count: ' . count($input)); 
+                        PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] SANITIZE CALLBACK - Input keys: ' . implode(', ', array_keys($input))); 
+                    }
+                    
+                    // Log spécifique pour les paramètres templates
+                    if (isset($input['pdf_builder_default_template'])) {
+                        if (class_exists('PDF_Builder_Logger')) { 
+                            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Template par défaut: ' . $input['pdf_builder_default_template']); 
+                        }
+                    }
+                    if (isset($input['pdf_builder_template_library_enabled'])) {
+                        if (class_exists('PDF_Builder_Logger')) { 
+                            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Bibliothèque templates: ' . $input['pdf_builder_template_library_enabled']); 
+                        }
+                    }
+                } else {
+                    if (class_exists('PDF_Builder_Logger')) { 
+                        PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] SANITIZE CALLBACK - Input is not array: ' . print_r($input, true)); 
+                    }
+                }
+                
+                // Retourner les données nettoyées
+                return $input;
+            }
+        ));
+
+        // Paramètres généraux
+        \register_setting('pdf_builder_settings', 'pdf_builder_allowed_roles');
+        \register_setting('pdf_builder_settings', 'pdf_builder_company_vat');
+        \register_setting('pdf_builder_settings', 'pdf_builder_company_rcs');
+        \register_setting('pdf_builder_settings', 'pdf_builder_company_siret');
+
+        // Paramètres des templates par statut de commande
+        \register_setting('pdf_builder_order_status_templates', 'pdf_builder_order_status_templates');
+
+        // Paramètres de localisation
+        \register_setting('pdf_builder_settings', 'pdf_builder_default_locale', [
+            'type' => 'string',
+            'description' => 'Locale par défaut',
+            'sanitize_callback' => 'sanitize_text_field'
+        ]);
+        \register_setting('pdf_builder_settings', 'pdf_builder_rtl_support', [
+            'type' => 'boolean',
+            'description' => 'Support RTL',
+            'sanitize_callback' => function($value) { return (bool) $value; }
+        ]);
+        \register_setting('pdf_builder_settings', 'pdf_builder_date_format', [
+            'type' => 'string',
+            'description' => 'Format de date',
+            'sanitize_callback' => 'sanitize_text_field'
+        ]);
+        \register_setting('pdf_builder_settings', 'pdf_builder_time_format', [
+            'type' => 'string',
+            'description' => 'Format d\'heure',
+            'sanitize_callback' => 'sanitize_text_field'
+        ]);
+        \register_setting('pdf_builder_settings', 'pdf_builder_number_format', [
+            'type' => 'string',
+            'description' => 'Format des nombres',
+            'sanitize_callback' => 'sanitize_text_field'
+        ]);
+
+        if (class_exists('PDF_Builder_Logger')) { 
+            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] All settings registered in settings-main.php'); 
+        }
+    });
+
+    // Gestion de la soumission du formulaire
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['option_page']) && $_POST['option_page'] === 'pdf_builder_settings') {
+        if (class_exists('PDF_Builder_Logger')) { 
+            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Form submitted - processing settings save'); 
+        }
+        
+        // La sauvegarde est gérée automatiquement par WordPress via register_setting
+        // Ajouter un message de succès
+        add_action('admin_notices', function() {
+            echo '<div class="notice notice-success is-dismissible"><p>' . __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro') . '</p></div>';
+        });
+        
+        if (class_exists('PDF_Builder_Logger')) { 
+            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Settings save completed successfully'); 
+        }
+    }
+
+    // Hook pour la sauvegarde personnalisée via admin-post.php
+    add_action('admin_post_pdf_builder_save_settings', function() {
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Accès refusé.', 'pdf-builder-pro'));
+        }
+
+        // Vérifier le nonce de sécurité
+        if (!isset($_POST['_wpnonce']) || !wp_verify_nonce($_POST['_wpnonce'], 'pdf_builder_save_settings')) {
+            wp_die(__('Erreur de sécurité.', 'pdf-builder-pro'));
+        }
+
+        if (class_exists('PDF_Builder_Logger')) { 
+            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Admin post save function called'); 
+        }
+
+        // Traiter les données du formulaire
+        $settings = isset($_POST['pdf_builder_settings']) ? $_POST['pdf_builder_settings'] : array();
+        
+        // Nettoyer et valider les données
+        $sanitized_settings = array();
+        foreach ($settings as $key => $value) {
+            if (is_array($value)) {
+                $sanitized_settings[$key] = array_map('sanitize_text_field', $value);
+            } else {
+                $sanitized_settings[$key] = sanitize_text_field($value);
+            }
+        }
+
+        // Sauvegarder dans la base de données
+        update_option('pdf_builder_settings', $sanitized_settings);
+
+        // Sauvegarder les autres paramètres individuels
+        $individual_settings = [
+            'pdf_builder_allowed_roles',
+            'pdf_builder_company_vat', 
+            'pdf_builder_company_rcs',
+            'pdf_builder_company_siret',
+            'pdf_builder_default_locale',
+            'pdf_builder_rtl_support',
+            'pdf_builder_date_format',
+            'pdf_builder_time_format',
+            'pdf_builder_number_format'
+        ];
+
+        foreach ($individual_settings as $setting_key) {
+            if (isset($_POST[$setting_key])) {
+                if (is_array($_POST[$setting_key])) {
+                    update_option($setting_key, array_map('sanitize_text_field', $_POST[$setting_key]));
+                } else {
+                    update_option($setting_key, sanitize_text_field($_POST[$setting_key]));
+                }
+            }
+        }
+
+        // Redirection avec message de succès
+        $redirect_url = add_query_arg('settings-updated', 'true', wp_get_referer());
+        wp_safe_redirect($redirect_url);
+        exit;
+    });
+
 ?>
 
 <div class="wrap">
@@ -61,12 +221,9 @@
         <strong>🔍 DEBUG:</strong> Page chargée à <?php echo current_time('H:i:s'); ?> - Tab: <?php echo $current_tab; ?> - Settings count: <?php echo count($settings); ?>
     </div>
 
-    <form method="post" action="options.php">
-        <?php 
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] About to call settings_fields for pdf_builder_settings'); }
-        settings_fields('pdf_builder_settings'); 
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings_fields called'); }
-        ?>
+    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" id="pdf-builder-settings-form">
+        <input type="hidden" name="action" value="pdf_builder_save_settings" />
+        <?php wp_nonce_field('pdf_builder_save_settings'); ?>
 
         <!-- Navigation par onglets moderne -->
     <h2 class="nav-tab-wrapper">

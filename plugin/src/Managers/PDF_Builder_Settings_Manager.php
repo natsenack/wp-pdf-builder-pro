@@ -56,24 +56,6 @@ class PDF_Builder_Settings_Manager
 
 
     /**
-     * Enregistrer les paramètres
-     */
-    public function registerSettings()
-    {
-        // Paramètre principal pour les settings
-        register_setting('pdf_builder_settings', 'pdf_builder_settings');
-
-        // Paramètres généraux
-        register_setting('pdf_builder_settings', 'pdf_builder_allowed_roles');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_vat');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_rcs');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_siret');
-
-        // Paramètres des templates par statut de commande
-        register_setting('pdf_builder_order_status_templates', 'pdf_builder_order_status_templates');
-    }
-
-    /**
      * Récupérer un paramètre
      *
      * @param string $option Clé du paramètre
