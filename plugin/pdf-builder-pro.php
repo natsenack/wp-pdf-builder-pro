@@ -137,7 +137,8 @@ if (function_exists('add_action')) {
 // }
 
 /**
- * Fonction d'activation
+ * Fonction d'activation du plugin
+ * Crée toutes les tables nécessaires
  */
 function pdf_builder_activate()
 {
@@ -152,59 +153,46 @@ function pdf_builder_activate()
         wp_die('PDF Builder Pro nécessite WordPress 5.0 ou supérieur. Version actuelle: ' . get_bloginfo('version'));
     }
 
-    // ========== NOUVELLE TABLE DE PARAMÈTRES PERSONNALISÉE ==========
-    // Charger le Settings Table Manager
-    require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
-    
-    // Créer la table de paramètres personnalisée
-    \PDF_Builder\Database\Settings_Table_Manager::create_table();
-    
-    // Migrer les clés de licence vers des lignes séparées (si nécessaire)
-    $license_migrated = get_option('pdf_builder_license_keys_migrated', false);
-    if (!$license_migrated) {
-        $migrated_count = \PDF_Builder\Database\Settings_Table_Manager::migrate_license_keys_to_separate_rows();
-        if ($migrated_count > 0) {
-            update_option('pdf_builder_license_keys_migrated', true);
-            error_log('[PDF Builder] Activation: Clés de licence migrées vers lignes séparées (' . $migrated_count . ' clés)');
-        }
-    }
-    // ================================================================
-
-    // Créer une table de logs si nécessaire
     global $wpdb;
-    $table_name = $wpdb->prefix . 'pdf_builder_logs';
-    if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
-        $charset_collate = $wpdb->get_charset_collate();
-        $sql = "CREATE TABLE $table_name (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            log_message text NOT NULL,
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id)
-        ) $charset_collate;";
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
-    }
+    $charset_collate = $wpdb->get_charset_collate();
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-    // Créer une table de templates si nécessaire
+    // ========== TABLE 1: PARAMÈTRES PERSONNALISÉS ==========
+    $table_settings = $wpdb->prefix . 'pdf_builder_settings';
+    
+    $sql_settings = "CREATE TABLE IF NOT EXISTS $table_settings (
+        option_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+        option_name varchar(191) NOT NULL DEFAULT '',
+        option_value longtext NOT NULL,
+        autoload varchar(20) NOT NULL DEFAULT 'yes',
+        PRIMARY KEY (option_id),
+        UNIQUE KEY option_name (option_name)
+    ) $charset_collate;";
+    
+    dbDelta($sql_settings);
+    error_log('[PDF Builder] Activation: Table wp_pdf_builder_settings créée/vérifiée');
+
+    // ========== TABLE 2: TEMPLATES PERSONNALISÉS ==========
     $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-    if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
-        $charset_collate = $wpdb->get_charset_collate();
-        $sql = "CREATE TABLE $table_templates (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            name varchar(255) NOT NULL,
-            template_data longtext NOT NULL,
-            user_id bigint(20) unsigned NOT NULL DEFAULT 0,
-            is_default tinyint(1) NOT NULL DEFAULT 0,
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
-            KEY name (name),
-            KEY user_id (user_id),
-            KEY is_default (is_default)
-        ) $charset_collate;";
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
-    }
+    
+    $sql_templates = "CREATE TABLE IF NOT EXISTS $table_templates (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        name varchar(255) NOT NULL,
+        template_data longtext NOT NULL,
+        user_id bigint(20) unsigned NOT NULL DEFAULT 0,
+        is_default tinyint(1) NOT NULL DEFAULT 0,
+        created_at datetime DEFAULT CURRENT_TIMESTAMP,
+        updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        KEY name (name),
+        KEY user_id (user_id),
+        KEY is_default (is_default)
+    ) $charset_collate;";
+    
+    dbDelta($sql_templates);
+    error_log('[PDF Builder] Activation: Table wp_pdf_builder_templates créée/vérifiée');
+
+    // Marquer la version du plugin comme activée
     pdf_builder_update_option('pdf_builder_version', '1.0.1.0');
 
     // Définir les valeurs par défaut pour les paramètres canvas
@@ -2396,4 +2384,21 @@ function pdf_builder_view_logs_handler() {
     } catch (Exception $e) {
         wp_send_json_error('Erreur lors de la récupération des logs: ' . $e->getMessage());
     }
+}
+
+// ====================================================================
+// HOOKS D'ACTIVATION / DÉACTIVATION
+// ====================================================================
+
+// Enregistrer la fonction d'activation du plugin
+register_activation_hook(__FILE__, 'pdf_builder_activate');
+
+// Optionnel : Enregistrer la fonction de déactivation
+register_deactivation_hook(__FILE__, 'pdf_builder_deactivate');
+
+/**
+ * Fonction de déactivation du plugin
+ */
+function pdf_builder_deactivate() {
+    error_log('[PDF Builder] Plugin déactivé');
 }
