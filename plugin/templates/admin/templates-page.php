@@ -1761,6 +1761,11 @@ function saveTemplateSettings() {
         return;
     }
     
+    // Sauvegarder le texte original et désactiver le bouton
+    var originalText = saveButton.innerHTML;
+    saveButton.innerHTML = 'Sauvegarde en cours...';
+    saveButton.disabled = true;
+    
     // Faire la requête AJAX
     fetch(ajaxurl, {
         method: 'POST',
