@@ -355,6 +355,14 @@ class PdfBuilderAdminNew
      */
     public function sanitize_settings($input)
     {
+        // LOG pour déboguer la sauvegarde
+        if (class_exists('PDF_Builder_Logger')) { 
+            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === SANITIZE_SETTINGS CALLED ===');
+            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Input data: ' . print_r($input, true));
+            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']);
+            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] POST submit: ' . ($_POST['submit'] ?? 'NOT SET'));
+        }
+
         $sanitized = array();
 
         // Champs généraux
@@ -404,6 +412,12 @@ class PdfBuilderAdminNew
         // Champs développeur
         if (isset($input['developer_debug_mode'])) {
             $sanitized['developer_debug_mode'] = $input['developer_debug_mode'] ? '1' : '0';
+        }
+
+        // LOG pour déboguer la fin de la sanitisation
+        if (class_exists('PDF_Builder_Logger')) { 
+            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Sanitized data: ' . print_r($sanitized, true));
+            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === SANITIZE_SETTINGS END ===');
         }
 
         return $sanitized;

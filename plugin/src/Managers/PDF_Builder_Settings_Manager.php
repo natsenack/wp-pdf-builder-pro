@@ -90,6 +90,8 @@ class PDF_Builder_Settings_Manager
      */
     private function saveSettings()
     {
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === SAVE SETTINGS CALLED ==='); }
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] POST data: ' . json_encode($_POST)); }
         // Rôles autorisés
         $allowed_roles = isset($_POST['allowed_roles']) ? $_POST['allowed_roles'] : ['administrator'];
         pdf_builder_update_option('pdf_builder_allowed_roles', $allowed_roles);

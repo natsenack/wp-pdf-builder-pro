@@ -28,6 +28,17 @@
     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Settings page loaded - REQUEST_METHOD: ' . $_SERVER['REQUEST_METHOD']); }
     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Current tab: ' . $current_tab); }
     
+    // Log des données POST si présentes
+    if (!empty($_POST)) {
+        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] POST data received: ' . json_encode($_POST)); }
+        if (isset($_POST['submit'])) {
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Submit button clicked: ' . $_POST['submit']); }
+        }
+        if (isset($_POST['option_page'])) {
+            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Option page: ' . $_POST['option_page']); }
+        }
+    }
+    
     // Gestion des onglets via URL
     $current_tab = sanitize_text_field($_GET['tab'] ?? 'general');
     $valid_tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
@@ -158,11 +169,13 @@
         <?php submit_button(); ?>
 
         <!-- Bouton flottant de sauvegarde -->
+        <?php if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] About to render floating save button'); } ?>
         <div id="pdf-builder-save-floating" class="pdf-builder-save-floating-container">
             <button type="submit" name="submit" id="pdf-builder-save-floating-btn" class="pdf-builder-floating-save">
                 💾 Enregistrer
             </button>
         </div>
+        <?php if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Floating save button rendered'); ?>
     </div>
     </form>
 
