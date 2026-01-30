@@ -172,6 +172,11 @@ add_action('admin_enqueue_scripts', function() {
                 
                 // Proceed handler
                 $('#pdf-builder-btn-proceed').on('click', function() {
+                    if (!deactivateLink) {
+                        console.error('deactivateLink not found');
+                        return false;
+                    }
+                    
                     var reason = $('input[name="pdf_builder_reason"]:checked').val() || 'not_specified';
                     
                     // If "Autre" is selected, use custom reason
@@ -179,11 +184,10 @@ add_action('admin_enqueue_scripts', function() {
                         reason = $('#pdf-builder-custom-reason').val().trim() || 'other';
                     }
                     
-                    if (!deactivateLink) return;
-                    
                     var separator = deactivateLink.indexOf('?') === -1 ? '?' : '&';
                     var finalUrl = deactivateLink + separator + 'pdf_builder_reason=' + encodeURIComponent(reason);
                     
+                    console.log('Redirecting to:', finalUrl);
                     window.location.href = finalUrl;
                 });
             });
