@@ -883,8 +883,8 @@ class PdfBuilderAdminNew
      */
     private function initConditionalHooks()
     {
-        // Inclure le gestionnaire de modèles prédéfinis
-        include_once self::TEMPLATES_DIR . '/predefined-templates-manager.php';
+        // Le gestionnaire de modèles prédéfinis est déjà chargé dans bootstrap.php
+        // include_once self::TEMPLATES_DIR . '/predefined-templates-manager.php';
 
         // Hooks WooCommerce - Délégation vers le manager
         \add_action('init', function() {
