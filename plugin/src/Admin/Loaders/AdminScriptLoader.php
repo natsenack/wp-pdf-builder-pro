@@ -177,61 +177,7 @@ class AdminScriptLoader
                     ", 'before');
                 }
                 
-                // Ajouter un script inline supplémentaire pour s'assurer que ça marche
-                \wp_add_inline_script('jquery', "
-                jQuery(document).ready(function($) {
-                    console.log('[PDF Builder] Inline floating save script loaded');
-                    
-                    // Debug immédiat
-                    setTimeout(function() {
-                        console.log('[PDF Builder] Checking elements after timeout...');
-                        var floatingBtn = $('#pdf-builder-save-floating-btn');
-                        var form = $('form[action=\"options.php\"]');
-                        
-                        console.log('[PDF Builder] Floating button element:', floatingBtn);
-                        console.log('[PDF Builder] Floating button length:', floatingBtn.length);
-                        console.log('[PDF Builder] Form element:', form);
-                        console.log('[PDF Builder] Form length:', form.length);
-                        console.log('[PDF Builder] Form action:', form.attr('action'));
-                        
-                        if (floatingBtn.length > 0) {
-                            console.log('[PDF Builder] Button is visible:', floatingBtn.is(':visible'));
-                            console.log('[PDF Builder] Button position:', floatingBtn.offset());
-                        }
-                    }, 1000);
-                    
-                    // Attendre que le DOM soit complètement chargé
-                    $(window).on('load', function() {
-                        console.log('[PDF Builder] Window loaded, attaching handlers...');
-                        
-                        var floatingBtn = $('#pdf-builder-save-floating-btn');
-                        var form = $('form[action=\"options.php\"]');
-                        
-                        console.log('[PDF Builder] Final check - Floating button found:', floatingBtn.length);
-                        console.log('[PDF Builder] Final check - Form found:', form.length);
-                        
-                        if (floatingBtn.length > 0 && form.length > 0) {
-                            console.log('[PDF Builder] Attaching click handler to floating button');
-                            
-                            floatingBtn.off('click.floatingSave').on('click.floatingSave', function(e) {
-                                console.log('[PDF Builder] Floating save button clicked - handler triggered');
-                                // Ne pas preventDefault - laisser la soumission naturelle
-                                
-                                // Ajouter la classe loading
-                                $(this).addClass('loading');
-                                console.log('[PDF Builder] Added loading class');
-                                
-                                // La soumission se fera naturellement via le bouton submit
-                                console.log('[PDF Builder] Letting natural form submission happen...');
-                            });
-                            
-                            console.log('[PDF Builder] Click handler attached successfully');
-                        } else {
-                            console.warn('[PDF Builder] Floating button or form not found - cannot attach handler');
-                        }
-                    });
-                });
-                ", 'after');
+                // Le fallback inline suffit maintenant
             }
 
             // Charger les styles canvas-modal pour les pages templates et settings
