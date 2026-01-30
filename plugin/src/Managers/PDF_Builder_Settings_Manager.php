@@ -43,6 +43,9 @@ class PDF_Builder_Settings_Manager
         add_action('update_option_pdf_builder_company_siret', [$this, 'logSettingsUpdate'], 10, 3);
         add_action('update_option_pdf_builder_order_status_templates', [$this, 'logSettingsUpdate'], 10, 3);
         
+        // Hook générique pour toutes les options pdf_builder_
+        add_action('update_option', [$this, 'logAllSettingsUpdate'], 10, 3);
+        
         if (class_exists('\PDF_Builder_Logger')) {
             \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Settings Manager hooks initialized');
         }
@@ -166,6 +169,25 @@ class PDF_Builder_Settings_Manager
         }
 
         return $json_string;
+    }
+
+    /**
+     * Logger toutes les mises à jour des paramètres PDF Builder
+     */
+    public function logAllSettingsUpdate($option, $old_value, $new_value)
+    {
+        if (strpos($option, 'pdf_builder_') === 0) {
+            if (class_exists('\PDF_Builder_Logger')) {
+                \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ALL OPTIONS - Option updated: ' . $option);
+                
+                if (isset($_POST['pdf_builder_floating_save']) && $_POST['pdf_builder_floating_save'] == '1') {
+                    \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ALL OPTIONS - FLOATING SAVE: ' . $option);
+                    \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ALL OPTIONS - POST data: ' . json_encode($_POST));
+                } else {
+                    \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ALL OPTIONS - NORMAL SAVE: ' . $option);
+                }
+            }
+        }
     }
 
     /**

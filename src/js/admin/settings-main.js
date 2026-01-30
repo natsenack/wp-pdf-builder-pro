@@ -56,7 +56,13 @@
 
     // Debug form submission
     $(document).on('submit', 'form[action="options.php"]', function(e) {
-        
+        console.log('[PDF Builder] Form submitted');
+        var floatingField = $(this).find('input[name="pdf_builder_floating_save"]');
+        if (floatingField.length) {
+            console.log('[PDF Builder] Floating save field found with value: ' + floatingField.val());
+        } else {
+            console.log('[PDF Builder] No floating save field found');
+        }
     });
 
     // Only initialize modal functionality if we're on the license tab
@@ -92,7 +98,13 @@
 
     // Debug when DOM is ready
     $(document).ready(function() {
-        
+        console.log('[PDF Builder] settings-main.js loaded and DOM ready');
+        // Check if floating button exists
+        if ($('#pdf-builder-save-floating-btn').length) {
+            console.log('[PDF Builder] Floating save button found in DOM');
+        } else {
+            console.log('[PDF Builder] Floating save button NOT found in DOM');
+        }
     });
 
     
