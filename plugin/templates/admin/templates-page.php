@@ -1729,7 +1729,9 @@ function displayTemplateSettings(template) {
 // Fonction pour sauvegarder les paramètres du template
 function saveTemplateSettings() {
     if (!currentTemplateId) {
-        alert('Erreur: Aucun template sélectionné');
+        if (typeof window.showErrorNotification !== 'undefined') {
+            window.showErrorNotification('Erreur: Aucun template sélectionné');
+        }
         return;
     }
     
@@ -1781,6 +1783,9 @@ function saveTemplateSettings() {
             // Fermer la modale
             closeTemplateSettingsModal();
             
+            // Stocker le message de succès pour après le rechargement
+            localStorage.setItem('pdfBuilderTemplateSuccess', 'Paramètres du template sauvegardés avec succès');
+            
             // Afficher une notification de succès
             if (typeof window.showSuccessNotification !== 'undefined') {
                 window.showSuccessNotification('Paramètres du template sauvegardés avec succès');
@@ -1814,5 +1819,15 @@ function saveTemplateSettings() {
         saveButton.disabled = false;
     });
 }
+
+// Initialisation - Vérifier les notifications après rechargement
+document.addEventListener('DOMContentLoaded', function() {
+    // Vérifier s'il y a une notification de succès à afficher après rechargement
+    var successMessage = localStorage.getItem('pdfBuilderTemplateSuccess');
+    if (successMessage && typeof window.showSuccessNotification !== 'undefined') {
+        window.showSuccessNotification(successMessage);
+        localStorage.removeItem('pdfBuilderTemplateSuccess');
+    }
+});
 
 </script>
