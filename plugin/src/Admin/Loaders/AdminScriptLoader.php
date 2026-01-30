@@ -167,9 +167,9 @@ class AdminScriptLoader
                             var form = $('form[action=\"options.php\"]');
                             if (floatingBtn.length > 0 && form.length > 0) {
                                 floatingBtn.on('click', function(e) {
-                                    e.preventDefault();
+                                    // Ne pas preventDefault - laisser le bouton submit fonctionner normalement
                                     $(this).addClass('loading');
-                                    form.submit();
+                                    // La soumission se fera automatiquement via le type='submit'
                                 });
                             }
                         });
@@ -215,23 +215,14 @@ class AdminScriptLoader
                             
                             floatingBtn.off('click.floatingSave').on('click.floatingSave', function(e) {
                                 console.log('[PDF Builder] Floating save button clicked - handler triggered');
-                                e.preventDefault();
-                                e.stopPropagation();
+                                // Ne pas preventDefault - laisser la soumission naturelle
                                 
                                 // Ajouter la classe loading
                                 $(this).addClass('loading');
                                 console.log('[PDF Builder] Added loading class');
                                 
-                                // Soumettre le formulaire
-                                console.log('[PDF Builder] About to submit form...');
-                                try {
-                                    form[0].submit();
-                                    console.log('[PDF Builder] Form submit called successfully');
-                                } catch(error) {
-                                    console.error('[PDF Builder] Error submitting form:', error);
-                                }
-                                
-                                return false;
+                                // La soumission se fera naturellement via le bouton submit
+                                console.log('[PDF Builder] Letting natural form submission happen...');
                             });
                             
                             console.log('[PDF Builder] Click handler attached successfully');
