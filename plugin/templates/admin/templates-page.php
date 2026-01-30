@@ -1784,8 +1784,6 @@ function saveTemplateSettings() {
             // Afficher une notification de succès
             if (typeof window.showSuccessNotification !== 'undefined') {
                 window.showSuccessNotification('Paramètres du template sauvegardés avec succès');
-            } else {
-                alert('Paramètres sauvegardés avec succès !');
             }
             
             // Recharger la page pour voir les changements
@@ -1799,8 +1797,6 @@ function saveTemplateSettings() {
             // Afficher une notification d'erreur
             if (typeof window.showErrorNotification !== 'undefined') {
                 window.showErrorNotification('Erreur lors de la sauvegarde: ' + errorMsg);
-            } else {
-                alert('Erreur lors de la sauvegarde: ' + errorMsg);
             }
         }
     })
@@ -1810,8 +1806,6 @@ function saveTemplateSettings() {
         // Afficher une notification d'erreur
         if (typeof window.showErrorNotification !== 'undefined') {
             window.showErrorNotification('Erreur de communication lors de la sauvegarde');
-        } else {
-            alert('Erreur de communication lors de la sauvegarde');
         }
     })
     .finally(function() {
