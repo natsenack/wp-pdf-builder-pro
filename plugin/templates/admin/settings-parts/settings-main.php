@@ -17,8 +17,16 @@
 
     // LOG AU DÉBUT DU FICHIER
     
-    // Afficher les logs persistants s'ils existent
-    $persistent_logs = get_option('pdf_builder_debug_logs', array());
+    // Afficher les logs persistants s'ils existent (depuis le fichier temporaire)
+    $log_file = sys_get_temp_dir() . '/pdf_builder_debug.log';
+    $persistent_logs = array();
+    if (file_exists($log_file)) {
+        $log_content = file_get_contents($log_file);
+        if ($log_content) {
+            $persistent_logs = array_filter(explode(PHP_EOL, trim($log_content)));
+        }
+    }
+    
     if (!empty($persistent_logs)) {
         echo '<div style="background: #f0f8ff; border: 1px solid #add8e6; padding: 10px; margin: 10px 0; border-radius: 5px;">';
         echo '<h3>📋 Logs de débogage persistants :</h3>';
@@ -35,27 +43,12 @@
     }
     
     if (isset($_GET['clear_logs'])) {
-        delete_option('pdf_builder_debug_logs');
+        $log_file = sys_get_temp_dir() . '/pdf_builder_debug.log';
+        if (file_exists($log_file)) {
+            unlink($log_file);
+        }
         wp_redirect(remove_query_arg('clear_logs'));
         exit;
-    }
-    
-    // Traiter les logs persistants envoyés par AJAX
-    if (isset($_POST['pdf_builder_add_log']) && isset($_POST['log_message'])) {
-        $existing_logs = get_option('pdf_builder_debug_logs', array());
-        $existing_logs[] = sanitize_text_field($_POST['log_message']);
-        // Garder seulement les 50 derniers logs
-        if (count($existing_logs) > 50) {
-            $existing_logs = array_slice($existing_logs, -50);
-        }
-        update_option('pdf_builder_debug_logs', $existing_logs);
-        // Répondre avec succès pour AJAX
-        if (wp_doing_ajax()) {
-            wp_die('Log added');
-        }
-    }
-    
-    
     if (!is_user_logged_in() || !current_user_can('manage_options')) {
         wp_die(__('Accès refusé. Vous devez être administrateur pour accéder à cette page.', 'pdf-builder-pro'));
     }

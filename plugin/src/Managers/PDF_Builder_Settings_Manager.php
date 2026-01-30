@@ -43,8 +43,8 @@ class PDF_Builder_Settings_Manager
         add_action('update_option_pdf_builder_company_siret', [$this, 'logSettingsUpdate'], 10, 3);
         add_action('update_option_pdf_builder_order_status_templates', [$this, 'logSettingsUpdate'], 10, 3);
         
-        // Hook générique pour toutes les options pdf_builder_
-        add_action('update_option', [$this, 'logAllSettingsUpdate'], 10, 3);
+        // NE PAS utiliser le hook générique update_option - cela cause une boucle infinie !
+        // add_action('update_option', [$this, 'logAllSettingsUpdate'], 10, 3);
         
         if (class_exists('\PDF_Builder_Logger')) {
             \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Settings Manager hooks initialized');
@@ -172,23 +172,6 @@ class PDF_Builder_Settings_Manager
     }
 
     /**
-     * Logger toutes les mises à jour des paramètres PDF Builder
-     */
-    public function logAllSettingsUpdate($option, $old_value, $new_value)
-    {
-        if (strpos($option, 'pdf_builder_') === 0) {
-            $this->addPersistentLog('[PHP] ALL OPTIONS - Option updated: ' . $option);
-            
-            if (isset($_POST['pdf_builder_floating_save']) && $_POST['pdf_builder_floating_save'] == '1') {
-                $this->addPersistentLog('[PHP] ALL OPTIONS - FLOATING SAVE: ' . $option);
-                $this->addPersistentLog('[PHP] ALL OPTIONS - POST data keys: ' . implode(', ', array_keys($_POST)));
-            } else {
-                $this->addPersistentLog('[PHP] ALL OPTIONS - NORMAL SAVE: ' . $option);
-            }
-        }
-    }
-
-    /**
      * Logger les mises à jour des paramètres, surtout si via bouton flottant
      */
     public function logSettingsUpdate($old_value, $new_value, $option)
@@ -200,6 +183,9 @@ class PDF_Builder_Settings_Manager
                 \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Paramètre mis à jour via bouton flottant: ' . $option);
                 \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Ancienne valeur: ' . json_encode($old_value));
                 \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Nouvelle valeur: ' . json_encode($new_value));
+                
+                // Log persistant pour le bouton flottant
+                $this->addPersistentLog('[PHP] FLOATING SAVE - Option: ' . $option . ' | Old: ' . substr(json_encode($old_value), 0, 100) . ' | New: ' . substr(json_encode($new_value), 0, 100));
             } else {
                 \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Paramètre mis à jour normalement (pas via bouton flottant): ' . $option);
             }
@@ -211,13 +197,21 @@ class PDF_Builder_Settings_Manager
      */
     private function addPersistentLog($message)
     {
-        $existing_logs = get_option('pdf_builder_debug_logs', array());
-        $existing_logs[] = $message . ' (' . date('Y-m-d H:i:s') . ')';
-        // Garder seulement les 50 derniers logs
-        if (count($existing_logs) > 50) {
-            $existing_logs = array_slice($existing_logs, -50);
+        // Utiliser un fichier temporaire au lieu des options WordPress pour éviter les boucles infinies
+        $log_file = sys_get_temp_dir() . '/pdf_builder_debug.log';
+        
+        $timestamp = date('Y-m-d H:i:s');
+        $log_entry = "[$timestamp] $message" . PHP_EOL;
+        
+        // Limiter la taille du fichier à 10KB maximum
+        if (file_exists($log_file) && filesize($log_file) > 10240) {
+            // Garder seulement les 20 dernières lignes
+            $lines = file($log_file);
+            $lines = array_slice($lines, -20);
+            file_put_contents($log_file, implode('', $lines));
         }
-        update_option('pdf_builder_debug_logs', $existing_logs);
+        
+        file_put_contents($log_file, $log_entry, FILE_APPEND | LOCK_EX);
     }
 }
 

@@ -4,19 +4,10 @@
 (function($) {
     'use strict';
 
-    // Fonction pour ajouter des logs persistants
+    // Fonction pour ajouter des logs persistants (simplifiée - utilise seulement console.log)
     function addPersistentLog(message) {
-        console.log(message); // Garder aussi le console.log
-        // Envoyer le log au serveur de manière asynchrone
-        fetch(window.location.href, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'pdf_builder_add_log=1&log_message=' + encodeURIComponent('[JS] ' + message + ' (' + new Date().toISOString() + ')')
-        }).catch(function(err) {
-            console.error('Failed to send persistent log:', err);
-        });
+        console.log('[PERSISTENT LOG]', message);
+        // Plus d'AJAX - les logs sont maintenant gérés côté PHP uniquement
     }
 
     
