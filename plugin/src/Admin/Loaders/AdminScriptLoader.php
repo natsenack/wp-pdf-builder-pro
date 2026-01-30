@@ -147,6 +147,20 @@ class AdminScriptLoader
                 );
             }
 
+            // Charger le script du bouton flottant de sauvegarde - seulement pour la page des paramètres
+            if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-settings') {
+                $floating_save_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/floating-save.min.js';
+                if (file_exists($floating_save_js)) {
+                    \wp_enqueue_script(
+                        'pdf-builder-floating-save',
+                        PDF_BUILDER_PRO_ASSETS_URL . 'js/floating-save.min.js',
+                        ['jquery'],
+                        PDF_BUILDER_PRO_VERSION,
+                        true
+                    );
+                }
+            }
+
             // Charger les styles canvas-modal pour les pages templates et settings
             if (strpos($hook, 'templates') !== false || strpos($hook, 'settings') !== false) {
                 \wp_enqueue_style(
