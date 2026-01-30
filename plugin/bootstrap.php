@@ -10,6 +10,16 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
 }
 
 // ========================================================================
+// ✅ CHARGER LE DEACTIVATION MANAGER
+// ========================================================================
+$deactivation_manager_path = PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Deactivation_Manager.php';
+if (file_exists($deactivation_manager_path)) {
+    require_once $deactivation_manager_path;
+} else {
+    error_log('[BOOTSTRAP] Deactivation Manager not found at: ' . $deactivation_manager_path);
+}
+
+// ========================================================================
 // ✅ CHARGEMENT DE L'AUTOLOADER COMPOSER
 // ========================================================================
 $autoload_path = PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
