@@ -16,8 +16,6 @@ if (!function_exists('do_action')) {
     function do_action($tag, ...$args) { return null; }
 }
 
-class_exists('\PDF_Builder\Admin\PdfBuilderAdminNew') || class_alias('stdClass', '\PDF_Builder\Admin\PdfBuilderAdminNew');
-
 /**
  * @global function \add_filter
  * @global function \is_admin

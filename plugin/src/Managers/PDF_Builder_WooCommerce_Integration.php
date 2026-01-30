@@ -30,15 +30,6 @@ if (!defined('OBJECT')) {
 }
 
 // Déclarations des classes PHP natives pour l'IDE dans le namespace
-if (!class_exists('PDF_Builder\Managers\Exception')) {
-    class_alias('Exception', 'PDF_Builder\Managers\Exception');
-}
-if (!class_exists('PDF_Builder\Managers\Error')) {
-    class_alias('Error', 'PDF_Builder\Managers\Error');
-}
-if (!class_exists('PDF_Builder\Managers\Throwable')) {
-    class_alias('Throwable', 'PDF_Builder\Managers\Throwable');
-}
 if (!class_exists('PDF_Builder\Managers\WP_Error')) {
     class_alias('WP_Error', 'PDF_Builder\Managers\WP_Error');
 }
