@@ -269,62 +269,9 @@ class PdfBuilderCore
     }
 
     /**
-     * Enregistrer le menu admin - DÉSACTIVÉ COMPLÈTEMENT
-     * Cette classe PDF_Builder_Core est remplacée par PdfBuilderAdminNew
-     * qui fournit un éditeur unifié avec support des types de templates
-     */
-    public function registerAdminMenu()
-    {
-        // DÉSACTIVÉ - Tous les menus sont gérés par PdfBuilderAdminNew
-        return;
-
-        if (self::$menu_added) {
-            return;
-        }
-        self::$menu_added = true;
-
-        try {
-            add_menu_page(
-                __('PDF Builder Pro', 'pdf-builder-pro'),
-                __('PDF Builder', 'pdf-builder-pro'),
-                'manage_options',
-                'pdf-builder-pro',
-                array($this, 'admin_page'),
-                'dashicons-pdf',
-                30
-            );
-
-            // Pages admin - RESTAURATION des vrais slugs
-            add_submenu_page(
-                'pdf-builder-pro',
-                __('Templates', 'pdf-builder-pro'),
-                __('Templates', 'pdf-builder-pro'),
-                'read',
-                'pdf-builder-templates', // Slug original restauré
-                array($this, 'templatesPage')
-            );
-
-            add_submenu_page(
-                'pdf-builder-pro',
-                __('Settings', 'pdf-builder-pro'),
-                __('Settings', 'pdf-builder-pro'),
-                'read',
-                'pdf-builder-settings', // Slug original restauré
-                array($this, 'settingsPage')
-            );
         } catch (\Exception $e) {
             
         }
-    }
-
-    /**
-     * Alias pour registerAdminMenu() - compatibilité
-     */
-    public function register_admin_menu()
-    {
-        return $this->registerAdminMenu();
-    }
-
     /**
      * Enregistrer les paramètres
      */

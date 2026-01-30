@@ -946,67 +946,6 @@ function pdf_builder_load_admin_components()
         }
         // Ne pas enregistrer de menu de fallback dans les autres cas
     }
-
-    // Enregistrer le menu de manière centralisée et unique
-    add_action('admin_menu', function() {
-        // Vérifier si le menu principal existe déjà
-        global $menu;
-        $menu_exists = false;
-        foreach ($menu as $item) {
-            if (isset($item[2]) && $item[2] === 'pdf-builder-pro') {
-                $menu_exists = true;
-                break;
-            }
-        }
-
-        // Si le menu principal n'existe pas, on l'ajoute
-        if (!$menu_exists) {
-            add_menu_page(
-                __('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'),
-                __('PDF Builder', 'pdf-builder-pro'),
-                'manage_options',
-                'pdf-builder-pro',
-                'pdf_builder_simple_admin_page',
-                'dashicons-pdf',
-                25
-            );
-        }
-    });
-}
-
-/**
- * Page admin simple de fallback
- */
-function pdf_builder_simple_admin_page() {
-    ?>
-    <div class="wrap">
-        <h1><?php \_e('PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
-        <div class="notice notice-warning">
-            <p><?php \_e('Le système d\'administration avancé n\'a pas pu être chargé. Utilisation du mode de secours.', 'pdf-builder-pro'); ?></p>
-        </div>
-        <p><?php \_e('Bienvenue dans PDF Builder Pro. Le système d\'administration complet n\'est pas disponible pour le moment.', 'pdf-builder-pro'); ?></p>
-        <p><?php \_e('Vous pouvez accéder aux paramètres via le menu latéral.', 'pdf-builder-pro'); ?></p>
-    </div>
-    <?php
-}
-
-/**
- * Page de paramètres simple de fallback
- */
-function pdf_builder_simple_settings_page() {
-    ?>
-    <div class="wrap">
-        <h1><?php \_e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
-        <div class="notice notice-info">
-            <p><?php \_e('Paramètres simplifiés - Le système avancé n\'est pas disponible.', 'pdf-builder-pro'); ?></p>
-        </div>
-        <form method="post" action="options.php">
-            <?php \settings_fields('pdf_builder_settings'); ?>
-            <?php \do_settings_sections('pdf_builder_settings'); ?>
-            <?php \submit_button(); ?>
-        </form>
-    </div>
-    <?php
 }
 
 // Fonction pour charger les composants frontend
