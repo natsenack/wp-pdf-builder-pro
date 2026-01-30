@@ -1226,17 +1226,11 @@ function pdf_builder_test_cache_ajax() {
  * AJAX handler pour obtenir un nouveau nonce frais
  */
 function pdf_builder_get_fresh_nonce_ajax() {
-    // Vérifier les permissions (pas besoin de nonce ici car on en génère un nouveau)
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Permissions insuffisantes');
         return;
     }
-
-    // Générer un nouveau nonce
     $fresh_nonce = wp_create_nonce('pdf_builder_ajax');
-
-
-
     wp_send_json_success(array(
         'nonce' => $fresh_nonce,
         'generated_at' => current_time('timestamp')
