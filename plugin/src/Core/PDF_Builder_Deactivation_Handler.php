@@ -156,12 +156,7 @@ add_action('admin_enqueue_scripts', function() {
                 
                 // Function to enable/disable proceed button
                 function enableProceedButton() {
-                    // TOUJOURS désactivé - le bouton ne doit jamais s'activer
-                    $('#pdf-builder-btn-proceed').prop('disabled', true).css({
-                        'opacity': '0.5',
-                        'cursor': 'not-allowed',
-                        'pointer-events': 'none'
-                    });
+                    // Bouton toujours actif
                 }
                 
                 // Close handlers
@@ -176,13 +171,7 @@ add_action('admin_enqueue_scripts', function() {
                 });
                 
                 // Proceed handler
-                $('#pdf-builder-btn-proceed').on('click', function(e) {
-                    // BLOQUER absolument le fonctionnement du bouton
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if ($(this).prop('disabled')) return;
-                    return false; // Double protection
-                    
+                $('#pdf-builder-btn-proceed').on('click', function() {
                     var reason = $('input[name="pdf_builder_reason"]:checked').val() || 'not_specified';
                     
                     // If "Autre" is selected, use custom reason
