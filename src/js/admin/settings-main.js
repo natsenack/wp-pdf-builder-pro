@@ -4,6 +4,21 @@
 (function($) {
     'use strict';
 
+    // Fonction pour ajouter des logs persistants
+    function addPersistentLog(message) {
+        console.log(message); // Garder aussi le console.log
+        // Envoyer le log au serveur de manière asynchrone
+        fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'pdf_builder_add_log=1&log_message=' + encodeURIComponent('[JS] ' + message + ' (' + new Date().toISOString() + ')')
+        }).catch(function(err) {
+            console.error('Failed to send persistent log:', err);
+        });
+    }
+
     
 
     // Define global functions immediately for modal control
@@ -47,21 +62,21 @@
         var form = $(this).closest('form');
         if (form.length && !form.find('input[name="pdf_builder_floating_save"]').length) {
             form.append('<input type="hidden" name="pdf_builder_floating_save" value="1">');
-            console.log('[PDF Builder] Floating save button clicked - hidden field added');
+            addPersistentLog('[JS] Floating save button clicked - hidden field added');
         } else {
-            console.log('[PDF Builder] Floating save button clicked - hidden field already exists or form not found');
+            addPersistentLog('[JS] Floating save button clicked - hidden field already exists or form not found');
         }
         // Don't prevent default, let the form submit
     });
 
     // Debug form submission
     $(document).on('submit', 'form[action="options.php"]', function(e) {
-        console.log('[PDF Builder] Form submitted');
+        addPersistentLog('Form submitted');
         var floatingField = $(this).find('input[name="pdf_builder_floating_save"]');
         if (floatingField.length) {
-            console.log('[PDF Builder] Floating save field found with value: ' + floatingField.val());
+            addPersistentLog('Floating save field found with value: ' + floatingField.val());
         } else {
-            console.log('[PDF Builder] No floating save field found');
+            addPersistentLog('No floating save field found');
         }
     });
 
@@ -98,12 +113,12 @@
 
     // Debug when DOM is ready
     $(document).ready(function() {
-        console.log('[PDF Builder] settings-main.js loaded and DOM ready');
+        addPersistentLog('settings-main.js loaded and DOM ready');
         // Check if floating button exists
         if ($('#pdf-builder-save-floating-btn').length) {
-            console.log('[PDF Builder] Floating save button found in DOM');
+            addPersistentLog('Floating save button found in DOM');
         } else {
-            console.log('[PDF Builder] Floating save button NOT found in DOM');
+            addPersistentLog('Floating save button NOT found in DOM');
         }
     });
 

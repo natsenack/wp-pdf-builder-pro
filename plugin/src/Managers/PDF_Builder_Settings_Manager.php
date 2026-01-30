@@ -177,15 +177,13 @@ class PDF_Builder_Settings_Manager
     public function logAllSettingsUpdate($option, $old_value, $new_value)
     {
         if (strpos($option, 'pdf_builder_') === 0) {
-            if (class_exists('\PDF_Builder_Logger')) {
-                \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ALL OPTIONS - Option updated: ' . $option);
-                
-                if (isset($_POST['pdf_builder_floating_save']) && $_POST['pdf_builder_floating_save'] == '1') {
-                    \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ALL OPTIONS - FLOATING SAVE: ' . $option);
-                    \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ALL OPTIONS - POST data: ' . json_encode($_POST));
-                } else {
-                    \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ALL OPTIONS - NORMAL SAVE: ' . $option);
-                }
+            $this->addPersistentLog('[PHP] ALL OPTIONS - Option updated: ' . $option);
+            
+            if (isset($_POST['pdf_builder_floating_save']) && $_POST['pdf_builder_floating_save'] == '1') {
+                $this->addPersistentLog('[PHP] ALL OPTIONS - FLOATING SAVE: ' . $option);
+                $this->addPersistentLog('[PHP] ALL OPTIONS - POST data keys: ' . implode(', ', array_keys($_POST)));
+            } else {
+                $this->addPersistentLog('[PHP] ALL OPTIONS - NORMAL SAVE: ' . $option);
             }
         }
     }
@@ -206,6 +204,20 @@ class PDF_Builder_Settings_Manager
                 \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Paramètre mis à jour normalement (pas via bouton flottant): ' . $option);
             }
         }
+    }
+
+    /**
+     * Ajouter un log persistant
+     */
+    private function addPersistentLog($message)
+    {
+        $existing_logs = get_option('pdf_builder_debug_logs', array());
+        $existing_logs[] = $message . ' (' . date('Y-m-d H:i:s') . ')';
+        // Garder seulement les 50 derniers logs
+        if (count($existing_logs) > 50) {
+            $existing_logs = array_slice($existing_logs, -50);
+        }
+        update_option('pdf_builder_debug_logs', $existing_logs);
     }
 }
 
