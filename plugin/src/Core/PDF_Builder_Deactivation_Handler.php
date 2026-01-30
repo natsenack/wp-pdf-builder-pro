@@ -1,27 +1,19 @@
 <?php
 /**
- * PDF Builder Pro - Gestion de la désactivation du plugin
- * Affiche un modal de feedback avec option de suppression de la base de données
+ * PDF Builder Pro - Deactivation Handler
  */
-
-// Éviter les inclusions multiples
 if (defined('PDF_BUILDER_DEACTIVATION_HANDLER_LOADED')) {
     return;
 }
 define('PDF_BUILDER_DEACTIVATION_HANDLER_LOADED', true);
 
-// ============================================================================
-// Hook TRÈS TÔT pour vérifier les actions de désactivation
-// ============================================================================
 add_action('plugins_loaded', function() {
     if (!is_admin() || !isset($_GET['pdf_builder_db_action'])) {
         return;
     }
-
     if (!current_user_can('manage_options')) {
         return;
     }
-
     $action = sanitize_text_field($_GET['pdf_builder_db_action']);
     if ($action === 'delete') {
         update_option('pdf_builder_delete_on_deactivate', true);
@@ -30,95 +22,56 @@ add_action('plugins_loaded', function() {
     }
 }, 1);
 
-// ============================================================================
-// Afficher le modal sur la page des plugins DIRECTEMENT
-// ============================================================================
 add_action('admin_enqueue_scripts', function() {
-    // Vérifier si on est sur la page des plugins
     $current_screen = function_exists('get_current_screen') ? get_current_screen() : null;
     if (!$current_screen || $current_screen->id !== 'plugins') {
         return;
     }
-    
-    // Ajouter le HTML du modal et le script
     add_action('admin_footer', function() {
         ?>
-        <!-- Modal de feedback PDF Builder Pro -->
         <div id="pdf-builder-deactivation-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center;">
             <div style="background: white; border-radius: 8px; max-width: 500px; width: 90%; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
-                <!-- Header -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h2 style="margin: 0; font-size: 24px; color: #333;">Avant de désactiver...</h2>
                     <button id="pdf-builder-deactivation-close" type="button" style="background: none; border: none; font-size: 28px; cursor: pointer; color: #666;">×</button>
                 </div>
-
-                <!-- Content -->
                 <div style="margin-bottom: 25px; color: #666; line-height: 1.6;">
                     <p>Bonjour ! Avant de désactiver PDF Builder Pro, nous aimerions en savoir plus sur votre décision.</p>
-                    
-                    <p style="margin-top: 15px;"><strong>Souhaitez-vous conserver vos données dans la base de données ?</strong></p>
-
-                    <!-- Options de radio -->
+                    <p style="margin-top: 15px;"><strong>Souhaitez-vous conserver vos données ?</strong></p>
                     <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; padding: 15px; margin-top: 12px;">
-                        <!-- Option 1: Conserver les données -->
                         <label style="display: flex; align-items: flex-start; margin-bottom: 15px; cursor: pointer;">
-                            <input type="radio" name="pdf_builder_db_action" id="pdf_builder_keep_data" value="keep" checked style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer; margin-top: 2px; flex-shrink: 0;">
+                            <input type="radio" name="pdf_builder_db_action" value="keep" checked style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer; margin-top: 2px;">
                             <span style="font-size: 14px; color: #333;">
                                 <strong>Conserver les données</strong>
                                 <br/>
-                                <span style="color: #999; font-size: 12px;">Les templates et paramètres seront sauvegardés. Vous pourrez réactiver le plugin plus tard.</span>
+                                <span style="color: #999; font-size: 12px;">Les templates et paramètres seront sauvegardés.</span>
                             </span>
                         </label>
-
-                        <!-- Option 2: Supprimer les données -->
                         <label style="display: flex; align-items: flex-start; cursor: pointer;">
-                            <input type="radio" name="pdf_builder_db_action" id="pdf_builder_delete_data" value="delete" style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer; margin-top: 2px; flex-shrink: 0;">
+                            <input type="radio" name="pdf_builder_db_action" value="delete" style="margin-right: 10px; width: 18px; height: 18px; cursor: pointer; margin-top: 2px;">
                             <span style="font-size: 14px; color: #333;">
                                 <strong>Supprimer toutes les données</strong>
                                 <br/>
-                                <span style="color: #999; font-size: 12px;">Tous les templates et paramètres du plugin seront supprimés définitivement.</span>
+                                <span style="color: #999; font-size: 12px;">Tous les données seront supprimées.</span>
                             </span>
                         </label>
                     </div>
                 </div>
-
-                <!-- Actions -->
                 <div style="display: flex; gap: 10px; justify-content: flex-end;">
                     <button id="pdf-builder-deactivation-cancel" type="button" class="button button-secondary" style="padding: 8px 20px;">Annuler</button>
-                    <button id="pdf-builder-deactivation-proceed" type="button" class="button button-primary" style="padding: 8px 20px; background: #667eea; border-color: #667eea; color: white; cursor: pointer;">Continuer la désactivation</button>
+                    <button id="pdf-builder-deactivation-proceed" type="button" class="button button-primary" style="padding: 8px 20px; background: #667eea; border-color: #667eea; color: white; cursor: pointer;">Continuer</button>
                 </div>
             </div>
         </div>
-
-        <script type="text/javascript">
+        <script>
         (function() {
-            console.log('[PDF_BUILDER] Script de désactivation chargé');
-            
-            var deactivationLink = null;
-            var selectedAction = 'keep';
-            var initialized = false;
-
-            function setupModal() {
-                if (initialized || typeof jQuery === 'undefined') {
-                    return;
-                }
-                initialized = true;
-
-                var $ = jQuery;
-                console.log('[PDF_BUILDER] Initialisation du modal');
-
-                // Chercher le lien de désactivation pour notre plugin
+            if (typeof jQuery === 'undefined') return;
+            var $ = jQuery, link = null;
+            $(document).ready(function() {
                 $('a[href*="action=deactivate"]').each(function() {
-                    var href = $(this).attr('href');
-                    console.log('[PDF_BUILDER] Vérifiant lien:', href);
-                    
-                    if (href.indexOf('wp-pdf-builder-pro') > -1) {
-                        console.log('[PDF_BUILDER] ✅ Lien PDF Builder trouvé:', href);
-                        deactivationLink = href;
-                        
-                        // Intercepter le clic
+                    if ($(this).attr('href').indexOf('wp-pdf-builder-pro') > -1) {
+                        link = $(this).attr('href');
                         $(this).on('click', function(e) {
-                            console.log('[PDF_BUILDER] Clic sur désactivation intercepté!');
                             e.preventDefault();
                             e.stopPropagation();
                             $('#pdf-builder-deactivation-modal').fadeIn();
@@ -126,77 +79,47 @@ add_action('admin_enqueue_scripts', function() {
                         });
                     }
                 });
-
-                if (!deactivationLink) {
-                    console.warn('[PDF_BUILDER] Lien de désactivation non trouvé!');
-                }
-
-                // Bouton Annuler
-                $('#pdf-builder-deactivation-cancel').on('click', function() {
-                    console.log('[PDF_BUILDER] Annulation');
+                $('#pdf-builder-deactivation-cancel, #pdf-builder-deactivation-close').on('click', function() {
                     $('#pdf-builder-deactivation-modal').fadeOut();
                 });
-
-                // Bouton Fermer (X)
-                $('#pdf-builder-deactivation-close').on('click', function() {
-                    console.log('[PDF_BUILDER] Fermeture via X');
-                    $('#pdf-builder-deactivation-modal').fadeOut();
-                });
-
-                // Bouton Continuer
                 $('#pdf-builder-deactivation-proceed').on('click', function() {
-                    selectedAction = $('input[name="pdf_builder_db_action"]:checked').val() || 'keep';
-                    console.log('[PDF_BUILDER] Action:', selectedAction);
-                    console.log('[PDF_BUILDER] Lien original:', deactivationLink);
-                    
-                    if (!deactivationLink) {
-                        console.error('[PDF_BUILDER] Pas de lien!');
-                        return;
-                    }
-
-                    var separator = deactivationLink.indexOf('?') === -1 ? '?' : '&';
-                    var finalUrl = deactivationLink + separator + 'pdf_builder_db_action=' + selectedAction;
-                    console.log('[PDF_BUILDER] URL finale:', finalUrl);
-                    
-                    window.location.href = finalUrl;
+                    var action = $('input[name="pdf_builder_db_action"]:checked').val() || 'keep';
+                    if (!link) return;
+                    var sep = link.indexOf('?') === -1 ? '?' : '&';
+                    window.location.href = link + sep + 'pdf_builder_db_action=' + action;
                 });
-
-                // Fermer en cliquant sur le fond
-                $('#pdf-builder-deactivation-modal').on('click', function(e) {
-                    if (e.target === this) {
-                        $(this).fadeOut();
-                    }
-                });
-            }
-
-            // Attendre jQuery
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', function() {
-                    if (typeof jQuery !== 'undefined') {
-                        setupModal();
-                    } else {
-                        setTimeout(setupModal, 500);
-                    }
-                });
-            } else {
-                if (typeof jQuery !== 'undefined') {
-                    jQuery(document).ready(setupModal);
-                } else {
-                    setTimeout(setupModal, 500);
-                }
-            }
+            });
         })();
         </script>
         <?php
     }, 999);
 }, 10);
 
-/**
- * Afficher le modal HTML et le JavaScript pour la désactivation
- */
-if (!function_exists('pdf_builder_add_deactivation_modal')) {
-    function pdf_builder_add_deactivation_modal() {
-        ?>
+add_action('pdf_builder_deactivate', function() {
+    if (!get_option('pdf_builder_delete_on_deactivate', false)) {
+        return;
+    }
+    global $wpdb;
+    $prefix = $wpdb->prefix;
+    $tables = array(
+        $prefix . 'pdf_builder_templates',
+        $prefix . 'pdf_builder_elements',
+        $prefix . 'pdf_builder_settings',
+        $prefix . 'pdf_builder_logs',
+        $prefix . 'pdf_builder_analytics',
+        $prefix . 'pdf_builder_security_logs',
+    );
+    foreach ($tables as $table) {
+        $wpdb->query("DROP TABLE IF EXISTS `$table`");
+    }
+    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE 'pdf_builder_%' OR option_name LIKE 'pdf-builder-%'");
+    $wpdb->query("DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE 'pdf_builder_%'");
+    $wpdb->query("DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE 'pdf_builder_%'");
+    delete_option('pdf_builder_delete_on_deactivate');
+}, 10);
+?>
+
+
         <!-- Modal de feedback PDF Builder Pro -->
         <div id="pdf-builder-deactivation-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center;">
             <div style="background: white; border-radius: 8px; max-width: 500px; width: 90%; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
