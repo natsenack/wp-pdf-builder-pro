@@ -17,8 +17,14 @@ add_action('plugins_loaded', function() {
     $action = sanitize_text_field($_GET['pdf_builder_db_action']);
     if ($action === 'delete') {
         update_option('pdf_builder_delete_on_deactivate', true);
+        // Redirection propre sans le paramètre
+        $clean_url = remove_query_arg('pdf_builder_db_action');
+        wp_safe_remote_get($clean_url);
     } else if ($action === 'keep') {
         update_option('pdf_builder_delete_on_deactivate', false);
+        // Redirection propre sans le paramètre
+        $clean_url = remove_query_arg('pdf_builder_db_action');
+        wp_safe_remote_get($clean_url);
     }
 }, 1);
 
