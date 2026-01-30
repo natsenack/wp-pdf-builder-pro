@@ -5837,7 +5837,7 @@ body.modal-open {
 }
 
 /* === BOUTON FLOTTANT === */
-/* === BOUTON FLOTTANT DE SAUVEGARDE OPTIMISÉ === */
+/* === BOUTON FLOTTANT DE SAUVEGARDE SIMPLE === */
 .pdf-builder-save-floating-container {
     position: fixed;
     bottom: 30px;
@@ -5848,11 +5848,7 @@ body.modal-open {
 
 .pdf-builder-floating-save {
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: linear-gradient(135deg, #007cba 0%, #005a87 100%);
+    background: #007cba;
     color: white;
     border: none;
     border-radius: 50px;
@@ -5860,148 +5856,21 @@ body.modal-open {
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    box-shadow:
-        0 8px 25px rgba(0, 124, 186, 0.4),
-        0 4px 10px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 124, 186, 0.3);
     pointer-events: auto;
     min-width: 160px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
 }
 
 .pdf-builder-floating-save:hover {
-    background: linear-gradient(135deg, #005a87 0%, #003d5c 100%);
-    box-shadow:
-        0 12px 35px rgba(0, 124, 186, 0.5),
-        0 6px 15px rgba(0, 0, 0, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-    transform: translateY(-3px) scale(1.05);
+    background: #005a87;
+    box-shadow: 0 6px 16px rgba(0, 124, 186, 0.4);
 }
 
 .pdf-builder-floating-save:active {
-    transform: translateY(-1px) scale(1.02);
-    box-shadow:
-        0 6px 20px rgba(0, 124, 186, 0.4),
-        0 3px 8px rgba(0, 0, 0, 0.1),
-        inset 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.pdf-builder-floating-save:focus {
-    outline: none;
-    box-shadow:
-        0 8px 25px rgba(0, 124, 186, 0.4),
-        0 4px 10px rgba(0, 0, 0, 0.1),
-        0 0 0 3px rgba(0, 124, 186, 0.3);
-}
-
-.save-icon {
-    font-size: 18px;
-    display: inline-block;
-    transition: transform 0.3s ease;
-}
-
-.pdf-builder-floating-save:hover .save-icon {
-    transform: scale(1.1) rotate(5deg);
-}
-
-.save-text {
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.save-spinner {
-    width: 18px;
-    height: 18px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top: 2px solid white;
-    border-radius: 50%;
-    animation: save-spin 1s linear infinite;
-    display: inline-block;
-}
-
-@keyframes save-spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.pdf-builder-floating-save.loading {
-    opacity: 0.9;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-.pdf-builder-floating-save.loading .save-text {
-    opacity: 0.7;
-}
-
-.pdf-builder-floating-save.loading .save-icon {
-    display: none;
-}
-
-.pdf-builder-floating-save.loading .save-spinner {
-    display: inline-block;
-}
-
-.pdf-builder-floating-save.success {
-    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
-    animation: save-success 0.6s ease;
-}
-
-@keyframes save-success {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-.pdf-builder-floating-save.error {
-    background: linear-gradient(135deg, #dc3545 0%, #bd2130 100%);
-    animation: save-error 0.5s ease;
-}
-
-@keyframes save-error {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    50% { transform: translateX(5px); }
-    75% { transform: translateX(-5px); }
-    100% { transform: translateX(0); }
-}
-
-.save-tooltip {
-    position: absolute;
-    bottom: 100%;
-    right: 0;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(10px);
-    transition: all 0.3s ease;
-    margin-bottom: 10px;
-    pointer-events: none;
-}
-
-.save-tooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    right: 20px;
-    border: 5px solid transparent;
-    border-top-color: rgba(0, 0, 0, 0.8);
-}
-
-.pdf-builder-save-floating-container:hover .save-tooltip {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+    background: #003d5c;
+    box-shadow: 0 2px 8px rgba(0, 124, 186, 0.3);
 }
 
 /* Masquer le bouton original de WordPress */
@@ -6009,24 +5878,7 @@ body.modal-open {
     display: none !important;
 }
 
-/* Ajustements pour écrans mobiles et tablettes */
-@media (max-width: 1024px) {
-    .pdf-builder-save-floating-container {
-        bottom: 25px;
-        right: 25px;
-    }
-
-    .pdf-builder-floating-save {
-        padding: 14px 24px;
-        font-size: 15px;
-        min-width: 140px;
-    }
-
-    .save-icon {
-        font-size: 16px;
-    }
-}
-
+/* Responsive */
 @media (max-width: 768px) {
     .pdf-builder-save-floating-container {
         bottom: 20px;
@@ -6037,70 +5889,6 @@ body.modal-open {
         padding: 12px 20px;
         font-size: 14px;
         min-width: 120px;
-    }
-
-    .save-text {
-        display: none;
-    }
-
-    .save-icon {
-        font-size: 20px;
-    }
-
-    .save-tooltip {
-        display: none;
-    }
-}
-
-@media (max-width: 480px) {
-    .pdf-builder-save-floating-container {
-        bottom: 15px;
-        right: 15px;
-    }
-
-    .pdf-builder-floating-save {
-        padding: 10px 18px;
-        min-width: 50px;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-    }
-}
-
-/* Animation d'entrée */
-.pdf-builder-floating-save {
-    animation: slideInFromBottom 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes slideInFromBottom {
-    0% {
-        transform: translateY(100px);
-        opacity: 0;
-    }
-    100% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-/* Effet de pulsation périodique pour attirer l'attention */
-.pdf-builder-floating-save {
-    animation: slideInFromBottom 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-               pulse 3s ease-in-out 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        box-shadow:
-            0 8px 25px rgba(0, 124, 186, 0.4),
-            0 4px 10px rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    }
-    50% {
-        box-shadow:
-            0 12px 35px rgba(0, 124, 186, 0.6),
-            0 6px 15px rgba(0, 0, 0, 0.15),
-            inset 0 1px 0 rgba(255, 255, 255, 0.3);
     }
 }
 
