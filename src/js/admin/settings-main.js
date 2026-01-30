@@ -47,6 +47,9 @@
         var form = $(this).closest('form');
         if (form.length && !form.find('input[name="pdf_builder_floating_save"]').length) {
             form.append('<input type="hidden" name="pdf_builder_floating_save" value="1">');
+            console.log('[PDF Builder] Floating save button clicked - hidden field added');
+        } else {
+            console.log('[PDF Builder] Floating save button clicked - hidden field already exists or form not found');
         }
         // Don't prevent default, let the form submit
     });

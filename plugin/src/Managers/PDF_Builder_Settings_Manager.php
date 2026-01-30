@@ -42,6 +42,10 @@ class PDF_Builder_Settings_Manager
         add_action('update_option_pdf_builder_company_rcs', [$this, 'logSettingsUpdate'], 10, 3);
         add_action('update_option_pdf_builder_company_siret', [$this, 'logSettingsUpdate'], 10, 3);
         add_action('update_option_pdf_builder_order_status_templates', [$this, 'logSettingsUpdate'], 10, 3);
+        
+        if (class_exists('PDF_Builder_Logger')) {
+            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Settings Manager hooks initialized');
+        }
     }
 
     /**
@@ -169,11 +173,15 @@ class PDF_Builder_Settings_Manager
      */
     public function logSettingsUpdate($old_value, $new_value, $option)
     {
-        if (isset($_POST['pdf_builder_floating_save']) && $_POST['pdf_builder_floating_save'] == '1') {
-            if (class_exists('PDF_Builder_Logger')) {
+        if (class_exists('PDF_Builder_Logger')) {
+            PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Option updated: ' . $option);
+            
+            if (isset($_POST['pdf_builder_floating_save']) && $_POST['pdf_builder_floating_save'] == '1') {
                 PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Paramètre mis à jour via bouton flottant: ' . $option);
                 PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Ancienne valeur: ' . json_encode($old_value));
                 PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Nouvelle valeur: ' . json_encode($new_value));
+            } else {
+                PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Paramètre mis à jour normalement (pas via bouton flottant): ' . $option);
             }
         }
     }
