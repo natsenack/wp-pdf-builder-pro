@@ -1001,6 +1001,17 @@ class PdfBuilderAdminNew
             return;
         }
 
+        // Menu principal PDF Builder Pro
+        \add_menu_page(
+            __('PDF Builder Pro', 'pdf-builder-pro'),
+            __('PDF Builder', 'pdf-builder-pro'),
+            'manage_options',
+            'pdf-builder-pro',
+            [$this, 'adminPage'],
+            'dashicons-pdf',
+            30
+        );
+
         // Page d'accueil (sous-menu principal masqué)
         \add_submenu_page(
             'pdf-builder-pro',
