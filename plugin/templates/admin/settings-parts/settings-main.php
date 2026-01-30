@@ -161,47 +161,111 @@
 
         // Traiter les données du formulaire
         $settings = isset($_POST['pdf_builder_settings']) ? $_POST['pdf_builder_settings'] : array();
-        
-        // Nettoyer et valider les données
-        $sanitized_settings = array();
-        foreach ($settings as $key => $value) {
-            if (is_array($value)) {
-                $sanitized_settings[$key] = array_map('sanitize_text_field', $value);
-            } else {
-                $sanitized_settings[$key] = sanitize_text_field($value);
-            }
-        }
 
-        // Sauvegarder dans la base de données
-        update_option('pdf_builder_settings', $sanitized_settings);
-
-        // Sauvegarder les autres paramètres individuels
-        $individual_settings = [
-            'pdf_builder_allowed_roles',
-            'pdf_builder_company_vat', 
-            'pdf_builder_company_rcs',
-            'pdf_builder_company_siret',
-            'pdf_builder_default_locale',
-            'pdf_builder_rtl_support',
-            'pdf_builder_date_format',
-            'pdf_builder_time_format',
-            'pdf_builder_number_format'
-        ];
-
-        foreach ($individual_settings as $setting_key) {
-            if (isset($_POST[$setting_key])) {
-                if (is_array($_POST[$setting_key])) {
-                    update_option($setting_key, array_map('sanitize_text_field', $_POST[$setting_key]));
+        try {
+            // Nettoyer et valider les données
+            $sanitized_settings = array();
+            foreach ($settings as $key => $value) {
+                if (is_array($value)) {
+                    $sanitized_settings[$key] = array_map('sanitize_text_field', $value);
                 } else {
-                    update_option($setting_key, sanitize_text_field($_POST[$setting_key]));
+                    $sanitized_settings[$key] = sanitize_text_field($value);
                 }
             }
-        }
 
-        // Redirection avec message de succès
-        $redirect_url = add_query_arg('settings-updated', 'true', wp_get_referer());
-        wp_safe_redirect($redirect_url);
-        exit;
+            // Sauvegarder dans la base de données
+            $update_result = update_option('pdf_builder_settings', $sanitized_settings);
+            if ($update_result === false && !empty($sanitized_settings)) {
+                throw new Exception(__('Erreur lors de la sauvegarde des paramètres principaux.', 'pdf-builder-pro'));
+            }
+
+            // Sauvegarder les autres paramètres individuels
+            $individual_settings = [
+                'pdf_builder_allowed_roles',
+                'pdf_builder_company_vat',
+                'pdf_builder_company_rcs',
+                'pdf_builder_company_siret',
+                'pdf_builder_default_locale',
+                'pdf_builder_rtl_support',
+                'pdf_builder_date_format',
+                'pdf_builder_time_format',
+                'pdf_builder_number_format'
+            ];
+
+            foreach ($individual_settings as $setting_key) {
+                if (isset($_POST[$setting_key])) {
+                    $value = is_array($_POST[$setting_key]) ?
+                        array_map('sanitize_text_field', $_POST[$setting_key]) :
+                        sanitize_text_field($_POST[$setting_key]);
+                    $update_result = update_option($setting_key, $value);
+                    if ($update_result === false && !empty($value)) {
+                        throw new Exception(sprintf(__('Erreur lors de la sauvegarde du paramètre %s.', 'pdf-builder-pro'), $setting_key));
+                    }
+                }
+            }
+
+            if (class_exists('PDF_Builder_Logger')) {
+                PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Settings saved successfully');
+            }
+
+            // Redirection avec message de succès
+            $redirect_url = add_query_arg(array(
+                'settings-updated' => 'true',
+                'save-status' => 'success'
+            ), wp_get_referer());
+            wp_safe_redirect($redirect_url);
+            exit;
+
+        } catch (Exception $e) {
+            if (class_exists('PDF_Builder_Logger')) {
+                PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Save error: ' . $e->getMessage());
+            }
+
+            // Redirection avec message d'erreur
+            $redirect_url = add_query_arg(array(
+                'settings-updated' => 'false',
+                'save-status' => 'error',
+                'error-message' => urlencode($e->getMessage())
+            ), wp_get_referer());
+            wp_safe_redirect($redirect_url);
+            exit;
+        }
+    });
+
+    // Gestion des erreurs de sauvegarde
+    add_action('admin_notices', function() {
+        if (isset($_GET['save-status'])) {
+            $status = sanitize_text_field($_GET['save-status']);
+            if ($status === 'success') {
+                echo '<div class="notice notice-success is-dismissible" id="pdf-builder-save-notice">';
+                echo '<p><strong>' . __('Paramètres sauvegardés avec succès !', 'pdf-builder-pro') . '</strong></p>';
+                echo '</div>';
+            } elseif ($status === 'error') {
+                echo '<div class="notice notice-error is-dismissible" id="pdf-builder-save-notice">';
+                echo '<p><strong>' . __('Erreur lors de la sauvegarde des paramètres.', 'pdf-builder-pro') . '</strong></p>';
+                echo '</div>';
+            }
+        }
+    });
+
+    // JavaScript pour gérer l'état du bouton flottant
+    add_action('admin_footer', function() {
+        if (isset($_GET['save-status'])) {
+            $status = sanitize_text_field($_GET['save-status']);
+            ?>
+            <script type="text/javascript">
+                jQuery(document).ready(function($) {
+                    if (typeof window.PDFBuilderFloatingSave !== 'undefined') {
+                        if ('<?php echo $status; ?>' === 'success') {
+                            window.PDFBuilderFloatingSave.showSuccess();
+                        } else if ('<?php echo $status; ?>' === 'error') {
+                            window.PDFBuilderFloatingSave.showError();
+                        }
+                    }
+                });
+            </script>
+            <?php
+        }
     });
 
 ?>
@@ -314,34 +378,14 @@
 
         <?php submit_button(); ?>
 
-        <!-- Bouton flottant de sauvegarde optimisé -->
-        <div id="pdf-builder-floating-save-container" class="pdf-builder-floating-save-container">
-            <div class="pdf-builder-floating-save-wrapper">
-                <button type="submit"
-                        name="pdf_builder_save_settings"
-                        id="pdf-builder-floating-save-btn"
-                        class="pdf-builder-floating-save-btn"
-                        data-action="save"
-                        data-nonce="<?php echo wp_create_nonce('pdf_builder_save_settings'); ?>"
-                        title="<?php esc_attr_e('Enregistrer tous les paramètres', 'pdf-builder-pro'); ?>">
-                    <span class="pdf-builder-save-icon">💾</span>
-                    <span class="pdf-builder-save-text"><?php _e('Enregistrer', 'pdf-builder-pro'); ?></span>
-                    <span class="pdf-builder-save-spinner" style="display: none;">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" opacity="0.3"></circle>
-                            <path d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor"></path>
-                        </svg>
-                    </span>
-                </button>
-
-                <!-- Indicateur de statut -->
-                <div class="pdf-builder-save-status" id="pdf-builder-save-status">
-                    <div class="pdf-builder-save-status-content">
-                        <span class="pdf-builder-status-icon">✓</span>
-                        <span class="pdf-builder-status-text"><?php _e('Paramètres enregistrés', 'pdf-builder-pro'); ?></span>
-                    </div>
-                </div>
-            </div>
+        <!-- Bouton flottant de sauvegarde optimisé - DANS le formulaire -->
+        <div id="pdf-builder-save-floating" class="pdf-builder-save-floating-container">
+            <button type="submit" name="submit" id="pdf-builder-save-floating-btn" class="pdf-builder-floating-save">
+                <span class="save-icon">💾</span>
+                <span class="save-text">Enregistrer</span>
+                <span class="save-spinner" style="display: none;"></span>
+            </button>
+            <div class="save-tooltip">Cliquez pour sauvegarder vos paramètres</div>
         </div>
     </div>
     </form>
