@@ -123,14 +123,6 @@ function pdf_builder_init_plugin() {
     } else {
         error_log('[ERROR] PDF Builder: bootstrap.php not found at: ' . $bootstrap);
     }
-
-    // Charger le système de menus admin
-    $admin_pages = PDF_BUILDER_PLUGIN_DIR . 'includes/AdminPages.php';
-    if (file_exists($admin_pages)) {
-        require_once $admin_pages;
-    } else {
-        error_log('[ERROR] PDF Builder: AdminPages.php not found at: ' . $admin_pages);
-    }
 }
 
 // VERSION ULTRA-SIMPLE - ne charger que l'essentiel
