@@ -1751,10 +1751,15 @@ function saveTemplateSettings() {
     formData.append('canvas_dpi', document.getElementById('template-dpi').value);
     
     // Désactiver le bouton de sauvegarde
-    var saveButton = document.querySelector('#template-settings-modal .button-primary');
-    var originalText = saveButton.innerHTML;
-    saveButton.innerHTML = '<span class="dashicons dashicons-update" style="margin-right: 5px;"></span> Sauvegarde...';
-    saveButton.disabled = true;
+    var saveButton = document.querySelector('#template-settings-modal .canvas-modal-btn-primary');
+    if (!saveButton) {
+        // Fallback pour les autres types de boutons
+        saveButton = document.querySelector('#template-settings-modal .button-primary');
+    }
+    if (!saveButton) {
+        console.error('[DEBUG] Bouton de sauvegarde non trouvé');
+        return;
+    }
     
     // Faire la requête AJAX
     fetch(ajaxurl, {
