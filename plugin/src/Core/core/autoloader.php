@@ -12,6 +12,9 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit;
 }
 
+// LOG AU DÉBUT DE L'AUTOLOADER
+error_log('[PDF BUILDER] === AUTOLOADER FILE LOADED ===');
+
 class PdfBuilderAutoloader
 {
     /**
@@ -44,6 +47,9 @@ class PdfBuilderAutoloader
      */
     public static function init($base_path)
     {
+        error_log('[PDF BUILDER] === AUTOLOADER INIT CALLED ===');
+        error_log('[PDF BUILDER] Base path: ' . $base_path);
+        
         // Add trailing slash if not present (equivalent to trailingslashit)
         self::$base_path = rtrim($base_path, '/') . '/';
         spl_autoload_register([__CLASS__, 'autoload']);
@@ -54,6 +60,8 @@ class PdfBuilderAutoloader
      */
     public static function autoload($class)
     {
+        error_log('[PDF BUILDER] === AUTOLOAD CALLED FOR CLASS: ' . $class . ' ===');
+        
         // Skip Dompdf classes to avoid conflicts
         if (strpos($class, 'Dompdf') !== false) {
             return false;

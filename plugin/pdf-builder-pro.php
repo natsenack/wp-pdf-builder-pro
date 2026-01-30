@@ -15,6 +15,11 @@
  * Requires PHP: 7.4
  */
 
+// LOG AU DÉBUT DU PLUGIN PRINCIPAL
+error_log('[PDF BUILDER] === PLUGIN FILE LOADED - MAIN FILE ===');
+error_log('[PDF BUILDER] Plugin dir: ' . dirname(__FILE__));
+error_log('[PDF BUILDER] Current file: ' . __FILE__);
+
 // Définir les constantes du plugin
 define('PDF_BUILDER_PLUGIN_FILE', __FILE__);
 define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
