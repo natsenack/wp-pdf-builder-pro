@@ -29,19 +29,9 @@ if (!defined('OBJECT')) {
     define('OBJECT', 'OBJECT');
 }
 
-// Déclarations des classes PHP natives pour l'IDE dans le namespace
-if (!class_exists('PDF_Builder\Managers\Exception')) {
-    class_alias('Exception', 'PDF_Builder\Managers\Exception');
-}
-if (!class_exists('PDF_Builder\Managers\Error')) {
-    class_alias('Error', 'PDF_Builder\Managers\Error');
-}
-if (!class_exists('PDF_Builder\Managers\Throwable')) {
-    class_alias('Throwable', 'PDF_Builder\Managers\Throwable');
-}
-if (!class_exists('PDF_Builder\Managers\WP_Error')) {
-    class_alias('WP_Error', 'PDF_Builder\Managers\WP_Error');
-}
+// Déclarations des classes pour utilisation dans ce namespace
+// Note: Les classes Exception, Error, Throwable sont natives et accessibles globalement
+// Pour les utiliser, référencez-les avec le namespace global (e.g., \Exception)
 
 // Fonction globale WC()
 if (!function_exists('WC')) {
