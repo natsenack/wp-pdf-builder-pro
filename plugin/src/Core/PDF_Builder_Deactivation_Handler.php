@@ -114,7 +114,7 @@ add_action('admin_enqueue_scripts', function() {
                     <button id="pdf-builder-btn-skip" type="button" class="button" style="padding: 10px 20px; cursor: pointer; background: transparent; border: 1px solid transparent; color: #aaa; opacity: 0.4; font-size: 12px; font-weight: normal;">Passer & Désactiver</button>
                     <div style="display: flex; gap: 10px;">
                         <button id="pdf-builder-btn-cancel" type="button" class="button button-secondary" style="padding: 10px 20px; cursor: pointer;">Annuler</button>
-                        <button id="pdf-builder-btn-proceed" type="button" class="button button-primary" style="padding: 10px 20px; background: #667eea; border-color: #667eea; color: white; cursor: not-allowed; opacity: 0.6;">Désactiver</button>
+                        <button id="pdf-builder-btn-proceed" type="button" class="button button-primary" style="padding: 10px 20px; background: #667eea; border-color: #667eea; color: white; cursor: pointer;">Désactiver</button>
                     </div>
                 </div>
             </div>
@@ -150,14 +150,7 @@ add_action('admin_enqueue_scripts', function() {
                     } else {
                         $('#pdf-builder-other-reason').hide();
                     }
-                    // Enable proceed button when any reason is selected
-                    enableProceedButton();
                 });
-                
-                // Function to enable/disable proceed button
-                function enableProceedButton() {
-                    // Bouton toujours actif
-                }
                 
                 // Close handlers
                 $('#pdf-builder-modal-close, #pdf-builder-btn-cancel').on('click', function() {
@@ -170,25 +163,29 @@ add_action('admin_enqueue_scripts', function() {
                     window.location.href = deactivateLink;
                 });
                 
-                // Proceed handler
+                // Proceed button - SIMPLE ET DIRECT
                 $('#pdf-builder-btn-proceed').on('click', function() {
+                    // Pas de vérification, pas de conditions
+                    // Simplement récupérer la raison sélectionnée
+                    var reason = $('input[name="pdf_builder_reason"]:checked').val() || 'no_reason';
+                    
+                    // Si "Autre" est sélectionné, utiliser le texte personnalisé
+                    if (reason === 'other') {
+                        var customText = $('#pdf-builder-custom-reason').val().trim();
+                        reason = customText || 'autre';
+                    }
+                    
+                    // Construire l'URL avec la raison
                     if (!deactivateLink) {
-                        console.error('deactivateLink not found');
                         return false;
                     }
                     
-                    var reason = $('input[name="pdf_builder_reason"]:checked').val() || 'not_specified';
+                    var url = deactivateLink;
+                    var separator = url.indexOf('?') === -1 ? '?' : '&';
+                    url += separator + 'pdf_builder_reason=' + encodeURIComponent(reason);
                     
-                    // If "Autre" is selected, use custom reason
-                    if (reason === 'other') {
-                        reason = $('#pdf-builder-custom-reason').val().trim() || 'other';
-                    }
-                    
-                    var separator = deactivateLink.indexOf('?') === -1 ? '?' : '&';
-                    var finalUrl = deactivateLink + separator + 'pdf_builder_reason=' + encodeURIComponent(reason);
-                    
-                    console.log('Redirecting to:', finalUrl);
-                    window.location.href = finalUrl;
+                    // Rediriger
+                    window.location.href = url;
                 });
             });
         })();
