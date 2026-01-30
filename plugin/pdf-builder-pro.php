@@ -346,12 +346,16 @@ function pdf_builder_check_database_updates() {
  */
 function pdf_builder_deactivate()
 {
-
     delete_option('pdf_builder_activated');
-// Clear scheduled expiration check
+    
+    // Clear scheduled expiration check
     if (class_exists('\PDFBuilderPro\License\License_Expiration_Handler')) {
         \PDFBuilderPro\License\License_Expiration_Handler::clear_scheduled_expiration_check();
     }
+    
+    // Déclencher le hook de désactivation personnalisé
+    // Cela permettra au gestionnaire de désactivation de traiter les données
+    do_action('pdf_builder_deactivate');
 }
 
 
@@ -2392,3 +2396,6 @@ function pdf_builder_view_logs_handler() {
 
 // Enregistrer la fonction d'activation du plugin
 register_activation_hook(__FILE__, 'pdf_builder_activate');
+
+// Enregistrer la fonction de désactivation du plugin
+register_deactivation_hook(__FILE__, 'pdf_builder_deactivate');

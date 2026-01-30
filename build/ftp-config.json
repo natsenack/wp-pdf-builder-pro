@@ -1,0 +1,23 @@
+{
+  "FtpHost": "65.108.242.181",
+  "FtpUser": "nats",
+  "FtpPass": "iZ6vU3zV2y",
+  "FtpRemotePath": "/wp-content/plugins/wp-pdf-builder-pro",
+  "LocalPluginPath": "plugin",
+  "UsePassive": true,
+  "UseBinary": true,
+  "Timeout": 30000,
+  "MaxRetries": 3,
+  "RetryDelay": 2000,
+  "Verbose": false,
+  "ExcludePatterns": [
+    "*.git*",
+    "node_modules",
+    ".vscode",
+    "*.md",
+    "test*",
+    ".DS_Store",
+    "Thumbs.db"
+  ],
+  "Description": "Configuration FTP pour PDF Builder Pro v1.0.1.0"
+}
