@@ -996,6 +996,45 @@ add_action('wp_ajax_pdf_builder_get_debug_settings', 'pdf_builder_get_debug_sett
 add_action('wp_ajax_pdf_builder_get_allowed_roles', 'pdf_builder_get_allowed_roles_ajax_handler');
 add_action('wp_ajax_pdf_builder_reset_canvas_defaults', 'pdf_builder_reset_canvas_defaults_handler');
 add_action('wp_ajax_verify_canvas_settings_consistency', 'pdf_builder_verify_canvas_settings_consistency_handler');
+add_action('wp_ajax_pdf_builder_log_floating_save_click', 'pdf_builder_log_floating_save_click_handler');
+
+/**
+ * Handler AJAX pour logger le clic sur le bouton flottant de sauvegarde
+ */
+function pdf_builder_log_floating_save_click_handler() {
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+        wp_die('Nonce invalide');
+    }
+
+    // Vérifier les permissions
+    if (!current_user_can('manage_options')) {
+        wp_die('Accès refusé');
+    }
+
+    // Logger le clic
+    $user_id = get_current_user_id();
+    $user_info = get_userdata($user_id);
+    $timestamp = current_time('Y-m-d H:i:s');
+
+    error_log("[PDF Builder] Bouton flottant 'Enregistrer' cliqué par l'utilisateur {$user_info->user_login} (ID: {$user_id}) à {$timestamp}");
+
+    // Utiliser la classe de logging si elle a une méthode log
+    if (class_exists('PDF_Builder_Logger')) {
+        $logger = new PDF_Builder_Logger();
+        if (method_exists($logger, 'log')) {
+            $logger->log('info', 'Bouton flottant de sauvegarde cliqué', [
+                'user_id' => $user_id,
+                'user_login' => $user_info->user_login,
+                'timestamp' => $timestamp,
+                'page' => isset($_POST['page']) ? sanitize_text_field($_POST['page']) : 'unknown'
+            ]);
+        }
+    }
+
+    // Répondre avec succès
+    wp_send_json_success(['message' => 'Log enregistré']);
+}
 
 
 
