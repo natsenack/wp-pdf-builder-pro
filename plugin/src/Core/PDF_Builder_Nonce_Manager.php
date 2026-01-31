@@ -12,8 +12,8 @@ class PDF_Builder_Nonce_Manager {
     private $refresh_threshold = 5 * 60 * 1000; // 5 minutes avant expiration
     private $max_retries = 2;
     private $nonce_mappings = [
-        'save_settings' => 'pdf_builder_save_settings_nonce',
-        'pdf_builder_canvas_settings' => 'pdf_builder_canvas_settings',
+        'save_settings' => 'pdf_builder_ajax',
+        'pdf_builder_canvas_settings' => 'pdf_builder_ajax',
         'get_cache_metrics' => 'pdf_builder_ajax',
         'test_cache_integration' => 'pdf_builder_ajax',
         'clear_cache' => 'pdf_builder_ajax',
@@ -99,8 +99,8 @@ class PDF_Builder_Nonce_Manager {
             return false;
         }
 
-        // Vérifier le nonce
-        $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
+        // Vérifier le nonce (chercher d'abord _wpnonce, puis nonce pour compatibilité)
+        $nonce = isset($_POST['_wpnonce']) ? $_POST['_wpnonce'] : (isset($_POST['nonce']) ? $_POST['nonce'] : '');
         if (!$this->validate_nonce($nonce, $context)) {
             wp_send_json_error(['message' => 'Nonce invalide']);
             return false;

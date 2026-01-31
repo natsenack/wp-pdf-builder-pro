@@ -88,8 +88,13 @@ function pdf_builder_inject_nonce() {
         return; // Pas de permission
     }
 
-    // Créer le nonce
-    $nonce = wp_create_nonce('pdf_builder_ajax');
+    // Créer le nonce via le Nonce Manager
+    if (class_exists('PDF_Builder_Nonce_Manager')) {
+        $nonce_manager = PDF_Builder_Nonce_Manager::get_instance();
+        $nonce = $nonce_manager->generate_nonce();
+    } else {
+        $nonce = wp_create_nonce('pdf_builder_ajax');
+    }
     
     // Injecter directement
     $ajax_url = admin_url('admin-ajax.php');

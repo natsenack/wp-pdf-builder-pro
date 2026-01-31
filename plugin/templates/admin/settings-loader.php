@@ -113,9 +113,15 @@ function pdf_builder_load_settings_assets($hook) {
         );
 
         // Localiser le script avec les données AJAX - seulement si chargé
+        if (class_exists('PDF_Builder_Nonce_Manager')) {
+            $nonce_manager = PDF_Builder_Nonce_Manager::get_instance();
+            $nonce = $nonce_manager->generate_nonce();
+        } else {
+            $nonce = wp_create_nonce('pdf_builder_ajax');
+        }
         wp_localize_script('pdf-builder-settings-tabs', 'pdfBuilderAjax', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_ajax')
+            'nonce' => $nonce
         ));
 
         // DEBUG: Après localization
@@ -159,17 +165,29 @@ function pdf_builder_load_settings_assets($hook) {
             );
 
             // Localiser le script canvas-settings avec le nonce approprié et l'URL AJAX
+            if (class_exists('PDF_Builder_Nonce_Manager')) {
+                $nonce_manager = PDF_Builder_Nonce_Manager::get_instance();
+                $canvas_nonce = $nonce_manager->generate_nonce();
+            } else {
+                $canvas_nonce = wp_create_nonce('pdf_builder_canvas_settings');
+            }
             wp_localize_script('pdf-builder-canvas-settings', 'pdf_builder_canvas_settings', array(
-                'nonce' => wp_create_nonce('pdf_builder_canvas_settings'),
+                'nonce' => $canvas_nonce,
                 'ajax_url' => admin_url('admin-ajax.php')
             ));
         }
     }
 
     // Localiser le script principal avec les données AJAX
+    if (class_exists('PDF_Builder_Nonce_Manager')) {
+        $nonce_manager = PDF_Builder_Nonce_Manager::get_instance();
+        $main_nonce = $nonce_manager->generate_nonce();
+    } else {
+        $main_nonce = wp_create_nonce('pdf_builder_ajax');
+    }
     wp_localize_script('pdf-builder-settings-main', 'pdf_builder_ajax', array(
         'ajax_url' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('pdf_builder_ajax')
+        'nonce' => $main_nonce
     ));
 
     // Charger le script du bouton flottant de sauvegarde - seulement si le fichier existe
