@@ -675,7 +675,7 @@ class AjaxHandler
             }
 
         } catch (Exception $e) {
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Erreur handler unifié: ' . $e->getMessage());
+            error_log('PDF Builder - Erreur handler unifié: ' . $e->getMessage());
             \wp_send_json_error(['message' => 'Erreur serveur: ' . $e->getMessage()]);
         }
     }
@@ -713,9 +713,9 @@ class AjaxHandler
                 }
             }
 
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PHP: Received POST keys: ' . implode(', ', array_keys($_POST)));
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PHP: Settings to save: ' . implode(', ', array_keys($settings_to_save)));
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PHP: Templates data: ' . json_encode($templates_data));
+            error_log('PHP: Received POST keys: ' . implode(', ', array_keys($_POST)));
+            error_log('PHP: Settings to save: ' . implode(', ', array_keys($settings_to_save)));
+            error_log('PHP: Templates data: ' . json_encode($templates_data));
 
             // Sauvegarder les templates séparément si des données existent
             if (!empty($templates_data)) {
@@ -741,10 +741,10 @@ class AjaxHandler
 
                 if (!$saved && !empty($db_error)) {
                     // Erreur DB réelle
-                    if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - update_option failed. Last DB error: ' . $db_error);
-                    if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Settings size: ' . strlen(serialize($updated_settings)));
-                    if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Existing settings size: ' . strlen(serialize($existing_settings)));
-                    if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - New settings count: ' . count($settings_to_save));
+                    error_log('PDF Builder - update_option failed. Last DB error: ' . $db_error);
+                    error_log('PDF Builder - Settings size: ' . strlen(serialize($updated_settings)));
+                    error_log('PDF Builder - Existing settings size: ' . strlen(serialize($existing_settings)));
+                    error_log('PDF Builder - New settings count: ' . count($settings_to_save));
 
                     // Rollback en cas d'échec
                     $this->rollbackSettings($backup_key);
@@ -767,7 +767,7 @@ class AjaxHandler
         } catch (Exception $e) {
             // Rollback en cas d'exception
             $this->rollbackSettings($backup_key);
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Erreur sauvegarde: ' . $e->getMessage());
+            error_log('PDF Builder - Erreur sauvegarde: ' . $e->getMessage());
             \wp_send_json_error(['message' => 'Erreur lors du traitement des données']);
         }
     }
@@ -1186,26 +1186,26 @@ class AjaxHandler
     private function fallbackLoadTemplate($template_id)
     {
         try {
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] fallbackLoadTemplate called for template_id: ' . $template_id);
+            error_log('[PDF Builder] fallbackLoadTemplate called for template_id: ' . $template_id);
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
             // Vérifier que la table existe
             if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
-                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Templates table does not exist: ' . $table_templates);
+                error_log('[PDF Builder] Templates table does not exist: ' . $table_templates);
                 \wp_send_json_error('Table des templates introuvable');
                 return;
             }
 
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Templates table exists, querying for template_id: ' . $template_id);
+            error_log('[PDF Builder] Templates table exists, querying for template_id: ' . $template_id);
             $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
             if (!$template) {
-                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Template not found in database');
+                error_log('[PDF Builder] Template not found in database');
                 \wp_send_json_error('Template introuvable');
                 return;
             }
 
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Template found, attempting JSON decode');
+            error_log('[PDF Builder] Template found, attempting JSON decode');
 
             // Essayer de décoder le JSON
             $template_data = json_decode($template['template_data'], true);
@@ -1435,7 +1435,7 @@ class AjaxHandler
             }
 
         } catch (Exception $e) {
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Erreur sauvegarde unifiée: ' . $e->getMessage());
+            error_log('PDF Builder - Erreur sauvegarde unifiée: ' . $e->getMessage());
             \wp_send_json_error(['message' => 'Erreur serveur: ' . $e->getMessage()]);
         }
     }
@@ -1462,7 +1462,7 @@ class AjaxHandler
         if ($backup !== false) {
             pdf_builder_update_option('pdf_builder_settings', $backup);
             delete_option($backup_key);
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Rollback effectué depuis backup: ' . $backup_key);
+            error_log('PDF Builder - Rollback effectué depuis backup: ' . $backup_key);
         }
     }
 
