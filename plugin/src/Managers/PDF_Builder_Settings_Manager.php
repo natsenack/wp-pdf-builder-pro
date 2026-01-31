@@ -141,14 +141,27 @@ class PDF_Builder_Settings_Manager
      */
     public function logSettingsUpdate($old_value, $new_value, $option)
     {
-        error_log('[PDF Builder] Option updated: ' . $option);
+        if (class_exists('PDF_Builder_Logger')) {
+            $logger = PDF_Builder_Logger::get_instance();
+            $logger->info_log('Option mise à jour: ' . $option);
 
-        if (isset($_POST['pdf_builder_floating_save']) && $_POST['pdf_builder_floating_save'] == '1') {
-            error_log('[PDF Builder] Paramètre mis à jour via bouton flottant: ' . $option);
-            error_log('[PDF Builder] Ancienne valeur: ' . json_encode($old_value));
-            error_log('[PDF Builder] Nouvelle valeur: ' . json_encode($new_value));
+            if (isset($_POST['pdf_builder_floating_save']) && $_POST['pdf_builder_floating_save'] == '1') {
+                $logger->info_log('Paramètre mis à jour via bouton flottant: ' . $option);
+                $logger->debug_log('Ancienne valeur: ' . json_encode($old_value));
+                $logger->debug_log('Nouvelle valeur: ' . json_encode($new_value));
+            } else {
+                $logger->info_log('Paramètre mis à jour normalement (pas via bouton flottant): ' . $option);
+            }
         } else {
-            error_log('[PDF Builder] Paramètre mis à jour normalement (pas via bouton flottant): ' . $option);
+            error_log('[PDF Builder] Option updated: ' . $option);
+
+            if (isset($_POST['pdf_builder_floating_save']) && $_POST['pdf_builder_floating_save'] == '1') {
+                error_log('[PDF Builder] Paramètre mis à jour via bouton flottant: ' . $option);
+                error_log('[PDF Builder] Ancienne valeur: ' . json_encode($old_value));
+                error_log('[PDF Builder] Nouvelle valeur: ' . json_encode($new_value));
+            } else {
+                error_log('[PDF Builder] Paramètre mis à jour normalement (pas via bouton flottant): ' . $option);
+            }
         }
     }
 

@@ -44,8 +44,9 @@ class PDF_Builder_Logger
      */
     public function debug_log($message)
     {
-        // Logging disabled
-        
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('[PDF Builder DEBUG] ' . $message);
+        }
     }
 
     /**
@@ -56,7 +57,7 @@ class PDF_Builder_Logger
      */
     public function info_log($message)
     {
-        
+        error_log('[PDF Builder INFO] ' . $message);
     }
 
     /**
@@ -67,7 +68,7 @@ class PDF_Builder_Logger
      */
     public function error_log($message)
     {
-        
+        error_log('[PDF Builder ERROR] ' . $message);
     }
 
     /**
@@ -78,7 +79,7 @@ class PDF_Builder_Logger
      */
     public function warning_log($message)
     {
-        
+        error_log('[PDF Builder WARNING] ' . $message);
     }
 }
 

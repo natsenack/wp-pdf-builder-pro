@@ -1017,19 +1017,11 @@ function pdf_builder_log_floating_save_click_handler() {
     $user_info = get_userdata($user_id);
     $timestamp = current_time('Y-m-d H:i:s');
 
-    error_log("[PDF Builder] Bouton flottant 'Enregistrer' cliqué par l'utilisateur {$user_info->user_login} (ID: {$user_id}) à {$timestamp}");
-
-    // Utiliser la classe de logging si elle a une méthode log
     if (class_exists('PDF_Builder_Logger')) {
-        $logger = new PDF_Builder_Logger();
-        if (method_exists($logger, 'log')) {
-            $logger->log('info', 'Bouton flottant de sauvegarde cliqué', [
-                'user_id' => $user_id,
-                'user_login' => $user_info->user_login,
-                'timestamp' => $timestamp,
-                'page' => isset($_POST['page']) ? sanitize_text_field($_POST['page']) : 'unknown'
-            ]);
-        }
+        $logger = PDF_Builder_Logger::get_instance();
+        $logger->info_log('Bouton flottant "Enregistrer" cliqué par l\'utilisateur ' . $user_info->user_login . ' (ID: ' . $user_id . ') à ' . $timestamp);
+    } else {
+        error_log('[PDF Builder] Bouton flottant "Enregistrer" cliqué par l\'utilisateur ' . $user_info->user_login . ' (ID: ' . $user_id . ') à ' . $timestamp);
     }
 
     // Répondre avec succès

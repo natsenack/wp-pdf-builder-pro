@@ -330,27 +330,27 @@ class AjaxHandler
             $template_id = isset($_GET['template_id']) ? \intval($_GET['template_id']) : (isset($_POST['template_id']) ? \intval($_POST['template_id']) : null);
 
             if (!$template_id) {
-                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] No template_id provided');
+                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] No template_id provided'); }
                 \wp_send_json_error('ID de template manquant');
                 return;
             }
 
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Processing template_id: ' . $template_id);
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Processing template_id: ' . $template_id); }
 
             // Vérifier que template_processor existe
             if (!isset($this->admin->template_processor) || !$this->admin->template_processor) {
                 // Fallback: charger le template directement
-                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] template_processor not available, using fallback');
+                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] template_processor not available, using fallback'); }
                 return $this->fallbackLoadTemplate($template_id);
             }
 
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Using template_processor to load template');
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Using template_processor to load template'); }
 
             // Charger le template en utilisant le template processor
             $template = $this->admin->template_processor->loadTemplateRobust($template_id);
 
             if ($template) {
-                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Template loaded successfully via template_processor');
+                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Template loaded successfully via template_processor'); }
 
                 // Récupérer le nom du template depuis les métadonnées DB en priorité, sinon depuis la DB
                 $template_name = '';
@@ -387,7 +387,7 @@ class AjaxHandler
                     'message' => 'Template chargé avec succès'
                 ]);
             } else {
-                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Template loading failed via template_processor, trying fallback');
+                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Template loading failed via template_processor, trying fallback'); }
                 return $this->fallbackLoadTemplate($template_id);
             }
 
