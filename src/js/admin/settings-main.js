@@ -49,19 +49,28 @@
 
     // Debug floating save button
     $(document).on('click', '#pdf-builder-save-floating-btn', function(e) {
+        e.preventDefault(); // Prevent default form submission
+        
         // Add a hidden field to indicate floating save was used
         var form = $(this).closest('form');
-        if (form.length && !form.find('input[name="pdf_builder_floating_save"]').length) {
-            form.append('<input type="hidden" name="pdf_builder_floating_save" value="1">');
-            addPersistentLog('[JS] Floating save button clicked - hidden field added');
+        if (form.length) {
+            if (!form.find('input[name="pdf_builder_floating_save"]').length) {
+                form.append('<input type="hidden" name="pdf_builder_floating_save" value="1">');
+                addPersistentLog('[JS] Floating save button clicked - hidden field added');
+            } else {
+                addPersistentLog('[JS] Floating save button clicked - hidden field already exists');
+            }
+            
+            // Submit the form
+            addPersistentLog('[JS] Submitting form via floating save button');
+            form.submit();
         } else {
-            addPersistentLog('[JS] Floating save button clicked - hidden field already exists or form not found');
+            addPersistentLog('[JS] Floating save button clicked - form not found');
         }
-        // Don't prevent default, let the form submit
     });
 
     // Debug form submission
-    $(document).on('submit', 'form[action="options.php"]', function(e) {
+    $(document).on('submit', '#pdf-builder-settings-form', function(e) {
         addPersistentLog('Form submitted');
         var floatingField = $(this).find('input[name="pdf_builder_floating_save"]');
         if (floatingField.length) {

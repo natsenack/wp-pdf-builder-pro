@@ -29,17 +29,32 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings'])) {
         wp_die('Accès refusé');
     }
 
+    // Sanitize and save settings
     $settings = array_map('sanitize_text_field', $_POST['pdf_builder_settings']);
     pdf_builder_update_option('pdf_builder_settings', $settings);
 
-    // Message de succès
+    // Log the save operation
+    if (class_exists('PDF_Builder_Logger')) {
+        PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Settings saved via form submission');
+        PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Saved settings: ' . json_encode($settings));
+    }
+
+    // Redirection pour éviter la resoumission avec message de succès
+    $redirect_url = add_query_arg([
+        'page' => 'pdf-builder-settings',
+        'tab' => $current_tab,
+        'updated' => '1'
+    ], admin_url('admin.php'));
+    
+    wp_redirect($redirect_url);
+    exit;
+}
+
+// Afficher le message de succès si la mise à jour a réussi
+if (isset($_GET['updated']) && $_GET['updated'] === '1') {
     add_action('admin_notices', function() {
         echo '<div class="notice notice-success is-dismissible"><p>Paramètres sauvegardés avec succès !</p></div>';
     });
-
-    // Redirection pour éviter la resoumission
-    wp_redirect(add_query_arg('updated', '1', wp_get_referer()));
-    exit;
 }
 
 ?>
