@@ -23,31 +23,17 @@ if (!in_array($current_tab, $valid_tabs)) {
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings'])) {
     // Déterminer si c'est une sauvegarde flottante
     $is_floating_save = isset($_POST['pdf_builder_floating_save']) && $_POST['pdf_builder_floating_save'] == '1';
-    $save_type = $is_floating_save ? 'FLOATING SAVE BUTTON' : 'REGULAR SAVE';
+    $save_type = $is_floating_save ? 'FLOATING SAVE' : 'REGULAR SAVE';
 
-    // Logs détaillés pour le débogage
-    if (class_exists('PDF_Builder_Logger')) {
-        PDF_Builder_Logger::get_instance()->debug_log('[PHP][' . $save_type . '] Settings save triggered');
-        PDF_Builder_Logger::get_instance()->debug_log('[PHP][' . $save_type . '] POST data received: submit=' . (isset($_POST['submit']) ? 'YES' : 'NO') . ', settings_count=' . (isset($_POST['pdf_builder_settings']) ? count($_POST['pdf_builder_settings']) : '0'));
-        PDF_Builder_Logger::get_instance()->debug_log('[PHP][' . $save_type . '] Current tab: ' . $current_tab);
-        PDF_Builder_Logger::get_instance()->debug_log('[PHP][' . $save_type . '] User: ' . wp_get_current_user()->user_login . ' (ID: ' . get_current_user_id() . ')');
-
-        if ($is_floating_save) {
-            PDF_Builder_Logger::get_instance()->debug_log('[PHP][' . $save_type . '] Floating save detected - value: ' . $_POST['pdf_builder_floating_save']);
-        }
-    }
+    error_log("[$save_type] Sauvegarde démarrée");
 
     if (!wp_verify_nonce($_POST['_wpnonce'] ?? '', 'pdf_builder_settings-options')) {
-        if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->debug_log('[PHP][' . $save_type . '] ERROR: Invalid nonce');
-        }
+        error_log("[$save_type] ERREUR: Nonce invalide");
         wp_die('Sécurité: Nonce invalide');
     }
 
     if (!current_user_can('manage_options')) {
-        if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->debug_log('[PHP][' . $save_type . '] ERROR: Insufficient permissions for user ' . wp_get_current_user()->user_login);
-        }
+        error_log("[$save_type] ERREUR: Permissions insuffisantes");
         wp_die('Accès refusé');
     }
 
@@ -55,18 +41,10 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings'])) {
     $settings = array_map('sanitize_text_field', $_POST['pdf_builder_settings']);
     $save_result = pdf_builder_update_option('pdf_builder_settings', $settings);
 
-    // Log the save operation avec plus de détails
-    if (class_exists('PDF_Builder_Logger')) {
-        PDF_Builder_Logger::get_instance()->debug_log('[PHP][' . $save_type . '] Settings saved successfully - result: ' . ($save_result ? 'SUCCESS' : 'FAILED'));
-        PDF_Builder_Logger::get_instance()->debug_log('[PHP][' . $save_type . '] Settings count: ' . count($settings));
-
-        // Log des clés sauvegardées (sans les valeurs sensibles)
-        $setting_keys = array_keys($settings);
-        PDF_Builder_Logger::get_instance()->debug_log('[PHP][' . $save_type . '] Saved setting keys: ' . implode(', ', $setting_keys));
-
-        if ($is_floating_save) {
-            PDF_Builder_Logger::get_instance()->debug_log('[PHP][' . $save_type . '] Floating save completed for tab: ' . $current_tab);
-        }
+    if ($save_result) {
+        error_log("[$save_type] Sauvegarde réussie");
+    } else {
+        error_log("[$save_type] ERREUR: Échec de la sauvegarde");
     }
 
     // Redirection pour éviter la resoumission avec message de succès
@@ -76,19 +54,8 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings'])) {
         'updated' => '1'
     ], admin_url('admin.php'));
 
-    if (class_exists('PDF_Builder_Logger')) {
-        PDF_Builder_Logger::get_instance()->debug_log('[PHP][' . $save_type . '] Redirecting to: ' . $redirect_url);
-        PDF_Builder_Logger::get_instance()->debug_log('[PHP][' . $save_type . '] Save process completed successfully');
-    }
-
     wp_redirect($redirect_url);
     exit;
-} else {
-    // Log quand aucune soumission de formulaire n'est détectée
-    if (class_exists('PDF_Builder_Logger') && isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
-        PDF_Builder_Logger::get_instance()->debug_log('[PHP] POST request received but no valid form submission detected');
-        PDF_Builder_Logger::get_instance()->debug_log('[PHP] POST keys: ' . implode(', ', array_keys($_POST)));
-    }
 }
 
 // Afficher le message de succès si la mise à jour a réussi
