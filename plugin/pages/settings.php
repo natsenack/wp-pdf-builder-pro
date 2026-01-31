@@ -197,7 +197,9 @@ jQuery(document).ready(function($) {
     }
 
     // Gestionnaire du clic sur le bouton Enregistrer
-    $saveBtn.on('click', function() {
+    $saveBtn.on('click', function(e) {
+        e.preventDefault(); // Empêcher le rechargement de la page
+        
         var $btn = $(this);
 
         // Désactiver le bouton pendant la sauvegarde
