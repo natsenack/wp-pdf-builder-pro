@@ -64,6 +64,8 @@ if (isset($_GET['updated']) && $_GET['updated'] === '1') {
 
     <form method="post" action="" id="pdf-builder-settings-form">
         <?php wp_nonce_field('pdf_builder_settings-options'); ?>
+        <!-- Champ caché pour la soumission manuelle du formulaire -->
+        <input type="hidden" name="submit" value="1">
 
         <!-- Navigation par onglets -->
         <h2 class="nav-tab-wrapper">
