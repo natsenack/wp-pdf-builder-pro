@@ -566,8 +566,12 @@ function pdf_builder_load_core()
     }
 
     // Initialiser les gestionnaires Core
+    error_log("[BOOTSTRAP] Checking if PDF_Builder_Unified_Ajax_Handler class exists: " . (class_exists('PDF_Builder_Unified_Ajax_Handler') ? 'YES' : 'NO'));
     if (class_exists('PDF_Builder_Unified_Ajax_Handler')) {
+        error_log("[BOOTSTRAP] Calling PDF_Builder_Unified_Ajax_Handler::get_instance()");
         PDF_Builder_Unified_Ajax_Handler::get_instance();
+    } else {
+        error_log("[BOOTSTRAP] PDF_Builder_Unified_Ajax_Handler class does not exist!");
     }
 
     // Charger TemplateDefaults depuis core/
