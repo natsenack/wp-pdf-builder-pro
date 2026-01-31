@@ -1551,8 +1551,8 @@ class AjaxHandler
                 return;
             }
 
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PHP: ajaxSaveOrderStatusTemplates called');
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PHP: POST data: ' . print_r($_POST, true));
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PHP: ajaxSaveOrderStatusTemplates called'); }
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PHP: POST data: ' . print_r($_POST, true)); }
 
             // Récupérer les données des templates
             $templates_data = isset($_POST['pdf_builder_order_status_templates']) ? $_POST['pdf_builder_order_status_templates'] : [];
@@ -1574,8 +1574,8 @@ class AjaxHandler
 
             // Sauvegarder dans la base de données
             pdf_builder_update_option('pdf_builder_order_status_templates', $clean_templates);
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PHP: Saved to DB in ajaxSaveOrderStatusTemplates: ' . print_r($clean_templates, true));
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PHP: DB content after save: ' . print_r(pdf_builder_get_option('pdf_builder_order_status_templates', []), true));
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PHP: Saved to DB in ajaxSaveOrderStatusTemplates: ' . print_r($clean_templates, true)); }
+            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PHP: DB content after save: ' . print_r(pdf_builder_get_option('pdf_builder_order_status_templates', []), true)); }
 
             \wp_send_json_success([
                 'message' => 'Mappings de templates sauvegardés avec succès',
