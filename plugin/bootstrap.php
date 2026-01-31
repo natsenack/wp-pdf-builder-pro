@@ -1024,6 +1024,8 @@ function pdf_builder_load_core_on_demand()
             'pdf_builder_save_template',
             'pdf_builder_load_template',
             'pdf_builder_auto_save_template',
+            'pdf_builder_save_settings',
+            'pdf_builder_save_all_settings',
             // Actions AJAX de l'Onboarding Manager
             'pdf_builder_complete_onboarding_step',
             'pdf_builder_skip_onboarding',
@@ -1076,6 +1078,9 @@ function pdf_builder_init_canvas_defaults()
 
 // Defer the call to ensure WordPress is fully loaded
 add_action('init', 'pdf_builder_init_canvas_defaults');
+
+// Hook to load core on demand
+add_action('init', 'pdf_builder_load_core_on_demand', 5);
 
 // AJAX handler pour obtenir un nonce frais
 function pdf_builder_ajax_get_fresh_nonce()
