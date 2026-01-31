@@ -38,17 +38,6 @@ add_action('plugins_loaded', function() {
     // Initialiser l'autoloader personnalisé
     $autoloader_file = PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/autoloader.php';
     if (file_exists($autoloader_file)) {
-<<<<<<< HEAD
-        require_once $autoloader_file;
-        \PDF_Builder\Core\PdfBuilderAutoloader::init(PDF_BUILDER_PLUGIN_DIR);
-        error_log('[PDF BUILDER] Autoloader initialized successfully');
-        
-        // Test si la classe PDF_Builder_Logger peut être chargée
-        if (class_exists('PDF_Builder_Logger')) {
-            error_log('[PDF BUILDER] PDF_Builder_Logger class is available');
-        } else {
-            error_log('[PDF BUILDER] PDF_Builder_Logger class NOT found - autoloader issue');
-=======
         try {
             require_once $autoloader_file;
             if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
@@ -56,7 +45,6 @@ add_action('plugins_loaded', function() {
             }
         } catch (Exception $e) {
             error_log('[ERROR] PDF Builder: Autoloader init failed: ' . $e->getMessage());
->>>>>>> a95dfc1e4c21298f74f2f7fcedd7c49c1dcfa128
         }
     } else {
         error_log('[PDF BUILDER] Autoloader file not found: ' . $autoloader_file);
@@ -231,28 +219,6 @@ function pdf_builder_activate()
         wp_die('PDF Builder Pro nécessite WordPress 5.0 ou supérieur. Version actuelle: ' . get_bloginfo('version'));
     }
 
-<<<<<<< HEAD
-    // ========== NOUVELLE TABLE DE PARAMÈTRES PERSONNALISÉE ==========
-    // Charger le Settings Table Manager
-    require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
-    
-    // Créer la table de paramètres personnalisée
-    \PDF_Builder\Database\Settings_Table_Manager::create_table();
-    
-    // Migrer les clés de licence vers des lignes séparées (si nécessaire)
-    $license_migrated = get_option('pdf_builder_license_keys_migrated', false);
-    if (!$license_migrated) {
-        $migrated_count = \PDF_Builder\Database\Settings_Table_Manager::migrate_license_keys_to_separate_rows();
-        if ($migrated_count > 0) {
-            update_option('pdf_builder_license_keys_migrated', true);
-            
-        }
-    }
-    // ================================================================
-
-    // Créer une table de logs si nécessaire
-=======
->>>>>>> a95dfc1e4c21298f74f2f7fcedd7c49c1dcfa128
     global $wpdb;
     $charset_collate = $wpdb->get_charset_collate();
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -2484,8 +2450,6 @@ function pdf_builder_view_logs_handler() {
     }
 }
 
-<<<<<<< HEAD
-=======
 // ====================================================================
 // HOOKS D'ACTIVATION / DÉACTIVATION
 // ====================================================================
@@ -2495,4 +2459,3 @@ register_activation_hook(__FILE__, 'pdf_builder_activate');
 
 // Enregistrer la fonction de désactivation du plugin
 register_deactivation_hook(__FILE__, 'pdf_builder_deactivate');
->>>>>>> a95dfc1e4c21298f74f2f7fcedd7c49c1dcfa128

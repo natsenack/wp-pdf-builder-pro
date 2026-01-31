@@ -11,8 +11,8 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
 ?>
 
 <div class="wrap">
-    <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
-    
+    <h1><?php echo esc_html(__('Paramètres PDF Builder Pro', 'pdf-builder-pro')); ?></h1>
+
     <nav class="nav-tab-wrapper">
         <a href="?page=pdf-builder-settings&tab=general" class="nav-tab <?php echo $active_tab === 'general' ? 'nav-tab-active' : ''; ?>">
             <?php _e('Général', 'pdf-builder-pro'); ?>
