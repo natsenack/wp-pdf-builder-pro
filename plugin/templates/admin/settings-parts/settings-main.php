@@ -311,8 +311,18 @@ jQuery(document).ready(function($) {
                     fieldCount++;
                 }
             });
-            console.log('PDF Builder Settings: Collected', fieldCount, 'fields');
+        console.log('PDF Builder Settings: Collected', fieldCount, 'fields');
         }
+
+        // Log détaillé des données AJAX avant envoi
+        console.log('PDF Builder Settings: AJAX data to send:', {
+            action: ajaxData.action,
+            tab: ajaxData.tab,
+            _wpnonce: ajaxData._wpnonce ? ajaxData._wpnonce.substring(0, 10) + '...' : 'NOT SET',
+            fieldCount: Object.keys(ajaxData).length - 3, // Soustraire action, tab, _wpnonce
+            windowPdfBuilderNonce: window.pdfBuilderNonce ? window.pdfBuilderNonce.substring(0, 10) + '...' : 'NOT SET',
+            nonceMatch: ajaxData._wpnonce === window.pdfBuilderNonce
+        });
 
         console.log('PDF Builder Settings: Sending AJAX request to:', ajaxurl);
 
@@ -323,17 +333,29 @@ jQuery(document).ready(function($) {
             data: ajaxData,
             timeout: 30000, // 30 secondes timeout
             success: function(response) {
-                console.log('PDF Builder Settings: AJAX success:', response);
+                console.log('PDF Builder Settings: AJAX success - Full response:', response);
+                console.log('PDF Builder Settings: Response success:', response.success);
+                console.log('PDF Builder Settings: Response data:', response.data);
                 if (response.success) {
                     showStatus('<?php _e("Paramètres sauvegardés", "pdf-builder-pro"); ?>', 'success');
                     $btn.removeClass('saving').addClass('saved');
                 } else {
-                    showStatus(response.data || '<?php _e("Erreur lors de la sauvegarde", "pdf-builder-pro"); ?>', 'error');
+                    console.log('PDF Builder Settings: Error details:', {
+                        message: response.data.message || 'Unknown error',
+                        debug: response.data.debug || 'No debug info'
+                    });
+                    showStatus(response.data.message || '<?php _e("Erreur lors de la sauvegarde", "pdf-builder-pro"); ?>', 'error');
                     $btn.removeClass('saving').addClass('error');
                 }
             },
             error: function(xhr, status, error) {
-                console.log('PDF Builder Settings: AJAX error:', xhr, status, error);
+                console.log('PDF Builder Settings: AJAX error - Full details:', {
+                    xhr: xhr,
+                    status: status,
+                    error: error,
+                    responseText: xhr.responseText,
+                    statusCode: xhr.status
+                });
                 var errorMsg = '<?php _e("Erreur de connexion", "pdf-builder-pro"); ?>';
                 if (status === 'timeout') {
                     errorMsg = '<?php _e("Timeout - Réessayez", "pdf-builder-pro"); ?>';
