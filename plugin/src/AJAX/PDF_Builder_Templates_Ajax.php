@@ -304,15 +304,9 @@ class PdfBuilderTemplatesAjax
             }
 
             // Debug logs
-            }
-
-            // Construire les arrays des options disponibles dynamiquement
-            $available_formats = $settings['pdf_builder_available_formats'] ?? ['A3', 'A4', 'A5', 'Letter', 'Legal'];
-            $available_orientations = $settings['pdf_builder_available_orientations'] ?? ['portrait', 'landscape'];
-            $available_dpi = $settings['pdf_builder_available_dpi'] ?? [72, 96, 150, 300, 600];
-
-            // Debug logs
-            }
+            error_log('PDF Builder: Available formats: ' . print_r($available_formats, true));
+            error_log('PDF Builder: Available orientations: ' . print_r($available_orientations, true));
+            error_log('PDF Builder: Available DPI: ' . print_r($available_dpi, true));
 
             $settings = array(
                 'id' => $template['id'],
