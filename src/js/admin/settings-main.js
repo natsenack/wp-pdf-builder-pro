@@ -49,9 +49,10 @@
 
     // Debug floating save button
     $(document).on('click', '#pdf-builder-save-floating-btn', function(e) {
-        // Ne pas preventDefault - laisser le bouton submit fonctionner normalement
-        // Le bouton a type="submit" et name="submit", donc il soumettra le formulaire automatiquement
-        addPersistentLog('[JS] Floating save button clicked - form will be submitted normally');
+        e.preventDefault(); // Empêcher le comportement par défaut
+        addPersistentLog('[JS] Floating save button clicked - submitting form manually');
+        // Soumettre le formulaire manuellement
+        $('#pdf-builder-settings-form').submit();
     });
 
     // Debug form submission
