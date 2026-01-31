@@ -760,13 +760,10 @@
                 </div>
             </section>
 
-            <!-- Bouton de sauvegarde spécifique à l'onglet développeur -->
+            <!-- Note: Les paramètres sont maintenant sauvegardés via le bouton flottant AJAX -->
             <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
-                <h3 style="margin-top: 0; color: #495057;">💾 Sauvegarde des Paramètres Développeur</h3>
-                <p style="margin-bottom: 15px; color: #666;">Sauvegardez uniquement les paramètres de cette section développeur.</p>
-                <button type="submit" class="button button-primary" style="background: #007cba; border-color: #007cba; color: white; padding: 10px 20px; font-size: 14px; font-weight: 600; border-radius: 6px; cursor: pointer;">
-                    💾 Sauvegarder les Paramètres Développeur
-                </button>
+                <h3 style="margin-top: 0; color: #495057;">💾 Sauvegarde Automatique</h3>
+                <p style="margin-bottom: 15px; color: #666;">Tous les paramètres sont automatiquement sauvegardés via le bouton flottant en bas à droite.</p>
             </div>
 
 
