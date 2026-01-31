@@ -69,8 +69,8 @@ function pdf_builder_inject_nonce() {
     }
 
     $page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
-    if ($page !== 'pdf-builder-react-editor') {
-        return; // Pas sur la page de l'éditeur
+    if ($page !== 'pdf-builder-react-editor' && $page !== 'pdf-builder-settings') {
+        return; // Pas sur la page de l'éditeur ou des paramètres
     }
 
     // Vérifier que l'utilisateur est correctement initialisé

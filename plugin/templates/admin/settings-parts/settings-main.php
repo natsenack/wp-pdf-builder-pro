@@ -284,10 +284,9 @@ jQuery(document).ready(function($) {
 
         // Collecter les données du formulaire actif
         var formData = new FormData();
-        formData.append('action', 'pdf_builder_ajax_handler');
-        formData.append('action_type', 'save_settings_page');
+        formData.append('action', 'pdf_builder_save_settings');
         formData.append('tab', currentTab);
-        formData.append('nonce', window.pdfBuilderNonce);
+        formData.append('_wpnonce', window.pdfBuilderNonce);
 
         // Collecter les champs du formulaire actif
         var $activeForm = $('#pdf-builder-settings-form');
