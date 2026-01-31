@@ -69,8 +69,8 @@ class AjaxHandler
         \add_action('wp_ajax_pdf_builder_get_canvas_orientations', [$this, 'ajaxGetCanvasOrientations']);
         \add_action('wp_ajax_pdf_builder_save_canvas_modal_settings', [$this, 'ajaxSaveCanvasModalSettings']);
 
-        // Hook AJAX pour la sauvegarde des paramètres
-        \add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajaxSaveSettings']);
+        // Hook AJAX pour la sauvegarde des paramètres - REMOVED: handled by Unified Ajax Handler
+        // \add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajaxSaveSettings']);
     }
 
     /**

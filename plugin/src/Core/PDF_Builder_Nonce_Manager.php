@@ -101,8 +101,12 @@ class PDF_Builder_Nonce_Manager {
 
         // Vérifier le nonce (chercher d'abord _wpnonce, puis nonce pour compatibilité)
         $nonce = isset($_POST['_wpnonce']) ? $_POST['_wpnonce'] : (isset($_POST['nonce']) ? $_POST['nonce'] : '');
+        if (empty($nonce)) {
+            wp_send_json_error(['message' => 'Nonce manquant', 'debug' => ['_wpnonce' => $_POST['_wpnonce'] ?? 'not set', 'nonce' => $_POST['nonce'] ?? 'not set']]);
+            return false;
+        }
         if (!$this->validate_nonce($nonce, $context)) {
-            wp_send_json_error(['message' => 'Nonce invalide']);
+            wp_send_json_error(['message' => 'Nonce invalide', 'debug' => ['provided_nonce' => $nonce, 'context' => $context]]);
             return false;
         }
 
