@@ -1,5 +1,5 @@
 import { useState, FC } from 'react';
-import './SaveTooltip.css';
+import '../../../../css/SaveTooltip.css';
 
 export interface SaveTooltipProps {
   state: 'idle' | 'saving' | 'saved' | 'error';

@@ -27,6 +27,48 @@ function pdf_builder_load_settings_assets($hook) {
     // Charger la médiathèque WordPress si nécessaire
     wp_enqueue_media();
 
+    // Enqueue WordPress core scripts needed for the settings page
+    wp_enqueue_script('wp-date'); // Provides moment.js
+    wp_enqueue_script('wp-element'); // Provides React
+    wp_enqueue_script('wp-components'); // Provides React components
+    wp_enqueue_script('wp-api'); // Provides WordPress API
+    wp_enqueue_script('wp-data'); // Provides Redux store
+    wp_enqueue_script('wp-hooks'); // Provides hooks
+    wp_enqueue_script('wp-i18n'); // Provides internationalization
+    wp_enqueue_script('wp-url'); // Provides URL utilities
+    wp_enqueue_script('wp-keycodes'); // Provides keycodes
+    wp_enqueue_script('wp-compose'); // Provides compose utilities
+    wp_enqueue_script('wp-html-entities'); // Provides HTML entities
+    wp_enqueue_script('wp-primitives'); // Provides primitives
+    wp_enqueue_script('wp-warning'); // Provides warning system
+    wp_enqueue_script('wp-token-list'); // Provides token list
+    wp_enqueue_script('wp-core-data'); // Provides core data
+    wp_enqueue_script('wp-core-commands'); // Provides core commands
+    wp_enqueue_script('wp-block-editor'); // Provides block editor
+    wp_enqueue_script('wp-rich-text'); // Provides rich text
+    wp_enqueue_script('wp-commands'); // Provides commands
+    wp_enqueue_script('wp-blob'); // Provides blob utilities
+    wp_enqueue_script('wp-shortcode'); // Provides shortcode
+    wp_enqueue_script('wp-media-utils'); // Provides media utilities
+    wp_enqueue_script('wp-notices'); // Provides notices
+    wp_enqueue_script('wp-preferences'); // Provides preferences
+    wp_enqueue_script('wp-preferences-persistence'); // Provides preferences persistence
+    wp_enqueue_script('wp-editor'); // Provides editor
+    wp_enqueue_script('wp-plugins'); // Provides plugins
+    wp_enqueue_script('wp-edit-post'); // Provides edit post
+    wp_enqueue_script('wp-viewport'); // Provides viewport
+    wp_enqueue_script('wp-interface'); // Provides interface
+    wp_enqueue_script('wp-redux-routine'); // Provides redux routine
+    wp_enqueue_script('wp-priority-queue'); // Provides priority queue
+    wp_enqueue_script('wp-server-side-render'); // Provides server side render
+    wp_enqueue_script('wp-autop'); // Provides autop
+    wp_enqueue_script('wp-wordcount'); // Provides wordcount
+    wp_enqueue_script('wp-annotations'); // Provides annotations
+    wp_enqueue_script('wp-dom'); // Provides DOM utilities
+    wp_enqueue_script('wp-a11y'); // Provides accessibility
+    wp_enqueue_script('wp-dom-ready'); // Provides DOM ready
+    wp_enqueue_script('wp-polyfill'); // Provides polyfills
+
     // S'assurer que l'objet wp global est disponible pour tous les scripts admin
     add_action('admin_enqueue_scripts', function() {
         ?>
@@ -65,7 +107,7 @@ function pdf_builder_load_settings_assets($hook) {
         wp_enqueue_script(
             'pdf-builder-settings-tabs',
             PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.min.js',
-            array('jquery'), // Removed wp-util and wp-api to avoid async loading
+            array('jquery', 'wp-element', 'wp-components', 'wp-data', 'wp-hooks'), // Updated dependencies
             PDF_BUILDER_VERSION . '-' . time() . '-' . rand(1000, 9999), // Cache busting très agressif
             false // Chargé dans le header pour une exécution précoce
         );
@@ -100,7 +142,7 @@ function pdf_builder_load_settings_assets($hook) {
         wp_enqueue_script(
             'pdf-builder-settings-main',
             PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-main.min.js',
-            array('jquery'),
+            array('jquery', 'wp-element', 'wp-components', 'wp-data', 'wp-hooks'),
             PDF_BUILDER_VERSION . '-' . time(),
             false // Chargé dans le header pour disponibilité immédiate
         );
@@ -111,7 +153,7 @@ function pdf_builder_load_settings_assets($hook) {
             wp_enqueue_script(
                 'pdf-builder-canvas-settings',
                 PDF_BUILDER_PLUGIN_URL . 'assets/js/canvas-settings.min.js',
-                array('jquery', 'pdf-builder-settings-main'),
+                array('jquery', 'pdf-builder-settings-main', 'wp-element', 'wp-components'),
                 PDF_BUILDER_VERSION . '-' . time(),
                 true // Chargé dans le footer
             );
@@ -136,7 +178,7 @@ function pdf_builder_load_settings_assets($hook) {
         wp_enqueue_script(
             'pdf-builder-floating-save',
             PDF_BUILDER_PLUGIN_URL . 'assets/js/floating-save-button.js',
-            array('jquery', 'pdf-builder-settings-main'),
+            array('jquery', 'pdf-builder-settings-main', 'wp-element', 'wp-components'),
             PDF_BUILDER_VERSION . '-' . time(),
             true // Chargé dans le footer
         );

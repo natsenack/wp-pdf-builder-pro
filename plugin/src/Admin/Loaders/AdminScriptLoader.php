@@ -75,13 +75,55 @@ class AdminScriptLoader
         if (strpos($current_url, 'pdf-builder') !== false) {
             error_log('[WP AdminScriptLoader] Loading settings scripts - URL contains pdf-builder: ' . $current_url);
 
+            // Enqueue WordPress core scripts needed for the plugin
+            wp_enqueue_script('wp-date'); // Provides moment.js
+            wp_enqueue_script('wp-element'); // Provides React
+            wp_enqueue_script('wp-components'); // Provides React components
+            wp_enqueue_script('wp-api'); // Provides WordPress API
+            wp_enqueue_script('wp-data'); // Provides Redux store
+            wp_enqueue_script('wp-hooks'); // Provides hooks
+            wp_enqueue_script('wp-i18n'); // Provides internationalization
+            wp_enqueue_script('wp-url'); // Provides URL utilities
+            wp_enqueue_script('wp-keycodes'); // Provides keycodes
+            wp_enqueue_script('wp-compose'); // Provides compose utilities
+            wp_enqueue_script('wp-html-entities'); // Provides HTML entities
+            wp_enqueue_script('wp-primitives'); // Provides primitives
+            wp_enqueue_script('wp-warning'); // Provides warning system
+            wp_enqueue_script('wp-token-list'); // Provides token list
+            wp_enqueue_script('wp-core-data'); // Provides core data
+            wp_enqueue_script('wp-core-commands'); // Provides core commands
+            wp_enqueue_script('wp-block-editor'); // Provides block editor
+            wp_enqueue_script('wp-rich-text'); // Provides rich text
+            wp_enqueue_script('wp-commands'); // Provides commands
+            wp_enqueue_script('wp-blob'); // Provides blob utilities
+            wp_enqueue_script('wp-shortcode'); // Provides shortcode
+            wp_enqueue_script('wp-media-utils'); // Provides media utilities
+            wp_enqueue_script('wp-notices'); // Provides notices
+            wp_enqueue_script('wp-preferences'); // Provides preferences
+            wp_enqueue_script('wp-preferences-persistence'); // Provides preferences persistence
+            wp_enqueue_script('wp-editor'); // Provides editor
+            wp_enqueue_script('wp-plugins'); // Provides plugins
+            wp_enqueue_script('wp-edit-post'); // Provides edit post
+            wp_enqueue_script('wp-viewport'); // Provides viewport
+            wp_enqueue_script('wp-interface'); // Provides interface
+            wp_enqueue_script('wp-redux-routine'); // Provides redux routine
+            wp_enqueue_script('wp-priority-queue'); // Provides priority queue
+            wp_enqueue_script('wp-server-side-render'); // Provides server side render
+            wp_enqueue_script('wp-autop'); // Provides autop
+            wp_enqueue_script('wp-wordcount'); // Provides wordcount
+            wp_enqueue_script('wp-annotations'); // Provides annotations
+            wp_enqueue_script('wp-dom'); // Provides DOM utilities
+            wp_enqueue_script('wp-a11y'); // Provides accessibility
+            wp_enqueue_script('wp-dom-ready'); // Provides DOM ready
+            wp_enqueue_script('wp-polyfill'); // Provides polyfills
+
             // Charger les utilitaires PDF Builder en premier (PerformanceMetrics, LocalCache, etc.) - seulement si le fichier existe
             $utils_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-utils.js';
             if (file_exists($utils_js)) {
                 \wp_enqueue_script(
                     'pdf-builder-utils',
                     PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-utils.js',
-                    [],
+                    ['wp-element', 'wp-components', 'wp-data', 'wp-hooks'],
                     PDF_BUILDER_PRO_VERSION,
                     true
                 );
@@ -99,7 +141,7 @@ class AdminScriptLoader
                 \wp_enqueue_script(
                     'pdf-builder-settings-tabs',
                     PDF_BUILDER_PRO_ASSETS_URL . 'js/settings-tabs.min.js',
-                    ['jquery'],
+                    ['jquery', 'wp-element', 'wp-components', 'wp-data', 'wp-hooks'],
                     PDF_BUILDER_PRO_VERSION,
                     true
                 );
@@ -114,7 +156,7 @@ class AdminScriptLoader
                 \wp_enqueue_script(
                     'pdf-builder-settings-main',
                     PDF_BUILDER_PRO_ASSETS_URL . 'js/settings-main.min.js',
-                    ['jquery'],
+                    ['jquery', 'wp-element', 'wp-components', 'wp-data', 'wp-hooks'],
                     PDF_BUILDER_PRO_VERSION,
                     true
                 );
@@ -127,7 +169,7 @@ class AdminScriptLoader
                 \wp_enqueue_script(
                     'pdf-builder-notifications',
                     PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.min.js',
-                    ['jquery'],
+                    ['jquery', 'wp-element', 'wp-components', 'wp-notices'],
                     PDF_BUILDER_PRO_VERSION,
                     true
                 );
@@ -151,7 +193,7 @@ class AdminScriptLoader
                     \wp_enqueue_script(
                         'pdf-builder-floating-save',
                         PDF_BUILDER_PRO_ASSETS_URL . 'js/floating-save.min.js',
-                        ['jquery'],
+                        ['jquery', 'wp-element', 'wp-components'],
                         PDF_BUILDER_PRO_VERSION,
                         true
                     );
@@ -257,7 +299,7 @@ class AdminScriptLoader
             ];
         \wp_add_inline_script('jquery', 'window.pdfBuilderData = ' . wp_json_encode($preview_data) . '; window.pdfBuilderNonce = "' . \wp_create_nonce('pdf_builder_save_settings_nonce') . '";', 'after');
             
-            \wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-api-client.min.js', ['jquery'], $version_param, true);
+            \wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-api-client.min.js', ['jquery', 'wp-element', 'wp-api'], $version_param, true);
             
             // Debug: Add script to check if variables are defined after the main script
             wp_add_inline_script('pdf-preview-api-client', '
@@ -276,7 +318,7 @@ class AdminScriptLoader
             
             $preview_integration_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-preview-integration.min.js';
             if (file_exists($preview_integration_js)) {
-                \wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-integration.min.js', ['pdf-preview-api-client'], $version_param, true);
+                \wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-integration.min.js', ['pdf-preview-api-client', 'wp-element', 'wp-api'], $version_param, true);
 
                 // Localize ajaxurl for integration script
                 \wp_localize_script('pdf-preview-integration', 'pdfBuilderAjax', [
@@ -289,7 +331,7 @@ class AdminScriptLoader
         // Outils développeur asynchrones - seulement si le fichier existe
         $developer_tools_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/developer-tools.js';
         if (file_exists($developer_tools_js)) {
-            \wp_enqueue_script('pdf-builder-developer-tools', PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js', ['jquery', 'pdf-preview-api-client'], $version_param, true);
+            \wp_enqueue_script('pdf-builder-developer-tools', PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js', ['jquery', 'pdf-preview-api-client', 'wp-element', 'wp-api'], $version_param, true);
         }
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-developer-tools: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js');
         // error_log('[WP AdminScriptLoader] Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set'));
@@ -383,7 +425,7 @@ class AdminScriptLoader
 
         // Notifications system
         $notifications_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.min.js';
-        \wp_enqueue_script('pdf-builder-notifications', $notifications_url, ['jquery'], $cache_bust, true);
+        \wp_enqueue_script('pdf-builder-notifications', $notifications_url, ['jquery', 'wp-element', 'wp-components', 'wp-notices'], $cache_bust, true);
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications: ' . $notifications_url . ' with cache_bust: ' . $cache_bust);
 
         // Notifications CSS
@@ -424,38 +466,56 @@ class AdminScriptLoader
 
         // Wrapper script
         $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.min.js';
-        \wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle', 'pdf-builder-notifications'], $cache_bust, true);
+        \wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle', 'pdf-builder-notifications', 'wp-element', 'wp-components'], $cache_bust, true);
         // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
 
-        // FORCE COMPLETE RELOAD - Use ULTRA NUCLEAR aggressive version parameters to bypass ALL caching
-        $nuclear_suffix = '-ULTRA-NUCLEAR-' . microtime(true) . '-' . time() . '-' . uniqid('ULTRA-NUKE', true) . '-FORCE-RELOAD-' . rand(10000000, 99999999);
-        $version_param = PDF_BUILDER_PRO_VERSION . '-' . microtime(true) . '-' . rand(100000, 999999) . '-ULTRA-NUKE-' . uniqid();
+        // Enqueue WordPress core scripts for React editor
+        wp_enqueue_script('wp-date'); // Provides moment.js
+        wp_enqueue_script('wp-element'); // Provides React
+        wp_enqueue_script('wp-components'); // Provides React components
+        wp_enqueue_script('wp-api'); // Provides WordPress API
+        wp_enqueue_script('wp-data'); // Provides Redux store
+        wp_enqueue_script('wp-hooks'); // Provides hooks
+        wp_enqueue_script('wp-i18n'); // Provides internationalization
+        wp_enqueue_script('wp-url'); // Provides URL utilities
+        wp_enqueue_script('wp-keycodes'); // Provides keycodes
+        wp_enqueue_script('wp-compose'); // Provides compose utilities
+        wp_enqueue_script('wp-html-entities'); // Provides HTML entities
+        wp_enqueue_script('wp-primitives'); // Provides primitives
+        wp_enqueue_script('wp-warning'); // Provides warning system
+        wp_enqueue_script('wp-token-list'); // Provides token list
+        wp_enqueue_script('wp-core-data'); // Provides core data
+        wp_enqueue_script('wp-core-commands'); // Provides core commands
+        wp_enqueue_script('wp-block-editor'); // Provides block editor
+        wp_enqueue_script('wp-rich-text'); // Provides rich text
+        wp_enqueue_script('wp-commands'); // Provides commands
+        wp_enqueue_script('wp-blob'); // Provides blob utilities
+        wp_enqueue_script('wp-shortcode'); // Provides shortcode
+        wp_enqueue_script('wp-media-utils'); // Provides media utilities
+        wp_enqueue_script('wp-notices'); // Provides notices
+        wp_enqueue_script('wp-preferences'); // Provides preferences
+        wp_enqueue_script('wp-preferences-persistence'); // Provides preferences persistence
+        wp_enqueue_script('wp-editor'); // Provides editor
+        wp_enqueue_script('wp-plugins'); // Provides plugins
+        wp_enqueue_script('wp-edit-post'); // Provides edit post
+        wp_enqueue_script('wp-viewport'); // Provides viewport
+        wp_enqueue_script('wp-interface'); // Provides interface
+        wp_enqueue_script('wp-redux-routine'); // Provides redux routine
+        wp_enqueue_script('wp-priority-queue'); // Provides priority queue
+        wp_enqueue_script('wp-server-side-render'); // Provides server side render
+        wp_enqueue_script('wp-autop'); // Provides autop
+        wp_enqueue_script('wp-wordcount'); // Provides wordcount
+        wp_enqueue_script('wp-annotations'); // Provides annotations
+        wp_enqueue_script('wp-dom'); // Provides DOM utilities
+        wp_enqueue_script('wp-a11y'); // Provides accessibility
+        wp_enqueue_script('wp-dom-ready'); // Provides DOM ready
+        wp_enqueue_script('wp-polyfill'); // Provides polyfills
 
-        // DISABLED: Random query parameters cause 404 errors - WordPress handles versioning properly
-        // $random_param = '?t=' . microtime(true) . '&r=' . rand(1000000, 9999999) . '&nuke=' . uniqid('NUKE', true) . '&ultra=' . time();
-        $random_param = ''; // Disabled to prevent 404 errors
-
-        // Load React vendors bundle (React, ReactDOM, dependencies)
-        $react_vendors_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/react-vendor.min.js' . $random_param;
-        \wp_enqueue_script('pdf-builder-react-vendors', $react_vendors_url, ['pdf-builder-wrap'], $version_param . $nuclear_suffix, true);
-        wp_script_add_data('pdf-builder-react-vendors', 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-vendors');
-
-        // Runtime script
-        $runtime_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/runtime.min.js' . $random_param;
-        \wp_enqueue_script('pdf-builder-runtime', $runtime_url, ['pdf-builder-react-vendors'], $version_param . $nuclear_suffix, true);
-        wp_script_add_data('pdf-builder-runtime', 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-runtime');
-
-        // CSS pour l'éditeur React
-        $react_css_url = PDF_BUILDER_PLUGIN_URL . 'assets/css/pdf-builder-react.min.css';
-        \wp_enqueue_style('pdf-builder-react', $react_css_url, [], $version_param . $nuclear_suffix);
-
-        // Main React app bundle (dépend du runtime, vendors et de la médiathèque WordPress)
-        $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js' . $random_param;
-        \wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-runtime', 'media-views'], $version_param . $nuclear_suffix, true);
+        // Main React app bundle (use WordPress React instead of external bundles)
+        $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js';
+        \wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['wp-element', 'wp-components', 'wp-data', 'wp-hooks', 'wp-api', 'media-views'], $version_param, true);
         wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-main with media-views dependency');
+        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-main with WordPress React dependencies');
         
         // Localize script data BEFORE enqueuing
         $localize_data = [
