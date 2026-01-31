@@ -43,24 +43,7 @@
 
     // Debug floating save button
     $(document).on('click', '#pdf-builder-save-floating-btn', function(e) {
-        console.log('[JS] Floating save button clicked - logging and adding hidden field');
-
-        // Logger le clic côté serveur
-        $.ajax({
-            url: ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'pdf_builder_log_floating_save_click',
-                nonce: (window.pdf_builder_ajax && window.pdf_builder_ajax.nonce) ? window.pdf_builder_ajax.nonce : '',
-                page: 'settings'
-            },
-            success: function(response) {
-                console.log('[JS] Floating save click logged successfully');
-            },
-            error: function(xhr, status, error) {
-                console.log('[JS] Error logging floating save click: ' + error);
-            }
-        });
+        console.log('[JS] Floating save button clicked - adding hidden field');
 
         // Vérifier que le formulaire existe
         if ($('#pdf-builder-settings-form').length === 0) {
