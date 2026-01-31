@@ -565,6 +565,11 @@ function pdf_builder_load_core()
         }
     }
 
+    // Initialiser les gestionnaires Core
+    if (class_exists('PDF_Builder_Unified_Ajax_Handler')) {
+        PDF_Builder_Unified_Ajax_Handler::get_instance();
+    }
+
     // Charger TemplateDefaults depuis core/
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/TemplateDefaults.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/TemplateDefaults.php';
