@@ -287,7 +287,7 @@ jQuery(document).ready(function($) {
         formData.append('action', 'pdf_builder_ajax_handler');
         formData.append('action_type', 'save_settings_page');
         formData.append('tab', currentTab);
-        formData.append('nonce', '<?php echo wp_create_nonce("pdf_builder_settings"); ?>');
+        formData.append('nonce', '<?php echo wp_create_nonce("pdf_builder_save_settings_nonce"); ?>');
 
         // Collecter les champs du formulaire actif
         var $activeForm = $('#pdf-builder-settings-form');
