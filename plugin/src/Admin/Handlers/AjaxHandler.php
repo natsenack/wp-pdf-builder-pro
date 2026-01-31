@@ -545,42 +545,6 @@ class AjaxHandler
     }
 
     /**
-     * Sauvegarder les paramètres
-     */
-    public function ajaxSaveSettings()
-    {
-        try {
-            // Valider les permissions et nonce de manière unifiée
-            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
-            if (!$validation['success']) {
-                if ($validation['code'] === 'nonce_invalid') {
-                    NonceManager::sendNonceErrorResponse();
-                } else {
-                    NonceManager::sendPermissionErrorResponse();
-                }
-                return;
-            }
-
-            // Sauvegarder les paramètres généraux
-            $settings = [
-                'pdf_builder_enable_debug' => isset($_POST['enable_debug']) ? '1' : '0',
-                'pdf_builder_max_file_size' => \intval($_POST['max_file_size'] ?? 10),
-            ];
-
-            foreach ($settings as $key => $value) {
-                \update_option($key, $value);
-            }
-
-            \wp_send_json_success([
-                'message' => 'Paramètres sauvegardés avec succès'
-            ]);
-
-        } catch (Exception $e) {
-            \wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
-        }
-    }
-
-    /**
      * Handler AJAX unifié - point d'entrée unique pour toutes les actions
      */
     public function ajaxUnifiedHandler()
