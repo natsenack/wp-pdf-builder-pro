@@ -5836,42 +5836,7 @@ body.modal-open {
     font-size: 12px;
 }
 
-/* === BOUTON FLOTTANT === */
-/* === BOUTON FLOTTANT DE SAUVEGARDE SIMPLE === */
-.pdf-builder-save-floating-container {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    z-index: 100000;
-    pointer-events: none;
-}
 
-.pdf-builder-floating-save {
-    position: relative;
-    background: #007cba;
-    color: white;
-    border: none;
-    border-radius: 50px;
-    padding: 16px 28px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 124, 186, 0.3);
-    pointer-events: auto;
-    min-width: 160px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.pdf-builder-floating-save:hover {
-    background: #005a87;
-    box-shadow: 0 6px 16px rgba(0, 124, 186, 0.4);
-}
-
-.pdf-builder-floating-save:active {
-    background: #003d5c;
-    box-shadow: 0 2px 8px rgba(0, 124, 186, 0.3);
-}
 
 /* Masquer le bouton original de WordPress */
 .form-table + p.submit {
