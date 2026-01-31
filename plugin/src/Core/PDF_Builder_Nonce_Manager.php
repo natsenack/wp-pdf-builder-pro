@@ -72,16 +72,16 @@ class PDF_Builder_Nonce_Manager {
         $action = isset($this->nonce_mappings[$context]) ? $this->nonce_mappings[$context] : $this->nonce_action;
 
         // Debug: Log the nonce validation attempt
-
+        error_log("[NONCE DEBUG] Validating nonce for context: '$context', action: '$action', nonce: '" . substr($nonce, 0, 10) . "...'");
 
         $is_valid = wp_verify_nonce($nonce, $action);
 
-
+        error_log("[NONCE DEBUG] Validation result: " . ($is_valid ? 'VALID' : 'INVALID'));
 
         if (!$is_valid) {
             $this->log_error('Nonce invalide', $context, [
                 'provided_nonce' => substr($nonce, 0, 10) . '...',
-                'expected_action' => $this->nonce_action
+                'expected_action' => $action
             ]);
         }
 
