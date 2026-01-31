@@ -49,24 +49,9 @@
 
     // Debug floating save button
     $(document).on('click', '#pdf-builder-save-floating-btn', function(e) {
-        e.preventDefault(); // Prevent default form submission
-        
-        // Add a hidden field to indicate floating save was used
-        var form = $(this).closest('form');
-        if (form.length) {
-            if (!form.find('input[name="pdf_builder_floating_save"]').length) {
-                form.append('<input type="hidden" name="pdf_builder_floating_save" value="1">');
-                addPersistentLog('[JS] Floating save button clicked - hidden field added');
-            } else {
-                addPersistentLog('[JS] Floating save button clicked - hidden field already exists');
-            }
-            
-            // Submit the form
-            addPersistentLog('[JS] Submitting form via floating save button');
-            form.submit();
-        } else {
-            addPersistentLog('[JS] Floating save button clicked - form not found');
-        }
+        // Ne pas preventDefault - laisser le bouton submit fonctionner normalement
+        // Le bouton a type="submit" et name="submit", donc il soumettra le formulaire automatiquement
+        addPersistentLog('[JS] Floating save button clicked - form will be submitted normally');
     });
 
     // Debug form submission
