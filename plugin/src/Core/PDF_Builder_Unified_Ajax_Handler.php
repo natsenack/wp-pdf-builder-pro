@@ -1099,7 +1099,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         foreach ($settings as $key => $value) {
             $option_name = 'pdf_builder_' . $key;
-            $result = update_option($option_name, $value);
+            $result = pdf_builder_update_option($option_name, $value);
             error_log("PDF Builder: Saved general setting - {$option_name} = '{$value}' (result: " . ($result ? 'SUCCESS' : 'FAILED') . ")");
         }
 
