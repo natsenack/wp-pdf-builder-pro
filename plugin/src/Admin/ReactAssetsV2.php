@@ -384,3 +384,4 @@ class ReactAssets {
 ReactAssets::register();
 
 
+

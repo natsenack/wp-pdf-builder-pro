@@ -719,8 +719,7 @@ class AjaxHandler
             // Sauvegarder les templates séparément si des données existent
             if (!empty($templates_data)) {
                 pdf_builder_update_option('pdf_builder_order_status_templates', $templates_data);
-                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('PHP: Templates data saved to pdf_builder_order_status_templates');
-            }
+                error_log('PHP: Templates data saved to pdf_builder_order_status_templates');
 
             if (empty($settings_to_save) && empty($templates_data)) {
                 \wp_send_json_error(['message' => 'Aucune donnée valide à sauvegarder']);
@@ -2129,6 +2128,7 @@ class AjaxHandler
         }
     }
 }
+
 
 
 

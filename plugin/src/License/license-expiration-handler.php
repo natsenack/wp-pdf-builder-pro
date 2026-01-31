@@ -35,24 +35,18 @@ class License_Expiration_Handler
     public static function checkLicenseExpiration()
     {
         // Log the start of the check
-        if (class_exists('\PDF_Builder_Logger')) {
-            \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] checkLicenseExpiration: Début de la vérification');
-        }
+        error_log('[PDF Builder] checkLicenseExpiration: Début de la vérification');
 
         // Check premium license expiration
         $license_expires = pdf_builder_get_option('pdf_builder_license_expires', '');
         $license_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
-        if (class_exists('\PDF_Builder_Logger')) {
-            \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] checkLicenseExpiration: License expires=' . $license_expires . ', status=' . $license_status);
-        }
+        error_log('[PDF Builder] checkLicenseExpiration: License expires=' . $license_expires . ', status=' . $license_status);
         if (!empty($license_expires) && $license_status !== 'free') {
             $expires_date = new \DateTime($license_expires);
             $now = new \DateTime();
         // If license has expired, update status
             if ($now > $expires_date) {
-                if (class_exists('\PDF_Builder_Logger')) {
-                    \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] checkLicenseExpiration: Licence premium expirée, suppression de la clé');
-                }
+                error_log('[PDF Builder] checkLicenseExpiration: Licence premium expirée, suppression de la clé');
                 pdf_builder_update_option('pdf_builder_license_status', 'expired');
                 pdf_builder_delete_option('pdf_builder_license_key');
 // Clear the key
@@ -72,18 +66,14 @@ class License_Expiration_Handler
         // Check test key expiration
         $test_key_expires = pdf_builder_get_option('pdf_builder_license_test_key_expires', '');
         $test_key = pdf_builder_get_option('pdf_builder_license_test_key', '');
-        if (class_exists('\PDF_Builder_Logger')) {
-            \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] checkLicenseExpiration: Test key expires=' . $test_key_expires . ', test key=' . substr($test_key, 0, 10) . '...');
-        }
+        error_log('[PDF Builder] checkLicenseExpiration: Test key expires=' . $test_key_expires . ', test key=' . substr($test_key, 0, 10) . '...');
         if (!empty($test_key_expires) && !empty($test_key)) {
             // Convertir les dates au format Y-m-d pour comparaison
             $expires_date = new \DateTime($test_key_expires . ' 23:59:59'); // Fin de journée
             $now = new \DateTime();
         // If test key has expired, remove it
             if ($now > $expires_date) {
-                if (class_exists('\PDF_Builder_Logger')) {
-                    \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] checkLicenseExpiration: Clé de test expirée, suppression');
-                }
+                error_log('[PDF Builder] checkLicenseExpiration: Clé de test expirée, suppression');
                 pdf_builder_delete_option('pdf_builder_license_test_key');
                 pdf_builder_delete_option('pdf_builder_license_test_key_expires');
                 pdf_builder_delete_option('pdf_builder_license_test_mode_enabled');
@@ -93,9 +83,7 @@ class License_Expiration_Handler
             }
         }
 
-        if (class_exists('\PDF_Builder_Logger')) {
-            \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] checkLicenseExpiration: Fin de la vérification');
-        }
+        error_log('[PDF Builder] checkLicenseExpiration: Fin de la vérification');
     }
 
     /**
@@ -106,9 +94,7 @@ class License_Expiration_Handler
         // Legacy notification emails are disabled: record the event in logs/DB for audit purposes
         $site_name = \get_option('blogname');
         $site_url = \get_option('siteurl');
-        if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->info('License nearing expiration: ' . $site_name . ' (remaining ' . $days_remaining . ' days)', ['license_expires' => $expiration_date]);
-        }
+        error_log('License nearing expiration: ' . $site_name . ' (remaining ' . $days_remaining . ' days) - expires: ' . $expiration_date);
 
         // Check if we already recorded an event for this date today
         $last_notification = pdf_builder_get_option('pdf_builder_license_last_notification_' . date('Y-m-d'), '');
@@ -139,6 +125,7 @@ class License_Expiration_Handler
         self::clearScheduledExpirationCheck();
     }
 }
+
 
 
 

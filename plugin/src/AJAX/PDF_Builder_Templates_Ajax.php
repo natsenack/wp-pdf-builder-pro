@@ -301,9 +301,7 @@ class PdfBuilderTemplatesAjax
                 );
                 pdf_builder_update_option('pdf_builder_settings', $default_settings);
                 $settings = $default_settings;
-                if (class_exists('PDF_Builder_Logger')) {
-                    PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Initialized default settings for available options');
-                }
+                error_log('PDF Builder: Initialized default settings for available options');
             }
 
             // Debug logs
@@ -704,6 +702,7 @@ class PdfBuilderTemplatesAjax
 
 // Initialiser le handler AJAX
 new PdfBuilderTemplatesAjax();
+
 
 
 

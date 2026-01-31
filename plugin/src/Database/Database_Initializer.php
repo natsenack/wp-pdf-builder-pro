@@ -94,3 +94,4 @@ class Database_Initializer {
         dbDelta($sql);
     }
 }
+

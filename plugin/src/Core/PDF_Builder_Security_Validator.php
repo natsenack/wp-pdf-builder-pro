@@ -124,3 +124,4 @@ function pdf_builder_sanitize_settings($settings) {
     return $validator->sanitize_settings($settings);
 }
 
+

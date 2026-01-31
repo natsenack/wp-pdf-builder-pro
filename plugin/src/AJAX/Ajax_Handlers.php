@@ -1003,3 +1003,4 @@ add_action('wp_ajax_verify_canvas_settings_consistency', 'pdf_builder_verify_can
 
 
 
+

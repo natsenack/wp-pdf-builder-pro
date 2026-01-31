@@ -71,9 +71,8 @@ class PDF_Builder_Settings_Manager
      */
     private function saveSettings()
     {
-        
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === SAVE SETTINGS CALLED ===');
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] POST data: ' . json_encode($_POST));
+        error_log('[PDF Builder] === SAVE SETTINGS CALLED ===');
+        error_log('[PDF Builder] POST data: ' . json_encode($_POST));
         // Rôles autorisés
         $allowed_roles = isset($_POST['allowed_roles']) ? $_POST['allowed_roles'] : ['administrator'];
         pdf_builder_update_option('pdf_builder_allowed_roles', $allowed_roles);
@@ -142,20 +141,19 @@ class PDF_Builder_Settings_Manager
      */
     public function logSettingsUpdate($old_value, $new_value, $option)
     {
-        if (class_exists('\PDF_Builder_Logger')) {
-            \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Option updated: ' . $option);
-            
-            if (isset($_POST['pdf_builder_floating_save']) && $_POST['pdf_builder_floating_save'] == '1') {
-                \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Paramètre mis à jour via bouton flottant: ' . $option);
-                \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Ancienne valeur: ' . json_encode($old_value));
-                \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Nouvelle valeur: ' . json_encode($new_value));
-            } else {
-                \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Paramètre mis à jour normalement (pas via bouton flottant): ' . $option);
-            }
+        error_log('[PDF Builder] Option updated: ' . $option);
+
+        if (isset($_POST['pdf_builder_floating_save']) && $_POST['pdf_builder_floating_save'] == '1') {
+            error_log('[PDF Builder] Paramètre mis à jour via bouton flottant: ' . $option);
+            error_log('[PDF Builder] Ancienne valeur: ' . json_encode($old_value));
+            error_log('[PDF Builder] Nouvelle valeur: ' . json_encode($new_value));
+        } else {
+            error_log('[PDF Builder] Paramètre mis à jour normalement (pas via bouton flottant): ' . $option);
         }
     }
 
 }
+
 
 
 

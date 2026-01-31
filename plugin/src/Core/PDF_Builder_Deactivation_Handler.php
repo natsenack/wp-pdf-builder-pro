@@ -235,3 +235,4 @@ add_action('pdf_builder_deactivate', function() {
     
     delete_option('pdf_builder_delete_on_deactivate');
 });
+

@@ -16,7 +16,7 @@ if (!defined('PDF_BUILDER_ASSETS_DIR')) {
 }
 
 // Import the logger class
-use PDF_Builder_Logger;
+// use PDF_Builder_Logger; // Removed - using error_log instead
 
 /**
  * Classe responsable du chargement des scripts et styles admin
@@ -35,13 +35,7 @@ class AdminScriptLoader
     {
         $this->admin = $admin;
 
-        // Ensure logger is loaded
-        if (!class_exists('PDF_Builder_Logger')) {
-            $logger_file = \plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'src/Core/PDF_Builder_Core_Logger.php';
-            if (file_exists($logger_file)) {
-                require_once $logger_file;
-            }
-        }
+        // Logger initialization removed - using error_log instead
 
         // Enregistrer le hook pour charger les scripts admin
         \add_action('admin_enqueue_scripts', [$this, 'loadAdminScripts'], 20);
@@ -692,9 +686,7 @@ class AdminScriptLoader
                             $localize_data['isPredefinedTemplate'] = true;
                             $localize_data['predefinedTemplateName'] = $template_data['name'] ?? 'Template prédéfini';
 
-                            if (class_exists('PDF_Builder_Logger')) {
-                                PDF_Builder_Logger::get_instance()->debug_log('[WP AdminScriptLoader] Predefined template loaded successfully: ' . $predefined_slug);
-                            }
+                            error_log('[WP AdminScriptLoader] Predefined template loaded successfully: ' . $predefined_slug);
                         } else {
 
                         }
@@ -989,6 +981,7 @@ class AdminScriptLoader
         return $content;
     }
 }
+
 
 
 

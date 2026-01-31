@@ -352,3 +352,4 @@ class PDF_Builder_Resize_Manager
 
 
 
+
