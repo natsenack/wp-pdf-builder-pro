@@ -51,6 +51,19 @@
     $(document).on('click', '#pdf-builder-save-floating-btn', function(e) {
         e.preventDefault(); // Empêcher le comportement par défaut
         addPersistentLog('[JS] Floating save button clicked - submitting form manually');
+        
+        // Récupérer l'onglet actif
+        var activeTab = $('.pdf-builder-tab-content.active').data('tab');
+        addPersistentLog('[JS] Active tab: ' + activeTab);
+        
+        // Définir l'action du formulaire avec l'onglet actif
+        var currentUrl = window.location.href;
+        var url = new URL(currentUrl);
+        url.searchParams.set('tab', activeTab);
+        $('#pdf-builder-settings-form').attr('action', url.toString());
+        
+        addPersistentLog('[JS] Form action set to: ' + url.toString());
+        
         // Soumettre le formulaire manuellement
         $('#pdf-builder-settings-form').submit();
     });
