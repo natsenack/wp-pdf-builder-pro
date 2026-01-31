@@ -81,35 +81,35 @@
                     <div class="form-grid-compact">
                         <div class="pdf-form-field">
                             <label for="company_phone_manual">📞 Téléphone *</label>
-                            <input type="tel" id="company_phone_manual" name="pdf_builder_settings[pdf_builder_company_phone_manual]"
+                            <input type="tel" id="company_phone_manual" name="company_phone_manual"
                                    value="<?php echo esc_attr($company_phone_manual); ?>"
                                    placeholder="+33 1 23 45 67 89" pattern="[\+]?[0-9\s\-\(\)]+"/>
                         </div>
 
                         <div class="pdf-form-field">
                             <label for="company_siret">🆔 SIRET</label>
-                            <input type="text" id="company_siret" name="pdf_builder_settings[pdf_builder_company_siret]"
+                            <input type="text" id="company_siret" name="company_siret"
                                    value="<?php echo esc_attr($company_siret); ?>"
                                    placeholder="12345678900012" pattern="[0-9\s]{14,17}" maxlength="17"/>
                         </div>
 
                         <div class="pdf-form-field">
                             <label for="company_vat">💰 TVA</label>
-                            <input type="text" id="company_vat" name="pdf_builder_settings[pdf_builder_company_vat]"
+                            <input type="text" id="company_vat" name="company_vat"
                                    value="<?php echo esc_attr($company_vat); ?>"
                                    placeholder="FR12345678901" pattern="[A-Z]{2}[0-9A-Z]{8,12}"/>
                         </div>
 
                         <div class="pdf-form-field">
                             <label for="company_rcs">🏢 RCS</label>
-                            <input type="text" id="company_rcs" name="pdf_builder_settings[pdf_builder_company_rcs]"
+                            <input type="text" id="company_rcs" name="company_rcs"
                                    value="<?php echo esc_attr($company_rcs); ?>"
                                    placeholder="Lyon B 123456789"/>
                         </div>
 
                         <div class="pdf-form-field">
                             <label for="company_capital">📈 Capital</label>
-                            <input type="text" id="company_capital" name="pdf_builder_settings[pdf_builder_company_capital]"
+                            <input type="text" id="company_capital" name="company_capital"
                                    value="<?php echo esc_attr($company_capital); ?>"
                                    placeholder="10000 €" pattern="[0-9\s€,\.]+"/>
                         </div>
