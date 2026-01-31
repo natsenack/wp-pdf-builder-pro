@@ -4,13 +4,7 @@
 (function($) {
     'use strict';
 
-    // Fonction pour ajouter des logs persistants (simplifiée - utilise seulement console.log)
-    function addPersistentLog(message) {
-        console.log('[PERSISTENT LOG]', message);
-        // Plus d'AJAX - les logs sont maintenant gérés côté PHP uniquement
-    }
 
-    
 
     // Define global functions immediately for modal control
     window.closeDeactivateModal = function() {
@@ -49,36 +43,20 @@
 
     // Debug floating save button
     $(document).on('click', '#pdf-builder-save-floating-btn', function(e) {
-        e.preventDefault(); // Empêcher le comportement par défaut
-        addPersistentLog('[JS] Floating save button clicked - submitting form manually');
-        
-        // Récupérer l'onglet actif depuis l'URL ou l'onglet actif
-        var urlParams = new URLSearchParams(window.location.search);
-        var activeTab = urlParams.get('tab') || 'general';
-        addPersistentLog('[JS] Active tab: ' + activeTab);
-        
         // Ajouter un champ caché pour indiquer une sauvegarde flottante
-        $('#pdf-builder-settings-form-' + activeTab).append($('<input>', {
+        $('#pdf-builder-settings-form').append($('<input>', {
             'type': 'hidden',
             'name': 'pdf_builder_floating_save',
             'value': '1'
         }));
         
-        addPersistentLog('[JS] Submitting form: pdf-builder-settings-form-' + activeTab);
-        
-        // Soumettre le formulaire manuellement
-        $('#pdf-builder-settings-form-' + activeTab).submit();
+        // Laisser le bouton soumettre normalement le formulaire
+        // e.preventDefault(); // Ne pas empêcher le comportement par défaut
     });
 
     // Debug form submission
-    $(document).on('submit', 'form[id^="pdf-builder-settings-form-"]', function(e) {
-        addPersistentLog('Form submitted: ' + $(this).attr('id'));
+    $(document).on('submit', '#pdf-builder-settings-form', function(e) {
         var floatingField = $(this).find('input[name="pdf_builder_floating_save"]');
-        if (floatingField.length) {
-            addPersistentLog('Floating save field found with value: ' + floatingField.val());
-        } else {
-            addPersistentLog('No floating save field found');
-        }
     });
 
     // Only initialize modal functionality if we're on the license tab
@@ -114,12 +92,11 @@
 
     // Debug when DOM is ready
     $(document).ready(function() {
-        addPersistentLog('settings-main.js loaded and DOM ready');
         // Check if floating button exists
         if ($('#pdf-builder-save-floating-btn').length) {
-            addPersistentLog('Floating save button found in DOM');
+            // Floating save button found in DOM
         } else {
-            addPersistentLog('Floating save button NOT found in DOM');
+            // Floating save button NOT found in DOM
         }
     });
 

@@ -149,36 +149,12 @@ class PDF_Builder_Settings_Manager
                 \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Paramètre mis à jour via bouton flottant: ' . $option);
                 \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Ancienne valeur: ' . json_encode($old_value));
                 \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Nouvelle valeur: ' . json_encode($new_value));
-                
-                // Log persistant pour le bouton flottant
-                $this->addPersistentLog('[PHP] FLOATING SAVE - Option: ' . $option . ' | Old: ' . substr(json_encode($old_value), 0, 100) . ' | New: ' . substr(json_encode($new_value), 0, 100));
             } else {
                 \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Paramètre mis à jour normalement (pas via bouton flottant): ' . $option);
             }
         }
     }
 
-    /**
-     * Ajouter un log persistant
-     */
-    private function addPersistentLog($message)
-    {
-        // Utiliser un fichier temporaire au lieu des options WordPress pour éviter les boucles infinies
-        $log_file = sys_get_temp_dir() . '/pdf_builder_debug.log';
-        
-        $timestamp = date('Y-m-d H:i:s');
-        $log_entry = "[$timestamp] $message" . PHP_EOL;
-        
-        // Limiter la taille du fichier à 10KB maximum
-        if (file_exists($log_file) && filesize($log_file) > 10240) {
-            // Garder seulement les 20 dernières lignes
-            $lines = file($log_file);
-            $lines = array_slice($lines, -20);
-            file_put_contents($log_file, implode('', $lines));
-        }
-        
-        file_put_contents($log_file, $log_entry, FILE_APPEND | LOCK_EX);
-    }
 }
 
 
