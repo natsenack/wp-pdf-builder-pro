@@ -195,10 +195,7 @@ class PdfBuilderCore
      */
     public function init()
     {
-        // Enregistrer le menu admin au hook admin_menu (pas pendant plugins_loaded)
-        // Cela évite que les traductions soient appelées trop tôt
-        add_action('admin_menu', [$this, 'register_admin_menu']);
-
+        // Menu admin is registered in PDF_Builder_Admin.php
         // Initialiser les dossiers au hook WordPress 'init' (plus tardif)
         add_action('init', [$this, 'initialize_directories']);
 
