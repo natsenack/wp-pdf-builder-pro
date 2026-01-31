@@ -1766,7 +1766,10 @@ class AjaxHandler
                     if ($result) {
                         $removed_count++;
                     } else {
+                        // Option could not be deleted
+                    }
                 } else {
+                    // Option does not exist
                 }
             }
 
