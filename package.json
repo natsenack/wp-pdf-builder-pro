@@ -36,6 +36,7 @@
     "eslint-plugin-react": "^7.34.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "mini-css-extract-plugin": "^2.8.0",
+    "purgecss": "^8.0.0",
     "style-loader": "^3.3.0",
     "terser-webpack-plugin": "^5.3.10",
     "ts-loader": "^9.5.0",
