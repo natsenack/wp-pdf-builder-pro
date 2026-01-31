@@ -183,12 +183,24 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
 
 <script type="text/javascript">
 jQuery(document).ready(function($) {
+    console.log('PDF Builder Settings: JavaScript loaded');
+    
+    // S'assurer qu'ajaxurl est défini
+    if (typeof ajaxurl === 'undefined') {
+        ajaxurl = '<?php echo admin_url("admin-ajax.php"); ?>';
+        console.log('PDF Builder Settings: ajaxurl was undefined, set to:', ajaxurl);
+    }
+    
     var $saveBtn = $('#pdf-builder-save-settings');
     var $saveStatus = $('#pdf-builder-save-status');
     var currentTab = '<?php echo $active_tab; ?>';
+    
+    console.log('PDF Builder Settings: Button found:', $saveBtn.length);
+    console.log('PDF Builder Settings: ajaxurl available:', ajaxurl);
 
     // Fonction pour afficher le statut
     function showStatus(message, type) {
+        console.log('PDF Builder Settings: Showing status:', message, type);
         $saveStatus.removeClass('success error').addClass(type + ' show').text(message);
 
         setTimeout(function() {
@@ -197,10 +209,19 @@ jQuery(document).ready(function($) {
     }
 
     // Gestionnaire du clic sur le bouton Enregistrer
-    $saveBtn.on('click', function(e) {
-        e.preventDefault(); // Empêcher le rechargement de la page
+    $saveBtn.on('click', function(event) {
+        console.log('PDF Builder Settings: Button clicked');
+        event.preventDefault();
+        event.stopImmediatePropagation(); // Arrêter tous les autres gestionnaires
         
         var $btn = $(this);
+        console.log('PDF Builder Settings: Starting AJAX save');
+
+        // Vérifier si déjà en cours de sauvegarde
+        if ($btn.hasClass('saving')) {
+            console.log('PDF Builder Settings: Already saving, ignoring click');
+            return false;
+        }
 
         // Désactiver le bouton pendant la sauvegarde
         $btn.addClass('saving').prop('disabled', true).find('.dashicons').removeClass('dashicons-yes').addClass('dashicons-update dashicons-spin');
@@ -213,20 +234,30 @@ jQuery(document).ready(function($) {
 
         // Collecter les champs du formulaire actif
         var $activeForm = $('#pdf-builder-settings-form-' + currentTab);
+        console.log('PDF Builder Settings: Active form:', $activeForm.length, 'for tab:', currentTab);
+        
         if ($activeForm.length > 0) {
+            var fieldCount = 0;
             $activeForm.find('input, select, textarea').each(function() {
                 var $field = $(this);
-                if ($field.attr('type') === 'checkbox') {
-                    formData.append($field.attr('name'), $field.is(':checked') ? '1' : '0');
-                } else if ($field.attr('type') === 'radio') {
-                    if ($field.is(':checked')) {
-                        formData.append($field.attr('name'), $field.val());
+                var fieldName = $field.attr('name');
+                if (fieldName) {
+                    if ($field.attr('type') === 'checkbox') {
+                        formData.append(fieldName, $field.is(':checked') ? '1' : '0');
+                    } else if ($field.attr('type') === 'radio') {
+                        if ($field.is(':checked')) {
+                            formData.append(fieldName, $field.val());
+                        }
+                    } else {
+                        formData.append(fieldName, $field.val() || '');
                     }
-                } else {
-                    formData.append($field.attr('name'), $field.val());
+                    fieldCount++;
                 }
             });
+            console.log('PDF Builder Settings: Collected', fieldCount, 'fields');
         }
+
+        console.log('PDF Builder Settings: Sending AJAX request to:', ajaxurl);
 
         // Envoyer la requête AJAX
         $.ajax({
@@ -235,7 +266,9 @@ jQuery(document).ready(function($) {
             data: formData,
             processData: false,
             contentType: false,
+            timeout: 30000, // 30 secondes timeout
             success: function(response) {
+                console.log('PDF Builder Settings: AJAX success:', response);
                 if (response.success) {
                     showStatus('<?php _e("Paramètres sauvegardés", "pdf-builder-pro"); ?>', 'success');
                     $btn.removeClass('saving').addClass('saved');
@@ -245,7 +278,12 @@ jQuery(document).ready(function($) {
                 }
             },
             error: function(xhr, status, error) {
-                showStatus('<?php _e("Erreur de connexion", "pdf-builder-pro"); ?>', 'error');
+                console.log('PDF Builder Settings: AJAX error:', xhr, status, error);
+                var errorMsg = '<?php _e("Erreur de connexion", "pdf-builder-pro"); ?>';
+                if (status === 'timeout') {
+                    errorMsg = '<?php _e("Timeout - Réessayez", "pdf-builder-pro"); ?>';
+                }
+                showStatus(errorMsg, 'error');
                 $btn.removeClass('saving').addClass('error');
             },
             complete: function() {
@@ -256,6 +294,8 @@ jQuery(document).ready(function($) {
                 }, 2000);
             }
         });
+        
+        return false; // Sécurité supplémentaire
     });
 
     // Changer d'onglet
@@ -267,6 +307,8 @@ jQuery(document).ready(function($) {
             window.location.href = $(this).attr('href');
         }
     });
+    
+    console.log('PDF Builder Settings: Initialization complete');
 });
 </script>
 
