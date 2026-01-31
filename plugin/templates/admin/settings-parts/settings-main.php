@@ -158,6 +158,85 @@ if (isset($_GET['updated']) && $_GET['updated'] === '1') {
     </form>
 </div>
 
+<style>
+.pdf-builder-floating-save {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
+}
+
+.pdf-builder-save-btn {
+    background: #007cba;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.pdf-builder-save-btn:hover {
+    background: #005a87;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.pdf-builder-save-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pdf-builder-save-btn.saving {
+    background: #f39c12;
+    cursor: not-allowed;
+}
+
+.pdf-builder-save-btn.saved {
+    background: #27ae60;
+}
+
+.pdf-builder-save-btn.error {
+    background: #e74c3c;
+}
+
+.pdf-builder-save-status {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.pdf-builder-save-status.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.pdf-builder-save-status.success {
+    background: #27ae60;
+}
+
+.pdf-builder-save-status.error {
+    background: #e74c3c;
+}
+</style>
+
 <script type="text/javascript">
 jQuery(document).ready(function($) {
     console.log('PDF Builder Settings: JavaScript loaded');
