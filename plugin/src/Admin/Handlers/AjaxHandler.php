@@ -68,6 +68,9 @@ class AjaxHandler
         \add_action('wp_ajax_pdf_builder_get_template_mappings', [$this, 'handleGetTemplateMappings']);
         \add_action('wp_ajax_pdf_builder_get_canvas_orientations', [$this, 'ajaxGetCanvasOrientations']);
         \add_action('wp_ajax_pdf_builder_save_canvas_modal_settings', [$this, 'ajaxSaveCanvasModalSettings']);
+
+        // Hook AJAX pour la sauvegarde des paramètres
+        \add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajaxSaveSettings']);
     }
 
     /**
@@ -2074,6 +2077,87 @@ class AjaxHandler
 
         } catch (Exception $e) {
             \wp_send_json_error(['message' => 'Erreur lors de la vérification: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Sauvegarder les paramètres via AJAX
+     */
+    public function ajaxSaveSettings()
+    {
+        try {
+            // Vérifier les permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error(__('Permissions insuffisantes', 'pdf-builder-pro'));
+                return;
+            }
+
+            // Vérifier le nonce
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings')) {
+                wp_send_json_error(__('Nonce invalide', 'pdf-builder-pro'));
+                return;
+            }
+
+            $tab = sanitize_text_field($_POST['tab'] ?? 'general');
+            $saved_count = 0;
+
+            // Traiter les données selon l'onglet
+            if ($tab === 'general') {
+                // Sauvegarder les paramètres généraux
+                $option_keys = [
+                    'pdf_builder_license_key',
+                    'pdf_builder_license_email',
+                    'pdf_builder_enable_debug',
+                    'pdf_builder_max_templates',
+                    'pdf_builder_default_format',
+                    'pdf_builder_default_orientation'
+                ];
+
+                foreach ($option_keys as $key) {
+                    if (isset($_POST[$key])) {
+                        $value = sanitize_text_field($_POST[$key]);
+                        if (pdf_builder_update_option($key, $value)) {
+                            $saved_count++;
+                        }
+                    }
+                }
+            } elseif ($tab === 'advanced') {
+                // Sauvegarder les paramètres avancés
+                $option_keys = [
+                    'pdf_builder_cache_enabled',
+                    'pdf_builder_cache_expiry',
+                    'pdf_builder_performance_mode',
+                    'pdf_builder_error_reporting',
+                    'pdf_builder_custom_css',
+                    'pdf_builder_custom_js'
+                ];
+
+                foreach ($option_keys as $key) {
+                    if (isset($_POST[$key])) {
+                        if ($key === 'pdf_builder_custom_css' || $key === 'pdf_builder_custom_js') {
+                            $value = wp_kses_post($_POST[$key]); // Permettre HTML limité
+                        } else {
+                            $value = sanitize_text_field($_POST[$key]);
+                        }
+                        if (pdf_builder_update_option($key, $value)) {
+                            $saved_count++;
+                        }
+                    }
+                }
+            }
+
+            if ($saved_count > 0) {
+                wp_send_json_success([
+                    'message' => sprintf(__('Paramètres sauvegardés (%d)', 'pdf-builder-pro'), $saved_count),
+                    'saved_count' => $saved_count
+                ]);
+            } else {
+                wp_send_json_error(__('Aucun paramètre n\'a été modifié', 'pdf-builder-pro'));
+            }
+
+        } catch (Exception $e) {
+            error_log('PDF Builder: Error saving settings: ' . $e->getMessage());
+            wp_send_json_error(__('Erreur lors de la sauvegarde: ', 'pdf-builder-pro') . $e->getMessage());
         }
     }
 }

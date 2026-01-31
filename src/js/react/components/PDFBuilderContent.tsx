@@ -30,11 +30,6 @@ const spinStyles = `
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
-  @keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.7; }
-    100% { opacity: 1; }
-  }
 `;
 
 // Inject CSS
@@ -454,71 +449,6 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
           )}
         </div>
       </div>
-
-      {/* Bouton flottant de sauvegarde */}
-      {isModified && !isSaving && (
-        <button
-          onClick={saveTemplateWithAutoSave}
-          style={{
-            position: "fixed",
-            bottom: "20px",
-            right: "20px",
-            zIndex: 1000,
-            padding: "12px 20px",
-            backgroundColor: "#28a745",
-            color: "white",
-            border: "none",
-            borderRadius: "50px",
-            cursor: "pointer",
-            fontSize: "16px",
-            fontWeight: "bold",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            transition: "all 0.3s ease",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#218838";
-            e.currentTarget.style.transform = "scale(1.05)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "#28a745";
-            e.currentTarget.style.transform = "scale(1)";
-          }}
-          title="Enregistrer le template (sans recharger la page)"
-        >
-          <span>💾</span>
-          <span>Enregistrer</span>
-        </button>
-      )}
-
-      {/* Indicateur de sauvegarde flottant */}
-      {isSaving && (
-        <div
-          style={{
-            position: "fixed",
-            bottom: "20px",
-            right: "20px",
-            zIndex: 1000,
-            padding: "12px 20px",
-            backgroundColor: "#ffc107",
-            color: "#212529",
-            border: "none",
-            borderRadius: "50px",
-            fontSize: "16px",
-            fontWeight: "bold",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            animation: "pulse 1.5s infinite",
-          }}
-        >
-          <span>⟳</span>
-          <span>Sauvegarde en cours...</span>
-        </div>
-      )}
     </>
   );
 });

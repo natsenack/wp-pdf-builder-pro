@@ -69,6 +69,92 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
         <?php endif; ?>
     </div>
 </div>
+
+<!-- Bouton flottant Enregistrer -->
+<div id="pdf-builder-floating-save" class="pdf-builder-floating-save">
+    <button type="button" id="pdf-builder-save-settings" class="pdf-builder-save-btn">
+        <span class="dashicons dashicons-yes"></span>
+        <?php _e('Enregistrer', 'pdf-builder-pro'); ?>
+    </button>
+    <div id="pdf-builder-save-status" class="pdf-builder-save-status"></div>
+</div>
+
+<style>
+.pdf-builder-floating-save {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
+}
+
+.pdf-builder-save-btn {
+    background: #2271b1;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.pdf-builder-save-btn:hover {
+    background: #135e96;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.pdf-builder-save-btn:active {
+    transform: translateY(0);
+}
+
+.pdf-builder-save-btn.saving {
+    background: #f39c12;
+    cursor: not-allowed;
+}
+
+.pdf-builder-save-btn.saved {
+    background: #27ae60;
+}
+
+.pdf-builder-save-btn.error {
+    background: #e74c3c;
+}
+
+.pdf-builder-save-status {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.pdf-builder-save-status.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.pdf-builder-save-status.success {
+    background: #27ae60;
+}
+
+.pdf-builder-save-status.error {
+    background: #e74c3c;
+}
+
+.tab-content {
     background: white;
     padding: 20px;
     margin-top: 0;
@@ -94,5 +180,92 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
     margin-bottom: 8px;
 }
 </style>
+
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    var $saveBtn = $('#pdf-builder-save-settings');
+    var $saveStatus = $('#pdf-builder-save-status');
+    var currentTab = '<?php echo $active_tab; ?>';
+
+    // Fonction pour afficher le statut
+    function showStatus(message, type) {
+        $saveStatus.removeClass('success error').addClass(type + ' show').text(message);
+
+        setTimeout(function() {
+            $saveStatus.removeClass('show');
+        }, 3000);
+    }
+
+    // Gestionnaire du clic sur le bouton Enregistrer
+    $saveBtn.on('click', function() {
+        var $btn = $(this);
+
+        // Désactiver le bouton pendant la sauvegarde
+        $btn.addClass('saving').prop('disabled', true).find('.dashicons').removeClass('dashicons-yes').addClass('dashicons-update dashicons-spin');
+
+        // Collecter les données du formulaire actif
+        var formData = new FormData();
+        formData.append('action', 'pdf_builder_save_settings');
+        formData.append('tab', currentTab);
+        formData.append('nonce', '<?php echo wp_create_nonce("pdf_builder_settings"); ?>');
+
+        // Collecter les champs du formulaire actif
+        var $activeForm = $('#pdf-builder-settings-form-' + currentTab);
+        if ($activeForm.length > 0) {
+            $activeForm.find('input, select, textarea').each(function() {
+                var $field = $(this);
+                if ($field.attr('type') === 'checkbox') {
+                    formData.append($field.attr('name'), $field.is(':checked') ? '1' : '0');
+                } else if ($field.attr('type') === 'radio') {
+                    if ($field.is(':checked')) {
+                        formData.append($field.attr('name'), $field.val());
+                    }
+                } else {
+                    formData.append($field.attr('name'), $field.val());
+                }
+            });
+        }
+
+        // Envoyer la requête AJAX
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success) {
+                    showStatus('<?php _e("Paramètres sauvegardés", "pdf-builder-pro"); ?>', 'success');
+                    $btn.removeClass('saving').addClass('saved');
+                } else {
+                    showStatus(response.data || '<?php _e("Erreur lors de la sauvegarde", "pdf-builder-pro"); ?>', 'error');
+                    $btn.removeClass('saving').addClass('error');
+                }
+            },
+            error: function(xhr, status, error) {
+                showStatus('<?php _e("Erreur de connexion", "pdf-builder-pro"); ?>', 'error');
+                $btn.removeClass('saving').addClass('error');
+            },
+            complete: function() {
+                // Réactiver le bouton après un délai
+                setTimeout(function() {
+                    $btn.removeClass('saving saved error').prop('disabled', false)
+                        .find('.dashicons').removeClass('dashicons-update dashicons-spin').addClass('dashicons-yes');
+                }, 2000);
+            }
+        });
+    });
+
+    // Changer d'onglet
+    $('.nav-tab').on('click', function(e) {
+        e.preventDefault();
+        var tab = $(this).attr('href').split('tab=')[1];
+        if (tab) {
+            currentTab = tab;
+            window.location.href = $(this).attr('href');
+        }
+    });
+});
+</script>
 
 
