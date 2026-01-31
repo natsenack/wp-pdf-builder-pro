@@ -182,6 +182,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
 
             if ($saved_count > 0) {
+                error_log("[UNIFIED AJAX] Sending success response with saved_count: {$saved_count}");
                 wp_send_json_success([
                     'message' => 'Paramètres sauvegardés avec succès',
                     'saved_count' => $saved_count,
@@ -189,6 +190,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'new_nonce' => $this->nonce_manager->generate_nonce()
                 ]);
             } else {
+                error_log("[UNIFIED AJAX] Sending error response - no settings saved");
                 wp_send_json_error(['message' => 'Aucun paramètre sauvegardé']);
             }
 
