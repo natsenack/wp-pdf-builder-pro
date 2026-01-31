@@ -32,27 +32,7 @@ class PDF_Builder_Settings_Manager
      */
     private function initHooks()
     {
-<<<<<<< HEAD
-        // Hooks pour les paramètres
-        add_action('admin_init', [$this, 'registerSettings']);
-        
-        // Hooks pour logger les mises à jour des paramètres
-        add_action('update_option_pdf_builder_settings', [$this, 'logSettingsUpdate'], 10, 3);
-        add_action('update_option_pdf_builder_allowed_roles', [$this, 'logSettingsUpdate'], 10, 3);
-        add_action('update_option_pdf_builder_company_vat', [$this, 'logSettingsUpdate'], 10, 3);
-        add_action('update_option_pdf_builder_company_rcs', [$this, 'logSettingsUpdate'], 10, 3);
-        add_action('update_option_pdf_builder_company_siret', [$this, 'logSettingsUpdate'], 10, 3);
-        add_action('update_option_pdf_builder_order_status_templates', [$this, 'logSettingsUpdate'], 10, 3);
-        
-        // NE PAS utiliser le hook générique update_option - cela cause une boucle infinie !
-        // add_action('update_option', [$this, 'logAllSettingsUpdate'], 10, 3);
-        
-        if (class_exists('\PDF_Builder_Logger')) {
-            \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Settings Manager hooks initialized');
-        }
-=======
         // Tous les hooks de paramètres ont été déplacés vers settings-main.php
->>>>>>> a95dfc1e4c21298f74f2f7fcedd7c49c1dcfa128
     }
 
     /**
