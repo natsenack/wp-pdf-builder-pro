@@ -31,7 +31,7 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
                 <h2><?php _e('Paramètres généraux', 'pdf-builder-pro'); ?></h2>
                 <p><?php _e('Configurez les options générales du PDF Builder Pro.', 'pdf-builder-pro'); ?></p>
                 
-                <form method="post" action="options.php">
+                <form id="pdf-builder-settings-form-general" method="post" action="options.php">
                     <?php settings_fields('pdf_builder_general'); ?>
                     <?php do_settings_sections('pdf_builder_general'); ?>
                     <?php submit_button(); ?>
@@ -42,7 +42,7 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
                 <h2><?php _e('Paramètres avancés', 'pdf-builder-pro'); ?></h2>
                 <p><?php _e('Configurer les options avancées du PDF Builder Pro.', 'pdf-builder-pro'); ?></p>
                 
-                <form method="post" action="options.php">
+                <form id="pdf-builder-settings-form-advanced" method="post" action="options.php">
                     <?php settings_fields('pdf_builder_advanced'); ?>
                     <?php do_settings_sections('pdf_builder_advanced'); ?>
                     <?php submit_button(); ?>

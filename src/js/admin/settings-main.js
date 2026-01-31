@@ -64,8 +64,15 @@
         
         addPersistentLog('[JS] Form action set to: ' + url.toString());
         
+        // Ajouter un champ caché pour indiquer une sauvegarde flottante
+        $('#pdf-builder-settings-form-' + activeTab).append($('<input>', {
+            'type': 'hidden',
+            'name': 'pdf_builder_floating_save',
+            'value': '1'
+        }));
+        
         // Soumettre le formulaire manuellement
-        $('#pdf-builder-settings-form').submit();
+        $('#pdf-builder-settings-form-' + activeTab).submit();
     });
 
     // Debug form submission
