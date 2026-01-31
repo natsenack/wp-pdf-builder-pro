@@ -10,13 +10,51 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
 }
 
 // ========================================================================
-// ✅ CHARGEMENT DE L'AUTOLOADER COMPOSER
+// ✅ CHARGEMENT DE L'AUTOLOADER COMPOSER OU PERSONNALISÉ
 // ========================================================================
 $autoload_path = PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+
+// Chercher l'autoloader Composer valide
+$composer_autoloader_found = false;
 if (file_exists($autoload_path)) {
-    require_once $autoload_path;
+    $autoload_content = file_get_contents($autoload_path);
+    // Vérifier que l'autoloader n'est pas vide
+    if (!empty($autoload_content) && strlen($autoload_content) > 100) {
+        require_once $autoload_path;
+        $composer_autoloader_found = true;
+        error_log('[BOOTSTRAP] Composer autoloader loaded successfully');
+    } else {
+        error_log('[BOOTSTRAP] Composer autoloader is empty, using PSR-4 fallback');
+    }
 } else {
 
+}
+
+// Si Composer n'est pas disponible, créer un autoloader PSR-4 personnalisé
+if (!$composer_autoloader_found) {
+    spl_autoload_register(function($class) {
+        // Namespaces personnalisés
+        $prefix_map = [
+            'PDF_Builder\\' => 'src/',
+            'PDF_Builder_Pro\\' => 'src/',
+        ];
+
+        foreach ($prefix_map as $prefix => $base_dir) {
+            $len = strlen($prefix);
+            if (strncmp($prefix, $class, $len) === 0) {
+                // Remplacer le namespace par le chemin réel
+                $relative_class = substr($class, $len);
+                $file = PDF_BUILDER_PLUGIN_DIR . $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+                
+                if (file_exists($file)) {
+                    require $file;
+                    return true;
+                }
+            }
+        }
+        return false;
+    });
+    error_log('[BOOTSTRAP] PSR-4 autoloader registered as fallback');
 }
 
 // ========================================================================
@@ -99,6 +137,14 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
 }
 
 // ============================================================================
+// ✅ CHARGER LE GESTIONNAIRE DE DÉSACTIVATION (TRÈS TÔT)
+// ============================================================================
+// Charger le gestionnaire de désactivation avant tout pour intercepter les requêtes
+if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Deactivation_Handler.php')) {
+    require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Deactivation_Handler.php';
+}
+
+// ============================================================================
 // ✅ CHARGEMENT CENTRALISÉ DE L'AUTOLOADER COMPOSER
 // ============================================================================
 
@@ -118,57 +164,65 @@ if (!class_exists('Dompdf\Dompdf') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'vend
  * Récupérer une option depuis la table personnalisée wp_pdf_builder_settings
  * Fallback vers wp_options si la table n'existe pas
  */
-function pdf_builder_get_option($option_name, $default = false) {
-    // Charger le Settings Table Manager
-    if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
-    }
-    
-    $result = \PDF_Builder\Database\Settings_Table_Manager::get_option($option_name, $default);
-    
-    if (class_exists('PDF_Builder_Logger')) {
+if (!function_exists('pdf_builder_get_option')) {
+    function pdf_builder_get_option($option_name, $default = false) {
+        // Charger le Settings Table Manager
+        if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+        }
+        
+        $result = \PDF_Builder\Database\Settings_Table_Manager::get_option($option_name, $default);
+        
+        if (class_exists('PDF_Builder_Logger')) {
         \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] pdf_builder_get_option called for: ' . $option_name);
         \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] pdf_builder_get_option result type: ' . gettype($result));
         \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] pdf_builder_get_option result: ' . print_r($result, true));
     }
     
     return $result;
+    }
 }
 
 /**
  * Mettre à jour une option dans la table personnalisée wp_pdf_builder_settings
  */
-function pdf_builder_update_option($option_name, $option_value, $autoload = 'yes') {
-    // Charger le Settings Table Manager
-    if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+if (!function_exists('pdf_builder_update_option')) {
+    function pdf_builder_update_option($option_name, $option_value, $autoload = 'yes') {
+        // Charger le Settings Table Manager
+        if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+        }
+        
+        return \PDF_Builder\Database\Settings_Table_Manager::update_option($option_name, $option_value, $autoload);
     }
-    
-    return \PDF_Builder\Database\Settings_Table_Manager::update_option($option_name, $option_value, $autoload);
 }
 
 /**
  * Supprimer une option depuis la table personnalisée wp_pdf_builder_settings
  */
-function pdf_builder_delete_option($option_name) {
-    // Charger le Settings Table Manager
-    if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+if (!function_exists('pdf_builder_delete_option')) {
+    function pdf_builder_delete_option($option_name) {
+        // Charger le Settings Table Manager
+        if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+        }
+        
+        return \PDF_Builder\Database\Settings_Table_Manager::delete_option($option_name);
     }
-    
-    return \PDF_Builder\Database\Settings_Table_Manager::delete_option($option_name);
 }
 
 /**
  * Récupérer tous les paramètres PDF Builder
  */
-function pdf_builder_get_all_options() {
-    // Charger le Settings Table Manager
-    if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+if (!function_exists('pdf_builder_get_all_options')) {
+    function pdf_builder_get_all_options() {
+        // Charger le Settings Table Manager
+        if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+        }
+        
+        return \PDF_Builder\Database\Settings_Table_Manager::get_all_options();
     }
-    
-    return \PDF_Builder\Database\Settings_Table_Manager::get_all_options();
 }
 // ✅ FONCTION DE CHARGEMENT D'URGENCE DES UTILITAIRES
 // ============================================================================
@@ -448,40 +502,6 @@ if (function_exists('add_action')) {
         }
     }, 1);
 }
-
-// Enregistrer les paramètres principaux
-add_action('admin_init', function() {
-    \register_setting('pdf_builder_settings', 'pdf_builder_settings', array(
-        'type' => 'array',
-        'description' => 'Paramètres principaux PDF Builder Pro',
-        'sanitize_callback' => function($input) {
-            // Log détaillé pour déboguer la sauvegarde
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] SANITIZE CALLBACK - Input type: ' . gettype($input)); }
-            if (is_array($input)) {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] SANITIZE CALLBACK - Input count: ' . count($input)); }
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] SANITIZE CALLBACK - Input keys: ' . implode(', ', array_keys($input))); }
-                
-                // Log spécifique pour les paramètres templates
-                if (isset($input['pdf_builder_default_template'])) {
-                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Template par défaut: ' . $input['pdf_builder_default_template']); }
-                }
-                if (isset($input['pdf_builder_template_library_enabled'])) {
-                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Bibliothèque templates: ' . $input['pdf_builder_template_library_enabled']); }
-                }
-            } else {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] SANITIZE CALLBACK - Input is not array: ' . print_r($input, true)); }
-            }
-            
-            // Validation et nettoyage des données
-            if (!is_array($input)) {
-                return array();
-            }
-            
-            return $input;
-        },
-        'default' => array()
-    ));
-});
 
 // Initialiser les variables $_SERVER manquantes pour éviter les erreurs PHP 8.1+
 if (!isset($_SERVER['HTTP_B701CD7'])) {
@@ -925,18 +945,18 @@ function pdf_builder_load_admin_components()
         }
 
         // Forcer le chargement manuel de PdfBuilderAdminNew si nécessaire
-        if (!class_exists('PdfBuilderAdminNew')) {
+        if (!class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
             $admin_file = PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
             if (file_exists($admin_file)) {
                 require_once $admin_file;
             }
         }
 
-        if (class_exists('PdfBuilderAdminNew')) {
+        if (class_exists('PDF_Builder\Admin\PdfBuilderAdminNew')) {
             try {
-                $admin = PdfBuilderAdminNew::getInstance($core);
+                $admin = \PDF_Builder\Admin\PdfBuilderAdminNew::getInstance($core);
             } catch (Exception $e) {
-                // Ne pas enregistrer de menu de fallback ici
+                error_log('[BOOTSTRAP] Error instantiating PdfBuilderAdminNew: ' . $e->getMessage());
             }
         }
         // Ne pas enregistrer de menu de fallback dans les autres cas

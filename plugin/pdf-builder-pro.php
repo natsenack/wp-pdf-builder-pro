@@ -38,6 +38,7 @@ add_action('plugins_loaded', function() {
     // Initialiser l'autoloader personnalisé
     $autoloader_file = PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/autoloader.php';
     if (file_exists($autoloader_file)) {
+<<<<<<< HEAD
         require_once $autoloader_file;
         \PDF_Builder\Core\PdfBuilderAutoloader::init(PDF_BUILDER_PLUGIN_DIR);
         error_log('[PDF BUILDER] Autoloader initialized successfully');
@@ -47,6 +48,15 @@ add_action('plugins_loaded', function() {
             error_log('[PDF BUILDER] PDF_Builder_Logger class is available');
         } else {
             error_log('[PDF BUILDER] PDF_Builder_Logger class NOT found - autoloader issue');
+=======
+        try {
+            require_once $autoloader_file;
+            if (class_exists('PDF_Builder\Core\PdfBuilderAutoloader')) {
+                \PDF_Builder\Core\PdfBuilderAutoloader::init(PDF_BUILDER_PLUGIN_DIR);
+            }
+        } catch (Exception $e) {
+            error_log('[ERROR] PDF Builder: Autoloader init failed: ' . $e->getMessage());
+>>>>>>> a95dfc1e4c21298f74f2f7fcedd7c49c1dcfa128
         }
     } else {
         error_log('[PDF BUILDER] Autoloader file not found: ' . $autoloader_file);
@@ -55,6 +65,34 @@ add_action('plugins_loaded', function() {
     // ENREGISTRER LES ACTIONS AJAX TRÈS TÔT
     add_action('wp_ajax_pdf_builder_show_notification', 'pdf_builder_test_notification_handler');
     add_action('wp_ajax_nopriv_pdf_builder_show_notification', 'pdf_builder_test_notification_handler');
+    
+    // Add action links to plugin list (Paramètres et Passer en Pro)
+    add_filter('plugin_action_links_wp-pdf-builder-pro/pdf-builder-pro.php', function($links) {
+        // Bouton Paramètres
+        $settings_url = admin_url('admin.php?page=pdf-builder-settings');
+        $settings_link = '<a href="' . esc_url($settings_url) . '" style="color: #0073aa; text-decoration: none;">Paramètres</a>';
+        
+        // Bouton Passer en Pro - uniquement si pas de licence activée (pas les licences test)
+        $show_pro_button = true;
+        if (class_exists('PDF_Builder\Managers\PDF_Builder_License_Manager')) {
+            $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+            // Afficher le bouton seulement si ce n'est pas une licence premium active
+            if ($license_manager->is_premium() && $license_manager->get_license_status() === 'active') {
+                $show_pro_button = false;
+            }
+        }
+        
+        // Ajouter les nouveaux liens avant les liens existants
+        if ($show_pro_button) {
+            $pro_url = 'https://threeaxe.fr/pdf-builder-pro';
+            $pro_link = '<a href="' . esc_url($pro_url) . '" target="_blank" style="color: #27ae60; font-weight: bold; text-decoration: none;">⭐ Passer en Pro</a>';
+            array_unshift($links, $pro_link);
+        }
+        
+        array_unshift($links, $settings_link);
+        
+        return $links;
+    });
     
     function pdf_builder_test_notification_handler() {
         
@@ -145,8 +183,40 @@ if (function_exists('add_action')) {
 //     pdf_builder_register_ajax_handlers();
 // }
 
+// ========================================================================
+// FONCTIONS UTILITAIRES - DOIVENT ÊTRE DISPONIBLES À L'ACTIVATION
+// ========================================================================
+
 /**
- * Fonction d'activation
+ * Fonction utilitaire pour mettre à jour les options
+ * REMOVED: Conflit avec bootstrap.php - fonction supprimée, utiliser la version de bootstrap.php
+ */
+
+// Fonction supprimée pour éviter le conflit avec bootstrap.php
+// if (!function_exists('pdf_builder_update_option')) {
+//     function pdf_builder_update_option($option_name, $option_value, $autoload = 'yes') {
+//         if (function_exists('update_option')) {
+//             return update_option($option_name, $option_value);
+//         }
+//         return false;
+//     }
+// }
+
+/**
+ * Fonction de logging
+ */
+if (!function_exists('pdf_builder_log')) {
+    function pdf_builder_log($message, $level = 'info') {
+        if (function_exists('error_log')) {
+            $prefix = strtoupper($level);
+            error_log('[PDF Builder] ' . $prefix . ': ' . $message);
+        }
+    }
+}
+
+/**
+ * Fonction d'activation du plugin
+ * Crée toutes les tables nécessaires
  */
 function pdf_builder_activate()
 {
@@ -161,6 +231,7 @@ function pdf_builder_activate()
         wp_die('PDF Builder Pro nécessite WordPress 5.0 ou supérieur. Version actuelle: ' . get_bloginfo('version'));
     }
 
+<<<<<<< HEAD
     // ========== NOUVELLE TABLE DE PARAMÈTRES PERSONNALISÉE ==========
     // Charger le Settings Table Manager
     require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
@@ -180,40 +251,48 @@ function pdf_builder_activate()
     // ================================================================
 
     // Créer une table de logs si nécessaire
+=======
+>>>>>>> a95dfc1e4c21298f74f2f7fcedd7c49c1dcfa128
     global $wpdb;
-    $table_name = $wpdb->prefix . 'pdf_builder_logs';
-    if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
-        $charset_collate = $wpdb->get_charset_collate();
-        $sql = "CREATE TABLE $table_name (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            log_message text NOT NULL,
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id)
-        ) $charset_collate;";
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
-    }
+    $charset_collate = $wpdb->get_charset_collate();
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-    // Créer une table de templates si nécessaire
+    // ========== TABLE 1: PARAMÈTRES PERSONNALISÉS ==========
+    $table_settings = $wpdb->prefix . 'pdf_builder_settings';
+    
+    $sql_settings = "CREATE TABLE IF NOT EXISTS $table_settings (
+        option_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+        option_name varchar(191) NOT NULL DEFAULT '',
+        option_value longtext NOT NULL,
+        autoload varchar(20) NOT NULL DEFAULT 'yes',
+        PRIMARY KEY (option_id),
+        UNIQUE KEY option_name (option_name)
+    ) $charset_collate;";
+    
+    dbDelta($sql_settings);
+    error_log('[PDF Builder] Activation: Table wp_pdf_builder_settings créée/vérifiée');
+
+    // ========== TABLE 2: TEMPLATES PERSONNALISÉS ==========
     $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-    if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
-        $charset_collate = $wpdb->get_charset_collate();
-        $sql = "CREATE TABLE $table_templates (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            name varchar(255) NOT NULL,
-            template_data longtext NOT NULL,
-            user_id bigint(20) unsigned NOT NULL DEFAULT 0,
-            is_default tinyint(1) NOT NULL DEFAULT 0,
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
-            KEY name (name),
-            KEY user_id (user_id),
-            KEY is_default (is_default)
-        ) $charset_collate;";
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
-    }
+    
+    $sql_templates = "CREATE TABLE IF NOT EXISTS $table_templates (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        name varchar(255) NOT NULL,
+        template_data longtext NOT NULL,
+        user_id bigint(20) unsigned NOT NULL DEFAULT 0,
+        is_default tinyint(1) NOT NULL DEFAULT 0,
+        created_at datetime DEFAULT CURRENT_TIMESTAMP,
+        updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        KEY name (name),
+        KEY user_id (user_id),
+        KEY is_default (is_default)
+    ) $charset_collate;";
+    
+    dbDelta($sql_templates);
+    error_log('[PDF Builder] Activation: Table wp_pdf_builder_templates créée/vérifiée');
+
+    // Marquer la version du plugin comme activée
     pdf_builder_update_option('pdf_builder_version', '1.0.1.0');
 
     // Définir les valeurs par défaut pour les paramètres canvas
@@ -367,12 +446,16 @@ function pdf_builder_check_database_updates() {
  */
 function pdf_builder_deactivate()
 {
-
     delete_option('pdf_builder_activated');
-// Clear scheduled expiration check
+    
+    // Clear scheduled expiration check
     if (class_exists('\PDFBuilderPro\License\License_Expiration_Handler')) {
         \PDFBuilderPro\License\License_Expiration_Handler::clear_scheduled_expiration_check();
     }
+    
+    // Déclencher le hook de désactivation personnalisé
+    // Cela permettra au gestionnaire de désactivation de traiter les données
+    do_action('pdf_builder_deactivate');
 }
 
 
@@ -2401,3 +2484,15 @@ function pdf_builder_view_logs_handler() {
     }
 }
 
+<<<<<<< HEAD
+=======
+// ====================================================================
+// HOOKS D'ACTIVATION / DÉACTIVATION
+// ====================================================================
+
+// Enregistrer la fonction d'activation du plugin
+register_activation_hook(__FILE__, 'pdf_builder_activate');
+
+// Enregistrer la fonction de désactivation du plugin
+register_deactivation_hook(__FILE__, 'pdf_builder_deactivate');
+>>>>>>> a95dfc1e4c21298f74f2f7fcedd7c49c1dcfa128

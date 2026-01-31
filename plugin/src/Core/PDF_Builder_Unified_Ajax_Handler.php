@@ -11,6 +11,7 @@ require_once dirname(dirname(dirname(__FILE__))) . '/bootstrap.php';
 /**
  * Déclarations de fonctions pour Intelephense
  * Ces fonctions sont définies dans bootstrap.php mais Intelephense ne les reconnaît pas
+ * REMOVED: Causent des conflits de redéclaration en production
  */
 if (!function_exists('pdf_builder_get_option')) {
     /**

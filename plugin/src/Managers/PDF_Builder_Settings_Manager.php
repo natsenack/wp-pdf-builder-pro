@@ -32,6 +32,7 @@ class PDF_Builder_Settings_Manager
      */
     private function initHooks()
     {
+<<<<<<< HEAD
         // Hooks pour les paramètres
         add_action('admin_init', [$this, 'registerSettings']);
         
@@ -49,6 +50,9 @@ class PDF_Builder_Settings_Manager
         if (class_exists('\PDF_Builder_Logger')) {
             \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Settings Manager hooks initialized');
         }
+=======
+        // Tous les hooks de paramètres ont été déplacés vers settings-main.php
+>>>>>>> a95dfc1e4c21298f74f2f7fcedd7c49c1dcfa128
     }
 
     /**
@@ -69,24 +73,6 @@ class PDF_Builder_Settings_Manager
     }
 
 
-
-    /**
-     * Enregistrer les paramètres
-     */
-    public function registerSettings()
-    {
-        // Paramètre principal pour les settings
-        register_setting('pdf_builder_settings', 'pdf_builder_settings');
-
-        // Paramètres généraux
-        register_setting('pdf_builder_settings', 'pdf_builder_allowed_roles');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_vat');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_rcs');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_siret');
-
-        // Paramètres des templates par statut de commande
-        register_setting('pdf_builder_order_status_templates', 'pdf_builder_order_status_templates');
-    }
 
     /**
      * Récupérer un paramètre

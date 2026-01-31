@@ -130,6 +130,18 @@ function pdf_builder_load_settings_assets($hook) {
         'nonce' => wp_create_nonce('pdf_builder_ajax')
     ));
 
+    // Charger le script du bouton flottant de sauvegarde - seulement si le fichier existe
+    $floating_save_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/floating-save-button.js';
+    if (file_exists($floating_save_js)) {
+        wp_enqueue_script(
+            'pdf-builder-floating-save',
+            PDF_BUILDER_PLUGIN_URL . 'assets/js/floating-save-button.js',
+            array('jquery', 'pdf-builder-settings-main'),
+            PDF_BUILDER_VERSION . '-' . time(),
+            true // Chargé dans le footer
+        );
+    }
+
     if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - pdf_builder_load_settings_assets TERMINÉE pour hook: ' . $hook); }
 }
 

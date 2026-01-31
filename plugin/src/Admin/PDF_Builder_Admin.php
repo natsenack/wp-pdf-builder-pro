@@ -26,10 +26,15 @@ use PDF_Builder\Admin\Utils\Utils;
 /**
  * Classe principale d'administration du PDF Builder Pro
  * RESPONSABILITÉS : Orchestration des managers, interface principale
- * Version: 2.0.3 - Renamed class to fix redeclaration issue
+ * Version: 2.0.3 - Optimisée avec lazy loading et méthodes groupées
  */
 class PdfBuilderAdminNew
 {
+    // Constantes pour optimiser les chemins
+    const PLUGIN_ROOT = __DIR__ . '/../../..';
+    const SRC_DIR = self::PLUGIN_ROOT . '/src';
+    const TEMPLATES_DIR = self::PLUGIN_ROOT . '/templates/admin';
+
     /**
      * Instance unique de la classe
      */
@@ -100,12 +105,25 @@ class PdfBuilderAdminNew
     }
 
     /**
-     * Constructeur privé
+     * Constructeur privé - Optimisé avec initialisations groupées
      */
     private function __construct($core = null)
     {
         $this->core = $core;
 
+        $this->initCoreManagers();
+        $this->initSpecializedModules();
+        $this->initServicesAndLoaders();
+        $this->initConditionalModules();
+
+        $this->initHooks();
+    }
+
+    /**
+     * Initialisation des managers de base
+     */
+    private function initCoreManagers()
+    {
         // Initialiser les managers spécialisés avec autoloader PSR-4
         $this->settings_manager = new \PDF_Builder\Managers\PDF_Builder_Settings_Manager($this);
 
@@ -115,11 +133,16 @@ class PdfBuilderAdminNew
         } else {
             
         }
+    }
 
-        // Initialiser les nouveaux modules spécialisés
+    /**
+     * Initialisation des modules spécialisés
+     */
+    private function initSpecializedModules()
+    {
         $this->html_renderer = new \PDF_Builder\Admin\Renderers\HTMLRenderer($this);
         $this->data_utils = new DataUtils($this);
-        
+
         // Try-catch pour la création du template_processor
         try {
             $this->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this);
@@ -129,34 +152,16 @@ class PdfBuilderAdminNew
 
         // Initialiser AjaxHandler APRÈS template_processor
         $this->ajax_handler = new \PDF_Builder\Admin\Handlers\AjaxHandler($this);
-        
+
         $this->pdf_generator = new \PDF_Builder\Admin\Generators\PDFGenerator($this);
         $this->utils = new \PDF_Builder\Admin\Utils\Utils($this);
+    }
 
-        // Initialiser l'intégration WooCommerce si disponible
-        if (\did_action('plugins_loaded') && defined('WC_VERSION') && class_exists('PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration')) {
-            $this->woocommerce_integration = new \PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration($this->core);
-        }
-
-        // Initialiser le manager de templates prédéfinis
-        if (class_exists('PDF_Builder\Admin\PDF_Builder_Predefined_Templates_Manager')) {
-            $this->predefined_templates_manager = new \PDF_Builder\Admin\PDF_Builder_Predefined_Templates_Manager();
-        }
-
-        // Charger manuellement le Thumbnail Manager si nécessaire
-        if (!class_exists('PDF_Builder\Managers\PDF_Builder_Thumbnail_Manager')) {
-            // Chemin absolu depuis ce fichier
-            $plugin_root = dirname(dirname(dirname(__DIR__)));
-            $thumbnail_manager_file = $plugin_root . '/src/Managers/PDF_Builder_Thumbnail_Manager.php';
-            if (file_exists($thumbnail_manager_file)) {
-                require_once $thumbnail_manager_file;
-            }
-        }
-
-        // Initialiser le manager de thumbnails
-        $this->thumbnail_manager = \PDF_Builder\Managers\PDF_Builder_Thumbnail_Manager::getInstance();
-
-        // Initialiser les nouveaux services et loaders
+    /**
+     * Initialisation des services et loaders
+     */
+    private function initServicesAndLoaders()
+    {
         $this->script_loader = new \PDF_Builder\Admin\Loaders\AdminScriptLoader($this);
         $this->style_builder = new \PDF_Builder\Admin\Builders\StyleBuilder();
         $this->table_renderer = new \PDF_Builder\Admin\Renderers\TableRenderer();
@@ -167,17 +172,51 @@ class PdfBuilderAdminNew
         $this->parameter_validator = new \PDF_Builder\Admin\Validators\ParameterValidator();
         $this->maintenance_action_handler = new \PDF_Builder\Admin\Handlers\MaintenanceActionHandler();
 
-        // Charger le DashboardDataProvider si nécessaire
+        // Initialiser le AdminPageRenderer
+        $this->admin_page_renderer = new \PDF_Builder\Admin\Renderers\AdminPageRenderer($this);
+    }
+
+    /**
+     * Initialisation des modules conditionnels - Optimisée avec lazy loading
+     */
+    private function initConditionalModules()
+    {
+        // Ces modules seront initialisés à la demande via les getters
+        // $this->thumbnail_manager = lazy loaded via getThumbnailManager()
+        // $this->dashboard_data_provider = lazy loaded via getDashboardDataProvider()
+        // $this->woocommerce_integration = lazy loaded via getWooCommerceIntegration()
+
+        // Initialiser seulement le manager de templates prédéfinis s'il existe
+        if (class_exists('PDF_Builder\Admin\PDF_Builder_Predefined_Templates_Manager')) {
+            $this->predefined_templates_manager = new \PDF_Builder\Admin\PDF_Builder_Predefined_Templates_Manager();
+        }
+    }
+
+    /**
+     * Initialisation du Thumbnail Manager avec gestion d'erreurs
+     */
+    private function initThumbnailManager()
+    {
+        if (!class_exists('PDF_Builder\Managers\PDF_Builder_Thumbnail_Manager')) {
+            $thumbnail_manager_file = self::SRC_DIR . '/Managers/PDF_Builder_Thumbnail_Manager.php';
+            if (file_exists($thumbnail_manager_file)) {
+                require_once $thumbnail_manager_file;
+            }
+        }
+
+        $this->thumbnail_manager = \PDF_Builder\Managers\PDF_Builder_Thumbnail_Manager::getInstance();
+    }
+
+    /**
+     * Initialisation du Dashboard Data Provider
+     */
+    private function initDashboardProvider()
+    {
         if (!class_exists('\PDF_Builder\Admin\Providers\DashboardDataProvider')) {
-            require_once dirname(dirname(dirname(__DIR__))) . '/src/Admin/Providers/DashboardDataProvider.php';
+            require_once self::SRC_DIR . '/Admin/Providers/DashboardDataProvider.php';
         }
 
         $this->dashboard_data_provider = new \PDF_Builder\Admin\Providers\DashboardDataProvider();
-
-        // Initialiser le AdminPageRenderer
-        $this->admin_page_renderer = new \PDF_Builder\Admin\Renderers\AdminPageRenderer($this);
-
-        $this->initHooks();
     }
 
     /**
@@ -185,8 +224,9 @@ class PdfBuilderAdminNew
      */
     public function getDashboardStats()
     {
-        if ($this->dashboard_data_provider) {
-            return $this->dashboard_data_provider->getDashboardStats();
+        $provider = $this->getDashboardDataProvider();
+        if ($provider) {
+            return $provider->getDashboardStats();
         }
         return [
             'templates' => 0,
@@ -200,8 +240,6 @@ class PdfBuilderAdminNew
      */
     public function register_settings()
     {
-        // REMOVED: \register_setting déplacé vers SettingsManager.php pour éviter les conflits
-        // \register_setting('pdf_builder_settings', 'pdf_builder_settings', array($this, 'sanitize_settings'));
 
         // Section Général
         \add_settings_section(
@@ -680,34 +718,40 @@ class PdfBuilderAdminNew
         // Traiter selon l'onglet
         switch ($current_tab) {
             case 'general':
-                // Paramètres généraux
-                $settings['pdf_builder_company_name'] = sanitize_text_field($_POST['pdf_builder_company_name'] ?? '');
-                $settings['pdf_builder_company_address'] = \sanitize_textarea_field($_POST['pdf_builder_company_address'] ?? '');
-                $settings['pdf_builder_company_phone'] = sanitize_text_field($_POST['pdf_builder_company_phone'] ?? '');
-                $settings['pdf_builder_company_email'] = sanitize_email($_POST['pdf_builder_company_email'] ?? '');
-                $settings['pdf_builder_company_phone_manual'] = sanitize_text_field($_POST['pdf_builder_company_phone_manual'] ?? '');
-                $settings['pdf_builder_company_siret'] = sanitize_text_field($_POST['pdf_builder_company_siret'] ?? '');
-                $settings['pdf_builder_company_vat'] = sanitize_text_field($_POST['pdf_builder_company_vat'] ?? '');
-                $settings['pdf_builder_company_rcs'] = sanitize_text_field($_POST['pdf_builder_company_rcs'] ?? '');
-                $settings['pdf_builder_company_capital'] = sanitize_text_field($_POST['pdf_builder_company_capital'] ?? '');
+                // Paramètres généraux - traiter le array pdf_builder_settings
+                if (isset($_POST['pdf_builder_settings']) && is_array($_POST['pdf_builder_settings'])) {
+                    $settings['pdf_builder_company_name'] = sanitize_text_field($_POST['pdf_builder_settings']['pdf_builder_company_name'] ?? '');
+                    $settings['pdf_builder_company_address'] = \sanitize_textarea_field($_POST['pdf_builder_settings']['pdf_builder_company_address'] ?? '');
+                    $settings['pdf_builder_company_phone'] = sanitize_text_field($_POST['pdf_builder_settings']['pdf_builder_company_phone'] ?? '');
+                    $settings['pdf_builder_company_email'] = sanitize_email($_POST['pdf_builder_settings']['pdf_builder_company_email'] ?? '');
+                    $settings['pdf_builder_company_phone_manual'] = sanitize_text_field($_POST['pdf_builder_settings']['pdf_builder_company_phone_manual'] ?? '');
+                    $settings['pdf_builder_company_siret'] = sanitize_text_field($_POST['pdf_builder_settings']['pdf_builder_company_siret'] ?? '');
+                    $settings['pdf_builder_company_vat'] = sanitize_text_field($_POST['pdf_builder_settings']['pdf_builder_company_vat'] ?? '');
+                    $settings['pdf_builder_company_rcs'] = sanitize_text_field($_POST['pdf_builder_settings']['pdf_builder_company_rcs'] ?? '');
+                    $settings['pdf_builder_company_capital'] = sanitize_text_field($_POST['pdf_builder_settings']['pdf_builder_company_capital'] ?? '');
+                }
                 break;
 
             case 'pdf':
                 // Paramètres PDF
-                $settings['pdf_builder_pdf_quality'] = sanitize_text_field($_POST['pdf_builder_pdf_quality'] ?? 'high');
-                $settings['pdf_builder_default_format'] = sanitize_text_field($_POST['pdf_builder_default_format'] ?? 'A4');
-                $settings['pdf_builder_default_orientation'] = sanitize_text_field($_POST['pdf_builder_default_orientation'] ?? 'portrait');
+                if (isset($_POST['pdf_builder_settings']) && is_array($_POST['pdf_builder_settings'])) {
+                    $settings['pdf_builder_pdf_quality'] = sanitize_text_field($_POST['pdf_builder_settings']['pdf_quality'] ?? 'high');
+                    $settings['pdf_builder_default_format'] = sanitize_text_field($_POST['pdf_builder_settings']['pdf_builder_default_format'] ?? 'A4');
+                    $settings['pdf_builder_default_orientation'] = sanitize_text_field($_POST['pdf_builder_settings']['pdf_builder_default_orientation'] ?? 'portrait');
+                }
                 break;
 
             case 'systeme':
                 // Paramètres système
-                $settings['pdf_builder_cache_enabled'] = isset($_POST['pdf_builder_cache_enabled']) ? '1' : '0';
-                $settings['pdf_builder_cache_compression'] = isset($_POST['pdf_builder_cache_compression']) ? '1' : '0';
-                $settings['pdf_builder_cache_auto_cleanup'] = isset($_POST['pdf_builder_cache_auto_cleanup']) ? '1' : '0';
-                $settings['pdf_builder_cache_max_size'] = intval($_POST['pdf_builder_cache_max_size'] ?? 100);
-                $settings['pdf_builder_cache_ttl'] = intval($_POST['pdf_builder_cache_ttl'] ?? 3600);
-                $settings['pdf_builder_performance_auto_optimization'] = isset($_POST['pdf_builder_performance_auto_optimization']) ? '1' : '0';
-                $settings['pdf_builder_systeme_auto_maintenance'] = isset($_POST['pdf_builder_systeme_auto_maintenance']) ? '1' : '0';
+                if (isset($_POST['pdf_builder_settings']) && is_array($_POST['pdf_builder_settings'])) {
+                    $settings['pdf_builder_cache_enabled'] = isset($_POST['pdf_builder_settings']['pdf_builder_cache_enabled']) ? '1' : '0';
+                    $settings['pdf_builder_cache_compression'] = isset($_POST['pdf_builder_settings']['pdf_builder_cache_compression']) ? '1' : '0';
+                    $settings['pdf_builder_cache_auto_cleanup'] = isset($_POST['pdf_builder_settings']['pdf_builder_cache_auto_cleanup']) ? '1' : '0';
+                    $settings['pdf_builder_cache_max_size'] = intval($_POST['pdf_builder_settings']['pdf_builder_cache_max_size'] ?? 100);
+                    $settings['pdf_builder_cache_ttl'] = intval($_POST['pdf_builder_settings']['pdf_builder_cache_ttl'] ?? 3600);
+                    $settings['pdf_builder_performance_auto_optimization'] = isset($_POST['pdf_builder_settings']['pdf_builder_performance_auto_optimization']) ? '1' : '0';
+                    $settings['pdf_builder_systeme_auto_maintenance'] = isset($_POST['pdf_builder_settings']['pdf_builder_systeme_auto_maintenance']) ? '1' : '0';
+                }
                 break;
 
             // Ajouter d'autres onglets selon les besoins
@@ -795,64 +839,62 @@ class PdfBuilderAdminNew
     /**
      * Initialise les hooks WordPress
      */
+    /**
+     * Initialisation des hooks WordPress - Optimisée
+     */
     private function initHooks()
     {
-        // Toujours enregistrer le hook admin_menu, même en dehors du contexte admin
-        // car WordPress l'appelle pendant la construction du menu
+        // Hooks toujours nécessaires
         \add_action('admin_menu', [$this, 'addAdminMenu']);
 
-        // N'enregistrer les autres hooks admin que si nécessaire
-        $is_admin_or_pdf_ajax = is_admin() || (isset($_REQUEST['action']) && strpos($_REQUEST['action'], 'pdf_builder') !== false);
-
-        if (!$is_admin_or_pdf_ajax) {
-            return; // Ne pas enregistrer les autres hooks si pas dans l'admin
+        // Vérifier si on est dans le contexte admin
+        if (!$this->isAdminContext()) {
+            return;
         }
 
-        // Enregistrer les paramètres
+        // Hooks d'administration
+        $this->initAdminHooks();
+
+        // Hooks conditionnels
+        $this->initConditionalHooks();
+    }
+
+    /**
+     * Vérifie si on est dans le contexte d'administration
+     */
+    private function isAdminContext()
+    {
+        return is_admin() || (isset($_REQUEST['action']) && strpos($_REQUEST['action'], 'pdf_builder') !== false);
+    }
+
+    /**
+     * Hooks d'administration de base
+     */
+    private function initAdminHooks()
+    {
         \add_action('admin_init', array($this, 'register_settings'));
-
-        // 🔧 MISE À JOUR DES NOMS DE TEMPLATES (TEMPORAIRE)
-        // Désactiver temporairement la mise à jour automatique des noms
-        // \add_action('admin_init', [$this, 'update_template_names']);
-
-        // Enregistrer le custom post type pour les templates
         \add_action('init', [$this, 'register_template_post_type']);
-
-        // Script loading is handled by AdminScriptLoader
-        // \add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
-
-        // Désactiver les préférences WordPress problématiques sur notre page
         \add_action('admin_enqueue_scripts', [$this, 'disable_problematic_preferences'], 1);
+        \add_action('admin_init', [$this, 'handleLegacyTemplateLinks']);
+    }
 
-        // Les scripts React sont gérés par AdminScriptLoader
-
-        // Inclure le gestionnaire de modèles prédéfinis
-        include_once \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/predefined-templates-manager.php';
-
-        // Instancier le gestionnaire de modèles prédéfinis
-        // new PDF_Builder_Predefined_Templates_Manager();
-
-        // Enregistrer les hooks AJAX du Template_Manager avant même son instantiation
-        // Cela garantit que les handlers AJAX seront disponibles immédiatement
-        // ✅ Note: Seulement pdf_builder_save_template - React utilise celui-ci
-
-// REMOVED: Conflit avec bootstrap.php - le handler de bootstrap.php gère maintenant le chargement
-// Hook pdf_builder_get_template déjà enregistré plus haut
+    /**
+     * Hooks conditionnels (WooCommerce, etc.)
+     */
+    private function initConditionalHooks()
+    {
+        // Le gestionnaire de modèles prédéfinis est déjà chargé dans bootstrap.php
+        // include_once self::TEMPLATES_DIR . '/predefined-templates-manager.php';
 
         // Hooks WooCommerce - Délégation vers le manager
-        // Différer l'enregistrement jusqu'à ce que WooCommerce soit complètement chargé
         \add_action('init', function() {
             if (\did_action('plugins_loaded') && defined('WC_VERSION') && $this->woocommerce_integration !== null) {
                 \add_action('add_meta_boxes_shop_order', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
-                // Le hook HPOS peut ne pas exister dans toutes les versions, on l'enregistre seulement si WC_VERSION est défini et >= 7.1
                 if (defined('WC_VERSION') && version_compare(WC_VERSION, '7.1', '>=')) {
                     \add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
                 }
             }
         });
-
-        // Hook pour la compatibilité avec les anciens liens template_id
-        \add_action('admin_init', [$this, 'handleLegacyTemplateLinks']);
     }
 
     /**
@@ -1124,7 +1166,7 @@ class PdfBuilderAdminNew
     }
 
     /**
-     * Page des paramètres
+     * Page des paramètres - CENTRALISÉE dans settings-main.php
      */
     public function settings_page()
     {
@@ -1132,188 +1174,47 @@ class PdfBuilderAdminNew
             \wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
-        // Traitement des formulaires personnalisés des templates
-        $this->handle_settings_form_submission();
-
-        // Récupération des paramètres généraux
-        $settings = pdf_builder_get_option('pdf_builder_settings', array());
-        $current_user = \wp_get_current_user();
-
-        // Gestion des onglets via URL
-        $current_tab = sanitize_text_field($_GET['tab'] ?? 'general');
-        $valid_tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
-        if (!in_array($current_tab, $valid_tabs)) {
-            $current_tab = 'general';
-        }
-
-        ?>
-        <div class="wrap">
-            <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
-            <p><?php _e('Configurez les paramètres de génération de vos documents PDF.', 'pdf-builder-pro'); ?></p>
-
-            <form method="post" action="options.php">
-                <?php settings_fields('pdf_builder_settings'); ?>
-
-                <!-- Navigation par onglets moderne -->
-                <h2 class="nav-tab-wrapper">
-                    <div class="tabs-container">
-                        <a href="?page=pdf-builder-settings&tab=general" class="nav-tab<?php echo $current_tab === 'general' ? ' nav-tab-active' : ''; ?>">
-                            <span class="tab-icon">⚙️</span>
-                            <span class="tab-text"><?php _e('Général', 'pdf-builder-pro'); ?></span>
-                        </a>
-
-                        <a href="?page=pdf-builder-settings&tab=licence" class="nav-tab<?php echo $current_tab === 'licence' ? ' nav-tab-active' : ''; ?>">
-                            <span class="tab-icon">🔑</span>
-                            <span class="tab-text"><?php _e('Licence', 'pdf-builder-pro'); ?></span>
-                        </a>
-
-                        <a href="?page=pdf-builder-settings&tab=systeme" class="nav-tab<?php echo $current_tab === 'systeme' ? ' nav-tab-active' : ''; ?>">
-                            <span class="tab-icon">🖥️</span>
-                            <span class="tab-text"><?php _e('Système', 'pdf-builder-pro'); ?></span>
-                        </a>
-
-                        <a href="?page=pdf-builder-settings&tab=securite" class="nav-tab<?php echo $current_tab === 'securite' ? ' nav-tab-active' : ''; ?>">
-                            <span class="tab-icon">🔒</span>
-                            <span class="tab-text"><?php _e('Sécurité', 'pdf-builder-pro'); ?></span>
-                        </a>
-
-                        <a href="?page=pdf-builder-settings&tab=pdf" class="nav-tab<?php echo $current_tab === 'pdf' ? ' nav-tab-active' : ''; ?>">
-                            <span class="tab-icon">📄</span>
-                            <span class="tab-text"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></span>
-                        </a>
-
-                        <a href="?page=pdf-builder-settings&tab=contenu" class="nav-tab<?php echo $current_tab === 'contenu' ? ' nav-tab-active' : ''; ?>">
-                            <span class="tab-icon">🎨</span>
-                            <span class="tab-text"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></span>
-                        </a>
-
-                        <a href="?page=pdf-builder-settings&tab=templates" class="nav-tab<?php echo $current_tab === 'templates' ? ' nav-tab-active' : ''; ?>">
-                            <span class="tab-icon">📋</span>
-                            <span class="tab-text"><?php _e('Templates', 'pdf-builder-pro'); ?></span>
-                        </a>
-
-                        <a href="?page=pdf-builder-settings&tab=developpeur" class="nav-tab<?php echo $current_tab === 'developpeur' ? ' nav-tab-active' : ''; ?>">
-                            <span class="tab-icon">👨‍💻</span>
-                            <span class="tab-text"><?php _e('Développeur', 'pdf-builder-pro'); ?></span>
-                        </a>
-                    </div>
-                </h2>
-
-                <!-- contenu des onglets moderne -->
-                <div class="settings-content-wrapper">
-                    <?php
-                    switch ($current_tab) {
-                        case 'general':
-                            echo '<div id="pdf-builder-tab-general">';
-                            $general_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-general.php';
-                            if (file_exists($general_file)) {
-                                include $general_file;
-                            } else {
-                                echo '<p>' . __('Fichier de paramètres général manquant.', 'pdf-builder-pro') . '</p>';
-                            }
-                            echo '</div>';
-                            break;
-
-                        case 'licence':
-                            echo '<div id="pdf-builder-tab-licence">';
-                            $licence_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-licence.php';
-                            if (file_exists($licence_file)) {
-                                include $licence_file;
-                            } else {
-                                echo '<p>' . __('Fichier de paramètres licence manquant.', 'pdf-builder-pro') . '</p>';
-                            }
-                            echo '</div>';
-                            break;
-
-                        case 'systeme':
-                            echo '<div id="pdf-builder-tab-systeme">';
-                            $systeme_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-systeme.php';
-                            if (file_exists($systeme_file)) {
-                                include $systeme_file;
-                            } else {
-                                echo '<p>' . __('Fichier de paramètres système manquant.', 'pdf-builder-pro') . '</p>';
-                            }
-                            echo '</div>';
-                            break;
-
-                        case 'securite':
-                            echo '<div id="pdf-builder-tab-securite">';
-                            $securite_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-securite.php';
-                            if (file_exists($securite_file)) {
-                                include $securite_file;
-                            } else {
-                                echo '<p>' . __('Fichier de paramètres sécurité manquant.', 'pdf-builder-pro') . '</p>';
-                            }
-                            echo '</div>';
-                            break;
-
-                        case 'pdf':
-                            echo '<div id="pdf-builder-tab-pdf">';
-                            $pdf_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-pdf.php';
-                            if (file_exists($pdf_file)) {
-                                include $pdf_file;
-                            } else {
-                                echo '<p>' . __('Fichier de paramètres PDF manquant.', 'pdf-builder-pro') . '</p>';
-                            }
-                            echo '</div>';
-                            break;
-
-                        case 'contenu':
-                            echo '<div id="pdf-builder-tab-contenu">';
-                            $contenu_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-contenu.php';
-                            if (file_exists($contenu_file)) {
-                                include $contenu_file;
-                            } else {
-                                echo '<p>' . __('Fichier de paramètres canvas manquant.', 'pdf-builder-pro') . '</p>';
-                            }
-                            echo '</div>';
-                            break;
-
-                        case 'templates':
-                            echo '<div id="pdf-builder-tab-templates">';
-                            $templates_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-templates.php';
-                            if (file_exists($templates_file)) {
-                                include $templates_file;
-                            } else {
-                                echo '<p>' . __('Fichier de paramètres templates manquant.', 'pdf-builder-pro') . '</p>';
-                            }
-                            echo '</div>';
-                            break;
-
-                        case 'developpeur':
-                            echo '<div id="pdf-builder-tab-developpeur">';
-                            $developpeur_file = \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-developpeur.php';
-                            if (file_exists($developpeur_file)) {
-                                include $developpeur_file;
-                            } else {
-                                echo '<p>' . __('Fichier de paramètres développeur manquant.', 'pdf-builder-pro') . '</p>';
-                            }
-                            echo '</div>';
-                            break;
-
-                        default:
-                            echo '<p>' . __('Onglet non valide.', 'pdf-builder-pro') . '</p>';
-                            break;
-                    }
-                    ?>
-
-                    <!-- Bouton flottant personnalisé -->
-                    <button type="submit" name="submit" id="pdf-builder-floating-save" class="pdf-builder-floating-save">
-                        <?php _e('Enregistrer', 'pdf-builder-pro'); ?>
-                    </button>
-                </div>
-            </form>
-
-            <!-- Containers fictifs pour éviter les erreurs JS -->
-            <div id="pdf-builder-tabs" style="display: none;"></div>
-            <div id="pdf-builder-tab-content" style="display: none;"></div>
-
-        </div> <!-- Fin du .wrap -->
-        <?php
+        // Inclure le fichier centralisé des paramètres
+        include \plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/settings-parts/settings-main.php';
     }
 
     /**
-     * Getter pour le TemplateProcessor avec création à la demande
+     * Getter pour le Thumbnail Manager avec lazy loading
+     */
+    public function getThumbnailManager()
+    {
+        if ($this->thumbnail_manager === null) {
+            $this->initThumbnailManager();
+        }
+        return $this->thumbnail_manager;
+    }
+
+    /**
+     * Getter pour le Dashboard Data Provider avec lazy loading
+     */
+    public function getDashboardDataProvider()
+    {
+        if ($this->dashboard_data_provider === null) {
+            $this->initDashboardProvider();
+        }
+        return $this->dashboard_data_provider;
+    }
+
+    /**
+     * Getter pour l'intégration WooCommerce avec lazy loading
+     */
+    public function getWooCommerceIntegration()
+    {
+        if ($this->woocommerce_integration === null && \did_action('plugins_loaded') && defined('WC_VERSION')) {
+            if (class_exists('PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration')) {
+                $this->woocommerce_integration = new \PDF_Builder\Managers\PDF_Builder_WooCommerce_Integration($this->core);
+            }
+        }
+        return $this->woocommerce_integration;
+    }
+
+    /**
+     * Get template processor instance
      */
     public function getTemplateProcessor()
     {

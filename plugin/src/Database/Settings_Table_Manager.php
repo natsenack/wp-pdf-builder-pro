@@ -21,8 +21,14 @@ class Settings_Table_Manager {
         $table_name = $wpdb->prefix . 'pdf_builder_settings';
         $charset_collate = $wpdb->get_charset_collate();
         
-        // Vérifier si la table existe déjà
-        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name) {
+        // Vérifier si la table existe déjà via information_schema (plus fiable)
+        $table_exists = $wpdb->get_var($wpdb->prepare(
+            "SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s",
+            DB_NAME,
+            $table_name
+        ));
+        
+        if ($table_exists) {
             return true; // Table existe déjà
         }
         
@@ -38,8 +44,20 @@ class Settings_Table_Manager {
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
         
-        if (class_exists('PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Table wp_pdf_builder_settings créée avec succès'); }
-        return true;
+        // Vérifier que la table a bien été créée
+        $table_created = $wpdb->get_var($wpdb->prepare(
+            "SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s",
+            DB_NAME,
+            $table_name
+        ));
+        
+        if ($table_created) {
+            if (class_exists('PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Table wp_pdf_builder_settings créée avec succès'); }
+            return true;
+        } else {
+            error_log('[PDF Builder] ERREUR: Table wp_pdf_builder_settings NOT créée');
+            return false;
+        }
     }
     
     /**

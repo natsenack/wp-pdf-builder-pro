@@ -16,6 +16,13 @@ if (!function_exists('do_action')) {
     function do_action($tag, ...$args) { return null; }
 }
 
+<<<<<<< HEAD
+=======
+if (!class_exists('\PDF_Builder\Admin\PdfBuilderAdminNew')) {
+    class PdfBuilderAdminNew {}
+}
+
+>>>>>>> a95dfc1e4c21298f74f2f7fcedd7c49c1dcfa128
 /**
  * @global function \add_filter
  * @global function \is_admin
