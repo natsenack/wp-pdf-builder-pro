@@ -99,13 +99,19 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     public function handle_save_settings() {
         error_log("[UNIFIED AJAX] handle_save_settings called - POST data: " . json_encode($_POST));
+        error_log("[UNIFIED AJAX] REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
+        error_log("[UNIFIED AJAX] action parameter: " . ($_POST['action'] ?? 'NOT SET'));
 
         if (!$this->nonce_manager->validate_ajax_request('save_settings')) {
+            error_log("[UNIFIED AJAX] Nonce validation FAILED");
             return;
         }
 
+        error_log("[UNIFIED AJAX] Nonce validation PASSED");
+
         try {
             $current_tab = sanitize_text_field($_POST['tab'] ?? 'all');
+            error_log("[UNIFIED AJAX] Processing tab: {$current_tab}");
             $saved_count = 0;
             $saved_options = [];
 
@@ -117,8 +123,10 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $saved_options = $this->get_saved_options_for_tab('all');
                     break;
                 case 'general':
+                    error_log("[UNIFIED AJAX] Calling save_general_settings");
                     $saved_count = $this->save_general_settings();
                     $saved_options = $this->get_saved_options_for_tab('general');
+                    error_log("[UNIFIED AJAX] save_general_settings returned: {$saved_count}");
                     break;
                 case 'performance':
                     $saved_count = $this->save_performance_settings();
@@ -1078,28 +1086,21 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function save_general_settings() {
         $settings = [
-            'cache_enabled' => isset($_POST['cache_enabled']) ? '1' : '0',
-            'cache_ttl' => intval($_POST['cache_ttl']),
-            'cache_compression' => isset($_POST['cache_compression']) ? '1' : '0',
-            'cache_auto_cleanup' => isset($_POST['cache_auto_cleanup']) ? '1' : '0',
-            'cache_max_size' => intval($_POST['cache_max_size'] ?? 100),
             'company_phone_manual' => sanitize_text_field($_POST['company_phone_manual'] ?? ''),
             'company_siret' => sanitize_text_field($_POST['company_siret'] ?? ''),
             'company_vat' => sanitize_text_field($_POST['company_vat'] ?? ''),
             'company_rcs' => sanitize_text_field($_POST['company_rcs'] ?? ''),
             'company_capital' => sanitize_text_field($_POST['company_capital'] ?? ''),
-            'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
-            'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
-            'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
         ];
+
+        error_log("PDF Builder: Saving general settings - " . json_encode($settings));
 
         foreach ($settings as $key => $value) {
             $option_name = 'pdf_builder_' . $key;
-            update_option($option_name, $value);
-            // error_log("PDF Builder: Saved general setting - {$option_name} = '{$value}'");
+            $result = update_option($option_name, $value);
+            error_log("PDF Builder: Saved general setting - {$option_name} = '{$value}' (result: " . ($result ? 'SUCCESS' : 'FAILED') . ")");
         }
 
-        // error_log("PDF Builder: General settings saved - " . count($settings) . " fields");
         return count($settings);
     }
 
