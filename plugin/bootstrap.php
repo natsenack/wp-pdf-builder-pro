@@ -173,9 +173,8 @@ if (!function_exists('pdf_builder_get_option')) {
         
         $result = \PDF_Builder\Database\Settings_Table_Manager::get_option($option_name, $default);
         
+        return $result;
     }
-    
-    return $result;
 }
 
 /**
