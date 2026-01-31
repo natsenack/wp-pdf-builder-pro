@@ -176,7 +176,6 @@ if (!function_exists('pdf_builder_get_option')) {
     }
     
     return $result;
-    }
 }
 
 /**
