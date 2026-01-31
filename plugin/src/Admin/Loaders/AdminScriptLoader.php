@@ -255,7 +255,7 @@ class AdminScriptLoader
                     'generating_pdf' => \__('Génération du PDF en cours...', 'pdf-builder-pro'),
                 ]
             ];
-            wp_add_inline_script('jquery', 'window.pdfBuilderData = ' . wp_json_encode($preview_data) . '; window.pdfBuilderNonce = "' . \wp_create_nonce('pdf_builder_order_actions') . '";', 'after');
+        \wp_add_inline_script('jquery', 'window.pdfBuilderData = ' . wp_json_encode($preview_data) . '; window.pdfBuilderNonce = "' . \wp_create_nonce('pdf_builder_save_settings_nonce') . '";', 'after');
             
             \wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-api-client.min.js', ['jquery'], $version_param, true);
             
