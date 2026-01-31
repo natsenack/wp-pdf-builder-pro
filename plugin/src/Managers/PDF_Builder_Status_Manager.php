@@ -273,7 +273,6 @@ class PDF_Builder_Status_Manager
             $status_name,
             $action
         );
-        PDF_Builder_Logger::get_instance()->info($message, ['context' => 'status_manager']);
     }
     /**
      * Logger l'utilisation d'un statut inconnu
@@ -284,7 +283,6 @@ class PDF_Builder_Status_Manager
             'Statut inconnu utilisé: %s - Template par défaut appliqué',
             $status_key
         );
-        PDF_Builder_Logger::get_instance()->warning($message, ['context' => 'status_manager']);
     }
 
     /**

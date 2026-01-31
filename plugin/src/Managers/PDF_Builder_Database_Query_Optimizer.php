@@ -410,7 +410,6 @@ class PDF_Builder_Database_Query_Optimizer
             $wpdb->query($index_sql);
         }
 
-        PDF_Builder_Logger::get_instance()->info('Index de performance créés pour PDF Builder', ['context' => 'db_optimizer']);
     }
 
     /**
@@ -501,7 +500,6 @@ class PDF_Builder_Database_Query_Optimizer
         wp_cache_delete('pdf_builder_query_cache');
         $this->initializeQueryCache();
 
-        PDF_Builder_Logger::get_instance()->info('Cache des requêtes nettoyé', ['context' => 'db_optimizer']);
     }
 
     /**
@@ -527,7 +525,6 @@ class PDF_Builder_Database_Query_Optimizer
         // Créer les index de performance
         $this->createPerformanceIndexes();
 
-        PDF_Builder_Logger::get_instance()->info('Base de données optimisée pour PDF Builder', ['context' => 'db_optimizer']);
     }
 }
 

@@ -322,18 +322,6 @@ class PDF_Builder_Resize_Manager
     }
 
     /**
-     * Logger les événements de redimensionnement
-     */
-    private function logResizeEvent($event_type, $session_id, $data = [])
-    {
-        $logger = PDF_Builder_Logger::getInstance();
-        if ($logger) {
-            // Logger commented out to avoid syntax issues
-            // $logger->log('resize', $event_type, array_merge(['session_id' => $session_id], $data));
-        }
-    }
-
-    /**
      * Obtenir les statistiques de performance du redimensionnement
      */
     public function getResizePerformanceStats()

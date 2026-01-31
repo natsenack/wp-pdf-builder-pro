@@ -16,7 +16,6 @@ if (!defined('PDF_BUILDER_ASSETS_DIR')) {
 }
 
 // Import the logger class
-// use PDF_Builder_Logger; // Removed - using error_log instead
 
 /**
  * Classe responsable du chargement des scripts et styles admin

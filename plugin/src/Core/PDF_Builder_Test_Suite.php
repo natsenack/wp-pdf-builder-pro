@@ -174,8 +174,6 @@ class PDF_Builder_Test_Suite {
             $this->notify_test_failures($results);
         }
 
-        if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->info('Test suite completed', [
                 'suite' => $suite_name,
                 'passed' => $results['summary']['passed'],
                 'failed' => $results['summary']['failed'],
@@ -960,7 +958,6 @@ class PDF_Builder_Test_Suite {
         $message .= "Taux de succès: " . round($results['summary']['success_rate'], 2) . "%";
 
         // Legacy notification calls removed — log as error
-        PDF_Builder_Logger::get_instance()->error('Échecs de tests détectés: ' . $message, ['test_results' => $results]);
     }
 
     /**
@@ -1012,8 +1009,6 @@ class PDF_Builder_Test_Suite {
             WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)
         ", $retention_days));
 
-        if ($deleted > 0 && class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->info("Old test results cleaned up: $deleted records removed");
         }
     }
 
@@ -1021,8 +1016,6 @@ class PDF_Builder_Test_Suite {
      * Log une erreur de test
      */
     private function log_test_error($operation, $exception) {
-        if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->error("Test operation failed: $operation", [
                 'error' => $exception->getMessage(),
                 'trace' => $exception->getTraceAsString()
             ]);

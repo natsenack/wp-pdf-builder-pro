@@ -287,8 +287,6 @@ class PDF_Builder_Integration_Manager {
 
         } catch (Exception $e) {
             // Logger l'erreur
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->error('Service connection failed', [
                     'service' => $service_id,
                     'error' => $e->getMessage()
                 ]);
@@ -319,8 +317,6 @@ class PDF_Builder_Integration_Manager {
             pdf_builder_update_option('pdf_builder_integrations', $this->integrations_cache);
 
             // Logger la déconnexion
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Service disconnected', [
                     'service' => $service_id
                 ]);
             }
@@ -550,8 +546,6 @@ class PDF_Builder_Integration_Manager {
 
         } catch (Exception $e) {
             // Logger l'erreur
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->error('OAuth callback failed', [
                     'service' => $service_id,
                     'error' => $e->getMessage()
                 ]);
@@ -637,8 +631,6 @@ class PDF_Builder_Integration_Manager {
                     $this->refresh_oauth_token($service_id);
                 } catch (Exception $e) {
                     // Logger l'erreur mais continuer
-                    if (class_exists('PDF_Builder_Logger')) {
-                        PDF_Builder_Logger::get_instance()->error('Token refresh failed', [
                             'service' => $service_id,
                             'error' => $e->getMessage()
                         ]);
@@ -883,8 +875,6 @@ class PDF_Builder_Integration_Manager {
                     pdf_builder_update_option('pdf_builder_integration_connections', $this->connections_cache);
 
                     // Logger l'erreur
-                    if (class_exists('PDF_Builder_Logger')) {
-                        PDF_Builder_Logger::get_instance()->warning('Integration health check failed', [
                             'service' => $service_id,
                             'error' => $e->getMessage()
                         ]);

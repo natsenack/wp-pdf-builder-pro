@@ -73,9 +73,6 @@ class PDF_Builder_Auto_Update_System {
             $updates = $this->fetch_available_updates();
 
             if (empty($updates)) {
-                if (class_exists('PDF_Builder_Logger')) {
-                    PDF_Builder_Logger::get_instance()->info('No updates available');
-                }
                 return false;
             }
 
@@ -91,11 +88,8 @@ class PDF_Builder_Auto_Update_System {
                 // Notifier si c'est une mise à jour de sécurité
                 if ($best_update['type'] === self::UPDATE_TYPE_SECURITY) {
                     // Legacy notification calls removed — log an error for security updates
-                    PDF_Builder_Logger::get_instance()->warning("Mise à jour de sécurité disponible: {$best_update['version']}", ['update' => $best_update, 'current_version' => $current_version]);
                 }
 
-                if (class_exists('PDF_Builder_Logger')) {
-                    PDF_Builder_Logger::get_instance()->info('Update available', [
                         'version' => $best_update['version'],
                         'type' => $best_update['type']
                     ]);
@@ -263,8 +257,6 @@ class PDF_Builder_Auto_Update_System {
                 'downloaded_at' => current_time('mysql')
             ]);
 
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Update downloaded successfully', [
                     'version' => $version,
                     'size' => filesize($download_path)
                 ]);
@@ -323,10 +315,7 @@ class PDF_Builder_Auto_Update_System {
             ]);
 
             // Legacy notification calls removed — log info for success
-            PDF_Builder_Logger::get_instance()->info('Mise à jour installée avec succès: PDF Builder Pro mis à jour vers la version ' . $version, ['version' => $version, 'backup_id' => $backup_id ?? null]);
 
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Update installed successfully', [
                     'version' => $version,
                     'backup_id' => $backup_id ?? null
                 ]);
@@ -625,7 +614,6 @@ class PDF_Builder_Auto_Update_System {
 
         if ($update) {
             // Legacy notification calls removed — log info
-            PDF_Builder_Logger::get_instance()->info('Mise à jour disponible: Une nouvelle version de PDF Builder Pro est disponible: ' . $update['version'], ['update' => $update]);
         }
     }
 
@@ -644,8 +632,6 @@ class PDF_Builder_Auto_Update_System {
             AND installed_at < DATE_SUB(NOW(), INTERVAL %d MONTH)
         ", $retention_months));
 
-        if ($deleted > 0 && class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->info("Old update records cleaned up: $deleted records removed");
         }
     }
 
@@ -728,8 +714,6 @@ class PDF_Builder_Auto_Update_System {
      * Log une erreur de mise à jour
      */
     private function log_update_error($operation, $exception) {
-        if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->error("Update operation failed: $operation", [
                 'error' => $exception->getMessage(),
                 'trace' => $exception->getTraceAsString()
             ]);

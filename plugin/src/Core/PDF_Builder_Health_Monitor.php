@@ -385,11 +385,9 @@ class PDF_Builder_Health_Monitor {
      * Obtient les métriques d'erreurs
      */
     private function get_error_metrics() {
-        if (!class_exists('PDF_Builder_Logger')) {
             return [];
         }
 
-        $logger = PDF_Builder_Logger::get_instance();
 
         return [
             'error_count_24h' => $logger->get_error_count(24),
@@ -730,8 +728,6 @@ class PDF_Builder_Health_Monitor {
         $this->alerts_sent[$alert_key] = time();
 
         // Legacy notification calls removed — send events to the logger only
-        if (class_exists('PDF_Builder_Logger')) {
-            $logger = PDF_Builder_Logger::get_instance();
             switch ($level) {
                 case 'critical':
                     $logger->critical("Alerte de santé système: $message", $details);
@@ -794,11 +790,9 @@ class PDF_Builder_Health_Monitor {
      * Surveille les erreurs
      */
     public function monitor_errors() {
-        if (!class_exists('PDF_Builder_Logger')) {
             return;
         }
 
-        $logger = PDF_Builder_Logger::get_instance();
         $error_rate = $logger->get_error_rate();
 
         if ($error_rate > self::ERROR_RATE_THRESHOLD) {

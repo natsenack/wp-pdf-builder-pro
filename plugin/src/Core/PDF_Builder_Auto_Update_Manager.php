@@ -217,8 +217,6 @@ class PDF_Builder_Auto_Update_Manager {
             $this->check_security_patches();
 
             // Logger la vérification
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Update check completed', [
                     'updates_found' => count($filtered_updates),
                     'security_patches' => count($this->security_patches)
                 ]);
@@ -226,8 +224,6 @@ class PDF_Builder_Auto_Update_Manager {
 
         } catch (Exception $e) {
             // Logger l'erreur
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->error('Update check failed', [
                     'error' => $e->getMessage()
                 ]);
             }
@@ -269,8 +265,6 @@ class PDF_Builder_Auto_Update_Manager {
 
         } catch (Exception $e) {
             // Logger l'erreur silencieusement
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->warning('Security patch check failed', [
                     'error' => $e->getMessage()
                 ]);
             }
@@ -321,8 +315,6 @@ class PDF_Builder_Auto_Update_Manager {
                 $this->cleanup_update_files();
 
                 // Logger l'installation
-                if (class_exists('PDF_Builder_Logger')) {
-                    PDF_Builder_Logger::get_instance()->info('Update installed successfully', [
                         'update_id' => $update_id,
                         'version' => $update['version']
                     ]);
@@ -346,8 +338,6 @@ class PDF_Builder_Auto_Update_Manager {
             }
 
             // Logger l'erreur
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->error('Update installation failed', [
                     'update_id' => $update_id,
                     'error' => $e->getMessage()
                 ]);
@@ -875,8 +865,6 @@ class PDF_Builder_Auto_Update_Manager {
             $this->load_update_data();
 
             // Logger la mise à jour
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Plugin updated via WordPress', [
                     'new_version' => PDF_BUILDER_VERSION
                 ]);
             }

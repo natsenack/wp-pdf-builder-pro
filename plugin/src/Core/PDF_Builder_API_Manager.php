@@ -99,8 +99,6 @@ class PDF_Builder_API_Manager {
             $this->save_connections();
 
             // Logger la connexion
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info("API connection established: $service");
             }
 
             return [
@@ -137,8 +135,6 @@ class PDF_Builder_API_Manager {
         // Nettoyer le cache du client
         unset($this->api_clients[$service]);
 
-        if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->info("API connection disconnected: $service");
         }
 
         return [
@@ -303,8 +299,6 @@ class PDF_Builder_API_Manager {
             }
         } catch (Exception $e) {
             // Logger l'erreur mais ne pas échouer
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->warning("Failed to revoke tokens for $service: " . $e->getMessage());
             }
         }
     }
@@ -467,7 +461,6 @@ class PDF_Builder_API_Manager {
 
             // Notifier
                 // Legacy notification calls removed — write a warning to the logger instead
-                PDF_Builder_Logger::get_instance()->warning('Tokens API expirés: Les tokens suivants ont expiré: ' . implode(', ', $expired));
         }
     }
 

@@ -89,8 +89,6 @@ class PDF_Builder_Backup_Recovery_System {
             $this->register_backup($backup_data['metadata'], $archive_path);
 
             // Logger le succès
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Full backup created successfully', [
                     'backup_id' => $backup_id,
                     'size' => filesize($archive_path)
                 ]);
@@ -165,8 +163,6 @@ class PDF_Builder_Backup_Recovery_System {
             $this->mark_backup_restored($backup_id, $emergency_backup_id);
 
             // Logger le succès
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Backup restored successfully', [
                     'backup_id' => $backup_id,
                     'emergency_backup' => $emergency_backup_id,
                     'components' => $components
@@ -665,7 +661,6 @@ class PDF_Builder_Backup_Recovery_System {
 
             // Notifier l'admin
             // Legacy notification calls removed — log this event as critical
-            PDF_Builder_Logger::get_instance()->critical('Problème d\'intégrité système détecté: ' . implode("\n", $issues), ['issues' => $issues]);
         }
 
         return [
@@ -698,8 +693,6 @@ class PDF_Builder_Backup_Recovery_System {
             AND type != 'emergency'
         ", $retention_days));
 
-        if ($deleted > 0 && class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->info("Old backups cleaned up: $deleted backups removed");
         }
     }
 
@@ -707,8 +700,6 @@ class PDF_Builder_Backup_Recovery_System {
      * Log une erreur de sauvegarde
      */
     private function log_backup_error($operation, $exception) {
-        if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->error("Backup operation failed: $operation", [
                 'error' => $exception->getMessage(),
                 'trace' => $exception->getTraceAsString()
             ]);

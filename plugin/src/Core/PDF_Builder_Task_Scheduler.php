@@ -306,8 +306,6 @@ class PDF_Builder_Task_Scheduler {
      * Log une erreur de tâche
      */
     private function log_task_error($task_name, $exception) {
-        if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->error("Task $task_name failed", [
                 'error' => $exception->getMessage(),
                 'trace' => $exception->getTraceAsString()
             ]);

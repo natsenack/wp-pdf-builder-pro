@@ -40,7 +40,6 @@ class PdfBuilderAutoloader
      */
     private static $legacy_classes = [
         'PDF_Builder_Unified_Ajax_Handler' => 'src/Core/PDF_Builder_Unified_Ajax_Handler.php',
-        // 'PDF_Builder_Logger' => 'src/PDF_Builder_Logger.php', // Removed - using error_log instead
     ];
 
     /**

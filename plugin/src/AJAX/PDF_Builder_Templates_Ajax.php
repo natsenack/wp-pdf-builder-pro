@@ -8,7 +8,6 @@
 namespace PDF_Builder\AJAX;
 
 use Exception;
-use PDF_Builder_Logger;
 
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
@@ -305,11 +304,6 @@ class PdfBuilderTemplatesAjax
             }
 
             // Debug logs
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Full settings from database: ' . print_r($settings, true));
-                PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Raw available_formats from settings: ' . print_r($settings['pdf_builder_available_formats'] ?? 'NOT_SET', true));
-                PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Raw available_orientations from settings: ' . print_r($settings['pdf_builder_available_orientations'] ?? 'NOT_SET', true));
-                PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Raw available_dpi from settings: ' . print_r($settings['pdf_builder_available_dpi'] ?? 'NOT_SET', true));
             }
 
             // Construire les arrays des options disponibles dynamiquement
@@ -318,10 +312,6 @@ class PdfBuilderTemplatesAjax
             $available_dpi = $settings['pdf_builder_available_dpi'] ?? [72, 96, 150, 300, 600];
 
             // Debug logs
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Final available formats: ' . print_r($available_formats, true));
-                PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Final available orientations: ' . print_r($available_orientations, true));
-                PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Final available DPI: ' . print_r($available_dpi, true));
             }
 
             $settings = array(

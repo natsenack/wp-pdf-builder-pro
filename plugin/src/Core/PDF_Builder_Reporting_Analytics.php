@@ -97,11 +97,8 @@ class PDF_Builder_Reporting_Analytics {
             // Notifier si nécessaire
             if (pdf_builder_config('report_notifications_enabled', true)) {
                  // Legacy notification calls removed — log info
-                 PDF_Builder_Logger::get_instance()->info('Rapport généré: ' . (is_string($message) ? $message : json_encode($message)), ['report_id' => $report_id]);
             }
 
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Report generated successfully', [
                     'type' => $type,
                     'period' => $period,
                     'format' => $format,
@@ -1437,8 +1434,6 @@ class PDF_Builder_Reporting_Analytics {
             }
         }
 
-        if ($deleted_reports > 0 && class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->info("Old reports cleaned up: $deleted_reports reports removed");
         }
     }
 
@@ -1457,15 +1452,12 @@ class PDF_Builder_Reporting_Analytics {
         $message = "Rapport de {$type_names[$type]} ($period) généré avec succès";
 
         // Legacy notification calls removed — log info instead
-        PDF_Builder_Logger::get_instance()->info('Rapport généré: ' . $message, ['report_type' => $type, 'period' => $period, 'report_id' => $report_id]);
     }
 
     /**
      * Log une erreur de rapport
      */
     private function log_report_error($operation, $exception) {
-        if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->error("Report operation failed: $operation", [
                 'error' => $exception->getMessage(),
                 'trace' => $exception->getTraceAsString()
             ]);

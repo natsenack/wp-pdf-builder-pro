@@ -280,17 +280,6 @@ class PDF_Builder_Drag_Drop_Manager
     }
 
     /**
-     * Logger les événements de drag
-     */
-    private function logDragEvent($event_type, $session_id, $data = [])
-    {
-        $logger = PDF_Builder_Logger::getInstance();
-        if ($logger) {
-            // $logger->log('drag_drop', $event_type, array_merge(['session_id' => $session_id], $data));
-        }
-    }
-
-    /**
      * Obtenir les statistiques de performance du drag
      */
     public function getDragPerformanceStats()

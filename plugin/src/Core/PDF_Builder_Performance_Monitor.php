@@ -220,8 +220,6 @@ class PDF_Builder_Performance_Monitor {
      * Log un problème de performance
      */
     private function log_performance_issue($type, $data) {
-        if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->warning("Performance issue: $type", $data);
         } else {
 
         }

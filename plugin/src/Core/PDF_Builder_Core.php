@@ -109,7 +109,6 @@ class PdfBuilderCore
             // 'PDF_Builder_Feature_Manager.php', // Chargé dans bootstrap.php
             // 'PDF_Builder_Feature_Manager.php', // Chargé dans bootstrap.php
             // 'PDF_Builder_License_Manager.php', // Chargé dans bootstrap.php
-            // 'PDF_Builder_Logger.php', // Chargé dans bootstrap.php
             'PDF_Builder_PDF_Generator.php',
             'PDF_Builder_Resize_Manager.php',
             'PDF_Builder_Settings_Manager.php',

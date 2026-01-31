@@ -154,10 +154,6 @@ class PDF_Builder_Performance_Monitor
         }
 
         // file_put_contents($log_file, $log_entry, FILE_APPEND | LOCK_EX);
-        // Log aussi dans le logger du plugin
-        if (class_exists('PDF_Builder_Logger')) {
-            // PDF_Builder_Logger::log("Performance [$type]: " . json_encode($data), 'info');
-        }
     }
 
     /**

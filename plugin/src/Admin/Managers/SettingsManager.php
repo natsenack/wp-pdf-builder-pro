@@ -529,13 +529,9 @@ class SettingsManager
      */
     public function sanitizeSettings($input)
     {
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === SANITIZE SETTINGS START ===');
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] sanitizeSettings called with input count: ' . (is_array($input) ? count($input) : 'not array'));
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Raw input data: ' . print_r($input, true));
 
         // Vérifier si l'input est vide
         if (empty($input)) {
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ERROR: sanitizeSettings called with empty input!');
             return array();
         }
 
@@ -543,8 +539,6 @@ class SettingsManager
 
         // Récupérer les valeurs existantes pour les fusionner
         $existing = pdf_builder_get_option('pdf_builder_settings', array());
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Existing settings count: ' . count($existing));
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Existing settings keys: ' . implode(', ', array_keys($existing)));
 
         // Commencer avec les valeurs existantes
         $sanitized = $existing;
@@ -552,18 +546,14 @@ class SettingsManager
         // CORRECTION: Suppression de la logique des checkboxes non présentes dans l'input
 
         // LOGS SPECIFIQUES POUR LES TEMPLATES
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === CHECKING TEMPLATE FIELDS ===');
         $template_fields = ['pdf_builder_default_template', 'pdf_builder_template_library_enabled'];
         foreach ($template_fields as $field) {
             if (isset($input[$field])) {
-                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] Template field '$field' found with value: '" . $input[$field] . "'");
             } else {
-                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] Template field '$field' NOT found in input");
             }
         }
 
         // LOGS SPECIFIQUES POUR LES COULEURS CANVAS
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === CHECKING CANVAS COLOR FIELDS ===');
         $canvas_color_fields = [
             'pdf_builder_canvas_bg_color',
             'pdf_builder_canvas_border_color',
@@ -571,9 +561,7 @@ class SettingsManager
         ];
         foreach ($canvas_color_fields as $field) {
             if (isset($input[$field])) {
-                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] Canvas color field '$field' found with value: '" . $input[$field] . "'");
             } else {
-                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] Canvas color field '$field' NOT found in input");
             }
         }
 
@@ -698,8 +686,6 @@ class SettingsManager
                 // 1. Validation de l'email
                 if (!\is_email($email)) {
                     // Email invalide - ne pas sauvegarder
-                    if (class_exists('\PDF_Builder_Logger')) {
-                        \PDF_Builder_Logger::get_instance()->debug_log('[RGPD] Email invalide fourni pour les rappels: ' . $email);
                     }
                     $email = '';
                 } else {
@@ -711,8 +697,6 @@ class SettingsManager
 
                     if (!$consent_given) {
                         // Pas de consentement - ne pas sauvegarder l'email
-                        if (class_exists('\PDF_Builder_Logger')) {
-                            \PDF_Builder_Logger::get_instance()->debug_log('[RGPD] Consentement non donné pour l\'email: ' . $email);
                         }
                         $email = '';
                     } else {
@@ -722,8 +706,6 @@ class SettingsManager
                         // 5. Conservation limitée : liée à la durée de validité de la licence
                         // L'email sera automatiquement supprimé lors de la désactivation du mode test
 
-                        if (class_exists('\PDF_Builder_Logger')) {
-                            \PDF_Builder_Logger::get_instance()->debug_log('[RGPD] Email validé et consenti pour les rappels: ' . $email);
                         }
                     }
                 }
@@ -851,23 +833,18 @@ class SettingsManager
             }
         }
 
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === FINAL TEMPLATE VALUES ===');
         foreach ($template_fields as $field) {
             $final_value = isset($sanitized[$field]) ? $sanitized[$field] : 'NOT_SET';
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] Final '$field' = '$final_value'");
         }
 
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === FINAL CANVAS COLOR VALUES ===');
         foreach ($canvas_color_fields as $field) {
             $final_value = isset($sanitized[$field]) ? $sanitized[$field] : 'NOT_SET';
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] Final '$field' = '$final_value'");
         }
 
         // Sanitize les options disponibles (tableaux)
         if (isset($input['pdf_builder_canvas_formats']) && is_array($input['pdf_builder_canvas_formats'])) {
             $valid_formats = ['A3', 'A4', 'A5', 'Letter', 'Legal', 'Tabloid', 'Executive'];
             $sanitized['pdf_builder_available_formats'] = array_intersect($input['pdf_builder_canvas_formats'], $valid_formats);
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Sanitized available_formats: ' . implode(', ', $sanitized['pdf_builder_available_formats']));
         } else {
             // Si aucune checkbox n'est cochée, définir un array vide
             $sanitized['pdf_builder_available_formats'] = [];
@@ -876,7 +853,6 @@ class SettingsManager
         if (isset($input['pdf_builder_canvas_orientations']) && is_array($input['pdf_builder_canvas_orientations'])) {
             $valid_orientations = ['portrait', 'landscape'];
             $sanitized['pdf_builder_available_orientations'] = array_intersect($input['pdf_builder_canvas_orientations'], $valid_orientations);
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Sanitized available_orientations: ' . implode(', ', $sanitized['pdf_builder_available_orientations']));
         } else {
             $sanitized['pdf_builder_available_orientations'] = [];
             error_log('[PDF Builder] No available_orientations checkboxes checked, setting empty array');
@@ -884,7 +860,6 @@ class SettingsManager
         if (isset($input['pdf_builder_canvas_dpi']) && is_array($input['pdf_builder_canvas_dpi'])) {
             $valid_dpi = [72, 96, 150, 200, 300, 600, 1200];
             $sanitized['pdf_builder_available_dpi'] = array_map('intval', array_intersect($input['pdf_builder_canvas_dpi'], $valid_dpi));
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Sanitized available_dpi: ' . implode(', ', $sanitized['pdf_builder_available_dpi']));
         } else {
             $sanitized['pdf_builder_available_dpi'] = [];
             error_log('[PDF Builder] No available_dpi checkboxes checked, setting empty array');
@@ -904,11 +879,9 @@ class SettingsManager
         foreach ($general_fields as $field) {
             if (isset($input[$field])) {
                 pdf_builder_update_option($field, \sanitize_text_field($input[$field]));
-                if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] Saved general field '$field' = '" . $input[$field] . "'");
             }
         }
 
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] sanitizeSettings saved to custom table, returning false to prevent wp_options save');
         return false; // Prevent WordPress from saving to wp_options
     }
 
@@ -917,9 +890,6 @@ class SettingsManager
      */
     public function onSettingsUpdated($old_value, $new_value, $option)
     {
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ✅ SUCCESS: onSettingsUpdated called for option: ' . $option);
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ✅ Old value count: ' . (is_array($old_value) ? count($old_value) : 'not array'));
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ✅ New value count: ' . (is_array($new_value) ? count($new_value) : 'not array'));
 
         // Logs spécifiques pour les champs problématiques
         $check_fields = [
@@ -930,15 +900,12 @@ class SettingsManager
             'pdf_builder_canvas_container_bg_color'
         ];
 
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] === SETTINGS UPDATE DETAILS ===');
         foreach ($check_fields as $field) {
             $old_val = isset($old_value[$field]) ? $old_value[$field] : 'NOT_SET';
             $new_val = (is_array($new_value) && isset($new_value[$field])) ? $new_value[$field] : 'NOT_SET';
             $changed = ($old_val !== $new_val) ? 'CHANGED' : 'UNCHANGED';
-            if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] $field: '$old_val' -> '$new_val' [$changed]");
         }
 
-        if (class_exists('\PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ✅ New value sample: ' . (is_array($new_value) ? print_r(array_slice($new_value, 0, 5), true) : 'Not an array (returned false from sanitizeSettings)'));
     }
 
     /**

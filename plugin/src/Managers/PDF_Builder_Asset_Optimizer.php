@@ -616,7 +616,6 @@ class PDF_Builder_Asset_Optimizer
             round($compression_ratio, 1)
         );
 
-        PDF_Builder_Logger::get_instance()->info($message, ['context' => 'asset_optimizer']);
     }
 
     /**

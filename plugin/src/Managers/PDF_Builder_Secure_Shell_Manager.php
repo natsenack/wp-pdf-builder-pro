@@ -41,11 +41,6 @@ class PDF_Builder_Secure_Shell_Manager
     private static function logExecution($command, $output, $success = true, $security_level = 'info')
     {
         $log_message = sprintf("[SECURE_SHELL] %s - Command: %s - Output: %s - Level: %s", $success ? 'SUCCESS' : 'FAILED', $command, is_string($output) ? substr($output, 0, 200) : 'N/A', $security_level);
-// Log aussi dans le logger du plugin si disponible
-        if (class_exists('PDF_Builder_Logger')) {
-            $method = $success ? 'log' : 'error';
-            PDF_Builder_Logger::$method($log_message);
-        }
 
         // Log de sécurité pour les commandes à haut risque
         if ($security_level === 'high') {

@@ -140,8 +140,6 @@ class PDF_Builder_Continuous_Deployment {
             // Notifier le succès
             $this->notify_deployment_success($deployment_id);
 
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Deployment completed successfully', [
                     'deployment_id' => $deployment_id,
                     'version' => $version,
                     'environment' => $environment
@@ -203,8 +201,6 @@ class PDF_Builder_Continuous_Deployment {
             // Notifier le rollback
             $this->notify_rollback_success($rollback_id, $deployment_id);
 
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Rollback completed successfully', [
                     'rollback_id' => $rollback_id,
                     'from_deployment' => $deployment_id
                 ]);
@@ -708,7 +704,6 @@ class PDF_Builder_Continuous_Deployment {
 
         if (!empty($issues)) {
             // Legacy notification calls removed — log as warning
-            PDF_Builder_Logger::get_instance()->warning('Vérifications pré-déploiement: Issues détectées: ' . implode("\n", $issues), ['issues' => $issues]);
         }
     }
 
@@ -727,8 +722,6 @@ class PDF_Builder_Continuous_Deployment {
             AND created_at < DATE_SUB(NOW(), INTERVAL %d MONTH)
         ", $retention_months));
 
-        if ($deleted > 0 && class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->info("Old deployments cleaned up: $deleted records removed");
         }
     }
 
@@ -754,7 +747,6 @@ class PDF_Builder_Continuous_Deployment {
             ]);
 
             // Legacy notification calls removed — log as error
-            PDF_Builder_Logger::get_instance()->error("Déploiement bloqué détecté: Le déploiement {$deployment['id']} est bloqué depuis plus d'une heure", ['deployment' => $deployment]);
         }
     }
 
@@ -772,7 +764,6 @@ class PDF_Builder_Continuous_Deployment {
         $message .= "Déploiement ID: {$deployment_id}";
 
         // Legacy notification calls removed — log success
-        PDF_Builder_Logger::get_instance()->info('Déploiement réussi: ' . $message, ['deployment' => $deployment]);
     }
 
     /**
@@ -790,7 +781,6 @@ class PDF_Builder_Continuous_Deployment {
         $message .= "Erreur: {$exception->getMessage()}";
 
         // Legacy notification calls removed — log critical
-        PDF_Builder_Logger::get_instance()->critical('Échec de déploiement: ' . $message, ['deployment' => $deployment, 'error' => $exception->getMessage()]);
     }
 
     /**
@@ -806,7 +796,6 @@ class PDF_Builder_Continuous_Deployment {
         $message .= "Rollback ID: {$rollback_id}";
 
         // Legacy notification calls removed — log warning
-        PDF_Builder_Logger::get_instance()->warning('Rollback réussi: ' . $message, ['rollback' => $rollback, 'original_deployment' => $original_deployment_id]);
     }
 
     /**
@@ -820,15 +809,12 @@ class PDF_Builder_Continuous_Deployment {
         $message .= "Erreur: {$exception->getMessage()}";
 
         // Legacy notification calls removed — log critical
-        PDF_Builder_Logger::get_instance()->critical('Échec de rollback: ' . $message, ['rollback' => $rollback, 'error' => $exception->getMessage()]);
     }
 
     /**
      * Log une erreur de déploiement
      */
     private function log_deployment_error($operation, $exception) {
-        if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->error("Deployment operation failed: $operation", [
                 'error' => $exception->getMessage(),
                 'trace' => $exception->getTraceAsString()
             ]);

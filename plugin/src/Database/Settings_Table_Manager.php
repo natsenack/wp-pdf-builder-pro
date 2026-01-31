@@ -52,7 +52,7 @@ class Settings_Table_Manager {
         ));
         
         if ($table_created) {
-            if (class_exists('PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Table wp_pdf_builder_settings créée avec succès');
+            error_log('[PDF Builder] Table wp_pdf_builder_settings créée avec succès');
             return true;
         } else {
             error_log('[PDF Builder] ERREUR: Table wp_pdf_builder_settings NOT créée');
@@ -158,9 +158,9 @@ class Settings_Table_Manager {
         $table_name = $wpdb->prefix . 'pdf_builder_settings';
         
         $result = $wpdb->query("TRUNCATE TABLE $table_name");
-        
-        if (class_exists('PDF_Builder_Logger')) { \PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Table wp_pdf_builder_settings vidée');
-        
+
+        error_log('[PDF Builder] Table wp_pdf_builder_settings vidée');
+
         return $result !== false;
     }
 }

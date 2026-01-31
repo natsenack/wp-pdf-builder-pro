@@ -220,8 +220,6 @@ class PDF_Builder_Advanced_Reporting {
             $this->save_report($report);
 
             // Logger la génération
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Report generated', [
                     'report_id' => $report['id'],
                     'type' => $type,
                     'period' => $period,
@@ -233,8 +231,6 @@ class PDF_Builder_Advanced_Reporting {
 
         } catch (Exception $e) {
             // Logger l'erreur
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->error('Report generation failed', [
                     'type' => $type,
                     'period' => $period,
                     'error' => $e->getMessage()
@@ -709,8 +705,6 @@ class PDF_Builder_Advanced_Reporting {
 
                 } catch (Exception $e) {
                     // Logger l'erreur
-                    if (class_exists('PDF_Builder_Logger')) {
-                        PDF_Builder_Logger::get_instance()->error('Scheduled report generation failed', [
                             'schedule_id' => $schedule_id,
                             'error' => $e->getMessage()
                         ]);
@@ -887,8 +881,6 @@ class PDF_Builder_Advanced_Reporting {
 
         } catch (Exception $e) {
             // Logger l'erreur
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->error('Scheduled report failed', [
                     'schedule_id' => $schedule_id,
                     'error' => $e->getMessage()
                 ]);

@@ -156,8 +156,6 @@ class PDF_Builder_Global_Config_Manager {
         pdf_builder_update_option('pdf_builder_config', $this->config);
 
         // Logger la modification
-        if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->info('Configuration updated', [
                 'user_id' => get_current_user_id(),
                 'changes' => array_keys($validated_config)
             ]);
@@ -179,8 +177,6 @@ class PDF_Builder_Global_Config_Manager {
         pdf_builder_update_option('pdf_builder_config', $this->config);
 
         // Logger la réinitialisation
-        if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->warning('Configuration reset to defaults', [
                 'user_id' => get_current_user_id()
             ]);
         }

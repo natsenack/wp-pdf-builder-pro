@@ -3,7 +3,6 @@
 namespace PDF_Builder\Generators;
 
 use PDF_Builder\Interfaces\DataProviderInterface;
-use PDF_Builder_Logger;
 
 /**
  * Classe abstraite BaseGenerator
@@ -1268,7 +1267,6 @@ abstract class BaseGenerator
     protected function injectVariables(string $text): string
     {
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            $logger = PDF_Builder_Logger::get_instance();
             // $logger->debug_log('injectVariables - input text: ' . $text);
         }
         
@@ -1276,7 +1274,6 @@ abstract class BaseGenerator
         preg_match_all('/\{\{([^}]+)\}\}/', $text, $matches);
         
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            $logger = PDF_Builder_Logger::get_instance();
             // $logger->debug_log('injectVariables - found variables: ' . print_r($matches[1], true));
         }
         
@@ -1284,7 +1281,6 @@ abstract class BaseGenerator
             $value = $this->data_provider->getVariableValue(trim($variable));
             
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                $logger = PDF_Builder_Logger::get_instance();
                 // $logger->debug_log('injectVariables - variable: ' . $variable . ' -> value: ' . $value);
             }
             
@@ -1292,7 +1288,6 @@ abstract class BaseGenerator
         }
 
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            $logger = PDF_Builder_Logger::get_instance();
             // $logger->debug_log('injectVariables - output text: ' . $text);
         }
         

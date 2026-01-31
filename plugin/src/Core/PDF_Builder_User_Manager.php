@@ -406,8 +406,6 @@ class PDF_Builder_User_Manager {
         unset($this->permissions_cache[$user_id]);
 
         // Logger l'action
-        if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->info('User permissions updated', [
                 'user_id' => $user_id,
                 'permissions' => $permissions,
                 'context_permissions' => $context_permissions
@@ -425,8 +423,6 @@ class PDF_Builder_User_Manager {
 
         if ($result) {
             // Logger la création
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Custom role created', [
                     'role_name' => $role_name,
                     'display_name' => $display_name,
                     'capabilities' => $capabilities
@@ -445,8 +441,6 @@ class PDF_Builder_User_Manager {
 
         if ($result) {
             // Logger la suppression
-            if (class_exists('PDF_Builder_Logger')) {
-                PDF_Builder_Logger::get_instance()->info('Custom role deleted', [
                     'role_name' => $role_name
                 ]);
             }
@@ -542,8 +536,6 @@ class PDF_Builder_User_Manager {
         $user->set_role($role_name);
 
         // Logger l'action
-        if (class_exists('PDF_Builder_Logger')) {
-            PDF_Builder_Logger::get_instance()->info('User role assigned', [
                 'user_id' => $user_id,
                 'role' => $role_name
             ]);
