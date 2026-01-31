@@ -52,17 +52,10 @@
         e.preventDefault(); // Empêcher le comportement par défaut
         addPersistentLog('[JS] Floating save button clicked - submitting form manually');
         
-        // Récupérer l'onglet actif
-        var activeTab = $('.pdf-builder-tab-content.active').data('tab');
+        // Récupérer l'onglet actif depuis l'URL ou l'onglet actif
+        var urlParams = new URLSearchParams(window.location.search);
+        var activeTab = urlParams.get('tab') || 'general';
         addPersistentLog('[JS] Active tab: ' + activeTab);
-        
-        // Définir l'action du formulaire avec l'onglet actif
-        var currentUrl = window.location.href;
-        var url = new URL(currentUrl);
-        url.searchParams.set('tab', activeTab);
-        $('#pdf-builder-settings-form').attr('action', url.toString());
-        
-        addPersistentLog('[JS] Form action set to: ' + url.toString());
         
         // Ajouter un champ caché pour indiquer une sauvegarde flottante
         $('#pdf-builder-settings-form-' + activeTab).append($('<input>', {
@@ -71,13 +64,15 @@
             'value': '1'
         }));
         
+        addPersistentLog('[JS] Submitting form: pdf-builder-settings-form-' + activeTab);
+        
         // Soumettre le formulaire manuellement
         $('#pdf-builder-settings-form-' + activeTab).submit();
     });
 
     // Debug form submission
-    $(document).on('submit', '#pdf-builder-settings-form', function(e) {
-        addPersistentLog('Form submitted');
+    $(document).on('submit', 'form[id^="pdf-builder-settings-form-"]', function(e) {
+        addPersistentLog('Form submitted: ' + $(this).attr('id'));
         var floatingField = $(this).find('input[name="pdf_builder_floating_save"]');
         if (floatingField.length) {
             addPersistentLog('Floating save field found with value: ' + floatingField.val());
