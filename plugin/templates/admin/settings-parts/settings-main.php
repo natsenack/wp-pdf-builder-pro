@@ -146,8 +146,6 @@ if (isset($_GET['updated']) && $_GET['updated'] === '1') {
             }
             ?>
 
-            <?php submit_button(); ?>
-
             <!-- Bouton flottant Enregistrer -->
             <div id="pdf-builder-floating-save" class="pdf-builder-floating-save">
                 <button type="button" id="pdf-builder-save-settings" class="pdf-builder-save-btn">
