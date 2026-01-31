@@ -283,10 +283,11 @@ jQuery(document).ready(function($) {
         $btn.addClass('saving').prop('disabled', true).find('.dashicons').removeClass('dashicons-yes').addClass('dashicons-update dashicons-spin');
 
         // Collecter les données du formulaire actif
-        var formData = new FormData();
-        formData.append('action', 'pdf_builder_save_settings');
-        formData.append('tab', currentTab);
-        formData.append('_wpnonce', window.pdfBuilderNonce);
+        var ajaxData = {
+            action: 'pdf_builder_save_settings',
+            tab: currentTab,
+            _wpnonce: window.pdfBuilderNonce
+        };
 
         // Collecter les champs du formulaire actif
         var $activeForm = $('#pdf-builder-settings-form');
@@ -299,13 +300,13 @@ jQuery(document).ready(function($) {
                 var fieldName = $field.attr('name');
                 if (fieldName) {
                     if ($field.attr('type') === 'checkbox') {
-                        formData.append(fieldName, $field.is(':checked') ? '1' : '0');
+                        ajaxData[fieldName] = $field.is(':checked') ? '1' : '0';
                     } else if ($field.attr('type') === 'radio') {
                         if ($field.is(':checked')) {
-                            formData.append(fieldName, $field.val());
+                            ajaxData[fieldName] = $field.val();
                         }
                     } else {
-                        formData.append(fieldName, $field.val() || '');
+                        ajaxData[fieldName] = $field.val() || '';
                     }
                     fieldCount++;
                 }
@@ -319,9 +320,7 @@ jQuery(document).ready(function($) {
         $.ajax({
             url: ajaxurl,
             type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
+            data: ajaxData,
             timeout: 30000, // 30 secondes timeout
             success: function(response) {
                 console.log('PDF Builder Settings: AJAX success:', response);
