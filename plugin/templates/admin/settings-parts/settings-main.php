@@ -167,29 +167,32 @@ if (isset($_GET['updated']) && $_GET['updated'] === '1') {
 }
 
 .pdf-builder-save-btn {
-    background: #2271b1;
+    background: #007cba;
     color: white;
     border: none;
-    padding: 12px 20px;
-    border-radius: 50px;
+    padding: 12px 24px;
+    border-radius: 8px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    min-width: 120px;
+    justify-content: center;
 }
 
 .pdf-builder-save-btn:hover {
-    background: #135e96;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    background: #005a87;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
 }
 
 .pdf-builder-save-btn:active {
     transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .pdf-builder-save-btn.saving {
