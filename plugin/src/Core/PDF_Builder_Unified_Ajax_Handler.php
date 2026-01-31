@@ -246,6 +246,8 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Handler principal pour la sauvegarde des paramètres
      */
     public function handle_save_settings() {
+        error_log("[UNIFIED AJAX] handle_save_settings called - POST data: " . json_encode($_POST));
+
         if (!$this->nonce_manager->validate_ajax_request('save_settings')) {
             return;
         }
