@@ -17,7 +17,7 @@
     $company_rcs = pdf_builder_get_option('pdf_builder_company_rcs', '');
     $company_capital = pdf_builder_get_option('pdf_builder_company_capital', '');
     
-    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings-general.php - Individual fields loaded: phone=' . $company_phone_manual . ', siret=' . $company_siret); }
+    error_log('[PDF Builder] settings-general.php - Individual fields loaded: phone=' . $company_phone_manual . ', siret=' . $company_siret);
 
     // Récupération des informations WooCommerce
     $store_name = get_option('woocommerce_store_name', get_bloginfo('name'));
@@ -31,7 +31,7 @@
     $address_parts = array_filter([$store_address, $store_city, $store_postcode, $store_country]);
     $full_address = implode(', ', $address_parts);
 
-    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings-general.php loaded - settings count: ' . count($settings) . ', store_name: ' . $store_name); }
+    error_log('[PDF Builder] settings-general.php loaded - settings count: ' . count($settings) . ', store_name: ' . $store_name);
 ?>
 
 <section id="general" class="settings-section general-settings" role="tabpanel" aria-labelledby="tab-general">
@@ -135,7 +135,7 @@
     .pdf-form-field { display: flex; flex-direction: column; gap: 0.5rem; }
     .pdf-form-field label { font-weight: 600; color: #1d2327; display: flex; align-items: center; gap: 0.25rem; }
     .pdf-form-field input { padding: 0.5rem; border: 1px solid #8c8f94; border-radius: 4px; font-size: 0.95rem; }
-    .pdf-form-field input:focus { outline: none; border-color: #2271b1; box-shadow: 0 0 0 2px rgba(34,113,177,0.2); }
+    .pdf-form-field input:focus { outline: none; border-color: #2271b1; box-shadow: 0 0 0 2px rgba(34,113,177,0.2);
     .form-actions { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #f0f0f1; text-align: center; }
     @media (max-width: 782px) { .form-grid-compact { grid-template-columns: 1fr; } .card-header, .card-content { padding: 1rem; } }
 </style>

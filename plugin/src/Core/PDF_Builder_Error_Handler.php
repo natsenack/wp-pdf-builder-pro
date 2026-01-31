@@ -330,7 +330,7 @@ class PDF_Builder_Error_Handler {
             <title>Erreur PDF Builder Pro</title>
             <style>
                 body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
-                .error-container { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+                .error-container { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
                 .error-title { color: #d9534f; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
                 .error-details { margin-top: 20px; }
                 .error-section { margin-bottom: 15px; }

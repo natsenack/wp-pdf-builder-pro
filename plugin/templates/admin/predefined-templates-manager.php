@@ -491,8 +491,8 @@ class PDF_Builder_Predefined_Templates_Manager
             margin: 0 auto 10px;
         }
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% { transform: rotate(0deg);
+            100% { transform: rotate(360deg);
         }
 
         /* Responsive Design */

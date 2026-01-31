@@ -7,7 +7,7 @@ if (!function_exists('did_action')) {
     function did_action($tag) { return 0; }
 }
 if (!function_exists('wp_mkdir_p')) {
-    function wp_mkdir_p($path) { return mkdir($path, 0755, true); }
+    function wp_mkdir_p($path) { return mkdir($path, 0755, true);
 }
 if (!function_exists('add_menu_page')) {
     function add_menu_page($page_title, $menu_title, $capability, $menu_slug, $function = '', $icon_url = '', $position = null) { return ''; }
@@ -22,13 +22,13 @@ if (!function_exists('_e')) {
     function _e($text, $domain = 'default') { echo $text; }
 }
 if (!function_exists('wp_die')) {
-    function wp_die($message = '', $title = '', $args = []) { die($message); }
+    function wp_die($message = '', $title = '', $args = []) { die($message);
 }
 if (!function_exists('esc_html')) {
-    function esc_html($text) { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8'); }
+    function esc_html($text) { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 if (!function_exists('date_i18n')) {
-    function date_i18n($format, $timestamp = false) { return date($format, $timestamp ?: time()); }
+    function date_i18n($format, $timestamp = false) { return date($format, $timestamp ?: time());
 }
 if (!function_exists('get_option')) {
     function get_option($option, $default = false) { return $default; }
@@ -52,13 +52,13 @@ if (!function_exists('get_bloginfo')) {
     function get_bloginfo($show = '') { return 'PDF Builder Pro'; }
 }
 if (!function_exists('sanitize_email')) {
-    function sanitize_email($email) { return filter_var($email, FILTER_SANITIZE_EMAIL); }
+    function sanitize_email($email) { return filter_var($email, FILTER_SANITIZE_EMAIL);
 }
 if (!function_exists('__')) {
     function __($text, $domain = 'default') { return $text; }
 }
 if (!function_exists('printf')) {
-    function printf($format, ...$args) { echo sprintf($format, ...$args); }
+    function printf($format, ...$args) { echo sprintf($format, ...$args);
 }
 
 /**

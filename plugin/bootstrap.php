@@ -406,7 +406,7 @@ if (function_exists('add_action')) {
             if (file_exists($onboarding_path)) {
                 require_once $onboarding_path;
             } else {
-                // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Fichier Onboarding Manager introuvable: ' . $onboarding_path); }
+                // error_log('PDF Builder: Fichier Onboarding Manager introuvable: ' . $onboarding_path);
             }
         }
 
@@ -427,7 +427,7 @@ if (function_exists('add_action')) {
             try {
                 PDF_Builder_Onboarding_Manager_Alias::get_instance();
             } catch (Exception $e) {
-                // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Erreur lors de la création de l\'instance Onboarding Manager: ' . $e->getMessage()); }
+                // error_log('PDF Builder: Erreur lors de la création de l\'instance Onboarding Manager: ' . $e->getMessage());
             }
         }
     }, 0);
@@ -460,7 +460,7 @@ if (function_exists('add_action')) {
             );
             if (!\is_ssl() && !$is_forwarded_ssl) {
                 if (defined('WP_DEBUG') && WP_DEBUG) {
-                    // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder HTTPS] Redirecting to HTTPS. host=' . ($_SERVER['HTTP_HOST'] ?? '') . ', uri=' . ($_SERVER['REQUEST_URI'] ?? '')); }
+                    // error_log('[PDF Builder HTTPS] Redirecting to HTTPS. host=' . ($_SERVER['HTTP_HOST'] ?? '') . ', uri=' . ($_SERVER['REQUEST_URI'] ?? ''));
                 }
                 $host = $_SERVER['HTTP_HOST'] ?? '';
                 $uri = $_SERVER['REQUEST_URI'] ?? '';
@@ -489,7 +489,7 @@ if (function_exists('add_action')) {
             );
             if (!\is_ssl() && !$is_forwarded_ssl) {
                 if (defined('WP_DEBUG') && WP_DEBUG) {
-                    // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder HTTPS] Admin redirecting to HTTPS. host=' . ($_SERVER['HTTP_HOST'] ?? '') . ', uri=' . ($_SERVER['REQUEST_URI'] ?? '')); }
+                    // error_log('[PDF Builder HTTPS] Admin redirecting to HTTPS. host=' . ($_SERVER['HTTP_HOST'] ?? '') . ', uri=' . ($_SERVER['REQUEST_URI'] ?? ''));
                 }
                 $host = $_SERVER['HTTP_HOST'] ?? '';
                 $uri = $_SERVER['REQUEST_URI'] ?? '';
@@ -1448,29 +1448,29 @@ if (\is_admin() && isset($_GET['page']) && $_GET['page'] === 'pdf-builder-settin
 
 // Gestionnaire AJAX des paramètres développeur
 add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
-    // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder Développeur: Gestionnaire AJAX DÉMARRÉ à ' . date('Y-m-d H:i:s')); }
+    // error_log('PDF Builder Développeur: Gestionnaire AJAX DÉMARRÉ à ' . date('Y-m-d H:i:s'));
 
     try {
         // Journaliser toutes les données POST pour le débogage
-        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder Développeur: Données POST reçues: ' . print_r($_POST, true)); }
+        // error_log('PDF Builder Développeur: Données POST reçues: ' . print_r($_POST, true));
 
         // Vérifier le nonce
         $nonce_value = sanitize_text_field($_POST['nonce'] ?? '');
         $nonce_valid = \wp_verify_nonce($nonce_value, 'pdf_builder_ajax');
-        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder Développeur: Résultat de vérification du nonce: ' . ($nonce_valid ? 'VALIDE' : 'INVALIDE')); }
+        // error_log('PDF Builder Développeur: Résultat de vérification du nonce: ' . ($nonce_valid ? 'VALIDE' : 'INVALIDE'));
 
         if (!$nonce_valid) {
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder Développeur: Échec de vérification du nonce'); }
+            // error_log('PDF Builder Développeur: Échec de vérification du nonce');
             wp_send_json_error(['message' => 'Échec de vérification de sécurité']);
             return;
         }
 
         // Vérifier la capacité utilisateur
         $has_capability = current_user_can('manage_options');
-        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder Développeur: Vérification de capacité utilisateur: ' . ($has_capability ? 'A' : 'NON')); }
+        // error_log('PDF Builder Développeur: Vérification de capacité utilisateur: ' . ($has_capability ? 'A' : 'NON'));
 
         if (!$has_capability) {
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder Développeur: Permissions insuffisantes'); }
+            // error_log('PDF Builder Développeur: Permissions insuffisantes');
             wp_send_json_error(['message' => 'Permissions insuffisantes']);
             return;
         }
@@ -1479,7 +1479,7 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
         $setting_key = sanitize_text_field($_POST['setting_key'] ?? '');
         $setting_value = sanitize_text_field($_POST['setting_value'] ?? '');
 
-        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("PDF Builder Développeur: Clé paramètre: '{$setting_key}', valeur: '{$setting_value}'"); }
+        // error_log("PDF Builder Développeur: Clé paramètre: '{$setting_key}', valeur: '{$setting_value}'");
 
         // Valider la clé de paramètre (autoriser seulement les paramètres développeur)
         $allowed_keys = [
@@ -1489,7 +1489,7 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
         ];
 
         if (!in_array($setting_key, $allowed_keys)) {
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("PDF Builder Développeur: Clé paramètre invalide: {$setting_key}"); }
+            // error_log("PDF Builder Développeur: Clé paramètre invalide: {$setting_key}");
             wp_send_json_error(['message' => 'Clé paramètre invalide']);
             return;
         }
@@ -1502,7 +1502,7 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
 
         // Sauvegarder en base de données
         $updated = pdf_builder_update_option('pdf_builder_settings', $settings);
-        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("PDF Builder Développeur: Résultat update_option: " . ($updated ? 'SUCCÈS' : 'AUCUN CHANGEMENT')); }
+        // error_log("PDF Builder Développeur: Résultat update_option: " . ($updated ? 'SUCCÈS' : 'AUCUN CHANGEMENT'));
 
         wp_send_json_success([
             'message' => 'Paramètre développeur sauvegardé avec succès',
@@ -1511,7 +1511,7 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
         ]);
 
     } catch (Exception $e) {
-        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder Développeur: Erreur AJAX - ' . $e->getMessage()); }
+        // error_log('PDF Builder Développeur: Erreur AJAX - ' . $e->getMessage());
         wp_send_json_error(['message' => $e->getMessage()]);
     }
 });

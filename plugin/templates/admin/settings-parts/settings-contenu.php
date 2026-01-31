@@ -23,10 +23,10 @@
         function get_option($option, $default = false) { return $default; }
     }
     if (!function_exists('esc_attr')) {
-        function esc_attr($text) { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8'); }
+        function esc_attr($text) { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
     }
     if (!function_exists('esc_html')) {
-        function esc_html($text) { return htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8'); }
+        function esc_html($text) { return htmlspecialchars($text, ENT_NOQUOTES, 'UTF-8');
     }
     if (!function_exists('selected')) {
         function selected($selected, $current = true, $echo = true) {
@@ -56,9 +56,9 @@
 
         if ($value === null) {
             $value = $default;
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] PAGE_LOAD - {$key}: OPTION_NOT_FOUND - using default '{$default}' - KEY: {$option_key}"); }
+            error_log("[PDF Builder] PAGE_LOAD - {$key}: OPTION_NOT_FOUND - using default '{$default}' - KEY: {$option_key}");
         } else {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] PAGE_LOAD - {$key}: FOUND_DB_VALUE '{$value}' - KEY: {$option_key}"); }
+            error_log("[PDF Builder] PAGE_LOAD - {$key}: FOUND_DB_VALUE '{$value}' - KEY: {$option_key}");
         }
 
         return $value;
@@ -107,7 +107,7 @@
     foreach ($default_canvas_options as $option_name => $default_value) {
         if (get_option($option_name) === false) {
             add_option($option_name, $default_value);
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[INIT CANVAS OPTIONS] Created option: $option_name = $default_value"); }
+            error_log("[INIT CANVAS OPTIONS] Created option: $option_name = $default_value");
         }
     }
 ?>
@@ -123,7 +123,7 @@
 ?>
             <!-- Section Canvas -->
             <section class="contenu-canvas-section">
-                <?php if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] CANVAS_SECTION - Rendering canvas section"); } ?>
+                <?php error_log("[PDF Builder] CANVAS_SECTION - Rendering canvas section");
                 <h3 style="display: flex; justify-content: flex-start; align-items: center;">
                     <span>
                         🎨 Canvas
@@ -135,7 +135,7 @@
 
                 <p>Configurez l'apparence et le comportement de votre canvas de conception PDF.</p>
 
-                <?php if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] HIDDEN_FIELDS - About to render hidden fields"); } ?>
+                <?php error_log("[PDF Builder] HIDDEN_FIELDS - About to render hidden fields");
                 <!-- Champs cachés pour la sauvegarde centralisée des paramètres -->
                 <!-- DEBUG: Hidden fields rendering started -->
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_width]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_width', '794')); ?>">
@@ -178,7 +178,7 @@
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_allow_landscape]" value="<?php echo esc_attr(pdf_builder_get_option('pdf_builder_canvas_allow_landscape', '1')); ?>">
 
                     <!-- DEBUG: Hidden fields rendering completed -->
-                    <?php if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] HIDDEN_FIELDS - Hidden fields rendered successfully"); } ?>
+                    <?php error_log("[PDF Builder] HIDDEN_FIELDS - Hidden fields rendered successfully");
 
                     <!-- Grille de cartes Canvas -->
                     <div class="canvas-settings-grid">

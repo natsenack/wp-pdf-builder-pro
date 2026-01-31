@@ -85,7 +85,7 @@ if (!function_exists('wp_rand')) {
      * @param int $max
      * @return int
      */
-    function wp_rand($min = 0, $max = 0) { return rand($min, $max); }
+    function wp_rand($min = 0, $max = 0) { return rand($min, $max);
 }
 if (!function_exists('wp_remote_get')) {
     /**
@@ -296,14 +296,14 @@ class PDF_Builder_Unified_Ajax_Handler {
                     break;
                 case 'developpeur':
                     if (defined('WP_DEBUG') && WP_DEBUG) {
-                        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Processing developer tab save'); }
-                        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Developer enabled POST: ' . ($_POST['pdf_builder_developer_enabled'] ?? 'not set')); }
-                        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Debug PHP errors POST: ' . ($_POST['debug_php_errors'] ?? 'not set')); }
+                        // error_log('PDF Builder: Processing developer tab save');
+                        // error_log('PDF Builder: Developer enabled POST: ' . ($_POST['pdf_builder_developer_enabled'] ?? 'not set'));
+                        // error_log('PDF Builder: Debug PHP errors POST: ' . ($_POST['debug_php_errors'] ?? 'not set'));
                     }
                     $saved_count = $this->save_developer_settings();
                     $saved_options = $this->get_saved_options_for_tab('developpeur');
                     if (defined('WP_DEBUG') && WP_DEBUG) {
-                        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Developer settings saved, count: ' . $saved_count); }
+                        // error_log('PDF Builder: Developer settings saved, count: ' . $saved_count);
                     }
                     break;
                 case 'licence':
@@ -331,7 +331,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
 
         } catch (Exception $e) {
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur sauvegarde: ' . $e->getMessage()); }
+            // error_log('[PDF Builder AJAX] Erreur sauvegarde: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur interne du serveur']);
         }
     }
@@ -340,15 +340,15 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Handler pour la sauvegarde des paramètres Canvas
      */
     public function handle_save_canvas_settings() {
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_START - Handler called"); }
+        error_log("[PDF Builder] SAVE_CANVAS_START - Handler called");
 
         if (!$this->nonce_manager->validate_ajax_request('pdf_builder_canvas_settings')) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_ERROR - Nonce validation failed"); }
+            error_log("[PDF Builder] SAVE_CANVAS_ERROR - Nonce validation failed");
             wp_send_json_error(['message' => 'Nonce invalide']);
             return;
         }
 
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_START - Nonce valid, processing POST data: " . print_r($_POST, true)); }
+        error_log("[PDF Builder] SAVE_CANVAS_START - Nonce valid, processing POST data: " . print_r($_POST, true));
 
         try {
             $saved_count = 0;
@@ -417,22 +417,22 @@ class PDF_Builder_Unified_Ajax_Handler {
                     }
                     
                     // Log pour déboguer
-                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] Sauvegarde Canvas - {$setting_key}: {$value}"); }
+                    error_log("[PDF Builder] Sauvegarde Canvas - {$setting_key}: {$value}");
                     
                     // Log spécifique pour les toggles de grille
                     if (in_array($setting_key, ['pdf_builder_canvas_grid_enabled', 'pdf_builder_canvas_guides_enabled', 'pdf_builder_canvas_snap_to_grid'])) {
-                        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] GRID_TOGGLE_SAVE - {$setting_key}: {$value}"); }
+                        error_log("[PDF Builder] GRID_TOGGLE_SAVE - {$setting_key}: {$value}");
                         
                         // Validation premium: forcer à '0' si l'utilisateur n'a pas accès à la fonctionnalité
                         if (!\PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('grid_navigation')) {
                             $value = '0';
-                            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] GRID_TOGGLE_FORCED_OFF - {$setting_key}: utilisateur gratuit, forcé à 0"); }
+                            error_log("[PDF Builder] GRID_TOGGLE_FORCED_OFF - {$setting_key}: utilisateur gratuit, forcé à 0");
                         }
                     }
                     
                     // Log pour tous les toggles d'interactions
                     if (in_array($setting_key, ['pdf_builder_canvas_drag_enabled', 'pdf_builder_canvas_resize_enabled', 'pdf_builder_canvas_rotate_enabled', 'pdf_builder_canvas_multi_select', 'pdf_builder_canvas_keyboard_shortcuts'])) {
-                        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] INTERACTIONS_TOGGLE_SAVE - {$setting_key}: {$value}"); }
+                        error_log("[PDF Builder] INTERACTIONS_TOGGLE_SAVE - {$setting_key}: {$value}");
                     }
                     
                     // Validation spécifique selon le type de paramètre
@@ -442,7 +442,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     } elseif (strpos($setting_key, '_border_width') !== false) {
                         $value = intval($value);
                         $value = max(0, min(10, $value)); // Limiter entre 0 et 10 pour l'épaisseur des bordures
-                        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] Border width validé: {$value}"); }
+                        error_log("[PDF Builder] Border width validé: {$value}");
                     } elseif (strpos($setting_key, '_dpi') !== false) {
                         $value = intval($value);
                         $value = max(72, min(600, $value)); // Limiter entre 72 et 600 DPI
@@ -469,17 +469,17 @@ class PDF_Builder_Unified_Ajax_Handler {
                     
                     // Vérifier immédiatement que la valeur a été sauvegardée
                     $verify_value = pdf_builder_get_option($setting_key);
-                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_VERIFY - {$setting_key}: saved={$value}, retrieved={$verify_value}"); }
+                    error_log("[PDF Builder] SAVE_VERIFY - {$setting_key}: saved={$value}, retrieved={$verify_value}");
                     
                     // Log spécifique pour les toggles
                     if (in_array($setting_key, ['pdf_builder_canvas_grid_enabled', 'pdf_builder_canvas_guides_enabled', 'pdf_builder_canvas_snap_to_grid', 'pdf_builder_canvas_drag_enabled', 'pdf_builder_canvas_resize_enabled', 'pdf_builder_canvas_rotate_enabled', 'pdf_builder_canvas_multi_select', 'pdf_builder_canvas_keyboard_shortcuts'])) {
-                        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] TOGGLE_SAVE_VERIFY - {$setting_key}: saved={$value}, retrieved={$verify_value}"); }
+                        error_log("[PDF Builder] TOGGLE_SAVE_VERIFY - {$setting_key}: saved={$value}, retrieved={$verify_value}");
                     }
                 }
             }
 
             if ($saved_count > 0) {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_SUCCESS - {$saved_count} paramètres sauvegardés: " . implode(', ', array_keys($saved_options))); }
+                error_log("[PDF Builder] SAVE_CANVAS_SUCCESS - {$saved_count} paramètres sauvegardés: " . implode(', ', array_keys($saved_options)));
                 wp_send_json_success([
                     'message' => 'Paramètres Canvas sauvegardés avec succès',
                     'saved_count' => $saved_count,
@@ -487,12 +487,12 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'new_nonce' => $this->nonce_manager->generate_nonce()
                 ]);
             } else {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder] SAVE_CANVAS_WARNING - Aucun paramètre sauvegardé"); }
+                error_log("[PDF Builder] SAVE_CANVAS_WARNING - Aucun paramètre sauvegardé");
                 wp_send_json_error(['message' => 'Aucun paramètre Canvas sauvegardé']);
             }
 
         } catch (Exception $e) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur sauvegarde Canvas: ' . $e->getMessage()); }
+            error_log('[PDF Builder AJAX] Erreur sauvegarde Canvas: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur interne du serveur']);
         }
     }
@@ -530,7 +530,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             wp_send_json_success($orientation_permissions);
 
         } catch (Exception $e) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur récupération orientations: ' . $e->getMessage()); }
+            error_log('[PDF Builder AJAX] Erreur récupération orientations: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur interne du serveur']);
         }
     }
@@ -795,18 +795,18 @@ class PDF_Builder_Unified_Ajax_Handler {
         try {
             // Check if data is sent as flattened POST data (new format) or JSON (legacy)
             $form_data_json = $_POST['form_data'] ?? '';
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] handle_save_all_settings called with form_data: ' . substr($form_data_json, 0, 500)); }
+            // error_log('[PDF Builder AJAX] handle_save_all_settings called with form_data: ' . substr($form_data_json, 0, 500));
 
             if (!empty($form_data_json)) {
                 // Legacy JSON format - not supported anymore, use flattened format
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Legacy JSON format not supported, using flattened format instead'); }
+                error_log('[PDF Builder AJAX] Legacy JSON format not supported, using flattened format instead');
                 $saved_count = $this->save_all_settings_from_flattened_data();
             } else {
                 // New flattened format - save all settings from POST data
                 $saved_count = $this->save_all_settings_from_flattened_data();
             }
 
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Saved ' . $saved_count . ' settings'); }
+            // error_log('[PDF Builder AJAX] Saved ' . $saved_count . ' settings');
 
             $saved_options = $this->get_saved_options_for_tab('all');
 
@@ -818,8 +818,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             ]);
 
         } catch (Exception $e) {
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur sauvegarde tous: ' . $e->getMessage()); }
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Stack trace: ' . $e->getTraceAsString()); }
+            // error_log('[PDF Builder AJAX] Erreur sauvegarde tous: ' . $e->getMessage());
+            // error_log('[PDF Builder AJAX] Stack trace: ' . $e->getTraceAsString());
             wp_send_json_error(['message' => 'Erreur interne du serveur: ' . $e->getMessage()]);
         }
     }
@@ -838,12 +838,12 @@ class PDF_Builder_Unified_Ajax_Handler {
         $saved_count = 0;
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
 
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Processing flattened data, POST keys: ' . implode(', ', array_keys($_POST))); }
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Full POST data: ' . json_encode($_POST)); }
+        error_log('[PDF Builder AJAX] Processing flattened data, POST keys: ' . implode(', ', array_keys($_POST)));
+        error_log('[PDF Builder AJAX] Full POST data: ' . json_encode($_POST));
 
         // FIRST: Handle the main pdf_builder_settings array if it exists
         if (isset($_POST['pdf_builder_settings']) && is_array($_POST['pdf_builder_settings'])) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Found pdf_builder_settings array with keys: ' . implode(', ', array_keys($_POST['pdf_builder_settings']))); }
+            error_log('[PDF Builder AJAX] Found pdf_builder_settings array with keys: ' . implode(', ', array_keys($_POST['pdf_builder_settings'])));
 
             // EXTRACTION ET SAUVEGARDE DES CHAMPS DE L'ONGLET GÉNÉRAL DANS DES LIGNES SÉPARÉES
             $general_fields = [
@@ -858,7 +858,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 if (isset($_POST['pdf_builder_settings'][$general_field])) {
                     // Sauvegarder dans une ligne séparée
                     pdf_builder_update_option($general_field, sanitize_text_field($_POST['pdf_builder_settings'][$general_field]));
-                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder AJAX] Saved general field to separate row: {$general_field} = " . $_POST['pdf_builder_settings'][$general_field]); }
+                    error_log("[PDF Builder AJAX] Saved general field to separate row: {$general_field} = " . $_POST['pdf_builder_settings'][$general_field]);
 
                     // Supprimer du tableau POST pour éviter le double traitement
                     unset($_POST['pdf_builder_settings'][$general_field]);
@@ -871,7 +871,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     // Handle nested arrays like pdf_builder_order_status_templates
                     if ($setting_key === 'pdf_builder_order_status_templates') {
                         $settings[$setting_key] = array_map('sanitize_text_field', $setting_value);
-                        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Saved nested array ' . $setting_key . ' with ' . count($setting_value) . ' items: ' . json_encode($setting_value)); }
+                        error_log('[PDF Builder AJAX] Saved nested array ' . $setting_key . ' with ' . count($setting_value) . ' items: ' . json_encode($setting_value));
                     } else {
                         // Handle other nested arrays if needed
                         $settings[$setting_key] = $setting_value; // Keep as-is for now, sanitize later if needed
@@ -895,9 +895,9 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         // Debug: check if shadow field is present
         if (isset($_POST['pdf_builder_canvas_shadow_enabled'])) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Shadow field received: ' . $_POST['pdf_builder_canvas_shadow_enabled']); }
+            error_log('[PDF Builder AJAX] Shadow field received: ' . $_POST['pdf_builder_canvas_shadow_enabled']);
         } else {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Shadow field NOT received in POST'); }
+            error_log('[PDF Builder AJAX] Shadow field NOT received in POST');
         }
 
         // Define field type rules (same as in Ajax_Handlers.php)
@@ -961,7 +961,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $option_key = $bool_field;
                     $settings[$option_key] = $option_value; // Save to unified settings array instead of individual option
                     if ($bool_field === 'pdf_builder_canvas_shadow_enabled' || strpos($bool_field, 'pdf_builder_canvas_grid') === 0 || strpos($bool_field, 'pdf_builder_canvas_guide') === 0 || strpos($bool_field, 'pdf_builder_canvas_snap') === 0) {
-                        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Saved canvas field to settings: ' . $option_key . ' = ' . $option_value . ' (type: ' . gettype($option_value) . ')'); }
+                        error_log('[PDF Builder AJAX] Saved canvas field to settings: ' . $option_key . ' = ' . $option_value . ' (type: ' . gettype($option_value) . ')');
                     }
                 } elseif (strpos($bool_field, 'pdf_builder_') === 0) {
                     $option_key = $bool_field;
@@ -1020,7 +1020,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Debug log only if JavaScript debug is enabled
             if (isset($_POST['pdf_builder_debug_javascript']) && $_POST['pdf_builder_debug_javascript'] == '1') {
                 $display_value = is_array($value) ? 'Array(' . count($value) . ')' : $value;
-                // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[UNIFIED HANDLER] Processing non-bool field: '$key' = '$display_value'"); }
+                // error_log("[UNIFIED HANDLER] Processing non-bool field: '$key' = '$display_value'");
             }
 
             $option_key = '';
@@ -1055,7 +1055,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $option_value = intval($value ?? 0);
                     $settings[$option_key] = $option_value; // Save to unified settings array instead of individual option
                     if ($key === 'pdf_builder_canvas_grid_size') {
-                        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Saved canvas int field to settings: ' . $option_key . ' = ' . $option_value . ' (type: ' . gettype($option_value) . ')'); }
+                        error_log('[PDF Builder AJAX] Saved canvas int field to settings: ' . $option_key . ' = ' . $option_value . ' (type: ' . gettype($option_value) . ')');
                     }
                 } elseif (strpos($key, 'pdf_builder_') === 0) {
                     // Already prefixed, save as-is
@@ -1128,7 +1128,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             if (isset($settings[$license_key])) {
                 // Sauvegarder dans une ligne séparée
                 pdf_builder_update_option($license_key, $settings[$license_key]);
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PDF Builder AJAX] Saved license key to separate row: {$license_key}"); }
+                error_log("[PDF Builder AJAX] Saved license key to separate row: {$license_key}");
                 
                 // Supprimer du tableau unifié
                 unset($settings[$license_key]);
@@ -1242,10 +1242,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         foreach ($settings as $key => $value) {
             $option_name = 'pdf_builder_' . $key;
             update_option($option_name, $value);
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("PDF Builder: Saved general setting - {$option_name} = '{$value}'"); }
+            // error_log("PDF Builder: Saved general setting - {$option_name} = '{$value}'");
         }
 
-        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("PDF Builder: General settings saved - " . count($settings) . " fields"); }
+        // error_log("PDF Builder: General settings saved - " . count($settings) . " fields");
         return count($settings);
     }
 
@@ -1386,7 +1386,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Traiter tous les paramètres canvas qui commencent par pdf_builder_canvas_
         foreach ($_POST as $key => $value) {
             if (strpos($key, 'pdf_builder_canvas_') === 0) {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PHP SAVE] Processing canvas setting: {$key} = {$value}"); }
+                error_log("[PHP SAVE] Processing canvas setting: {$key} = {$value}");
 
                 // Sanitiser selon le type de paramètre
                 if (strpos($key, '_color') !== false || strpos($key, '_bg_color') !== false || strpos($key, '_border_color') !== false) {
@@ -1409,12 +1409,12 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $saved_count++;
 
                 if (defined('WP_DEBUG') && WP_DEBUG) {
-                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("PDF Builder: Saved canvas setting {$key} = {$sanitized_value}"); }
+                    error_log("PDF Builder: Saved canvas setting {$key} = {$sanitized_value}");
                 }
             }
         }
 
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log("[PHP SAVE] ===== COMPLETED: saved {$saved_count} settings ====="); }
+        error_log("[PHP SAVE] ===== COMPLETED: saved {$saved_count} settings =====");
 
         // Paramètres de contenu généraux (si présents)
         $general_settings = [
@@ -1441,8 +1441,8 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function save_developer_settings() {
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Starting save_developer_settings'); }
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: POST data keys: ' . implode(', ', array_keys($_POST))); }
+            // error_log('PDF Builder: Starting save_developer_settings');
+            // error_log('PDF Builder: POST data keys: ' . implode(', ', array_keys($_POST)));
         }
 
         $settings = [
@@ -1453,13 +1453,13 @@ class PDF_Builder_Unified_Ajax_Handler {
         ];
 
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Settings to save: ' . json_encode($settings)); }
+            // error_log('PDF Builder: Settings to save: ' . json_encode($settings));
         }
 
         foreach ($settings as $key => $value) {
             update_option($key, $value);
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder: Saved option ' . $key . ' = ' . $value); }
+                // error_log('PDF Builder: Saved option ' . $key . ' = ' . $value);
             }
         }
 
@@ -1909,21 +1909,21 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     public function handle_create_backup() {
         // Debug: Log que le handler est appelé
-        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handle_create_backup called'); }
+        // error_log('[PDF Builder] handle_create_backup called');
 
         if (!$this->nonce_manager->validate_ajax_request()) {
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Nonce validation failed for create_backup'); }
+            // error_log('[PDF Builder] Nonce validation failed for create_backup');
             return;
         }
 
         if (!current_user_can('manage_options')) {
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] User does not have manage_options capability'); }
+            // error_log('[PDF Builder] User does not have manage_options capability');
             wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
             return;
         }
 
         try {
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Creating backup manager instance'); }
+            // error_log('[PDF Builder] Creating backup manager instance');
             $backup_manager = \PDF_Builder\Managers\PDF_Builder_Backup_Restore_Manager::getInstance();
 
             $options = [
@@ -1933,9 +1933,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'exclude_user_data' => isset($_POST['exclude_user_data']) && $_POST['exclude_user_data'] === '1'
             ];
 
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Calling createBackup with options: ' . json_encode($options)); }
+            // error_log('[PDF Builder] Calling createBackup with options: ' . json_encode($options));
             $result = $backup_manager->createBackup($options);
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] createBackup result: ' . json_encode($result)); }
+            // error_log('[PDF Builder] createBackup result: ' . json_encode($result));
 
             if ($result['success']) {
                 wp_send_json_success([
@@ -1948,7 +1948,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
 
         } catch (Exception $e) {
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur création sauvegarde: ' . $e->getMessage()); }
+            // error_log('[PDF Builder AJAX] Erreur création sauvegarde: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur interne du serveur: ' . $e->getMessage()]);
         }
     }
@@ -1973,7 +1973,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             wp_send_json_success(['backups' => $backups]);
 
         } catch (Exception $e) {
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur listage sauvegardes: ' . $e->getMessage()); }
+            // error_log('[PDF Builder AJAX] Erreur listage sauvegardes: ' . $e->getMessage());
             wp_send_json_error(['message' => __('Erreur lors du chargement des sauvegardes.', 'pdf-builder-pro')]);
         }
     }
@@ -2020,7 +2020,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
 
         } catch (Exception $e) {
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur restauration sauvegarde: ' . $e->getMessage()); }
+            // error_log('[PDF Builder AJAX] Erreur restauration sauvegarde: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur interne du serveur']);
         }
     }
@@ -2056,7 +2056,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
 
         } catch (Exception $e) {
-            // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur suppression sauvegarde: ' . $e->getMessage()); }
+            // error_log('[PDF Builder AJAX] Erreur suppression sauvegarde: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur interne du serveur']);
         }
     }
@@ -2107,7 +2107,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              exit;
 
          } catch (Exception $e) {
-             // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur téléchargement sauvegarde: ' . $e->getMessage()); }
+             // error_log('[PDF Builder AJAX] Erreur téléchargement sauvegarde: ' . $e->getMessage());
              wp_send_json_error(['message' => 'Erreur interne du serveur']);
          }
      }
@@ -2160,7 +2160,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              wp_send_json_success($response_data);
 
          } catch (Exception $e) {
-             // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur toggle test mode: ' . $e->getMessage()); }
+             // error_log('[PDF Builder AJAX] Erreur toggle test mode: ' . $e->getMessage());
              wp_send_json_error(['message' => 'Erreur interne du serveur']);
          }
      }
@@ -2170,15 +2170,15 @@ class PDF_Builder_Unified_Ajax_Handler {
       */
      public function handle_generate_test_license_key() {
          // Debug: Log the request
-         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Generate test license key called'); }
-         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('POST data: ' . print_r($_POST, true)); }
+         error_log('PDF Builder - Generate test license key called');
+         error_log('POST data: ' . print_r($_POST, true));
 
          if (!$this->nonce_manager->validate_ajax_request()) {
-             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Nonce validation failed'); }
+             error_log('PDF Builder - Nonce validation failed');
              return;
          }
 
-         if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Nonce validation passed'); }
+         error_log('PDF Builder - Nonce validation passed');
 
          try {
             $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(wp_rand(), true)), 0, 16));
@@ -2189,7 +2189,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             pdf_builder_update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
             pdf_builder_update_option('pdf_builder_license_status', 'active'); // Mettre le statut à "active" quand une clé de test est générée
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Test license key generated: ' . $test_key); }
+            error_log('PDF Builder - Test license key generated: ' . $test_key);
 
             wp_send_json_success([
                 'message' => 'Clé de test générée avec succès.',
@@ -2198,7 +2198,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             ]);
 
          } catch (Exception $e) {
-             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur génération clé test: ' . $e->getMessage()); }
+             error_log('[PDF Builder AJAX] Erreur génération clé test: ' . $e->getMessage());
              wp_send_json_error(['message' => 'Erreur interne du serveur']);
          }
      }
@@ -2228,7 +2228,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              ]);
 
          } catch (Exception $e) {
-             // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur suppression clé test: ' . $e->getMessage()); }
+             // error_log('[PDF Builder AJAX] Erreur suppression clé test: ' . $e->getMessage());
              wp_send_json_error(['message' => 'Erreur interne du serveur']);
          }
      }
@@ -2242,7 +2242,7 @@ class PDF_Builder_Unified_Ajax_Handler {
          }
 
          try {
-             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Starting license cleanup'); }
+             error_log('[PDF Builder] Starting license cleanup');
 
              // Liste des options de licence à supprimer
              $license_options = [
@@ -2262,7 +2262,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              // Supprimer chaque option individuellement
              foreach ($license_options as $option) {
                  pdf_builder_delete_option($option);
-                 if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Deleted option: ' . $option); }
+                 error_log('[PDF Builder] Deleted option: ' . $option);
              }
 
              // Désactiver le mode test dans les paramètres généraux
@@ -2270,7 +2270,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              if (isset($settings['pdf_builder_license_test_mode_enabled'])) {
                  $settings['pdf_builder_license_test_mode_enabled'] = '0';
                  pdf_builder_update_option('pdf_builder_settings', $settings);
-                 if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Disabled test mode in settings'); }
+                 error_log('[PDF Builder] Disabled test mode in settings');
              }
 
              // Définir le statut de licence à 'free'
@@ -2280,7 +2280,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              global $wpdb;
              $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_license_%'");
              $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_license_%'");
-             if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Cleared license transients'); }
+             error_log('[PDF Builder] Cleared license transients');
 
              wp_send_json_success([
                  'message' => 'Licence complètement nettoyée. Le plugin est maintenant en mode gratuit.',
@@ -2288,7 +2288,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              ]);
 
          } catch (Exception $e) {
-             // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur nettoyage licence: ' . $e->getMessage()); }
+             // error_log('[PDF Builder AJAX] Erreur nettoyage licence: ' . $e->getMessage());
              wp_send_json_error(['message' => 'Erreur interne du serveur']);
          }
      }
@@ -2345,7 +2345,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              ]);
 
          } catch (Exception $e) {
-             // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur nettoyage temp: ' . $e->getMessage()); }
+             // error_log('[PDF Builder AJAX] Erreur nettoyage temp: ' . $e->getMessage());
              wp_send_json_error(['message' => 'Erreur interne du serveur']);
          }
      }
@@ -2435,7 +2435,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              ]);
 
          } catch (Exception $e) {
-             // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur actualisation logs: ' . $e->getMessage()); }
+             // error_log('[PDF Builder AJAX] Erreur actualisation logs: ' . $e->getMessage());
              wp_send_json_error(['message' => 'Erreur interne du serveur']);
          }
      }
@@ -2472,7 +2472,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              ]);
 
          } catch (Exception $e) {
-             // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur nettoyage logs: ' . $e->getMessage()); }
+             // error_log('[PDF Builder AJAX] Erreur nettoyage logs: ' . $e->getMessage());
              wp_send_json_error(['message' => 'Erreur interne du serveur']);
          }
      }
@@ -2493,7 +2493,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              ]);
 
          } catch (Exception $e) {
-             // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur génération nonce: ' . $e->getMessage()); }
+             // error_log('[PDF Builder AJAX] Erreur génération nonce: ' . $e->getMessage());
              wp_send_json_error(['message' => 'Erreur interne du serveur']);
          }
      }
@@ -2543,7 +2543,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              ]);
 
          } catch (Exception $e) {
-             // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur récupération info système: ' . $e->getMessage()); }
+             // error_log('[PDF Builder AJAX] Erreur récupération info système: ' . $e->getMessage());
              wp_send_json_error(['message' => 'Erreur interne du serveur']);
          }
      }
@@ -2578,7 +2578,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              ]);
 
          } catch (Exception $e) {
-             // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder AJAX] Erreur reset paramètres dev: ' . $e->getMessage()); }
+             // error_log('[PDF Builder AJAX] Erreur reset paramètres dev: ' . $e->getMessage());
              wp_send_json_error(['message' => 'Erreur interne du serveur']);
          }
      }

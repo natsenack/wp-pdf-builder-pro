@@ -1104,7 +1104,7 @@ document.addEventListener('DOMContentLoaded', function() {
     filterBtns.forEach(function(btn) {
         btn.addEventListener('click', function() {
             // Retirer la classe active de tous les boutons
-            filterBtns.forEach(function(b) { b.classList.remove('active'); });
+            filterBtns.forEach(function(b) { b.classList.remove('active'););
             // Ajouter la classe active au bouton cliqué
             this.classList.add('active');
 
@@ -1118,7 +1118,7 @@ document.addEventListener('DOMContentLoaded', function() {
     galleryFilterBtns.forEach(function(btn) {
         btn.addEventListener('click', function() {
             // Retirer la classe active de tous les boutons
-            galleryFilterBtns.forEach(function(b) { b.classList.remove('active'); });
+            galleryFilterBtns.forEach(function(b) { b.classList.remove('active'););
             // Ajouter la classe active au bouton cliqué
             this.classList.add('active');
 

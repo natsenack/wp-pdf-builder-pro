@@ -9,7 +9,7 @@ if (!function_exists('PDF_Builder\Data\is_email')) {
     function is_email($email) { return filter_var($email, FILTER_VALIDATE_EMAIL) !== false; }
 }
 if (!function_exists('PDF_Builder\Data\sanitize_email')) {
-    function sanitize_email($email) { return filter_var($email, FILTER_SANITIZE_EMAIL); }
+    function sanitize_email($email) { return filter_var($email, FILTER_SANITIZE_EMAIL);
 }
 if (!function_exists('PDF_Builder\Data\esc_url_raw')) {
     function esc_url_raw($url) { return $url; }

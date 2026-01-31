@@ -14,10 +14,10 @@ if (!defined('ABSPATH')) {
  */
 function pdf_builder_load_settings_assets($hook) {
     // DEBUG: Fonction appelée
-    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - pdf_builder_load_settings_assets appelée pour hook: ' . $hook . ' - DÉBUT FONCTION'); }
+    error_log('PDF Builder - pdf_builder_load_settings_assets appelée pour hook: ' . $hook . ' - DÉBUT FONCTION');
 
     // DEBUG: Log du hook actuel
-    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Hook actuel: ' . $hook); }
+    error_log('PDF Builder - Hook actuel: ' . $hook);
 
     // TEMPORAIREMENT : Charger sur TOUTES les pages admin pour debug
     // if ($hook !== 'pdf-builder-pro_page_pdf-builder-settings') {
@@ -57,7 +57,7 @@ function pdf_builder_load_settings_assets($hook) {
     );
 
     // DEBUG: Avant enqueue du script
-    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Avant wp_enqueue_script'); }
+    error_log('PDF Builder - Avant wp_enqueue_script');
 
     // Charger le JavaScript pour la navigation par onglets - seulement si le fichier existe
     $settings_tabs_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/settings-tabs.min.js';
@@ -77,9 +77,9 @@ function pdf_builder_load_settings_assets($hook) {
         ));
 
         // DEBUG: Après localization
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Après wp_localize_script'); }
+        error_log('PDF Builder - Après wp_localize_script');
     } else {
-        if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - settings-tabs.js non trouvé, script ignoré'); }
+        error_log('PDF Builder - settings-tabs.js non trouvé, script ignoré');
     }
 
     // Force the settings-tabs script to not be deferred or async for early API availability
@@ -92,7 +92,7 @@ function pdf_builder_load_settings_assets($hook) {
     }, 1);
 
     // DEBUG: Après enqueue du script
-    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Après wp_enqueue_script'); }
+    error_log('PDF Builder - Après wp_enqueue_script');
 
     // Charger le script principal des paramètres - seulement si le fichier existe
     $settings_main_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/settings-main.min.js';
@@ -142,7 +142,7 @@ function pdf_builder_load_settings_assets($hook) {
         );
     }
 
-    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - pdf_builder_load_settings_assets TERMINÉE pour hook: ' . $hook); }
+    error_log('PDF Builder - pdf_builder_load_settings_assets TERMINÉE pour hook: ' . $hook);
 }
 
 // Enregistrer le hook pour charger les assets

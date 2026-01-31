@@ -2,7 +2,7 @@
 
     // Récupération des paramètres depuis le tableau unifié
     $settings = pdf_builder_get_option('pdf_builder_settings', array());
-    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings-systeme.php - Full settings from DB: ' . print_r($settings, true)); }
+    error_log('[PDF Builder] settings-systeme.php - Full settings from DB: ' . print_r($settings, true));
 
     // Préparer toutes les variables nécessaires
     $cache_enabled = $settings['pdf_builder_cache_enabled'] ?? '0';
@@ -17,8 +17,8 @@
     $last_backup = $settings['pdf_builder_last_backup'] ?? 'Jamais';
     $cache_last_cleanup = $settings['pdf_builder_cache_last_cleanup'] ?? 'Jamais';
 
-    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings-systeme.php loaded - cache_enabled: ' . $cache_enabled . ' (type: ' . gettype($cache_enabled) . '), cache_ttl: ' . $cache_ttl); }
-    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Toggle values - cache_enabled should be checked: ' . ($cache_enabled === '1' ? 'YES' : 'NO')); }
+    error_log('[PDF Builder] settings-systeme.php loaded - cache_enabled: ' . $cache_enabled . ' (type: ' . gettype($cache_enabled) . '), cache_ttl: ' . $cache_ttl);
+    error_log('[PDF Builder] Toggle values - cache_enabled should be checked: ' . ($cache_enabled === '1' ? 'YES' : 'NO'));
 
     // Vérifier le statut premium de l'utilisateur
     $is_premium = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium();
@@ -976,7 +976,7 @@
 
                         output += '<div class="backup-list" style="margin-top: 15px;">';
                         output += '<style>.backup-item-info { margin-bottom: 0 !important; }</style>';
-                        output += '<style>@keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.8); } 20% { opacity: 1; transform: scale(1.1); } 80% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.8); } } .backup-count-plus-one { animation: fadeInOut 3s ease-in-out; }</style>';
+                        output += '<style>@keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.8); 20% { opacity: 1; transform: scale(1.1); 80% { opacity: 1; transform: scale(1); 100% { opacity: 0; transform: scale(0.8); } .backup-count-plus-one { animation: fadeInOut 3s ease-in-out; }</style>';
 
                         response.data.backups.forEach(function(backup, index) {
                             

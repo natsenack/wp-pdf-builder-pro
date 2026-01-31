@@ -4,7 +4,7 @@ namespace PDF_Builder\Managers;
 
 // Déclarations des fonctions WordPress et constantes pour l'IDE
 if (!function_exists('wp_mkdir_p')) {
-    function wp_mkdir_p($path) { return mkdir($path, 0755, true); }
+    function wp_mkdir_p($path) { return mkdir($path, 0755, true);
 }
 if (!function_exists('wp_kses')) {
     function wp_kses($string, $allowed_html = []) { return $string; }
@@ -106,7 +106,7 @@ if (!function_exists('wp_nonce_field')) {
     function wp_nonce_field($action = -1, $name = '_wpnonce', $referer = true, $echo = true) {}
 }
 if (!function_exists('wp_mkdir_p')) {
-    function wp_mkdir_p($dir) { return mkdir($dir, 0755, true); }
+    function wp_mkdir_p($dir) { return mkdir($dir, 0755, true);
 }
 if (!function_exists('wp_kses')) {
     function wp_kses($string, $allowed_html = []) { return $string; }

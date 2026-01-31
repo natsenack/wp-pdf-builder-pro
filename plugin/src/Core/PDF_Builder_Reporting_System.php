@@ -613,16 +613,16 @@ class PDF_Builder_Reporting_System {
     /**
      * Placeholders pour les autres méthodes
      */
-    private function get_performance_recommendations($metrics) { return array(); }
-    private function get_usage_insights($stats) { return array(); }
-    private function get_security_vulnerabilities($security) { return array(); }
-    private function get_security_recommendations($security) { return array(); }
-    private function check_compliance_status($security) { return array(); }
-    private function get_database_optimization_suggestions($db_health) { return array(); }
-    private function get_backup_status() { return array(); }
+    private function get_performance_recommendations($metrics) { return array();
+    private function get_usage_insights($stats) { return array();
+    private function get_security_vulnerabilities($security) { return array();
+    private function get_security_recommendations($security) { return array();
+    private function check_compliance_status($security) { return array();
+    private function get_database_optimization_suggestions($db_health) { return array();
+    private function get_backup_status() { return array();
     private function format_pdf_report($report) { return 'PDF format not implemented yet'; }
     private function format_csv_report($report) { return 'CSV format not implemented yet'; }
-    private function format_json_report($report) { return json_encode($report); }
+    private function format_json_report($report) { return json_encode($report);
 }
 
 

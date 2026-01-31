@@ -2,7 +2,7 @@
 
     // Récupération des paramètres depuis le tableau unifié
     $settings = pdf_builder_get_option('pdf_builder_settings', array());
-    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] settings-developpeur.php loaded - license_test_mode: ' . ($settings['pdf_builder_license_test_mode_enabled'] ?? 'not set') . ', settings count: ' . count($settings)); }
+    error_log('[PDF Builder] settings-developpeur.php loaded - license_test_mode: ' . ($settings['pdf_builder_license_test_mode_enabled'] ?? 'not set') . ', settings count: ' . count($settings));
 
     // Variables nécessaires pour l'onglet développeur
     $license_test_mode = $settings['pdf_builder_license_test_mode_enabled'] ?? '0';

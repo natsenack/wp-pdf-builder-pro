@@ -222,8 +222,8 @@ class ReactAssets {
                         return Promise.resolve({
                             ok: true,
                             status: 200,
-                            json: function() { return Promise.resolve({}); },
-                            text: function() { return Promise.resolve('{}'); }
+                            json: function() { return Promise.resolve({});,
+                            text: function() { return Promise.resolve('{}');
                         });
                     }
                     return originalFetch.apply(this, arguments);

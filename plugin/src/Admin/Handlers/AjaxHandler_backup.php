@@ -252,7 +252,7 @@ class AjaxHandler
      */
     public function ajaxLoadTemplate()
     {
-        // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ajaxLoadTemplate called - START'); }
+        // error_log('[PDF Builder] ajaxLoadTemplate called - START');
 
         // Déléguer au template manager si disponible
         $template_manager = $this->admin->getTemplateManager();
@@ -306,16 +306,16 @@ class AjaxHandler
     {
         try {
             // Debug logging
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ajaxGetTemplate called at ' . \current_time('Y-m-d H:i:s')); }
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] REQUEST_METHOD: ' . (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'UNKNOWN')); }
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] template_id GET: ' . (isset($_GET['template_id']) ? $_GET['template_id'] : 'NOT SET')); }
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] template_id POST: ' . (isset($_POST['template_id']) ? $_POST['template_id'] : 'NOT SET')); }
+            error_log('[PDF Builder] ajaxGetTemplate called at ' . \current_time('Y-m-d H:i:s'));
+            error_log('[PDF Builder] REQUEST_METHOD: ' . (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'UNKNOWN'));
+            error_log('[PDF Builder] template_id GET: ' . (isset($_GET['template_id']) ? $_GET['template_id'] : 'NOT SET'));
+            error_log('[PDF Builder] template_id POST: ' . (isset($_POST['template_id']) ? $_POST['template_id'] : 'NOT SET'));
 
             // Valider les permissions et nonce de manière unifiée
             // 🔧 CORRECTION: Accepter les éditeurs aussi (MIN_CAPABILITY au lieu de ADMIN_CAPABILITY)
             $validation = NonceManager::validateRequest(NonceManager::MIN_CAPABILITY);
             if (!$validation['success']) {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Nonce validation failed: ' . $validation['message']); }
+                error_log('[PDF Builder] Nonce validation failed: ' . $validation['message']);
                 if ($validation['code'] === 'nonce_invalid') {
                     NonceManager::sendNonceErrorResponse();
                 } else {
@@ -324,33 +324,33 @@ class AjaxHandler
                 return;
             }
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Nonce validation passed'); }
+            error_log('[PDF Builder] Nonce validation passed');
 
             // Récupérer le template_id depuis GET ou POST
             $template_id = isset($_GET['template_id']) ? \intval($_GET['template_id']) : (isset($_POST['template_id']) ? \intval($_POST['template_id']) : null);
 
             if (!$template_id) {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] No template_id provided'); }
+                error_log('[PDF Builder] No template_id provided');
                 \wp_send_json_error('ID de template manquant');
                 return;
             }
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Processing template_id: ' . $template_id); }
+            error_log('[PDF Builder] Processing template_id: ' . $template_id);
 
             // Vérifier que template_processor existe
             if (!isset($this->admin->template_processor) || !$this->admin->template_processor) {
                 // Fallback: charger le template directement
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] template_processor not available, using fallback'); }
+                error_log('[PDF Builder] template_processor not available, using fallback');
                 return $this->fallbackLoadTemplate($template_id);
             }
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Using template_processor to load template'); }
+            error_log('[PDF Builder] Using template_processor to load template');
 
             // Charger le template en utilisant le template processor
             $template = $this->admin->template_processor->loadTemplateRobust($template_id);
 
             if ($template) {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Template loaded successfully via template_processor'); }
+                error_log('[PDF Builder] Template loaded successfully via template_processor');
 
                 // Récupérer le nom du template depuis les métadonnées DB en priorité, sinon depuis la DB
                 $template_name = '';
@@ -375,11 +375,11 @@ class AjaxHandler
                 }
 
                 // Debug logging
-                // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ajaxGetTemplate - Template ID: ' . $template_id); }
-                // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ajaxGetTemplate - Template data has name: ' . (isset($template['name']) ? $template['name'] : 'NO')); }
-                // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ajaxGetTemplate - Template data has _db_name: ' . (isset($template['_db_name']) ? $template['_db_name'] : 'NO')); }
-                // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ajaxGetTemplate - DB template name: ' . ($db_template && isset($db_template['name']) ? $db_template['name'] : 'NO DB RECORD')); }
-                // if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] ajaxGetTemplate - Final template_name: ' . $template_name); }
+                // error_log('[PDF Builder] ajaxGetTemplate - Template ID: ' . $template_id);
+                // error_log('[PDF Builder] ajaxGetTemplate - Template data has name: ' . (isset($template['name']) ? $template['name'] : 'NO'));
+                // error_log('[PDF Builder] ajaxGetTemplate - Template data has _db_name: ' . (isset($template['_db_name']) ? $template['_db_name'] : 'NO'));
+                // error_log('[PDF Builder] ajaxGetTemplate - DB template name: ' . ($db_template && isset($db_template['name']) ? $db_template['name'] : 'NO DB RECORD'));
+                // error_log('[PDF Builder] ajaxGetTemplate - Final template_name: ' . $template_name);
 
                 \wp_send_json_success([
                     'template' => $template,
@@ -387,7 +387,7 @@ class AjaxHandler
                     'message' => 'Template chargé avec succès'
                 ]);
             } else {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Template loading failed via template_processor, trying fallback'); }
+                error_log('[PDF Builder] Template loading failed via template_processor, trying fallback');
                 return $this->fallbackLoadTemplate($template_id);
             }
 
@@ -671,7 +671,7 @@ class AjaxHandler
             }
 
         } catch (Exception $e) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Erreur handler unifié: ' . $e->getMessage()); }
+            error_log('PDF Builder - Erreur handler unifié: ' . $e->getMessage());
             \wp_send_json_error(['message' => 'Erreur serveur: ' . $e->getMessage()]);
         }
     }
@@ -709,14 +709,14 @@ class AjaxHandler
                 }
             }
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PHP: Received POST keys: ' . implode(', ', array_keys($_POST))); }
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PHP: Settings to save: ' . implode(', ', array_keys($settings_to_save))); }
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PHP: Templates data: ' . json_encode($templates_data)); }
+            error_log('PHP: Received POST keys: ' . implode(', ', array_keys($_POST)));
+            error_log('PHP: Settings to save: ' . implode(', ', array_keys($settings_to_save)));
+            error_log('PHP: Templates data: ' . json_encode($templates_data));
 
             // Sauvegarder les templates séparément si des données existent
             if (!empty($templates_data)) {
                 pdf_builder_update_option('pdf_builder_order_status_templates', $templates_data);
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PHP: Templates data saved to pdf_builder_order_status_templates'); }
+                error_log('PHP: Templates data saved to pdf_builder_order_status_templates');
             }
 
             if (empty($settings_to_save) && empty($templates_data)) {
@@ -738,10 +738,10 @@ class AjaxHandler
 
                 if (!$saved && !empty($db_error)) {
                     // Erreur DB réelle
-                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - update_option failed. Last DB error: ' . $db_error); }
-                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Settings size: ' . strlen(serialize($updated_settings))); }
-                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Existing settings size: ' . strlen(serialize($existing_settings))); }
-                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - New settings count: ' . count($settings_to_save)); }
+                    error_log('PDF Builder - update_option failed. Last DB error: ' . $db_error);
+                    error_log('PDF Builder - Settings size: ' . strlen(serialize($updated_settings)));
+                    error_log('PDF Builder - Existing settings size: ' . strlen(serialize($existing_settings)));
+                    error_log('PDF Builder - New settings count: ' . count($settings_to_save));
 
                     // Rollback en cas d'échec
                     $this->rollbackSettings($backup_key);
@@ -764,7 +764,7 @@ class AjaxHandler
         } catch (Exception $e) {
             // Rollback en cas d'exception
             $this->rollbackSettings($backup_key);
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Erreur sauvegarde: ' . $e->getMessage()); }
+            error_log('PDF Builder - Erreur sauvegarde: ' . $e->getMessage());
             \wp_send_json_error(['message' => 'Erreur lors du traitement des données']);
         }
     }
@@ -1183,26 +1183,26 @@ class AjaxHandler
     private function fallbackLoadTemplate($template_id)
     {
         try {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] fallbackLoadTemplate called for template_id: ' . $template_id); }
+            error_log('[PDF Builder] fallbackLoadTemplate called for template_id: ' . $template_id);
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
             // Vérifier que la table existe
             if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Templates table does not exist: ' . $table_templates); }
+                error_log('[PDF Builder] Templates table does not exist: ' . $table_templates);
                 \wp_send_json_error('Table des templates introuvable');
                 return;
             }
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Templates table exists, querying for template_id: ' . $template_id); }
+            error_log('[PDF Builder] Templates table exists, querying for template_id: ' . $template_id);
             $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
             if (!$template) {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Template not found in database'); }
+                error_log('[PDF Builder] Template not found in database');
                 \wp_send_json_error('Template introuvable');
                 return;
             }
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] Template found, attempting JSON decode'); }
+            error_log('[PDF Builder] Template found, attempting JSON decode');
 
             // Essayer de décoder le JSON
             $template_data = json_decode($template['template_data'], true);
@@ -1432,7 +1432,7 @@ class AjaxHandler
             }
 
         } catch (Exception $e) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Erreur sauvegarde unifiée: ' . $e->getMessage()); }
+            error_log('PDF Builder - Erreur sauvegarde unifiée: ' . $e->getMessage());
             \wp_send_json_error(['message' => 'Erreur serveur: ' . $e->getMessage()]);
         }
     }
@@ -1459,7 +1459,7 @@ class AjaxHandler
         if ($backup !== false) {
             pdf_builder_update_option('pdf_builder_settings', $backup);
             delete_option($backup_key);
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PDF Builder - Rollback effectué depuis backup: ' . $backup_key); }
+            error_log('PDF Builder - Rollback effectué depuis backup: ' . $backup_key);
         }
     }
 
@@ -1547,8 +1547,8 @@ class AjaxHandler
                 return;
             }
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PHP: ajaxSaveOrderStatusTemplates called'); }
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PHP: POST data: ' . print_r($_POST, true)); }
+            error_log('PHP: ajaxSaveOrderStatusTemplates called');
+            error_log('PHP: POST data: ' . print_r($_POST, true));
 
             // Récupérer les données des templates
             $templates_data = isset($_POST['pdf_builder_order_status_templates']) ? $_POST['pdf_builder_order_status_templates'] : [];
@@ -1570,8 +1570,8 @@ class AjaxHandler
 
             // Sauvegarder dans la base de données
             pdf_builder_update_option('pdf_builder_order_status_templates', $clean_templates);
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PHP: Saved to DB in ajaxSaveOrderStatusTemplates: ' . print_r($clean_templates, true)); }
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('PHP: DB content after save: ' . print_r(pdf_builder_get_option('pdf_builder_order_status_templates', []), true)); }
+            error_log('PHP: Saved to DB in ajaxSaveOrderStatusTemplates: ' . print_r($clean_templates, true));
+            error_log('PHP: DB content after save: ' . print_r(pdf_builder_get_option('pdf_builder_order_status_templates', []), true));
 
             \wp_send_json_success([
                 'message' => 'Mappings de templates sauvegardés avec succès',
@@ -1788,16 +1788,16 @@ class AjaxHandler
     private function handleCleanupLicense()
     {
         try {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Starting cleanup process'); }
+            error_log('[PDF Builder] handleCleanupLicense - Starting cleanup process');
 
             // Récupérer les paramètres actuels
             $settings = pdf_builder_get_option('pdf_builder_settings', array());
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Current settings count: ' . count($settings)); }
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Current settings keys: ' . implode(', ', array_keys($settings))); }
+            error_log('[PDF Builder] handleCleanupLicense - Current settings count: ' . count($settings));
+            error_log('[PDF Builder] handleCleanupLicense - Current settings keys: ' . implode(', ', array_keys($settings)));
 
             // Vérifier si le mode test est actif AVANT de commencer le nettoyage
             $test_mode_was_enabled = ($settings['pdf_builder_license_test_mode_enabled'] ?? '0') === '1';
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Test mode was enabled: ' . ($test_mode_was_enabled ? 'YES' : 'NO')); }
+            error_log('[PDF Builder] handleCleanupLicense - Test mode was enabled: ' . ($test_mode_was_enabled ? 'YES' : 'NO'));
 
             // Liste des clés de licence à supprimer (nettoyage complet)
             $license_keys_to_remove = [
@@ -1812,7 +1812,7 @@ class AjaxHandler
                 'pdf_builder_license_test_mode_enabled'
             ];
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Keys to remove: ' . implode(', ', $license_keys_to_remove)); }
+            error_log('[PDF Builder] handleCleanupLicense - Keys to remove: ' . implode(', ', $license_keys_to_remove));
 
             $removed_count = 0;
             foreach ($license_keys_to_remove as $key) {
@@ -1820,9 +1820,9 @@ class AjaxHandler
                     $old_value = $settings[$key];
                     unset($settings[$key]);
                     $removed_count++;
-                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Removed key: ' . $key . ' (value was: ' . $old_value . ')'); }
+                    error_log('[PDF Builder] handleCleanupLicense - Removed key: ' . $key . ' (value was: ' . $old_value . ')');
                 } else {
-                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Key not found: ' . $key); }
+                    error_log('[PDF Builder] handleCleanupLicense - Key not found: ' . $key);
                 }
             }
 
@@ -1832,18 +1832,18 @@ class AjaxHandler
             if (isset($wp_filter['sanitize_option_pdf_builder_settings'])) {
                 $sanitize_callbacks = $wp_filter['sanitize_option_pdf_builder_settings'];
                 unset($wp_filter['sanitize_option_pdf_builder_settings']);
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Temporarily disabled sanitize callback'); }
+                error_log('[PDF Builder] handleCleanupLicense - Temporarily disabled sanitize callback');
             }
 
             // Sauvegarder les paramètres nettoyés SANS sanitize callback
             $update_result = pdf_builder_update_option('pdf_builder_settings', $settings);
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED')); }
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Removed ' . $removed_count . ' license keys'); }
+            error_log('[PDF Builder] handleCleanupLicense - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED'));
+            error_log('[PDF Builder] handleCleanupLicense - Removed ' . $removed_count . ' license keys');
 
             // Réactiver le sanitize callback si il était présent
             if ($sanitize_callbacks !== null) {
                 $wp_filter['sanitize_option_pdf_builder_settings'] = $sanitize_callbacks;
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Re-enabled sanitize callback'); }
+                error_log('[PDF Builder] handleCleanupLicense - Re-enabled sanitize callback');
             }
 
             // Vérifier que les clés ont bien été supprimées
@@ -1851,8 +1851,8 @@ class AjaxHandler
             $remaining_license_keys = array_filter(array_keys($updated_settings), function($key) {
                 return strpos($key, 'pdf_builder_license') === 0;
             });
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Remaining license keys: ' . implode(', ', $remaining_license_keys)); }
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Final settings count: ' . count($updated_settings)); }
+            error_log('[PDF Builder] handleCleanupLicense - Remaining license keys: ' . implode(', ', $remaining_license_keys));
+            error_log('[PDF Builder] handleCleanupLicense - Final settings count: ' . count($updated_settings));
 
             \wp_send_json_success([
                 'message' => 'Nettoyage complet réussi. ' . $removed_count . ' clés de licence supprimées.',
@@ -1861,7 +1861,7 @@ class AjaxHandler
             ]);
 
         } catch (Exception $e) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCleanupLicense - Error: ' . $e->getMessage()); }
+            error_log('[PDF Builder] handleCleanupLicense - Error: ' . $e->getMessage());
             \wp_send_json_error(['message' => 'Erreur lors du nettoyage: ' . $e->getMessage()]);
         }
     }
@@ -1872,7 +1872,7 @@ class AjaxHandler
     private function handleToggleLicenseTestMode()
     {
         try {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleLicenseTestMode - Starting toggle process'); }
+            error_log('[PDF Builder] handleToggleLicenseTestMode - Starting toggle process');
 
             // Récupérer les paramètres actuels
             $settings = pdf_builder_get_option('pdf_builder_settings', array());
@@ -1888,10 +1888,10 @@ class AjaxHandler
             // Vérifier que la sauvegarde a bien fonctionné
             $verify_settings = pdf_builder_get_option('pdf_builder_settings', array());
             $verify_mode = $verify_settings['pdf_builder_license_test_mode_enabled'] ?? 'NOT_SET';
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleLicenseTestMode - VERIFICATION: saved=' . $new_mode . ' retrieved=' . $verify_mode); }
+            error_log('[PDF Builder] handleToggleLicenseTestMode - VERIFICATION: saved=' . $new_mode . ' retrieved=' . $verify_mode);
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleLicenseTestMode - Toggled from ' . $current_mode . ' to ' . $new_mode); }
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleLicenseTestMode - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED')); }
+            error_log('[PDF Builder] handleToggleLicenseTestMode - Toggled from ' . $current_mode . ' to ' . $new_mode);
+            error_log('[PDF Builder] handleToggleLicenseTestMode - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED'));
 
             \wp_send_json_success([
                 'message' => 'Mode test ' . ($new_mode === '1' ? 'activé' : 'désactivé') . ' avec succès',
@@ -1899,7 +1899,7 @@ class AjaxHandler
             ]);
 
         } catch (Exception $e) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleToggleLicenseTestMode - Error: ' . $e->getMessage()); }
+            error_log('[PDF Builder] handleToggleLicenseTestMode - Error: ' . $e->getMessage());
             \wp_send_json_error(['message' => 'Erreur lors du basculement: ' . $e->getMessage()]);
         }
     }
@@ -1910,7 +1910,7 @@ class AjaxHandler
     private function handleGenerateLicenseKey()
     {
         try {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleGenerateLicenseKey - Starting generation process'); }
+            error_log('[PDF Builder] handleGenerateLicenseKey - Starting generation process');
 
             // Générer une clé aléatoire
             $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 16));
@@ -1922,8 +1922,8 @@ class AjaxHandler
             // Sauvegarder
             $update_result = pdf_builder_update_option('pdf_builder_settings', $settings);
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleGenerateLicenseKey - Generated key: ' . $test_key); }
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleGenerateLicenseKey - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED')); }
+            error_log('[PDF Builder] handleGenerateLicenseKey - Generated key: ' . $test_key);
+            error_log('[PDF Builder] handleGenerateLicenseKey - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED'));
 
             \wp_send_json_success([
                 'message' => 'Clé de test générée avec succès',
@@ -1931,7 +1931,7 @@ class AjaxHandler
             ]);
 
         } catch (Exception $e) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleGenerateLicenseKey - Error: ' . $e->getMessage()); }
+            error_log('[PDF Builder] handleGenerateLicenseKey - Error: ' . $e->getMessage());
             \wp_send_json_error(['message' => 'Erreur lors de la génération: ' . $e->getMessage()]);
         }
     }
@@ -1942,7 +1942,7 @@ class AjaxHandler
     private function handleDeleteLicenseKey()
     {
         try {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleDeleteLicenseKey - Starting deletion process'); }
+            error_log('[PDF Builder] handleDeleteLicenseKey - Starting deletion process');
 
             // Récupérer les paramètres actuels
             $settings = pdf_builder_get_option('pdf_builder_settings', array());
@@ -1955,15 +1955,15 @@ class AjaxHandler
             // Sauvegarder
             $update_result = pdf_builder_update_option('pdf_builder_settings', $settings);
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleDeleteLicenseKey - Deleted key: ' . $old_key); }
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleDeleteLicenseKey - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED')); }
+            error_log('[PDF Builder] handleDeleteLicenseKey - Deleted key: ' . $old_key);
+            error_log('[PDF Builder] handleDeleteLicenseKey - Update result: ' . ($update_result ? 'SUCCESS' : 'FAILED'));
 
             \wp_send_json_success([
                 'message' => 'Clé de test supprimée avec succès'
             ]);
 
         } catch (Exception $e) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleDeleteLicenseKey - Error: ' . $e->getMessage()); }
+            error_log('[PDF Builder] handleDeleteLicenseKey - Error: ' . $e->getMessage());
             \wp_send_json_error(['message' => 'Erreur lors de la suppression: ' . $e->getMessage()]);
         }
     }
@@ -1974,7 +1974,7 @@ class AjaxHandler
     private function handleValidateLicenseKey()
     {
         try {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleValidateLicenseKey - Starting validation process'); }
+            error_log('[PDF Builder] handleValidateLicenseKey - Starting validation process');
 
             // Récupérer les paramètres actuels
             $settings = pdf_builder_get_option('pdf_builder_settings', array());
@@ -1988,7 +1988,7 @@ class AjaxHandler
             // Validation simple pour les clés de test
             $is_valid = strpos($test_key, 'TEST-') === 0 && strlen($test_key) === 21;
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleValidateLicenseKey - Key: ' . $test_key . ', Valid: ' . ($is_valid ? 'YES' : 'NO')); }
+            error_log('[PDF Builder] handleValidateLicenseKey - Key: ' . $test_key . ', Valid: ' . ($is_valid ? 'YES' : 'NO'));
 
             if ($is_valid) {
                 \wp_send_json_success([
@@ -2000,7 +2000,7 @@ class AjaxHandler
             }
 
         } catch (Exception $e) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleValidateLicenseKey - Error: ' . $e->getMessage()); }
+            error_log('[PDF Builder] handleValidateLicenseKey - Error: ' . $e->getMessage());
             \wp_send_json_error(['message' => 'Erreur lors de la validation: ' . $e->getMessage()]);
         }
     }
@@ -2011,18 +2011,18 @@ class AjaxHandler
     private function handleManageDatabaseTable()
     {
         try {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleManageDatabaseTable - Starting'); }
+            error_log('[PDF Builder] handleManageDatabaseTable - Starting');
 
             // Récupérer la sous-action
             $sub_action = isset($_POST['sub_action']) ? \sanitize_text_field($_POST['sub_action']) : '';
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleManageDatabaseTable - Sub-action: ' . $sub_action); }
+            error_log('[PDF Builder] handleManageDatabaseTable - Sub-action: ' . $sub_action);
 
             // Charger la classe Settings_Table_Manager
             $table_manager_file = plugin_dir_path(dirname(__FILE__)) . 'Database/Settings_Table_Manager.php';
             
             if (!file_exists($table_manager_file)) {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleManageDatabaseTable - Settings_Table_Manager not found at: ' . $table_manager_file); }
+                error_log('[PDF Builder] handleManageDatabaseTable - Settings_Table_Manager not found at: ' . $table_manager_file);
                 \wp_send_json_error(['message' => 'Gestionnaire de table non trouvé']);
                 return;
             }
@@ -2048,13 +2048,13 @@ class AjaxHandler
                     break;
 
                 default:
-                    if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleManageDatabaseTable - Unknown sub-action: ' . $sub_action); }
+                    error_log('[PDF Builder] handleManageDatabaseTable - Unknown sub-action: ' . $sub_action);
                     \wp_send_json_error(['message' => 'Sous-action non reconnue: ' . $sub_action]);
                     break;
             }
 
         } catch (Exception $e) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleManageDatabaseTable - Error: ' . $e->getMessage()); }
+            error_log('[PDF Builder] handleManageDatabaseTable - Error: ' . $e->getMessage());
             \wp_send_json_error(['message' => 'Erreur lors de la gestion de la BD: ' . $e->getMessage()]);
         }
     }
@@ -2065,21 +2065,21 @@ class AjaxHandler
     private function handleCreateTable($table_manager)
     {
         try {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCreateTable - Starting table creation'); }
+            error_log('[PDF Builder] handleCreateTable - Starting table creation');
 
             // Créer la table
             $result = $table_manager->create_table();
 
             if ($result) {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCreateTable - Table created successfully'); }
+                error_log('[PDF Builder] handleCreateTable - Table created successfully');
                 \wp_send_json_success(['message' => 'Table wp_pdf_builder_settings créée avec succès']);
             } else {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCreateTable - Table creation failed'); }
+                error_log('[PDF Builder] handleCreateTable - Table creation failed');
                 \wp_send_json_error(['message' => 'Erreur lors de la création de la table']);
             }
 
         } catch (Exception $e) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCreateTable - Error: ' . $e->getMessage()); }
+            error_log('[PDF Builder] handleCreateTable - Error: ' . $e->getMessage());
             \wp_send_json_error(['message' => 'Erreur lors de la création: ' . $e->getMessage()]);
         }
     }
@@ -2090,26 +2090,26 @@ class AjaxHandler
     private function handleMigrateData($table_manager)
     {
         try {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleMigrateData - Starting data migration'); }
+            error_log('[PDF Builder] handleMigrateData - Starting data migration');
 
             // Migrer les données
             $result = $table_manager->migrate_data();
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleMigrateData - Migration result: ' . json_encode($result)); }
+            error_log('[PDF Builder] handleMigrateData - Migration result: ' . json_encode($result));
 
             if ($result && isset($result['success']) && $result['success']) {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleMigrateData - Data migration completed successfully'); }
+                error_log('[PDF Builder] handleMigrateData - Data migration completed successfully');
                 \wp_send_json_success([
                     'message' => 'Migration des données effectuée: ' . ($result['migrated'] ?? 0) . ' paramètres migrés',
                     'migrated' => $result['migrated'] ?? 0
                 ]);
             } else {
-                if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleMigrateData - Data migration failed: ' . json_encode($result)); }
+                error_log('[PDF Builder] handleMigrateData - Data migration failed: ' . json_encode($result));
                 \wp_send_json_error(['message' => 'Erreur lors de la migration: ' . ($result['message'] ?? 'Erreur inconnue')]);
             }
 
         } catch (Exception $e) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleMigrateData - Error: ' . $e->getMessage()); }
+            error_log('[PDF Builder] handleMigrateData - Error: ' . $e->getMessage());
             \wp_send_json_error(['message' => 'Erreur lors de la migration: ' . $e->getMessage()]);
         }
     }
@@ -2120,7 +2120,7 @@ class AjaxHandler
     private function handleCheckDatabaseStatus($table_manager)
     {
         try {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCheckDatabaseStatus - Starting status check'); }
+            error_log('[PDF Builder] handleCheckDatabaseStatus - Starting status check');
 
             global $wpdb;
 
@@ -2128,7 +2128,7 @@ class AjaxHandler
             $table_name = $wpdb->prefix . 'pdf_builder_settings';
             $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCheckDatabaseStatus - Table exists: ' . ($table_exists ? 'YES' : 'NO')); }
+            error_log('[PDF Builder] handleCheckDatabaseStatus - Table exists: ' . ($table_exists ? 'YES' : 'NO'));
 
             $response = [
                 'table_exists' => $table_exists,
@@ -2149,12 +2149,12 @@ class AjaxHandler
                 $response['is_migrated'] = $table_manager->is_migrated();
             }
 
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCheckDatabaseStatus - Status: ' . json_encode($response)); }
+            error_log('[PDF Builder] handleCheckDatabaseStatus - Status: ' . json_encode($response));
 
             \wp_send_json_success($response);
 
         } catch (Exception $e) {
-            if (class_exists('PDF_Builder_Logger')) { PDF_Builder_Logger::get_instance()->debug_log('[PDF Builder] handleCheckDatabaseStatus - Error: ' . $e->getMessage()); }
+            error_log('[PDF Builder] handleCheckDatabaseStatus - Error: ' . $e->getMessage());
             \wp_send_json_error(['message' => 'Erreur lors de la vérification: ' . $e->getMessage()]);
         }
     }
