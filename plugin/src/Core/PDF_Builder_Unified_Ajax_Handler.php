@@ -177,6 +177,7 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Constructeur privé
      */
     private function __construct() {
+        error_log("[UNIFIED AJAX] PDF_Builder_Unified_Ajax_Handler constructor called");
         $this->nonce_manager = PDF_Builder_Nonce_Manager::get_instance();
         $this->init_hooks();
     }
@@ -185,8 +186,12 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Initialise les hooks AJAX
      */
     private function init_hooks() {
+        error_log("[UNIFIED AJAX] init_hooks called - registering AJAX handlers");
+
         // Actions de sauvegarde principales
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'handle_save_settings']);
+        error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_save_settings");
+
         add_action('wp_ajax_pdf_builder_save_all_settings', [$this, 'handle_save_all_settings']);
         // REMOVED: pdf_builder_save_canvas_settings is now handled by AjaxHandler to avoid conflicts
         // add_action('wp_ajax_pdf_builder_save_canvas_settings', [$this, 'handle_save_canvas_settings']);
