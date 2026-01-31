@@ -298,7 +298,7 @@ jQuery(document).ready(function($) {
             $activeForm.find('input, select, textarea').each(function() {
                 var $field = $(this);
                 var fieldName = $field.attr('name');
-                if (fieldName) {
+                if (fieldName && fieldName !== '_wpnonce') { // Skip _wpnonce as we set it explicitly
                     if ($field.attr('type') === 'checkbox') {
                         ajaxData[fieldName] = $field.is(':checked') ? '1' : '0';
                     } else if ($field.attr('type') === 'radio') {

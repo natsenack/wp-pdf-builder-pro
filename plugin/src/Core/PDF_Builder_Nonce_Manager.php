@@ -12,7 +12,7 @@ class PDF_Builder_Nonce_Manager {
     private $refresh_threshold = 5 * 60 * 1000; // 5 minutes avant expiration
     private $max_retries = 2;
     private $nonce_mappings = [
-        'save_settings' => 'pdf_builder_ajax',
+        'save_settings' => 'pdf_builder_settings-options',
         'pdf_builder_canvas_settings' => 'pdf_builder_ajax',
         'get_cache_metrics' => 'pdf_builder_ajax',
         'test_cache_integration' => 'pdf_builder_ajax',
