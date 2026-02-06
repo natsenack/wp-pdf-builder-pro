@@ -160,11 +160,7 @@ class PDF_Builder_Backup_Recovery_System {
             $this->mark_backup_restored($backup_id, $emergency_backup_id);
 
             // Logger le succès
-                    'backup_id' => $backup_id,
-                    'emergency_backup' => $emergency_backup_id,
-                    'components' => $components
-                ]);
-            }
+            error_log('Backup restored successfully: ' . $backup_id);
 
             return $results;
 
