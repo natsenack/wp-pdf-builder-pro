@@ -518,7 +518,7 @@ class AdminScriptLoader
         
         // Main React app bundle  
         $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js';
-        \wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-react-vendor', 'wp-element', 'wp-components', 'wp-data', 'wp-hooks', 'wp-api', 'media-views'], $version_param, true);
+        \wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['wp-element', 'wp-components', 'wp-data', 'wp-hooks', 'wp-api', 'media-views'], $version_param, true);
         wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
         error_log('[WP AdminScriptLoader] MAIN ENQUEUED: ' . $react_main_url);
         
