@@ -307,18 +307,32 @@ export const Header = memo(function Header({
       const formData = new FormData();
       formData.append('action', 'pdf_builder_generate_html_preview');
       formData.append('nonce', (window as any).pdfBuilderNonce);
-      formData.append('data', JSON.stringify({
+      const dataToSend = JSON.stringify({
         pageOptions: {
           template: templateData
         }
-      }));
+      });
+      formData.append('data', dataToSend);
+
+      console.log('[HTML PREVIEW] Sending request with data:', dataToSend);
+      console.log('[HTML PREVIEW] Nonce:', (window as any).pdfBuilderNonce);
 
       const response = await fetch('/wp-admin/admin-ajax.php', {
         method: 'POST',
         body: formData
       });
 
-      const data = await response.json();
+      console.log('[HTML PREVIEW] Response status:', response.status);
+      console.log('[HTML PREVIEW] Response headers:', Object.fromEntries(response.headers.entries()));
+
+      const responseText = await response.text();
+      console.log('[HTML PREVIEW] Raw response:', responseText);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${responseText}`);
+      }
+
+      const data = JSON.parse(responseText);
 
       if (data.success && data.data && data.data.html) {
         setGeneratedHtml(data.data.html);

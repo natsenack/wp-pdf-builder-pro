@@ -774,6 +774,10 @@ class AdminScriptLoader
         wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
         error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
 
+        // Also set window.pdfBuilderNonce for AJAX calls
+        wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderNonce = "' . \wp_create_nonce('pdf_builder_ajax') . '";', 'before');
+        error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderNonce');
+
         // DEBUG: Add inline script to check if data is available
         wp_add_inline_script('pdf-builder-react-main', '
             console.log("[DEBUG] pdfBuilderData available:", typeof window.pdfBuilderData);
