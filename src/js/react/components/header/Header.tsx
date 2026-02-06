@@ -1143,7 +1143,7 @@ export const Header = memo(function Header({
               backgroundColor: "#ffffff",
               borderRadius: "8px",
               padding: "24px",
-              maxWidth: "90vw",
+              maxWidth: "35vw",
               width: "100%",
               maxHeight: "85vh",
               display: "flex",

@@ -99,40 +99,55 @@ class PreviewAjaxHandler {
         //     wp_send_json_error('Permissions insuffisantes', 403);
         // }
 
+        error_log('[HTML PREVIEW AJAX] Starting generateHtmlPreviewAjax');
+
         $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
+        error_log('[HTML PREVIEW AJAX] Received nonce: ' . $nonce);
+
         if (!wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
+            error_log('[HTML PREVIEW AJAX] Nonce verification failed');
             wp_send_json_error('Nonce invalide', 403);
         }
-        
+
+        error_log('[HTML PREVIEW AJAX] Nonce verified successfully');
+
         // Vérifier si on utilise le nouveau format (pageOptions)
         if (isset($_POST['data'])) {
             $options = stripslashes($_POST['data']);
-            
+            error_log('[HTML PREVIEW AJAX] Received data: ' . substr($options, 0, 200) . '...');
+
             if (empty($options)) {
+                error_log('[HTML PREVIEW AJAX] Data is empty');
                 wp_send_json_error('Données manquantes', 400);
             }
-            
+
             $options = json_decode($options);
             if (!$options) {
+                error_log('[HTML PREVIEW AJAX] JSON decode failed');
                 wp_send_json_error('Données JSON invalides', 400);
             }
-            
+
             $pageOptions = $options->pageOptions ?? null;
-            
+
             if (!$pageOptions) {
+                error_log('[HTML PREVIEW AJAX] pageOptions missing');
                 wp_send_json_error('Options de page manquantes', 400);
             }
-            
+
+            error_log('[HTML PREVIEW AJAX] Calling generateHtmlPreview');
             $result = self::generateHtmlPreview($pageOptions);
-            
+
         } else {
+            error_log('[HTML PREVIEW AJAX] No data parameter');
             wp_send_json_error('Format de données non supporté pour l\'aperçu HTML', 400);
         }
-        
+
         if (isset($result['error'])) {
+            error_log('[HTML PREVIEW AJAX] Error in result: ' . $result['error']);
             wp_send_json_error($result['error'], 400);
         }
-        
+
+        error_log('[HTML PREVIEW AJAX] Success, returning result');
         wp_send_json_success($result);
     }
 
@@ -294,12 +309,15 @@ class PreviewAjaxHandler {
     
     private static function generateHtmlPreview($pageOptions): array {
         require_once dirname(__FILE__) . '/../../vendor/autoload.php';
-        
+
+        error_log('[HTML PREVIEW] Starting generateHtmlPreview');
+
         try {
+            error_log('[HTML PREVIEW] Creating SampleDataProvider');
 
             // Créer un SampleDataProvider avec des données d'exemple réalistes
             $dataProvider = new \PDF_Builder\Data\SampleDataProvider('preview');
-            
+
             // Fonction pour convertir récursivement les objets en tableaux
             $objectToArray = function($obj) use (&$objectToArray) {
                 if (is_object($obj)) {
@@ -312,27 +330,29 @@ class PreviewAjaxHandler {
                 }
                 return $obj;
             };
-            
+
             // Convertir les options de page en array si nécessaire
             $pageOptionsArray = $objectToArray($pageOptions);
-            
+            error_log('[HTML PREVIEW] pageOptions converted to array');
+
             // Extraire les données du template depuis pageOptions.template
             $templateData = $pageOptionsArray['template'] ?? $pageOptionsArray;
-            
-            // S'assurer que templateData est un array (déjà fait par objectToArray)
-            
+            error_log('[HTML PREVIEW] templateData extracted, elements count: ' . (isset($templateData['elements']) ? count($templateData['elements']) : 'N/A'));
 
             // Créer le générateur PDF avec les données du template
+            error_log('[HTML PREVIEW] Creating PDFGenerator');
             $generator = new \PDF_Builder\Generators\PDFGenerator($templateData, $dataProvider, true, []);
-            
 
             // Générer l'aperçu HTML
+            error_log('[HTML PREVIEW] Calling generateHtmlPreview on generator');
             $html = $generator->generateHtmlPreview();
+            error_log('[HTML PREVIEW] HTML generated successfully, length: ' . strlen($html));
 
             return ['html' => $html, 'success' => true];
-            
-        } catch (\Exception $e) {
 
+        } catch (\Exception $e) {
+            error_log('[HTML PREVIEW] Exception caught: ' . $e->getMessage());
+            error_log('[HTML PREVIEW] Exception trace: ' . $e->getTraceAsString());
 
             return ['error' => 'Erreur lors de la génération de l\'aperçu HTML: ' . $e->getMessage()];
         }
