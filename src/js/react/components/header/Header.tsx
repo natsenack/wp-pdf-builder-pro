@@ -309,6 +309,9 @@ export const Header = memo(function Header({
       });
 
       console.log('[JSON TO HTML] Form Data:', params.toString());
+      console.log('[JSON TO HTML] Nonce verification: Expected nonce = 6828f06d36, Sending nonce = ' + nonce);
+      console.log('[JSON TO HTML] Action: pdf_builder_generate_html_preview');
+      console.log('[JSON TO HTML] Data length:', String(requestData.data).length);
 
       const response = await fetch(ajaxUrl, {
         method: 'POST',
@@ -319,14 +322,20 @@ export const Header = memo(function Header({
         credentials: 'same-origin',
       });
 
-      const responseText = await response.text();
-
       console.log('[JSON TO HTML] Response Status:', response.status);
       console.log('[JSON TO HTML] Response Text:', responseText);
 
       if (!response.ok) {
         console.error('[JSON TO HTML] Request failed with status:', response.status);
         console.error('[JSON TO HTML] Response body:', responseText);
+        
+        // Afficher une alerte détaillée
+        if (responseText === '0') {
+          alert('❌ Erreur serveur: Authentification échouée ou action non trouvée.\n\nResponse: 0\n\nCela signifie:\n- Le nonce est invalide\n- Ou l\'action AJAX n\'existe pas');
+        } else {
+          alert('❌ Erreur serveur: ' + response.status + '\n\nResponse: ' + responseText);
+        }
+        
         throw new Error(`Erreur serveur: ${response.status} - ${responseText.substring(0, 100)}`);
       }
 
