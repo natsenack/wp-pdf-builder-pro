@@ -86,8 +86,6 @@ export const Header = memo(function Header({
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showJsonModal, setShowJsonModal] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [jsonModalView, setJsonModalView] = useState<'json' | 'html'>('json');
-  const [generatedHtml, setGeneratedHtml] = useState<string>('');
   const [isGeneratingHtml, setIsGeneratingHtml] = useState(false);
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [performanceMetrics, setPerformanceMetrics] = useState({
@@ -258,15 +256,14 @@ export const Header = memo(function Header({
     }
   }, [showPredefinedTemplates]);
 
-  // Fonction pour générer l'aperçu HTML dans le modal
-  const generateHtmlPreview = useCallback(async () => {
+  // Convertir JSON to HTML et afficher dans une nouvelle fenêtre
+  const convertJsonToHtml = useCallback(async () => {
     if (isGeneratingHtml) return;
     
     setIsGeneratingHtml(true);
     try {
-      console.log('[HTML PREVIEW] Starting HTML preview generation');
+      console.log('[JSON TO HTML] Starting conversion');
 
-      // Transformer les éléments pour l'aperçu HTML
       const transformedElements = state.elements && state.elements.length > 0 
         ? state.elements.map((element: any) => ({
             ...element,
@@ -281,7 +278,6 @@ export const Header = memo(function Header({
           }))
         : [];
 
-      // Construire les données à envoyer
       const templateData = {
         elements: transformedElements,
         canvasWidth: state.canvas.width,
@@ -299,16 +295,10 @@ export const Header = memo(function Header({
         })
       };
 
-      // Utiliser URLSearchParams pour l'encodage correct
       const params = new URLSearchParams();
       Object.entries(requestData).forEach(([key, value]) => {
         params.append(key, String(value));
       });
-
-      console.log('[HTML PREVIEW] Sending request with:');
-      console.log('[HTML PREVIEW] - Elements count:', transformedElements.length);
-      console.log('[HTML PREVIEW] - Canvas:', state.canvas.width, 'x', state.canvas.height);
-      console.log('[HTML PREVIEW] - Template:', state.template?.name || 'N/A');
 
       const response = await fetch('/wp-admin/admin-ajax.php', {
         method: 'POST',
@@ -319,46 +309,72 @@ export const Header = memo(function Header({
         credentials: 'same-origin',
       });
 
-      console.log('[HTML PREVIEW] Response status:', response.status);
-
       const responseText = await response.text();
-      console.log('[HTML PREVIEW] Response length:', responseText.length);
 
       if (!response.ok) {
-        console.error('[HTML PREVIEW] HTTP error:', response.status);
         throw new Error(`Erreur serveur: ${response.status}`);
       }
 
       if (responseText.trim() === '0') {
-        console.error('[HTML PREVIEW] Server returned 0 (nonce or action issue)');
-        throw new Error('Erreur d\'authentification ou d\'action non reconnue');
+        throw new Error('Erreur d\'authentification');
       }
 
-      // Parser la réponse JSON
       let data: any;
       try {
         data = JSON.parse(responseText);
       } catch (e) {
-        console.warn('[HTML PREVIEW] Response is not valid JSON');
         // Si ce n'est pas du JSON, utiliser la réponse comme HTML brut
-        setGeneratedHtml(responseText);
-        setJsonModalView('html');
+        const newWindow = window.open('', '_blank');
+        if (newWindow) {
+          newWindow.document.write(responseText);
+          newWindow.document.close();
+        }
         return;
       }
 
       if (data.success && data.data && data.data.html) {
-        console.log('[HTML PREVIEW] HTML generation successful');
-        setGeneratedHtml(data.data.html);
-        setJsonModalView('html');
+        const newWindow = window.open('', '_blank');
+        if (newWindow) {
+          const htmlContent = `
+            <!DOCTYPE html>
+            <html lang="fr">
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Aperçu HTML - ${state.template?.name || 'Template'}</title>
+              <style>
+                body {
+                  margin: 0;
+                  padding: 20px;
+                  background-color: #f5f5f5;
+                  font-family: Arial, sans-serif;
+                }
+                .html-container {
+                  background: white;
+                  padding: 20px;
+                  border-radius: 8px;
+                  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                  max-width: 1200px;
+                  margin: 0 auto;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="html-container">
+                ${data.data.html}
+              </div>
+            </body>
+            </html>
+          `;
+          newWindow.document.write(htmlContent);
+          newWindow.document.close();
+        }
       } else {
-        console.error('[HTML PREVIEW] Response error:', data);
-        const errorMsg = data.data?.message || 'Erreur inconnue lors de la génération HTML';
-        throw new Error(errorMsg);
+        throw new Error(data.data?.message || 'Erreur inconnue');
       }
     } catch (error) {
-      console.error('[HTML PREVIEW] Error occurred:', error);
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      alert(`❌ Erreur: ${errorMessage}`);
+      console.error('[JSON TO HTML] Error:', error);
+      alert(`❌ Erreur: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setIsGeneratingHtml(false);
     }
@@ -1172,7 +1188,7 @@ export const Header = memo(function Header({
               backgroundColor: "#ffffff",
               borderRadius: "8px",
               padding: "24px",
-              maxWidth: "35vw",
+              maxWidth: "45vw",
               width: "100%",
               maxHeight: "85vh",
               display: "flex",
@@ -1199,7 +1215,7 @@ export const Header = memo(function Header({
                   color: "#1a1a1a",
                 }}
               >
-                📋 Données du Template (ID: {templateName || "N/A"})
+                📋 Données JSON du Template
               </h3>
               <button
                 onClick={() => setShowJsonModal(false)}
@@ -1217,174 +1233,41 @@ export const Header = memo(function Header({
               </button>
             </div>
 
-            {/* Tabs Navigation */}
-            <div
-              style={{
-                display: "flex",
-                gap: "8px",
-                marginBottom: "16px",
-                borderBottom: "2px solid #e0e0e0",
-                paddingBottom: "0px",
-              }}
-            >
-              <button
-                onClick={() => setJsonModalView('json')}
-                style={{
-                  padding: "12px 20px",
-                  border: "none",
-                  borderBottom: jsonModalView === 'json' ? "3px solid #0073aa" : "3px solid transparent",
-                  borderRadius: "0px",
-                  backgroundColor: jsonModalView === 'json' ? "#f0f8ff" : "transparent",
-                  color: jsonModalView === 'json' ? "#0073aa" : "#666",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  fontWeight: jsonModalView === 'json' ? "600" : "500",
-                  transition: "all 0.2s ease",
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = jsonModalView !== 'json' ? "#f9f9f9" : "#f0f8ff"}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = jsonModalView === 'json' ? "#f0f8ff" : "transparent"}
-              >
-                📄 Données JSON
-              </button>
-              <button
-                onClick={() => {
-                  if (generatedHtml.trim() === '') {
-                    alert('Veuillez d\'abord générer l\'aperçu HTML');
-                  } else {
-                    setJsonModalView('html');
-                  }
-                }}
-                style={{
-                  padding: "12px 20px",
-                  border: "none",
-                  borderBottom: jsonModalView === 'html' ? "3px solid #10a37f" : "3px solid transparent",
-                  borderRadius: "0px",
-                  backgroundColor: jsonModalView === 'html' ? "#f0fdf4" : "transparent",
-                  color: jsonModalView === 'html' ? "#10a37f" : "#666",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  fontWeight: jsonModalView === 'html' ? "600" : "500",
-                  transition: "all 0.2s ease",
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = jsonModalView !== 'html' ? "#f9f9f9" : "#f0fdf4"}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = jsonModalView === 'html' ? "#f0fdf4" : "transparent"}
-              >
-                🌐 Aperçu HTML
-              </button>
-            </div>
-
-            {/* Generation Action Bar */}
-            {jsonModalView === 'html' && (
-              <div
-                style={{
-                  display: "flex",
-                  gap: "12px",
-                  marginBottom: "16px",
-                  padding: "12px",
-                  backgroundColor: "#fffbf0",
-                  borderRadius: "6px",
-                  border: "1px solid #ffd699",
-                }}
-              >
-                <button
-                  onClick={generateHtmlPreview}
-                  disabled={isGeneratingHtml}
-                  style={{
-                    flex: 1,
-                    padding: "10px 16px",
-                    border: "none",
-                    borderRadius: "6px",
-                    backgroundColor: isGeneratingHtml ? "#ccc" : "#10a37f",
-                    color: "#fff",
-                    cursor: isGeneratingHtml ? "not-allowed" : "pointer",
-                    fontSize: "14px",
-                    fontWeight: "500",
-                    transition: "all 0.2s ease",
-                    opacity: isGeneratingHtml ? 0.7 : 1,
-                  }}
-                >
-                  {isGeneratingHtml ? (
-                    <>
-                      <span>⏳</span>
-                      <span style={{ marginLeft: "8px" }}>Génération en cours...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>✨</span>
-                      <span style={{ marginLeft: "8px" }}>Générer l'aperçu HTML</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            )}
-
-            {/* Content Area */}
+            {/* Content - Always show JSON */}
             <div
               style={{
                 flex: 1,
                 overflow: "auto",
-                backgroundColor: jsonModalView === 'json' ? "#f5f5f5" : "#ffffff",
+                backgroundColor: "#f5f5f5",
                 borderRadius: "6px",
-                padding: jsonModalView === 'json' ? "16px" : "0px",
+                padding: "16px",
                 border: "1px solid #ddd",
                 marginBottom: "16px",
-                maxHeight: "450px",
-                display: "flex",
-                flexDirection: "column",
+                maxHeight: "400px",
               }}
             >
-              {jsonModalView === 'json' ? (
-                <pre
-                  style={{
-                    fontFamily: "'Courier New', monospace",
-                    fontSize: "11px",
-                    lineHeight: "1.4",
-                    color: "#1e1e1e",
-                    margin: 0,
-                    whiteSpace: "pre-wrap",
-                    wordBreak: "break-word",
-                    background: "transparent",
-                    padding: 0,
-                  }}
-                >
-                  {JSON.stringify(
-                    {
-                      ...state.template,
-                      elements: state.elements,
-                    },
-                    null,
-                    2
-                  )}
-                </pre>
-              ) : generatedHtml.trim() === '' ? (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: "100%",
-                    color: "#999",
-                    fontSize: "14px",
-                    fontStyle: "italic",
-                  }}
-                >
-                  Aucun aperçu HTML généré. Cliquez sur "Générer l'aperçu HTML" pour commencer.
-                </div>
-              ) : (
-                <div
-                  style={{
-                    width: "100%",
-                    flex: 1,
-                    overflow: "auto",
-                    backgroundColor: "#ffffff",
-                    padding: "12px",
-                    borderRadius: "4px",
-                    fontSize: "13px",
-                    lineHeight: "1.5",
-                  }}
-                  dangerouslySetInnerHTML={{ __html: generatedHtml }}
-                />
-              )}
+              <pre
+                style={{
+                  fontFamily: "'Courier New', monospace",
+                  fontSize: "11px",
+                  lineHeight: "1.4",
+                  color: "#1e1e1e",
+                  margin: 0,
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
+                  background: "transparent",
+                  padding: 0,
+                }}
+              >
+                {JSON.stringify(
+                  {
+                    ...state.template,
+                    elements: state.elements,
+                  },
+                  null,
+                  2
+                )}
+              </pre>
             </div>
 
             {/* Footer with Buttons */}
@@ -1392,88 +1275,136 @@ export const Header = memo(function Header({
               style={{
                 display: "flex",
                 gap: "12px",
-                justifyContent: "flex-end",
+                justifyContent: "flex-start",
                 alignItems: "center",
               }}
             >
-              {jsonModalView === 'json' && (
-                <>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(
-                        JSON.stringify(
-                          {
-                            ...state.template,
-                            elements: state.elements,
-                          },
-                          null,
-                          2
-                        )
-                      );
-                      setCopySuccess(true);
-                      setTimeout(() => setCopySuccess(false), 2000);
-                    }}
-                    style={{
-                      padding: "8px 16px",
-                      backgroundColor: "#0073aa",
-                      color: "#ffffff",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      fontSize: "14px",
-                      fontWeight: "500",
-                      opacity: copySuccess ? 0.7 : 1,
-                    }}
-                    title="Copier le JSON"
-                  >
-                    {copySuccess ? "✅ Copié!" : "📋 Copier JSON"}
-                  </button>
-                  <button
-                    onClick={() => {
-                      const jsonString = JSON.stringify(
-                        {
-                          ...state.template,
-                          elements: state.elements,
-                        },
-                        null,
-                        2
-                      );
-                      const blob = new Blob([jsonString], {
-                        type: "application/json",
-                      });
-                      const url = URL.createObjectURL(blob);
-                      const link = document.createElement("a");
-                      link.href = url;
-                      link.download = `template-${
-                        templateName || "export"
-                      }-${new Date().getTime()}.json`;
-                      link.click();
-                      URL.revokeObjectURL(url);
-                    }}
-                    style={{
-                      padding: "8px 16px",
-                      backgroundColor: "#10a37f",
-                      color: "#ffffff",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      fontSize: "14px",
-                      fontWeight: "500",
-                    }}
-                    title="Télécharger le JSON"
-                  >
-                    💾 Télécharger
-                  </button>
-                </>
-              )}
+              {/* Bouton JSON → HTML */}
+              <button
+                onClick={convertJsonToHtml}
+                disabled={isGeneratingHtml}
+                style={{
+                  padding: "10px 16px",
+                  backgroundColor: isGeneratingHtml ? "#ccc" : "#10a37f",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: isGeneratingHtml ? "not-allowed" : "pointer",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
+                {isGeneratingHtml ? (
+                  <>
+                    <span>⏳</span>
+                    <span>Génération...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>🔄</span>
+                    <span>JSON → HTML</span>
+                  </>
+                )}
+              </button>
+
+              {/* Bouton Copier JSON */}
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    JSON.stringify(
+                      {
+                        ...state.template,
+                        elements: state.elements,
+                      },
+                      null,
+                      2
+                    )
+                  );
+                  setCopySuccess(true);
+                  setTimeout(() => setCopySuccess(false), 2000);
+                }}
+                style={{
+                  padding: "10px 16px",
+                  backgroundColor: copySuccess ? "#28a745" : "#0073aa",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  transition: "background-color 0.2s ease",
+                }}
+              >
+                {copySuccess ? (
+                  <>
+                    <span>✅</span>
+                    <span>Copié!</span>
+                  </>
+                ) : (
+                  <>
+                    <span>📋</span>
+                    <span>Copier JSON</span>
+                  </>
+                )}
+              </button>
+
+              {/* Bouton Télécharger JSON */}
+              <button
+                onClick={() => {
+                  const jsonString = JSON.stringify(
+                    {
+                      ...state.template,
+                      elements: state.elements,
+                    },
+                    null,
+                    2
+                  );
+                  const blob = new Blob([jsonString], {
+                    type: "application/json",
+                  });
+                  const url = URL.createObjectURL(blob);
+                  const link = document.createElement("a");
+                  link.href = url;
+                  link.download = `template-${
+                    templateName || "export"
+                  }-${new Date().getTime()}.json`;
+                  link.click();
+                  URL.revokeObjectURL(url);
+                }}
+                style={{
+                  padding: "10px 16px",
+                  backgroundColor: "#666",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
+                <span>📥</span>
+                <span>Télécharger</span>
+              </button>
+
+              {/* Bouton Fermer */}
               <button
                 onClick={() => setShowJsonModal(false)}
                 style={{
-                  padding: "8px 16px",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px",
-                  backgroundColor: "#f8f8f8",
+                  marginLeft: "auto",
+                  padding: "10px 16px",
+                  backgroundColor: "#f0f0f0",
                   color: "#333",
+                  border: "1px solid #ddd",
+                  borderRadius: "6px",
                   cursor: "pointer",
                   fontSize: "14px",
                   fontWeight: "500",
