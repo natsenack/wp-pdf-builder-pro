@@ -176,7 +176,7 @@ class TemplateManager
         }
 
         // Vérifier le nonce
-        if (!isset($_POST['pdf_template_meta_nonce']) || !\wp_verify_nonce($_POST['pdf_template_meta_nonce'], 'pdf_template_meta')) {
+        if (!isset($_POST['pdf_template_meta_nonce']) || !\pdf_builder_verify_nonce($_POST['pdf_template_meta_nonce'], 'pdf_template_meta')) {
             return;
         }
 

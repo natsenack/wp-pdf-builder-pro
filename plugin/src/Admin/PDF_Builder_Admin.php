@@ -712,7 +712,7 @@ class PdfBuilderAdminNew
 
         // Vérifier le nonce selon l'onglet
         $nonce_name = 'pdf_builder_save_settings';
-        if (!isset($_POST[$nonce_name]) || !\wp_verify_nonce($_POST[$nonce_name], $nonce_name)) {
+        if (!isset($_POST[$nonce_name]) || !\pdf_builder_verify_nonce($_POST[$nonce_name], $nonce_name)) {
             \wp_die(__('Nonce de sécurité invalide.', 'pdf-builder-pro'));
         }
 
