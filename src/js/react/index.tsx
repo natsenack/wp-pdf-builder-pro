@@ -20,7 +20,7 @@
 console.log('[MINIMAL BUNDLE] Creating minimal API...');
 
 const minimalApi = {
-  initPDFBuilderReact: function(containerId) {
+  initPDFBuilderReact: function(containerId: string) {
     console.log('[MINIMAL API] initPDFBuilderReact called with:', containerId);
 
     const container = document.getElementById(containerId);
@@ -48,10 +48,19 @@ const minimalApi = {
 
 console.log('[MINIMAL BUNDLE] API created:', minimalApi);
 
-// Make API globally available
+// Export as default - webpack will handle this
+export default minimalApi;
+
+// Also assign to window immediately and with delay to ensure it works
 if (typeof window !== 'undefined') {
   window.pdfBuilderReact = minimalApi;
-  console.log('[MINIMAL BUNDLE] window.pdfBuilderReact assigned');
+  console.log('[MINIMAL BUNDLE] window.pdfBuilderReact assigned immediately');
+
+  // Also assign with a small delay in case webpack needs time
+  setTimeout(() => {
+    window.pdfBuilderReact = minimalApi;
+    console.log('[MINIMAL BUNDLE] window.pdfBuilderReact assigned with delay');
+  }, 1);
 } else {
   console.error('[MINIMAL BUNDLE] Window not available!');
 }
