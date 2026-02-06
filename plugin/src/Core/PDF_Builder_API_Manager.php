@@ -297,7 +297,6 @@ class PDF_Builder_API_Manager {
             }
         } catch (Exception $e) {
             // Logger l'erreur mais ne pas échouer
-            }
         }
     }
 

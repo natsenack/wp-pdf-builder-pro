@@ -287,10 +287,11 @@ class PDF_Builder_Integration_Manager {
 
         } catch (Exception $e) {
             // Logger l'erreur
-                    'service' => $service_id,
-                    'error' => $e->getMessage()
-                ]);
-            }
+            error_log(sprintf(
+                'Integration Manager Error - Service: %s, Error: %s',
+                $service_id,
+                $e->getMessage()
+            ));
 
             return [
                 'success' => false,
@@ -546,10 +547,11 @@ class PDF_Builder_Integration_Manager {
 
         } catch (Exception $e) {
             // Logger l'erreur
-                    'service' => $service_id,
-                    'error' => $e->getMessage()
-                ]);
-            }
+            error_log(sprintf(
+                'OAuth2 Callback Error - Service: %s, Error: %s',
+                $service_id,
+                $e->getMessage()
+            ));
 
             // Rediriger avec erreur
             wp_redirect(admin_url('admin.php?page=pdf-builder-integrations&oauth_error=1&service=' . $service_id));
@@ -631,10 +633,11 @@ class PDF_Builder_Integration_Manager {
                     $this->refresh_oauth_token($service_id);
                 } catch (Exception $e) {
                     // Logger l'erreur mais continuer
-                            'service' => $service_id,
-                            'error' => $e->getMessage()
-                        ]);
-                    }
+                    error_log(sprintf(
+                        'OAuth Token Refresh Error - Service: %s, Error: %s',
+                        $service_id,
+                        $e->getMessage()
+                    ));
                 }
             }
         }
@@ -875,10 +878,11 @@ class PDF_Builder_Integration_Manager {
                     pdf_builder_update_option('pdf_builder_integration_connections', $this->connections_cache);
 
                     // Logger l'erreur
-                            'service' => $service_id,
-                            'error' => $e->getMessage()
-                        ]);
-                    }
+                    error_log(sprintf(
+                        'Integration Connection Error - Service: %s, Error: %s',
+                        $service_id,
+                        $e->getMessage()
+                    ));
                 }
             }
         }

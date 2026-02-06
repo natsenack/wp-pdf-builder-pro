@@ -202,6 +202,8 @@ class PDF_Builder_Error_Handler {
      * Log une erreur dans le système de logging
      */
     private function log_error($error_data) {
+        if (class_exists('PDF_Builder_Logger')) {
+            $logger = PDF_Builder_Logger::get_instance();
 
             // Mapper les niveaux d'erreur aux méthodes du logger
             $level_map = [
@@ -224,7 +226,7 @@ class PDF_Builder_Error_Handler {
             ]);
         } else {
             // Fallback vers error_log
-
+            error_log('Error: ' . $error_data['message']);
         }
 
         // Stocker en base pour les erreurs critiques
