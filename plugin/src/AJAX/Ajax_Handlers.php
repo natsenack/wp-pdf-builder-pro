@@ -802,7 +802,7 @@ function pdf_builder_reset_canvas_defaults_handler() {
     error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] ===== DÉBUT DU HANDLER =====');
 
     // Vérifier le nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'reset_canvas_defaults')) {
+    if (!isset($_POST['nonce']) || !pdf_builder_verify_nonce($_POST['nonce'], 'reset_canvas_defaults')) {
         error_log('PDF Builder: [RESET CANVAS DEFAULTS HANDLER] Nonce invalide');
         wp_send_json_error(['message' => 'Nonce invalide'], 403);
         return;

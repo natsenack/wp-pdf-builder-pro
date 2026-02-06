@@ -226,7 +226,7 @@ class PDFEditorPreferences {
     public function ajax_save_preferences() {
         try {
             // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], 'pdf_editor_preferences')) {
+            if (!isset($_POST['nonce']) || !\pdf_builder_verify_nonce($_POST['nonce'], 'pdf_editor_preferences')) {
                 wp_send_json_error(array('message' => 'Sécurité: nonce invalide'));
                 return;
             }
@@ -272,7 +272,7 @@ class PDFEditorPreferences {
     public function ajax_get_preferences() {
         try {
             // Vérifier le nonce
-            if (!isset($_GET['nonce']) || !\wp_verify_nonce($_GET['nonce'], 'pdf_editor_preferences')) {
+            if (!isset($_GET['nonce']) || !\pdf_builder_verify_nonce($_GET['nonce'], 'pdf_editor_preferences')) {
                 wp_send_json_error(array('message' => 'Sécurité: nonce invalide'));
                 return;
             }

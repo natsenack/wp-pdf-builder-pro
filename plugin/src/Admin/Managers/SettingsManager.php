@@ -264,7 +264,7 @@ class SettingsManager
             }
 
             // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
+            if (!isset($_POST['nonce']) || !\pdf_builder_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
                 \wp_send_json_error('Nonce invalide');
                 return;
             }
@@ -304,7 +304,7 @@ class SettingsManager
             }
 
             // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
+            if (!isset($_POST['nonce']) || !\pdf_builder_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
                 \wp_send_json_error('Nonce invalide');
                 return;
             }

@@ -1116,7 +1116,7 @@ class AjaxHandler
      */
     public function ajaxCheckIntegrity()
     {
-        if (!\wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_check_integrity')) {
+        if (!\pdf_builder_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_check_integrity')) {
             \wp_send_json_error(['message' => \__('Nonce invalide.', 'pdf-builder-pro')]);
             return;
         }
@@ -2063,7 +2063,7 @@ class AjaxHandler
             }
 
             // Vérifier le nonce
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings')) {
+            if (!pdf_builder_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings')) {
                 wp_send_json_error(__('Nonce invalide', 'pdf-builder-pro'));
                 return;
             }
