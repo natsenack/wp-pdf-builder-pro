@@ -92,18 +92,18 @@ Le plugin utilise un système de chargement différé pour optimiser les perform
 
 ### Génération PDF
 
-Le système de génération utilise une approche hybride :
+Le système de génération utilise DomPDF comme moteur principal :
 
 1. **DomPDF** : Générateur principal (HTML → PDF)
-2. **Canvas Fallback** : Génération JavaScript si DomPDF échoue
-3. **Image Generator** : Aperçus rapides avec GD
+2. **Canvas Fallback** : Rendu JavaScript côté navigateur
+3. **React Components** : Système moderne d'édition visuelle
 
-### Système d'aperçu
+## Architecture actuelle
 
-- **API PreviewImageAPI** : Génération d'aperçus PNG/JPG
-- **Cache intelligent** : Évite la régénération inutile
-- **Formats multiples** : PNG, JPG, WebP (si supporté)
-- **Optimisation** : Compression et redimensionnement automatique
+- **Admin Panel** : Interface de gestion WordPress classique
+- **React Editor** : Éditeur visuel moderne avec canvas
+- **Template System** : Système de modèles prédéfinis
+- **AJAX Handlers** : Gestionnaires centralisés pour les requêtes
 
 ## Problèmes identifiés et corrections
 

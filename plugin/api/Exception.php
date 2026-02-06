@@ -3,7 +3,7 @@
 namespace PDF_Builder\Api;
 
 /**
- * Exception personnalisée pour l'API PreviewImageAPI
+ * Exception personnalisée pour les APIs
  */
 class Exception extends \Exception
 {
