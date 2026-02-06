@@ -87,16 +87,6 @@ module.exports = {
       },
     ],
   },
-  externals: {
-    'react': 'React',
-    'react-dom': 'ReactDOM',
-    'react-dom/client': {
-      root: 'ReactDOM',
-      commonjs2: 'react-dom/client',
-      commonjs: 'react-dom/client',
-      amd: 'react-dom/client'
-    }
-  },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
     alias: {
