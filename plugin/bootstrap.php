@@ -1543,6 +1543,16 @@ if (file_exists($migration_ajax_path)) {
 // ============================================================================
 
 // ============================================================================
+// ✅ INITIALISATION DU SYSTÈME D'APERÇU
+// ============================================================================
+add_action('init', function() {
+    if (class_exists('PDF_Builder\PreviewSystem\PreviewAjaxHandler')) {
+        \PDF_Builder\PreviewSystem\PreviewAjaxHandler::init();
+        error_log('[BOOTSTRAP] PreviewAjaxHandler initialized');
+    }
+});
+
+// ============================================================================
 // FIN DU BOOTSTRAP
 // ============================================================================
 
