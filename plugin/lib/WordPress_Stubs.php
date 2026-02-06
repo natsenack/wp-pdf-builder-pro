@@ -1232,8 +1232,66 @@ if (!function_exists('wp_mail')) {
     function wp_mail($to, $subject, $message, $headers = '', $attachments = []) {}
 }
 
+if (!function_exists('wp_json_encode')) {
+    /**
+     * JSON encode a value
+     * @param mixed $data
+     * @param int $options
+     * @param int $depth
+     * @return string
+     */
+    function wp_json_encode($data, $options = 0, $depth = 512) {
+        return json_encode($data, $options, $depth);
+    }
+}
+
 if (!defined('DAY_IN_SECONDS')) {
     define('DAY_IN_SECONDS', 86400);
+}
+
+// Custom PDF Builder functions
+if (!function_exists('pdf_builder_translate')) {
+    /**
+     * Translate a PDF Builder string
+     * @param string $string
+     * @param string $domain
+     * @return string
+     */
+    function pdf_builder_translate($string, $domain = 'pdf-builder-pro') {
+        return __($string, $domain);
+    }
+}
+
+// Analytics Manager stub
+if (!class_exists('PDF_Builder_Analytics_Manager')) {
+    class PDF_Builder_Analytics_Manager {
+        private static $instance = null;
+        
+        public static function get_instance() {
+            return self::$instance ?: (self::$instance = new self());
+        }
+        
+        public function update_realtime_metrics() {}
+        public function get_metrics($period = 'day') {}
+    }
+}
+
+// TCPDF Stub
+if (!class_exists('TCPDF')) {
+    class TCPDF {
+        public function __construct() {}
+        public function AddPage($orientation = '', $format = '', $keepmargins = false) {}
+        public function Cell($w, $h = 0, $txt = '', $border = 0, $ln = 0, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calignment = 'T', $valignment = 'M') {}
+        public function MultiCell($w, $h, $txt = '', $border = 0, $align = 'J', $fill = false, $ln = 1, $x = '', $y = '', $reseth = true, $stretch = 0, $ishtml = false, $autopadding = true, $maxh = 0, $valign = 'T', $fitcell = false) {}
+        public function Output($dest = '', $name = '') {}
+        public function SetFont($family, $style = '', $size = 0) {}
+        public function SetFontSize($size) {}
+        public function SetTextColor($r, $g = -1, $b = -1) {}
+        public function SetFillColor($r, $g = -1, $b = -1) {}
+        public function SetDrawColor($r, $g = -1, $b = -1) {}
+        public function SetLineWidth($width) {}
+        public function Image($file, $x = '', $y = '', $w = 0, $h = 0, $type = '', $link = '', $align = '', $resize = false, $dpi = 300, $palignment = '', $ismask = false, $imgmask = false, $border = 0, $fitbox = false, $hidden = false, $fitonpage = false, $alt = false, $alttext = '') {}
+    }
 }
 
 // WordPress Exception class

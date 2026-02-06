@@ -852,9 +852,7 @@ class PDF_Builder_Auto_Update_Manager {
             $this->load_update_data();
 
             // Logger la mise à jour
-                    'new_version' => PDF_BUILDER_VERSION
-                ]);
-            }
+            error_log('PDF Builder Pro updated to version: ' . PDF_BUILDER_VERSION);
 
             // Vérifier s'il y a des tâches post-mise à jour
             $this->run_post_update_tasks();

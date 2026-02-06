@@ -305,11 +305,7 @@ class PDF_Builder_Auto_Update_System {
             ]);
 
             // Legacy notification calls removed — log info for success
-
-                    'version' => $version,
-                    'backup_id' => $backup_id ?? null
-                ]);
-            }
+            error_log('Update installed successfully for version: ' . $version);
 
             return true;
 
@@ -704,12 +700,7 @@ class PDF_Builder_Auto_Update_System {
      * Log une erreur de mise à jour
      */
     private function log_update_error($operation, $exception) {
-                'error' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString()
-            ]);
-        } else {
-
-        }
+        error_log('PDF Builder Update Error [' . $operation . ']: ' . $exception->getMessage());
     }
 
     /**

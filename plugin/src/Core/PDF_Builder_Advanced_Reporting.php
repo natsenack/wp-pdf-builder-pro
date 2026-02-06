@@ -431,7 +431,7 @@ class PDF_Builder_Advanced_Reporting {
                 return $this->generate_html_report($report);
 
             case self::FORMAT_EXCEL:
-                return $this->generate_excel_report($report);
+                return $this->generate_csv_report($report); // Excel format uses CSV
 
             default:
                 throw new Exception(pdf_builder_translate('Format non supporté', 'reporting'));
