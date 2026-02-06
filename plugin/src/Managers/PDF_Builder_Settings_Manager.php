@@ -44,7 +44,7 @@ class PDF_Builder_Settings_Manager
             wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
         }
 
-        if ((isset($_POST['save_settings']) || isset($_POST['pdf_builder_floating_save'])) && wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+        if ((isset($_POST['save_settings']) || isset($_POST['pdf_builder_floating_save'])) && pdf_builder_verify_nonce($_POST['pdf_builder_settings_nonce'] ?? '', 'pdf_builder_settings')) {
             $this->saveSettings();
             echo '<div class="notice notice-success"><p>' . __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro') . '</p></div>';
         }

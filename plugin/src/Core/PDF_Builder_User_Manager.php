@@ -556,7 +556,7 @@ class PDF_Builder_User_Manager {
      */
     public function save_user_permissions_ajax() {
         try {
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            if (!pdf_builder_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
                 return;
             }
@@ -595,7 +595,7 @@ class PDF_Builder_User_Manager {
      */
     public function get_user_permissions_ajax() {
         try {
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            if (!pdf_builder_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
                 return;
             }
@@ -621,7 +621,7 @@ class PDF_Builder_User_Manager {
      */
     public function create_user_role_ajax() {
         try {
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            if (!pdf_builder_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
                 return;
             }
@@ -663,7 +663,7 @@ class PDF_Builder_User_Manager {
      */
     public function delete_user_role_ajax() {
         try {
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            if (!pdf_builder_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
                 return;
             }

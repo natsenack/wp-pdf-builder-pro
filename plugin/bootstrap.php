@@ -88,8 +88,10 @@ function pdf_builder_inject_nonce() {
         return; // Pas de permission
     }
 
-    // Créer le nonce via le Nonce Manager
-    if (class_exists('PDF_Builder_Nonce_Manager')) {
+    // Créer le nonce via le Nonce Registry (nouveau système unifié)
+    if (class_exists('PDF_Builder_Nonce_Registry')) {
+        $nonce = \wp_create_nonce(PDF_Builder_Nonce_Registry::resolve_action('pdf_builder_ajax'));
+    } elseif (class_exists('PDF_Builder_Nonce_Manager')) {
         $nonce_manager = PDF_Builder_Nonce_Manager::get_instance();
         $nonce = $nonce_manager->generate_nonce();
     } else {
@@ -147,6 +149,17 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
 // Charger le gestionnaire de désactivation avant tout pour intercepter les requêtes
 if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Deactivation_Handler.php')) {
     require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Deactivation_Handler.php';
+}
+
+// ============================================================================
+// ✅ CHARGER LE SYSTÈME CENTRALISÉ DE GESTION DES NONCES
+// ============================================================================
+// Charger le registre et le validateur de nonces (sécurité critique)
+if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Nonce_Registry.php')) {
+    require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Nonce_Registry.php';
+}
+if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Nonce_Validator.php')) {
+    require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Nonce_Validator.php';
 }
 
 // ============================================================================
@@ -1086,7 +1099,7 @@ function pdf_builder_ajax_get_fresh_nonce()
 function pdf_builder_ajax_get_template()
 {
     // Vérifier le nonce de sécurité
-    if (!isset($_GET['nonce']) || !\wp_verify_nonce($_GET['nonce'], 'pdf_builder_ajax')) {
+    if (!isset($_GET['nonce']) || !\pdf_builder_verify_nonce($_GET['nonce'], 'pdf_builder_ajax')) {
         wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
         return;
     }
@@ -1454,7 +1467,7 @@ add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
 
         // Vérifier le nonce
         $nonce_value = sanitize_text_field($_POST['nonce'] ?? '');
-        $nonce_valid = \wp_verify_nonce($nonce_value, 'pdf_builder_ajax');
+        $nonce_valid = \pdf_builder_verify_nonce($nonce_value, 'pdf_builder_ajax');
         // error_log('PDF Builder Développeur: Résultat de vérification du nonce: ' . ($nonce_valid ? 'VALIDE' : 'INVALIDE'));
 
         if (!$nonce_valid) {

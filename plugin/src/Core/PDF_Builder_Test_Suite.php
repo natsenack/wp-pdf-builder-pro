@@ -750,12 +750,12 @@ class PDF_Builder_Test_Suite {
         );
 
         $results['nonce_verification'] = $this->assert_true(
-            wp_verify_nonce($nonce, 'pdf_builder_ajax'),
+            pdf_builder_verify_nonce($nonce, 'pdf_builder_ajax'),
             'Vérification de nonce réussie'
         );
 
         $results['invalid_nonce'] = $this->assert_false(
-            wp_verify_nonce('invalid_nonce', 'pdf_builder_ajax'),
+            pdf_builder_verify_nonce('invalid_nonce', 'pdf_builder_ajax'),
             'Rejet de nonce invalide réussi'
         );
 
@@ -1059,7 +1059,7 @@ class PDF_Builder_Test_Suite {
      */
     public function get_test_results_ajax() {
         try {
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            if (!pdf_builder_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
                 return;
             }

@@ -27,7 +27,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings'])) {
 
     error_log("[$save_type] Sauvegarde démarrée");
 
-    if (!wp_verify_nonce($_POST['_wpnonce'] ?? '', 'pdf_builder_ajax')) {
+    if (!pdf_builder_verify_nonce($_POST['_wpnonce'] ?? '', 'pdf_builder_ajax')) {
         error_log("[$save_type] ERREUR: Nonce invalide");
         wp_die('Sécurité: Nonce invalide');
     }

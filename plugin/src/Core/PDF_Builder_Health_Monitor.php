@@ -806,9 +806,9 @@ class PDF_Builder_Health_Monitor {
      */
     public function health_check_ajax() {
         try {
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            if (!pdf_builder_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 // Essayer aussi le nonce WordPress standard
-                if (!wp_verify_nonce($_POST['nonce'] ?? '', 'wp_rest')) {
+                if (!pdf_builder_verify_nonce($_POST['nonce'] ?? '', 'wp_rest')) {
                     wp_send_json_error(['message' => 'Nonce invalide']);
                     return;
                 }
@@ -836,7 +836,7 @@ class PDF_Builder_Health_Monitor {
      */
     public function get_health_status_ajax() {
         try {
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            if (!pdf_builder_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
                 wp_send_json_error(['message' => 'Nonce invalide']);
                 return;
             }

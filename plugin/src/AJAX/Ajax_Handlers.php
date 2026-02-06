@@ -65,7 +65,7 @@ abstract class PDF_Builder_Ajax_Base {
      */
     protected function validate_request() {
         // Vérifier le nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], $this->nonce_action)) {
+        if (!isset($_POST['nonce']) || !pdf_builder_verify_nonce($_POST['nonce'], $this->nonce_action)) {
             $this->send_error('Nonce invalide', 403);
         }
 
@@ -746,7 +746,7 @@ function pdf_builder_test_roles_handler() {
     // error_log('PDF Builder: [TEST ROLES HANDLER] REQUEST data: ' . print_r($_REQUEST, true));
     
     // Vérifier le nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+    if (!isset($_POST['nonce']) || !pdf_builder_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
         // error_log('PDF Builder: [TEST ROLES HANDLER] Nonce invalide ou manquant');
         wp_send_json_error(['message' => 'Nonce invalide'], 403);
         return;
@@ -920,7 +920,7 @@ function pdf_builder_get_debug_settings_handler() {
     // error_log('PDF Builder: [GET DEBUG SETTINGS HANDLER] Timestamp: ' . current_time('Y-m-d H:i:s'));
     
     // Vérifier le nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+    if (!isset($_POST['nonce']) || !pdf_builder_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
         // error_log('PDF Builder: [GET DEBUG SETTINGS HANDLER] Nonce invalide');
         wp_send_json_error(['message' => 'Nonce invalide'], 403);
         return;

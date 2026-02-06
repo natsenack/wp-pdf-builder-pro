@@ -174,7 +174,7 @@ class PDF_Builder_Predefined_Templates_Manager
                 wp_send_json_error('Nonce manquant');
             }
             
-            if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_developer_auth')) {
+            if (!pdf_builder_verify_nonce($_POST['nonce'], 'pdf_builder_developer_auth')) {
                 
                 wp_send_json_error('Vérification de sécurité échouée');
             }

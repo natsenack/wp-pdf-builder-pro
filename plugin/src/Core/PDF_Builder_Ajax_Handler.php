@@ -96,14 +96,9 @@ class PDF_Builder_Ajax_Handler {
      * Valider la requête AJAX
      */
     private function validate_request() {
-        // Vérifier le nonce
-        if (!isset($_REQUEST['nonce']) || !wp_verify_nonce($_REQUEST['nonce'], 'pdf_builder_ajax')) {
-            throw new Exception('Nonce de sécurité invalide');
-        }
-
-        // Vérifier les permissions
-        if (!current_user_can('manage_options')) {
-            throw new Exception('Permissions insuffisantes');
+        // Vérifier le nonce et les permissions via le système unifié
+        if (!pdf_builder_verify_request('pdf_builder_ajax')) {
+            throw new Exception('Nonce de sécurité invalide ou permissions insuffisantes');
         }
 
         // Validation supplémentaire via le système de sécurité

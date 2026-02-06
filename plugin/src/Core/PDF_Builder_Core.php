@@ -651,7 +651,7 @@ class PdfBuilderCore
     public function ajaxSaveSettings()
     {
         // Vérifier le nonce
-        if (!isset($_POST['nonce']) || !\wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
+        if (!isset($_POST['nonce']) || !\pdf_builder_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
             \wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
             exit;
         }
@@ -806,7 +806,7 @@ class PdfBuilderCore
     public function ajaxGetSettings()
     {
         // Vérifier le nonce
-        if (!isset($_GET['nonce']) || !\wp_verify_nonce($_GET['nonce'], 'pdf_builder_settings')) {
+        if (!isset($_GET['nonce']) || !\pdf_builder_verify_nonce($_GET['nonce'], 'pdf_builder_settings')) {
             \wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
             exit;
         }

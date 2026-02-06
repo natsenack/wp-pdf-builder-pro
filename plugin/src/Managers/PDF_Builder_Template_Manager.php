@@ -577,7 +577,7 @@ class PDF_Builder_Template_Manager
             }
 
             $nonce = sanitize_text_field($_REQUEST['nonce']);
-            if (!\wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
+            if (!\pdf_builder_verify_nonce($nonce, 'pdf_builder_ajax')) {
                 \wp_send_json_error('Sécurité: Nonce invalide');
             }
 

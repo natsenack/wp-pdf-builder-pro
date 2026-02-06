@@ -593,7 +593,7 @@
                     // Traitement désactivation licence (legacy - devrait être remplacé par AJAX unifié)
                     if (isset($_POST['deactivate_license']) && isset($_POST['pdf_builder_deactivate_nonce'])) {
 
-                        if (wp_verify_nonce($_POST['pdf_builder_deactivate_nonce'], 'pdf_builder_deactivate')) {
+                        if (pdf_builder_verify_nonce($_POST['pdf_builder_deactivate_nonce'], 'pdf_builder_deactivate')) {
                             // Mise à jour du tableau unifié au lieu d'options séparées
                             $settings = pdf_builder_get_option('pdf_builder_settings', array());
                             $settings['pdf_builder_license_key'] = '';
