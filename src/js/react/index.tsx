@@ -8,6 +8,20 @@
  * - Properties panel for element editing
  */
 
+// IMMEDIATE EXECUTION - Test if bundle runs at all
+(function() {
+  console.log('[INDEX IMMEDIATE] ===== BUNDLE IMMEDIATE EXECUTION =====');
+  console.log('[INDEX IMMEDIATE] Bundle loaded and executing immediately at:', new Date().toISOString());
+  console.log('[INDEX IMMEDIATE] Window available:', typeof window !== 'undefined');
+  console.log('[INDEX IMMEDIATE] Document available:', typeof document !== 'undefined');
+
+  // Test basic functionality
+  if (typeof window !== 'undefined') {
+    window.pdfBuilderReactTest = 'BUNDLE_EXECUTED_' + Date.now();
+    console.log('[INDEX IMMEDIATE] Set test variable:', window.pdfBuilderReactTest);
+  }
+})();
+
 console.log('[INDEX TOP LEVEL] ===== BUNDLE EXECUTION START =====');
 console.log('[INDEX TOP LEVEL] Bundle file loaded and executing at:', new Date().toISOString());
 console.log('[INDEX TOP LEVEL] Current window object:', typeof window);
