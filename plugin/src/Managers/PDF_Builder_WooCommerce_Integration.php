@@ -51,13 +51,14 @@ if (!function_exists('WC')) {
 if (!defined('ABSPATH')) {
     exit('Direct access not allowed');
 }
+
 /**
  * PDF Builder Pro - WooCommerce Integration Manager
  * Gestion de l'intégration WooCommerce
  */
 
-use PDF_Builder\Controllers\PdfBuilderProGenerator;
-use PDF_Builder\Core\PDF_Builder_Security_Validator;
+// use PDF_Builder\Controllers\PdfBuilderProGenerator;
+// use PDF_Builder\Core\PDF_Builder_Security_Validator;
 
 /**
  * Stub class for PDF_Builder_Rate_Limiter

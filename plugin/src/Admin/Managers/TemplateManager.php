@@ -90,7 +90,7 @@ class TemplateManager
      */
     public function addTemplateMetaBoxes()
     {
-        add_meta_box(
+        \add_meta_box(
             'pdf_template_data',
             \__('Données du Template', 'pdf-builder-pro'),
             [$this, 'renderTemplateDataMetaBox'],
@@ -99,7 +99,7 @@ class TemplateManager
             'high'
         );
 
-        add_meta_box(
+        \add_meta_box(
             'pdf_template_settings',
             \__('Paramètres du Template', 'pdf-builder-pro'),
             [$this, 'renderTemplateSettingsMetaBox'],

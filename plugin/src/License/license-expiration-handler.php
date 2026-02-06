@@ -113,7 +113,7 @@ class License_Expiration_Handler
     {
         $timestamp = \wp_next_scheduled('pdf_builder_checkLicenseExpiration');
         if ($timestamp) {
-            wp_unschedule_event($timestamp, 'pdf_builder_checkLicenseExpiration');
+            \wp_unschedule_event($timestamp, 'pdf_builder_checkLicenseExpiration');
         }
     }
 

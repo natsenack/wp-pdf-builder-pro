@@ -1262,7 +1262,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 }
 
                 update_option($key, $sanitized_value);
-                wp_cache_delete('alloptions', 'options'); // Invalider le cache des options
+                \wp_cache_delete('alloptions', 'options'); // Invalider le cache des options
                 $saved_count++;
 
                 if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -1328,7 +1328,7 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function save_license_settings() {
         // Notifications removed from the license settings — ensure any old option is deleted
-        delete_option('pdf_builder_license_enable_notifications');
+        \delete_option('pdf_builder_license_enable_notifications');
 
         // Paramètres de rappel par email - maintenant gérés par WordPress standard
         // Ces paramètres sont sauvegardés automatiquement via le formulaire WordPress
@@ -1376,13 +1376,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             $test_key = 'pdf_builder_cache_test_' . time();
             $test_value = 'test_value_' . rand(1000, 9999);
 
-            wp_cache_set($test_key, $test_value, 'pdf_builder', 300);
+            \wp_cache_set($test_key, $test_value, 'pdf_builder', 300);
             $retrieved_value = wp_cache_get($test_key, 'pdf_builder');
 
             $cache_wp_ok = ($retrieved_value === $test_value);
 
             // Nettoyer le test
-            wp_cache_delete($test_key, 'pdf_builder');
+            \wp_cache_delete($test_key, 'pdf_builder');
 
             // Test 2: Vérifier les transients
             $transient_key = 'pdf_builder_test_transient';
@@ -1430,7 +1430,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             return;
         }
 
-        wp_cache_flush();
+        \wp_cache_flush();
         delete_transient('pdf_builder_cache');
 
         wp_send_json_success(['message' => 'Cache vidé avec succès']);
@@ -1479,7 +1479,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
 
             // Mettre à jour la date de dernière maintenance
-            $current_time = current_time('mysql');
+            $current_time = \current_time('mysql');
             $settings = pdf_builder_get_option('pdf_builder_settings', array());
             $settings['pdf_builder_last_maintenance'] = $current_time;
             pdf_builder_update_option('pdf_builder_settings', $settings);
@@ -1538,7 +1538,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $message .= "• Transients nettoyés: " . intval($transient_count);
 
             // Mettre à jour la date de dernière maintenance
-            $current_time = current_time('mysql');
+            $current_time = \current_time('mysql');
             $settings = pdf_builder_get_option('pdf_builder_settings', array());
             $settings['pdf_builder_last_maintenance'] = $current_time;
             pdf_builder_update_option('pdf_builder_settings', $settings);
@@ -1598,7 +1598,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
 
             // Mettre à jour la date de dernière maintenance
-            $current_time = current_time('mysql');
+            $current_time = \current_time('mysql');
             $settings = pdf_builder_get_option('pdf_builder_settings', array());
             $settings['pdf_builder_last_maintenance'] = $current_time;
             pdf_builder_update_option('pdf_builder_settings', $settings);
@@ -1716,7 +1716,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'license_key' => !empty($license_key) ? substr($license_key, 0, 8) . '...' : '',
                 'test_mode' => $test_mode,
                 'test_result' => $test_result,
-                'tested_at' => current_time('mysql')
+                'tested_at' => \current_time('mysql')
             ]);
 
         } catch (Exception $e) {
@@ -1756,7 +1756,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         wp_send_json_success([
             'message' => 'AJAX connection successful',
-            'timestamp' => current_time('mysql'),
+            'timestamp' => \current_time('mysql'),
             'user_id' => get_current_user_id()
         ]);
     }
@@ -1798,7 +1798,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 wp_send_json_success([
                     'message' => $result['message'],
                     'filename' => $result['filename'],
-                    'size_human' => size_format($result['size'])
+                    'size_human' => \size_format($result['size'])
                 ]);
             } else {
                 wp_send_json_error(['message' => $result['message']]);
@@ -2161,7 +2161,7 @@ class PDF_Builder_Unified_Ajax_Handler {
          try {
              $temp_dirs = [
                  WP_CONTENT_DIR . '/pdf-builder-temp/',
-                 get_temp_dir() . '/pdf-builder/'
+                 \get_temp_dir() . '/pdf-builder/'
              ];
 
              $cleared_files = 0;
@@ -2198,7 +2198,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              }
 
              wp_send_json_success([
-                 'message' => "Fichiers temporaires nettoyés: $cleared_files fichier(s) supprimé(s), " . size_format($total_size) . ' libéré(s).'
+                 'message' => "Fichiers temporaires nettoyés: $cleared_files fichier(s) supprimé(s), " . \size_format($total_size) . ' libéré(s).'
              ]);
 
          } catch (Exception $e) {
@@ -2224,10 +2224,10 @@ class PDF_Builder_Unified_Ajax_Handler {
          ];
 
          foreach ($admin_routes as $route => $description) {
-             $url = admin_url($route);
-             $response = wp_remote_head($url, ['timeout' => 5]);
+             $url = \admin_url($route);
+             $response = \wp_remote_head($url, ['timeout' => 5]);
 
-             if (is_wp_error($response)) {
+             if (\is_wp_error($response)) {
                  $error_message = is_object($response) && method_exists($response, 'get_error_message') ? $response->get_error_message() : 'Unknown error';
                  $failed_routes[] = $route . ' (' . $error_message . ')';
              } else {

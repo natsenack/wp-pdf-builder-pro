@@ -33,7 +33,7 @@ function pdf_builder_get_version() {
 
     if ($version === null) {
         if (defined('PDF_BUILDER_PLUGIN_FILE') && file_exists(PDF_BUILDER_PLUGIN_FILE)) {
-            $plugin_data = get_file_data(PDF_BUILDER_PLUGIN_FILE, array('Version' => 'Version'));
+            $plugin_data = \get_file_data(PDF_BUILDER_PLUGIN_FILE, array('Version' => 'Version'));
             $version = $plugin_data['Version'] ?: pdf_builder_get_current_version();
         } else {
             $version = pdf_builder_get_current_version();
@@ -64,9 +64,15 @@ function pdf_builder_is_pro_license_active() {
 
     // Also check for license manager if it exists
     if (class_exists('PDF_Builder\\Managers\\PDF_Builder_License_Manager')) {
-        $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::get_instance();
-        if (method_exists($license_manager, 'is_license_active')) {
-            return $license_manager->is_license_active();
+        if (method_exists('PDF_Builder\\Managers\\PDF_Builder_License_Manager', 'getInstance')) {
+            try {
+                $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+                if (is_object($license_manager) && method_exists($license_manager, 'is_license_active')) {
+                    return $license_manager->is_license_active();
+                }
+            } catch (\Exception $e) {
+                // Silently fail and use default
+            }
         }
     }
 

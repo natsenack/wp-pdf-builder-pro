@@ -409,7 +409,7 @@ class AdminScriptLoader
         error_log('[WP AdminScriptLoader] Current URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set'));
 
         // CHARGER LA MÉDIATHÈQUE WORDPRESS POUR LES COMPOSANTS REACT
-        wp_enqueue_media();
+        \wp_enqueue_media();
         error_log('[WP AdminScriptLoader] wp_enqueue_media() called for React editor');
 
         $cache_bust = microtime(true) . '-' . rand(1000, 9999);
@@ -519,7 +519,7 @@ class AdminScriptLoader
         // Main React app bundle  
         $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js';
         \wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['wp-element', 'wp-components', 'wp-data', 'wp-hooks', 'wp-api', 'media-views'], $version_param, true);
-        wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
+        \wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
         error_log('[WP AdminScriptLoader] MAIN ENQUEUED: ' . $react_main_url);
         
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-vendor and pdf-builder-react-main with dependencies');
@@ -562,7 +562,7 @@ class AdminScriptLoader
         
         // Remplacer par les données WooCommerce si elles existent et que les paramètres du plugin sont vides
         if (empty($company_data['name'])) {
-            $company_data['name'] = get_bloginfo('name', '');
+            $company_data['name'] = \get_bloginfo('name', '');
         }
         if (empty($company_data['address'])) {
             // Récupérer l'adresse complète depuis WooCommerce
@@ -734,7 +734,7 @@ class AdminScriptLoader
 
         // Charger les données du template prédéfini si predefined_template est fourni
         if (isset($_GET['predefined_template']) && !empty($_GET['predefined_template'])) {
-            $predefined_slug = sanitize_key($_GET['predefined_template']);
+            $predefined_slug = \sanitize_key($_GET['predefined_template']);
 
 
             // Charger le template prédéfini
@@ -815,13 +815,13 @@ class AdminScriptLoader
         // React wrapper script - waits for pdfBuilderReact to be available
         $react_wrapper_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-wrapper.min.js';
         \wp_enqueue_script('pdf-builder-react-wrapper', $react_wrapper_url, ['pdf-builder-react-main'], $version_param, true);
-        wp_script_add_data('pdf-builder-react-wrapper', 'type', 'text/javascript');
+        \wp_script_add_data('pdf-builder-react-wrapper', 'type', 'text/javascript');
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-wrapper: ' . $react_wrapper_url);
 
         // Module executor - forces execution of the React bundle
         $react_executor_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-executor.min.js';
         \wp_enqueue_script('pdf-builder-react-executor', $react_executor_url, ['pdf-builder-react-main'], $version_param, true);
-        wp_script_add_data('pdf-builder-react-executor', 'type', 'text/javascript');
+        \wp_script_add_data('pdf-builder-react-executor', 'type', 'text/javascript');
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-executor: ' . $react_executor_url);
 
         // Add a safety check script that forces initialization
@@ -861,7 +861,7 @@ class AdminScriptLoader
         $nuclear_suffix = '';
         $react_init_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-init.min.js' . $random_param;
         \wp_enqueue_script('pdf-builder-react-initializer', $react_init_url, ['pdf-builder-react-executor'], $version_param . $nuclear_suffix, true);
-        wp_script_add_data('pdf-builder-react-initializer', 'type', 'text/javascript');
+        \wp_script_add_data('pdf-builder-react-initializer', 'type', 'text/javascript');
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-initializer');
 
         // Scripts de l'API Preview

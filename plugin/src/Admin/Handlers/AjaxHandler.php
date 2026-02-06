@@ -230,8 +230,11 @@ class AjaxHandler
             }
 
             // Sauvegarder le template
-            // Note: Template manager should be available, this fallback shouldn't be reached
-            \wp_send_json_error('Erreur: Template manager non disponible pour la sauvegarde');
+            // Note: Template manager should be available via admin instance
+            $result = false;
+            if ($this->admin && method_exists($this->admin, 'saveTemplate')) {
+                $result = $this->admin->saveTemplate($template_data, $template_name);
+            }
 
             if ($result) {
                 \wp_send_json_success([
@@ -410,6 +413,9 @@ class AjaxHandler
                 }
                 return;
             }
+
+            $order_id = isset($_POST['order_id']) ? \absint($_POST['order_id']) : 0;
+            $template_id = isset($_POST['template_id']) ? \absint($_POST['template_id']) : 0;
 
             if (!$order_id || !$template_id) {
                 \wp_send_json_error('ID de commande ou template manquant');
@@ -905,7 +911,7 @@ class AjaxHandler
         foreach ($_POST as $key => $value) {
             if (strpos($key, 'pdf_builder_') === 0) {
                 // Validation spécifique selon le type de champ
-                if (strpos($key, '_email') !== false && !is_email($value)) {
+                if (strpos($key, '_email') !== false && !\is_email($value)) {
                     $errors[] = "Email invalide: $key";
                 }
                 if (strpos($key, '_url') !== false && !filter_var($value, FILTER_VALIDATE_URL)) {
@@ -1593,7 +1599,7 @@ class AjaxHandler
         if (strpos($key, '_email') !== false) {
             return \sanitize_email($value);
         } elseif (strpos($key, '_url') !== false) {
-            return esc_url_raw($value);
+            return \esc_url_raw($value);
         } elseif (strpos($key, '_number') !== false || strpos($key, '_size') !== false || strpos($key, '_ttl') !== false) {
             return is_numeric($value) ? (int)$value : 0;
         } elseif (strpos($key, '_boolean') !== false || strpos($key, '_enabled') !== false) {

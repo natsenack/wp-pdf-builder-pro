@@ -23,6 +23,10 @@ use PDF_Builder\Admin\Utils\Helpers;
 use PDF_Builder\Admin\Data\DataUtils;
 use PDF_Builder\Admin\Utils\Utils;
 
+// Import des fonctions WordPress globales (implicite - appellées avec \__)
+// Les fonctions comme            \__(), _e(), add_action, etc. sont des fonction globales WordPress
+// et seront accessibles via l'opérateur \ lorsqu'elles ne sont pas trouvées dans le namespace
+
 /**
  * Classe principale d'administration du PDF Builder Pro
  * RESPONSABILITÉS : Orchestration des managers, interface principale
@@ -146,7 +150,7 @@ class PdfBuilderAdminNew
         // Try-catch pour la création du template_processor
         try {
             $this->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->template_processor = null;
         }
 
@@ -244,14 +248,14 @@ class PdfBuilderAdminNew
         // Section Général
         \add_settings_section(
             'pdf_builder_general',
-            __('Paramètres Généraux', 'pdf-builder-pro'),
+            \__('Paramètres Généraux', 'pdf-builder-pro'),
             array($this, 'general_section_callback'),
             'pdf_builder_general'
         );
 
         \add_settings_field(
             'company_name',
-            __('Nom de l\'entreprise', 'pdf-builder-pro'),
+            \__('Nom de l\'entreprise', 'pdf-builder-pro'),
             array($this, 'company_name_field_callback'),
             'pdf_builder_general',
             'pdf_builder_general'
@@ -259,7 +263,7 @@ class PdfBuilderAdminNew
 
         \add_settings_field(
             'company_address',
-            __('Adresse', 'pdf-builder-pro'),
+            \__('Adresse', 'pdf-builder-pro'),
             array($this, 'company_address_field_callback'),
             'pdf_builder_general',
             'pdf_builder_general'
@@ -268,7 +272,7 @@ class PdfBuilderAdminNew
         // Section Licence
         \add_settings_section(
             'pdf_builder_licence',
-            __('Paramètres de Licence', 'pdf-builder-pro'),
+            \__('Paramètres de Licence', 'pdf-builder-pro'),
             array($this, 'licence_section_callback'),
             'pdf_builder_licence'
         );
@@ -276,14 +280,14 @@ class PdfBuilderAdminNew
         // Section Système
         \add_settings_section(
             'pdf_builder_systeme',
-            __('Paramètres Système', 'pdf-builder-pro'),
+            \__('Paramètres Système', 'pdf-builder-pro'),
             array($this, 'systeme_section_callback'),
             'pdf_builder_systeme'
         );
 
         \add_settings_field(
             'system_memory_limit',
-            __('Limite mémoire PHP', 'pdf-builder-pro'),
+            \__('Limite mémoire PHP', 'pdf-builder-pro'),
             array($this, 'system_memory_limit_field_callback'),
             'pdf_builder_systeme',
             'pdf_builder_systeme'
@@ -291,7 +295,7 @@ class PdfBuilderAdminNew
 
         \add_settings_field(
             'system_max_execution_time',
-            __('Temps d\'exécution maximum', 'pdf-builder-pro'),
+            \__('Temps d\'exécution maximum', 'pdf-builder-pro'),
             array($this, 'system_max_execution_time_field_callback'),
             'pdf_builder_systeme',
             'pdf_builder_systeme'
@@ -300,14 +304,14 @@ class PdfBuilderAdminNew
         // Section Sécurité
         \add_settings_section(
             'pdf_builder_securite',
-            __('Paramètres de Sécurité', 'pdf-builder-pro'),
+            \__('Paramètres de Sécurité', 'pdf-builder-pro'),
             array($this, 'securite_section_callback'),
             'pdf_builder_securite'
         );
 
         \add_settings_field(
             'security_file_validation',
-            __('Validation des fichiers', 'pdf-builder-pro'),
+            \__('Validation des fichiers', 'pdf-builder-pro'),
             array($this, 'security_file_validation_field_callback'),
             'pdf_builder_securite',
             'pdf_builder_securite'
@@ -316,7 +320,7 @@ class PdfBuilderAdminNew
         // Section Configuration PDF
         \add_settings_section(
             'pdf_builder_pdf',
-            __('Configuration PDF', 'pdf-builder-pro'),
+            \__('Configuration PDF', 'pdf-builder-pro'),
             array($this, 'pdf_section_callback'),
             'pdf_builder_pdf'
         );
@@ -528,7 +532,7 @@ class PdfBuilderAdminNew
      */
     public function developpeur_section_callback()
     {
-        echo '<p>' . __('Outils et options pour les développeurs.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' .            \__('Outils et options pour les développeurs.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -723,7 +727,7 @@ class PdfBuilderAdminNew
                     $settings['pdf_builder_company_name'] = sanitize_text_field($_POST['pdf_builder_settings']['pdf_builder_company_name'] ?? '');
                     $settings['pdf_builder_company_address'] = \sanitize_textarea_field($_POST['pdf_builder_settings']['pdf_builder_company_address'] ?? '');
                     $settings['pdf_builder_company_phone'] = sanitize_text_field($_POST['pdf_builder_settings']['pdf_builder_company_phone'] ?? '');
-                    $settings['pdf_builder_company_email'] = sanitize_email($_POST['pdf_builder_settings']['pdf_builder_company_email'] ?? '');
+                    $settings['pdf_builder_company_email'] = \sanitize_email($_POST['pdf_builder_settings']['pdf_builder_company_email'] ?? '');
                     $settings['pdf_builder_company_phone_manual'] = sanitize_text_field($_POST['pdf_builder_settings']['pdf_builder_company_phone_manual'] ?? '');
                     $settings['pdf_builder_company_siret'] = sanitize_text_field($_POST['pdf_builder_settings']['pdf_builder_company_siret'] ?? '');
                     $settings['pdf_builder_company_vat'] = sanitize_text_field($_POST['pdf_builder_settings']['pdf_builder_company_vat'] ?? '');
@@ -764,10 +768,10 @@ class PdfBuilderAdminNew
         pdf_builder_update_option('pdf_builder_settings', $settings);
 
         // Message de succès
-        add_settings_error(
+        \add_settings_error(
             'pdf_builder_settings',
             'settings_updated',
-            __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro'),
+            \__('Paramètres sauvegardés avec succès.', 'pdf-builder-pro'),
             'updated'
         );
 
@@ -812,18 +816,18 @@ class PdfBuilderAdminNew
      */
     public function registerTemplatePostType()
     {
-        register_post_type('pdf_template', [
+        \register_post_type('pdf_template', [
             'labels' => [
-                'name' => __('Templates PDF', 'pdf-builder-pro'),
-                'singular_name' => __('Template PDF', 'pdf-builder-pro'),
-                'add_new' => __('Nouveau Template', 'pdf-builder-pro'),
-                'add_new_item' => __('Ajouter un Nouveau Template', 'pdf-builder-pro'),
-                'edit_item' => __('Éditer le Template', 'pdf-builder-pro'),
-                'new_item' => __('Nouveau Template', 'pdf-builder-pro'),
-                'view_item' => __('Voir le Template', 'pdf-builder-pro'),
-                'search_items' => __('Rechercher Templates', 'pdf-builder-pro'),
-                'not_found' => __('Aucun template trouvé', 'pdf-builder-pro'),
-                'not_found_in_trash' => __('Aucun template dans la corbeille', 'pdf-builder-pro'),
+                'name' =>            \__('Templates PDF', 'pdf-builder-pro'),
+                'singular_name' =>            \__('Template PDF', 'pdf-builder-pro'),
+                'add_new' =>            \__('Nouveau Template', 'pdf-builder-pro'),
+                'add_new_item' =>            \__('Ajouter un Nouveau Template', 'pdf-builder-pro'),
+                'edit_item' =>            \__('Éditer le Template', 'pdf-builder-pro'),
+                'new_item' =>            \__('Nouveau Template', 'pdf-builder-pro'),
+                'view_item' =>            \__('Voir le Template', 'pdf-builder-pro'),
+                'search_items' =>            \__('Rechercher Templates', 'pdf-builder-pro'),
+                'not_found' =>            \__('Aucun template trouvé', 'pdf-builder-pro'),
+                'not_found_in_trash' =>            \__('Aucun template dans la corbeille', 'pdf-builder-pro'),
             ],
             'public' => false,
             'show_ui' => true,
@@ -903,17 +907,17 @@ class PdfBuilderAdminNew
     public function register_template_post_type()
     {
         $labels = array(
-            'name' => __('Templates PDF', 'pdf-builder-pro'),
-            'singular_name' => __('Template PDF', 'pdf-builder-pro'),
-            'menu_name' => __('Templates', 'pdf-builder-pro'),
-            'add_new' => __('Ajouter', 'pdf-builder-pro'),
-            'add_new_item' => __('Ajouter un template PDF', 'pdf-builder-pro'),
-            'edit_item' => __('Modifier le template', 'pdf-builder-pro'),
-            'new_item' => __('Nouveau template', 'pdf-builder-pro'),
-            'view_item' => __('Voir le template', 'pdf-builder-pro'),
-            'search_items' => __('Rechercher des templates', 'pdf-builder-pro'),
-            'not_found' => __('Aucun template trouvé', 'pdf-builder-pro'),
-            'not_found_in_trash' => __('Aucun template dans la corbeille', 'pdf-builder-pro'),
+            'name' =>            \__('Templates PDF', 'pdf-builder-pro'),
+            'singular_name' =>            \__('Template PDF', 'pdf-builder-pro'),
+            'menu_name' =>            \__('Templates', 'pdf-builder-pro'),
+            'add_new' =>            \__('Ajouter', 'pdf-builder-pro'),
+            'add_new_item' =>            \__('Ajouter un template PDF', 'pdf-builder-pro'),
+            'edit_item' =>            \__('Modifier le template', 'pdf-builder-pro'),
+            'new_item' =>            \__('Nouveau template', 'pdf-builder-pro'),
+            'view_item' =>            \__('Voir le template', 'pdf-builder-pro'),
+            'search_items' =>            \__('Rechercher des templates', 'pdf-builder-pro'),
+            'not_found' =>            \__('Aucun template trouvé', 'pdf-builder-pro'),
+            'not_found_in_trash' =>            \__('Aucun template dans la corbeille', 'pdf-builder-pro'),
         );
 
         $args = array(
@@ -929,7 +933,7 @@ class PdfBuilderAdminNew
             'query_var' => false,
         );
 
-        register_post_type('pdf_template', $args);
+        \register_post_type('pdf_template', $args);
     }
 
     /**
@@ -1045,8 +1049,8 @@ class PdfBuilderAdminNew
 
         // Menu principal PDF Builder Pro
         \add_menu_page(
-            __('PDF Builder Pro', 'pdf-builder-pro'),
-            __('PDF Builder', 'pdf-builder-pro'),
+            \__('PDF Builder Pro', 'pdf-builder-pro'),
+            \__('PDF Builder', 'pdf-builder-pro'),
             'manage_options',
             'pdf-builder-pro',
             [$this, 'adminPage'],
@@ -1057,15 +1061,15 @@ class PdfBuilderAdminNew
         // Page d'accueil (sous-menu principal masqué)
         \add_submenu_page(
             'pdf-builder-pro',
-            __('Accueil - PDF Builder Pro', 'pdf-builder-pro'),
-            __('🏠 Accueil', 'pdf-builder-pro'),
+            \__('Accueil - PDF Builder Pro', 'pdf-builder-pro'),
+            \__('🏠 Accueil', 'pdf-builder-pro'),
             'manage_options',
             'pdf-builder-pro', // Même slug que le menu principal
             [$this, 'adminPage']
         );
 
         // Éditeur React unique (accessible via lien direct, masqué du menu)
-        \add_submenu_page('pdf-builder-pro', __('Éditeur PDF', 'pdf-builder-pro'), __('🎨 Éditeur PDF', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'reactEditorPage']);
+        \add_submenu_page('pdf-builder-pro',            \__('Éditeur PDF', 'pdf-builder-pro'),            \__('🎨 Éditeur PDF', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-react-editor', [$this, 'reactEditorPage']);
 
         // Le menu de l'éditeur React est maintenant visible
         // Ancien code commenté :
@@ -1081,17 +1085,17 @@ class PdfBuilderAdminNew
         // });
 
         // Gestion des templates
-        \add_submenu_page('pdf-builder-pro', __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'), __('📋 Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-templates', [$this, 'templatesPage']);
+        \add_submenu_page('pdf-builder-pro',            \__('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'),            \__('📋 Templates', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-templates', [$this, 'templatesPage']);
 
         // Paramètres et configuration
-        \add_submenu_page('pdf-builder-pro', __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'), __('⚙️ Paramètres', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-settings', [$this, 'settings_page']);
+        \add_submenu_page('pdf-builder-pro',            \__('Paramètres - PDF Builder Pro', 'pdf-builder-pro'),            \__('⚙️ Paramètres', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-settings', [$this, 'settings_page']);
 
         // Galerie de modèles (mode développeur uniquement)
         if (!empty(pdf_builder_get_option('pdf_builder_settings')['pdf_builder_developer_enabled'])) {
             \add_submenu_page(
                 'pdf-builder-pro',
-                __('Galerie de Modèles - PDF Builder Pro', 'pdf-builder-pro'),
-                __('🖼️ Galerie', 'pdf-builder-pro'),
+            \__('Galerie de Modèles - PDF Builder Pro', 'pdf-builder-pro'),
+            \__('🖼️ Galerie', 'pdf-builder-pro'),
                 'manage_options',
                 'pdf-builder-predefined-templates',
                 [$this->predefined_templates_manager ?? null, 'renderAdminPage']
@@ -1223,7 +1227,7 @@ class PdfBuilderAdminNew
             try {
                 $this->template_processor = new \PDF_Builder\Admin\Processors\TemplateProcessor($this);
                 
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 
                 $this->template_processor = null;
             }

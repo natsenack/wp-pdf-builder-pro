@@ -45,42 +45,10 @@ class PDF_Builder_Thumbnail_Manager
     public function generateTemplateThumbnail($template_id, $template_data)
     {
         try {
-            // Utiliser le GeneratorManager pour créer un aperçu
-            $generator_manager = new \PDF_Builder\Generators\GeneratorManager();
-
-            // Créer un data provider basique pour les thumbnails
-            $data_provider = new class implements \PDF_Builder\Interfaces\DataProviderInterface {
-                public function getVariableValue(string $variable): string {
-                    return 'Sample ' . $variable;
-                }
-                public function hasVariable(string $variable): bool {
-                    return true;
-                }
-                public function getAllVariables(): array {
-                    return ['name', 'date', 'title'];
-                }
-                public function isSampleData(): bool {
-                    return true;
-                }
-                public function getContext(): string {
-                    return 'thumbnail';
-                }
-                public function validateAndSanitizeData(array $data): array {
-                    return $data;
-                }
-            };
-
-            $preview_result = $generator_manager->generatePreview(
-                $template_data,
-                $data_provider,
-                'png',
-                ['quality' => 75, 'width' => 300, 'height' => 200]
-            );
-
-            if ($preview_result && isset($preview_result['url'])) {
-                // Utiliser directement l'URL générée comme thumbnail
-                return $preview_result['url'];
-            }
+            // Thumbnail generation requires the PdfHtmlGenerator
+            // which would need extensive setup. For now, return false
+            // to use default placeholder
+            return false;
         } catch (\Exception $e) {
             // Log l'erreur mais ne pas échouer la sauvegarde
             $this->logError('Erreur génération thumbnail template ' . $template_id . ': ' . $e->getMessage());
