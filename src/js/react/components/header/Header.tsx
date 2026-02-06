@@ -86,6 +86,9 @@ export const Header = memo(function Header({
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showJsonModal, setShowJsonModal] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [jsonModalView, setJsonModalView] = useState<'json' | 'html'>('json');
+  const [generatedHtml, setGeneratedHtml] = useState<string>('');
+  const [isGeneratingHtml, setIsGeneratingHtml] = useState(false);
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [performanceMetrics, setPerformanceMetrics] = useState({
     fps: 0,
@@ -254,6 +257,83 @@ export const Header = memo(function Header({
         document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [showPredefinedTemplates]);
+
+  // Fonction pour générer l'aperçu HTML dans le modal
+  const generateHtmlPreview = async () => {
+    setIsGeneratingHtml(true);
+    try {
+      // Fonction pour transformer les éléments pour l'aperçu HTML
+      const transformElementForPreview = (element: any) => {
+        const transformed = { ...element };
+
+        // Liste des propriétés système à exclure
+        const systemProps = ['id', 'type', 'x', 'y', 'width', 'height', 'rotation', 'visible', 'locked', 'createdAt', 'updatedAt'];
+
+        // Créer l'objet properties avec TOUTES les propriétés non-système
+        transformed.properties = {};
+
+        // Copier toutes les propriétés qui ne sont pas système
+        Object.entries(element).forEach(([key, value]) => {
+          if (!systemProps.includes(key) && value !== undefined && value !== null) {
+            transformed.properties[key] = value;
+          }
+        });
+
+        // S'assurer que les propriétés spécifiques sont correctement mappées
+        if (element.bold) transformed.properties.fontWeight = 'bold';
+        if (element.italic) transformed.properties.fontStyle = 'italic';
+        if (element.underline) transformed.properties.textDecoration = 'underline';
+
+        // Mapper les propriétés de forme
+        if (element.fillColor) transformed.properties.backgroundColor = element.fillColor;
+        if (element.strokeColor) transformed.properties.borderColor = element.strokeColor;
+        if (element.strokeWidth) transformed.properties.borderWidth = element.strokeWidth;
+
+        return transformed;
+      };
+
+      // Transformer tous les éléments
+      const transformedElements = state.elements.map(transformElementForPreview);
+
+      // Construire les données du template à partir du state actuel
+      const templateData = {
+        elements: transformedElements,
+        canvasWidth: state.canvas.width,
+        canvasHeight: state.canvas.height,
+        template: state.template,
+      };
+
+      // Générer l'aperçu HTML
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_generate_html_preview');
+      formData.append('nonce', (window as any).pdfBuilderNonce);
+      formData.append('data', JSON.stringify({
+        pageOptions: {
+          template: templateData
+        }
+      }));
+
+      const response = await fetch('/wp-admin/admin-ajax.php', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.data && data.data.html) {
+        setGeneratedHtml(data.data.html);
+        setJsonModalView('html');
+      } else {
+        console.error('Erreur lors de la génération HTML:', data);
+        alert('Erreur lors de la génération de l\'aperçu HTML. Vérifiez la console pour plus de détails.');
+      }
+    } catch (error) {
+      console.error('Erreur réseau lors de la génération HTML:', error);
+      alert('Erreur réseau lors de la génération de l\'aperçu HTML.');
+    } finally {
+      setIsGeneratingHtml(false);
+    }
+  };
 
   const buttonBaseStyles = {
     padding: "10px 16px",
@@ -1090,7 +1170,7 @@ export const Header = memo(function Header({
                   color: "#1a1a1a",
                 }}
               >
-                📋 JSON Brut du Template (ID: {templateName || "N/A"})
+                📋 Données du Template (ID: {templateName || "N/A"})
               </h3>
               <button
                 onClick={() => setShowJsonModal(false)}
@@ -1108,7 +1188,51 @@ export const Header = memo(function Header({
               </button>
             </div>
 
-            {/* JSON Content */}
+            {/* Tabs */}
+            <div
+              style={{
+                display: "flex",
+                gap: "4px",
+                marginBottom: "16px",
+                borderBottom: "1px solid #e0e0e0",
+                paddingBottom: "8px",
+              }}
+            >
+              <button
+                onClick={() => setJsonModalView('json')}
+                style={{
+                  padding: "8px 16px",
+                  border: "none",
+                  borderRadius: "4px",
+                  backgroundColor: jsonModalView === 'json' ? "#0073aa" : "#f0f0f0",
+                  color: jsonModalView === 'json' ? "#ffffff" : "#333",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                }}
+              >
+                📄 JSON
+              </button>
+              <button
+                onClick={generateHtmlPreview}
+                disabled={isGeneratingHtml}
+                style={{
+                  padding: "8px 16px",
+                  border: "none",
+                  borderRadius: "4px",
+                  backgroundColor: jsonModalView === 'html' ? "#10a37f" : "#f0f0f0",
+                  color: jsonModalView === 'html' ? "#ffffff" : "#333",
+                  cursor: isGeneratingHtml ? "not-allowed" : "pointer",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  opacity: isGeneratingHtml ? 0.6 : 1,
+                }}
+              >
+                {isGeneratingHtml ? "⏳ Génération..." : "🌐 HTML"}
+              </button>
+            </div>
+
+            {/* Content */}
             <div
               style={{
                 flex: 1,
@@ -1116,23 +1240,44 @@ export const Header = memo(function Header({
                 backgroundColor: "#f5f5f5",
                 borderRadius: "6px",
                 padding: "16px",
-                fontFamily: "'Courier New', monospace",
-                fontSize: "12px",
-                lineHeight: "1.5",
-                color: "#333",
-                whiteSpace: "pre-wrap",
-                wordBreak: "break-word",
                 border: "1px solid #ddd",
                 marginBottom: "16px",
+                maxHeight: "400px",
               }}
             >
-              {JSON.stringify(
-                {
-                  ...state.template,
-                  elements: state.elements,
-                },
-                null,
-                2
+              {jsonModalView === 'json' ? (
+                <pre
+                  style={{
+                    fontFamily: "'Courier New', monospace",
+                    fontSize: "12px",
+                    lineHeight: "1.5",
+                    color: "#333",
+                    margin: 0,
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {JSON.stringify(
+                    {
+                      ...state.template,
+                      elements: state.elements,
+                    },
+                    null,
+                    2
+                  )}
+                </pre>
+              ) : (
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "#ffffff",
+                    border: "1px solid #ddd",
+                    borderRadius: "4px",
+                    padding: "8px",
+                  }}
+                  dangerouslySetInnerHTML={{ __html: generatedHtml }}
+                />
               )}
             </div>
 
@@ -1145,72 +1290,76 @@ export const Header = memo(function Header({
                 alignItems: "center",
               }}
             >
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(
-                    JSON.stringify(
-                      {
-                        ...state.template,
-                        elements: state.elements,
-                      },
-                      null,
-                      2
-                    )
-                  );
-                  setCopySuccess(true);
-                  setTimeout(() => setCopySuccess(false), 2000);
-                }}
-                style={{
-                  padding: "8px 16px",
-                  backgroundColor: "#0073aa",
-                  color: "#ffffff",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  opacity: copySuccess ? 0.7 : 1,
-                }}
-                title="Copier le JSON"
-              >
-                {copySuccess ? "✅ Copié!" : "📋 Copier JSON"}
-              </button>
-              <button
-                onClick={() => {
-                  const jsonString = JSON.stringify(
-                    {
-                      ...state.template,
-                      elements: state.elements,
-                    },
-                    null,
-                    2
-                  );
-                  const blob = new Blob([jsonString], {
-                    type: "application/json",
-                  });
-                  const url = URL.createObjectURL(blob);
-                  const link = document.createElement("a");
-                  link.href = url;
-                  link.download = `template-${
-                    templateName || "export"
-                  }-${new Date().getTime()}.json`;
-                  link.click();
-                  URL.revokeObjectURL(url);
-                }}
-                style={{
-                  padding: "8px 16px",
-                  backgroundColor: "#10a37f",
-                  color: "#ffffff",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                }}
-                title="Télécharger le JSON"
-              >
-                💾 Télécharger
-              </button>
+              {jsonModalView === 'json' && (
+                <>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        JSON.stringify(
+                          {
+                            ...state.template,
+                            elements: state.elements,
+                          },
+                          null,
+                          2
+                        )
+                      );
+                      setCopySuccess(true);
+                      setTimeout(() => setCopySuccess(false), 2000);
+                    }}
+                    style={{
+                      padding: "8px 16px",
+                      backgroundColor: "#0073aa",
+                      color: "#ffffff",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      opacity: copySuccess ? 0.7 : 1,
+                    }}
+                    title="Copier le JSON"
+                  >
+                    {copySuccess ? "✅ Copié!" : "📋 Copier JSON"}
+                  </button>
+                  <button
+                    onClick={() => {
+                      const jsonString = JSON.stringify(
+                        {
+                          ...state.template,
+                          elements: state.elements,
+                        },
+                        null,
+                        2
+                      );
+                      const blob = new Blob([jsonString], {
+                        type: "application/json",
+                      });
+                      const url = URL.createObjectURL(blob);
+                      const link = document.createElement("a");
+                      link.href = url;
+                      link.download = `template-${
+                        templateName || "export"
+                      }-${new Date().getTime()}.json`;
+                      link.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                    style={{
+                      padding: "8px 16px",
+                      backgroundColor: "#10a37f",
+                      color: "#ffffff",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      fontSize: "14px",
+                      fontWeight: "500",
+                    }}
+                    title="Télécharger le JSON"
+                  >
+                    💾 Télécharger
+                  </button>
+                </>
+              )}
               <button
                 onClick={() => setShowJsonModal(false)}
                 style={{
