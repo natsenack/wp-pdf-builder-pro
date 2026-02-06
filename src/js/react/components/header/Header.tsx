@@ -102,10 +102,16 @@ export const Header = memo(function Header({
     "portrait" | "landscape"
   >(canvasWidth < canvasHeight ? "portrait" : "landscape");
   const [showPredefinedTemplates, setShowPredefinedTemplates] = useState(false);
-  const [orientationPermissions, setOrientationPermissions] = useState({
+  const [orientationPermissions, setOrientationPermissions] = useState<{
+    allowPortrait: boolean;
+    allowLandscape: boolean;
+    defaultOrientation: "portrait" | "landscape";
+    availableOrientations: string[];
+  }>({
     allowPortrait: true,
     allowLandscape: true,
     defaultOrientation: "portrait",
+    availableOrientations: ["portrait", "landscape"],
   });
 
   // Utiliser le hook usePreview pour la gestion de l'aperçu
@@ -147,7 +153,7 @@ export const Header = memo(function Header({
         const orientationPermissions = {
           allowPortrait: availableOrientations.includes('portrait'),
           allowLandscape: availableOrientations.includes('landscape'),
-          defaultOrientation: (window as any).pdfBuilderCanvasSettings?.default_canvas_orientation || 'portrait',
+          defaultOrientation: ((window as any).pdfBuilderCanvasSettings?.default_canvas_orientation || 'portrait') as 'portrait' | 'landscape',
           availableOrientations: availableOrientations
         };
 
@@ -280,8 +286,8 @@ export const Header = memo(function Header({
 
       const templateData = {
         elements: transformedElements,
-        canvasWidth: state.canvas.width,
-        canvasHeight: state.canvas.height,
+        canvasWidth: canvasWidth,
+        canvasHeight: canvasHeight,
         template: state.template,
       };
 
@@ -321,6 +327,8 @@ export const Header = memo(function Header({
         body: params.toString(),
         credentials: 'same-origin',
       });
+
+      const responseText = await response.text();
 
       console.log('[JSON TO HTML] Response Status:', response.status);
       console.log('[JSON TO HTML] Response Text:', responseText);
@@ -1643,7 +1651,6 @@ export const Header = memo(function Header({
                 }}
               >
                 <strong>Erreur:</strong> {previewError}
-                {console.log('[HEADER COMPONENT] Displaying error in UI:', previewError)}
               </div>
             )}
 
