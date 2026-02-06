@@ -511,12 +511,16 @@ class AdminScriptLoader
         wp_enqueue_script('wp-dom-ready'); // Provides DOM ready
         wp_enqueue_script('wp-polyfill'); // Provides polyfills
 
-        // Main React app bundle (use WordPress React instead of external bundles)
+        // Enqueue React vendor bundle (contains React and ReactDOM)
+        $react_vendor_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/react-vendor.min.js';
+        \wp_enqueue_script('pdf-builder-react-vendor', $react_vendor_url, [], $version_param, false);
+        
+        // Main React app bundle
         $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js';
-        \wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['wp-element', 'wp-components', 'wp-data', 'wp-hooks', 'wp-api', 'media-views'], $version_param, true);
+        \wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-react-vendor', 'wp-element', 'wp-components', 'wp-data', 'wp-hooks', 'wp-api', 'media-views'], $version_param, true);
         wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
         
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-main with WordPress React dependencies');
+        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-vendor and pdf-builder-react-main with dependencies');
         
         // Localize script data BEFORE enqueuing
         $localize_data = [

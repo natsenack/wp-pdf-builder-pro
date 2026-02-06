@@ -8,6 +8,19 @@
  * - Properties panel for element editing
  */
 
+// ============================================================================
+// IMMEDIATE EXECUTION WRAPPER - Ensures module runs on load
+// ============================================================================
+(function() {
+  // LOG IMMEDIATELY - BEFORE ANYTHING ELSE
+  console.log('[REACT INDEX] ===== FILE LOADED =====');
+  console.log('[REACT INDEX] React bundle loaded and executing at:', new Date().toISOString());
+  console.log('[REACT INDEX] Window object available:', typeof window);
+  console.log('[REACT INDEX] Document object available:', typeof document);
+  console.log('[REACT INDEX] window.React available:', typeof (window as any).React);
+  console.log('[REACT INDEX] window.ReactDOM available:', typeof (window as any).ReactDOM);
+})();
+
 // LOG IMMEDIATELY - BEFORE ANYTHING ELSE
 console.log('[REACT INDEX] ===== FILE LOADED =====');
 console.log('[REACT INDEX] React bundle loaded and executing at:', new Date().toISOString());
@@ -190,6 +203,27 @@ if (typeof window !== 'undefined') {
 } else {
   console.error('[REACT INDEX] window is not defined!');
 }
+
+// ============================================================================
+// IMMEDIATE INITIALIZATION CHECK
+// ============================================================================
+// Try to auto-init if root element exists and document is ready
+(function() {
+  console.log('[REACT INDEX] === AUTO-INIT CHECK ===');
+  console.log('[REACT INDEX] Document ready state:', document.readyState);
+  
+  const rootElement = document.getElementById('pdf-builder-react-root');
+  console.log('[REACT INDEX] Root element exists:', !!rootElement);
+  
+  if (rootElement && document.readyState === 'complete') {
+    console.log('[REACT INDEX] Auto-initializing because DOM is ready...');
+    if (typeof (window as any).pdfBuilderReact?.initPDFBuilderReact === 'function') {
+      (window as any).pdfBuilderReact.initPDFBuilderReact('pdf-builder-react-root');
+    }
+  } else {
+    console.log('[REACT INDEX] Skipping auto-init: readyState=' + document.readyState);
+  }
+})();
 
 // Default export for testing/bundling
 export { initPDFBuilderReact, PDFBuilder, api };
