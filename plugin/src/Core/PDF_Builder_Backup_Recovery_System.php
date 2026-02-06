@@ -89,10 +89,7 @@ class PDF_Builder_Backup_Recovery_System {
             $this->register_backup($backup_data['metadata'], $archive_path);
 
             // Logger le succès
-                    'backup_id' => $backup_id,
-                    'size' => filesize($archive_path)
-                ]);
-            }
+            error_log('Backup created successfully: ' . $backup_id);
 
             return $backup_id;
 

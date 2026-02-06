@@ -1249,6 +1249,14 @@ if (!defined('DAY_IN_SECONDS')) {
     define('DAY_IN_SECONDS', 86400);
 }
 
+if (!defined('HOUR_IN_SECONDS')) {
+    define('HOUR_IN_SECONDS', 3600);
+}
+
+if (!defined('WEEK_IN_SECONDS')) {
+    define('WEEK_IN_SECONDS', 604800);
+}
+
 // Custom PDF Builder functions
 if (!function_exists('pdf_builder_translate')) {
     /**
@@ -1259,6 +1267,104 @@ if (!function_exists('pdf_builder_translate')) {
      */
     function pdf_builder_translate($string, $domain = 'pdf-builder-pro') {
         return __($string, $domain);
+    }
+}
+
+if (!function_exists('pdf_builder_is_license_active')) {
+    /**
+     * Check if PDF Builder license is active
+     * @return bool
+     */
+    function pdf_builder_is_license_active() {
+        $license_key = pdf_builder_get_option('pdf_builder_license_key');
+        return !empty($license_key);
+    }
+}
+
+if (!function_exists('pdf_builder_get_option')) {
+    /**
+     * Get a PDF Builder option
+     * @param string $option
+     * @param mixed $default
+     * @return mixed
+     */
+    function pdf_builder_get_option($option, $default = false) {
+        return get_option($option, $default);
+    }
+}
+
+if (!function_exists('pdf_builder_update_option')) {
+    /**
+     * Update a PDF Builder option
+     * @param string $option
+     * @param mixed $value
+     * @return bool
+     */
+    function pdf_builder_update_option($option, $value) {
+        return update_option($option, $value);
+    }
+}
+
+if (!function_exists('_n')) {
+    /**
+     * Plural translation
+     * @param string $singular
+     * @param string $plural
+     * @param int $count
+     * @param string $domain
+     * @return string
+     */
+    function _n($singular, $plural, $count, $domain = 'default') {
+        return _n($singular, $plural, $count, $domain);
+    }
+}
+
+if (!function_exists('wp_remote_post')) {
+    /**
+     * HTTP POST request using WordPress HTTP API
+     * @param string $url
+     * @param array $args
+     * @return array|WP_Error
+     */
+    function wp_remote_post($url, $args = []) {
+        return wp_remote_request($url, ['method' => 'POST'] + $args);
+    }
+}
+
+if (!function_exists('wp_remote_retrieve_response_code')) {
+    /**
+     * Get the response code from a remote request
+     * @param array|WP_Error $response
+     * @return int
+     */
+    function wp_remote_retrieve_response_code($response) {
+        if (is_array($response)) {
+            return (int)$response['response']['code'] ?? 0;
+        }
+        return 0;
+    }
+}
+
+if (!function_exists('plugin_basename')) {
+    /**
+     * Get the basename of a plugin file
+     * @param string $file
+     * @return string
+     */
+    function plugin_basename($file) {
+        return basename(dirname($file)) . '/' . basename($file);
+    }
+}
+
+if (!function_exists('wp_clear_scheduled_hook')) {
+    /**
+     * Clear all scheduled hooks for an action
+     * @param string $hook
+     * @param array $args
+     * @return int|false
+     */
+    function wp_clear_scheduled_hook($hook, $args = []) {
+        return true;
     }
 }
 
