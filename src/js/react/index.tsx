@@ -82,7 +82,7 @@ function initPDFBuilderReact(containerId: string = 'pdf-builder-react-root'): bo
 }
 
 // ============================================================================
-// API OBJECT - ASSIGN TO WINDOW IMMEDIATELY
+// API OBJECT - EXPORT AS DEFAULT
 // ============================================================================
 
 const api = {
@@ -92,9 +92,7 @@ const api = {
   PDFBuilder,
 };
 
-console.log('[INDEX TOP LEVEL] ========== ASSIGNING TO WINDOW ==========');
-(window as any).pdfBuilderReact = api;
-(window as any).initPDFBuilderReact = initPDFBuilderReact;
-console.log('[INDEX TOP LEVEL] ✅ window.pdfBuilderReact assigned!');
-console.log('[INDEX TOP LEVEL] window.pdfBuilderReact type:', typeof (window as any).pdfBuilderReact);
-console.log('[INDEX TOP LEVEL] initPDFBuilderReact type:', typeof (window as any).initPDFBuilderReact);
+console.log('[INDEX TOP LEVEL] ========== EXPORTING API ==========');
+console.log('[INDEX TOP LEVEL] API object:', api);
+
+export default api;

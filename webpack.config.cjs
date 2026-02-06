@@ -32,6 +32,10 @@ module.exports = {
     globalObject: 'typeof window !== "undefined" ? window : global',
     clean: true,
     assetModuleFilename: "../assets/[name][ext]",
+    library: {
+      name: 'pdfBuilderReact',
+      type: 'window'
+    }
   },
   devtool: isDev ? "eval-source-map" : false,
   performance: {

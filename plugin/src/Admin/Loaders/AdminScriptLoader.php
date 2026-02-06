@@ -820,15 +820,21 @@ class AdminScriptLoader
             // If still not available after 100ms, something is wrong with the bundle
             setTimeout(function() {
                 if (!window.pdfBuilderReact) {
-                    console.warn("[BUNDLE CHECK] pdfBuilderReact not found, creating fallback");
-                    window.pdfBuilderReact = {
-                        initPDFBuilderReact: function() {
-                            console.error("[BUNDLE] Error: React bundle failed to initialize");
-                            return false;
-                        },
-                        _isFallback: true,
-                        _error: "Bundle failed to export pdfBuilderReact"
-                    };
+                    console.warn("[BUNDLE CHECK] pdfBuilderReact not found, checking webpack export");
+                    // Check if webpack exported it as window.pdfBuilderReact
+                    if (window.pdfBuilderReact) {
+                        console.log("[BUNDLE CHECK] Found webpack export!");
+                    } else {
+                        console.warn("[BUNDLE CHECK] pdfBuilderReact not found, creating fallback");
+                        window.pdfBuilderReact = {
+                            initPDFBuilderReact: function() {
+                                console.error("[BUNDLE] Error: React bundle failed to initialize");
+                                return false;
+                            },
+                            _isFallback: true,
+                            _error: "Bundle failed to export pdfBuilderReact"
+                        };
+                    }
                 }
             }, 100);
         ', 'after');
