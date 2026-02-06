@@ -123,7 +123,7 @@
 ?>
             <!-- Section Canvas -->
             <section class="contenu-canvas-section">
-                <?php error_log("[PDF Builder] CANVAS_SECTION - Rendering canvas section");
+                <?php error_log("[PDF Builder] CANVAS_SECTION - Rendering canvas section"); ?>
                 <h3 style="display: flex; justify-content: flex-start; align-items: center;">
                     <span>
                         🎨 Canvas
@@ -135,7 +135,7 @@
 
                 <p>Configurez l'apparence et le comportement de votre canvas de conception PDF.</p>
 
-                <?php error_log("[PDF Builder] HIDDEN_FIELDS - About to render hidden fields");
+                <?php error_log("[PDF Builder] HIDDEN_FIELDS - About to render hidden fields"); ?>
                 <!-- Champs cachés pour la sauvegarde centralisée des paramètres -->
                 <!-- DEBUG: Hidden fields rendering started -->
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_width]" value="<?php echo esc_attr(get_canvas_option_contenu('canvas_width', '794')); ?>">
