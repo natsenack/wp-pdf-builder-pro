@@ -108,19 +108,25 @@ class PDF_Builder_Security_Validator {
  * Fonctions utilitaires de sécurité (temporaires)
  * TODO: Déplacer dans la classe principale
  */
-function pdf_builder_validate_ajax_request() {
-    return PDF_Builder_Security_Validator::validateNonce() &&
-           PDF_Builder_Security_Validator::checkPermissions();
+if (!function_exists('PDF_Builder\\Core\\pdf_builder_validate_ajax_request')) {
+    function pdf_builder_validate_ajax_request() {
+        return PDF_Builder_Security_Validator::validateNonce() &&
+               PDF_Builder_Security_Validator::checkPermissions();
+    }
 }
 
-function pdf_builder_sanitize_template_data($data) {
-    $validator = PDF_Builder_Security_Validator::get_instance();
-    return $validator->sanitize_template_data($data);
+if (!function_exists('PDF_Builder\\Core\\pdf_builder_sanitize_template_data')) {
+    function pdf_builder_sanitize_template_data($data) {
+        $validator = PDF_Builder_Security_Validator::get_instance();
+        return $validator->sanitize_template_data($data);
+    }
 }
 
-function pdf_builder_sanitize_settings($settings) {
-    $validator = PDF_Builder_Security_Validator::get_instance();
-    return $validator->sanitize_settings($settings);
+if (!function_exists('PDF_Builder\\Core\\pdf_builder_sanitize_settings')) {
+    function pdf_builder_sanitize_settings($settings) {
+        $validator = PDF_Builder_Security_Validator::get_instance();
+        return $validator->sanitize_settings($settings);
+    }
 }
 
 
