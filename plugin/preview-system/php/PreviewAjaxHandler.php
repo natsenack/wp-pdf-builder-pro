@@ -94,6 +94,10 @@ class PreviewAjaxHandler {
     }
 
     public static function generateHtmlPreviewAjax() {
+        // LOG TRÈS TÔT pour vérifier si la fonction est appelée
+        error_log('[HTML PREVIEW AJAX] ===== FUNCTION CALLED =====');
+        error_log('[HTML PREVIEW AJAX] POST data: ' . json_encode($_POST));
+        
         // Temporairement désactivé pour debug
         // if (!current_user_can('read')) {
         //     wp_send_json_error('Permissions insuffisantes', 403);
