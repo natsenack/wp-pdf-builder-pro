@@ -259,43 +259,29 @@ export const Header = memo(function Header({
   }, [showPredefinedTemplates]);
 
   // Fonction pour générer l'aperçu HTML dans le modal
-  const generateHtmlPreview = async () => {
+  const generateHtmlPreview = useCallback(async () => {
+    if (isGeneratingHtml) return;
+    
     setIsGeneratingHtml(true);
     try {
-      // Fonction pour transformer les éléments pour l'aperçu HTML
-      const transformElementForPreview = (element: any) => {
-        const transformed = { ...element };
+      console.log('[HTML PREVIEW] Starting HTML preview generation');
 
-        // Liste des propriétés système à exclure
-        const systemProps = ['id', 'type', 'x', 'y', 'width', 'height', 'rotation', 'visible', 'locked', 'createdAt', 'updatedAt'];
+      // Transformer les éléments pour l'aperçu HTML
+      const transformedElements = state.elements && state.elements.length > 0 
+        ? state.elements.map((element: any) => ({
+            ...element,
+            properties: {
+              ...Object.keys(element)
+                .filter(key => !['id', 'type', 'x', 'y', 'width', 'height', 'rotation', 'visible', 'locked', 'createdAt', 'updatedAt'].includes(key))
+                .reduce((obj, key) => ({ ...obj, [key]: element[key] }), {}),
+              ...(element.fillColor && { backgroundColor: element.fillColor }),
+              ...(element.strokeColor && { borderColor: element.strokeColor }),
+              ...(element.strokeWidth && { borderWidth: element.strokeWidth }),
+            }
+          }))
+        : [];
 
-        // Créer l'objet properties avec TOUTES les propriétés non-système
-        transformed.properties = {};
-
-        // Copier toutes les propriétés qui ne sont pas système
-        Object.entries(element).forEach(([key, value]) => {
-          if (!systemProps.includes(key) && value !== undefined && value !== null) {
-            transformed.properties[key] = value;
-          }
-        });
-
-        // S'assurer que les propriétés spécifiques sont correctement mappées
-        if (element.bold) transformed.properties.fontWeight = 'bold';
-        if (element.italic) transformed.properties.fontStyle = 'italic';
-        if (element.underline) transformed.properties.textDecoration = 'underline';
-
-        // Mapper les propriétés de forme
-        if (element.fillColor) transformed.properties.backgroundColor = element.fillColor;
-        if (element.strokeColor) transformed.properties.borderColor = element.strokeColor;
-        if (element.strokeWidth) transformed.properties.borderWidth = element.strokeWidth;
-
-        return transformed;
-      };
-
-      // Transformer tous les éléments
-      const transformedElements = state.elements.map(transformElementForPreview);
-
-      // Construire les données du template à partir du state actuel
+      // Construire les données à envoyer
       const templateData = {
         elements: transformedElements,
         canvasWidth: state.canvas.width,
@@ -303,51 +289,80 @@ export const Header = memo(function Header({
         template: state.template,
       };
 
-      // Générer l'aperçu HTML
-      const formData = new FormData();
-      formData.append('action', 'pdf_builder_generate_html_preview');
-      formData.append('nonce', (window as any).pdfBuilderNonce);
-      const dataToSend = JSON.stringify({
-        pageOptions: {
-          template: templateData
-        }
-      });
-      formData.append('data', dataToSend);
+      const requestData = {
+        action: 'pdf_builder_generate_html_preview',
+        nonce: (window as any).pdfBuilderNonce,
+        data: JSON.stringify({
+          pageOptions: {
+            template: templateData
+          }
+        })
+      };
 
-      console.log('[HTML PREVIEW] Sending request with data:', dataToSend);
-      console.log('[HTML PREVIEW] Nonce:', (window as any).pdfBuilderNonce);
+      // Utiliser URLSearchParams pour l'encodage correct
+      const params = new URLSearchParams();
+      Object.entries(requestData).forEach(([key, value]) => {
+        params.append(key, String(value));
+      });
+
+      console.log('[HTML PREVIEW] Sending request with:');
+      console.log('[HTML PREVIEW] - Elements count:', transformedElements.length);
+      console.log('[HTML PREVIEW] - Canvas:', state.canvas.width, 'x', state.canvas.height);
+      console.log('[HTML PREVIEW] - Template:', state.template?.name || 'N/A');
 
       const response = await fetch('/wp-admin/admin-ajax.php', {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params.toString(),
+        credentials: 'same-origin',
       });
 
       console.log('[HTML PREVIEW] Response status:', response.status);
-      console.log('[HTML PREVIEW] Response headers:', Object.fromEntries(response.headers.entries()));
 
       const responseText = await response.text();
-      console.log('[HTML PREVIEW] Raw response:', responseText);
+      console.log('[HTML PREVIEW] Response length:', responseText.length);
 
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${responseText}`);
+        console.error('[HTML PREVIEW] HTTP error:', response.status);
+        throw new Error(`Erreur serveur: ${response.status}`);
       }
 
-      const data = JSON.parse(responseText);
+      if (responseText.trim() === '0') {
+        console.error('[HTML PREVIEW] Server returned 0 (nonce or action issue)');
+        throw new Error('Erreur d\'authentification ou d\'action non reconnue');
+      }
+
+      // Parser la réponse JSON
+      let data: any;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.warn('[HTML PREVIEW] Response is not valid JSON');
+        // Si ce n'est pas du JSON, utiliser la réponse comme HTML brut
+        setGeneratedHtml(responseText);
+        setJsonModalView('html');
+        return;
+      }
 
       if (data.success && data.data && data.data.html) {
+        console.log('[HTML PREVIEW] HTML generation successful');
         setGeneratedHtml(data.data.html);
         setJsonModalView('html');
       } else {
-        console.error('Erreur lors de la génération HTML:', data);
-        alert('Erreur lors de la génération de l\'aperçu HTML. Vérifiez la console pour plus de détails.');
+        console.error('[HTML PREVIEW] Response error:', data);
+        const errorMsg = data.data?.message || 'Erreur inconnue lors de la génération HTML';
+        throw new Error(errorMsg);
       }
     } catch (error) {
-      console.error('Erreur réseau lors de la génération HTML:', error);
-      alert('Erreur réseau lors de la génération de l\'aperçu HTML.');
+      console.error('[HTML PREVIEW] Error occurred:', error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      alert(`❌ Erreur: ${errorMessage}`);
     } finally {
       setIsGeneratingHtml(false);
     }
-  };
+  }, [state, isGeneratingHtml]);
 
   const buttonBaseStyles = {
     padding: "10px 16px",
@@ -1202,73 +1217,134 @@ export const Header = memo(function Header({
               </button>
             </div>
 
-            {/* Tabs */}
+            {/* Tabs Navigation */}
             <div
               style={{
                 display: "flex",
-                gap: "4px",
+                gap: "8px",
                 marginBottom: "16px",
-                borderBottom: "1px solid #e0e0e0",
-                paddingBottom: "8px",
+                borderBottom: "2px solid #e0e0e0",
+                paddingBottom: "0px",
               }}
             >
               <button
                 onClick={() => setJsonModalView('json')}
                 style={{
-                  padding: "8px 16px",
+                  padding: "12px 20px",
                   border: "none",
-                  borderRadius: "4px",
-                  backgroundColor: jsonModalView === 'json' ? "#0073aa" : "#f0f0f0",
-                  color: jsonModalView === 'json' ? "#ffffff" : "#333",
+                  borderBottom: jsonModalView === 'json' ? "3px solid #0073aa" : "3px solid transparent",
+                  borderRadius: "0px",
+                  backgroundColor: jsonModalView === 'json' ? "#f0f8ff" : "transparent",
+                  color: jsonModalView === 'json' ? "#0073aa" : "#666",
                   cursor: "pointer",
                   fontSize: "14px",
-                  fontWeight: "500",
+                  fontWeight: jsonModalView === 'json' ? "600" : "500",
+                  transition: "all 0.2s ease",
                 }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = jsonModalView !== 'json' ? "#f9f9f9" : "#f0f8ff"}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = jsonModalView === 'json' ? "#f0f8ff" : "transparent"}
               >
-                📄 JSON
+                📄 Données JSON
               </button>
               <button
-                onClick={generateHtmlPreview}
-                disabled={isGeneratingHtml}
-                style={{
-                  padding: "8px 16px",
-                  border: "none",
-                  borderRadius: "4px",
-                  backgroundColor: jsonModalView === 'html' ? "#10a37f" : "#f0f0f0",
-                  color: jsonModalView === 'html' ? "#ffffff" : "#333",
-                  cursor: isGeneratingHtml ? "not-allowed" : "pointer",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  opacity: isGeneratingHtml ? 0.6 : 1,
+                onClick={() => {
+                  if (generatedHtml.trim() === '') {
+                    alert('Veuillez d\'abord générer l\'aperçu HTML');
+                  } else {
+                    setJsonModalView('html');
+                  }
                 }}
+                style={{
+                  padding: "12px 20px",
+                  border: "none",
+                  borderBottom: jsonModalView === 'html' ? "3px solid #10a37f" : "3px solid transparent",
+                  borderRadius: "0px",
+                  backgroundColor: jsonModalView === 'html' ? "#f0fdf4" : "transparent",
+                  color: jsonModalView === 'html' ? "#10a37f" : "#666",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: jsonModalView === 'html' ? "600" : "500",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = jsonModalView !== 'html' ? "#f9f9f9" : "#f0fdf4"}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = jsonModalView === 'html' ? "#f0fdf4" : "transparent"}
               >
-                {isGeneratingHtml ? "⏳ Génération..." : "🌐 HTML"}
+                🌐 Aperçu HTML
               </button>
             </div>
 
-            {/* Content */}
+            {/* Generation Action Bar */}
+            {jsonModalView === 'html' && (
+              <div
+                style={{
+                  display: "flex",
+                  gap: "12px",
+                  marginBottom: "16px",
+                  padding: "12px",
+                  backgroundColor: "#fffbf0",
+                  borderRadius: "6px",
+                  border: "1px solid #ffd699",
+                }}
+              >
+                <button
+                  onClick={generateHtmlPreview}
+                  disabled={isGeneratingHtml}
+                  style={{
+                    flex: 1,
+                    padding: "10px 16px",
+                    border: "none",
+                    borderRadius: "6px",
+                    backgroundColor: isGeneratingHtml ? "#ccc" : "#10a37f",
+                    color: "#fff",
+                    cursor: isGeneratingHtml ? "not-allowed" : "pointer",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    transition: "all 0.2s ease",
+                    opacity: isGeneratingHtml ? 0.7 : 1,
+                  }}
+                >
+                  {isGeneratingHtml ? (
+                    <>
+                      <span>⏳</span>
+                      <span style={{ marginLeft: "8px" }}>Génération en cours...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>✨</span>
+                      <span style={{ marginLeft: "8px" }}>Générer l'aperçu HTML</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+
+            {/* Content Area */}
             <div
               style={{
                 flex: 1,
                 overflow: "auto",
-                backgroundColor: "#f5f5f5",
+                backgroundColor: jsonModalView === 'json' ? "#f5f5f5" : "#ffffff",
                 borderRadius: "6px",
-                padding: "16px",
+                padding: jsonModalView === 'json' ? "16px" : "0px",
                 border: "1px solid #ddd",
                 marginBottom: "16px",
-                maxHeight: "400px",
+                maxHeight: "450px",
+                display: "flex",
+                flexDirection: "column",
               }}
             >
               {jsonModalView === 'json' ? (
                 <pre
                   style={{
                     fontFamily: "'Courier New', monospace",
-                    fontSize: "12px",
-                    lineHeight: "1.5",
-                    color: "#333",
+                    fontSize: "11px",
+                    lineHeight: "1.4",
+                    color: "#1e1e1e",
                     margin: 0,
                     whiteSpace: "pre-wrap",
                     wordBreak: "break-word",
+                    background: "transparent",
+                    padding: 0,
                   }}
                 >
                   {JSON.stringify(
@@ -1280,15 +1356,31 @@ export const Header = memo(function Header({
                     2
                   )}
                 </pre>
+              ) : generatedHtml.trim() === '' ? (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: "100%",
+                    color: "#999",
+                    fontSize: "14px",
+                    fontStyle: "italic",
+                  }}
+                >
+                  Aucun aperçu HTML généré. Cliquez sur "Générer l'aperçu HTML" pour commencer.
+                </div>
               ) : (
                 <div
                   style={{
                     width: "100%",
-                    height: "100%",
+                    flex: 1,
+                    overflow: "auto",
                     backgroundColor: "#ffffff",
-                    border: "1px solid #ddd",
+                    padding: "12px",
                     borderRadius: "4px",
-                    padding: "8px",
+                    fontSize: "13px",
+                    lineHeight: "1.5",
                   }}
                   dangerouslySetInnerHTML={{ __html: generatedHtml }}
                 />
