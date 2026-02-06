@@ -95,4 +95,8 @@ const api = {
 console.log('[INDEX TOP LEVEL] ========== EXPORTING API ==========');
 console.log('[INDEX TOP LEVEL] API object:', api);
 
+// Make API globally available for WordPress integration
+(window as any).pdfBuilderReact = api;
+console.log('[INDEX TOP LEVEL] window.pdfBuilderReact assigned:', (window as any).pdfBuilderReact);
+
 export default api;

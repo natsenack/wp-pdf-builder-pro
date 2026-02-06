@@ -13,6 +13,7 @@ module.exports = {
   mode: isDev ? "development" : "production",
   entry: {
     "pdf-builder-react": "./src/js/react/index.tsx",
+    "pdf-builder-react-executor": "./src/js/pdf-builder-react-executor.js",
     "settings-tabs": "./src/js/admin/settings-tabs.js",
     "settings-main": "./src/js/admin/settings-main.js",
     "canvas-settings": "./src/js/admin/canvas-settings.js",
@@ -24,7 +25,7 @@ module.exports = {
     "pdf-builder-init": "./src/js/admin/pdf-builder-init.js",
     "pdf-preview-api-client": "./plugin/preview-system/js/pdf-preview-api-client.js",
     "pdf-preview-integration": "./src/js/admin/pdf-preview-integration.js",
-    "notifications": "./src/css/notifications.css",
+    "notifications-css": "./src/css/notifications.css",
   },
   output: {
     path: outputPath,
@@ -32,10 +33,6 @@ module.exports = {
     globalObject: 'typeof window !== "undefined" ? window : global',
     clean: true,
     assetModuleFilename: "../assets/[name][ext]",
-    library: {
-      name: 'pdfBuilderReact',
-      type: 'window'
-    }
   },
   devtool: isDev ? "eval-source-map" : false,
   performance: {

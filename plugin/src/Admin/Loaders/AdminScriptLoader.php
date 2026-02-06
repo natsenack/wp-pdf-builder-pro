@@ -812,11 +812,17 @@ class AdminScriptLoader
         wp_script_add_data('pdf-builder-react-wrapper', 'type', 'text/javascript');
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-wrapper: ' . $react_wrapper_url);
 
+        // Module executor - forces execution of the React bundle
+        $react_executor_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-executor.min.js';
+        \wp_enqueue_script('pdf-builder-react-executor', $react_executor_url, ['pdf-builder-react-main'], $version_param, true);
+        wp_script_add_data('pdf-builder-react-executor', 'type', 'text/javascript');
+        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-executor: ' . $react_executor_url);
+
         // Add a safety check script that forces initialization
-        wp_add_inline_script('pdf-builder-react-main', '
+        wp_add_inline_script('pdf-builder-react-executor', '
             window.__pdfBuilderReactBundleLoaded = true;
             console.log("[BUNDLE CHECK] Bundle loaded, pdfBuilderReact available:", typeof window.pdfBuilderReact);
-            
+
             // If still not available after 100ms, something is wrong with the bundle
             setTimeout(function() {
                 if (!window.pdfBuilderReact) {
@@ -841,14 +847,14 @@ class AdminScriptLoader
 
         // Init helper
         $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.min.js';
-        \wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react-wrapper'], $cache_bust, true);
+        \wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react-executor'], $cache_bust, true);
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-init: ' . $init_helper_url);
 
         // React initialization script - initializes PDFBuilderReact component
         $random_param = '';
         $nuclear_suffix = '';
         $react_init_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-init.min.js' . $random_param;
-        \wp_enqueue_script('pdf-builder-react-initializer', $react_init_url, ['pdf-builder-react-wrapper'], $version_param . $nuclear_suffix, true);
+        \wp_enqueue_script('pdf-builder-react-initializer', $react_init_url, ['pdf-builder-react-executor'], $version_param . $nuclear_suffix, true);
         wp_script_add_data('pdf-builder-react-initializer', 'type', 'text/javascript');
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-initializer');
 
