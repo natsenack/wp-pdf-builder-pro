@@ -37,6 +37,17 @@ if (!function_exists('sanitize_textarea_field')) {
     function sanitize_textarea_field($str) {}
 }
 
+if (!function_exists('wp_kses')) {
+    /**
+     * Sanitize with allowed HTML tags
+     * @param string $string
+     * @param array $allowed_html
+     * @param array $allowed_protocols
+     * @return string
+     */
+    function wp_kses($string, $allowed_html = [], $allowed_protocols = []) {}
+}
+
 if (!function_exists('wp_kses_post')) {
     /**
      * Sanitize post content

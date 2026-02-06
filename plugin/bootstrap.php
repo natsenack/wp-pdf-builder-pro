@@ -960,6 +960,14 @@ function pdf_builder_register_essential_ajax_hooks()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Template_Manager.php';
     }
 
+    // Charger et initialiser le PreviewAjaxHandler
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'preview-system/php/PreviewAjaxHandler.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'preview-system/php/PreviewAjaxHandler.php';
+        if (class_exists('PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
+            \PDF_Builder\PreviewSystem\PreviewAjaxHandler::init();
+        }
+    }
+
     // PDF_Builder_Admin.php déjà chargé plus haut
 
     // Créer une instance du template manager pour les handlers AJAX
@@ -1009,7 +1017,10 @@ function pdf_builder_load_core_on_demand()
             'pdf_builder_save_freemium_mode',
             'pdf_builder_update_onboarding_step',
             'pdf_builder_save_template_assignment',
-            'pdf_builder_mark_onboarding_complete'
+            'pdf_builder_mark_onboarding_complete',
+            // Actions AJAX du Preview System
+            'pdf_builder_generate_html_preview',
+            'pdf_builder_generate_preview'
         ];
         if (in_array($_REQUEST['action'], $pdf_builder_ajax_actions)) {
             $load_core = true;

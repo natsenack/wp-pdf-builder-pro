@@ -4,7 +4,7 @@ namespace PDF_Builder\Managers;
 
 // Déclarations des fonctions WordPress et constantes pour l'IDE
 if (!function_exists('wp_mkdir_p')) {
-    function wp_mkdir_p($path) { return mkdir($path, 0755, true);
+    function wp_mkdir_p($path) { return mkdir($path, 0755, true); }
 }
 if (!function_exists('wp_kses')) {
     function wp_kses($string, $allowed_html = []) { return $string; }
@@ -57,8 +57,8 @@ if (!defined('ABSPATH')) {
  * Gestion de l'intégration WooCommerce
  */
 
-// use PDF_Builder\Controllers\PdfBuilderProGenerator;
-// use PDF_Builder\Core\PDF_Builder_Security_Validator;
+use PDF_Builder\Controllers\PdfBuilderProGenerator;
+use PDF_Builder\Core\PDF_Builder_Security_Validator;
 
 /**
  * Stub class for PDF_Builder_Rate_Limiter
@@ -107,7 +107,7 @@ if (!function_exists('wp_nonce_field')) {
     function wp_nonce_field($action = -1, $name = '_wpnonce', $referer = true, $echo = true) {}
 }
 if (!function_exists('wp_mkdir_p')) {
-    function wp_mkdir_p($dir) { return mkdir($dir, 0755, true);
+    function wp_mkdir_p($dir) { return mkdir($dir, 0755, true); }
 }
 if (!function_exists('wp_kses')) {
     function wp_kses($string, $allowed_html = []) { return $string; }
@@ -640,11 +640,11 @@ class PDF_Builder_WooCommerce_Integration
                     'filename' => $filename
                 ]);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             \wp_send_json_error('Erreur Exception: ' . $e->getMessage());
-        } catch (Error $e) {
+        } catch (\Error $e) {
             \wp_send_json_error('Erreur PHP: ' . $e->getMessage());
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             \wp_send_json_error('Erreur Throwable: ' . $e->getMessage());
         }
     }
@@ -1153,7 +1153,7 @@ class PDF_Builder_WooCommerce_Integration
                 'elements_count' => count($sanitized_elements)
                 ]
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             \wp_send_json_error('Erreur interne lors de la sauvegarde');
         }
     }
@@ -1313,7 +1313,7 @@ class PDF_Builder_WooCommerce_Integration
                 'elements_count' => count($canvas_data)
                 ]
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             \wp_send_json_error('Erreur interne lors du chargement');
         }
     }
@@ -1427,7 +1427,7 @@ class PDF_Builder_WooCommerce_Integration
                 'element_count' => is_array($canvas_elements) ? count($canvas_elements) : 0
                 ]
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             \wp_send_json_error('Erreur interne lors de la récupération des éléments');
         }
     }
@@ -1700,7 +1700,7 @@ class PDF_Builder_WooCommerce_Integration
                 'order_id' => $order_id
                 ]
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             \wp_send_json_error('Erreur interne lors de la récupération des données de commande');
         }
     }
@@ -1744,7 +1744,7 @@ class PDF_Builder_WooCommerce_Integration
                 'accessible' => true
                 ]
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             \wp_send_json_error('Erreur interne lors de la validation d\'accès');
         }
     }
@@ -1794,7 +1794,7 @@ class PDF_Builder_WooCommerce_Integration
             wp_send_json_success([
                 'company' => $company_data
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             \wp_send_json_error('Erreur interne lors de la récupération des données entreprise');
         }
     }

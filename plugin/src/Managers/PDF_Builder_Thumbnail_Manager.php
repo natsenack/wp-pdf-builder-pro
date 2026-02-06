@@ -118,7 +118,6 @@ class PDF_Builder_Thumbnail_Manager
         imagestring($image, 5, 20, 80, 'Template ' . $template_id, $black);
 
         imagepng($image, $thumbnail_path);
-        imagedestroy($image);
 
         return $thumbnail_path;
     }
@@ -195,7 +194,6 @@ class PDF_Builder_Thumbnail_Manager
         }
 
         imagepng($image, $thumbnail_path);
-        imagedestroy($image);
 
         return $thumbnail_path;
     }
