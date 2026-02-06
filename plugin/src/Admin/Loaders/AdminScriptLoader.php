@@ -519,47 +519,53 @@ class AdminScriptLoader
         // Add React shim to expose window.React and window.ReactDOM for webpack externals
         wp_add_inline_script('wp-element', '
             (function() {
-                console.log("[PDF BUILDER SHIM] Initializing React globals from wp.element...");
+                console.log("[PDF BUILDER SHIM] ===== SHIM EXECUTION STARTED =====");
                 
                 if (typeof window !== "undefined") {
-                    // Get React from wp.element
-                    if (window.wp && window.wp.element && !window.React) {
-                        window.React = window.wp.element;
-                        console.log("[PDF BUILDER SHIM] ✅ window.React exposed from wp.element");
+                    // First check what we have
+                    console.log("[PDF BUILDER SHIM] Checking window structure:");
+                    console.log("[PDF BUILDER SHIM]   window.wp:", typeof window.wp);
+                    if (window.wp) {
+                        console.log("[PDF BUILDER SHIM]   window.wp.element:", typeof window.wp.element);
                     }
                     
-                    // Get ReactDOM from wp.element
-                    if (window.wp && window.wp.element && !window.ReactDOM) {
-                        // WordPress React uses a simplified API, create a wrapper
-                        if (typeof window.wp.element.render === "function") {
+                    // Try multiple approaches
+                    // Approach 1: Direct assignment from wp.element
+                    if (window.wp && window.wp.element) {
+                        window.React = window.wp.element;
+                        console.log("[PDF BUILDER SHIM] ✅ window.React = window.wp.element");
+                        
+                        // Create ReactDOM wrapper
+                        if (!window.ReactDOM) {
                             window.ReactDOM = {
-                                render: function(element, container) {
-                                    return window.wp.element.render(element, container);
-                                }
-                            };
-                            // Add createRoot for React 18 compatibility
-                            if (typeof window.wp.element.createRoot === "function") {
-                                window.ReactDOM.createRoot = function(container) {
+                                render: function(element, container) { 
+                                    return window.wp.element.render(element, container); 
+                                },
+                                createRoot: function(container) {
                                     return {
                                         render: function(element) {
-                                            window.wp.element.render(element, container);
+                                            return window.wp.element.render(element, container);
                                         }
                                     };
-                                };
-                            }
-                            console.log("[PDF BUILDER SHIM] ✅ window.ReactDOM exposed from wp.element");
+                                }
+                            };
+                            console.log("[PDF BUILDER SHIM] ✅ window.ReactDOM created");
                         }
                     }
                     
-                    // Log final state
-                    setTimeout(function() {
-                        console.log("[PDF BUILDER SHIM] Final state:");
-                        console.log("[PDF BUILDER SHIM]   window.React:", typeof window.React !== "undefined" ? "available" : "missing");
-                        console.log("[PDF BUILDER SHIM]   window.ReactDOM:", typeof window.ReactDOM !== "undefined" ? "available" : "missing");
-                    }, 100);
+                    // Approach 2: Check if already available from somewhere else
+                    if (typeof window.React === "undefined" && typeof window.wp !== "undefined") {
+                        console.log("[PDF BUILDER SHIM] ⚠️  window.React still missing after sync attempt");
+                        console.log("[PDF BUILDER SHIM] wp object keys:", Object.keys(window.wp).slice(0, 10).join(", "));
+                    }
+                    
+                    // Log final state immediately
+                    console.log("[PDF BUILDER SHIM] ===== SHIM FINAL STATE =====");
+                    console.log("[PDF BUILDER SHIM] window.React:", typeof window.React !== "undefined" ? "✅ available" : "❌ missing");
+                    console.log("[PDF BUILDER SHIM] window.ReactDOM:", typeof window.ReactDOM !== "undefined" ? "✅ available" : "❌ missing");
                 }
             })();
-        ', "before");
+        ', "after");
         
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-main with WordPress React dependencies');
         
