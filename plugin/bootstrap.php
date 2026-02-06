@@ -30,21 +30,6 @@ if (file_exists($autoload_path)) {
 
 }
 
-// ✅ CHARGER EXPLICITEMENT LES FICHIERS SYSTÈME CRITIQUES
-$critical_files = [
-    'preview-system/php/PreviewAjaxHandler.php',
-];
-
-foreach ($critical_files as $file) {
-    $file_path = PDF_BUILDER_PLUGIN_DIR . $file;
-    if (file_exists($file_path)) {
-        require_once $file_path;
-        error_log('[BOOTSTRAP] Loaded critical file: ' . $file);
-    } else {
-        error_log('[BOOTSTRAP] ⚠️ MISSING critical file: ' . $file);
-    }
-}
-
 // Si Composer n'est pas disponible, créer un autoloader PSR-4 personnalisé
 if (!$composer_autoloader_found) {
     spl_autoload_register(function($class) {
@@ -446,17 +431,6 @@ if (function_exists('add_action')) {
         }
     }, 0);
 
-    // Initialiser l'API Preview après que WordPress soit chargé
-    add_action('init', function() {
-        if (class_exists('\\PDF_Builder\\Api\\PreviewImageAPI')) {
-            new \PDF_Builder\Api\PreviewImageAPI();
-        }
-        // Initialiser le handler AJAX pour l'aperçu
-        if (class_exists('\\PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
-            \PDF_Builder\PreviewSystem\PreviewAjaxHandler::init();
-        }
-    });
-
     // Force HTTPS if enabled in settings (simple redirect to https if not SSL)
     add_action('template_redirect', function() {
         // Skip CLI, AJAX, REST requests and cron
@@ -648,11 +622,6 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
     }
 
-    // Charger le handler AJAX d'image de prévisualisation (Phase 3.0)
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
-    }
-
     // Charger les handlers AJAX pour les paramètres
 
     // ============================================================================
@@ -787,9 +756,6 @@ function pdf_builder_load_new_classes()
 
     // Les classes PSR-4 sont maintenant chargées automatiquement par l'autoloader
     // Seuls les fichiers spéciaux qui ne suivent pas PSR-4 sont chargés manuellement
-
-    // Charger l'API Preview (système spécial)
-    require_once PDF_BUILDER_PLUGIN_DIR . 'preview-system/index.php';
 
     $new_classes_loaded = true;
 }
@@ -952,13 +918,6 @@ function pdf_builder_load_admin_components()
 
     // CHARGER LES HOOKS AJAX ESSENTIELS
     pdf_builder_register_essential_ajax_hooks();
-
-    // INSTANCIER L'API PREVIEW POUR LES ROUTES REST
-    add_action('init', function() {
-        if (class_exists('PDF_Builder\\Api\\PreviewImageAPI')) {
-            new \PDF_Builder\Api\PreviewImageAPI();
-        }
-    });
 
     // Initialiser l'interface d'administration
     if (class_exists('PDF_Builder\\Core\\PdfBuilderCore')) {
@@ -1556,16 +1515,6 @@ if (file_exists($migration_ajax_path)) {
 // ============================================================================
 // ✅ INITIALISATION DU PLANIFICATEUR DE TÂCHES
 // ============================================================================
-
-// ============================================================================
-// ✅ INITIALISATION DU SYSTÈME D'APERÇU
-// ============================================================================
-add_action('init', function() {
-    if (class_exists('PDF_Builder\PreviewSystem\PreviewAjaxHandler')) {
-        \PDF_Builder\PreviewSystem\PreviewAjaxHandler::init();
-        error_log('[BOOTSTRAP] PreviewAjaxHandler initialized');
-    }
-});
 
 // ============================================================================
 // FIN DU BOOTSTRAP
