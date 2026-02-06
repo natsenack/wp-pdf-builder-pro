@@ -29,10 +29,6 @@ module.exports = {
   output: {
     path: outputPath,
     filename: "[name].min.js",
-    library: {
-      type: "assign",
-      name: "PdfBuilderApp"
-    },
     globalObject: 'typeof window !== "undefined" ? window : global',
     clean: true,
     assetModuleFilename: "../assets/[name][ext]",
