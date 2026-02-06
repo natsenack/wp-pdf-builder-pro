@@ -16,7 +16,26 @@ console.log('[REACT INDEX] React available:', typeof React);
 console.log('[REACT INDEX] createRoot available:', typeof createRoot);
 
 import React from 'react';
-import { createRoot, Root } from 'react-dom/client';
+// Support both WordPress React (no createRoot) and modern React
+let createRoot: any;
+if (typeof (window as any).ReactDOM !== 'undefined' && (window as any).ReactDOM.createRoot) {
+  createRoot = (window as any).ReactDOM.createRoot;
+} else if (typeof (window as any).ReactDOM !== 'undefined') {
+  // Fallback for WordPress React without createRoot
+  createRoot = (container: any) => ({
+    render: (element: React.ReactElement) => {
+      (window as any).ReactDOM.render(element, container);
+    },
+    unmount: () => {
+      (window as any).ReactDOM.unmountComponentAtNode(container);
+    }
+  });
+} else {
+  // If ReactDOM is not available, import from node_modules
+  const { createRoot: cr, Root } = require('react-dom/client');
+  createRoot = cr;
+}
+
 import { PDFBuilder } from './PDFBuilder';
 import createLogger from '@utils/logger';
 import { getDOMContainer } from '@utils/dom';
@@ -32,7 +51,7 @@ logger.info('🚀 PDF Builder V2 module execution started');
 // console.log('[PDF Builder React] Module loaded, React available:', typeof React);
 // console.log('[PDF Builder React] createRoot available:', typeof createRoot);
 
-let reactRoot: Root | null = null;
+let reactRoot: any = null;
 
 // ============================================================================
 // MAIN INITIALIZATION FUNCTION
