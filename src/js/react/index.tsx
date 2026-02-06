@@ -8,9 +8,15 @@
  * - Properties panel for element editing
  */
 
+// DEBUG: Mark that module execution started
+if (typeof window !== 'undefined') {
+  (window as any).__pdfBuilderReactModuleLoaded = true;
+  console.log('[INDEX MODULE] Module loaded and executing');
+}
+
 // Self-assign to window immediately - before anything else
 (function() {
-  console.log('[INDEX TOP LEVEL] Module execution - assigning to window');
+  console.log('[INDEX TOP LEVEL] IIFE execution started');
   
   // Import everything inside to ensure it's part of the IIFE closure
   const React = require('react');
@@ -25,59 +31,59 @@
   console.log('[INDEX TOP LEVEL] Dependencies loaded');
   console.log('[INDEX TOP LEVEL] React available:', typeof React);
   console.log('[INDEX TOP LEVEL] PDFBuilder available:', typeof PDFBuilder);
-  
-  // Support both WordPress React (no createRoot) and modern React
-  let createRoot: any;
-  
-  if (typeof (window as any).ReactDOM !== 'undefined' && (window as any).ReactDOM.createRoot) {
-    console.log('[INDEX TOP LEVEL] Using ReactDOM.createRoot');
-    createRoot = (window as any).ReactDOM.createRoot;
-  } else if (typeof (window as any).ReactDOM !== 'undefined') {
-    // Fallback for WordPress React without createRoot
-    console.log('[INDEX TOP LEVEL] Using ReactDOM.render fallback');
-    createRoot = (container: any) => ({
-      render: (element: any) => {
-        (window as any).ReactDOM.render(element, container);
-      },
-      unmount: () => {
-        (window as any).ReactDOM.unmountComponentAtNode(container);
-      }
-    });
-  } else {
-    console.log('[INDEX TOP LEVEL] Using require fallback');
-    try {
-      const RDom = require('react-dom/client');
-      createRoot = RDom.createRoot;
-    } catch (e) {
-      console.error('[INDEX TOP LEVEL] No ReactDOM available:', e);
-      createRoot = (container: any) => ({
-        render: () => console.warn('[INDEX TOP LEVEL] No renderer available'),
-        unmount: () => {}
-      });
-    }
-  }
-  
-  // ============================================================================
-  // MAIN INITIALIZATION FUNCTION
-  // ============================================================================
-
-  function initPDFBuilderReact(containerId: string = 'pdf-builder-react-root'): boolean {
-    console.log('[INDEX] initPDFBuilderReact called with:', containerId);
     
-    try {
-      const container = getDOMContainer(containerId);
-      if (!container) {
-        logger.error(`Container not found: ${containerId}`);
-        return false;
-      }
-
-      logger.info(`Initializing PDF Builder in container: ${containerId}`);
-
+    // Support both WordPress React (no createRoot) and modern React
+    let createRoot: any;
+    
+    if (typeof (window as any).ReactDOM !== 'undefined' && (window as any).ReactDOM.createRoot) {
+      console.log('[INDEX TOP LEVEL] Using ReactDOM.createRoot');
+      createRoot = (window as any).ReactDOM.createRoot;
+    } else if (typeof (window as any).ReactDOM !== 'undefined') {
+      // Fallback for WordPress React without createRoot
+      console.log('[INDEX TOP LEVEL] Using ReactDOM.render fallback');
+      createRoot = (container: any) => ({
+        render: (element: any) => {
+          (window as any).ReactDOM.render(element, container);
+        },
+        unmount: () => {
+          (window as any).ReactDOM.unmountComponentAtNode(container);
+        }
+      });
+    } else {
+      console.log('[INDEX TOP LEVEL] Using require fallback');
       try {
-        const root = createRoot(container);
-        const element = React.createElement(PDFBuilder);
-        root.render(element);
-        logger.info('✅ PDF Builder initialized successfully');
+        const RDom = require('react-dom/client');
+        createRoot = RDom.createRoot;
+      } catch (e) {
+        console.error('[INDEX TOP LEVEL] No ReactDOM available:', e);
+        createRoot = (container: any) => ({
+          render: () => console.warn('[INDEX TOP LEVEL] No renderer available'),
+          unmount: () => {}
+        });
+      }
+    }
+    
+    // ============================================================================
+    // MAIN INITIALIZATION FUNCTION
+    // ============================================================================
+
+    function initPDFBuilderReact(containerId: string = 'pdf-builder-react-root'): boolean {
+      console.log('[INDEX] initPDFBuilderReact called with:', containerId);
+      
+      try {
+        const container = getDOMContainer(containerId);
+        if (!container) {
+          logger.error(`Container not found: ${containerId}`);
+          return false;
+        }
+
+        logger.info(`Initializing PDF Builder in container: ${containerId}`);
+
+        try {
+          const root = createRoot(container);
+          const element = React.createElement(PDFBuilder);
+          root.render(element);
+          logger.info('✅ PDF Builder initialized successfully');
         return true;
       } catch (renderError) {
         logger.error('Failed to render PDF Builder:', renderError);

@@ -812,6 +812,27 @@ class AdminScriptLoader
         wp_script_add_data('pdf-builder-react-wrapper', 'type', 'text/javascript');
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-wrapper: ' . $react_wrapper_url);
 
+        // Add a safety check script that forces initialization
+        wp_add_inline_script('pdf-builder-react-main', '
+            window.__pdfBuilderReactBundleLoaded = true;
+            console.log("[BUNDLE CHECK] Bundle loaded, pdfBuilderReact available:", typeof window.pdfBuilderReact);
+            
+            // If still not available after 100ms, something is wrong with the bundle
+            setTimeout(function() {
+                if (!window.pdfBuilderReact) {
+                    console.warn("[BUNDLE CHECK] pdfBuilderReact not found, creating fallback");
+                    window.pdfBuilderReact = {
+                        initPDFBuilderReact: function() {
+                            console.error("[BUNDLE] Error: React bundle failed to initialize");
+                            return false;
+                        },
+                        _isFallback: true,
+                        _error: "Bundle failed to export pdfBuilderReact"
+                    };
+                }
+            }, 100);
+        ', 'after');
+
         // Init helper
         $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.min.js';
         \wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react-wrapper'], $cache_bust, true);
