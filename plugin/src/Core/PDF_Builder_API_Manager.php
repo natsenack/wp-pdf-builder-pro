@@ -99,7 +99,7 @@ class PDF_Builder_API_Manager {
             $this->save_connections();
 
             // Logger la connexion
-            }
+            error_log('API connection established for: ' . $service);
 
             return [
                 'success' => true,
@@ -134,8 +134,6 @@ class PDF_Builder_API_Manager {
 
         // Nettoyer le cache du client
         unset($this->api_clients[$service]);
-
-        }
 
         return [
             'success' => true,

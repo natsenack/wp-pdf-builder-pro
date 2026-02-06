@@ -219,24 +219,9 @@ class PDF_Builder_Advanced_Reporting {
             // Sauvegarder le rapport
             $this->save_report($report);
 
-            // Logger la génération
-                    'report_id' => $report['id'],
-                    'type' => $type,
-                    'period' => $period,
-                    'format' => $format
-                ]);
-            }
-
             return $report;
 
         } catch (Exception $e) {
-            // Logger l'erreur
-                    'type' => $type,
-                    'period' => $period,
-                    'error' => $e->getMessage()
-                ]);
-            }
-
             throw $e;
         }
     }
@@ -705,10 +690,7 @@ class PDF_Builder_Advanced_Reporting {
 
                 } catch (Exception $e) {
                     // Logger l'erreur
-                            'schedule_id' => $schedule_id,
-                            'error' => $e->getMessage()
-                        ]);
-                    }
+                    error_log('Error generating scheduled report: ' . $e->getMessage());
                 }
             }
         }
@@ -881,10 +863,7 @@ class PDF_Builder_Advanced_Reporting {
 
         } catch (Exception $e) {
             // Logger l'erreur
-                    'schedule_id' => $schedule_id,
-                    'error' => $e->getMessage()
-                ]);
-            }
+            error_log('Error generating scheduled report: ' . $e->getMessage());
         }
     }
 

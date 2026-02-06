@@ -90,11 +90,6 @@ class PDF_Builder_Auto_Update_System {
                     // Legacy notification calls removed — log an error for security updates
                 }
 
-                        'version' => $best_update['version'],
-                        'type' => $best_update['type']
-                    ]);
-                }
-
                 return $best_update;
             }
 
@@ -256,11 +251,6 @@ class PDF_Builder_Auto_Update_System {
                 'download_path' => $download_path,
                 'downloaded_at' => current_time('mysql')
             ]);
-
-                    'version' => $version,
-                    'size' => filesize($download_path)
-                ]);
-            }
 
             return $download_path;
 

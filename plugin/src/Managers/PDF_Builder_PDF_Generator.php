@@ -356,6 +356,7 @@ class PDF_Builder_PDF_Generator
     private function renderElementToHtml($element)
     {
         $type = $element['type'] ?? 'text';
+        $order = null; // Initialize order variable
 
         // Extraire les coordonnées
         $x = $element['position']['x'] ?? $element['x'] ?? 0;

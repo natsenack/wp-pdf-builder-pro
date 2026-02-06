@@ -1122,6 +1122,120 @@ if (!defined('ARRAY_N')) {
     define('ARRAY_N', 'ARRAY_N');
 }
 
+// File and Attachment Functions
+if (!function_exists('sanitize_file_name')) {
+    /**
+     * Sanitize a filename
+     * @param string $filename
+     * @return string
+     */
+    function sanitize_file_name($filename) {}
+}
+
+if (!function_exists('wp_get_attachment_url')) {
+    /**
+     * Get the URL of a media attachment
+     * @param int $attachment_id
+     * @return string|false
+     */
+    function wp_get_attachment_url($attachment_id) {}
+}
+
+if (!function_exists('wp_get_attachment_metadata')) {
+    /**
+     * Get attachment metadata
+     * @param int $attachment_id
+     * @param bool $unfiltered
+     * @return array|false
+     */
+    function wp_get_attachment_metadata($attachment_id, $unfiltered = false) {}
+}
+
+// Dompdf stubs
+namespace Dompdf {
+    if (!class_exists('\Dompdf\Dompdf')) {
+        class Dompdf {
+            public function __construct() {}
+            public function loadHtml($html, $encoding = null) {}
+            public function render() {}
+            public function output() {}
+            public function stream($filename = 'document.pdf', $options = []) {}
+            public function getCanvas() {}
+            public function setProtocol($protocol = 'file://') {}
+            public function setPaper($paper = 'letter', $orientation = 'portrait') {}
+        }
+    }
+
+    if (!class_exists('\Dompdf\Options')) {
+        class Options {
+            public function __construct(array $options = []) {}
+            public function set(string $key, $value) {}
+            public function get(string $key) {}
+            public function setFontDir($path) {}
+            public function setFontCache($path) {}
+        }
+    }
+}
+
+if (!function_exists('wp_generate_password')) {
+    /**
+     * Generate a random password
+     * @param int $length
+     * @param bool $special_chars
+     * @return string
+     */
+    function wp_generate_password($length = 12, $special_chars = true) {}
+}
+
+if (!function_exists('date_i18n')) {
+    /**
+     * Retrieve the date in localized format
+     * @param string $format
+     * @param int|bool $timestamp
+     * @param bool $gmt
+     * @return string
+     */
+    function date_i18n($format, $timestamp = false, $gmt = false) {}
+}
+
+if (!function_exists('wp_schedule_single_event')) {
+    /**
+     * Schedule an event to run once
+     * @param int $timestamp
+     * @param string $hook
+     * @param array $args
+     * @return false|void
+     */
+    function wp_schedule_single_event($timestamp, $hook, $args = []) {}
+}
+
+if (!function_exists('wp_tempnam')) {
+    /**
+     * Get a temporary file name
+     * @param string $dir
+     * @param string $prefix
+     * @return string|false
+     */
+    function wp_tempnam($dir = '', $prefix = '') {}
+}
+
+if (!function_exists('wp_mail')) {
+    /**
+     * Send mail
+     * @param string|array $to
+     * @param string $subject
+     * @param string $message
+     * @param string|array $headers
+     * @param string|array $attachments
+     * @return bool
+     */
+    function wp_mail($to, $subject, $message, $headers = '', $attachments = []) {}
+}
+
+if (!defined('DAY_IN_SECONDS')) {
+    define('DAY_IN_SECONDS', 86400);
+}
+
 // WordPress Exception class
 if (!class_exists('Exception')) {
     class Exception extends \Exception {}

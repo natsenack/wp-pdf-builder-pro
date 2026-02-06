@@ -217,16 +217,11 @@ class PDF_Builder_Auto_Update_Manager {
             $this->check_security_patches();
 
             // Logger la vérification
-                    'updates_found' => count($filtered_updates),
-                    'security_patches' => count($this->security_patches)
-                ]);
-            }
+            error_log('Update check completed. Updates found: ' . count($filtered_updates));
 
         } catch (Exception $e) {
             // Logger l'erreur
-                    'error' => $e->getMessage()
-                ]);
-            }
+            error_log('Error checking for updates: ' . $e->getMessage());
         }
     }
 
@@ -265,9 +260,7 @@ class PDF_Builder_Auto_Update_Manager {
 
         } catch (Exception $e) {
             // Logger l'erreur silencieusement
-                    'error' => $e->getMessage()
-                ]);
-            }
+            error_log('Security patch check failed: ' . $e->getMessage());
         }
     }
 
@@ -315,10 +308,7 @@ class PDF_Builder_Auto_Update_Manager {
                 $this->cleanup_update_files();
 
                 // Logger l'installation
-                        'update_id' => $update_id,
-                        'version' => $update['version']
-                    ]);
-                }
+                error_log('Update installed successfully: ' . $update_id);
 
                 return [
                     'success' => true,
@@ -338,10 +328,7 @@ class PDF_Builder_Auto_Update_Manager {
             }
 
             // Logger l'erreur
-                    'update_id' => $update_id,
-                    'error' => $e->getMessage()
-                ]);
-            }
+            error_log('Update installation failed for ' . $update_id . ': ' . $e->getMessage());
 
             return [
                 'success' => false,
