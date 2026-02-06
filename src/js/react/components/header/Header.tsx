@@ -285,9 +285,17 @@ export const Header = memo(function Header({
         template: state.template,
       };
 
+      // Utilisez l'URL de WordPress si disponible
+      const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
+      const nonce = (window as any).pdfBuilderNonce;
+      
+      console.log('[JSON TO HTML] AJAX URL:', ajaxUrl);
+      console.log('[JSON TO HTML] Nonce:', nonce);
+      console.log('[JSON TO HTML] Template Data:', templateData);
+
       const requestData = {
         action: 'pdf_builder_generate_html_preview',
-        nonce: (window as any).pdfBuilderNonce,
+        nonce: nonce,
         data: JSON.stringify({
           pageOptions: {
             template: templateData
@@ -300,7 +308,9 @@ export const Header = memo(function Header({
         params.append(key, String(value));
       });
 
-      const response = await fetch('/wp-admin/admin-ajax.php', {
+      console.log('[JSON TO HTML] Form Data:', params.toString());
+
+      const response = await fetch(ajaxUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -311,8 +321,13 @@ export const Header = memo(function Header({
 
       const responseText = await response.text();
 
+      console.log('[JSON TO HTML] Response Status:', response.status);
+      console.log('[JSON TO HTML] Response Text:', responseText);
+
       if (!response.ok) {
-        throw new Error(`Erreur serveur: ${response.status}`);
+        console.error('[JSON TO HTML] Request failed with status:', response.status);
+        console.error('[JSON TO HTML] Response body:', responseText);
+        throw new Error(`Erreur serveur: ${response.status} - ${responseText.substring(0, 100)}`);
       }
 
       if (responseText.trim() === '0') {
