@@ -396,7 +396,7 @@ class AdminScriptLoader
      */
     private function loadReactEditorScripts($hook = null)
     {
-        error_log('[WP AdminScriptLoader] loadReactEditorScripts called at ' . date('Y-m-d H:i:s') . ' for page: ' . (isset($_GET['page']) ? $_GET['page'] : 'unknown'));
+        error_log('[WP AdminScriptLoader] loadReactEditorScripts STARTED at ' . date('Y-m-d H:i:s') . ' for page: ' . (isset($_GET['page']) ? $_GET['page'] : 'unknown') . ', hook: ' . $hook);
 
         // VÉRIFICATION DES FICHIERS AVANT CHARGEMENT
         $throttle_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/ajax-throttle.min.js';
@@ -514,11 +514,13 @@ class AdminScriptLoader
         // Enqueue React vendor bundle (contains React and ReactDOM)
         $react_vendor_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/react-vendor.min.js';
         \wp_enqueue_script('pdf-builder-react-vendor', $react_vendor_url, [], $version_param, false);
+        error_log('[WP AdminScriptLoader] VENDOR ENQUEUED: ' . $react_vendor_url);
         
         // Main React app bundle  
         $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js';
         \wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-react-vendor', 'wp-element', 'wp-components', 'wp-data', 'wp-hooks', 'wp-api', 'media-views'], $version_param, true);
         wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
+        error_log('[WP AdminScriptLoader] MAIN ENQUEUED: ' . $react_main_url);
         
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-vendor and pdf-builder-react-main with dependencies');
         
