@@ -1,68 +1,92 @@
 /**
- * MINIMAL TEST - PDF Builder React Bundle
+ * PDF Builder Pro - React Application Entry Point
+ * Main entry point for the React-based PDF editor
  */
 
-// IMMEDIATE EXECUTION - Test if bundle runs at all
-(function() {
-  console.log('[MINIMAL BUNDLE] ===== BUNDLE IS EXECUTING =====');
-  console.log('[MINIMAL BUNDLE] Timestamp:', new Date().toISOString());
-  console.log('[MINIMAL BUNDLE] Window available:', typeof window !== 'undefined');
-  console.log('[MINIMAL BUNDLE] Document available:', typeof document !== 'undefined');
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import { PDFBuilder } from './PDFBuilder';
+import '../../css/main.css';
 
-  // Test basic functionality
-  if (typeof window !== 'undefined') {
-    window.pdfBuilderBundleExecuted = 'YES_' + Date.now();
-    console.log('[MINIMAL BUNDLE] Set test variable:', window.pdfBuilderBundleExecuted);
-  }
-})();
+// Debug logging
+console.log('[PDF Builder] ===== REACT APP INITIALIZING =====');
+console.log('[PDF Builder] React version:', React.version);
+console.log('[PDF Builder] Timestamp:', new Date().toISOString());
+console.log('[PDF Builder] Window available:', typeof window !== 'undefined');
+console.log('[PDF Builder] Document available:', typeof document !== 'undefined');
 
-// Create minimal API without any imports
-console.log('[MINIMAL BUNDLE] Creating minimal API...');
+// API for WordPress integration
+const pdfBuilderReactAPI = {
+  initPDFBuilderReact: function(containerId: string = 'pdf-builder-react-root') {
+    console.log('[PDF Builder] initPDFBuilderReact called with container:', containerId);
 
-const minimalApi = {
-  initPDFBuilderReact: function(containerId: string) {
-    console.log('[MINIMAL API] initPDFBuilderReact called with:', containerId);
+    try {
+      const container = document.getElementById(containerId);
+      if (!container) {
+        console.error('[PDF Builder] Container not found:', containerId);
+        return false;
+      }
 
-    const container = document.getElementById(containerId);
-    if (container) {
-      container.innerHTML = `
-        <div style="padding: 20px; border: 2px solid green; border-radius: 5px; background: #e8f5e8; margin: 20px;">
-          <h3 style="color: green; margin: 0 0 10px 0;">✅ PDF Builder Bundle Working!</h3>
-          <p style="margin: 5px 0;">The React bundle is executing correctly.</p>
-          <p style="margin: 5px 0;">Container ID: <strong>${containerId}</strong></p>
-          <p style="margin: 5px 0;">Timestamp: <strong>${new Date().toISOString()}</strong></p>
-          <p style="margin: 5px 0; color: blue;">Next step: Restore React functionality</p>
-        </div>
-      `;
-      console.log('[MINIMAL API] Container updated successfully');
+      console.log('[PDF Builder] Container found, creating React root...');
+
+      // Create React root if it doesn't exist
+      if (!container._reactRoot) {
+        container._reactRoot = createRoot(container);
+        console.log('[PDF Builder] React root created');
+      }
+
+      // Render the PDF Builder component
+      console.log('[PDF Builder] Rendering PDFBuilder component...');
+      container._reactRoot.render(
+        React.createElement(PDFBuilder, {
+          containerId,
+          timestamp: Date.now()
+        })
+      );
+
+      console.log('[PDF Builder] ✅ PDF Builder React app initialized successfully');
       return true;
-    } else {
-      console.error('[MINIMAL API] Container not found:', containerId);
+
+    } catch (error) {
+      console.error('[PDF Builder] ❌ Failed to initialize React app:', error);
       return false;
     }
   },
-  version: '0.1.0-minimal-test',
-  bundleExecuted: true,
-  timestamp: Date.now()
+
+  version: '2.0.0',
+  isInitialized: false,
+
+  // Utility methods
+  getContainer: function(containerId: string = 'pdf-builder-react-root') {
+    return document.getElementById(containerId);
+  },
+
+  destroy: function(containerId: string = 'pdf-builder-react-root') {
+    try {
+      const container = document.getElementById(containerId);
+      if (container && container._reactRoot) {
+        container._reactRoot.unmount();
+        container._reactRoot = null;
+        console.log('[PDF Builder] React app destroyed');
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('[PDF Builder] Error destroying React app:', error);
+      return false;
+    }
+  }
 };
 
-console.log('[MINIMAL BUNDLE] API created:', minimalApi);
-
-// Export as default - webpack will handle this
-export default minimalApi;
-
-// Also assign to window immediately and with delay to ensure it works
+// Make API globally available
 if (typeof window !== 'undefined') {
-  window.pdfBuilderReact = minimalApi;
-  console.log('[MINIMAL BUNDLE] window.pdfBuilderReact assigned immediately');
-
-  // Also assign with a small delay in case webpack needs time
-  setTimeout(() => {
-    window.pdfBuilderReact = minimalApi;
-    console.log('[MINIMAL BUNDLE] window.pdfBuilderReact assigned with delay');
-  }, 1);
+  window.pdfBuilderReact = pdfBuilderReactAPI;
+  console.log('[PDF Builder] window.pdfBuilderReact API assigned');
 } else {
-  console.error('[MINIMAL BUNDLE] Window not available!');
+  console.error('[PDF Builder] Window not available - cannot assign global API');
 }
 
-console.log('[MINIMAL BUNDLE] ===== BUNDLE EXECUTION COMPLETE =====');
+console.log('[PDF Builder] ===== REACT APP INITIALIZATION COMPLETE =====');
+
+// Export for potential module usage
+export default pdfBuilderReactAPI;
