@@ -178,7 +178,7 @@
                     <input type="hidden" name="pdf_builder_settings[pdf_builder_canvas_allow_landscape]" value="<?php echo esc_attr(pdf_builder_get_option('pdf_builder_canvas_allow_landscape', '1')); ?>">
 
                     <!-- DEBUG: Hidden fields rendering completed -->
-                    <?php error_log("[PDF Builder] HIDDEN_FIELDS - Hidden fields rendered successfully");
+                    <?php error_log("[PDF Builder] HIDDEN_FIELDS - Hidden fields rendered successfully"); ?>
 
                     <!-- Grille de cartes Canvas -->
                     <div class="canvas-settings-grid">
