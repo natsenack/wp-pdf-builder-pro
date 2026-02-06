@@ -30,9 +30,8 @@ module.exports = {
     path: outputPath,
     filename: "[name].min.js",
     library: {
-      type: "var",
-      name: "PdfBuilderApp",
-      export: "default"
+      type: "assign",
+      name: "PdfBuilderApp"
     },
     globalObject: 'typeof window !== "undefined" ? window : global',
     clean: true,

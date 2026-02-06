@@ -520,6 +520,34 @@ class AdminScriptLoader
         \wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['pdf-builder-react-vendor', 'wp-element', 'wp-components', 'wp-data', 'wp-hooks', 'wp-api', 'media-views'], $version_param, true);
         wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
         
+        // Add inline script to expose the bundle globally and initialize
+        wp_add_inline_script('pdf-builder-react-main', '
+            (function() {
+                console.log("[INIT WRAPPER] Script execution wrapper loaded");
+                
+                // Check if webpack bundle exported PdfBuilderApp
+                if (typeof PdfBuilderApp !== "undefined") {
+                    console.log("[INIT WRAPPER] PdfBuilderApp found, exposing to window");
+                    window.pdfBuilderReact = PdfBuilderApp;
+                    console.log("[INIT WRAPPER] ✅ window.pdfBuilderReact = PdfBuilderApp");
+                    console.log("[INIT WRAPPER] window.pdfBuilderReact.initPDFBuilderReact is:", typeof window.pdfBuilderReact?.initPDFBuilderReact);
+                } else {
+                    console.error("[INIT WRAPPER] PdfBuilderApp NOT found!");
+                    console.log("[INIT WRAPPER] window keys:", Object.keys(window).filter(k => k.includes("Pdf") || k.includes("react")).slice(0, 10));
+                }
+                
+                // Try to auto-init if root element exists
+                setTimeout(function() {
+                    console.log("[INIT WRAPPER] Checking for auto-init...");
+                    const rootElement = document.getElementById("pdf-builder-react-root");
+                    if (rootElement && window.pdfBuilderReact?.initPDFBuilderReact) {
+                        console.log("[INIT WRAPPER] Auto-initializing...");
+                        window.pdfBuilderReact.initPDFBuilderReact("pdf-builder-react-root");
+                    }
+                }, 100);
+            })();
+        ', "after");
+        
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-vendor and pdf-builder-react-main with dependencies');
         
         // Localize script data BEFORE enqueuing
