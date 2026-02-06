@@ -135,9 +135,12 @@ module.exports = {
         extractComments: false,
       }),
     ],
-    runtimeChunk: "single",
+    runtimeChunk: false,
     splitChunks: {
-      chunks: "all",
+      chunks: (chunk) => {
+        // Don't split the pdf-builder-react entry - it needs to execute immediately
+        return chunk.name !== 'pdf-builder-react' && chunk.name !== 'runtime';
+      },
       cacheGroups: {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
