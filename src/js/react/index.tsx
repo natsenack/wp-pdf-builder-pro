@@ -8,13 +8,17 @@
  * - Properties panel for element editing
  */
 
+console.log('[INDEX TOP LEVEL] ===== BUNDLE EXECUTION START =====');
+console.log('[INDEX TOP LEVEL] Bundle file loaded and executing at:', new Date().toISOString());
+console.log('[INDEX TOP LEVEL] Current window object:', typeof window);
+console.log('[INDEX TOP LEVEL] React available:', typeof React);
+console.log('[INDEX TOP LEVEL] ReactDOM available:', typeof (window as any).ReactDOM);
+
 import React from 'react';
 import { PDFBuilder } from './PDFBuilder';
 import createLogger from '@utils/logger';
 import { getDOMContainer } from '@utils/dom';
 import '../../css/main.css';
-
-const logger = createLogger('PDFBuilderReact');
 
 console.log('[INDEX TOP LEVEL] Imports complete, initializing API');
 
