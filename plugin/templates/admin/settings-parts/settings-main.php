@@ -120,7 +120,7 @@ if (isset($_GET['updated']) && $_GET['updated'] === '1') {
                     include __DIR__ . '/settings-general.php';
                     break;
                 case 'licence':
-                    do_settings_sections('pdf_builder_licence');
+                    include __DIR__ . '/settings-licence.php';
                     break;
                 case 'systeme':
                     include __DIR__ . '/settings-systeme.php';
