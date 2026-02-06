@@ -8,20 +8,45 @@
  * - Properties panel for element editing
  */
 
+// LOG IMMEDIATELY - BEFORE ANYTHING ELSE
 console.log('[REACT INDEX] ===== FILE LOADED =====');
 console.log('[REACT INDEX] React bundle loaded and executing at:', new Date().toISOString());
 console.log('[REACT INDEX] Window object available:', typeof window);
 console.log('[REACT INDEX] Document object available:', typeof document);
-console.log('[REACT INDEX] React available:', typeof React);
-console.log('[REACT INDEX] createRoot available:', typeof createRoot);
+console.log('[REACT INDEX] window.React available:', typeof (window as any).React);
+console.log('[REACT INDEX] window.ReactDOM available:', typeof (window as any).ReactDOM);
+
+// CREATE FALLBACK API IMMEDIATELY - BEFORE ANYTHING ELSE
+// This ensures the API exists even if React imports fail
+if (typeof (window as any).pdfBuilderReact === 'undefined') {
+  console.log('[REACT INDEX] Creating fallback pdfBuilderReact API...');
+  (window as any).pdfBuilderReact = {
+    initPDFBuilderReact: (containerId: string = 'pdf-builder-react-root') => {
+      console.log('[REACT INDEX] Fallback init called for:', containerId);
+      const container = document.getElementById(containerId);
+      if (container) {
+        container.innerHTML = '<div style="padding: 20px; background: #fff3cd; border: 1px solid #ffc107;">React dependencies loading...</div>';
+      }
+      return false;
+    },
+    version: '2.0.0',
+    _fallbackMode: true
+  };
+  console.log('[REACT INDEX] Fallback API created');
+}
 
 import React from 'react';
+
 // Support both WordPress React (no createRoot) and modern React
 let createRoot: any;
+console.log('[REACT INDEX] Detecting React environment...');
+
 if (typeof (window as any).ReactDOM !== 'undefined' && (window as any).ReactDOM.createRoot) {
+  console.log('[REACT INDEX] Using WordPress ReactDOM.createRoot');
   createRoot = (window as any).ReactDOM.createRoot;
 } else if (typeof (window as any).ReactDOM !== 'undefined') {
   // Fallback for WordPress React without createRoot
+  console.log('[REACT INDEX] Using WordPress ReactDOM.render (fallback)');
   createRoot = (container: any) => ({
     render: (element: React.ReactElement) => {
       (window as any).ReactDOM.render(element, container);
@@ -31,9 +56,22 @@ if (typeof (window as any).ReactDOM !== 'undefined' && (window as any).ReactDOM.
     }
   });
 } else {
-  // If ReactDOM is not available, import from node_modules
-  const { createRoot: cr, Root } = require('react-dom/client');
-  createRoot = cr;
+  // If ReactDOM is not available, try requiring from node_modules
+  console.log('[REACT INDEX] ReactDOM not found in window, trying node_modules');
+  try {
+    const { createRoot: cr } = require('react-dom/client');
+    createRoot = cr;
+    console.log('[REACT INDEX] Got createRoot from node_modules');
+  } catch (e) {
+    console.error('[REACT INDEX] Failed to load react-dom/client:', e);
+    // Return a no-op
+    createRoot = (container: any) => ({
+      render: () => {
+        console.warn('[REACT INDEX] createRoot is not available');
+      },
+      unmount: () => {}
+    });
+  }
 }
 
 import { PDFBuilder } from './PDFBuilder';
@@ -140,10 +178,17 @@ const api: PDFBuilderReactAPI = {
 };
 
 // Export to window
+console.log('[REACT INDEX] About to export API to window...');
 if (typeof window !== 'undefined') {
+  console.log('[REACT INDEX] window is defined, assigning pdfBuilderReact');
   (window as any).pdfBuilderReact = api;
   (window as any).initPDFBuilderReact = initPDFBuilderReact;
+  console.log('[REACT INDEX] ✅ pdfBuilderReact assigned to window');
+  console.log('[REACT INDEX] window.pdfBuilderReact type:', typeof (window as any).pdfBuilderReact);
+  console.log('[REACT INDEX] window.pdfBuilderReact.initPDFBuilderReact type:', typeof (window as any).pdfBuilderReact?.initPDFBuilderReact);
   logger.info('✅ PDF Builder API exported to window');
+} else {
+  console.error('[REACT INDEX] window is not defined!');
 }
 
 // Default export for testing/bundling
