@@ -30,6 +30,21 @@ if (file_exists($autoload_path)) {
 
 }
 
+// ✅ CHARGER EXPLICITEMENT LES FICHIERS SYSTÈME CRITIQUES
+$critical_files = [
+    'preview-system/php/PreviewAjaxHandler.php',
+];
+
+foreach ($critical_files as $file) {
+    $file_path = PDF_BUILDER_PLUGIN_DIR . $file;
+    if (file_exists($file_path)) {
+        require_once $file_path;
+        error_log('[BOOTSTRAP] Loaded critical file: ' . $file);
+    } else {
+        error_log('[BOOTSTRAP] ⚠️ MISSING critical file: ' . $file);
+    }
+}
+
 // Si Composer n'est pas disponible, créer un autoloader PSR-4 personnalisé
 if (!$composer_autoloader_found) {
     spl_autoload_register(function($class) {

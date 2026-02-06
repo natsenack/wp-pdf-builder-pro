@@ -19,7 +19,8 @@
     "files": [
       "src/Core/PDF_Builder_Path_Validator.php",
       "src/Core/PDF_Builder_Rate_Limiter.php",
-      "src/Core/PDF_Builder_Security_Validator.php"
+      "src/Core/PDF_Builder_Security_Validator.php",
+      "preview-system/php/PreviewAjaxHandler.php"
     ]
   },
   "scripts": {
