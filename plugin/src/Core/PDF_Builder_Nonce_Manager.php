@@ -74,7 +74,7 @@ class PDF_Builder_Nonce_Manager {
         // Debug: Log the nonce validation attempt
         error_log("[NONCE DEBUG] Validating nonce for context: '$context', action: '$action', nonce: '" . substr($nonce, 0, 10) . "...'");
 
-        $is_valid = wp_verify_nonce($nonce, $action);
+        $is_valid = \pdf_builder_verify_nonce($nonce, $action);
 
         error_log("[NONCE DEBUG] Validation result: " . ($is_valid ? 'VALID' : 'INVALID'));
 

@@ -63,7 +63,7 @@ class Validation
      */
     public static function verifyNonce($nonce, $action = 'pdf_builder_ajax')
     {
-        return wp_verify_nonce($nonce, $action);
+        return \pdf_builder_verify_nonce($nonce, $action);
     }
 
     /**

@@ -371,7 +371,7 @@ class PDF_Builder_Security_Mappings {
      */
     public static function verify_nonce($nonce, $action) {
         $nonce_key = self::$security_rules['nonces'][$action] ?? 'pdf_builder_general_nonce';
-        return wp_verify_nonce($nonce, $nonce_key);
+        return \pdf_builder_verify_nonce($nonce, $nonce_key);
     }
 
     /**

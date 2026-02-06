@@ -15,7 +15,7 @@ class PDF_Builder_Security_Manager {
      * @return bool True if nonce is valid, false otherwise
      */
     public static function verify_nonce($nonce, $action) {
-        if (!wp_verify_nonce($nonce, $action)) {
+        if (!\pdf_builder_verify_nonce($nonce, $action)) {
 
             return false;
         }
