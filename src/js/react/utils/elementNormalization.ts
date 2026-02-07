@@ -154,6 +154,18 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
         if (!normalized.showBorders) {
           (normalized as any).showBorders = true;
         }
+        if (!normalized.showAlternatingRows) {
+          (normalized as any).showAlternatingRows = true;
+        }
+        if (!normalized.showShipping) {
+          (normalized as any).showShipping = false;
+        }
+        if (!normalized.showTax) {
+          (normalized as any).showTax = false;
+        }
+        if (!normalized.showGlobalDiscount) {
+          (normalized as any).showGlobalDiscount = false;
+        }
         if (!normalized.dataSource) {
           (normalized as any).dataSource = 'order_items';
         }
@@ -166,6 +178,54 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
             total: true
           };
         }
+        // Styles globaux
+        if (!normalized.globalFontSize) {
+          (normalized as any).globalFontSize = 11;
+        }
+        if (!normalized.globalFontFamily) {
+          (normalized as any).globalFontFamily = 'Arial';
+        }
+        if (!normalized.globalFontWeight) {
+          (normalized as any).globalFontWeight = 'normal';
+        }
+        if (!normalized.globalFontStyle) {
+          (normalized as any).globalFontStyle = 'normal';
+        }
+        // Styles lignes
+        if (!normalized.rowFontSize) {
+          (normalized as any).rowFontSize = 11;
+        }
+        if (!normalized.rowFontFamily) {
+          (normalized as any).rowFontFamily = 'Arial';
+        }
+        if (!normalized.rowFontWeight) {
+          (normalized as any).rowFontWeight = 'normal';
+        }
+        if (!normalized.rowFontStyle) {
+          (normalized as any).rowFontStyle = 'normal';
+        }
+        if (!normalized.rowTextColor) {
+          (normalized as any).rowTextColor = '#374151';
+        }
+        // Styles totaux
+        if (!normalized.totalFontSize) {
+          (normalized as any).totalFontSize = 12;
+        }
+        if (!normalized.totalFontFamily) {
+          (normalized as any).totalFontFamily = 'Arial';
+        }
+        if (!normalized.totalFontWeight) {
+          (normalized as any).totalFontWeight = 'bold';
+        }
+        if (!normalized.totalFontStyle) {
+          (normalized as any).totalFontStyle = 'normal';
+        }
+        if (!normalized.totalTextColor) {
+          (normalized as any).totalTextColor = '#111827';
+        }
+        if (!normalized.verticalAlign) {
+          (normalized as any).verticalAlign = 'top';
+        }
         break;
 
       case 'customer_info':
@@ -176,22 +236,121 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
         if (!normalized.showBorders) {
           (normalized as any).showBorders = false;
         }
+        if (!normalized.showBackground) {
+          (normalized as any).showBackground = true;
+        }
+        if (!normalized.showName) {
+          (normalized as any).showName = true;
+        }
         if (!normalized.layout) {
           (normalized as any).layout = 'vertical';
         }
         if (!normalized.showLabels) {
           (normalized as any).showLabels = true;
         }
+        // Styles entête
+        if (!normalized.headerFontSize) {
+          (normalized as any).headerFontSize = 12;
+        }
+        if (!normalized.headerFontFamily) {
+          (normalized as any).headerFontFamily = 'Arial';
+        }
+        if (!normalized.headerFontWeight) {
+          (normalized as any).headerFontWeight = 'bold';
+        }
+        // Styles corps
+        if (!normalized.bodyFontSize) {
+          (normalized as any).bodyFontSize = 11;
+        }
+        if (!normalized.bodyFontFamily) {
+          (normalized as any).bodyFontFamily = 'Arial';
+        }
+        if (!normalized.bodyFontWeight) {
+          (normalized as any).bodyFontWeight = 'normal';
+        }
         break;
 
       case 'company_info':
-      case 'company_logo':
         // Propriétés pour infos entreprise
         if (!normalized.showHeaders) {
           (normalized as any).showHeaders = false;
         }
         if (!normalized.showBorders) {
           (normalized as any).showBorders = false;
+        }
+        if (!normalized.showBackground) {
+          (normalized as any).showBackground = true;
+        }
+        break;
+
+      case 'company_logo':
+        // Propriétés pour logo entreprise
+        if (!normalized.objectFit) {
+          (normalized as any).objectFit = 'contain';
+        }
+        break;
+
+      case 'order_number':
+        // Propriétés pour numéro de commande
+        if (!normalized.showHeaders) {
+          (normalized as any).showHeaders = true;
+        }
+        if (!normalized.showBackground) {
+          (normalized as any).showBackground = false;
+        }
+        if (!normalized.showBorders) {
+          (normalized as any).showBorders = false;
+        }
+        if (!normalized.showLabel) {
+          (normalized as any).showLabel = true;
+        }
+        if (!normalized.showDate) {
+          (normalized as any).showDate = false;
+        }
+        if (!normalized.labelText) {
+          (normalized as any).labelText = 'Commande #';
+        }
+        if (!normalized.labelPosition) {
+          (normalized as any).labelPosition = 'before';
+        }
+        if (!normalized.dateFormat) {
+          (normalized as any).dateFormat = 'DD/MM/YYYY';
+        }
+        // Styles entête
+        if (!normalized.headerFontSize) {
+          (normalized as any).headerFontSize = 12;
+        }
+        if (!normalized.headerFontFamily) {
+          (normalized as any).headerFontFamily = 'Arial';
+        }
+        if (!normalized.headerFontWeight) {
+          (normalized as any).headerFontWeight = 'bold';
+        }
+        if (!normalized.headerFontStyle) {
+          (normalized as any).headerFontStyle = 'normal';
+        }
+        if (!normalized.headerTextColor) {
+          (normalized as any).headerTextColor = '#111827';
+        }
+        // Styles numéro et date
+        if (!normalized.numberFontSize) {
+          (normalized as any).numberFontSize = 14;
+        }
+        if (!normalized.dateFontSize) {
+          (normalized as any).dateFontSize = 12;
+        }
+        // Styles corps
+        if (!normalized.bodyFontFamily) {
+          (normalized as any).bodyFontFamily = 'Arial';
+        }
+        if (!normalized.bodyFontWeight) {
+          (normalized as any).bodyFontWeight = 'normal';
+        }
+        if (!normalized.bodyFontStyle) {
+          (normalized as any).bodyFontStyle = 'normal';
+        }
+        if (!normalized.contentAlign) {
+          (normalized as any).contentAlign = 'left';
         }
         break;
 
@@ -345,6 +504,26 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
       // ===== PROPRIÉTÉS COMPANY_INFO =====
       'showCompanyName', 'showAddress', 'showRcs', 'showCapital',
       'layout',
+      
+      // ===== PROPRIÉTÉS PRODUCT_TABLE =====
+      'showHeaders', 'showBorders', 'showAlternatingRows', 'showShipping', 'showTax', 'showGlobalDiscount',
+      'globalFontSize', 'globalFontFamily', 'globalFontWeight', 'globalFontStyle',
+      'headerFontSize', 'headerFontFamily', 'headerFontWeight', 'headerFontStyle', 'headerTextColor', 'headerBackgroundColor',
+      'rowFontSize', 'rowFontFamily', 'rowFontWeight', 'rowFontStyle', 'rowTextColor',
+      'totalFontSize', 'totalFontFamily', 'totalFontWeight', 'totalFontStyle', 'totalTextColor',
+      'alternateRowColor', 'verticalAlign', 'tableStyle',
+      
+      // ===== PROPRIÉTÉS CUSTOMER_INFO =====
+      'showName', 'showFullName', 'showPaymentMethod', 'showTransactionId',
+      'bodyFontSize', 'bodyFontFamily', 'bodyFontWeight', 'bodyFontStyle',
+      
+      // ===== PROPRIÉTÉS ORDER_NUMBER =====
+      'showLabel', 'showDate', 'labelText', 'labelPosition', 'dateFormat',
+      'numberFontSize', 'dateFontSize',
+      'contentAlign', 'format',
+      
+      // ===== PROPRIÉTÉS IMAGES =====
+      'objectFit', 'fit', 'alignment',
       
       // ===== CONTENU =====
       'text', 'content', 'src', 'alt', 'label'
