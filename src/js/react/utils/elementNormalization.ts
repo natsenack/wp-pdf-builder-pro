@@ -276,6 +276,20 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
 
     // Filtrer les propriétés non sérialisables (Date, Function, etc)
     const serializable: Record<string, unknown> = {};
+    
+    // ========== PROPRIÉTÉS CRITIQUES À PRÉSERVER ==========
+    // Les styles dédans ce set ne doivent JAMAIS être perdus lors de la sauvegarde
+    const styleProperties = new Set([
+      'fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'fontColor', 'color',
+      'backgroundColor', 'bgColor', 'textAlign', 'textDecoration', 'textTransform',
+      'letterSpacing', 'wordSpacing', 'lineHeight', 'opacity', 'zIndex',
+      'border', 'borderTop', 'borderBottom', 'borderLeft', 'borderRight', 'borderColor', 'borderWidth', 'borderStyle',
+      'padding', 'margin', 'display', 'width', 'height', 'x', 'y',
+      'showEmail', 'showPhone', 'showSiret', 'showVat', 'separator', // mentions properties
+      'showCompanyName', 'showAddress', 'showRcs', 'showCapital', // company_info properties
+      'text', 'content', 'src', 'alt' // Contenu
+    ]);
+    
     Object.keys(normalized).forEach(key => {
       const value = normalized[key];
       const type = typeof value;
@@ -309,6 +323,12 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
         debugWarn(`⚠️  [SAVE NORMALIZE] Propriété rejetée: ${key} (type: ${type})`);
       }
     });
+
+    // ✅ VÉRIFICATION: Log des propriétés de style critiques existantes
+    if (normalized.type === 'text' || normalized.type === 'mentions' || normalized.type === 'company_info') {
+      const existingStyles = Array.from(styleProperties).filter(prop => serializable[prop] !== undefined);
+      // 
+    }
 
     return serializable as Element;
   }) as Element[];

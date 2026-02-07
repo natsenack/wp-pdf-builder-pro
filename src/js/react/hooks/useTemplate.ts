@@ -12,7 +12,7 @@ import { ClientNonceManager } from "../utils/ClientNonceManager";
 
 export function useTemplate() {
   const { state, dispatch } = useBuilder();
-  const { canvasWidth, canvasHeight } = useCanvasSettings();
+  const canvasSettings = useCanvasSettings();
 
   // Détecter si on est sur un template existant via l'URL ou les données localisées
   const getTemplateIdFromUrl = useCallback((): string | null => {
@@ -625,19 +625,76 @@ export function useTemplate() {
         });
       });
 
-      // Structure simple et propre pour la sauvegarde
+      // Structure complète pour la sauvegarde avec TOUS les styles et paramètres de mise en page
       const templateData = {
+        // Éléments avec tous leurs styles préservés
         elements: normalizedElements,
-        canvasWidth: canvasWidth,
-        canvasHeight: canvasHeight,
+        
+        // Version
         version: "1.0",
-        // Inclure les paramètres du template
+        
+        // Paramètres du template
         name: state.template.name,
         description: state.template.description,
+        
+        // ========== DIMENSIONS & ORIENTATION ==========
+        canvasWidth: state.template.canvasWidth || canvasSettings.canvasWidth,
+        canvasHeight: state.template.canvasHeight || canvasSettings.canvasHeight,
+        canvasUnit: canvasSettings.canvasUnit,
+        canvasOrientation: canvasSettings.canvasOrientation,
+        
+        // ========== COULEURS & APPARENCE ==========
+        canvasBackgroundColor: canvasSettings.canvasBackgroundColor,
+        containerBackgroundColor: canvasSettings.containerBackgroundColor,
+        borderColor: canvasSettings.borderColor,
+        borderWidth: canvasSettings.borderWidth,
+        shadowEnabled: canvasSettings.shadowEnabled,
+        
+        // ========== MARGES & ESPACES ==========
+        marginTop: state.template.marginTop || canvasSettings.marginTop,
+        marginRight: canvasSettings.marginRight,
+        marginBottom: state.template.marginBottom || canvasSettings.marginBottom,
+        marginLeft: canvasSettings.marginLeft,
+        showMargins: canvasSettings.showMargins,
+        
+        // ========== GRILLE & GUIDES ==========
+        gridShow: canvasSettings.gridShow,
+        gridSize: canvasSettings.gridSize,
+        gridColor: canvasSettings.gridColor,
+        gridSnapEnabled: canvasSettings.gridSnapEnabled,
+        gridSnapTolerance: canvasSettings.gridSnapTolerance,
+        guidesEnabled: canvasSettings.guidesEnabled,
+        
+        // ========== ZOOM & NAVIGATION ==========
+        zoomDefault: canvasSettings.zoomDefault,
+        zoomMin: canvasSettings.zoomMin,
+        zoomMax: canvasSettings.zoomMax,
+        zoomStep: canvasSettings.zoomStep,
+        navigationEnabled: canvasSettings.navigationEnabled,
+        
+        // ========== SÉLECTION & INTERACTION ==========
+        selectionDragEnabled: canvasSettings.selectionDragEnabled,
+        selectionMultiSelectEnabled: canvasSettings.selectionMultiSelectEnabled,
+        selectionRotationEnabled: canvasSettings.selectionRotationEnabled,
+        selectionCopyPasteEnabled: canvasSettings.selectionCopyPasteEnabled,
+        selectionShowHandles: canvasSettings.selectionShowHandles,
+        selectionHandleSize: canvasSettings.selectionHandleSize,
+        selectionHandleColor: canvasSettings.selectionHandleColor,
+        canvasSelectionMode: canvasSettings.canvasSelectionMode,
+        
+        // ========== EXPORT ==========
+        exportQuality: canvasSettings.exportQuality,
+        exportFormat: canvasSettings.exportFormat,
+        exportCompression: canvasSettings.exportCompression,
+        exportIncludeMetadata: canvasSettings.exportIncludeMetadata,
+        
+        // ========== HISTORIQUE ==========
+        historyUndoLevels: canvasSettings.historyUndoLevels,
+        historyRedoLevels: canvasSettings.historyRedoLevels,
+        
+        // ========== COMPORTEMENT DE L'ÉDITEUR ==========
         showGuides: state.template.showGuides,
         snapToGrid: state.template.snapToGrid,
-        marginTop: state.template.marginTop,
-        marginBottom: state.template.marginBottom,
       };
 
       const formData = new FormData();
@@ -663,11 +720,11 @@ export function useTemplate() {
       );
       formData.append(
         "canvas_width",
-        (state.template.canvasWidth || canvasWidth).toString()
+        (state.template.canvasWidth || canvasSettings.canvasWidth).toString()
       );
       formData.append(
         "canvas_height",
-        (state.template.canvasHeight || canvasHeight).toString()
+        (state.template.canvasHeight || canvasSettings.canvasHeight).toString()
       );
 
       const response = await fetch(ClientNonceManager.getAjaxUrl(), {
@@ -776,15 +833,14 @@ export function useTemplate() {
     [dispatch]
   );
 
-  return useMemo(
     () => ({
       templateName: state.template.name,
       templateDescription: state.template.description,
       templateTags: state.template.tags,
-      canvasWidth: state.template.canvasWidth,
-      canvasHeight: state.template.canvasHeight,
-      marginTop: state.template.marginTop,
-      marginBottom: state.template.marginBottom,
+      canvasWidth: state.template.canvasWidth || canvasSettings.canvasWidth,
+      canvasHeight: state.template.canvasHeight || canvasSettings.canvasHeight,
+      marginTop: state.template.marginTop || canvasSettings.marginTop,
+      marginBottom: state.template.marginBottom || canvasSettings.marginBottom,
       showGuides: state.template.showGuides,
       snapToGrid: state.template.snapToGrid,
       isNewTemplate: state.template.isNew,
@@ -815,6 +871,7 @@ export function useTemplate() {
       state.template.isSaving,
       state.template.isLoading,
       state.template.lastSaved,
+      canvasSettings, // ✅ AJOUT: Inclure tous les paramètres du canvas
       saveTemplate,
       previewTemplate,
       newTemplate,
@@ -822,7 +879,6 @@ export function useTemplate() {
       updateTemplateSettings,
       getTemplateIdFromUrl,
     ]
-  );
 }
 
 
