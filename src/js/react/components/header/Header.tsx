@@ -948,12 +948,25 @@ export const Header = memo(function Header({
             if (!companyContent) {
               const companyParts: string[] = [];
               
+              // Styles globaux à appliquer à tous les éléments
+              const globalStyles = (() => {
+                let globalStyle = '';
+                if (element.fontFamily) globalStyle += `font-family: ${element.fontFamily};`;
+                if (element.fontStyle && element.fontStyle !== 'normal') globalStyle += `font-style: ${element.fontStyle};`;
+                if (element.textDecoration && element.textDecoration !== 'none') globalStyle += `text-decoration: ${element.textDecoration};`;
+                if (element.textTransform && element.textTransform !== 'none') globalStyle += `text-transform: ${element.textTransform};`;
+                if (element.letterSpacing && element.letterSpacing !== 'normal') globalStyle += `letter-spacing: ${element.letterSpacing};`;
+                if (element.wordSpacing && element.wordSpacing !== 'normal') globalStyle += `word-spacing: ${element.wordSpacing};`;
+                if (element.lineHeight) globalStyle += `line-height: ${element.lineHeight};`;
+                return globalStyle;
+              })();
+              
               // Nom de l'entreprise
               if (element.showCompanyName !== false && isValidValue(companyData.name)) {
                 const headerFontSize = element.headerFontSize || element.fontSize || 14;
                 const headerFontWeight = element.headerFontWeight || element.fontWeight || 'bold';
                 const headerColor = element.headerTextColor || element.textColor || '#000000';
-                companyParts.push(`<div style="font-size: ${headerFontSize}px; font-weight: ${headerFontWeight}; color: ${headerColor};">${companyData.name}</div>`);
+                companyParts.push(`<div style="font-size: ${headerFontSize}px; font-weight: ${headerFontWeight}; color: ${headerColor}; ${globalStyles}">${companyData.name}</div>`);
               }
               
               // Adresse
@@ -962,56 +975,56 @@ export const Header = memo(function Header({
                 if (isValidValue(companyData.city)) addressText += `, ${companyData.city}`;
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">${addressText}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor}; ${globalStyles}">${addressText}</div>`);
               }
               
               // Téléphone
               if (element.showPhone !== false && isValidValue(companyData.phone)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">Tél: ${companyData.phone}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor}; ${globalStyles}">Tél: ${companyData.phone}</div>`);
               }
               
               // Email
               if (element.showEmail !== false && isValidValue(companyData.email)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">Email: ${companyData.email}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor}; ${globalStyles}">Email: ${companyData.email}</div>`);
               }
               
               // Site web
               if (element.showWebsite !== false && isValidValue(companyData.website)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">${companyData.website}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor}; ${globalStyles}">${companyData.website}</div>`);
               }
               
               // SIRET
               if (element.showSiret !== false && isValidValue(companyData.siret)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">SIRET: ${companyData.siret}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor}; ${globalStyles}">SIRET: ${companyData.siret}</div>`);
               }
               
               // TVA
               if (element.showVat !== false && isValidValue(companyData.tva)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">TVA: ${companyData.tva}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor}; ${globalStyles}">TVA: ${companyData.tva}</div>`);
               }
               
               // RCS
               if (element.showRcs !== false && isValidValue(companyData.rcs)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">RCS: ${companyData.rcs}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor}; ${globalStyles}">RCS: ${companyData.rcs}</div>`);
               }
               
               // Capital sociale
               if (element.showCapital !== false && isValidValue(companyData.capital)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">Capital: ${companyData.capital} €</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor}; ${globalStyles}">Capital: ${companyData.capital} €</div>`);
               }
               
               // Assembler le HTML avec le séparateur si layout horizontal
@@ -1030,6 +1043,25 @@ export const Header = memo(function Header({
             // Background
             if (element.showBackground && element.backgroundColor && element.backgroundColor !== 'transparent') {
               styles += ` background-color: ${element.backgroundColor};`;
+            }
+            
+            // Border (borderWidth et borderColor au lieu de border objet)
+            if (element.borderWidth && element.borderWidth > 0 && element.borderColor) {
+              styles += ` border: ${element.borderWidth}px solid ${element.borderColor};`;
+            }
+            
+            // Rotation
+            if (element.rotation && element.rotation !== 0) {
+              styles += ` transform: rotate(${element.rotation}deg);`;
+            }
+            
+            // Shadow (box-shadow)
+            if (element.shadowBlur && element.shadowBlur > 0) {
+              const shadowOffsetX = element.shadowOffsetX || 0;
+              const shadowOffsetY = element.shadowOffsetY || 0;
+              const shadowColor = element.shadowColor || '#000000';
+              const shadowBlur = element.shadowBlur || 0;
+              styles += ` box-shadow: ${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px ${shadowColor};`;
             }
             
             // Padding depuis JSON (peut être nombre ou objet {top, right, bottom, left})
