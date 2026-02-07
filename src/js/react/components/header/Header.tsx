@@ -626,10 +626,16 @@ export const Header = memo(function Header({
 
           case 'product_table':
           case 'table':
-            // Styles du TABLEAU UNIQUEMENT du JSON
+            // Styles du TABLEAU - appliqués à partir du JSON
             let tableStyles = `border-collapse: collapse; width: 100%;`;
-            if (element.fontSize) tableStyles += ` font-size: ${element.fontSize}px;`;
-            if (element.fontFamily) tableStyles += ` font-family: ${element.fontFamily};`;
+            
+            // Police globale si activée
+            if (element.globalFontEnabled && element.globalFontSize) tableStyles += ` font-size: ${element.globalFontSize}px;`;
+            else if (element.fontSize) tableStyles += ` font-size: ${element.fontSize}px;`;
+            
+            if (element.globalFontEnabled && element.globalFontFamily) tableStyles += ` font-family: ${element.globalFontFamily};`;
+            else if (element.fontFamily) tableStyles += ` font-family: ${element.fontFamily};`;
+            
             if (element.fontWeight && element.fontWeight !== 'normal') tableStyles += ` font-weight: ${element.fontWeight};`;
             if (element.fontStyle && element.fontStyle !== 'normal') tableStyles += ` font-style: ${element.fontStyle};`;
             if (element.textDecoration && element.textDecoration !== 'none') tableStyles += ` text-decoration: ${element.textDecoration};`;
@@ -638,21 +644,55 @@ export const Header = memo(function Header({
             if (element.wordSpacing && element.wordSpacing !== 'normal') tableStyles += ` word-spacing: ${element.wordSpacing};`;
             if (element.backgroundColor && element.backgroundColor !== 'transparent') tableStyles += ` background-color: ${element.backgroundColor};`;
             
-            // Styles pour les cellules
+            // Styles pour les cellules du corps
             let cellStyles = `padding: 8px;`;
             if (element.textAlign) cellStyles += ` text-align: ${element.textAlign};`;
-            if (element.verticalAlign) cellStyles += ` vertical-align: ${element.verticalAlign};`;
+            if (element.verticalAlign && element.verticalAlign !== 'baseline') cellStyles += ` vertical-align: ${element.verticalAlign};`;
             if (element.showBorders && element.borderWidth) cellStyles += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
-            if (element.textColor) cellStyles += ` color: ${element.textColor};`;
+            if (element.bodyTextColor) cellStyles += ` color: ${element.bodyTextColor};`;
+            else if (element.textColor) cellStyles += ` color: ${element.textColor};`;
+            if (element.bodyBackgroundColor && element.bodyBackgroundColor !== 'transparent') cellStyles += ` background-color: ${element.bodyBackgroundColor};`;
+            if (element.bodyFontSize) cellStyles += ` font-size: ${element.bodyFontSize}px;`;
+            if (element.bodyFontFamily) cellStyles += ` font-family: ${element.bodyFontFamily};`;
+            if (element.bodyFontWeight) cellStyles += ` font-weight: ${element.bodyFontWeight};`;
+            if (element.bodyFontStyle) cellStyles += ` font-style: ${element.bodyFontStyle};`;
             
-            // Styles pour les headers
+            // Styles pour les en-têtes
             let headerStyle = `padding: 8px;`;
             if (element.textAlign) headerStyle += ` text-align: ${element.textAlign};`;
-            if (element.verticalAlign) headerStyle += ` vertical-align: ${element.verticalAlign};`;
+            if (element.verticalAlign && element.verticalAlign !== 'baseline') headerStyle += ` vertical-align: ${element.verticalAlign};`;
             if (element.showBorders && element.borderWidth) headerStyle += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
             if (element.headerBackgroundColor && element.headerBackgroundColor !== 'transparent') headerStyle += ` background-color: ${element.headerBackgroundColor};`;
             if (element.headerTextColor) headerStyle += ` color: ${element.headerTextColor};`;
-            if (element.fontWeight) headerStyle += ` font-weight: ${element.fontWeight};`;
+            if (element.headerFontSize) headerStyle += ` font-size: ${element.headerFontSize}px;`;
+            if (element.headerFontFamily) headerStyle += ` font-family: ${element.headerFontFamily};`;
+            if (element.headerFontWeight) headerStyle += ` font-weight: ${element.headerFontWeight};`;
+            if (element.headerFontStyle) headerStyle += ` font-style: ${element.headerFontStyle};`;
+            
+            // Styles pour les lignes de données
+            let rowStyle = `padding: 8px;`;
+            if (element.textAlign) rowStyle += ` text-align: ${element.textAlign};`;
+            if (element.verticalAlign && element.verticalAlign !== 'baseline') rowStyle += ` vertical-align: ${element.verticalAlign};`;
+            if (element.showBorders && element.borderWidth) rowStyle += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
+            if (element.rowTextColor) rowStyle += ` color: ${element.rowTextColor};`;
+            else if (element.textColor) rowStyle += ` color: ${element.textColor};`;
+            if (element.rowFontSize) rowStyle += ` font-size: ${element.rowFontSize}px;`;
+            if (element.rowFontFamily) rowStyle += ` font-family: ${element.rowFontFamily};`;
+            if (element.rowFontWeight) rowStyle += ` font-weight: ${element.rowFontWeight};`;
+            if (element.rowFontStyle) rowStyle += ` font-style: ${element.rowFontStyle};`;
+            
+            // Styles pour la ligne totale
+            let totalStyle = `padding: 8px;`;
+            if (element.textAlign) totalStyle += ` text-align: ${element.textAlign};`;
+            if (element.verticalAlign && element.verticalAlign !== 'baseline') totalStyle += ` vertical-align: ${element.verticalAlign};`;
+            if (element.showBorders && element.borderWidth) totalStyle += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
+            if (element.totalTextColor) totalStyle += ` color: ${element.totalTextColor};`;
+            else if (element.textColor) totalStyle += ` color: ${element.textColor};`;
+            if (element.totalFontSize) totalStyle += ` font-size: ${element.totalFontSize}px;`;
+            if (element.totalFontFamily) totalStyle += ` font-family: ${element.totalFontFamily};`;
+            if (element.totalFontWeight) totalStyle += ` font-weight: ${element.totalFontWeight};`;
+            if (element.totalFontStyle) totalStyle += ` font-style: ${element.totalFontStyle};`;
+            totalStyle += ` font-weight: bold;`;
             
             const tableId = `table-${element.id}`;
             let tableCSS = '';
@@ -662,13 +702,98 @@ export const Header = memo(function Header({
               tableCSS = `<style>#${tableId} tbody tr:nth-child(odd) td { background-color: ${element.alternateRowColor}; }</style>`;
             }
             
+            // Génération du contenu du tableau à partir du JSON
             if (element.content) {
+              // Si le contenu HTML existe, l'utiliser
               let wrappedContent = element.content
                 .replace(/<th([^>]*)>/g, `<th style="${headerStyle}"$1>`)
                 .replace(/<td([^>]*)>/g, `<td style="${cellStyles}"$1>`);
               content = tableCSS + `<table id="${tableId}" style="${tableStyles}">${wrappedContent}</table>`;
             } else {
-              content = tableCSS + `<table id="${tableId}" style="${tableStyles}"><thead><tr><th style="${headerStyle}">Produit</th><th style="${headerStyle}">Qty</th><th style="${headerStyle}">Prix</th></tr></thead><tbody><tr><td style="${cellStyles}">Exemple</td><td style="${cellStyles}">1</td><td style="${cellStyles}">100€</td></tr></tbody></table>`;
+              // Sinon, créer un tableau d'exemple basé sur les propriétés
+              const cols = [
+                element.showSku ? 'SKU' : null,
+                'Produit',
+                element.showDescription ? 'Description' : null,
+                element.showQuantity ? 'Qty' : 'Quantité',
+                'Prix Unit.',
+                'Total',
+                element.showShipping ? 'Shipping' : null,
+                element.showTax ? 'Tax' : null,
+              ].filter(Boolean);
+              
+              // Calcul des montants pour la ligne totale
+              const baseAmount = 100.00;
+              const quantity = 1;
+              const subtotal = baseAmount * quantity;
+              const shippingCost = element.shippingCost || 10.00;
+              const globalDiscount = element.globalDiscount || 0;
+              const taxRate = (element.taxRate || 0.20);
+              const taxAmount = (subtotal - globalDiscount) * taxRate;
+              const total = subtotal + shippingCost - globalDiscount + taxAmount + (element.orderFees || 0);
+              
+              let tableHTML = tableCSS + `<table id="${tableId}" style="${tableStyles}">`;
+              
+              // En-têtes - affichés uniquement si showHeaders n'est pas false
+              if (element.showHeaders !== false) {
+                tableHTML += `<thead><tr>`;
+                tableHTML += cols.map(col => `<th style="${headerStyle}">${col}</th>`).join('');
+                tableHTML += `</tr></thead>`;
+              }
+              
+              tableHTML += `<tbody>`;
+              // Ligne de données
+              tableHTML += `<tr>`;
+              tableHTML += cols.map((col) => {
+                let cellValue = 'N/A';
+                if (col === 'SKU') cellValue = 'SKU001';
+                else if (col === 'Produit') cellValue = 'Produit Exemple';
+                else if (col === 'Description') cellValue = 'Description du produit';
+                else if (col === 'Qty' || col === 'Quantité') cellValue = quantity.toString();
+                else if (col === 'Prix Unit.') cellValue = baseAmount.toFixed(2) + ' €';
+                else if (col === 'Total') cellValue = subtotal.toFixed(2) + ' €';
+                else if (col === 'Shipping') cellValue = shippingCost.toFixed(2) + ' €';
+                else if (col === 'Tax') cellValue = taxAmount.toFixed(2) + ' €';
+                return `<td style="${rowStyle}">${cellValue}</td>`;
+              }).join('');
+              tableHTML += `</tr>`;
+              
+              // Ligne de discount global si activée
+              if (element.showGlobalDiscount && globalDiscount > 0) {
+                tableHTML += `<tr><td colspan="${cols.length - 1}" style="${rowStyle}">Discount:</td><td style="${rowStyle}">-${globalDiscount.toFixed(2)} €</td></tr>`;
+              }
+              
+              // Ligne totale
+              tableHTML += `<tr>`;
+              tableHTML += cols.map((col, idx) => {
+                let totalValue = 'N/A';
+                if (idx === cols.length - 1) {
+                  totalValue = total.toFixed(2) + ' €';
+                } else if (col === 'Produit') {
+                  totalValue = 'TOTAL';
+                } else if (col === 'SKU' || col === 'Description' || col === 'Qty' || col === 'Quantité' || col === 'Prix Unit.' || col === 'Shipping' || col === 'Tax') {
+                  totalValue = '';
+                }
+                return `<td style="${totalStyle}">${totalValue}</td>`;
+              }).join('');
+              tableHTML += `</tr>`;
+              
+              tableHTML += `</tbody></table>`;
+              content = tableHTML;
+            }
+            
+            // Ajouter styles de padding/margin/border si présents
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            }
+            if (element.margin) {
+              const marginStr = buildSpacing(element.margin);
+              if (marginStr) styles += ` margin: ${marginStr};`;
+            }
+            if (element.border) {
+              const borderStr = buildBorder(element.border);
+              if (borderStr) styles += ` border: ${borderStr};`;
             }
             break;
 
