@@ -13,7 +13,7 @@
   },
   "autoload": {
     "psr-4": {
-      "PDF_Builder\\": "src/",
+      "PDF_Builder\\": ["src/", "config/"],
       "PDF_Builder_Pro\\": "src/"
     },
     "files": [
