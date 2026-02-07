@@ -575,6 +575,24 @@ export const Header = memo(function Header({
           case 'dynamic_text':
             content = element.text || element.content || 'Texte';
             if (element.autoWrap !== false) styles += ` white-space: pre-wrap; overflow-wrap: break-word;`;
+            // Ajouter padding/margin/border
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            }
+            if (element.margin) {
+              const marginStr = buildSpacing(element.margin);
+              if (marginStr) styles += ` margin: ${marginStr};`;
+            }
+            if (element.border) {
+              const borderStr = buildBorder(element.border);
+              if (borderStr) styles += ` border: ${borderStr};`;
+            }
+            // Layout property
+            if (element.layout) {
+              const layoutStr = buildFlexLayout(element.layout);
+              if (layoutStr) styles += ` ${layoutStr}`;
+            }
             break;
 
           case 'document_type':
@@ -583,23 +601,59 @@ export const Header = memo(function Header({
             if (element.verticalAlign === 'middle' || element.verticalAlign === 'center') {
               styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === 'center' ? 'center' : 'flex-start'};`;
             }
+            // Padding/margin/border
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            }
+            if (element.margin) {
+              const marginStr = buildSpacing(element.margin);
+              if (marginStr) styles += ` margin: ${marginStr};`;
+            }
+            if (element.border) {
+              const borderStr = buildBorder(element.border);
+              if (borderStr) styles += ` border: ${borderStr};`;
+            }
             break;
 
           case 'order_number':
             const orderNum = element.text || element.content || '001';
             const format = element.format || 'CMD-{order_number}';
-            content = format.replace('{order_number}', orderNum);
+            let orderContent = format.replace('{order_number}', orderNum);
+            
+            // Si label à afficher
+            if (element.showLabel && element.labelText) {
+              const labelText = element.labelText || 'Order:';
+              const headerFontSize = element.headerFontSize || element.fontSize || 12;
+              const numberFontSize = element.numberFontSize || element.fontSize || 14;
+              const labelColor = element.headerTextColor || element.textColor || '#000000';
+              const numberColor = element.textColor || '#000000';
+              
+              orderContent = `
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                  <div style="font-size: ${headerFontSize}px; color: ${labelColor}; font-weight: ${element.headerFontWeight || 'normal'};">${labelText}</div>
+                  <div style="font-size: ${numberFontSize}px; color: ${numberColor}; font-weight: ${element.fontWeight || 'normal'};">${orderContent}</div>
+                </div>
+              `;
+            }
+            content = orderContent;
+            
             // contentAlign property
             if (element.contentAlign) {
               styles += ` text-align: ${element.contentAlign};`;
             }
-            // labelPosition et labelText
-            if (element.showLabel && element.labelText) {
-              styles += ` display: flex; flex-direction: column;`;
-              const labelPosition = element.labelPosition || 'above';
-              if (labelPosition === 'above' || labelPosition === 'left') {
-                // Will be handled by flex direction
-              }
+            // Padding/margin/border
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            }
+            if (element.margin) {
+              const marginStr = buildSpacing(element.margin);
+              if (marginStr) styles += ` margin: ${marginStr};`;
+            }
+            if (element.border) {
+              const borderStr = buildBorder(element.border);
+              if (borderStr) styles += ` border: ${borderStr};`;
             }
             break;
 
@@ -609,19 +663,49 @@ export const Header = memo(function Header({
               let imgStyles = `width: 100%; height: 100%; display: block;`;
               if (element.objectFit) imgStyles += ` object-fit: ${element.objectFit};`;
               if (element.opacity !== undefined && element.opacity < 1) imgStyles += ` opacity: ${element.opacity};`;
+              if (element.borderRadius && element.borderRadius > 0) imgStyles += ` border-radius: ${element.borderRadius}px;`;
               content = `<img src="${element.src}" style="${imgStyles}" />`;
             } else {
               content = '📦';
             }
-            // Ne pas ajouter de padding ou styling supplémentaire
+            // Padding/margin/border pour le conteneur
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            }
+            if (element.margin) {
+              const marginStr = buildSpacing(element.margin);
+              if (marginStr) styles += ` margin: ${marginStr};`;
+            }
+            if (element.border) {
+              const borderStr = buildBorder(element.border);
+              if (borderStr) styles += ` border: ${borderStr};`;
+            }
             break;
 
           case 'line':
           case 'separator':
             content = '';
-            const lineWidth = element.strokeWidth || 1;
-            const lineColor = element.strokeColor || '#000000';
-            styles += ` border-top: ${lineWidth}px solid ${lineColor};`;
+            let lineWidth = element.strokeWidth || 1;
+            let lineColor = element.strokeColor || '#000000';
+            let lineStyle = element.borderStyle || 'solid';
+            
+            // Support pour les styles de bordure alternatives
+            if (element.style) {
+              lineStyle = element.style;
+            }
+            
+            styles += ` border-top: ${lineWidth}px ${lineStyle} ${lineColor};`;
+            
+            // Padding/margin
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            }
+            if (element.margin) {
+              const marginStr = buildSpacing(element.margin);
+              if (marginStr) styles += ` margin: ${marginStr};`;
+            }
             break;
 
           case 'product_table':
@@ -799,10 +883,12 @@ export const Header = memo(function Header({
 
           case 'company_info':
             content = element.content || element.text || '<div>Entreprise</div>';
-            // Ajouter background seulement si showBackground=true ET backgroundColor défini
+            
+            // Background
             if (element.showBackground && element.backgroundColor && element.backgroundColor !== 'transparent') {
               styles += ` background-color: ${element.backgroundColor};`;
             }
+            
             // Padding depuis JSON (peut être nombre ou objet {top, right, bottom, left})
             if (element.padding) {
               const paddingStr = buildSpacing(element.padding);
@@ -810,30 +896,46 @@ export const Header = memo(function Header({
             } else {
               styles += ` padding: 8px;`;
             }
+            
             // Margin depuis JSON
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
             }
+            
             // Border depuis JSON (objet {width, style, color})
             if (element.border) {
               const borderStr = buildBorder(element.border);
               if (borderStr) styles += ` border: ${borderStr};`;
             }
+            
+            // BorderRadius
+            if (element.borderRadius && element.borderRadius > 0) {
+              styles += ` border-radius: ${element.borderRadius}px;`;
+            }
+            
             // Layout property (vertical ou horizontal)
             if (element.layout) {
               const layoutStr = buildFlexLayout(element.layout);
               if (layoutStr) styles += ` ${layoutStr}`;
             }
+            
+            // Separator si activé
+            if (element.separator) {
+              styles += ` border-bottom: 1px solid ${element.borderColor || '#e5e7eb'};`;
+            }
+            
             styles += ` overflow: auto;`;
             break;
 
           case 'customer_info':
             content = element.content || element.text || '<div>Client</div>';
+            
             // Background depuis JSON
             if (element.backgroundColor && element.backgroundColor !== 'transparent' && element.showBackground !== false) {
               styles += ` background-color: ${element.backgroundColor};`;
             }
+            
             // Padding depuis JSON (peut être nombre ou objet)
             if (element.padding) {
               const paddingStr = buildSpacing(element.padding);
@@ -841,49 +943,84 @@ export const Header = memo(function Header({
             } else {
               styles += ` padding: 8px;`;
             }
+            
             // Margin depuis JSON
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
             }
+            
             // Border depuis JSON (objet {width, style, color})
             if (element.border) {
               const borderStr = buildBorder(element.border);
               if (borderStr) styles += ` border: ${borderStr};`;
             }
+            
+            // BorderRadius
+            if (element.borderRadius && element.borderRadius > 0) {
+              styles += ` border-radius: ${element.borderRadius}px;`;
+            }
+            
             // Layout property (vertical ou horizontal)
             if (element.layout) {
               const layoutStr = buildFlexLayout(element.layout);
               if (layoutStr) styles += ` ${layoutStr}`;
             }
+            
             // showLabels et labelPosition
             if (element.showLabels && element.labelPosition) {
               styles += ` --label-position: ${element.labelPosition};`;
             }
+            
             styles += ` overflow: auto;`;
             break;
 
           case 'mentions':
           case 'note':
             content = element.content || element.text || '';
+            
             // Padding depuis JSON
             if (element.padding) {
               const paddingStr = buildSpacing(element.padding);
               if (paddingStr) styles += ` padding: ${paddingStr};`;
             }
+            
             // Margin depuis JSON
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
             }
+            
             // Border depuis JSON
             if (element.border) {
               const borderStr = buildBorder(element.border);
               if (borderStr) styles += ` border: ${borderStr};`;
             }
+            
+            // BorderRadius
+            if (element.borderRadius && element.borderRadius > 0) {
+              styles += ` border-radius: ${element.borderRadius}px;`;
+            }
+            
+            // Background
+            if (element.showBackground && element.backgroundColor && element.backgroundColor !== 'transparent') {
+              styles += ` background-color: ${element.backgroundColor};`;
+            }
+            
+            // LineHeight depuis propriétés
+            if (element.lineHeight) {
+              styles += ` line-height: ${element.lineHeight};`;
+            }
+            
             // Separator property
             if (element.showSeparator) {
-              styles += ` border-bottom: 1px solid #e5e7eb;`;
+              styles += ` border-bottom: 1px solid ${element.borderColor || '#e5e7eb'};`;
+            }
+            
+            // Layout property
+            if (element.layout) {
+              const layoutStr = buildFlexLayout(element.layout);
+              if (layoutStr) styles += ` ${layoutStr}`;
             }
             break;
 
