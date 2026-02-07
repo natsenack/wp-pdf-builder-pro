@@ -474,13 +474,12 @@ export const Header = memo(function Header({
   <title>Aperçu PDF - ${template.name || 'Template'}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; background: #e8e8e8; }
-    body { padding: 20px; font-family: ${fonts.family}; font-size: ${fonts.size}px; color: ${colors.text}; }
+    html, body { margin: 0; padding: 0; }
+    body { padding: 20px; }
     .pdf-wrapper { display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
     .pdf-page {
       width: ${canvasWidth}px;
       min-height: ${canvasHeight}px;
-      background: #ffffff;
       margin: 0 auto;
       padding: ${margins.top}px ${margins.right}px ${margins.bottom}px ${margins.left}px;
       position: relative;
@@ -496,8 +495,7 @@ export const Header = memo(function Header({
       word-wrap: break-word;
       overflow: auto;
     }
-    .text-element { white-space: pre-wrap; text-align: left; }
-    .title { font-size: 18px; font-weight: bold; }
+  </style>
   </style>
 </head>
 <body>
@@ -515,13 +513,6 @@ export const Header = memo(function Header({
 
         if (!visible) return;
 
-        const elementClass = (() => {
-          if (element.type === 'company_logo' || element.type === 'image') return 'logo';
-          if (element.type === 'product_table' || element.type === 'table') return 'table-element';
-          if (['company_info', 'customer_info', 'mentions'].includes(element.type)) return 'info-box';
-          return 'text-element';
-        })();
-
         let content = '';
         switch (element.type) {
           case 'text':
@@ -529,7 +520,7 @@ export const Header = memo(function Header({
             content = element.text || element.content || 'Texte';
             break;
           case 'document_type':
-            content = `<div class="title">${element.text || element.content || element.title || 'FACTURE'}</div>`;
+            content = element.text || element.content || element.title || 'FACTURE';
             break;
           case 'order_number':
             content = element.text || element.content || `Commande #${element.orderNumber || '001'}`;
@@ -537,7 +528,7 @@ export const Header = memo(function Header({
           case 'company_logo':
           case 'image':
             if (element.src) {
-              content = `<img src="${element.src}" style="max-width: 100%; max-height: 100%; width: auto; height: auto;" />`;
+              content = `<img src="${element.src}" />`;
             } else {
               content = element.text || element.content || '📦 Logo';
             }
@@ -549,9 +540,9 @@ export const Header = memo(function Header({
           case 'product_table':
           case 'table':
             if (element.content) {
-              content = `<table style="width: 100%; border-collapse: collapse;">${element.content}</table>`;
+              content = `<table>${element.content}</table>`;
             } else {
-              content = '<table style="width: 100%; border-collapse: collapse;"><tr><th style="padding: 4px; border: 1px solid #ddd;">Produit</th><th style="padding: 4px; border: 1px solid #ddd;">Qty</th><th style="padding: 4px; border: 1px solid #ddd;">Prix</th></tr><tr><td style="padding: 4px; border: 1px solid #ddd;">Exemple</td><td style="padding: 4px; border: 1px solid #ddd;">1</td><td style="padding: 4px; border: 1px solid #ddd;">100€</td></tr></table>';
+              content = '<table><tr><th>Produit</th><th>Qty</th><th>Prix</th></tr><tr><td>Exemple</td><td>1</td><td>100€</td></tr></table>';
             }
             break;
           case 'company_info':
@@ -569,7 +560,7 @@ export const Header = memo(function Header({
         }
 
         html += `<div class="element" style="left: ${x}px; top: ${y}px; width: ${w}px; height: ${h}px;">
-          <div class="element-content ${elementClass}">${content}</div>
+          <div class="element-content">${content}</div>
         </div>`;
       });
     } else {
