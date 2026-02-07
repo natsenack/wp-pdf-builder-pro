@@ -1484,17 +1484,7 @@ export const Header = memo(function Header({
               }}
             >
               {jsonModalMode === 'json' ? (
-                <pre
-                  style={{
-                    fontFamily: "'Courier New', monospace",
-                    fontSize: "11px",
-                    lineHeight: "1.4",
-                    margin: 0,
-                    whiteSpace: "pre-wrap",
-                    wordBreak: "break-word",
-                    padding: "16px",
-                  }}
-                >
+                <pre>
                   {JSON.stringify(
                     {
                       ...state.template,
