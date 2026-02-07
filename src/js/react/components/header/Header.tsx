@@ -1488,7 +1488,16 @@ export const Header = memo(function Header({
               }}
             >
               {jsonModalMode === 'json' ? (
-                <pre>
+                <pre
+                  style={{
+                    margin: 0,
+                    padding: "16px",
+                    fontFamily: "monospace",
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                    fontSize: "12px",
+                  }}
+                >
                   {JSON.stringify(
                     {
                       ...state.template,
