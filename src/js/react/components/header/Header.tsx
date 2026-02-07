@@ -1033,8 +1033,11 @@ export const Header = memo(function Header({
                 const separator = element.separator || ' • ';
                 companyContent = `<div style="display: flex; gap: 8px; flex-wrap: wrap;">${companyParts.map(p => `<span>${p}</span>`).join(separator)}</div>`;
               } else {
-                // Layout vertical (défaut) : chaque élément sur une nouvelle ligne
-                companyContent = companyParts.join('');
+                // Layout vertical (défaut) : chaque élément sur une nouvelle ligne avec espacement
+                const lineHeightValue = element.lineHeight ? parseFloat(element.lineHeight) : 1.2;
+                const fontSize = element.fontSize || 12;
+                const gap = Math.round(fontSize * (lineHeightValue - 1));
+                companyContent = `<div style="display: flex; flex-direction: column; gap: ${gap}px;">${companyParts.join('')}</div>`;
               }
             }
             
