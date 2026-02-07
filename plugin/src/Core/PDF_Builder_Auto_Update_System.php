@@ -617,8 +617,6 @@ class PDF_Builder_Auto_Update_System {
             WHERE status = 'installed'
             AND installed_at < DATE_SUB(NOW(), INTERVAL %d MONTH)
         ", $retention_months));
-
-        }
     }
 
     /**

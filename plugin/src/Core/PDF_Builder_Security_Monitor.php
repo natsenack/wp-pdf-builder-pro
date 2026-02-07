@@ -353,7 +353,6 @@ class PDF_Builder_Security_Monitor {
      */
     private function handle_low_threat($threat) {
         // Juste journaliser
-        }
     }
 
     /**
@@ -386,6 +385,11 @@ class PDF_Builder_Security_Monitor {
      */
     public function monitor_successful_login($user_login) {
         $user = get_user_by('login', $user_login);
+        
+        if (!$user) {
+            return;
+        }
+        
         $ip = $this->get_client_ip();
 
         $this->log_security_event('successful_login', [
@@ -537,6 +541,11 @@ class PDF_Builder_Security_Monitor {
 
         // Comptes administrateur avec mots de passe faibles
         $admin_users = get_users(['role' => 'administrator']);
+        
+        if (!$admin_users) {
+            return $issues;
+        }
+        
         foreach ($admin_users as $user) {
             if ($this->is_weak_password($user->user_login)) {
                 $issues[] = "Mot de passe faible détecté pour l'administrateur: {$user->user_login}";
@@ -686,6 +695,8 @@ class PDF_Builder_Security_Monitor {
         );
 
         // Logger aussi dans le système de logging avancé
+        if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log('Threat detected: ' . $threat['type']);
         }
     }
 
@@ -905,6 +916,11 @@ class PDF_Builder_Security_Monitor {
         }
 
         $plugin_updates = get_plugin_updates();
+        
+        if (!$plugin_updates) {
+            return $issues;
+        }
+        
         foreach ($plugin_updates as $plugin_file => $plugin_data) {
             if (isset($plugin_data->update) && $plugin_data->update->response === 'upgrade') {
                 $issues[] = "Mise à jour de sécurité disponible pour le plugin: {$plugin_data->Name}";

@@ -54,8 +54,20 @@ if (!defined('WP_DEBUG_LOG')) {
     define('WP_DEBUG_LOG', false);
 }
 
+if (!defined('WP_MEMORY_LIMIT')) {
+    define('WP_MEMORY_LIMIT', '40M');
+}
+
+if (!defined('WP_MAX_MEMORY_LIMIT')) {
+    define('WP_MAX_MEMORY_LIMIT', '256M');
+}
+
 if (!defined('REST_REQUEST')) {
     define('REST_REQUEST', false);
+}
+
+if (!defined('DISABLE_WP_CRON')) {
+    define('DISABLE_WP_CRON', false);
 }
 
 // ============================================================================
@@ -211,11 +223,23 @@ if (!function_exists('get_transient')) {
 }
 
 if (!function_exists('set_transient')) {
-    function set_transient($transient, $value, $expiration = 0) {}
+    function set_transient($transient, $value, $expiration = 0): bool { return true; }
 }
 
 if (!function_exists('delete_transient')) {
-    function delete_transient($transient) {}
+    function delete_transient($transient): bool { return true; }
+}
+
+if (!function_exists('get_site_transient')) {
+    function get_site_transient($transient) {}
+}
+
+if (!function_exists('set_site_transient')) {
+    function set_site_transient($transient, $value, $expiration = 0): bool { return true; }
+}
+
+if (!function_exists('delete_site_transient')) {
+    function delete_site_transient($transient): bool { return true; }
 }
 
 // ============================================================================
@@ -223,11 +247,11 @@ if (!function_exists('delete_transient')) {
 // ============================================================================
 
 if (!function_exists('get_site_url')) {
-    function get_site_url($blog_id = null, $path = '', $scheme = null): string {}
+    function get_site_url($blog_id = null, $path = '', $scheme = null): string { return ''; }
 }
 
 if (!function_exists('home_url')) {
-    function home_url($path = '', $scheme = null): string {}
+    function home_url($path = '', $scheme = null): string { return ''; }
 }
 
 if (!function_exists('wp_remote_request')) {
@@ -255,15 +279,47 @@ if (!function_exists('wp_remote_retrieve_body')) {
 // ============================================================================
 
 if (!function_exists('current_user_can')) {
-    function current_user_can($capability, $arg = null) {}
+    function current_user_can($capability, $arg = null): bool { return false; }
 }
 
 if (!function_exists('get_current_user_id')) {
-    function get_current_user_id() {}
+    function get_current_user_id(): int { return 0; }
 }
 
 if (!function_exists('wp_get_current_user')) {
     function wp_get_current_user() {}
+}
+
+if (!function_exists('is_plugin_active')) {
+    function is_plugin_active($plugin): bool { return false; }
+}
+
+if (!function_exists('is_plugin_active_for_network')) {
+    function is_plugin_active_for_network($plugin): bool { return false; }
+}
+
+if (!function_exists('activate_plugins')) {
+    function activate_plugins($plugins, $redirect = '', $network_wide = false, $silent = false) {}
+}
+
+if (!function_exists('deactivate_plugins')) {
+    function deactivate_plugins($plugins, $redirect = '', $network_wide = false, $silent = false) {}
+}
+
+if (!function_exists('get_user_by')) {
+    function get_user_by($field, $value) {}
+}
+
+if (!function_exists('get_users')) {
+    function get_users($args = []) {}
+}
+
+if (!function_exists('get_core_updates')) {
+    function get_core_updates() {}
+}
+
+if (!function_exists('get_plugin_updates')) {
+    function get_plugin_updates() {}
 }
 
 // ============================================================================
@@ -350,6 +406,54 @@ if (!function_exists('date_i18n')) {
     function date_i18n($format, $timestamp = false, $gmt = false): string {}
 }
 
+if (!function_exists('wp_add_inline_style')) {
+    function wp_add_inline_style($handle, $data = ''): bool {}
+}
+
+if (!function_exists('is_singular')) {
+    function is_singular($post_types = ''): bool {}
+}
+
+if (!function_exists('has_shortcode')) {
+    function has_shortcode($post_id, $tag): bool {}
+}
+
+if (!function_exists('wp_date')) {
+    function wp_date($format, $timestamp = 0, $timezone = null): string {}
+}
+
+if (!function_exists('maybe_unserialize')) {
+    function maybe_unserialize($data) {}
+}
+
+if (!function_exists('register_activation_hook')) {
+    function register_activation_hook($file, $function): void {}
+}
+
+if (!function_exists('register_deactivation_hook')) {
+    function register_deactivation_hook($file, $function): void {}
+}
+
+if (!function_exists('add_role')) {
+    function add_role($role, $display_name = '', $capabilities = []) {}
+}
+
+if (!function_exists('remove_role')) {
+    function remove_role($role): bool {}
+}
+
+if (!function_exists('get_role')) {
+    function get_role($role) {}
+}
+
+if (!function_exists('delete_user_meta')) {
+    function delete_user_meta($user_id, $meta_key, $meta_value = ''): bool {}
+}
+
+if (!function_exists('check_ajax_referer')) {
+    function check_ajax_referer($action = -1, $query_arg = false, $die = true) {}
+}
+
 if (!function_exists('get_site_option')) {
     function get_site_option($option, $default = false) {}
 }
@@ -364,6 +468,74 @@ if (!function_exists('wp_salt')) {
 
 if (!function_exists('file_put_contents')) {
     function file_put_contents($filename, $data, $flags = 0): int|false {}
+}
+
+if (!function_exists('wp_timezone_string')) {
+    function wp_timezone_string(): string {
+        return 'UTC';
+    }
+}
+
+if (!function_exists('wp_get_theme')) {
+    function wp_get_theme($stylesheet = '', $theme_root = '') {
+        return new class {
+            public function get($key, $default = '') {
+                return $default ?? '';
+            }
+            public function exists() {
+                return true;
+            }
+        };
+    }
+}
+
+if (!function_exists('get_bloginfo')) {
+    function get_bloginfo($show = ''): string {
+        return '';
+    }
+}
+
+if (!function_exists('number_format_i18n')) {
+    function number_format_i18n($number, $decimals = 0): string {
+        return number_format($number, $decimals);
+    }
+}
+
+if (!function_exists('wp_mkdir_p')) {
+    function wp_mkdir_p($target, $mode = 0777): bool {
+        return mkdir($target, $mode, true);
+    }
+}
+
+if (!function_exists('wp_upload_dir')) {
+    function wp_upload_dir($time = null) {
+        return [
+            'path' => '/wp-content/uploads',
+            'url' => 'http://example.com/wp-content/uploads',
+            'subdir' => '',
+            'basedir' => '/wp-content/uploads',
+            'baseurl' => 'http://example.com/wp-content/uploads',
+            'error' => false
+        ];
+    }
+}
+
+if (!function_exists('current_action')) {
+    function current_action(): string {
+        return '';
+    }
+}
+
+if (!function_exists('current_filter')) {
+    function current_filter(): string {
+        return '';
+    }
+}
+
+if (!function_exists('wp_get_environment_type')) {
+    function wp_get_environment_type(): string {
+        return 'production';
+    }
 }
 
 // ============================================================================
@@ -465,6 +637,10 @@ namespace Dompdf {
 // ============================================================================
 
 if (!class_exists('TCPDF')) {
+    /**
+     * TCPDF class stub with global namespace support
+     * Supports both import as TCPDF and global namespace reference \TCPDF
+     */
     class TCPDF {
         public function __construct($orientation = 'P', $unit = 'mm', $format = 'A4', $unicode = true, $encoding = 'UTF-8') {}
         public function AddPage($orientation = '', $format = '', $keepmargins = false, $blank = false) {}
@@ -484,7 +660,17 @@ if (!class_exists('TCPDF')) {
         public function SetXY($x, $y) {}
         public function GetX() {}
         public function GetY() {}
+        public function SetCreator($creator) {}
+        public function SetTitle($title) {}
+        public function SetSubject($subject) {}
+        public function SetAuthor($author) {}
+        public function SetKeywords($keywords) {}
     }
+}
+
+// Ensure TCPDF is available in global namespace for type hints
+if (!class_exists('\TCPDF', false)) {
+    class_alias('TCPDF', '\TCPDF');
 }
 
 // ============================================================================
@@ -550,6 +736,29 @@ namespace {
             return !empty($license_key);
         }
     }
+
+    if (!function_exists('pdf_builder_run_migrations')) {
+        /**
+         * Run PDF Builder database migrations
+         * @param string $version The target version
+         * @return bool
+         */
+        function pdf_builder_run_migrations($version) {
+            return true;
+        }
+    }
+
+    if (!function_exists('pdf_builder_config')) {
+        /**
+         * Get a PDF Builder config value
+         * @param string $key Config key
+         * @param mixed $default Default value
+         * @return mixed
+         */
+        function pdf_builder_config($key, $default = null) {
+            return $default;
+        }
+    }
 }
 
 // ============================================================================
@@ -591,6 +800,40 @@ if (!class_exists('PDF_Builder_Logger')) {
         public function get_warning_count($hours = 24) {}
         public function get_critical_count($hours = 24) {}
         public function get_error_rate() {}
+    }
+}
+
+if (!class_exists('PDF_Builder_Security_Validator')) {
+    /**
+     * Security Validator class - Stub for IDE
+     */
+    class PDF_Builder_Security_Validator {
+        private static $instance = null;
+        
+        public static function get_instance() {
+            return self::$instance ?: (self::$instance = new self());
+        }
+        
+        public function validate($data) {}
+        public function sanitize($input) {}
+        public function verify_permissions($capability) {}
+    }
+}
+
+if (!class_exists('PDF_Builder_Update_Manager')) {
+    /**
+     * Update Manager class - Stub for IDE
+     */
+    class PDF_Builder_Update_Manager {
+        private static $instance = null;
+        
+        public static function get_instance() {
+            return self::$instance ?: (self::$instance = new self());
+        }
+        
+        public function check_update() {}
+        public function apply_update() {}
+        public function get_update_info() {}
     }
 }
 

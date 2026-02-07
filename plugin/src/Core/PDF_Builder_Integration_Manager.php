@@ -318,8 +318,11 @@ class PDF_Builder_Integration_Manager {
             pdf_builder_update_option('pdf_builder_integrations', $this->integrations_cache);
 
             // Logger la déconnexion
+            if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+                error_log(wp_json_encode([
+                    'action' => 'service_disconnected',
                     'service' => $service_id
-                ]);
+                ]));
             }
 
             return [

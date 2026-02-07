@@ -380,6 +380,10 @@ class PDF_Builder_Backup_Recovery_System {
         $roles = wp_roles();
         $capabilities = [];
 
+        if (!$roles || !isset($roles->roles)) {
+            return $capabilities;
+        }
+
         foreach ($roles->roles as $role_name => $role_info) {
             $capabilities[$role_name] = array_keys($role_info['capabilities']);
         }
@@ -685,20 +689,17 @@ class PDF_Builder_Backup_Recovery_System {
             WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)
             AND type != 'emergency'
         ", $retention_days));
-
-        }
     }
 
     /**
      * Log une erreur de sauvegarde
      */
     private function log_backup_error($operation, $exception) {
-                'error' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString()
-            ]);
-        } else {
-
-        }
+        error_log(wp_json_encode([
+            'operation' => $operation,
+            'error' => $exception->getMessage(),
+            'trace' => $exception->getTraceAsString()
+        ]));
     }
 
     /**

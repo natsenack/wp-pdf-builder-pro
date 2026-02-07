@@ -96,14 +96,16 @@ class PDF_Builder_Reporting_Analytics {
 
             // Notifier si nécessaire
             if (pdf_builder_config('report_notifications_enabled', true)) {
-                 // Legacy notification calls removed — log info
-            }
-
-                    'type' => $type,
-                    'period' => $period,
-                    'format' => $format,
-                    'report_id' => $report_id
-                ]);
+                // Log the report generation
+                if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+                    error_log(wp_json_encode([
+                        'action' => 'report_generated',
+                        'type' => $type,
+                        'period' => $period,
+                        'format' => $format,
+                        'report_id' => $report_id
+                    ]));
+                }
             }
 
             return [
@@ -1433,8 +1435,6 @@ class PDF_Builder_Reporting_Analytics {
                 }
             }
         }
-
-        }
     }
 
     /**
@@ -1458,12 +1458,11 @@ class PDF_Builder_Reporting_Analytics {
      * Log une erreur de rapport
      */
     private function log_report_error($operation, $exception) {
-                'error' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString()
-            ]);
-        } else {
-
-        }
+        error_log(wp_json_encode([
+            'operation' => $operation,
+            'error' => $exception->getMessage(),
+            'trace' => $exception->getTraceAsString()
+        ]));
     }
 
     /**

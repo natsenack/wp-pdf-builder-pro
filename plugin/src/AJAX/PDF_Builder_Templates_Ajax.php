@@ -304,6 +304,10 @@ class PdfBuilderTemplatesAjax
             }
 
             // Debug logs
+            $available_formats = $settings['pdf_builder_available_formats'] ?? ['A4'];
+            $available_orientations = $settings['pdf_builder_available_orientations'] ?? ['portrait'];
+            $available_dpi = $settings['pdf_builder_available_dpi'] ?? [96];
+            
             error_log('PDF Builder: Available formats: ' . print_r($available_formats, true));
             error_log('PDF Builder: Available orientations: ' . print_r($available_orientations, true));
             error_log('PDF Builder: Available DPI: ' . print_r($available_dpi, true));

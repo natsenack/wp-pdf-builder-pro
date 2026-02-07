@@ -70,7 +70,10 @@ class PDF_Builder_Localization {
             load_textdomain(self::TEXT_DOMAIN, $mofile);
         } else {
             // Fallback vers la langue par défaut
-            load_plugin_textdomain(self::TEXT_DOMAIN, false, dirname(plugin_basename(PDF_BUILDER_PLUGIN_FILE)) . '/resources/languages/');
+            $plugin_path = plugin_basename(PDF_BUILDER_PLUGIN_FILE);
+            if ($plugin_path) {
+                load_plugin_textdomain(self::TEXT_DOMAIN, false, dirname($plugin_path) . '/resources/languages/');
+            }
         }
     }
 

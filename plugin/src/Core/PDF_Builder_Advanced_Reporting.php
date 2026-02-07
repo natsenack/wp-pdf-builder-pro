@@ -446,6 +446,7 @@ class PDF_Builder_Advanced_Reporting {
             throw new Exception(pdf_builder_translate('TCPDF non disponible', 'reporting'));
         }
 
+        /** @var \TCPDF $pdf */
         $pdf = new TCPDF();
         $pdf->SetCreator('PDF Builder Pro');
         $pdf->SetTitle($this->get_report_title($report['type']));

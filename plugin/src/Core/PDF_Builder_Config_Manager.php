@@ -156,9 +156,12 @@ class PDF_Builder_Global_Config_Manager {
         pdf_builder_update_option('pdf_builder_config', $this->config);
 
         // Logger la modification
+        if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log(wp_json_encode([
+                'operation' => 'config_update',
                 'user_id' => get_current_user_id(),
                 'changes' => array_keys($validated_config)
-            ]);
+            ]));
         }
 
         // Déclencher un hook pour les autres composants (seulement si WordPress est chargé)
@@ -177,8 +180,11 @@ class PDF_Builder_Global_Config_Manager {
         pdf_builder_update_option('pdf_builder_config', $this->config);
 
         // Logger la réinitialisation
+        if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log(wp_json_encode([
+                'operation' => 'config_reset',
                 'user_id' => get_current_user_id()
-            ]);
+            ]));
         }
 
         // Déclencher un hook (seulement si WordPress est chargé)

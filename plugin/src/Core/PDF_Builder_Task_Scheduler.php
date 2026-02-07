@@ -306,11 +306,12 @@ class PDF_Builder_Task_Scheduler {
      * Log une erreur de tâche
      */
     private function log_task_error($task_name, $exception) {
+        if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log(wp_json_encode([
+                'task' => $task_name,
                 'error' => $exception->getMessage(),
                 'trace' => $exception->getTraceAsString()
-            ]);
-        } else {
-
+            ]));
         }
 
         // Notification d'erreur pour les tâches importantes
@@ -446,7 +447,7 @@ class PDF_Builder_Task_Scheduler {
             ];
         }
 
-        return $stats;
+        return $status;
     }
 
     /**

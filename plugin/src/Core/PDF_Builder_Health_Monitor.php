@@ -794,9 +794,11 @@ class PDF_Builder_Health_Monitor {
      * Surveille les erreurs
      */
     public function monitor_errors() {
+        if (!class_exists('PDF_Builder_Logger')) {
             return;
         }
 
+        $logger = PDF_Builder_Logger::get_instance();
         $error_rate = $logger->get_error_rate();
 
         if ($error_rate > self::ERROR_RATE_THRESHOLD) {

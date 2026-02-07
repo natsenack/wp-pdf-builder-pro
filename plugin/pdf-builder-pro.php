@@ -1169,7 +1169,10 @@ if (function_exists('add_action')) {
  */
 function pdf_builder_load_textdomain()
 {
-    load_plugin_textdomain('pdf-builder-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
+    $plugin_path = plugin_basename(__FILE__);
+    if ($plugin_path) {
+        load_plugin_textdomain('pdf-builder-pro', false, dirname($plugin_path) . '/languages');
+    }
 }
 
 /**

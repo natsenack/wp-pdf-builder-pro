@@ -761,8 +761,12 @@ class PDF_Builder_Auto_Update_Manager {
 
         $response = wp_remote_post($url, $args);
 
-        if (is_wp_error($response)) {
+        if (is_wp_error($response) && $response !== null) {
             throw new Exception(pdf_builder_translate('Erreur de connexion à l\'API', 'update') . ': ' . $response->get_error_message());
+        }
+
+        if ($response === false) {
+            throw new Exception(pdf_builder_translate('Erreur de connexion à l\'API', 'update'));
         }
 
         $body = wp_remote_retrieve_body($response);

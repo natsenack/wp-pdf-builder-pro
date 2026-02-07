@@ -220,10 +220,6 @@ class PDF_Builder_Performance_Monitor {
      * Log un problème de performance
      */
     private function log_performance_issue($type, $data) {
-        } else {
-
-        }
-
         // Stocker pour analyse
         $this->store_performance_issue($type, $data);
     }

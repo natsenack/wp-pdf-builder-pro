@@ -137,9 +137,11 @@ class PDF_Builder_Diagnostic_Tool {
 
         // Vérifier les mises à jour
         $update_plugins = get_site_transient('update_plugins');
-        if (isset($update_plugins->response[plugin_basename(PDF_BUILDER_PLUGIN_FILE)])) {
+        $plugin_file = plugin_basename(PDF_BUILDER_PLUGIN_FILE);
+        
+        if ($plugin_file && $update_plugins && isset($update_plugins->response[$plugin_file])) {
             $status['update_available'] = true;
-            $status['update_info'] = $update_plugins->response[plugin_basename(PDF_BUILDER_PLUGIN_FILE)];
+            $status['update_info'] = $update_plugins->response[$plugin_file];
         }
 
         return $status;

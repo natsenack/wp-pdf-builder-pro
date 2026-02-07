@@ -406,10 +406,12 @@ class PDF_Builder_User_Manager {
         unset($this->permissions_cache[$user_id]);
 
         // Logger l'action
+        if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log(wp_json_encode([
                 'user_id' => $user_id,
                 'permissions' => $permissions,
                 'context_permissions' => $context_permissions
-            ]);
+            ]));
         }
 
         return true;
@@ -423,10 +425,12 @@ class PDF_Builder_User_Manager {
 
         if ($result) {
             // Logger la création
+            if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+                error_log(wp_json_encode([
                     'role_name' => $role_name,
                     'display_name' => $display_name,
                     'capabilities' => $capabilities
-                ]);
+                ]));
             }
         }
 
@@ -441,8 +445,10 @@ class PDF_Builder_User_Manager {
 
         if ($result) {
             // Logger la suppression
+            if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+                error_log(wp_json_encode([
                     'role_name' => $role_name
-                ]);
+                ]));
             }
         }
 
@@ -468,6 +474,10 @@ class PDF_Builder_User_Manager {
         ]);
 
         $pdf_users = [];
+
+        if (!$users) {
+            return $pdf_users;
+        }
 
         foreach ($users as $user) {
             $pdf_users[] = [
@@ -536,9 +546,11 @@ class PDF_Builder_User_Manager {
         $user->set_role($role_name);
 
         // Logger l'action
+        if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log(wp_json_encode([
                 'user_id' => $user_id,
                 'role' => $role_name
-            ]);
+            ]));
         }
 
         return true;

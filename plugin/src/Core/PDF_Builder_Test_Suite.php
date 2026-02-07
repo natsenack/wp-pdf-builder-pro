@@ -174,11 +174,13 @@ class PDF_Builder_Test_Suite {
             $this->notify_test_failures($results);
         }
 
+        if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log(wp_json_encode([
                 'suite' => $suite_name,
                 'passed' => $results['summary']['passed'],
                 'failed' => $results['summary']['failed'],
                 'duration' => $results['summary']['duration']
-            ]);
+            ]));
         }
 
         return $results;
@@ -1016,11 +1018,12 @@ class PDF_Builder_Test_Suite {
      * Log une erreur de test
      */
     private function log_test_error($operation, $exception) {
+        if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log(wp_json_encode([
+                'operation' => $operation,
                 'error' => $exception->getMessage(),
                 'trace' => $exception->getTraceAsString()
-            ]);
-        } else {
-
+            ]));
         }
     }
 

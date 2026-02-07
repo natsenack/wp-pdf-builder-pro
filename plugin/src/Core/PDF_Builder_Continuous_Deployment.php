@@ -140,10 +140,12 @@ class PDF_Builder_Continuous_Deployment {
             // Notifier le succès
             $this->notify_deployment_success($deployment_id);
 
+            if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+                error_log(wp_json_encode([
                     'deployment_id' => $deployment_id,
                     'version' => $version,
                     'environment' => $environment
-                ]);
+                ]));
             }
 
             return $deployment_id;
@@ -201,9 +203,11 @@ class PDF_Builder_Continuous_Deployment {
             // Notifier le rollback
             $this->notify_rollback_success($rollback_id, $deployment_id);
 
+            if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+                error_log(wp_json_encode([
                     'rollback_id' => $rollback_id,
                     'from_deployment' => $deployment_id
-                ]);
+                ]));
             }
 
             return $rollback_id;
@@ -721,8 +725,6 @@ class PDF_Builder_Continuous_Deployment {
             WHERE status = 'success'
             AND created_at < DATE_SUB(NOW(), INTERVAL %d MONTH)
         ", $retention_months));
-
-        }
     }
 
     /**
@@ -815,12 +817,11 @@ class PDF_Builder_Continuous_Deployment {
      * Log une erreur de déploiement
      */
     private function log_deployment_error($operation, $exception) {
-                'error' => $exception->getMessage(),
-                'trace' => $exception->getTraceAsString()
-            ]);
-        } else {
-
-        }
+        error_log(wp_json_encode([
+            'operation' => $operation,
+            'error' => $exception->getMessage(),
+            'trace' => $exception->getTraceAsString()
+        ]));
     }
 
     /**
