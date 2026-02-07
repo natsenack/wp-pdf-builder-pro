@@ -454,18 +454,7 @@ export const Header = memo(function Header({
     const elements = state.elements || [];
     const template = state.template || {};
 
-    // Paramètres par défaut du plugin
-    const margins = { top: 20, bottom: 20, left: 20, right: 20 };
-    const colors = {
-      primary: '#007cba',
-      secondary: '#666666',
-      text: '#333333',
-      border: '#e0e0e0',
-      background: '#f8f9fa',
-    };
-    const fonts = { family: 'Arial, sans-serif', size: 12 };
-
-    // Construire le HTML simulant un PDF
+    // Construire le HTML simulant un PDF - ESSENTIELLEMENT MINIMAL
     let html = `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -475,27 +464,15 @@ export const Header = memo(function Header({
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
-    body { padding: 20px; }
-    .pdf-wrapper { background: rgb(255 255 255); display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+    body { padding: 20px; background: #f5f5f5; }
+    .pdf-wrapper { background: white; display: flex; justify-content: center; }
     .pdf-page {
       width: ${canvasWidth}px;
-      min-height: ${canvasHeight}px;
-      margin: 0 auto;
-      padding: ${margins.top}px ${margins.right}px ${margins.bottom}px ${margins.left}px;
+      height: ${canvasHeight}px;
       position: relative;
-      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    .element {
-      position: absolute;
-      overflow: auto;
-    }
-    .element-content {
-      width: 100%;
-      height: 100%;
-      word-wrap: break-word;
-      overflow: auto;
-    }
-  </style>
+    .element { position: absolute; box-sizing: border-box; }
   </style>
 </head>
 <body>
@@ -513,13 +490,13 @@ export const Header = memo(function Header({
 
         if (!visible) return;
 
-        // Construire les styles inline à partir du JSON
+        // Construire les styles UNIQUEMENT à partir du JSON
         let styles = `left: ${x}px; top: ${y}px; width: ${w}px; height: ${h}px;`;
         
-        // Font styles
+        // ===== FONT STYLES =====
         if (element.fontSize) styles += ` font-size: ${element.fontSize}px;`;
         if (element.fontFamily) styles += ` font-family: ${element.fontFamily};`;
-        if (element.fontWeight) styles += ` font-weight: ${element.fontWeight};`;
+        if (element.fontWeight && element.fontWeight !== 'normal') styles += ` font-weight: ${element.fontWeight};`;
         if (element.fontStyle && element.fontStyle !== 'normal') styles += ` font-style: ${element.fontStyle};`;
         if (element.textDecoration && element.textDecoration !== 'none') styles += ` text-decoration: ${element.textDecoration};`;
         if (element.lineHeight) styles += ` line-height: ${element.lineHeight};`;
@@ -527,17 +504,24 @@ export const Header = memo(function Header({
         if (element.wordSpacing && element.wordSpacing !== 'normal') styles += ` word-spacing: ${element.wordSpacing};`;
         if (element.textTransform && element.textTransform !== 'none') styles += ` text-transform: ${element.textTransform};`;
         if (element.textAlign) styles += ` text-align: ${element.textAlign};`;
-        if (element.verticalAlign) styles += ` vertical-align: ${element.verticalAlign};`;
+        if (element.verticalAlign && element.verticalAlign !== 'baseline') styles += ` vertical-align: ${element.verticalAlign};`;
         
-        // Colors
+        // ===== COLORS =====
         if (element.textColor) styles += ` color: ${element.textColor};`;
-        if (element.backgroundColor && element.showBackground !== false) styles += ` background-color: ${element.backgroundColor};`;
+        // backgroundColor seulement si showBackground=true OU si backgroundColor n'est pas transparent
+        if (element.backgroundColor && element.backgroundColor !== 'transparent' && element.showBackground !== false) {
+          styles += ` background-color: ${element.backgroundColor};`;
+        }
         
-        // Borders
-        if (element.borderWidth) styles += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
-        if (element.borderRadius) styles += ` border-radius: ${element.borderRadius}px;`;
+        // ===== BORDERS & RADIUS =====
+        if (element.borderWidth && element.borderWidth > 0) {
+          styles += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
+        }
+        if (element.borderRadius && element.borderRadius > 0) {
+          styles += ` border-radius: ${element.borderRadius}px;`;
+        }
         
-        // Shadow
+        // ===== SHADOWS =====
         if (element.shadowBlur && element.shadowBlur > 0) {
           const offsetX = element.shadowOffsetX || 0;
           const offsetY = element.shadowOffsetY || 0;
@@ -546,47 +530,58 @@ export const Header = memo(function Header({
           styles += ` box-shadow: ${offsetX}px ${offsetY}px ${blur}px ${color};`;
         }
         
-        // Rotation
-        if (element.rotation) styles += ` transform: rotate(${element.rotation}deg);`;
-        
-        // Opacity
-        if (element.opacity && element.opacity < 1) styles += ` opacity: ${element.opacity};`;
+        // ===== TRANSFORMS & OPACITY =====
+        if (element.rotation && element.rotation !== 0) styles += ` transform: rotate(${element.rotation}deg);`;
+        if (element.opacity !== undefined && element.opacity < 1) styles += ` opacity: ${element.opacity};`;
 
         let content = '';
+
+        // ===== CONTENU PAR TYPE D'ÉLÉMENT =====
         switch (element.type) {
           case 'text':
           case 'dynamic_text':
             content = element.text || element.content || 'Texte';
-            if (element.autoWrap !== false) styles += ` white-space: pre-wrap; word-wrap: break-word;`;
+            if (element.autoWrap !== false) styles += ` white-space: pre-wrap; overflow-wrap: break-word;`;
             break;
+
           case 'document_type':
-            content = element.text || element.content || element.title || 'FACTURE';
-            styles += ` display: flex; align-items: center; justify-content: center;`;
+            content = element.title || element.text || element.content || 'FACTURE';
+            // Si verticalAlign est middle, utiliser flex
+            if (element.verticalAlign === 'middle' || element.verticalAlign === 'center') {
+              styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === 'center' ? 'center' : 'flex-start'};`;
+            }
             break;
+
           case 'order_number':
-            content = element.text || element.content || `Commande #${element.orderNumber || '001'}`;
+            const orderNum = element.text || element.content || '001';
+            const format = element.format || 'CMD-{order_number}';
+            content = format.replace('{order_number}', orderNum);
             break;
+
           case 'company_logo':
           case 'image':
             if (element.src) {
-              let imgStyles = `max-width: 100%; max-height: 100%; display: block;`;
+              let imgStyles = `width: 100%; height: 100%; display: block;`;
               if (element.objectFit) imgStyles += ` object-fit: ${element.objectFit};`;
-              if (element.opacity && element.opacity < 1) imgStyles += ` opacity: ${element.opacity};`;
-              if (element.borderRadius) imgStyles += ` border-radius: ${element.borderRadius}px;`;
-              if (element.borderWidth) imgStyles += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
+              if (element.opacity !== undefined && element.opacity < 1) imgStyles += ` opacity: ${element.opacity};`;
               content = `<img src="${element.src}" style="${imgStyles}" />`;
             } else {
-              content = element.text || element.content || '📦 Logo';
+              content = '📦';
             }
+            // Ne pas ajouter de padding ou styling supplémentaire
             break;
+
           case 'line':
           case 'separator':
             content = '';
-            if (element.strokeWidth) styles += ` border-top: ${element.strokeWidth}px solid ${element.strokeColor || '#000000'};`;
+            const lineWidth = element.strokeWidth || 1;
+            const lineColor = element.strokeColor || '#000000';
+            styles += ` border-top: ${lineWidth}px solid ${lineColor};`;
             break;
+
           case 'product_table':
           case 'table':
-            // Styles du tableau
+            // Styles du TABLEAU UNIQUEMENT du JSON
             let tableStyles = `border-collapse: collapse; width: 100%;`;
             if (element.fontSize) tableStyles += ` font-size: ${element.fontSize}px;`;
             if (element.fontFamily) tableStyles += ` font-family: ${element.fontFamily};`;
@@ -596,89 +591,79 @@ export const Header = memo(function Header({
             if (element.lineHeight) tableStyles += ` line-height: ${element.lineHeight};`;
             if (element.letterSpacing && element.letterSpacing !== 'normal') tableStyles += ` letter-spacing: ${element.letterSpacing};`;
             if (element.wordSpacing && element.wordSpacing !== 'normal') tableStyles += ` word-spacing: ${element.wordSpacing};`;
-            if (element.backgroundColor) tableStyles += ` background-color: ${element.backgroundColor};`;
+            if (element.backgroundColor && element.backgroundColor !== 'transparent') tableStyles += ` background-color: ${element.backgroundColor};`;
             
-            // Styles pour les cellules (td/th)
-            let cellStyles = `padding: 8px; text-align: ${element.textAlign || 'left'}; vertical-align: ${element.verticalAlign || 'top'};`;
-            if (element.borderWidth && element.showBorders) cellStyles += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
+            // Styles pour les cellules
+            let cellStyles = `padding: 8px;`;
+            if (element.textAlign) cellStyles += ` text-align: ${element.textAlign};`;
+            if (element.verticalAlign) cellStyles += ` vertical-align: ${element.verticalAlign};`;
+            if (element.showBorders && element.borderWidth) cellStyles += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
             if (element.textColor) cellStyles += ` color: ${element.textColor};`;
             
             // Styles pour les headers
-            let headerStyle = `padding: 8px; text-align: ${element.textAlign || 'left'}; vertical-align: ${element.verticalAlign || 'top'};`;
-            if (element.showHeaders) {
-              if (element.headerBackgroundColor) headerStyle += `background-color: ${element.headerBackgroundColor};`;
-              if (element.headerTextColor) headerStyle += `color: ${element.headerTextColor};`;
-              if (element.borderWidth && element.showBorders) headerStyle += `border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
-              if (element.fontWeight) headerStyle += `font-weight: ${element.fontWeight};`;
-            }
+            let headerStyle = `padding: 8px;`;
+            if (element.textAlign) headerStyle += ` text-align: ${element.textAlign};`;
+            if (element.verticalAlign) headerStyle += ` vertical-align: ${element.verticalAlign};`;
+            if (element.showBorders && element.borderWidth) headerStyle += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
+            if (element.headerBackgroundColor && element.headerBackgroundColor !== 'transparent') headerStyle += ` background-color: ${element.headerBackgroundColor};`;
+            if (element.headerTextColor) headerStyle += ` color: ${element.headerTextColor};`;
+            if (element.fontWeight) headerStyle += ` font-weight: ${element.fontWeight};`;
             
             const tableId = `table-${element.id}`;
             let tableCSS = '';
             
-            // Ajouter CSS pour les lignes alternées
+            // CSS pour lignes alternées
             if (element.showAlternatingRows && element.alternateRowColor) {
-              tableCSS = `<style>
-                #${tableId} tbody tr:nth-child(odd) td { background-color: ${element.alternateRowColor}; }
-              </style>`;
+              tableCSS = `<style>#${tableId} tbody tr:nth-child(odd) td { background-color: ${element.alternateRowColor}; }</style>`;
             }
             
-            // Générer le contenu du tableau avec styles dynamiques
             if (element.content) {
-              // Remplacer les tags td et th avec les styles
               let wrappedContent = element.content
                 .replace(/<th([^>]*)>/g, `<th style="${headerStyle}"$1>`)
                 .replace(/<td([^>]*)>/g, `<td style="${cellStyles}"$1>`);
-              
               content = tableCSS + `<table id="${tableId}" style="${tableStyles}">${wrappedContent}</table>`;
             } else {
               content = tableCSS + `<table id="${tableId}" style="${tableStyles}"><thead><tr><th style="${headerStyle}">Produit</th><th style="${headerStyle}">Qty</th><th style="${headerStyle}">Prix</th></tr></thead><tbody><tr><td style="${cellStyles}">Exemple</td><td style="${cellStyles}">1</td><td style="${cellStyles}">100€</td></tr></tbody></table>`;
             }
             break;
+
           case 'company_info':
-            content = element.content || element.text || '';
-            if (!content) {
-              // Si pas de contenu, créer un default
-              let companyContent = '<div style="margin-bottom:4px;"><strong>Entreprise</strong></div>';
-              companyContent += '<div>Nom: SARL Example</div>';
-              companyContent += '<div>Adresse: 123 Rue</div>';
-              content = companyContent;
-            }
+            content = element.content || element.text || '<div>Entreprise</div>';
+            // Ajouter background seulement si showBackground=true ET backgroundColor défini
             if (element.showBackground && element.backgroundColor && element.backgroundColor !== 'transparent') {
               styles += ` background-color: ${element.backgroundColor};`;
             }
+            // Padding par défaut pour readabilité
             styles += ` padding: 8px; overflow: auto;`;
             break;
+
           case 'customer_info':
-            content = element.content || element.text || '';
-            if (!content) {
-              // Si pas de contenu, créer un default
-              let customerContent = '<div style="margin-bottom:4px;"><strong>Client</strong></div>';
-              customerContent += '<div>Nom: Client</div>';
-              customerContent += '<div>Email: client@example.com</div>';
-              content = customerContent;
-            }
-            if (element.showBackground && element.backgroundColor && element.backgroundColor !== 'transparent') {
+            content = element.content || element.text || '<div>Client</div>';
+            // Ajouter background seulement si backgroundColor défini et pas transparent
+            if (element.backgroundColor && element.backgroundColor !== 'transparent' && element.showBackground !== false) {
               styles += ` background-color: ${element.backgroundColor};`;
             }
-            if (element.showBorders && element.borderWidth) {
+            // Ajouter border seulement si showBorders=true ET borderWidth > 0
+            if (element.showBorders && element.borderWidth && element.borderWidth > 0) {
               styles += ` border: ${element.borderWidth}px solid ${element.borderColor || '#f3f4f6'};`;
             }
             styles += ` padding: 8px; overflow: auto;`;
             break;
+
           case 'mentions':
           case 'note':
             content = element.content || element.text || '';
             break;
+
           default:
             content = element.text || element.content || element.label || `[${element.type}]`;
         }
 
-        html += `<div class="element" style="${styles}">
-          <div class="element-content">${content}</div>
-        </div>`;
+        // Wrapper l'élément avec tous les styles
+        html += `<div class="element" style="${styles}">${content}</div>`;
       });
     } else {
-      html += `<div style="padding: 40px; text-align: center; color: #666;">
+      html += `<div style="padding: 40px; text-align: center; color: #999;">
         <p style="font-size: 14px; margin-bottom: 10px;">🎨 Canvas vide</p>
         <p style="font-size: 12px;">Aucun élément n'a été ajouté au template.</p>
       </div>`;
