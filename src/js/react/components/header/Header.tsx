@@ -774,11 +774,11 @@ export const Header = memo(function Header({
             // Styles du TABLEAU - appliqués à partir du JSON
             let tableStyles = `border-collapse: collapse; width: 100%;`;
             
-            // Police globale si activée
-            if (element.globalFontEnabled && element.globalFontSize) tableStyles += ` font-size: ${element.globalFontSize}px;`;
+            // Police globale - utiliser globalFontSize/Family si présentes, sinon fallback
+            if (element.globalFontSize) tableStyles += ` font-size: ${element.globalFontSize}px;`;
             else if (element.fontSize) tableStyles += ` font-size: ${element.fontSize}px;`;
             
-            if (element.globalFontEnabled && element.globalFontFamily) tableStyles += ` font-family: ${element.globalFontFamily};`;
+            if (element.globalFontFamily) tableStyles += ` font-family: ${element.globalFontFamily};`;
             else if (element.fontFamily) tableStyles += ` font-family: ${element.fontFamily};`;
             
             if (element.fontWeight && element.fontWeight !== 'normal') tableStyles += ` font-weight: ${element.fontWeight};`;
@@ -1129,7 +1129,46 @@ export const Header = memo(function Header({
             break;
 
           case 'customer_info':
-            content = element.content || element.text || '<div>Client</div>';
+            // Générer le contenu du client avec styles appliqués depuis JSON
+            if (!element.content && !element.text) {
+              const headerFontSize = element.headerFontSize || 14;
+              const headerFontFamily = element.headerFontFamily || 'Arial';
+              const headerFontWeight = element.headerFontWeight || 'bold';
+              const headerFontStyle = element.headerFontStyle || 'normal';
+              const headerTextColor = element.headerTextColor || '#111827';
+              
+              const bodyFontSize = element.bodyFontSize || 12;
+              const bodyFontFamily = element.bodyFontFamily || 'Arial';
+              const bodyFontWeight = element.bodyFontWeight || 'normal';
+              const bodyFontStyle = element.bodyFontStyle || 'normal';
+              const bodyTextColor = element.textColor || '#374151';
+              
+              const customerParts = [];
+              
+              if (element.showHeaders !== false) {
+                customerParts.push(`<div style="font-size: ${headerFontSize}px; font-family: ${headerFontFamily}; font-weight: ${headerFontWeight}; font-style: ${headerFontStyle}; color: ${headerTextColor}; margin-bottom: 8px;">Client</div>`);
+              }
+              
+              if (element.showFullName !== false) {
+                customerParts.push(`<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">Prénom Nom</div>`);
+              }
+              
+              if (element.showAddress !== false) {
+                customerParts.push(`<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">123 Rue de la Paix, 75000 Paris</div>`);
+              }
+              
+              if (element.showEmail !== false) {
+                customerParts.push(`<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">client@example.com</div>`);
+              }
+              
+              if (element.showPhone !== false) {
+                customerParts.push(`<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">+01 23 45 67 89</div>`);
+              }
+              
+              content = customerParts.join('');
+            } else {
+              content = element.content || element.text;
+            }
             
             // Appliquer styles globaux (font properties)
             const globalStylesCustomer = buildGlobalStyles(element);
