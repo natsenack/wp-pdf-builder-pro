@@ -513,11 +513,49 @@ export const Header = memo(function Header({
 
         if (!visible) return;
 
+        // Construire les styles inline à partir du JSON
+        let styles = `left: ${x}px; top: ${y}px; width: ${w}px; height: ${h}px;`;
+        
+        // Font styles
+        if (element.fontSize) styles += ` font-size: ${element.fontSize}px;`;
+        if (element.fontFamily) styles += ` font-family: ${element.fontFamily};`;
+        if (element.fontWeight) styles += ` font-weight: ${element.fontWeight};`;
+        if (element.fontStyle && element.fontStyle !== 'normal') styles += ` font-style: ${element.fontStyle};`;
+        if (element.textDecoration && element.textDecoration !== 'none') styles += ` text-decoration: ${element.textDecoration};`;
+        if (element.lineHeight) styles += ` line-height: ${element.lineHeight};`;
+        if (element.textAlign) styles += ` text-align: ${element.textAlign};`;
+        if (element.verticalAlign) styles += ` vertical-align: ${element.verticalAlign};`;
+        
+        // Colors
+        if (element.textColor) styles += ` color: ${element.textColor};`;
+        if (element.backgroundColor && element.showBackground !== false) styles += ` background-color: ${element.backgroundColor};`;
+        
+        // Borders
+        if (element.borderWidth) styles += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
+        if (element.borderRadius) styles += ` border-radius: ${element.borderRadius}px;`;
+        
+        // Shadow
+        if (element.shadowBlur && element.shadowBlur > 0) {
+          const offsetX = element.shadowOffsetX || 0;
+          const offsetY = element.shadowOffsetY || 0;
+          const blur = element.shadowBlur || 0;
+          const color = element.shadowColor || '#000000';
+          styles += ` box-shadow: ${offsetX}px ${offsetY}px ${blur}px ${color};`;
+        }
+        
+        // Rotation
+        if (element.rotation) styles += ` transform: rotate(${element.rotation}deg);`;
+        
+        // Opacity
+        if (element.opacity && element.opacity < 1) styles += ` opacity: ${element.opacity};`;
+
         let content = '';
         switch (element.type) {
           case 'text':
           case 'dynamic_text':
             content = element.text || element.content || 'Texte';
+            if (element.autoWrap !== false) styles += ` white-space: pre-wrap; word-wrap: break-word;`;
+
             break;
           case 'document_type':
             content = element.text || element.content || element.title || 'FACTURE';
@@ -528,21 +566,39 @@ export const Header = memo(function Header({
           case 'company_logo':
           case 'image':
             if (element.src) {
-              content = `<img src="${element.src}" />`;
+              let imgStyles = `max-width: 100%; max-height: 100%;`;
+              if (element.objectFit) imgStyles += ` object-fit: ${element.objectFit};`;
+              if (element.opacity) imgStyles += ` opacity: ${element.opacity};`;
+              content = `<img src="${element.src}" style="${imgStyles}" />`;
             } else {
               content = element.text || element.content || '📦 Logo';
             }
             break;
           case 'line':
           case 'separator':
-            content = element.text || element.content || '—';
+            content = '';
+            if (element.strokeWidth) styles += ` border-top: ${element.strokeWidth}px solid ${element.strokeColor || '#000000'};`;
             break;
           case 'product_table':
           case 'table':
+            let tableStyles = `border-collapse: collapse;`;
+            if (element.borderWidth) tableStyles += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
+            if (element.fontSize) tableStyles += ` font-size: ${element.fontSize}px;`;
+            if (element.backgroundColor) tableStyles += ` background-color: ${element.backgroundColor};`;
+            
+            let headerStyle = '';
+            if (element.showHeaders) {
+              headerStyle = `style="`;
+              if (element.headerBackgroundColor) headerStyle += `background-color: ${element.headerBackgroundColor};`;
+              if (element.headerTextColor) headerStyle += `color: ${element.headerTextColor};`;
+              if (element.borderWidth) headerStyle += `border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
+              headerStyle += `"`;
+            }
+            
             if (element.content) {
-              content = `<table>${element.content}</table>`;
+              content = `<table style="${tableStyles}">${element.content}</table>`;
             } else {
-              content = '<table><tr><th>Produit</th><th>Qty</th><th>Prix</th></tr><tr><td>Exemple</td><td>1</td><td>100€</td></tr></table>';
+              content = `<table style="${tableStyles}"><tr>${headerStyle}><th>Produit</th><th>Qty</th><th>Prix</th></tr><tr><td>Exemple</td><td>1</td><td>100€</td></tr></table>`;
             }
             break;
           case 'company_info':
@@ -559,7 +615,7 @@ export const Header = memo(function Header({
             content = element.text || element.content || element.label || `[${element.type}]`;
         }
 
-        html += `<div class="element" style="left: ${x}px; top: ${y}px; width: ${w}px; height: ${h}px;">
+        html += `<div class="element" style="${styles}">
           <div class="element-content">${content}</div>
         </div>`;
       });
