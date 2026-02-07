@@ -492,19 +492,9 @@ export const Header = memo(function Header({
     }
     .element {
       position: absolute;
-      border: 1px dashed rgba(0,122,204,0.3);
     }
     .element-label {
-      position: absolute;
-      top: -20px;
-      left: 0;
-      background: rgba(0,122,204,0.8);
-      color: white;
-      padding: 2px 6px;
-      font-size: 10px;
-      border-radius: 2px;
-      z-index: 10;
-      pointer-events: none;
+      display: none;
     }
     .element-content {
       width: 100%;
@@ -586,7 +576,6 @@ export const Header = memo(function Header({
         }
 
         html += `<div class="element" style="left: ${x}px; top: ${y}px; width: ${w}px; height: ${h}px;">
-          <div class="element-label">${element.type}</div>
           <div class="element-content ${elementClass}">${content}</div>
         </div>`;
       });
@@ -1397,7 +1386,7 @@ export const Header = memo(function Header({
               padding: "24px",
               maxWidth: "65vw",
               width: "100%",
-              height: "100vh",
+              height: "87vh",
               display: "flex",
               flexDirection: "column",
               boxShadow: "0 10px 40px rgba(0, 0, 0, 0.3)",
