@@ -61,39 +61,50 @@ if (!$composer_autoloader_found) {
 // ✅ REGISTRATION DES HANDLERS AJAX TÔT
 // ========================================================================
 function pdf_builder_register_early_ajax_handlers() {
-    // Register AJAX handlers that need to work even if core is not loaded
-    add_action('wp_ajax_pdf_builder_generate_html_preview', function() {
-        // Load the handler if not already loaded
-        if (!class_exists('PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
-            $handler_file = PDF_BUILDER_PLUGIN_DIR . 'preview-system/php/PreviewAjaxHandler.php';
-            if (file_exists($handler_file)) {
-                require_once $handler_file;
-            }
+    // Load essential dependencies for AJAX
+    if (!class_exists('PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
+        // Load autoloader first
+        $autoload_path = PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+        if (file_exists($autoload_path)) {
+            require_once $autoload_path;
         }
         
-        if (class_exists('PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
-            // Call the handler method directly
-            PDF_Builder\PreviewSystem\PreviewAjaxHandler::generateHtmlPreviewAjax();
-        } else {
-            wp_send_json_error('Handler not available', 500);
+        // Load custom autoloader if needed
+        if (!function_exists('PDF_Builder\\PreviewSystem\\wp_remote_retrieve_body')) {
+            spl_autoload_register(function($class) {
+                $prefix_map = [
+                    'PDF_Builder\\' => 'src/',
+                    'PDF_Builder_Pro\\' => 'src/',
+                ];
+                
+                foreach ($prefix_map as $prefix => $base_dir) {
+                    $len = strlen($prefix);
+                    if (strncmp($prefix, $class, $len) === 0) {
+                        $relative_class = substr($class, $len);
+                        $file = PDF_BUILDER_PLUGIN_DIR . $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+                        
+                        if (file_exists($file)) {
+                            require $file;
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            });
         }
-    });
+        
+        // Load the handler file
+        $handler_file = PDF_BUILDER_PLUGIN_DIR . 'preview-system/php/PreviewAjaxHandler.php';
+        if (file_exists($handler_file)) {
+            require_once $handler_file;
+        }
+    }
     
-    add_action('wp_ajax_nopriv_pdf_builder_generate_html_preview', function() {
-        // Same as above for non-logged users if needed
-        if (!class_exists('PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
-            $handler_file = PDF_BUILDER_PLUGIN_DIR . 'preview-system/php/PreviewAjaxHandler.php';
-            if (file_exists($handler_file)) {
-                require_once $handler_file;
-            }
-        }
-        
-        if (class_exists('PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
-            PDF_Builder\PreviewSystem\PreviewAjaxHandler::generateHtmlPreviewAjax();
-        } else {
-            wp_send_json_error('Handler not available', 500);
-        }
-    });
+    // Register the AJAX actions
+    if (class_exists('PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
+        add_action('wp_ajax_pdf_builder_generate_html_preview', [PDF_Builder\PreviewSystem\PreviewAjaxHandler::class, 'generateHtmlPreviewAjax']);
+        add_action('wp_ajax_nopriv_pdf_builder_generate_html_preview', [PDF_Builder\PreviewSystem\PreviewAjaxHandler::class, 'generateHtmlPreviewAjax']);
+    }
 }
 
 // Register early AJAX handlers
