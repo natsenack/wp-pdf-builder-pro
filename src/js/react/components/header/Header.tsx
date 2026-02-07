@@ -549,36 +549,40 @@ export const Header = memo(function Header({
         switch (element.type) {
           case 'text':
           case 'dynamic_text':
-            content = element.text || 'Texte';
+            content = element.text || element.content || 'Texte';
             break;
           case 'document_type':
-            content = `<div class="title">${element.title || 'FACTURE'}</div>`;
+            content = `<div class="title">${element.text || element.content || element.title || 'FACTURE'}</div>`;
             break;
           case 'order_number':
-            content = `Commande #${element.orderNumber || '001'}`;
+            content = element.text || element.content || `Commande #${element.orderNumber || '001'}`;
             break;
           case 'company_logo':
           case 'image':
             if (element.src) {
               content = `<img src="${element.src}" style="max-width: 100%; max-height: 100%; width: auto; height: auto;" />`;
             } else {
-              content = '📦 Logo';
+              content = element.text || element.content || '📦 Logo';
             }
             break;
           case 'product_table':
-            content = '<table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;"><tr><th style="border: 1px solid #ddd; padding: 8px; background: #007cba; color: white;">Produit</th><th style="border: 1px solid #ddd; padding: 8px; background: #007cba; color: white;">Qty</th><th style="border: 1px solid #ddd; padding: 8px; background: #007cba; color: white;">Prix</th></tr><tr><td style="border: 1px solid #ddd; padding: 8px;">Exemple</td><td style="border: 1px solid #ddd; padding: 8px;">1</td><td style="border: 1px solid #ddd; padding: 8px;">100€</td></tr></table>';
+            if (element.content) {
+              content = `<table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;">${element.content}</table>`;
+            } else {
+              content = '<table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;"><tr><th style="border: 1px solid #ddd; padding: 8px; background: #007cba; color: white;">Produit</th><th style="border: 1px solid #ddd; padding: 8px; background: #007cba; color: white;">Qty</th><th style="border: 1px solid #ddd; padding: 8px; background: #007cba; color: white;">Prix</th></tr><tr><td style="border: 1px solid #ddd; padding: 8px;">Exemple</td><td style="border: 1px solid #ddd; padding: 8px;">1</td><td style="border: 1px solid #ddd; padding: 8px;">100€</td></tr></table>';
+            }
             break;
           case 'company_info':
-            content = '<strong>Informations Entreprise</strong><br/>Exemple SARL<br/>123 Rue Test<br/>75001 Paris';
+            content = element.content || element.text || '<strong>Informations Entreprise</strong><br/>Exemple SARL<br/>123 Rue Test<br/>75001 Paris';
             break;
           case 'customer_info':
-            content = '<strong>Informations Client</strong><br/>Client Exemple<br/>456 Rue Client<br/>75002 Paris';
+            content = element.content || element.text || '<strong>Informations Client</strong><br/>Client Exemple<br/>456 Rue Client<br/>75002 Paris';
             break;
           case 'mentions':
-            content = '<small>Mentions légales - Tous droits réservés</small>';
+            content = element.content || element.text || '<small>Mentions légales - Tous droits réservés</small>';
             break;
           default:
-            content = `[${element.type}]`;
+            content = element.text || element.content || `[${element.type}]`;
         }
 
         html += `<div class="element" style="left: ${x}px; top: ${y}px; width: ${w}px; height: ${h}px;">
