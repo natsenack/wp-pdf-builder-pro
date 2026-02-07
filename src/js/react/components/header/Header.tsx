@@ -553,8 +553,43 @@ export const Header = memo(function Header({
       height: ${canvasHeight}px;
       position: relative;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background: white;
+      font-family: Arial, sans-serif;
     }
-    .element { position: absolute; box-sizing: border-box; }
+    .element { 
+      position: absolute; 
+      box-sizing: border-box;
+      overflow: hidden;
+      padding: 0;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .element > * { 
+      word-wrap: break-word;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    .element > div { 
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    table { 
+      border-collapse: collapse;
+      width: 100%;
+      font-size: inherit;
+      margin: 0;
+      padding: 0;
+    }
+    table td, table th { 
+      padding: 4px 6px;
+      margin: 0;
+    }
   </style>
 </head>
 <body>
@@ -627,11 +662,18 @@ export const Header = memo(function Header({
             // Appliquer styles globaux (font properties)
             const globalStylesText = buildGlobalStyles(element);
             if (globalStylesText) styles += ` ${globalStylesText}`;
-            // Ajouter padding/margin/border
+            
+            // Display flex vertical pour contenu texte
+            styles += ` display: flex; align-items: center; justify-content: flex-start;`;
+            
+            // Ajouter padding par défaut si non spécifié
             if (element.padding) {
               const paddingStr = buildSpacing(element.padding);
               if (paddingStr) styles += ` padding: ${paddingStr};`;
+            } else if (element.type !== 'separator' && element.type !== 'line') {
+              styles += ` padding: 6px 8px;`;
             }
+            
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
@@ -655,14 +697,18 @@ export const Header = memo(function Header({
             // Si verticalAlign est middle, utiliser flex
             if (element.verticalAlign === 'middle' || element.verticalAlign === 'center') {
               styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === 'center' ? 'center' : 'flex-start'};`;
+            } else {
+              styles += ` display: flex; align-items: center;`;
             }
             // Appliquer styles globaux (font properties)
             const globalStylesDoc = buildGlobalStyles(element);
             if (globalStylesDoc) styles += ` ${globalStylesDoc}`;
-            // Padding/margin/border
+            // Padding/margin/border avec default
             if (element.padding) {
               const paddingStr = buildSpacing(element.padding);
               if (paddingStr) styles += ` padding: ${paddingStr};`;
+            } else {
+              styles += ` padding: 8px;`;
             }
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
@@ -1357,74 +1403,6 @@ export const Header = memo(function Header({
             if (element.border) {
               const borderStr = buildBorder(element.border);
               if (borderStr) styles += ` border: ${borderStr};`;
-            }
-            break;
-
-          case 'customer_info':
-            // Générer le contenu du client avec styles appliqués depuis JSON
-            let customerContent = element.content || element.text;
-            if (!customerContent) {
-              const headerFontSize = element.headerFontSize || 14;
-              const headerFontFamily = element.headerFontFamily || 'Arial';
-              const headerFontWeight = element.headerFontWeight || 'bold';
-              const headerFontStyle = element.headerFontStyle || 'normal';
-              const headerTextColor = element.headerTextColor || '#111827';
-              
-              const bodyFontSize = element.bodyFontSize || 12;
-              const bodyFontFamily = element.bodyFontFamily || 'Arial';
-              const bodyFontWeight = element.bodyFontWeight || 'normal';
-              const bodyFontStyle = element.bodyFontStyle || 'normal';
-              const bodyTextColor = element.textColor || '#374151';
-              
-              const customerParts = [];
-              
-              if (element.showHeaders !== false) {
-                customerParts.push(`<div style="font-size: ${headerFontSize}px; font-family: ${headerFontFamily}; font-weight: ${headerFontWeight}; font-style: ${headerFontStyle}; color: ${headerTextColor}; margin-bottom: 8px;">Client</div>`);
-              }
-              
-              if (element.showFullName !== false) {
-                customerParts.push(`<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">Prénom Nom</div>`);
-              }
-              
-              if (element.showAddress !== false) {
-                customerParts.push(`<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">123 Rue de la Paix, 75000 Paris</div>`);
-              }
-              
-              if (element.showEmail !== false) {
-                customerParts.push(`<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">client@example.com</div>`);
-              }
-              
-              if (element.showPhone !== false) {
-                customerParts.push(`<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">+01 23 45 67 89</div>`);
-              }
-              
-              customerContent = customerParts.join('');
-            }
-            content = customerContent;
-            
-            // Border depuis JSON
-            if (element.border) {
-              const borderStr = buildBorder(element.border);
-              if (borderStr) styles += ` border: ${borderStr};`;
-            }
-            
-            // BorderRadius
-            if (element.borderRadius && element.borderRadius > 0) {
-              styles += ` border-radius: ${element.borderRadius}px;`;
-            }
-            
-            // Layout property
-            if (element.layout) {
-              const lineHeightValue = element.lineHeight ? parseFloat(element.lineHeight) : 1.2;
-              const fontSize = element.fontSize || 12;
-              const gap = Math.round(fontSize * (lineHeightValue - 1));
-              const layoutStr = buildFlexLayout(element.layout, gap);
-              if (layoutStr) styles += ` ${layoutStr}`;
-            }
-            
-            // Padding par défaut
-            if (!element.padding) {
-              styles += ` padding: 8px;`;
             }
             break;
 
