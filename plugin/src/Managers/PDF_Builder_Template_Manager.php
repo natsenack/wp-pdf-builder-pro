@@ -295,6 +295,12 @@ class PDF_Builder_Template_Manager
                             }
                         }
                     }
+                    // 🔢 Assurer que les éléments order_number ont une propriété format
+                    if (isset($el['type']) && $el['type'] === 'order_number') {
+                        if (empty($el['format'])) {
+                            $el['format'] = 'CMD-{order_number}';
+                        }
+                    }
                 }
                 unset($el);
 

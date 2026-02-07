@@ -200,6 +200,7 @@ const WOOCOMMERCE_ELEMENTS = [
       shadowOffsetY: 0,
       shadowBlur: 0,
       visible: true,
+      format: "CMD-{order_number}",
     },
   },
   {

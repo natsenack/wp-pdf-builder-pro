@@ -222,16 +222,21 @@ const initialState: BuilderState = {
 function builderReducer(state: BuilderState, action: BuilderAction): BuilderState {
   switch (action.type) {
     case 'ADD_ELEMENT': {
+      const element = action.payload;
+      // Ajouter les propriétés obligatoires si manquantes
+      if (element.type === 'order_number' && !element.format) {
+        element.format = 'CMD-{order_number}';
+      }
       return {
         ...state,
-        elements: [...state.elements, action.payload],
+        elements: [...state.elements, element],
         template: {
           ...state.template,
           isModified: true
         },
         history: updateHistory(state, {
           ...state,
-          elements: [...state.elements, action.payload]
+          elements: [...state.elements, element]
         })
       };
     }
