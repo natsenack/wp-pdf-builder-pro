@@ -319,15 +319,16 @@ class PreviewAjaxHandler {
     }
     
     private static function generateHtmlPreview($pageOptions): array {
+        error_log('[HTML PREVIEW] ===== STARTING generateHtmlPreview =====');
         require_once dirname(__FILE__) . '/../../vendor/autoload.php';
-
-        error_log('[HTML PREVIEW] Starting generateHtmlPreview');
+        error_log('[HTML PREVIEW] Autoload loaded');
 
         try {
             error_log('[HTML PREVIEW] Creating SampleDataProvider');
 
             // Créer un SampleDataProvider avec des données d'exemple réalistes
             $dataProvider = new \PDF_Builder\Data\SampleDataProvider('preview');
+            error_log('[HTML PREVIEW] SampleDataProvider created successfully');
 
             // Fonction pour convertir récursivement les objets en tableaux
             $objectToArray = function($obj) use (&$objectToArray) {
@@ -350,17 +351,10 @@ class PreviewAjaxHandler {
             $templateData = $pageOptionsArray['template'] ?? $pageOptionsArray;
             error_log('[HTML PREVIEW] templateData extracted, elements count: ' . (isset($templateData['elements']) ? count($templateData['elements']) : 'N/A'));
 
-            // Créer le générateur PDF avec les données du template
-            // NOTE: PDFGenerator was moved to Admin\Generators namespace
-            // This preview system is deprecated and should use PdfHtmlGenerator instead
-            error_log('[HTML PREVIEW] Creating PDFGenerator');
-            // $generator = new \PDF_Builder\Generators\PDFGenerator($templateData, $dataProvider, true, []);
-
             // Générer l'aperçu HTML
-            error_log('[HTML PREVIEW] DEPRECATED: Use PdfHtmlGenerator instead of PDFGenerator');
-            // $html = $generator->generateHtmlPreview();
+            error_log('[HTML PREVIEW] Calling buildHtmlFromTemplate');
             $html = self::buildHtmlFromTemplate($templateData);
-            error_log('[HTML PREVIEW] HTML generated (or failed gracefully), length: ' . strlen($html));
+            error_log('[HTML PREVIEW] HTML generated successfully, length: ' . strlen($html));
 
             return ['html' => $html, 'success' => true];
 
@@ -373,8 +367,12 @@ class PreviewAjaxHandler {
     }
 
     private static function buildHtmlFromTemplate(array $template_data): string {
+        error_log('[BUILD HTML] ===== STARTING buildHtmlFromTemplate =====');
+        
         // Récupérer les paramètres du plugin pour simuler l'apparence PDF
         $plugin_settings = get_option('pdf_builder_settings', []);
+        error_log('[BUILD HTML] Plugin settings loaded: ' . json_encode($plugin_settings));
+        
         $margins = $plugin_settings['margins'] ?? ['top' => 10, 'bottom' => 10, 'left' => 10, 'right' => 10];
         $colors = $plugin_settings['colors'] ?? ['primary' => '#007cba', 'secondary' => '#666666', 'text' => '#333333'];
         $fonts = $plugin_settings['fonts'] ?? ['family' => 'Arial', 'size' => 12];
@@ -386,6 +384,7 @@ class PreviewAjaxHandler {
         $margin_bottom = $template_data['marginBottom'] ?? $template_data['margin_bottom'] ?? $margins['bottom'] ?? 28;
         
         $elements = $template_data['elements'] ?? [];
+        error_log('[BUILD HTML] Elements count: ' . count($elements));
         
         // Extraire les éléments par type
         $logo_element = null;
