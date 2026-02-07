@@ -280,14 +280,33 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
     // ========== PROPRIÉTÉS CRITIQUES À PRÉSERVER ==========
     // Les styles dédans ce set ne doivent JAMAIS être perdus lors de la sauvegarde
     const styleProperties = new Set([
+      // ===== STYLES TEXTE =====
       'fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'fontColor', 'color',
-      'backgroundColor', 'bgColor', 'textAlign', 'textDecoration', 'textTransform',
-      'letterSpacing', 'wordSpacing', 'lineHeight', 'opacity', 'zIndex',
-      'border', 'borderTop', 'borderBottom', 'borderLeft', 'borderRight', 'borderColor', 'borderWidth', 'borderStyle',
-      'padding', 'margin', 'display', 'width', 'height', 'x', 'y',
-      'showEmail', 'showPhone', 'showSiret', 'showVat', 'separator', // mentions properties
-      'showCompanyName', 'showAddress', 'showRcs', 'showCapital', // company_info properties
-      'text', 'content', 'src', 'alt' // Contenu
+      'textAlign', 'textDecoration', 'textTransform', 'letterSpacing', 'wordSpacing', 'lineHeight',
+      
+      // ===== STYLES FOND & BORDURES =====
+      'backgroundColor', 'bgColor', 'showBackground',
+      'border', 'borderTop', 'borderBottom', 'borderLeft', 'borderRight', 'borderColor', 'borderWidth', 'borderStyle', 'borderRadius',
+      
+      // ===== ESPACES & DIMENSIONS =====
+      'padding', 'margin', 'width', 'height', 'x', 'y', 'display',
+      
+      // ===== PROPRIÉTÉS VISUELLES =====
+      'opacity', 'zIndex', 'rotation', 'scale', 'visible', 'locked',
+      
+      // ===== SÉPARATEURS (Mentions & autres) =====
+      'showSeparator', 'separatorStyle', 'separator',
+      
+      // ===== PROPRIÉTÉS MENTIONS =====
+      'showEmail', 'showPhone', 'showSiret', 'showVat',
+      'mentionType', 'selectedMentions', 'medleySeparator', 'theme',
+      
+      // ===== PROPRIÉTÉS COMPANY_INFO =====
+      'showCompanyName', 'showAddress', 'showRcs', 'showCapital',
+      'layout',
+      
+      // ===== CONTENU =====
+      'text', 'content', 'src', 'alt', 'label'
     ]);
     
     Object.keys(normalized).forEach(key => {
