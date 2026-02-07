@@ -1485,6 +1485,7 @@ export const Header = memo(function Header({
                 flex: 1,
                 overflow: "auto",
                 marginBottom: "16px",
+                minHeight: "75vh",
               }}
             >
               {jsonModalMode === 'json' ? (
