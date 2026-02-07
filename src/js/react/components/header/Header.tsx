@@ -1480,37 +1480,30 @@ export const Header = memo(function Header({
               style={{
                 flex: 1,
                 overflow: "auto",
-                backgroundColor: jsonModalMode === 'json' ? "#f5f5f5" : "#e8e8e8",
-                borderRadius: "6px",
-                border: "1px solid #ddd",
                 marginBottom: "16px",
               }}
             >
               {jsonModalMode === 'json' ? (
-                <div style={{ padding: "16px" }}>
-                  <pre
-                    style={{
-                      fontFamily: "'Courier New', monospace",
-                      fontSize: "11px",
-                      lineHeight: "1.4",
-                      color: "#1e1e1e",
-                      margin: 0,
-                      whiteSpace: "pre-wrap",
-                      wordBreak: "break-word",
-                      background: "transparent",
-                      padding: 0,
-                    }}
-                  >
-                    {JSON.stringify(
-                      {
-                        ...state.template,
-                        elements: state.elements,
-                      },
-                      null,
-                      2
-                    )}
-                  </pre>
-                </div>
+                <pre
+                  style={{
+                    fontFamily: "'Courier New', monospace",
+                    fontSize: "11px",
+                    lineHeight: "1.4",
+                    margin: 0,
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                    padding: "16px",
+                  }}
+                >
+                  {JSON.stringify(
+                    {
+                      ...state.template,
+                      elements: state.elements,
+                    },
+                    null,
+                    2
+                  )}
+                </pre>
               ) : (
                 <div style={{ padding: "12px", height: '100%', overflow: 'auto' }}>
                   <iframe
