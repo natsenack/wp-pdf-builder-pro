@@ -47,6 +47,7 @@ $filesToCopy = @()
 # Fichiers critiques toujours déployés
 $criticalFiles = @(
     "plugin\pdf-builder-pro.php",
+    "plugin\bootstrap.php",
     "plugin\src\Core\PDF_Builder_Unified_Ajax_Handler.php",
     "plugin\src\Core\core\autoloader.php"
 )
