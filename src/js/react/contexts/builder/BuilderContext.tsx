@@ -213,7 +213,9 @@ const initialState: BuilderState = {
     snapToGrid: false
   },
   previewMode: 'editor',
-  history: initialHistoryState
+  history: initialHistoryState,
+  showPreviewModal: false,
+  htmlPreviewContent: ''
 };
 
 // Reducer
@@ -340,10 +342,17 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       };
     }
 
-    case 'SET_PREVIEW_MODE': {
+    case 'SET_SHOW_PREVIEW_MODAL': {
       return {
         ...state,
-        previewMode: action.payload
+        showPreviewModal: action.payload
+      };
+    }
+
+    case 'SET_HTML_PREVIEW_CONTENT': {
+      return {
+        ...state,
+        htmlPreviewContent: action.payload
       };
     }
 

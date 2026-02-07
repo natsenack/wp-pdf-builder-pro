@@ -352,6 +352,10 @@ export interface BuilderState {
   // Mode de prévisualisation (éditeur vs commande)
   previewMode: 'editor' | 'command';
   orderId?: string;
+  // Modal de prévisualisation
+  showPreviewModal: boolean;
+  // Contenu HTML de l'aperçu
+  htmlPreviewContent: string;
 }
 
 export type BuilderMode =
@@ -406,6 +410,7 @@ export type BuilderAction =
   | { type: 'SET_DRAG_STATE'; payload: Partial<DragState> }
   | { type: 'SET_PREVIEW_MODE'; payload: 'editor' | 'command' }
   | { type: 'SET_SHOW_PREVIEW_MODAL'; payload: boolean }
+  | { type: 'SET_HTML_PREVIEW_CONTENT'; payload: string }
   | { type: 'SET_ORDER_ID'; payload: string | undefined }
   | { type: 'UNDO' }
   | { type: 'REDO' }

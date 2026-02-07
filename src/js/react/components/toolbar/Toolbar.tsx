@@ -164,16 +164,11 @@ export function Toolbar({ className }: ToolbarProps) {
       console.log('🔍 [HTML PREVIEW] Données JSON reçues:', d);
 
       if (d.success && d.data && d.data.html) {
-        console.log('🔍 [HTML PREVIEW] Succès - ouverture de la nouvelle fenêtre');
-        // Ouvrir l'aperçu HTML dans une nouvelle fenêtre
-        const newWindow = window.open('', '_blank');
-        if (newWindow) {
-          newWindow.document.write(d.data.html);
-          newWindow.document.close();
-          console.log('🔍 [HTML PREVIEW] Nouvelle fenêtre ouverte avec succès');
-        } else {
-          console.error('🔍 [HTML PREVIEW] Impossible d\'ouvrir la nouvelle fenêtre (popup bloqué?)');
-        }
+        console.log('🔍 [HTML PREVIEW] Succès - affichage dans le modal');
+        // Stocker le contenu HTML et ouvrir le modal
+        dispatch({ type: 'SET_HTML_PREVIEW_CONTENT', payload: d.data.html });
+        dispatch({ type: 'SET_SHOW_PREVIEW_MODAL', payload: true });
+        console.log('🔍 [HTML PREVIEW] Contenu HTML stocké et modal ouvert');
       } else {
         console.error('🔍 [HTML PREVIEW] Erreur dans la réponse:', d);
         alert('Erreur lors de la génération de l\'aperçu HTML. Vérifiez la console pour plus de détails.');

@@ -1448,7 +1448,7 @@ export const Header = memo(function Header({
         </div>
       )}
 
-      {/* Modale d'aperçu PDF */}
+      {/* Modale d'aperçu PDF/HTML */}
       {showPreviewModal && (
         <div
           style={{
@@ -1472,6 +1472,7 @@ export const Header = memo(function Header({
             console.log('[REACT HEADER] - previewImageUrl:', previewImageUrl);
             console.log('[REACT HEADER] - previewError:', previewError);
             console.log('[REACT HEADER] - previewFormat:', previewFormat);
+            console.log('[REACT HEADER] - htmlPreviewContent length:', state.htmlPreviewContent?.length || 0);
             console.log('[REACT HEADER] Modal rendering timestamp:', Date.now());
           }}
         >
@@ -1481,7 +1482,7 @@ export const Header = memo(function Header({
               borderRadius: "8px",
               padding: "24px",
               maxWidth: "90vw",
-              width: "600px",
+              width: state.htmlPreviewContent ? "90vw" : "600px",
               maxHeight: "90vh",
               overflow: "auto",
               boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
@@ -1503,12 +1504,14 @@ export const Header = memo(function Header({
                   color: "#1a1a1a",
                 }}
               >
-                Aperçu du PDF
+                {state.htmlPreviewContent ? "Aperçu HTML du PDF" : "Aperçu du PDF"}
               </h3>
               <button
                 onClick={() => {
                   closePreviewModal();
                   clearPreview();
+                  // Vider aussi le contenu HTML de l'aperçu
+                  state.dispatch({ type: 'SET_HTML_PREVIEW_CONTENT', payload: '' });
                 }}
                 style={{
                   background: "none",
@@ -1529,164 +1532,188 @@ export const Header = memo(function Header({
               </button>
             </div>
 
-            {/* Options de format */}
-            <div style={{ marginBottom: "20px" }}>
-              <label
-                style={{
-                  display: "block",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  color: "#333",
-                  marginBottom: "8px",
-                }}
-              >
-                Format d&apos;export :
-              </label>
-              <div style={{ display: "flex", gap: "10px" }}>
-                {[
-                  { value: "png", label: "PNG", icon: "🖼️" },
-                  { value: "jpg", label: "JPG", icon: "📷" },
-                  { value: "pdf", label: "PDF", icon: "📄" },
-                ].map((format) => (
-                  <button
-                    key={format.value}
-                    onClick={() =>
-                      setPreviewFormat(format.value as "png" | "jpg" | "pdf")
-                    }
+            {/* Contenu conditionnel basé sur le type d'aperçu */}
+            {state.htmlPreviewContent ? (
+              /* Aperçu HTML */
+              <div>
+                <div style={{ marginBottom: "16px", padding: "12px", backgroundColor: "#f8f9fa", borderRadius: "4px", fontSize: "14px", color: "#666" }}>
+                  <strong>ℹ️ Aperçu HTML:</strong> Cette prévisualisation montre comment votre PDF sera rendu avec les paramètres actuels du plugin.
+                </div>
+                <div
+                  style={{
+                    border: "1px solid #ddd",
+                    borderRadius: "4px",
+                    padding: "16px",
+                    backgroundColor: "#fafafa",
+                    maxHeight: "600px",
+                    overflow: "auto"
+                  }}
+                  dangerouslySetInnerHTML={{ __html: state.htmlPreviewContent }}
+                />
+              </div>
+            ) : (
+              /* Aperçu PDF (format image) - contenu existant */
+              <>
+                {/* Options de format */}
+                <div style={{ marginBottom: "20px" }}>
+                  <label
                     style={{
-                      padding: "8px 16px",
-                      border: `2px solid ${
-                        previewFormat === format.value ? "#007cba" : "#ddd"
-                      }`,
-                      borderRadius: "6px",
-                      backgroundColor:
-                        previewFormat === format.value ? "#f0f8ff" : "#fff",
-                      color:
-                        previewFormat === format.value ? "#007cba" : "#333",
-                      cursor: "pointer",
+                      display: "block",
                       fontSize: "14px",
+                      fontWeight: "500",
+                      color: "#333",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    Format d&apos;export :
+                  </label>
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    {[
+                      { value: "png", label: "PNG", icon: "🖼️" },
+                      { value: "jpg", label: "JPG", icon: "📷" },
+                      { value: "pdf", label: "PDF", icon: "📄" },
+                    ].map((format) => (
+                      <button
+                        key={format.value}
+                        onClick={() =>
+                          setPreviewFormat(format.value as "png" | "jpg" | "pdf")
+                        }
+                        style={{
+                          padding: "8px 16px",
+                          border: `2px solid ${
+                            previewFormat === format.value ? "#007cba" : "#ddd"
+                          }`,
+                          borderRadius: "6px",
+                          backgroundColor:
+                            previewFormat === format.value ? "#f0f8ff" : "#fff",
+                          color:
+                            previewFormat === format.value ? "#007cba" : "#333",
+                          cursor: "pointer",
+                          fontSize: "14px",
+                          fontWeight: "500",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                        }}
+                      >
+                        <span>{format.icon}</span>
+                        <span>{format.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Bouton de génération */}
+                <div style={{ marginBottom: "20px" }}>
+                  <button
+                    onClick={async () => {
+                      console.log('[HEADER COMPONENT] ===== MODAL PREVIEW BUTTON CLICKED =====');
+                      console.log('[HEADER COMPONENT] Preview button clicked in modal');
+                      console.log('[HEADER COMPONENT] Timestamp:', Date.now());
+                      console.log('[HEADER COMPONENT] State template:', state.template);
+                      console.log('[HEADER COMPONENT] State template ID:', state.template?.id);
+                      console.log('[HEADER COMPONENT] State elements:', state.elements);
+                      console.log('[HEADER COMPONENT] State elements count:', state.elements?.length || 0);
+                      console.log('[HEADER COMPONENT] Preview format:', previewFormat);
+                      console.log('[HEADER COMPONENT] Is generating:', isGeneratingPreview);
+                      console.log('[HEADER COMPONENT] generatePreview function available:', typeof generatePreview);
+                      console.log('[HEADER COMPONENT] About to call generatePreview');
+
+                      await generatePreview(
+                        {
+                          ...state.template,
+                          elements: state.elements,
+                          template_id: state.template?.id || window.pdfBuilderData?.templateId || null,
+                        },
+                        {
+                          format: previewFormat,
+                          quality: 150,
+                        }
+                      );
+
+                      console.log('[HEADER COMPONENT] generatePreview call completed');
+                    }}
+                    disabled={isGeneratingPreview}
+                    style={{
+                      padding: "12px 24px",
+                      backgroundColor: isGeneratingPreview ? "#ccc" : "#007cba",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "6px",
+                      cursor: isGeneratingPreview ? "not-allowed" : "pointer",
+                      fontSize: "16px",
                       fontWeight: "500",
                       display: "flex",
                       alignItems: "center",
-                      gap: "6px",
+                      gap: "8px",
                     }}
                   >
-                    <span>{format.icon}</span>
-                    <span>{format.label}</span>
+                    {isGeneratingPreview ? (
+                      <>
+                        <span>⟳</span>
+                        <span>Génération en cours...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>🎨</span>
+                        <span>Générer l&apos;aperçu</span>
+                      </>
+                    )}
                   </button>
-                ))}
-              </div>
-            </div>
+                </div>
 
-            {/* Bouton de génération */}
-            <div style={{ marginBottom: "20px" }}>
-              <button
-                onClick={async () => {
-                  console.log('[HEADER COMPONENT] ===== MODAL PREVIEW BUTTON CLICKED =====');
-                  console.log('[HEADER COMPONENT] Preview button clicked in modal');
-                  console.log('[HEADER COMPONENT] Timestamp:', Date.now());
-                  console.log('[HEADER COMPONENT] State template:', state.template);
-                  console.log('[HEADER COMPONENT] State template ID:', state.template?.id);
-                  console.log('[HEADER COMPONENT] State elements:', state.elements);
-                  console.log('[HEADER COMPONENT] State elements count:', state.elements?.length || 0);
-                  console.log('[HEADER COMPONENT] Preview format:', previewFormat);
-                  console.log('[HEADER COMPONENT] Is generating:', isGeneratingPreview);
-                  console.log('[HEADER COMPONENT] generatePreview function available:', typeof generatePreview);
-                  console.log('[HEADER COMPONENT] About to call generatePreview');
-
-                  await generatePreview(
-                    {
-                      ...state.template,
-                      elements: state.elements,
-                      template_id: state.template?.id || window.pdfBuilderData?.templateId || null,
-                    },
-                    {
-                      format: previewFormat,
-                      quality: 150,
-                    }
-                  );
-
-                  console.log('[HEADER COMPONENT] generatePreview call completed');
-                }}
-                disabled={isGeneratingPreview}
-                style={{
-                  padding: "12px 24px",
-                  backgroundColor: isGeneratingPreview ? "#ccc" : "#007cba",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: isGeneratingPreview ? "not-allowed" : "pointer",
-                  fontSize: "16px",
-                  fontWeight: "500",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                }}
-              >
-                {isGeneratingPreview ? (
-                  <>
-                    <span>⟳</span>
-                    <span>Génération en cours...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>🎨</span>
-                    <span>Générer l&apos;aperçu</span>
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* Affichage de l'erreur */}
-            {previewError && (
-              <div
-                style={{
-                  padding: "12px",
-                  backgroundColor: "#f8d7da",
-                  border: "1px solid #f5c6cb",
-                  borderRadius: "4px",
-                  color: "#721c24",
-                  marginBottom: "20px",
-                }}
-              >
-                <strong>Erreur:</strong> {previewError}
-              </div>
-            )}
-
-            {/* Affichage de l'aperçu */}
-            {previewImageUrl && (
-              <div style={{ textAlign: "center" }}>
-                <img
-                  src={previewImageUrl}
-                  alt="Aperçu du PDF"
-                  style={{
-                    maxWidth: "100%",
-                    maxHeight: "400px",
-                    border: "1px solid #ddd",
-                    borderRadius: "4px",
-                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-                  }}
-                />
-                <div style={{ marginTop: "10px" }}>
-                  <a
-                    href={previewImageUrl}
-                    download={`apercu-${
-                      templateName || "template"
-                    }.${previewFormat}`}
+                {/* Affichage de l'erreur */}
+                {previewError && (
+                  <div
                     style={{
-                      padding: "8px 16px",
-                      backgroundColor: "#28a745",
-                      color: "#fff",
-                      textDecoration: "none",
+                      padding: "12px",
+                      backgroundColor: "#f8d7da",
+                      border: "1px solid #f5c6cb",
                       borderRadius: "4px",
-                      fontSize: "14px",
-                      fontWeight: "500",
+                      color: "#721c24",
+                      marginBottom: "20px",
                     }}
                   >
-                    💾 Télécharger
-                  </a>
-                </div>
-              </div>
+                    <strong>Erreur:</strong> {previewError}
+                  </div>
+                )}
+
+                {/* Affichage de l'aperçu */}
+                {previewImageUrl && (
+                  <div style={{ textAlign: "center" }}>
+                    <img
+                      src={previewImageUrl}
+                      alt="Aperçu du PDF"
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "400px",
+                        border: "1px solid #ddd",
+                        borderRadius: "4px",
+                        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                      }}
+                    />
+                    <div style={{ marginTop: "10px" }}>
+                      <a
+                        href={previewImageUrl}
+                        download={`apercu-${
+                          templateName || "template"
+                        }.${previewFormat}`}
+                        style={{
+                          padding: "8px 16px",
+                          backgroundColor: "#28a745",
+                          color: "#fff",
+                          textDecoration: "none",
+                          borderRadius: "4px",
+                          fontSize: "14px",
+                          fontWeight: "500",
+                        }}
+                      >
+                        💾 Télécharger
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
