@@ -126,17 +126,21 @@ class PDF_Builder_Nonce_Manager {
 
             $fresh_nonce = $this->generate_nonce();
 
-            $this->log_info('Nonce frais généré', [
-                'nonce_prefix' => substr($fresh_nonce, 0, 10) . '...',
-                'user_id' => get_current_user_id(),
-                'timestamp' => current_time('timestamp')
-            ]);
+            if ($fresh_nonce) {
+                $this->log_info('Nonce frais généré', [
+                    'nonce_prefix' => substr($fresh_nonce, 0, 10) . '...',
+                    'user_id' => get_current_user_id(),
+                    'timestamp' => current_time('timestamp')
+                ]);
 
-            wp_send_json_success([
-                'nonce' => $fresh_nonce,
-                'generated_at' => current_time('timestamp'),
-                'expires_in' => $this->nonce_ttl / 1000 // en secondes
-            ]);
+                wp_send_json_success([
+                    'nonce' => $fresh_nonce,
+                    'generated_at' => current_time('timestamp'),
+                    'expires_in' => $this->nonce_ttl / 1000 // en secondes
+                ]);
+            } else {
+                wp_send_json_error(['message' => 'Erreur lors de la génération du nonce']);
+            }
 
         } catch (Exception $e) {
             $this->log_error('Erreur génération nonce frais: ' . $e->getMessage());

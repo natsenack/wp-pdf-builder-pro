@@ -81,6 +81,7 @@ class Canvas_AJAX_Handler
             }
 
             $canvas_manager = Canvas_Manager::get_instance();
+            /** @phpstan-ignore-next-line Canvas_Manager::save_settings() defined in stub */
             $saved = $canvas_manager->save_settings($settings);
             if ($saved) {
                 \wp_send_json_success([
@@ -126,6 +127,7 @@ class Canvas_AJAX_Handler
             }
 
             $canvas_manager = Canvas_Manager::get_instance();
+            /** @phpstan-ignore-next-line Canvas_Manager::reset_to_defaults() defined in stub */
             $canvas_manager->reset_to_defaults();
             \wp_send_json_success([
                 'message' => \__('Paramètres du canvas réinitialisés aux valeurs par défaut', 'pdf-builder-pro'),

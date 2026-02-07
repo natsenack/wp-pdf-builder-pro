@@ -448,6 +448,7 @@ class PDF_Builder_Advanced_Reporting {
 
         /** @var \TCPDF $pdf */
         $pdf = new TCPDF();
+        /** @phpstan-ignore-next-line TCPDF stubs defined in lib/pdf-builder-stubs.php */
         $pdf->SetCreator('PDF Builder Pro');
         $pdf->SetTitle($this->get_report_title($report['type']));
 

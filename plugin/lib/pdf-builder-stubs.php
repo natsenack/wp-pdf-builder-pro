@@ -70,6 +70,10 @@ if (!defined('DISABLE_WP_CRON')) {
     define('DISABLE_WP_CRON', false);
 }
 
+if (!defined('PDF_BUILDER_REQUEST_START')) {
+    define('PDF_BUILDER_REQUEST_START', microtime(true));
+}
+
 // ============================================================================
 // WORDPRESS SECURITY & NONCE FUNCTIONS
 // ============================================================================
@@ -379,19 +383,19 @@ if (!function_exists('wp_unschedule_hook')) {
 // ============================================================================
 
 if (!function_exists('wp_generate_password')) {
-    function wp_generate_password($length = 12, $special_chars = true): string {}
+    function wp_generate_password($length = 12, $special_chars = true): string { return ''; }
 }
 
 if (!function_exists('wp_tempnam')) {
-    function wp_tempnam($dir = '', $prefix = ''): string {}
+    function wp_tempnam($dir = '', $prefix = ''): string { return ''; }
 }
 
 if (!function_exists('wp_json_encode')) {
-    function wp_json_encode($data, $options = 0, $depth = 512): string {}
+    function wp_json_encode($data, $options = 0, $depth = 512): string { return ''; }
 }
 
 if (!function_exists('wp_mail')) {
-    function wp_mail($to, $subject, $message, $headers = '', $attachments = []): bool {}
+    function wp_mail($to, $subject, $message, $headers = '', $attachments = []): bool { return false; }
 }
 
 if (!function_exists('wp_cache_flush')) {
@@ -399,27 +403,27 @@ if (!function_exists('wp_cache_flush')) {
 }
 
 if (!function_exists('current_time')) {
-    function current_time($type = 'mysql', $gmt = 0): string {}
+    function current_time($type = 'mysql', $gmt = 0): string { return ''; }
 }
 
 if (!function_exists('date_i18n')) {
-    function date_i18n($format, $timestamp = false, $gmt = false): string {}
+    function date_i18n($format, $timestamp = false, $gmt = false): string { return ''; }
 }
 
 if (!function_exists('wp_add_inline_style')) {
-    function wp_add_inline_style($handle, $data = ''): bool {}
+    function wp_add_inline_style($handle, $data = ''): bool { return true; }
 }
 
 if (!function_exists('is_singular')) {
-    function is_singular($post_types = ''): bool {}
+    function is_singular($post_types = ''): bool { return false; }
 }
 
 if (!function_exists('has_shortcode')) {
-    function has_shortcode($post_id, $tag): bool {}
+    function has_shortcode($post_id, $tag): bool { return false; }
 }
 
 if (!function_exists('wp_date')) {
-    function wp_date($format, $timestamp = 0, $timezone = null): string {}
+    function wp_date($format, $timestamp = 0, $timezone = null): string { return ''; }
 }
 
 if (!function_exists('maybe_unserialize')) {
@@ -439,7 +443,7 @@ if (!function_exists('add_role')) {
 }
 
 if (!function_exists('remove_role')) {
-    function remove_role($role): bool {}
+    function remove_role($role): bool { return false; }
 }
 
 if (!function_exists('get_role')) {
@@ -447,11 +451,23 @@ if (!function_exists('get_role')) {
 }
 
 if (!function_exists('delete_user_meta')) {
-    function delete_user_meta($user_id, $meta_key, $meta_value = ''): bool {}
+    function delete_user_meta($user_id, $meta_key, $meta_value = ''): bool { return true; }
 }
 
 if (!function_exists('check_ajax_referer')) {
     function check_ajax_referer($action = -1, $query_arg = false, $die = true) {}
+}
+
+if (!function_exists('has_action')) {
+    function has_action($hook, $function_to_check = false) { return false; }
+}
+
+if (!function_exists('user_can')) {
+    function user_can($user_id, $capability) { return false; }
+}
+
+if (!function_exists('get_num_queries')) {
+    function get_num_queries(): int { return 0; }
 }
 
 if (!function_exists('get_site_option')) {
@@ -459,15 +475,15 @@ if (!function_exists('get_site_option')) {
 }
 
 if (!function_exists('update_site_option')) {
-    function update_site_option($option, $value): bool {}
+    function update_site_option($option, $value): bool { return true; }
 }
 
 if (!function_exists('wp_salt')) {
-    function wp_salt($scheme = 'auth'): string {}
+    function wp_salt($scheme = 'auth'): string { return ''; }
 }
 
 if (!function_exists('file_put_contents')) {
-    function file_put_contents($filename, $data, $flags = 0): int|false {}
+    function file_put_contents($filename, $data, $flags = 0): int|false { return false; }
 }
 
 if (!function_exists('wp_timezone_string')) {
@@ -640,31 +656,55 @@ if (!class_exists('TCPDF')) {
     /**
      * TCPDF class stub with global namespace support
      * Supports both import as TCPDF and global namespace reference \TCPDF
+     * 
+     * @method void AddPage(string $orientation = '', string $format = '', bool $keepmargins = false, bool $blank = false)
+     * @method void Cell(float $w, float $h = 0, string $txt = '', int|string $border = 0, int $ln = 0, string $align = '', bool $fill = false, string $link = '', int $stretch = 0, bool $ignore_min_height = false, string $calignment = 'T', string $valignment = 'M')
+     * @method void MultiCell(float $w, float $h, string $txt = '', int|string $border = 0, string $align = 'J', bool $fill = false, int $ln = 1, string $x = '', string $y = '', bool $reseth = true, int $stretch = 0, bool $ishtml = false, bool $autopadding = true, float $maxh = 0, string $valign = 'T', bool $fitcell = false)
+     * @method string Output(string $name = 'doc.pdf', string $dest = 'I')
+     * @method void SetFont(string $family, string $style = '', int $size = 0)
+     * @method void SetFontSize(float $size)
+     * @method void SetTextColor(int $r, int $g = -1, int $b = -1)
+     * @method void SetFillColor(int $r, int $g = -1, int $b = -1)
+     * @method void SetDrawColor(int $r, int $g = -1, int $b = -1)
+     * @method void SetLineWidth(float $width)
+     * @method void Image(string $file, float $x = '', float $y = '', float $w = 0, float $h = 0, string $type = '', string $link = '', string $align = '', bool $resize = false, int $dpi = 300, string $palignment = '', bool $ismask = false, bool $imgmask = false, int|string $border = 0, bool|string $fitbox = false, bool $hidden = false, bool $fitonpage = false, bool $alt = false, string $alttext = '')
+     * @method void Ln(float $h = '')
+     * @method void Write(float $h, string $txt = '', string $link = '')
+     * @method void SetMargins(float $left, float $top, float $right = -1)
+     * @method void SetXY(float $x, float $y)
+     * @method float GetX()
+     * @method float GetY()
+     * @method void SetCreator(string $creator)
+     * @method void SetTitle(string $title)
+     * @method void SetSubject(string $subject)
+     * @method void SetAuthor(string $author)
+     * @method void SetKeywords(string $keywords)
      */
     class TCPDF {
-        public function __construct($orientation = 'P', $unit = 'mm', $format = 'A4', $unicode = true, $encoding = 'UTF-8') {}
-        public function AddPage($orientation = '', $format = '', $keepmargins = false, $blank = false) {}
-        public function Cell($w, $h = 0, $txt = '', $border = 0, $ln = 0, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calignment = 'T', $valignment = 'M') {}
-        public function MultiCell($w, $h, $txt = '', $border = 0, $align = 'J', $fill = false, $ln = 1, $x = '', $y = '', $reseth = true, $stretch = 0, $ishtml = false, $autopadding = true, $maxh = 0, $valign = 'T', $fitcell = false) {}
-        public function Output($name = 'doc.pdf', $dest = 'I') {}
-        public function SetFont($family, $style = '', $size = 0) {}
-        public function SetFontSize($size) {}
-        public function SetTextColor($r, $g = -1, $b = -1) {}
-        public function SetFillColor($r, $g = -1, $b = -1) {}
-        public function SetDrawColor($r, $g = -1, $b = -1) {}
-        public function SetLineWidth($width) {}
-        public function Image($file, $x = '', $y = '', $w = 0, $h = 0, $type = '', $link = '', $align = '', $resize = false, $dpi = 300, $palignment = '', $ismask = false, $imgmask = false, $border = 0, $fitbox = false, $hidden = false, $fitonpage = false, $alt = false, $alttext = '') {}
-        public function Ln($h = '') {}
-        public function Write($h, $txt = '', $link = '') {}
-        public function SetMargins($left, $top, $right = -1) {}
-        public function SetXY($x, $y) {}
-        public function GetX() {}
-        public function GetY() {}
-        public function SetCreator($creator) {}
-        public function SetTitle($title) {}
-        public function SetSubject($subject) {}
-        public function SetAuthor($author) {}
-        public function SetKeywords($keywords) {}
+        // Made public for IDE recognition
+        public function __construct($orientation = 'P', $unit = 'mm', $format = 'A4', $unicode = true, $encoding = 'UTF-8') { return; }
+        public function AddPage($orientation = '', $format = '', $keepmargins = false, $blank = false) { return; }
+        public function Cell($w, $h = 0, $txt = '', $border = 0, $ln = 0, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calignment = 'T', $valignment = 'M') { return; }
+        public function MultiCell($w, $h, $txt = '', $border = 0, $align = 'J', $fill = false, $ln = 1, $x = '', $y = '', $reseth = true, $stretch = 0, $ishtml = false, $autopadding = true, $maxh = 0, $valign = 'T', $fitcell = false) { return; }
+        public function Output($name = 'doc.pdf', $dest = 'I') { return ''; }
+        public function SetFont($family, $style = '', $size = 0) { return; }
+        public function SetFontSize($size) { return; }
+        public function SetTextColor($r, $g = -1, $b = -1) { return; }
+        public function SetFillColor($r, $g = -1, $b = -1) { return; }
+        public function SetDrawColor($r, $g = -1, $b = -1) { return; }
+        public function SetLineWidth($width) { return; }
+        public function Image($file, $x = '', $y = '', $w = 0, $h = 0, $type = '', $link = '', $align = '', $resize = false, $dpi = 300, $palignment = '', $ismask = false, $imgmask = false, $border = 0, $fitbox = false, $hidden = false, $fitonpage = false, $alt = false, $alttext = '') { return; }
+        public function Ln($h = '') { return; }
+        public function Write($h, $txt = '', $link = '') { return; }
+        public function SetMargins($left, $top, $right = -1) { return; }
+        public function SetXY($x, $y) { return; }
+        public function GetX() { return 0; }
+        public function GetY() { return 0; }
+        public function SetCreator($creator) { return; }
+        public function SetTitle($title) { return; }
+        public function SetSubject($subject) { return; }
+        public function SetAuthor($author) { return; }
+        public function SetKeywords($keywords) { return; }
     }
 }
 
@@ -834,6 +874,38 @@ if (!class_exists('PDF_Builder_Update_Manager')) {
         public function check_update() {}
         public function apply_update() {}
         public function get_update_info() {}
+    }
+}
+
+if (!class_exists('Canvas_Manager', false)) {
+    /**
+     * Canvas Manager class - Stub for IDE recognition
+     * Actual implementation is in plugin/src/Canvas/Canvas_Manager.php
+     * 
+     * @method array getAllSettings()
+     * @method bool save_settings(array $settings)
+     * @method bool reset_to_defaults()
+     * @method mixed get_setting(string $key, mixed $default = null)
+     * @method bool update_setting(string $key, mixed $value)
+     * @method static self getInstance()
+     * @method static self get_instance()
+     */
+    class Canvas_Manager {
+        private static $instance = null;
+        
+        public static function getInstance() {
+            return self::$instance ?: (self::$instance = new self());
+        }
+        
+        public static function get_instance() {
+            return self::getInstance();
+        }
+        
+        public function getAllSettings() { return []; }
+        public function save_settings($settings) { return true; }
+        public function reset_to_defaults() { return true; }
+        public function get_setting($key, $default = null) { return $default; }
+        public function update_setting($key, $value) { return true; }
     }
 }
 

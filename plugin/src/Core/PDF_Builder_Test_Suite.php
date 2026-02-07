@@ -1010,8 +1010,6 @@ class PDF_Builder_Test_Suite {
             DELETE FROM $table
             WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)
         ", $retention_days));
-
-        }
     }
 
     /**
@@ -1106,6 +1104,24 @@ class PDF_Builder_Test_Suite {
         }
 
         return $results;
+    }
+
+    /**
+     * Retourne une information de test
+     */
+    private function test_info($message) {
+        return [
+            'status' => 'info',
+            'message' => $message,
+            'timestamp' => current_time('timestamp')
+        ];
+    }
+
+    /**
+     * Assertion: la valeur n'est pas false
+     */
+    private function assert_not_false($value, $test_name = '') {
+        return $value !== false;
     }
 }
 

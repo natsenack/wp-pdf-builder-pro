@@ -7,7 +7,7 @@
 
 namespace PDF_Builder\Admin\Managers;
 
-
+use Exception;
 /**
  * Classe responsable de la gestion des paramètres
  */
@@ -673,8 +673,6 @@ class SettingsManager
             if ($email_reminders_enabled === '0') {
                 $sanitized['pdf_builder_license_reminder_email'] = '';
                 error_log('[RGPD] Rappels désactivés - adresse email supprimée automatiquement');
-                // Passer au traitement suivant (ne pas traiter l'email)
-                goto after_email_processing;
             }
         }
 
@@ -686,7 +684,6 @@ class SettingsManager
                 // 1. Validation de l'email
                 if (!\is_email($email)) {
                     // Email invalide - ne pas sauvegarder
-                    }
                     $email = '';
                 } else {
                     // 2. Sanitisation de l'email
@@ -697,24 +694,14 @@ class SettingsManager
 
                     if (!$consent_given) {
                         // Pas de consentement - ne pas sauvegarder l'email
-                        }
                         $email = '';
-                    } else {
-                        // 4. Finalité légitime : rappels de licence uniquement
-                        // L'email ne sera utilisé que pour les notifications de licence
-
-                        // 5. Conservation limitée : liée à la durée de validité de la licence
-                        // L'email sera automatiquement supprimé lors de la désactivation du mode test
-
-                        }
                     }
+                    // Else: consentement donné, l'email est validé et sanitisé
                 }
             }
 
             $sanitized['pdf_builder_license_reminder_email'] = $email;
         }
-
-        after_email_processing:
 
         // Sanitisation des paramètres PDF
         if (isset($input['pdf_builder_pdf_quality'])) {
@@ -849,6 +836,7 @@ class SettingsManager
             // Si aucune checkbox n'est cochée, définir un array vide
             $sanitized['pdf_builder_available_formats'] = [];
             error_log('[PDF Builder] No available_formats checkboxes checked, setting empty array');
+        }
 
         if (isset($input['pdf_builder_canvas_orientations']) && is_array($input['pdf_builder_canvas_orientations'])) {
             $valid_orientations = ['portrait', 'landscape'];
@@ -856,6 +844,7 @@ class SettingsManager
         } else {
             $sanitized['pdf_builder_available_orientations'] = [];
             error_log('[PDF Builder] No available_orientations checkboxes checked, setting empty array');
+        }
 
         if (isset($input['pdf_builder_canvas_dpi']) && is_array($input['pdf_builder_canvas_dpi'])) {
             $valid_dpi = [72, 96, 150, 200, 300, 600, 1200];
@@ -863,6 +852,7 @@ class SettingsManager
         } else {
             $sanitized['pdf_builder_available_dpi'] = [];
             error_log('[PDF Builder] No available_dpi checkboxes checked, setting empty array');
+        }
 
         // Save to custom table instead of wp_options
         pdf_builder_update_option('pdf_builder_settings', $sanitized);
