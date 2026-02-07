@@ -315,7 +315,6 @@ export const Header = memo(function Header({
       });
 
       console.log('[JSON TO HTML] Form Data:', params.toString());
-      console.log('[JSON TO HTML] Nonce verification: Expected nonce = 6828f06d36, Sending nonce = ' + nonce);
       console.log('[JSON TO HTML] Action: pdf_builder_generate_html_preview');
       console.log('[JSON TO HTML] Data length:', String(requestData.data).length);
 

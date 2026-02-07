@@ -58,6 +58,48 @@ if (!$composer_autoloader_found) {
 }
 
 // ========================================================================
+// ✅ REGISTRATION DES HANDLERS AJAX TÔT
+// ========================================================================
+function pdf_builder_register_early_ajax_handlers() {
+    // Register AJAX handlers that need to work even if core is not loaded
+    add_action('wp_ajax_pdf_builder_generate_html_preview', function() {
+        // Load the handler if not already loaded
+        if (!class_exists('PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
+            $handler_file = PDF_BUILDER_PLUGIN_DIR . 'preview-system/php/PreviewAjaxHandler.php';
+            if (file_exists($handler_file)) {
+                require_once $handler_file;
+            }
+        }
+        
+        if (class_exists('PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
+            // Call the handler method directly
+            PDF_Builder\PreviewSystem\PreviewAjaxHandler::generateHtmlPreviewAjax();
+        } else {
+            wp_send_json_error('Handler not available', 500);
+        }
+    });
+    
+    add_action('wp_ajax_nopriv_pdf_builder_generate_html_preview', function() {
+        // Same as above for non-logged users if needed
+        if (!class_exists('PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
+            $handler_file = PDF_BUILDER_PLUGIN_DIR . 'preview-system/php/PreviewAjaxHandler.php';
+            if (file_exists($handler_file)) {
+                require_once $handler_file;
+            }
+        }
+        
+        if (class_exists('PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
+            PDF_Builder\PreviewSystem\PreviewAjaxHandler::generateHtmlPreviewAjax();
+        } else {
+            wp_send_json_error('Handler not available', 500);
+        }
+    });
+}
+
+// Register early AJAX handlers
+add_action('init', 'pdf_builder_register_early_ajax_handlers', 1);
+
+// ========================================================================
 // ✅ INJECTION DU NONCE DANS LE HEAD - TRÈS TÔT
 // Cela s'exécute avant admin_head et garantit que le nonce est disponible
 // ========================================================================

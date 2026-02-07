@@ -47,7 +47,14 @@
 - ✅ Added @method documentation tags to Canvas_Manager stub
 - ✅ Enhanced return values for proper IDE recognition
 
-### 5. IDE Configuration Files
+### 5. AJAX Handler Registration Fix
+- ✅ Moved AJAX handler registration to early init (priority 1) to ensure availability during AJAX requests
+- ✅ Added duplicate prevention in PreviewAjaxHandler::init()
+- ✅ Fixed nonce consistency by preventing duplicate script enqueuing
+- ✅ Added static guards to prevent multiple React script loads and inline script additions
+- ✅ Removed confusing debug log from Header.tsx
+
+### 6. IDE Configuration Files
 - ✅ Created `.intelephense/settings.json` - Intelephense configuration
 - ✅ Created `phpstan.neon` - PHPStan static analysis configuration
 - ✅ Created `build/phpstan-bootstrap.php` - Stub bootstrap for analyzers

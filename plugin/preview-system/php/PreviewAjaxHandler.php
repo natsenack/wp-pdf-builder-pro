@@ -17,10 +17,15 @@ if (!function_exists('PDF_Builder\PreviewSystem\Exception')) {
 class PreviewAjaxHandler {
     
     public static function init() {
-        add_action('wp_ajax_pdf_builder_generate_preview', [self::class, 'generatePreviewAjax']);
-        add_action('wp_ajax_nopriv_pdf_builder_generate_preview', [self::class, 'generatePreviewAjax']);
-        add_action('wp_ajax_pdf_builder_generate_html_preview', [self::class, 'generateHtmlPreviewAjax']);
-        add_action('wp_ajax_nopriv_pdf_builder_generate_html_preview', [self::class, 'generateHtmlPreviewAjax']);
+        // Check if actions are already registered to avoid duplicates
+        if (!has_action('wp_ajax_pdf_builder_generate_preview')) {
+            add_action('wp_ajax_pdf_builder_generate_preview', [self::class, 'generatePreviewAjax']);
+            add_action('wp_ajax_nopriv_pdf_builder_generate_preview', [self::class, 'generatePreviewAjax']);
+        }
+        if (!has_action('wp_ajax_pdf_builder_generate_html_preview')) {
+            add_action('wp_ajax_pdf_builder_generate_html_preview', [self::class, 'generateHtmlPreviewAjax']);
+            add_action('wp_ajax_nopriv_pdf_builder_generate_html_preview', [self::class, 'generateHtmlPreviewAjax']);
+        }
     }
 
     public static function generatePreviewAjax() {

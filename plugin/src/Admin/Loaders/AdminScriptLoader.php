@@ -396,6 +396,13 @@ class AdminScriptLoader
      */
     private function loadReactEditorScripts($hook = null)
     {
+        static $scripts_loaded = false;
+        if ($scripts_loaded) {
+            error_log('[WP AdminScriptLoader] React editor scripts already loaded, skipping');
+            return;
+        }
+        $scripts_loaded = true;
+        
         error_log('[WP AdminScriptLoader] loadReactEditorScripts STARTED at ' . date('Y-m-d H:i:s') . ' for page: ' . (isset($_GET['page']) ? $_GET['page'] : 'unknown') . ', hook: ' . $hook);
 
         // VÉRIFICATION DES FICHIERS AVANT CHARGEMENT
@@ -513,14 +520,18 @@ class AdminScriptLoader
 
         // Enqueue React vendor bundle (contains React and ReactDOM)
         $react_vendor_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/react-vendor.min.js';
-        \wp_enqueue_script('pdf-builder-react-vendor', $react_vendor_url, [], $version_param, false);
-        error_log('[WP AdminScriptLoader] VENDOR ENQUEUED: ' . $react_vendor_url);
+        if (!wp_script_is('pdf-builder-react-vendor', 'enqueued')) {
+            \wp_enqueue_script('pdf-builder-react-vendor', $react_vendor_url, [], $version_param, false);
+            error_log('[WP AdminScriptLoader] VENDOR ENQUEUED: ' . $react_vendor_url);
+        }
         
         // Main React app bundle  
         $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js';
-        \wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['wp-element', 'wp-components', 'wp-data', 'wp-hooks', 'wp-api', 'media-views'], $version_param, true);
-        \wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] MAIN ENQUEUED: ' . $react_main_url);
+        if (!wp_script_is('pdf-builder-react-main', 'enqueued')) {
+            \wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['wp-element', 'wp-components', 'wp-data', 'wp-hooks', 'wp-api', 'media-views'], $version_param, true);
+            \wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
+            error_log('[WP AdminScriptLoader] MAIN ENQUEUED: ' . $react_main_url);
+        }
         
         error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-vendor and pdf-builder-react-main with dependencies');
         
@@ -771,12 +782,16 @@ class AdminScriptLoader
         error_log('[WP AdminScriptLoader] \wp_localize_script called for pdf-builder-react-main with data: ' . json_encode($localize_data));
 
         // Also set window.pdfBuilderData directly before React initializes
-        wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
-        error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
+        static $inline_scripts_added = false;
+        if (!$inline_scripts_added) {
+            wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
+            error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
 
-        // Also set window.pdfBuilderNonce for AJAX calls
-        wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderNonce = "' . \wp_create_nonce('pdf_builder_ajax') . '";', 'before');
-        error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderNonce');
+            // Also set window.pdfBuilderNonce for AJAX calls
+            wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderNonce = "' . \wp_create_nonce('pdf_builder_ajax') . '";', 'before');
+            error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderNonce');
+            $inline_scripts_added = true;
+        }
 
         // DEBUG: Add inline script to check if data is available
         wp_add_inline_script('pdf-builder-react-main', '
@@ -814,15 +829,19 @@ class AdminScriptLoader
 
         // React wrapper script - waits for pdfBuilderReact to be available
         $react_wrapper_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-wrapper.min.js';
-        \wp_enqueue_script('pdf-builder-react-wrapper', $react_wrapper_url, ['pdf-builder-react-main'], $version_param, true);
-        \wp_script_add_data('pdf-builder-react-wrapper', 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-wrapper: ' . $react_wrapper_url);
+        if (!wp_script_is('pdf-builder-react-wrapper', 'enqueued')) {
+            \wp_enqueue_script('pdf-builder-react-wrapper', $react_wrapper_url, ['pdf-builder-react-main'], $version_param, true);
+            \wp_script_add_data('pdf-builder-react-wrapper', 'type', 'text/javascript');
+            error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-wrapper: ' . $react_wrapper_url);
+        }
 
         // Module executor - forces execution of the React bundle
         $react_executor_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-executor.min.js';
-        \wp_enqueue_script('pdf-builder-react-executor', $react_executor_url, ['pdf-builder-react-main'], $version_param, true);
-        \wp_script_add_data('pdf-builder-react-executor', 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-executor: ' . $react_executor_url);
+        if (!wp_script_is('pdf-builder-react-executor', 'enqueued')) {
+            \wp_enqueue_script('pdf-builder-react-executor', $react_executor_url, ['pdf-builder-react-main'], $version_param, true);
+            \wp_script_add_data('pdf-builder-react-executor', 'type', 'text/javascript');
+            error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-executor: ' . $react_executor_url);
+        }
 
         // Add a safety check script that forces initialization
         wp_add_inline_script('pdf-builder-react-executor', '
@@ -853,16 +872,20 @@ class AdminScriptLoader
 
         // Init helper
         $init_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-init.min.js';
-        \wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react-executor'], $cache_bust, true);
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-init: ' . $init_helper_url);
+        if (!wp_script_is('pdf-builder-react-init', 'enqueued')) {
+            \wp_enqueue_script('pdf-builder-react-init', $init_helper_url, ['pdf-builder-react-executor'], $cache_bust, true);
+            error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-init: ' . $init_helper_url);
+        }
 
         // React initialization script - initializes PDFBuilderReact component
         $random_param = '';
         $nuclear_suffix = '';
         $react_init_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-init.min.js' . $random_param;
-        \wp_enqueue_script('pdf-builder-react-initializer', $react_init_url, ['pdf-builder-react-executor'], $version_param . $nuclear_suffix, true);
-        \wp_script_add_data('pdf-builder-react-initializer', 'type', 'text/javascript');
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-initializer');
+        if (!wp_script_is('pdf-builder-react-initializer', 'enqueued')) {
+            \wp_enqueue_script('pdf-builder-react-initializer', $react_init_url, ['pdf-builder-react-executor'], $version_param . $nuclear_suffix, true);
+            \wp_script_add_data('pdf-builder-react-initializer', 'type', 'text/javascript');
+            error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-initializer');
+        }
 
         // Scripts de l'API Preview
         $preview_client_path = PDF_BUILDER_ASSETS_DIR . 'js/pdf-preview-api-client.min.js';
