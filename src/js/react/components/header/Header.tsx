@@ -1397,7 +1397,7 @@ export const Header = memo(function Header({
               padding: "24px",
               maxWidth: "65vw",
               width: "100%",
-              maxHeight: "90vh",
+              height: "100vh",
               display: "flex",
               flexDirection: "column",
               boxShadow: "0 10px 40px rgba(0, 0, 0, 0.3)",
