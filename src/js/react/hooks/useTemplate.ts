@@ -797,8 +797,7 @@ export function useTemplate() {
     state.elements,
     state.template.name,
     dispatch,
-    canvasWidth,
-    canvasHeight,
+    canvasSettings,
     getTemplateIdFromUrl,
   ]);
 
@@ -833,6 +832,7 @@ export function useTemplate() {
     [dispatch]
   );
 
+  return useMemo(
     () => ({
       templateName: state.template.name,
       templateDescription: state.template.description,
@@ -879,6 +879,7 @@ export function useTemplate() {
       updateTemplateSettings,
       getTemplateIdFromUrl,
     ]
+  );
 }
 
 
