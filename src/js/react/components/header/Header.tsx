@@ -474,8 +474,8 @@ export const Header = memo(function Header({
   <title>Aperçu PDF - ${template.name || 'Template'}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; margin: 0; padding: 0; background: #e8e8e8; }
-    body { padding: 20px; font-family: ${fonts.family}; }
+    html, body { margin: 0; padding: 0; background: #e8e8e8; }
+    body { padding: 20px; font-family: ${fonts.family}; font-size: ${fonts.size}px; color: ${colors.text}; }
     .pdf-wrapper { display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
     .pdf-page {
       width: ${canvasWidth}px;
@@ -483,34 +483,21 @@ export const Header = memo(function Header({
       background: #ffffff;
       margin: 0 auto;
       padding: ${margins.top}px ${margins.right}px ${margins.bottom}px ${margins.left}px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
-      color: ${colors.text};
-      font-size: ${fonts.size}px;
-      line-height: 1.6;
       position: relative;
       overflow: hidden;
     }
     .element {
       position: absolute;
-    }
-    .element-label {
-      display: none;
+      overflow: auto;
     }
     .element-content {
       width: 100%;
       height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       word-wrap: break-word;
-      overflow: hidden;
-      padding: 8px;
+      overflow: auto;
     }
-    .logo { background: #f5f5f5; border: 1px solid ${colors.border}; border-radius: 4px; }
     .text-element { white-space: pre-wrap; text-align: left; }
-    .title { font-size: 24px; font-weight: bold; color: ${colors.primary}; }
-    .info-box { background: ${colors.background}; border: 1px solid ${colors.border}; border-radius: 4px; padding: 12px; font-size: 11px; }
-    .separator { border-top: 2px solid ${colors.primary}; margin: 15px 0; }
+    .title { font-size: 18px; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -555,24 +542,30 @@ export const Header = memo(function Header({
               content = element.text || element.content || '📦 Logo';
             }
             break;
+          case 'line':
+          case 'separator':
+            content = element.text || element.content || '—';
+            break;
           case 'product_table':
+          case 'table':
             if (element.content) {
-              content = `<table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;">${element.content}</table>`;
+              content = `<table style="width: 100%; border-collapse: collapse;">${element.content}</table>`;
             } else {
-              content = '<table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;"><tr><th style="border: 1px solid #ddd; padding: 8px; background: #007cba; color: white;">Produit</th><th style="border: 1px solid #ddd; padding: 8px; background: #007cba; color: white;">Qty</th><th style="border: 1px solid #ddd; padding: 8px; background: #007cba; color: white;">Prix</th></tr><tr><td style="border: 1px solid #ddd; padding: 8px;">Exemple</td><td style="border: 1px solid #ddd; padding: 8px;">1</td><td style="border: 1px solid #ddd; padding: 8px;">100€</td></tr></table>';
+              content = '<table style="width: 100%; border-collapse: collapse;"><tr><th style="padding: 4px; border: 1px solid #ddd;">Produit</th><th style="padding: 4px; border: 1px solid #ddd;">Qty</th><th style="padding: 4px; border: 1px solid #ddd;">Prix</th></tr><tr><td style="padding: 4px; border: 1px solid #ddd;">Exemple</td><td style="padding: 4px; border: 1px solid #ddd;">1</td><td style="padding: 4px; border: 1px solid #ddd;">100€</td></tr></table>';
             }
             break;
           case 'company_info':
-            content = element.content || element.text || '<strong>Informations Entreprise</strong><br/>Exemple SARL<br/>123 Rue Test<br/>75001 Paris';
+            content = element.content || element.text || 'Informations Entreprise';
             break;
           case 'customer_info':
-            content = element.content || element.text || '<strong>Informations Client</strong><br/>Client Exemple<br/>456 Rue Client<br/>75002 Paris';
+            content = element.content || element.text || 'Informations Client';
             break;
           case 'mentions':
-            content = element.content || element.text || '<small>Mentions légales - Tous droits réservés</small>';
+          case 'note':
+            content = element.content || element.text || '';
             break;
           default:
-            content = element.text || element.content || `[${element.type}]`;
+            content = element.text || element.content || element.label || `[${element.type}]`;
         }
 
         html += `<div class="element" style="left: ${x}px; top: ${y}px; width: ${w}px; height: ${h}px;">
