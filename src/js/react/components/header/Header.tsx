@@ -917,6 +917,11 @@ export const Header = memo(function Header({
             break;
 
           case 'company_info':
+            // Helper pour valider si une valeur doit être affichée
+            const isValidValue = (value: string | any): boolean => {
+              return value && value.toString().trim() !== '' && value !== 'Non indiqué';
+            };
+            
             // Récupérer les données d'entreprise (d'abord de l'élément, puis du plugin)
             const getCompanyDataForHtml = () => {
               const pluginCompany = (window as any).pdfBuilderData?.company || {};
@@ -944,7 +949,7 @@ export const Header = memo(function Header({
               const companyParts: string[] = [];
               
               // Nom de l'entreprise
-              if (element.showCompanyName !== false && companyData.name) {
+              if (element.showCompanyName !== false && isValidValue(companyData.name)) {
                 const headerFontSize = element.headerFontSize || element.fontSize || 14;
                 const headerFontWeight = element.headerFontWeight || element.fontWeight || 'bold';
                 const headerColor = element.headerTextColor || element.textColor || '#000000';
@@ -952,58 +957,58 @@ export const Header = memo(function Header({
               }
               
               // Adresse
-              if (element.showAddress !== false && companyData.address) {
+              if (element.showAddress !== false && isValidValue(companyData.address)) {
                 let addressText = companyData.address;
-                if (companyData.city) addressText += `, ${companyData.city}`;
+                if (isValidValue(companyData.city)) addressText += `, ${companyData.city}`;
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
                 companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">${addressText}</div>`);
               }
               
               // Téléphone
-              if (element.showPhone !== false && companyData.phone) {
+              if (element.showPhone !== false && isValidValue(companyData.phone)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
                 companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">Tél: ${companyData.phone}</div>`);
               }
               
               // Email
-              if (element.showEmail !== false && companyData.email) {
+              if (element.showEmail !== false && isValidValue(companyData.email)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
                 companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">Email: ${companyData.email}</div>`);
               }
               
               // Site web
-              if (element.showWebsite !== false && companyData.website) {
+              if (element.showWebsite !== false && isValidValue(companyData.website)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
                 companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">${companyData.website}</div>`);
               }
               
               // SIRET
-              if (element.showSiret !== false && companyData.siret) {
+              if (element.showSiret !== false && isValidValue(companyData.siret)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
                 companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">SIRET: ${companyData.siret}</div>`);
               }
               
               // TVA
-              if (element.showVat !== false && companyData.tva) {
+              if (element.showVat !== false && isValidValue(companyData.tva)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
                 companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">TVA: ${companyData.tva}</div>`);
               }
               
               // RCS
-              if (element.showRcs !== false && companyData.rcs) {
+              if (element.showRcs !== false && isValidValue(companyData.rcs)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
                 companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">RCS: ${companyData.rcs}</div>`);
               }
               
               // Capital sociale
-              if (element.showCapital !== false && companyData.capital) {
+              if (element.showCapital !== false && isValidValue(companyData.capital)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
                 companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">Capital: ${companyData.capital} €</div>`);
