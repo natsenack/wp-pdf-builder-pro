@@ -359,7 +359,7 @@ class PreviewAjaxHandler {
             // Générer l'aperçu HTML
             error_log('[HTML PREVIEW] DEPRECATED: Use PdfHtmlGenerator instead of PDFGenerator');
             // $html = $generator->generateHtmlPreview();
-            $html = '';
+            $html = self::buildHtmlFromTemplate($templateData);
             error_log('[HTML PREVIEW] HTML generated (or failed gracefully), length: ' . strlen($html));
 
             return ['html' => $html, 'success' => true];
@@ -373,6 +373,18 @@ class PreviewAjaxHandler {
     }
 
     private static function buildHtmlFromTemplate(array $template_data): string {
+        // Récupérer les paramètres du plugin pour simuler l'apparence PDF
+        $plugin_settings = get_option('pdf_builder_settings', []);
+        $margins = $plugin_settings['margins'] ?? ['top' => 10, 'bottom' => 10, 'left' => 10, 'right' => 10];
+        $colors = $plugin_settings['colors'] ?? ['primary' => '#007cba', 'secondary' => '#666666', 'text' => '#333333'];
+        $fonts = $plugin_settings['fonts'] ?? ['family' => 'Arial', 'size' => 12];
+        
+        // Extraire les dimensions du canvas depuis les données du template
+        $canvas_width = $template_data['canvasWidth'] ?? $template_data['canvas_width'] ?? 794; // A4 width in pixels
+        $canvas_height = $template_data['canvasHeight'] ?? $template_data['canvas_height'] ?? 1123; // A4 height in pixels
+        $margin_top = $template_data['marginTop'] ?? $template_data['margin_top'] ?? $margins['top'] ?? 28;
+        $margin_bottom = $template_data['marginBottom'] ?? $template_data['margin_bottom'] ?? $margins['bottom'] ?? 28;
+        
         $elements = $template_data['elements'] ?? [];
         
         // Extraire les éléments par type
@@ -433,17 +445,30 @@ class PreviewAjaxHandler {
             height: 100%;
             margin: 0;
             padding: 0;
+            background-color: #f5f5f5;
         }
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            padding: 8mm;
+        .pdf-container {
+            width: ' . $canvas_width . 'px;
+            min-height: ' . $canvas_height . 'px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: ' . $margin_top . 'px ' . ($margins['right'] ?? 20) . 'px ' . $margin_bottom . 'px ' . ($margins['left'] ?? 20) . 'px;
+            font-family: ' . ($fonts['family'] ?? 'Arial') . ', sans-serif;
+            font-size: ' . ($fonts['size'] ?? 12) . 'px;
+            color: ' . ($colors['text'] ?? '#333333') . ';
+            position: relative;
+        }
+        .pdf-content {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            min-height: ' . ($canvas_height - $margin_top - $margin_bottom) . 'px;
         }
         .header-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8mm;
-            gap: 8mm;
+            margin-bottom: 15px;
+            gap: 15px;
             align-items: flex-start;
         }
         .header-col {
@@ -451,105 +476,130 @@ class PreviewAjaxHandler {
         }
         .logo-container {
             text-align: center;
-            max-width: 80mm;
-            height: 30mm;
+            max-width: 200px;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2mm;
+            padding: 5px;
+            border: 1px solid #e0e0e0;
+            background-color: #fafafa;
         }
         .logo-container img {
             max-width: 100%;
-            max-height: 28mm;
+            max-height: 70px;
             width: auto;
             height: auto;
         }
         .document-type-title {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
-            color: #111827;
+            color: ' . ($colors['primary'] ?? '#007cba') . ';
             text-align: right;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .separator-line {
-            border-top: 1px solid #999999;
-            margin: 6mm 0 8mm 0;
+            border-top: 2px solid ' . ($colors['primary'] ?? '#007cba') . ';
+            margin: 15px 0 20px 0;
         }
         .two-col {
             display: flex;
-            gap: 15mm;
-            margin-bottom: 10mm;
+            gap: 30px;
+            margin-bottom: 20px;
         }
         .two-col > div {
             flex: 1;
         }
         .info-box {
-            background-color: #e5e7eb;
-            padding: 5mm;
+            background-color: #f8f9fa;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
             font-size: 11px;
             line-height: 1.5;
         }
         .info-box-title {
             font-weight: bold;
-            color: #111827;
-            margin-bottom: 3mm;
-            border-bottom: 1px solid #d1d5db;
-            padding-bottom: 2mm;
+            color: ' . ($colors['primary'] ?? '#007cba') . ';
+            margin-bottom: 8px;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 4px;
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 0.5px;
         }
         .info-item {
-            color: #374151;
-            margin-bottom: 2mm;
+            color: ' . ($colors['text'] ?? '#333333') . ';
+            margin-bottom: 4px;
+        }
         }
         .order-info {
             text-align: right;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
         }
         .order-number-label {
             font-weight: bold;
+            color: ' . ($colors['primary'] ?? '#007cba') . ';
+            font-size: 14px;
         }
         .order-date {
             font-size: 11px;
-            color: #374151;
+            color: ' . ($colors['secondary'] ?? '#666666') . ';
+            margin-top: 4px;
         }
         .product-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 10px;
-            margin: 10mm 0;
+            font-size: 11px;
+            margin: 20px 0;
+            border: 1px solid #e0e0e0;
         }
         .product-table th {
-            background-color: #f9fafb;
-            color: #111827;
-            padding: 5mm;
+            background-color: ' . ($colors['primary'] ?? '#007cba') . ';
+            color: #ffffff;
+            padding: 10px;
             text-align: left;
-            border: 0.5px solid #e5e7eb;
             font-weight: bold;
+            border: 1px solid #dee2e6;
         }
         .product-table td {
-            padding: 4mm 5mm;
-            border: 0.5px solid #e5e7eb;
-            color: #374151;
+            padding: 8px 10px;
+            border: 1px solid #e0e0e0;
+            color: ' . ($colors['text'] ?? '#333333') . ';
         }
         .product-table tr:nth-child(even) {
-            background-color: #f9fafb;
+            background-color: #f8f9fa;
         }
         .signature-section {
-            margin-top: 20mm;
+            margin-top: 30px;
             font-size: 11px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
         }
         .signature-text {
             white-space: pre-wrap;
-            color: #374151;
+            color: ' . ($colors['text'] ?? '#333333') . ';
+            line-height: 1.6;
         }
         .mentions-line {
-            margin-top: 10mm;
-            padding-top: 5mm;
-            border-top: 0.5px solid #d1d5db;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #dee2e6;
             font-size: 9px;
-            color: #6b7280;
+            color: ' . ($colors['secondary'] ?? '#666666') . ';
             text-align: center;
         }
     </style>
 </head>
-<body>';
+<body>
+    <div class="pdf-container">
+        <div class="pdf-content">';
         
         // En-tête avec logo et titre
         $html .= '<div class="header-row">';
@@ -663,6 +713,8 @@ class PreviewAjaxHandler {
         }
         
         $html .= '
+        </div>
+    </div>
 </body>
 </html>';
         
