@@ -78,106 +78,325 @@ export function Toolbar({ className }: ToolbarProps) {
   };
 
   const handleHTMLPreview = () => {
-    console.log('� [HTML PREVIEW FUNCTION] handleHTMLPreview appelée !');
-    console.log('�🔍 [HTML PREVIEW] Début de handleHTMLPreview');
+    console.log('🌐 [HTML PREVIEW FUNCTION] handleHTMLPreview appelée !');
+    console.log('🌐🔍 [HTML PREVIEW] Début de handleHTMLPreview côté client');
 
-    // Fonction pour transformer les éléments pour l'aperçu HTML
-    const transformElementForPreview = (element: any) => {
-      const transformed = { ...element };
-      
-      // Liste des propriétés système à exclure
-      const systemProps = ['id', 'type', 'x', 'y', 'width', 'height', 'rotation', 'visible', 'locked', 'createdAt', 'updatedAt'];
-      
-      // Créer l'objet properties avec TOUTES les propriétés non-système
-      transformed.properties = {};
-      
-      // Copier toutes les propriétés qui ne sont pas système
-      Object.entries(element).forEach(([key, value]) => {
-        if (!systemProps.includes(key) && value !== undefined && value !== null) {
-          transformed.properties[key] = value;
+    try {
+      // Générer l'HTML directement côté client
+      const html = generateHTMLFromElements(state.elements, state.canvas);
+      console.log('🌐✅ [HTML PREVIEW] HTML généré côté client, longueur:', html.length);
+
+      // Stocker le contenu HTML et ouvrir le modal
+      dispatch({ type: 'SET_HTML_PREVIEW_CONTENT', payload: html });
+      dispatch({ type: 'SET_SHOW_PREVIEW_MODAL', payload: true });
+      console.log('🌐✅ [HTML PREVIEW] Contenu HTML stocké et modal ouvert');
+
+    } catch (error) {
+      console.error('🌐❌ [HTML PREVIEW] Erreur lors de la génération côté client:', error);
+      alert('Erreur lors de la génération de l\'aperçu HTML: ' + error.message);
+    }
+  };
+
+  // Fonction pour générer l'HTML côté client
+  const generateHTMLFromElements = (elements: any[], canvas: any) => {
+    console.log('🌐🔧 [HTML GENERATION] Génération HTML pour', elements.length, 'éléments');
+
+    // Paramètres par défaut (similaires au PHP)
+    const margins = { top: 28, bottom: 28, left: 20, right: 20 };
+    const colors = { primary: '#007cba', secondary: '#666666', text: '#333333' };
+    const fonts = { family: 'Arial', size: 12 };
+
+    const canvasWidth = canvas.width || 794;
+    const canvasHeight = canvas.height || 1123;
+
+    // Extraire les éléments par type
+    const logoElement = elements.find(el => el.type === 'company_logo');
+    const docTypeElement = elements.find(el => el.type === 'document_type');
+    const companyInfoElement = elements.find(el => el.type === 'company_info');
+    const customerInfoElement = elements.find(el => el.type === 'customer_info');
+    const orderNumberElement = elements.find(el => el.type === 'order_number');
+    const orderDateElement = elements.find(el => el.type === 'woocommerce_order_date');
+    const productTableElement = elements.find(el => el.type === 'product_table');
+    const dynamicTextElements = elements.filter(el => el.type === 'dynamic_text');
+    const mentionsElement = elements.find(el => el.type === 'mentions');
+
+    let html = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-      });
-      
-      // S'assurer que les propriétés spécifiques sont correctement mappées
-      if (element.bold) transformed.properties.fontWeight = 'bold';
-      if (element.italic) transformed.properties.fontStyle = 'italic';
-      if (element.underline) transformed.properties.textDecoration = 'underline';
-      
-      // Mapper les propriétés de forme
-      if (element.fillColor) transformed.properties.backgroundColor = element.fillColor;
-      if (element.strokeColor) transformed.properties.borderColor = element.strokeColor;
-      if (element.strokeWidth) transformed.properties.borderWidth = element.strokeWidth;
-      
-      return transformed;
-    };
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .pdf-container {
+            width: ${canvasWidth}px;
+            min-height: ${canvasHeight}px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: ${margins.top}px ${margins.right}px ${margins.bottom}px ${margins.left}px;
+            font-family: ${fonts.family}, sans-serif;
+            font-size: ${fonts.size}px;
+            color: ${colors.text};
+            position: relative;
+        }
+        .pdf-content {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            min-height: ${canvasHeight - margins.top - margins.bottom}px;
+        }
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        .header-col {
+            flex: 1;
+        }
+        .logo-container {
+            text-align: center;
+            max-width: 200px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            border: 1px solid #e0e0e0;
+            background-color: #fafafa;
+        }
+        .logo-container img {
+            max-width: 100%;
+            max-height: 70px;
+            width: auto;
+            height: auto;
+        }
+        .document-type-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: ${colors.primary};
+            text-align: right;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .separator-line {
+            border-top: 2px solid ${colors.primary};
+            margin: 15px 0 20px 0;
+        }
+        .two-col {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        .two-col > div {
+            flex: 1;
+        }
+        .info-box {
+            background-color: #f8f9fa;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+        .info-box-title {
+            font-weight: bold;
+            color: ${colors.primary};
+            margin-bottom: 8px;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 4px;
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+        }
+        .info-item {
+            color: ${colors.text};
+            margin-bottom: 4px;
+        }
+        .order-info {
+            text-align: right;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+        }
+        .order-number-label {
+            font-weight: bold;
+            color: ${colors.primary};
+            font-size: 14px;
+        }
+        .order-date {
+            font-size: 11px;
+            color: ${colors.secondary};
+            margin-top: 4px;
+        }
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            margin: 20px 0;
+            border: 1px solid #e0e0e0;
+        }
+        .product-table th {
+            background-color: ${colors.primary};
+            color: #ffffff;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #dee2e6;
+        }
+        .product-table td {
+            padding: 8px 10px;
+            border: 1px solid #e0e0e0;
+            color: ${colors.text};
+        }
+        .product-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .signature-section {
+            margin-top: 30px;
+            font-size: 11px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+        .signature-text {
+            white-space: pre-wrap;
+            color: ${colors.text};
+            line-height: 1.6;
+        }
+        .mentions-line {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #dee2e6;
+            font-size: 9px;
+            color: ${colors.secondary};
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="pdf-container">
+        <div class="pdf-content">`;
 
-    // Transformer tous les éléments
-    const transformedElements = state.elements.map(transformElementForPreview);
+    // En-tête avec logo et titre
+    html += '<div class="header-row">';
 
-    console.log('🔍 [HTML PREVIEW] Original elements sample:', state.elements.slice(0, 2));
-    console.log('🔍 [HTML PREVIEW] Transformed elements sample:', transformedElements.slice(0, 2));
+    // Colonne gauche: infos entreprise
+    html += '<div class="header-col">';
+    if (companyInfoElement) {
+        html += `<div class="info-box">
+            <div class="info-box-title">Infos Entreprise</div>
+            <div class="info-item">[Company Name]</div>
+            <div class="info-item">[Company Address]</div>
+            <div class="info-item">Email: [Company Email]</div>
+            <div class="info-item">Tél: [Company Phone]</div>
+            <div class="info-item">SIRET: [SIRET]</div>
+            <div class="info-item">TVA: [VAT]</div>
+        </div>`;
+    }
+    html += '</div>';
 
-    // Construire les données du template à partir du state actuel
-    const templateData = {
-      elements: transformedElements,
-      canvasWidth: state.canvas.width,
-      canvasHeight: state.canvas.height,
-      template: state.template,
-      // Ajouter d'autres propriétés si nécessaire
-    };
+    // Colonne milieu: logo
+    html += '<div class="header-col" style="text-align: center;">';
+    if (logoElement && logoElement.src) {
+        html += `<div class="logo-container">
+            <img src="${logoElement.src}" alt="Logo">
+        </div>`;
+    } else {
+        html += '<div style="color: #999; font-size: 10px;">Logo</div>';
+    }
+    html += '</div>';
 
-    console.log('🔍 [HTML PREVIEW] Template data construit:', templateData);
-    console.log('🔍 [HTML PREVIEW] State elements count:', state.elements?.length || 0);
-    console.log('🔍 [HTML PREVIEW] Canvas dimensions:', { width: state.canvas.width, height: state.canvas.height });
+    // Colonne droite: titre document + commande
+    html += '<div class="header-col">';
+    if (docTypeElement) {
+        html += `<div class="document-type-title">${(docTypeElement.title || 'DOCUMENT')}</div>`;
+    }
+    if (orderNumberElement) {
+        html += `<div class="order-info">
+            <div class="order-number-label">Commande: [Order #]</div>`;
+        if (orderDateElement) {
+            html += `<div class="order-date">Date: ${new Date().toLocaleDateString('fr-FR')}</div>`;
+        }
+        html += '</div>';
+    }
+    html += '</div>';
 
-    // Générer l'aperçu HTML
-    const formData = new FormData();
-    formData.append('action', 'pdf_builder_generate_html_preview');
-    formData.append('nonce', (window as any).pdfBuilderNonce);
-    formData.append('data', JSON.stringify({
-      pageOptions: {
-        template: templateData
-      }
-    }));
+    html += '</div>';
 
-    console.log('🔍 [HTML PREVIEW] FormData préparé:');
-    console.log('🔍 [HTML PREVIEW] - action:', 'pdf_builder_generate_html_preview');
-    console.log('🔍 [HTML PREVIEW] - nonce:', (window as any).pdfBuilderNonce);
-    console.log('🔍 [HTML PREVIEW] - data length:', JSON.stringify({
-      pageOptions: {
-        template: templateData
-      }
-    }).length);
+    // Ligne séparatrice
+    html += '<div class="separator-line"></div>';
 
-    console.log('🔍 [HTML PREVIEW] Envoi de la requête fetch...');
+    // Infos client
+    html += '<div class="two-col">';
+    if (customerInfoElement) {
+        html += `<div class="info-box">
+            <div class="info-box-title">Informations Client</div>
+            <div class="info-item">Nom: [Customer Name]</div>
+            <div class="info-item">Adresse: [Customer Address]</div>
+            <div class="info-item">Email: [Customer Email]</div>
+            <div class="info-item">Téléphone: [Customer Phone]</div>
+        </div>`;
+    }
+    html += '</div>';
 
-    fetch('/wp-admin/admin-ajax.php', {
-      method: 'POST',
-      body: formData
-    })
-    .then(r => {
-      console.log('🔍 [HTML PREVIEW] Réponse reçue, status:', r.status);
-      console.log('🔍 [HTML PREVIEW] Headers:', Object.fromEntries(r.headers.entries()));
-      return r.json();
-    })
-    .then(d => {
-      console.log('🔍 [HTML PREVIEW] Données JSON reçues:', d);
+    // Table des produits
+    if (productTableElement) {
+        html += `<table class="product-table">
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th width="15%">Qty</th>
+                    <th width="20%">Prix Unit.</th>
+                    <th width="20%">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Produit exemple</td>
+                    <td>1</td>
+                    <td>100.00 €</td>
+                    <td>100.00 €</td>
+                </tr>
+            </tbody>
+        </table>`;
+    }
 
-      if (d.success && d.data && d.data.html) {
-        console.log('🔍 [HTML PREVIEW] Succès - affichage dans le modal');
-        // Stocker le contenu HTML et ouvrir le modal
-        dispatch({ type: 'SET_HTML_PREVIEW_CONTENT', payload: d.data.html });
-        dispatch({ type: 'SET_SHOW_PREVIEW_MODAL', payload: true });
-        console.log('🔍 [HTML PREVIEW] Contenu HTML stocké et modal ouvert');
-      } else {
-        console.error('🔍 [HTML PREVIEW] Erreur dans la réponse:', d);
-        alert('Erreur lors de la génération de l\'aperçu HTML. Vérifiez la console pour plus de détails.');
-      }
-    })
-    .catch(e => {
-      console.error('🔍 [HTML PREVIEW] Erreur réseau:', e);
-      alert('Erreur réseau lors de la génération de l\'aperçu HTML.');
+    // Signature/Dynamic Text
+    dynamicTextElements.forEach(element => {
+        const textContent = element.text || element.content || element.value || 'Texte dynamique non défini';
+        html += `<div class="signature-section">
+            <div class="signature-text">${textContent.replace(/\n/g, '<br>')}</div>
+        </div>`;
     });
+
+    // Mentions
+    if (mentionsElement) {
+        html += `<div class="mentions-line">
+            Email • Téléphone • SIRET • TVA
+        </div>`;
+    }
+
+    html += `
+        </div>
+    </div>
+</body>
+</html>`;
+
+    console.log('🌐✅ [HTML GENERATION] HTML généré avec succès');
+    return html;
   };
 
   const handleToggleSnapToGrid = () => {
