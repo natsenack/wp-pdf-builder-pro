@@ -522,6 +522,20 @@ export const Header = memo(function Header({
       return '';
     };
 
+    // Helper pour générer les styles globaux applicables au contenu interne
+    const buildGlobalStyles = (el: any): string => {
+      let globalStyle = '';
+      if (el.fontFamily) globalStyle += `font-family: ${el.fontFamily};`;
+      if (el.fontWeight && el.fontWeight !== 'normal') globalStyle += `font-weight: ${el.fontWeight};`;
+      if (el.fontStyle && el.fontStyle !== 'normal') globalStyle += `font-style: ${el.fontStyle};`;
+      if (el.textDecoration && el.textDecoration !== 'none') globalStyle += `text-decoration: ${el.textDecoration};`;
+      if (el.textTransform && el.textTransform !== 'none') globalStyle += `text-transform: ${el.textTransform};`;
+      if (el.letterSpacing && el.letterSpacing !== 'normal') globalStyle += `letter-spacing: ${el.letterSpacing};`;
+      if (el.wordSpacing && el.wordSpacing !== 'normal') globalStyle += `word-spacing: ${el.wordSpacing};`;
+      if (el.lineHeight) globalStyle += `line-height: ${el.lineHeight};`;
+      return globalStyle;
+    };
+
     // Construire le HTML simulant un PDF - ESSENTIELLEMENT MINIMAL
     let html = `<!DOCTYPE html>
 <html lang="fr">
@@ -610,6 +624,9 @@ export const Header = memo(function Header({
           case 'dynamic_text':
             content = element.text || element.content || 'Texte';
             if (element.autoWrap !== false) styles += ` white-space: pre-wrap; overflow-wrap: break-word;`;
+            // Appliquer styles globaux (font properties)
+            const globalStylesText = buildGlobalStyles(element);
+            if (globalStylesText) styles += ` ${globalStylesText}`;
             // Ajouter padding/margin/border
             if (element.padding) {
               const paddingStr = buildSpacing(element.padding);
@@ -639,6 +656,9 @@ export const Header = memo(function Header({
             if (element.verticalAlign === 'middle' || element.verticalAlign === 'center') {
               styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === 'center' ? 'center' : 'flex-start'};`;
             }
+            // Appliquer styles globaux (font properties)
+            const globalStylesDoc = buildGlobalStyles(element);
+            if (globalStylesDoc) styles += ` ${globalStylesDoc}`;
             // Padding/margin/border
             if (element.padding) {
               const paddingStr = buildSpacing(element.padding);
@@ -658,6 +678,7 @@ export const Header = memo(function Header({
             const orderNum = element.text || element.content || '001';
             const format = element.format || 'CMD-{order_number}';
             let orderContent = format.replace('{order_number}', orderNum);
+            const globalStylesOrder = buildGlobalStyles(element);
             
             // Si label à afficher
             if (element.showLabel && element.labelText) {
@@ -669,8 +690,8 @@ export const Header = memo(function Header({
               
               orderContent = `
                 <div style="display: flex; flex-direction: column; gap: 4px;">
-                  <div style="font-size: ${headerFontSize}px; color: ${labelColor}; font-weight: ${element.headerFontWeight || 'normal'};">${labelText}</div>
-                  <div style="font-size: ${numberFontSize}px; color: ${numberColor}; font-weight: ${element.fontWeight || 'normal'};">${orderContent}</div>
+                  <div style="font-size: ${headerFontSize}px; color: ${labelColor}; font-weight: ${element.headerFontWeight || 'normal'}; ${globalStylesOrder}">${labelText}</div>
+                  <div style="font-size: ${numberFontSize}px; color: ${numberColor}; font-weight: ${element.fontWeight || 'normal'}; ${globalStylesOrder}">${orderContent}</div>
                 </div>
               `;
             }
@@ -698,10 +719,12 @@ export const Header = memo(function Header({
           case 'company_logo':
           case 'image':
             if (element.src) {
+              const globalStylesImg = buildGlobalStyles(element);
               let imgStyles = `width: 100%; height: 100%; display: block;`;
               if (element.objectFit) imgStyles += ` object-fit: ${element.objectFit};`;
               if (element.opacity !== undefined && element.opacity < 1) imgStyles += ` opacity: ${element.opacity};`;
               if (element.borderRadius && element.borderRadius > 0) imgStyles += ` border-radius: ${element.borderRadius}px;`;
+              if (globalStylesImg) imgStyles += ` ${globalStylesImg}`;
               content = `<img src="${element.src}" style="${imgStyles}" />`;
             } else {
               content = '📦';
@@ -950,27 +973,14 @@ export const Header = memo(function Header({
             // Si pas de contenu prédéfini, construire à partir des propriétés
             if (!companyContent) {
               const companyParts: string[] = [];
-              
-              // Styles globaux à appliquer à tous les éléments
-              const globalStyles = (() => {
-                let globalStyle = '';
-                if (element.fontFamily) globalStyle += `font-family: ${element.fontFamily};`;
-                if (element.fontWeight && element.fontWeight !== 'normal') globalStyle += `font-weight: ${element.fontWeight};`;
-                if (element.fontStyle && element.fontStyle !== 'normal') globalStyle += `font-style: ${element.fontStyle};`;
-                if (element.textDecoration && element.textDecoration !== 'none') globalStyle += `text-decoration: ${element.textDecoration};`;
-                if (element.textTransform && element.textTransform !== 'none') globalStyle += `text-transform: ${element.textTransform};`;
-                if (element.letterSpacing && element.letterSpacing !== 'normal') globalStyle += `letter-spacing: ${element.letterSpacing};`;
-                if (element.wordSpacing && element.wordSpacing !== 'normal') globalStyle += `word-spacing: ${element.wordSpacing};`;
-                if (element.lineHeight) globalStyle += `line-height: ${element.lineHeight};`;
-                return globalStyle;
-              })();
+              const globalStylesCompany = buildGlobalStyles(element);
               
               // Nom de l'entreprise
               if (element.showCompanyName !== false && isValidValue(companyData.name)) {
                 const headerFontSize = element.headerFontSize || element.fontSize || 14;
                 const headerFontWeight = element.headerFontWeight || 'bold';
                 const headerColor = element.headerTextColor || element.textColor || '#000000';
-                companyParts.push(`<div style="font-size: ${headerFontSize}px; font-weight: ${headerFontWeight}; color: ${headerColor}; ${globalStyles}">${companyData.name}</div>`);
+                companyParts.push(`<div style="font-size: ${headerFontSize}px; font-weight: ${headerFontWeight}; color: ${headerColor}; ${globalStylesCompany}">${companyData.name}</div>`);
               }
               
               // Adresse
@@ -980,7 +990,7 @@ export const Header = memo(function Header({
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStyles}">${addressText}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">${addressText}</div>`);
               }
               
               // Téléphone
@@ -988,7 +998,7 @@ export const Header = memo(function Header({
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStyles}">Tél: ${companyData.phone}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">Tél: ${companyData.phone}</div>`);
               }
               
               // Email
@@ -996,7 +1006,7 @@ export const Header = memo(function Header({
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStyles}">Email: ${companyData.email}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">Email: ${companyData.email}</div>`);
               }
               
               // Site web
@@ -1004,7 +1014,7 @@ export const Header = memo(function Header({
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStyles}">${companyData.website}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">${companyData.website}</div>`);
               }
               
               // SIRET
@@ -1012,7 +1022,7 @@ export const Header = memo(function Header({
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStyles}">SIRET: ${companyData.siret}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">SIRET: ${companyData.siret}</div>`);
               }
               
               // TVA
@@ -1020,7 +1030,7 @@ export const Header = memo(function Header({
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStyles}">TVA: ${companyData.tva}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">TVA: ${companyData.tva}</div>`);
               }
               
               // RCS
@@ -1028,7 +1038,7 @@ export const Header = memo(function Header({
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStyles}">RCS: ${companyData.rcs}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">RCS: ${companyData.rcs}</div>`);
               }
               
               // Capital sociale
@@ -1036,7 +1046,7 @@ export const Header = memo(function Header({
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStyles}">Capital: ${companyData.capital} €</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">Capital: ${companyData.capital} €</div>`);
               }
               
               // Assembler le HTML avec le séparateur si layout horizontal
@@ -1121,6 +1131,10 @@ export const Header = memo(function Header({
           case 'customer_info':
             content = element.content || element.text || '<div>Client</div>';
             
+            // Appliquer styles globaux (font properties)
+            const globalStylesCustomer = buildGlobalStyles(element);
+            if (globalStylesCustomer) styles += ` ${globalStylesCustomer}`;
+            
             // Background depuis JSON
             if (element.backgroundColor && element.backgroundColor !== 'transparent' && element.showBackground !== false) {
               styles += ` background-color: ${element.backgroundColor};`;
@@ -1172,6 +1186,10 @@ export const Header = memo(function Header({
           case 'note':
             content = element.content || element.text || '';
             
+            // Appliquer styles globaux (font properties)
+            const globalStylesMentions = buildGlobalStyles(element);
+            if (globalStylesMentions) styles += ` ${globalStylesMentions}`;
+            
             // Padding depuis JSON
             if (element.padding) {
               const paddingStr = buildSpacing(element.padding);
@@ -1217,6 +1235,48 @@ export const Header = memo(function Header({
               const gap = Math.round(fontSize * (lineHeightValue - 1));
               const layoutStr = buildFlexLayout(element.layout, gap);
               if (layoutStr) styles += ` ${layoutStr}`;
+            }
+            break;
+
+          case 'woocommerce_invoice_number':
+            const invoiceNum = element.text || element.content || '001';
+            const invoiceFormat = element.format || 'FAC-{order_number}';
+            let invoiceContent = invoiceFormat.replace('{order_number}', invoiceNum);
+            const globalStylesInvoice = buildGlobalStyles(element);
+            
+            // Si label à afficher
+            if (element.showLabel && element.labelText) {
+              const labelText = element.labelText || 'Invoice:';
+              const headerFontSize = element.headerFontSize || element.fontSize || 12;
+              const numberFontSize = element.numberFontSize || element.fontSize || 14;
+              const labelColor = element.headerTextColor || element.textColor || '#000000';
+              const numberColor = element.textColor || '#000000';
+              
+              invoiceContent = `
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                  <div style="font-size: ${headerFontSize}px; color: ${labelColor}; font-weight: ${element.headerFontWeight || 'normal'}; ${globalStylesInvoice}">${labelText}</div>
+                  <div style="font-size: ${numberFontSize}px; color: ${numberColor}; font-weight: ${element.fontWeight || 'normal'}; ${globalStylesInvoice}">${invoiceContent}</div>
+                </div>
+              `;
+            }
+            content = invoiceContent;
+            
+            // contentAlign property
+            if (element.contentAlign) {
+              styles += ` text-align: ${element.contentAlign};`;
+            }
+            // Padding/margin/border
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            }
+            if (element.margin) {
+              const marginStr = buildSpacing(element.margin);
+              if (marginStr) styles += ` margin: ${marginStr};`;
+            }
+            if (element.border) {
+              const borderStr = buildBorder(element.border);
+              if (borderStr) styles += ` border: ${borderStr};`;
             }
             break;
 
