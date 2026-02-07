@@ -85,9 +85,11 @@ export const Header = memo(function Header({
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showJsonModal, setShowJsonModal] = useState(false);
+  const [jsonModalMode, setJsonModalMode] = useState<'json' | 'html'>('json');
   const [copySuccess, setCopySuccess] = useState(false);
   const [isGeneratingHtml, setIsGeneratingHtml] = useState(false);
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
+  const [generatedHtml, setGeneratedHtml] = useState<string>('');
   const [performanceMetrics, setPerformanceMetrics] = useState({
     fps: 0,
     memoryUsage: 0,
@@ -443,6 +445,176 @@ export const Header = memo(function Header({
       hoveredButton === "new"
         ? "0 2px 8px rgba(0, 0, 0, 0.1)"
         : "none",
+  };
+
+  // Fonction pour générer HTML qui simule un PDF avec les paramètres du plugin
+  const generatePDFSimulationHTML = () => {
+    const canvasWidth = state.canvas.width || 794;
+    const canvasHeight = state.canvas.height || 1123;
+    const elements = state.elements || [];
+    const template = state.template || {};
+
+    // Paramètres par défaut du plugin
+    const margins = { top: 20, bottom: 20, left: 20, right: 20 };
+    const colors = {
+      primary: '#007cba',
+      secondary: '#666666',
+      text: '#333333',
+      border: '#e0e0e0',
+      background: '#f8f9fa',
+    };
+    const fonts = { family: 'Arial, sans-serif', size: 12 };
+
+    // Construire le HTML simulant un PDF
+    let html = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aperçu PDF - ${template.name || 'Template'}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; margin: 0; padding: 0; background: #e8e8e8; }
+    body { padding: 20px; font-family: ${fonts.family}; }
+    .pdf-wrapper { display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+    .pdf-page {
+      width: ${canvasWidth}px;
+      min-height: ${canvasHeight}px;
+      background: #ffffff;
+      margin: 0 auto;
+      padding: ${margins.top}px ${margins.right}px ${margins.bottom}px ${margins.left}px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      color: ${colors.text};
+      font-size: ${fonts.size}px;
+      line-height: 1.6;
+      position: relative;
+      overflow: hidden;
+    }
+    .element {
+      position: absolute;
+      border: 1px dashed rgba(0,122,204,0.3);
+    }
+    .element-label {
+      position: absolute;
+      top: -20px;
+      left: 0;
+      background: rgba(0,122,204,0.8);
+      color: white;
+      padding: 2px 6px;
+      font-size: 10px;
+      border-radius: 2px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .element-content {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      word-wrap: break-word;
+      overflow: hidden;
+      padding: 8px;
+    }
+    .logo { background: #f5f5f5; border: 1px solid ${colors.border}; border-radius: 4px; }
+    .text-element { white-space: pre-wrap; text-align: left; }
+    .title { font-size: 24px; font-weight: bold; color: ${colors.primary}; }
+    .info-box { background: ${colors.background}; border: 1px solid ${colors.border}; border-radius: 4px; padding: 12px; font-size: 11px; }
+    .separator { border-top: 2px solid ${colors.primary}; margin: 15px 0; }
+  </style>
+</head>
+<body>
+  <div class="pdf-wrapper">
+    <div class="pdf-page">`;
+
+    // Ajouter chaque élément avec ses dimensions et position
+    if (elements && elements.length > 0) {
+      elements.forEach((element: any) => {
+        const x = element.x || 0;
+        const y = element.y || 0;
+        const w = element.width || 100;
+        const h = element.height || 50;
+        const visible = element.visible !== false;
+
+        if (!visible) return;
+
+        const elementClass = (() => {
+          if (element.type === 'company_logo' || element.type === 'image') return 'logo';
+          if (element.type === 'product_table' || element.type === 'table') return 'table-element';
+          if (['company_info', 'customer_info', 'mentions'].includes(element.type)) return 'info-box';
+          return 'text-element';
+        })();
+
+        let content = '';
+        switch (element.type) {
+          case 'text':
+          case 'dynamic_text':
+            content = element.text || 'Texte';
+            break;
+          case 'document_type':
+            content = `<div class="title">${element.title || 'FACTURE'}</div>`;
+            break;
+          case 'order_number':
+            content = `Commande #${element.orderNumber || '001'}`;
+            break;
+          case 'company_logo':
+          case 'image':
+            if (element.src) {
+              content = `<img src="${element.src}" style="max-width: 100%; max-height: 100%; width: auto; height: auto;" />`;
+            } else {
+              content = '📦 Logo';
+            }
+            break;
+          case 'product_table':
+            content = '<table style="width: 100%; border-collapse: collapse; border: 1px solid #ddd;"><tr><th style="border: 1px solid #ddd; padding: 8px; background: #007cba; color: white;">Produit</th><th style="border: 1px solid #ddd; padding: 8px; background: #007cba; color: white;">Qty</th><th style="border: 1px solid #ddd; padding: 8px; background: #007cba; color: white;">Prix</th></tr><tr><td style="border: 1px solid #ddd; padding: 8px;">Exemple</td><td style="border: 1px solid #ddd; padding: 8px;">1</td><td style="border: 1px solid #ddd; padding: 8px;">100€</td></tr></table>';
+            break;
+          case 'company_info':
+            content = '<strong>Informations Entreprise</strong><br/>Exemple SARL<br/>123 Rue Test<br/>75001 Paris';
+            break;
+          case 'customer_info':
+            content = '<strong>Informations Client</strong><br/>Client Exemple<br/>456 Rue Client<br/>75002 Paris';
+            break;
+          case 'mentions':
+            content = '<small>Mentions légales - Tous droits réservés</small>';
+            break;
+          default:
+            content = `[${element.type}]`;
+        }
+
+        html += `<div class="element" style="left: ${x}px; top: ${y}px; width: ${w}px; height: ${h}px;">
+          <div class="element-label">${element.type}</div>
+          <div class="element-content ${elementClass}">${content}</div>
+        </div>`;
+      });
+    } else {
+      html += `<div style="padding: 40px; text-align: center; color: #666;">
+        <p style="font-size: 14px; margin-bottom: 10px;">🎨 Canvas vide</p>
+        <p style="font-size: 12px;">Aucun élément n'a été ajouté au template.</p>
+      </div>`;
+    }
+
+    html += `
+    </div>
+  </div>
+</body>
+</html>`;
+
+    return html;
+  };
+
+  // Fonction pour générer et afficher l'aperçu HTML
+  const handleShowHtmlPreview = () => {
+    setIsGeneratingHtml(true);
+    try {
+      const html = generatePDFSimulationHTML();
+      setGeneratedHtml(html);
+      setJsonModalMode('html');
+    } catch (error) {
+      console.error('Erreur lors de la génération HTML:', error);
+      alert('Erreur lors de la génération de l\'aperçu HTML');
+    } finally {
+      setIsGeneratingHtml(false);
+    }
   };
 
   return (
@@ -1227,7 +1399,7 @@ export const Header = memo(function Header({
               boxShadow: "0 10px 40px rgba(0, 0, 0, 0.3)",
             }}
           >
-            {/* Header */}
+            {/* Header avec Toggle JSON/HTML */}
             <div
               style={{
                 display: "flex",
@@ -1238,16 +1410,55 @@ export const Header = memo(function Header({
                 paddingBottom: "12px",
               }}
             >
-              <h3
-                style={{
-                  margin: 0,
-                  fontSize: "18px",
-                  fontWeight: "600",
-                  color: "#1a1a1a",
-                }}
-              >
-                📋 Données JSON du Template
-              </h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <h3
+                  style={{
+                    margin: 0,
+                    fontSize: "18px",
+                    fontWeight: "600",
+                    color: "#1a1a1a",
+                  }}
+                >
+                  {jsonModalMode === 'json' ? '📋' : '🎨'} {jsonModalMode === 'json' ? 'JSON' : 'Aperçu HTML'}
+                </h3>
+                {/* Toggle Buttons */}
+                <div style={{ display: 'flex', gap: '6px', borderRadius: '4px', border: '1px solid #ddd', padding: '3px' }}>
+                  <button
+                    onClick={() => setJsonModalMode('json')}
+                    style={{
+                      padding: '6px 12px',
+                      border: 'none',
+                      borderRadius: '3px',
+                      backgroundColor: jsonModalMode === 'json' ? '#007cba' : '#f0f0f0',
+                      color: jsonModalMode === 'json' ? '#fff' : '#333',
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      fontWeight: jsonModalMode === 'json' ? 'bold' : 'normal',
+                    }}
+                    title="Afficher le JSON"
+                  >
+                    JSON
+                  </button>
+                  <button
+                    onClick={handleShowHtmlPreview}
+                    disabled={isGeneratingHtml}
+                    style={{
+                      padding: '6px 12px',
+                      border: 'none',
+                      borderRadius: '3px',
+                      backgroundColor: jsonModalMode === 'html' ? '#10a37f' : '#f0f0f0',
+                      color: jsonModalMode === 'html' ? '#fff' : '#333',
+                      cursor: isGeneratingHtml ? 'not-allowed' : 'pointer',
+                      fontSize: '12px',
+                      fontWeight: jsonModalMode === 'html' ? 'bold' : 'normal',
+                      opacity: isGeneratingHtml ? 0.6 : 1,
+                    }}
+                    title="Afficher l'aperçu HTML"
+                  >
+                    {isGeneratingHtml ? '⏳' : '🎨'} HTML
+                  </button>
+                </div>
+              </div>
               <button
                 onClick={() => setShowJsonModal(false)}
                 style={{
@@ -1264,41 +1475,58 @@ export const Header = memo(function Header({
               </button>
             </div>
 
-            {/* Content - Always show JSON */}
+            {/* Content - JSON or HTML */}
             <div
               style={{
                 flex: 1,
                 overflow: "auto",
-                backgroundColor: "#f5f5f5",
+                backgroundColor: jsonModalMode === 'json' ? "#f5f5f5" : "#e8e8e8",
                 borderRadius: "6px",
-                padding: "16px",
                 border: "1px solid #ddd",
                 marginBottom: "16px",
-                maxHeight: "400px",
               }}
             >
-              <pre
-                style={{
-                  fontFamily: "'Courier New', monospace",
-                  fontSize: "11px",
-                  lineHeight: "1.4",
-                  color: "#1e1e1e",
-                  margin: 0,
-                  whiteSpace: "pre-wrap",
-                  wordBreak: "break-word",
-                  background: "transparent",
-                  padding: 0,
-                }}
-              >
-                {JSON.stringify(
-                  {
-                    ...state.template,
-                    elements: state.elements,
-                  },
-                  null,
-                  2
-                )}
-              </pre>
+              {jsonModalMode === 'json' ? (
+                <div style={{ padding: "16px" }}>
+                  <pre
+                    style={{
+                      fontFamily: "'Courier New', monospace",
+                      fontSize: "11px",
+                      lineHeight: "1.4",
+                      color: "#1e1e1e",
+                      margin: 0,
+                      whiteSpace: "pre-wrap",
+                      wordBreak: "break-word",
+                      background: "transparent",
+                      padding: 0,
+                    }}
+                  >
+                    {JSON.stringify(
+                      {
+                        ...state.template,
+                        elements: state.elements,
+                      },
+                      null,
+                      2
+                    )}
+                  </pre>
+                </div>
+              ) : (
+                <div style={{ padding: "12px", height: '100%', overflow: 'auto' }}>
+                  <iframe
+                    srcDoc={generatedHtml}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      minHeight: '400px',
+                      border: 'none',
+                      borderRadius: '4px',
+                      backgroundColor: '#f5f5f5',
+                    }}
+                    title="Aperçu PDF"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Footer with Buttons */}
@@ -1308,38 +1536,9 @@ export const Header = memo(function Header({
                 gap: "12px",
                 justifyContent: "flex-start",
                 alignItems: "center",
+                flexWrap: 'wrap',
               }}
             >
-              {/* Bouton JSON → HTML */}
-              <button
-                onClick={convertJsonToHtml}
-                disabled={isGeneratingHtml}
-                style={{
-                  padding: "10px 16px",
-                  backgroundColor: isGeneratingHtml ? "#ccc" : "#10a37f",
-                  color: "#ffffff",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: isGeneratingHtml ? "not-allowed" : "pointer",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                }}
-              >
-                {isGeneratingHtml ? (
-                  <>
-                    <span>⏳</span>
-                    <span>Génération...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>🔄</span>
-                    <span>JSON → HTML</span>
-                  </>
-                )}
-              </button>
 
               {/* Bouton Copier JSON */}
               <button
