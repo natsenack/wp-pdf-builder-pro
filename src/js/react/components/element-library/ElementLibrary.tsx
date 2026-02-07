@@ -347,11 +347,23 @@ const WOOCOMMERCE_ELEMENTS = [
       y: 480,
       width: 500,
       height: 60,
+      // ===== OPTIONS DE CONTENU =====
       showEmail: true,
       showPhone: true,
       showSiret: true,
       showVat: true,
       separator: " • ",
+      text: "", // Contenu personnalisé (vide par défaut = génération automatique)
+      mentionType: "dynamic", // Type: "dynamic", "custom", "medley"
+      selectedMentions: [], // Pour type "medley" - liste des mentions sélectionnées
+      medleySeparator: "\n\n", // Séparateur entre mentions pour medley
+      
+      // ===== OPTIONS VISUELLES =====
+      showSeparator: true, // Affiche la barre horizontale
+      separatorStyle: "solid", // Style: "solid" ou "dashed"
+      showBackground: false,
+      
+      // ===== STYLES TEXTE =====
       fontSize: 10,
       fontFamily: "Arial",
       fontWeight: "normal",
@@ -362,16 +374,24 @@ const WOOCOMMERCE_ELEMENTS = [
       wordSpacing: "normal",
       lineHeight: "1.2",
       textAlign: "left",
+      textColor: "#6b7280",
+      
+      // ===== STYLES FOND & BORDURES =====
       backgroundColor: "transparent",
       borderColor: "#e5e7eb",
       borderWidth: 0,
-      textColor: "#6b7280",
+      borderStyle: "solid",
+      borderRadius: 0,
+      
+      // ===== EFFETS & VISIBILITÉ =====
       rotation: 0,
+      opacity: 100,
       shadowColor: "#000000",
       shadowOffsetX: 0,
       shadowOffsetY: 0,
       shadowBlur: 0,
       visible: true,
+      locked: false,
     },
   },
 ];

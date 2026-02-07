@@ -195,6 +195,47 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
         }
         break;
 
+      case 'mentions':
+      case 'note':
+        // Propriétés pour les mentions légales
+        if (!normalized.showEmail) {
+          (normalized as any).showEmail = true;
+        }
+        if (!normalized.showPhone) {
+          (normalized as any).showPhone = true;
+        }
+        if (!normalized.showSiret) {
+          (normalized as any).showSiret = true;
+        }
+        if (!normalized.showVat) {
+          (normalized as any).showVat = true;
+        }
+        if (!normalized.separator) {
+          (normalized as any).separator = ' • ';
+        }
+        if (!normalized.showSeparator) {
+          (normalized as any).showSeparator = true;
+        }
+        if (!normalized.separatorStyle) {
+          (normalized as any).separatorStyle = 'solid';
+        }
+        if (!normalized.mentionType) {
+          (normalized as any).mentionType = 'dynamic';
+        }
+        if (!normalized.selectedMentions) {
+          (normalized as any).selectedMentions = [];
+        }
+        if (!normalized.medleySeparator) {
+          (normalized as any).medleySeparator = '\n\n';
+        }
+        if (!normalized.showBackground) {
+          (normalized as any).showBackground = false;
+        }
+        if (!normalized.text) {
+          (normalized as any).text = '';
+        }
+        break;
+
       case 'document_type':
         // Requiert: documentType
         if (!normalized.documentType) {
