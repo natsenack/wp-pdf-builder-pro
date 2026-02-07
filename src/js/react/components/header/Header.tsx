@@ -623,9 +623,12 @@ export const Header = memo(function Header({
               const borderStr = buildBorder(element.border);
               if (borderStr) styles += ` border: ${borderStr};`;
             }
-            // Layout property
+            // Layout property avec gap calculé
             if (element.layout) {
-              const layoutStr = buildFlexLayout(element.layout);
+              const lineHeightValue = element.lineHeight ? parseFloat(element.lineHeight) : 1.2;
+              const fontSize = element.fontSize || 12;
+              const gap = Math.round(fontSize * (lineHeightValue - 1));
+              const layoutStr = buildFlexLayout(element.layout, gap);
               if (layoutStr) styles += ` ${layoutStr}`;
             }
             break;
@@ -952,6 +955,7 @@ export const Header = memo(function Header({
               const globalStyles = (() => {
                 let globalStyle = '';
                 if (element.fontFamily) globalStyle += `font-family: ${element.fontFamily};`;
+                if (element.fontWeight && element.fontWeight !== 'normal') globalStyle += `font-weight: ${element.fontWeight};`;
                 if (element.fontStyle && element.fontStyle !== 'normal') globalStyle += `font-style: ${element.fontStyle};`;
                 if (element.textDecoration && element.textDecoration !== 'none') globalStyle += `text-decoration: ${element.textDecoration};`;
                 if (element.textTransform && element.textTransform !== 'none') globalStyle += `text-transform: ${element.textTransform};`;
@@ -964,7 +968,7 @@ export const Header = memo(function Header({
               // Nom de l'entreprise
               if (element.showCompanyName !== false && isValidValue(companyData.name)) {
                 const headerFontSize = element.headerFontSize || element.fontSize || 14;
-                const headerFontWeight = element.headerFontWeight || element.fontWeight || 'bold';
+                const headerFontWeight = element.headerFontWeight || 'bold';
                 const headerColor = element.headerTextColor || element.textColor || '#000000';
                 companyParts.push(`<div style="font-size: ${headerFontSize}px; font-weight: ${headerFontWeight}; color: ${headerColor}; ${globalStyles}">${companyData.name}</div>`);
               }
@@ -974,57 +978,65 @@ export const Header = memo(function Header({
                 let addressText = companyData.address;
                 if (isValidValue(companyData.city)) addressText += `, ${companyData.city}`;
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
+                const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor}; ${globalStyles}">${addressText}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStyles}">${addressText}</div>`);
               }
               
               // Téléphone
               if (element.showPhone !== false && isValidValue(companyData.phone)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
+                const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor}; ${globalStyles}">Tél: ${companyData.phone}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStyles}">Tél: ${companyData.phone}</div>`);
               }
               
               // Email
               if (element.showEmail !== false && isValidValue(companyData.email)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
+                const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor}; ${globalStyles}">Email: ${companyData.email}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStyles}">Email: ${companyData.email}</div>`);
               }
               
               // Site web
               if (element.showWebsite !== false && isValidValue(companyData.website)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
+                const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor}; ${globalStyles}">${companyData.website}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStyles}">${companyData.website}</div>`);
               }
               
               // SIRET
               if (element.showSiret !== false && isValidValue(companyData.siret)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
+                const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor}; ${globalStyles}">SIRET: ${companyData.siret}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStyles}">SIRET: ${companyData.siret}</div>`);
               }
               
               // TVA
               if (element.showVat !== false && isValidValue(companyData.tva)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
+                const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor}; ${globalStyles}">TVA: ${companyData.tva}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStyles}">TVA: ${companyData.tva}</div>`);
               }
               
               // RCS
               if (element.showRcs !== false && isValidValue(companyData.rcs)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
+                const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor}; ${globalStyles}">RCS: ${companyData.rcs}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStyles}">RCS: ${companyData.rcs}</div>`);
               }
               
               // Capital sociale
               if (element.showCapital !== false && isValidValue(companyData.capital)) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
+                const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor}; ${globalStyles}">Capital: ${companyData.capital} €</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStyles}">Capital: ${companyData.capital} €</div>`);
               }
               
               // Assembler le HTML avec le séparateur si layout horizontal
@@ -1139,9 +1151,12 @@ export const Header = memo(function Header({
               styles += ` border-radius: ${element.borderRadius}px;`;
             }
             
-            // Layout property (vertical ou horizontal)
+            // Layout property (vertical ou horizontal) avec gap calculé
             if (element.layout) {
-              const layoutStr = buildFlexLayout(element.layout);
+              const lineHeightValue = element.lineHeight ? parseFloat(element.lineHeight) : 1.2;
+              const fontSize = element.fontSize || 12;
+              const gap = Math.round(fontSize * (lineHeightValue - 1));
+              const layoutStr = buildFlexLayout(element.layout, gap);
               if (layoutStr) styles += ` ${layoutStr}`;
             }
             
@@ -1195,9 +1210,12 @@ export const Header = memo(function Header({
               styles += ` border-bottom: 1px solid ${element.borderColor || '#e5e7eb'};`;
             }
             
-            // Layout property
+            // Layout property avec gap calculé
             if (element.layout) {
-              const layoutStr = buildFlexLayout(element.layout);
+              const lineHeightValue = element.lineHeight ? parseFloat(element.lineHeight) : 1.2;
+              const fontSize = element.fontSize || 12;
+              const gap = Math.round(fontSize * (lineHeightValue - 1));
+              const layoutStr = buildFlexLayout(element.layout, gap);
               if (layoutStr) styles += ` ${layoutStr}`;
             }
             break;
