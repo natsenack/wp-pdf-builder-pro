@@ -1360,12 +1360,85 @@ export const Header = memo(function Header({
             }
             break;
 
+          case 'customer_info':
+            // Générer le contenu du client avec styles appliqués depuis JSON
+            let customerContent = element.content || element.text;
+            if (!customerContent) {
+              const headerFontSize = element.headerFontSize || 14;
+              const headerFontFamily = element.headerFontFamily || 'Arial';
+              const headerFontWeight = element.headerFontWeight || 'bold';
+              const headerFontStyle = element.headerFontStyle || 'normal';
+              const headerTextColor = element.headerTextColor || '#111827';
+              
+              const bodyFontSize = element.bodyFontSize || 12;
+              const bodyFontFamily = element.bodyFontFamily || 'Arial';
+              const bodyFontWeight = element.bodyFontWeight || 'normal';
+              const bodyFontStyle = element.bodyFontStyle || 'normal';
+              const bodyTextColor = element.textColor || '#374151';
+              
+              const customerParts = [];
+              
+              if (element.showHeaders !== false) {
+                customerParts.push(`<div style="font-size: ${headerFontSize}px; font-family: ${headerFontFamily}; font-weight: ${headerFontWeight}; font-style: ${headerFontStyle}; color: ${headerTextColor}; margin-bottom: 8px;">Client</div>`);
+              }
+              
+              if (element.showFullName !== false) {
+                customerParts.push(`<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">Prénom Nom</div>`);
+              }
+              
+              if (element.showAddress !== false) {
+                customerParts.push(`<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">123 Rue de la Paix, 75000 Paris</div>`);
+              }
+              
+              if (element.showEmail !== false) {
+                customerParts.push(`<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">client@example.com</div>`);
+              }
+              
+              if (element.showPhone !== false) {
+                customerParts.push(`<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">+01 23 45 67 89</div>`);
+              }
+              
+              customerContent = customerParts.join('');
+            }
+            content = customerContent;
+            
+            // Border depuis JSON
+            if (element.border) {
+              const borderStr = buildBorder(element.border);
+              if (borderStr) styles += ` border: ${borderStr};`;
+            }
+            
+            // BorderRadius
+            if (element.borderRadius && element.borderRadius > 0) {
+              styles += ` border-radius: ${element.borderRadius}px;`;
+            }
+            
+            // Layout property
+            if (element.layout) {
+              const lineHeightValue = element.lineHeight ? parseFloat(element.lineHeight) : 1.2;
+              const fontSize = element.fontSize || 12;
+              const gap = Math.round(fontSize * (lineHeightValue - 1));
+              const layoutStr = buildFlexLayout(element.layout, gap);
+              if (layoutStr) styles += ` ${layoutStr}`;
+            }
+            
+            // Padding par défaut
+            if (!element.padding) {
+              styles += ` padding: 8px;`;
+            }
+            break;
+
           default:
             content = element.text || element.content || element.label || `[${element.type}]`;
         }
 
-        // Wrapper l'élément avec tous les styles
-        html += `<div class="element" style="${styles}">${content}</div>`;
+        // Wrapper l'élément avec tous les styles + overflow pour contenu interne
+        let containerStyles = styles;
+        if (element.type === 'customer_info' || element.type === 'product_table' || element.type === 'company_info') {
+          // Ajouter overflow pour les conteneurs complexes
+          containerStyles += ` overflow: hidden;`;
+        }
+        html += `<div class="element" style="${containerStyles}">${content}</div>`;
       });
     } else {
       html += `<div style="padding: 40px; text-align: center; color: #999;">
