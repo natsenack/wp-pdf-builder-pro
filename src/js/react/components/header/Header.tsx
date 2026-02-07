@@ -523,6 +523,9 @@ export const Header = memo(function Header({
         if (element.fontStyle && element.fontStyle !== 'normal') styles += ` font-style: ${element.fontStyle};`;
         if (element.textDecoration && element.textDecoration !== 'none') styles += ` text-decoration: ${element.textDecoration};`;
         if (element.lineHeight) styles += ` line-height: ${element.lineHeight};`;
+        if (element.letterSpacing && element.letterSpacing !== 'normal') styles += ` letter-spacing: ${element.letterSpacing};`;
+        if (element.wordSpacing && element.wordSpacing !== 'normal') styles += ` word-spacing: ${element.wordSpacing};`;
+        if (element.textTransform && element.textTransform !== 'none') styles += ` text-transform: ${element.textTransform};`;
         if (element.textAlign) styles += ` text-align: ${element.textAlign};`;
         if (element.verticalAlign) styles += ` vertical-align: ${element.verticalAlign};`;
         
@@ -555,10 +558,10 @@ export const Header = memo(function Header({
           case 'dynamic_text':
             content = element.text || element.content || 'Texte';
             if (element.autoWrap !== false) styles += ` white-space: pre-wrap; word-wrap: break-word;`;
-
             break;
           case 'document_type':
             content = element.text || element.content || element.title || 'FACTURE';
+            styles += ` display: flex; align-items: center; justify-content: center;`;
             break;
           case 'order_number':
             content = element.text || element.content || `Commande #${element.orderNumber || '001'}`;
@@ -566,9 +569,11 @@ export const Header = memo(function Header({
           case 'company_logo':
           case 'image':
             if (element.src) {
-              let imgStyles = `max-width: 100%; max-height: 100%;`;
+              let imgStyles = `max-width: 100%; max-height: 100%; display: block;`;
               if (element.objectFit) imgStyles += ` object-fit: ${element.objectFit};`;
-              if (element.opacity) imgStyles += ` opacity: ${element.opacity};`;
+              if (element.opacity && element.opacity < 1) imgStyles += ` opacity: ${element.opacity};`;
+              if (element.borderRadius) imgStyles += ` border-radius: ${element.borderRadius}px;`;
+              if (element.borderWidth) imgStyles += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
               content = `<img src="${element.src}" style="${imgStyles}" />`;
             } else {
               content = element.text || element.content || '📦 Logo';
@@ -630,10 +635,35 @@ export const Header = memo(function Header({
             }
             break;
           case 'company_info':
-            content = element.content || element.text || 'Informations Entreprise';
+            content = element.content || element.text || '';
+            if (!content) {
+              // Si pas de contenu, créer un default
+              let companyContent = '<div style="margin-bottom:4px;"><strong>Entreprise</strong></div>';
+              companyContent += '<div>Nom: SARL Example</div>';
+              companyContent += '<div>Adresse: 123 Rue</div>';
+              content = companyContent;
+            }
+            if (element.showBackground && element.backgroundColor && element.backgroundColor !== 'transparent') {
+              styles += ` background-color: ${element.backgroundColor};`;
+            }
+            styles += ` padding: 8px; overflow: auto;`;
             break;
           case 'customer_info':
-            content = element.content || element.text || 'Informations Client';
+            content = element.content || element.text || '';
+            if (!content) {
+              // Si pas de contenu, créer un default
+              let customerContent = '<div style="margin-bottom:4px;"><strong>Client</strong></div>';
+              customerContent += '<div>Nom: Client</div>';
+              customerContent += '<div>Email: client@example.com</div>';
+              content = customerContent;
+            }
+            if (element.showBackground && element.backgroundColor && element.backgroundColor !== 'transparent') {
+              styles += ` background-color: ${element.backgroundColor};`;
+            }
+            if (element.showBorders && element.borderWidth) {
+              styles += ` border: ${element.borderWidth}px solid ${element.borderColor || '#f3f4f6'};`;
+            }
+            styles += ` padding: 8px; overflow: auto;`;
             break;
           case 'mentions':
           case 'note':

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern Invoice - Preview</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 20px;
+    }
+    
+    .pdf-wrapper {
+      background: white;
+      width: 794px;
+      height: 1123px;
+      margin: 0 auto;
+      position: relative;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    
+    .pdf-page {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .element {
+      position: absolute;
+      box-sizing: border-box;
+    }
+    
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    /* Company Logo */
+    #logo {
+      left: 314.5px;
+      top: 6.984375px;
+      width: 152.5px;
+      height: 127px;
+    }
+    
+    #logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border: 1px solid #e5e7eb;
+    }
+    
+    /* Document Title */
+    #document-type {
+      left: 633px;
+      top: 13.984375px;
+      width: 150px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-family: Arial;
+      font-weight: bold;
+      color: #111827;
+      text-align: center;
+    }
+    
+    /* Separator Line */
+    #separator {
+      left: 12px;
+      top: 139.984375px;
+      width: 768px;
+      height: 20px;
+      border-top: 2px solid #000000;
+    }
+    
+    /* Company Info */
+    #company-info {
+      left: 17px;
+      top: 11.984375px;
+      width: 204.5px;
+      height: 114px;
+      background-color: #e5e7eb;
+      padding: 8px;
+      font-size: 12px;
+      font-family: Arial;
+      font-weight: normal;
+      color: #374151;
+      line-height: 1.2;
+      overflow: hidden;
+    }
+    
+    #company-info > div {
+      margin-bottom: 4px;
+      font-weight: normal;
+    }
+    
+    #company-info > div.header {
+      font-weight: bold;
+      color: #111827;
+    }
+    
+    /* Customer Info */
+    #customer-info {
+      left: 17px;
+      top: 161.984375px;
+      width: 250px;
+      height: 120px;
+      background-color: #ffffff;
+      border: 1px solid #f3f4f6;
+      padding: 8px;
+      font-size: 12px;
+      font-family: Arial;
+      font-weight: normal;
+      color: #374151;
+      line-height: 1.2;
+      overflow: hidden;
+    }
+    
+    #customer-info > div.header {
+      font-weight: bold;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+    
+    #customer-info > div.row {
+      margin-bottom: 3px;
+    }
+    
+    /* Product Table */
+    #product-table {
+      left: 15px;
+      top: 359.984375px;
+      width: 766px;
+      height: 367px;
+      overflow: hidden;
+    }
+    
+    #product-table table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      font-family: Arial;
+      font-weight: normal;
+      color: #374151;
+      line-height: 1.2;
+      background-color: #ffffff;
+    }
+    
+    #product-table thead {
+      background-color: #f9fafb;
+      color: #111827;
+    }
+    
+    #product-table thead th {
+      padding: 8px;
+      border: 1px solid #e5e7eb;
+      text-align: left;
+      vertical-align: top;
+      font-weight: bold;
+    }
+    
+    #product-table tbody td {
+      padding: 8px;
+      border: 1px solid #e5e7eb;
+      text-align: left;
+      vertical-align: top;
+    }
+    
+    #product-table tbody tr:nth-child(odd) td {
+      background-color: #f9fafb;
+    }
+    
+    /* Customer Signature */
+    #signature {
+      left: 47.5px;
+      top: 794.984375px;
+      width: 315.5px;
+      height: 160px;
+      font-size: 14px;
+      font-family: Arial;
+      font-weight: normal;
+      color: #000000;
+      line-height: 1.3;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <div class="pdf-wrapper">
+    <div class="pdf-page">
+      
+      <!-- Company Info -->
+      <div id="company-info" class="element">
+        <div class="header">Nos Entreprises</div>
+        <div>Exemple SARL</div>
+        <div>123 Rue de la Paix</div>
+        <div>75000 Paris</div>
+        <div>contact@example.com</div>
+        <div>01.23.45.67.89</div>
+        <div>SIRET: 123456789</div>
+      </div>
+      
+      <!-- Customer Logo -->
+      <div id="logo" class="element">
+        <img src="https://wp.local/wp-content/uploads/2026/02/cropped-Fichier-14global.png" alt="Logo">
+      </div>
+      
+      <!-- Document Type -->
+      <div id="document-type" class="element">FACTURE</div>
+      
+      <!-- Separator Line -->
+      <div id="separator" class="element"></div>
+      
+      <!-- Customer Info -->
+      <div id="customer-info" class="element">
+        <div class="header">Informations Client</div>
+        <div class="row">Client: John Doe</div>
+        <div class="row">Email: john@example.com</div>
+        <div class="row">Tél: 06.12.34.56.78</div>
+      </div>
+      
+      <!-- Product Table -->
+      <div id="product-table" class="element">
+        <table>
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Qty</th>
+              <th>Prix Unitaire</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>T-shirt Premium Bio</td>
+              <td>2</td>
+              <td>29.99€</td>
+              <td>59.98€</td>
+            </tr>
+            <tr>
+              <td>Jean Slim Fit Noir</td>
+              <td>1</td>
+              <td>89.99€</td>
+              <td>79.99€</td>
+            </tr>
+            <tr>
+              <td>Chaussures Running Pro</td>
+              <td>1</td>
+              <td>129.99€</td>
+              <td>129.99€</td>
+            </tr>
+            <tr>
+              <td>Sweat à Capuche</td>
+              <td>1</td>
+              <td>49.99€</td>
+              <td>44.99€</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Customer Signature -->
+      <div id="signature" class="element">Signature du client
+
+
+______________________________
+
+Nom et prénom :
+
+Date : ____/____/________</div>
+      
+    </div>
+  </div>
+</body>
+</html>
