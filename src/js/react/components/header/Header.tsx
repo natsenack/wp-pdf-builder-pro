@@ -476,7 +476,7 @@ export const Header = memo(function Header({
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
     body { padding: 20px; }
-    .pdf-wrapper { display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+    .pdf-wrapper { background: rgb(255 255 255); display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
     .pdf-page {
       width: ${canvasWidth}px;
       min-height: ${canvasHeight}px;
@@ -581,24 +581,52 @@ export const Header = memo(function Header({
             break;
           case 'product_table':
           case 'table':
-            let tableStyles = `border-collapse: collapse;`;
-            if (element.borderWidth) tableStyles += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
+            // Styles du tableau
+            let tableStyles = `border-collapse: collapse; width: 100%;`;
             if (element.fontSize) tableStyles += ` font-size: ${element.fontSize}px;`;
+            if (element.fontFamily) tableStyles += ` font-family: ${element.fontFamily};`;
+            if (element.fontWeight && element.fontWeight !== 'normal') tableStyles += ` font-weight: ${element.fontWeight};`;
+            if (element.fontStyle && element.fontStyle !== 'normal') tableStyles += ` font-style: ${element.fontStyle};`;
+            if (element.textDecoration && element.textDecoration !== 'none') tableStyles += ` text-decoration: ${element.textDecoration};`;
+            if (element.lineHeight) tableStyles += ` line-height: ${element.lineHeight};`;
+            if (element.letterSpacing && element.letterSpacing !== 'normal') tableStyles += ` letter-spacing: ${element.letterSpacing};`;
+            if (element.wordSpacing && element.wordSpacing !== 'normal') tableStyles += ` word-spacing: ${element.wordSpacing};`;
             if (element.backgroundColor) tableStyles += ` background-color: ${element.backgroundColor};`;
             
-            let headerStyle = '';
+            // Styles pour les cellules (td/th)
+            let cellStyles = `padding: 8px; text-align: ${element.textAlign || 'left'}; vertical-align: ${element.verticalAlign || 'top'};`;
+            if (element.borderWidth && element.showBorders) cellStyles += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
+            if (element.textColor) cellStyles += ` color: ${element.textColor};`;
+            
+            // Styles pour les headers
+            let headerStyle = `padding: 8px; text-align: ${element.textAlign || 'left'}; vertical-align: ${element.verticalAlign || 'top'};`;
             if (element.showHeaders) {
-              headerStyle = `style="`;
               if (element.headerBackgroundColor) headerStyle += `background-color: ${element.headerBackgroundColor};`;
               if (element.headerTextColor) headerStyle += `color: ${element.headerTextColor};`;
-              if (element.borderWidth) headerStyle += `border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
-              headerStyle += `"`;
+              if (element.borderWidth && element.showBorders) headerStyle += `border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
+              if (element.fontWeight) headerStyle += `font-weight: ${element.fontWeight};`;
             }
             
+            const tableId = `table-${element.id}`;
+            let tableCSS = '';
+            
+            // Ajouter CSS pour les lignes alternées
+            if (element.showAlternatingRows && element.alternateRowColor) {
+              tableCSS = `<style>
+                #${tableId} tbody tr:nth-child(odd) td { background-color: ${element.alternateRowColor}; }
+              </style>`;
+            }
+            
+            // Générer le contenu du tableau avec styles dynamiques
             if (element.content) {
-              content = `<table style="${tableStyles}">${element.content}</table>`;
+              // Remplacer les tags td et th avec les styles
+              let wrappedContent = element.content
+                .replace(/<th([^>]*)>/g, `<th style="${headerStyle}"$1>`)
+                .replace(/<td([^>]*)>/g, `<td style="${cellStyles}"$1>`);
+              
+              content = tableCSS + `<table id="${tableId}" style="${tableStyles}">${wrappedContent}</table>`;
             } else {
-              content = `<table style="${tableStyles}"><tr>${headerStyle}><th>Produit</th><th>Qty</th><th>Prix</th></tr><tr><td>Exemple</td><td>1</td><td>100€</td></tr></table>`;
+              content = tableCSS + `<table id="${tableId}" style="${tableStyles}"><thead><tr><th style="${headerStyle}">Produit</th><th style="${headerStyle}">Qty</th><th style="${headerStyle}">Prix</th></tr></thead><tbody><tr><td style="${cellStyles}">Exemple</td><td style="${cellStyles}">1</td><td style="${cellStyles}">100€</td></tr></tbody></table>`;
             }
             break;
           case 'company_info':
