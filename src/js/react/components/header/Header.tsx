@@ -1395,9 +1395,9 @@ export const Header = memo(function Header({
               backgroundColor: "#ffffff",
               borderRadius: "8px",
               padding: "24px",
-              maxWidth: "45vw",
+              maxWidth: "65vw",
               width: "100%",
-              maxHeight: "85vh",
+              maxHeight: "90vh",
               display: "flex",
               flexDirection: "column",
               boxShadow: "0 10px 40px rgba(0, 0, 0, 0.3)",
@@ -1508,7 +1508,7 @@ export const Header = memo(function Header({
                   )}
                 </pre>
               ) : (
-                <div style={{ padding: "12px", height: '100%', overflow: 'auto' }}>
+                <div style={{ padding: "12px", height: '100%' }}>
                   <iframe
                     srcDoc={generatedHtml}
                     style={{
