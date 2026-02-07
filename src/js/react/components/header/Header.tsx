@@ -98,6 +98,11 @@ export const Header = memo(function Header({
   const [editedTemplateName, setEditedTemplateName] = useState(templateName);
   const [editedTemplateDescription, setEditedTemplateDescription] =
     useState(templateDescription);
+  
+  // États pour le drag du modal JSON
+  const [modalPosition, setModalPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isDraggingModal, setIsDraggingModal] = useState(false);
+  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
   const [editedCanvasWidth, setEditedCanvasWidth] = useState(canvasWidth);
   const [editedCanvasHeight, setEditedCanvasHeight] = useState(canvasHeight);
   const [canvasOrientation, setCanvasOrientation] = useState<
@@ -263,6 +268,30 @@ export const Header = memo(function Header({
         document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [showPredefinedTemplates]);
+
+  // Effet pour gérer le drag du modal JSON
+  useEffect(() => {
+    if (!isDraggingModal || !dragStart) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaX = e.clientX - dragStart.x;
+      const deltaY = e.clientY - dragStart.y;
+      setModalPosition({ x: deltaX, y: deltaY });
+    };
+
+    const handleMouseUp = () => {
+      setIsDraggingModal(false);
+      setDragStart(null);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDraggingModal, dragStart]);
 
   // Convertir JSON to HTML et afficher dans une nouvelle fenêtre
   const convertJsonToHtml = useCallback(async () => {
@@ -1926,10 +1955,21 @@ export const Header = memo(function Header({
               display: "flex",
               flexDirection: "column",
               boxShadow: "0 10px 40px rgba(0, 0, 0, 0.3)",
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: `translate(calc(-50% + ${modalPosition.x}px), calc(-50% + ${modalPosition.y}px))`,
+              transition: isDraggingModal ? 'none' : 'transform 0.1s ease-out',
             }}
           >
             {/* Header avec Toggle JSON/HTML */}
             <div
+              onMouseDown={(e) => {
+                // Ne pas dragguer si on clique sur un bouton
+                if ((e.target as HTMLElement).closest('button')) return;
+                setIsDraggingModal(true);
+                setDragStart({ x: e.clientX, y: e.clientY });
+              }}
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -1937,6 +1977,8 @@ export const Header = memo(function Header({
                 marginBottom: "16px",
                 borderBottom: "1px solid #e0e0e0",
                 paddingBottom: "12px",
+                cursor: isDraggingModal ? 'grabbing' : 'grab',
+                userSelect: 'none',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
