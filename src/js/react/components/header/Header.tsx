@@ -1184,7 +1184,48 @@ export const Header = memo(function Header({
 
           case 'mentions':
           case 'note':
-            content = element.content || element.text || '';
+            // Récupérer les données d'entreprise pour générer les mentions
+            const getMentionsDataForHtml = () => {
+              const pluginCompany = (window as any).pdfBuilderData?.company || {};
+              return {
+                email: element.email || pluginCompany.email || '',
+                phone: element.phone || pluginCompany.phone || '',
+                siret: element.siret || pluginCompany.siret || '',
+                tva: element.tva || pluginCompany.tva || '',
+              };
+            };
+            
+            // Si contenu personnalisé, l'utiliser; sinon générer depuis les propriétés
+            content = element.content || element.text;
+            
+            if (!content) {
+              const mentionsData = getMentionsDataForHtml();
+              const mentionParts: string[] = [];
+              
+              // Ajouter email si requis et disponible
+              if (element.showEmail !== false && mentionsData.email && mentionsData.email.trim()) {
+                mentionParts.push(mentionsData.email);
+              }
+              
+              // Ajouter téléphone si requis et disponible
+              if (element.showPhone !== false && mentionsData.phone && mentionsData.phone.trim()) {
+                mentionParts.push(mentionsData.phone);
+              }
+              
+              // Ajouter SIRET si requis et disponible
+              if (element.showSiret !== false && mentionsData.siret && mentionsData.siret.trim()) {
+                mentionParts.push(`SIRET: ${mentionsData.siret}`);
+              }
+              
+              // Ajouter TVA si requis et disponible
+              if (element.showVat !== false && mentionsData.tva && mentionsData.tva.trim()) {
+                mentionParts.push(`TVA: ${mentionsData.tva}`);
+              }
+              
+              // Assembler avec le séparateur
+              const separator = element.separator || ' • ';
+              content = mentionParts.join(separator);
+            }
             
             // Appliquer styles globaux (font properties)
             const globalStylesMentions = buildGlobalStyles(element);

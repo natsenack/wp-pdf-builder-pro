@@ -75,6 +75,62 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
     setActiveTab({ ...activeTab, [element.id]: tab });
   };
 
+  // Fonction pour générer le contenu des mentions depuis les propriétés d'entreprise
+  const generateMentionsContent = (props?: any) => {
+    const config = props || element;
+    const mentionParts: string[] = [];
+    
+    // Récupérer les données d'entreprise depuis window
+    const pluginCompany = (window as any).pdfBuilderData?.company || {};
+    
+    // Ajouter email si requis et disponible
+    if (config.showEmail !== false && config.email && config.email.trim()) {
+      mentionParts.push(config.email);
+    } else if (config.showEmail !== false && pluginCompany.email) {
+      mentionParts.push(pluginCompany.email);
+    }
+    
+    // Ajouter téléphone si requis et disponible
+    if (config.showPhone !== false && config.phone && config.phone.trim()) {
+      mentionParts.push(config.phone);
+    } else if (config.showPhone !== false && pluginCompany.phone) {
+      mentionParts.push(pluginCompany.phone);
+    }
+    
+    // Ajouter SIRET si requis et disponible
+    if (config.showSiret !== false && config.siret && config.siret.trim()) {
+      mentionParts.push(`SIRET: ${config.siret}`);
+    } else if (config.showSiret !== false && pluginCompany.siret) {
+      mentionParts.push(`SIRET: ${pluginCompany.siret}`);
+    }
+    
+    // Ajouter TVA si requis et disponible
+    if (config.showVat !== false && config.tva && config.tva.trim()) {
+      mentionParts.push(`TVA: ${config.tva}`);
+    } else if (config.showVat !== false && pluginCompany.tva) {
+      mentionParts.push(`TVA: ${pluginCompany.tva}`);
+    }
+    
+    // Assembler avec le séparateur
+    const separator = config.separator || ' • ';
+    return mentionParts.join(separator);
+  };
+
+  // Helper pour toggler et régénérer le contenu
+  const handlePropertyChangeWithContentUpdate = (property: string, value: any) => {
+    onChange(element.id, property, value);
+    
+    // Si c'est une propriété qui affecte le contenu, régénérer et sauvegarder
+    // SAUF si le type courant est 'custom' (contenu personnalisé)
+    if (['showEmail', 'showPhone', 'showSiret', 'showVat', 'separator'].includes(property) && currentMentionType !== 'custom') {
+      const newConfig = { ...element, [property]: value };
+      const generatedContent = generateMentionsContent(newConfig);
+      if (generatedContent && generatedContent.trim()) {
+        onChange(element.id, 'text', generatedContent);
+      }
+    }
+  };
+
   const mentionsThemes = [
     {
       id: 'legal',
@@ -458,6 +514,85 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* Section Propriétés de mentions - Affichage des informations d'entreprise */}
+          <div style={{ marginBottom: '12px', padding: '12px', border: '1px solid #e0e0e0', borderRadius: '4px', backgroundColor: '#f9f9f9' }}>
+            <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '8px', color: '#555' }}>
+              Informations d'entreprise à afficher
+            </label>
+            
+            <div style={{ marginBottom: '6px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', fontSize: '11px', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={element.showEmail !== false}
+                  onChange={(e) => handlePropertyChangeWithContentUpdate('showEmail', e.target.checked)}
+                  style={{ marginRight: '6px' }}
+                />
+                Email
+              </label>
+            </div>
+
+            <div style={{ marginBottom: '6px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', fontSize: '11px', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={element.showPhone !== false}
+                  onChange={(e) => handlePropertyChangeWithContentUpdate('showPhone', e.target.checked)}
+                  style={{ marginRight: '6px' }}
+                />
+                Téléphone
+              </label>
+            </div>
+
+            <div style={{ marginBottom: '6px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', fontSize: '11px', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={element.showSiret !== false}
+                  onChange={(e) => handlePropertyChangeWithContentUpdate('showSiret', e.target.checked)}
+                  style={{ marginRight: '6px' }}
+                />
+                SIRET
+              </label>
+            </div>
+
+            <div style={{ marginBottom: '6px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', fontSize: '11px', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={element.showVat !== false}
+                  onChange={(e) => handlePropertyChangeWithContentUpdate('showVat', e.target.checked)}
+                  style={{ marginRight: '6px' }}
+                />
+                TVA
+              </label>
+            </div>
+
+            <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #ddd' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Séparateur
+              </label>
+              <select
+                value={element.separator || ' • '}
+                onChange={(e) => handlePropertyChangeWithContentUpdate('separator', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 6px',
+                  border: '1px solid #ccc',
+                  borderRadius: '3px',
+                  fontSize: '11px'
+                }}
+              >
+                <option value=" • ">Point (•)</option>
+                <option value=" | ">Barre verticale (|)</option>
+                <option value=" - ">Tiret (-)</option>
+                <option value=", ">Virgule (,)</option>
+                <option value=" / ">Slash (/)</option>
+                <option value=" | ">Barre (|)</option>
+              </select>
+            </div>
           </div>
 
           {/* Section Médley - Sélection des mentions à combiner */}

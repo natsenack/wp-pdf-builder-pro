@@ -76,6 +76,107 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
     setActiveTab({ ...activeTab, [element.id]: tab });
   };
 
+  // Fonction pour générer le contenu des infos entreprise depuis les propriétés
+  const generateCompanyContent = (props?: any) => {
+    const config = props || element;
+    const companyParts: string[] = [];
+    
+    // Récupérer les données d'entreprise depuis window
+    const pluginCompany = (window as any).pdfBuilderData?.company || {};
+    
+    // Helper pour valider une valeur
+    const isValidValue = (value: any): boolean => {
+      return value && value.toString().trim() !== '' && value !== 'Non indiqué';
+    };
+    
+    // Nom de l'entreprise (header)
+    if (config.showCompanyName !== false) {
+      const companyName = config.companyName || pluginCompany.name || '';
+      if (isValidValue(companyName)) {
+        const headerFontSize = config.headerFontSize || config.fontSize || 14;
+        const headerFontWeight = config.headerFontWeight || 'bold';
+        const headerColor = config.headerTextColor || config.textColor || '#000000';
+        companyParts.push(`Entreprise: ${companyName}`);
+      }
+    }
+    
+    // Adresse
+    if (config.showAddress !== false) {
+      const address = config.companyAddress || pluginCompany.address || '';
+      const city = config.companyCity || pluginCompany.city || '';
+      if (isValidValue(address)) {
+        let fullAddress = address;
+        if (isValidValue(city)) fullAddress += `, ${city}`;
+        companyParts.push(fullAddress);
+      }
+    }
+    
+    // Téléphone
+    if (config.showPhone !== false) {
+      const phone = config.companyPhone || pluginCompany.phone || '';
+      if (isValidValue(phone)) {
+        companyParts.push(`Tél: ${phone}`);
+      }
+    }
+    
+    // Email
+    if (config.showEmail !== false) {
+      const email = config.companyEmail || pluginCompany.email || '';
+      if (isValidValue(email)) {
+        companyParts.push(`Email: ${email}`);
+      }
+    }
+    
+    // SIRET
+    if (config.showSiret !== false) {
+      const siret = config.companySiret || pluginCompany.siret || '';
+      if (isValidValue(siret)) {
+        companyParts.push(`SIRET: ${siret}`);
+      }
+    }
+    
+    // TVA
+    if (config.showVat !== false) {
+      const tva = config.companyTva || pluginCompany.tva || '';
+      if (isValidValue(tva)) {
+        companyParts.push(`TVA: ${tva}`);
+      }
+    }
+    
+    // RCS
+    if (config.showRcs !== false) {
+      const rcs = config.companyRcs || pluginCompany.rcs || '';
+      if (isValidValue(rcs)) {
+        companyParts.push(`RCS: ${rcs}`);
+      }
+    }
+    
+    // Capital
+    if (config.showCapital !== false) {
+      const capital = config.companyCapital || pluginCompany.capital || '';
+      if (isValidValue(capital)) {
+        companyParts.push(`Capital: ${capital} €`);
+      }
+    }
+    
+    // Assembler avec séparateur (newline pour vertical)
+    return companyParts.join('\n');
+  };
+
+  // Helper pour toggler et régénérer le contenu
+  const handlePropertyChangeWithContentUpdate = (property: string, value: any) => {
+    onChange(element.id, property, value);
+    
+    // Si c'est une propriété qui affecte le contenu, régénérer et sauvegarder
+    if (['showCompanyName', 'showAddress', 'showPhone', 'showEmail', 'showSiret', 'showVat', 'showRcs', 'showCapital'].includes(property)) {
+      const newConfig = { ...element, [property]: value };
+      const generatedContent = generateCompanyContent(newConfig);
+      if (generatedContent && generatedContent.trim()) {
+        onChange(element.id, 'content', generatedContent);
+      }
+    }
+  };
+
   // État pour les accordéons de police
   const [fontAccordions, setFontAccordions] = useState({
     headerFont: false, // Accordéon du nom de l'entreprise fermé par défaut
@@ -455,7 +556,7 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
             <div style={{ paddingLeft: '8px' }}>
               <Toggle
                 checked={element.showCompanyName !== false}
-                onChange={(checked) => onChange(element.id, 'showCompanyName', checked)}
+                onChange={(checked) => handlePropertyChangeWithContentUpdate('showCompanyName', checked)}
                 label="Afficher le nom de l'entreprise"
                 description="Nom de l'entreprise"
               />
@@ -479,21 +580,21 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
             <div style={{ paddingLeft: '8px' }}>
               <Toggle
                 checked={element.showAddress !== false}
-                onChange={(checked) => onChange(element.id, 'showAddress', checked)}
+                onChange={(checked) => handlePropertyChangeWithContentUpdate('showAddress', checked)}
                 label="Afficher l'adresse"
                 description="Adresse complète de l'entreprise"
               />
 
               <Toggle
                 checked={element.showPhone !== false}
-                onChange={(checked) => onChange(element.id, 'showPhone', checked)}
+                onChange={(checked) => handlePropertyChangeWithContentUpdate('showPhone', checked)}
                 label="Afficher le téléphone"
                 description="Numéro de téléphone"
               />
 
               <Toggle
                 checked={element.showEmail !== false}
-                onChange={(checked) => onChange(element.id, 'showEmail', checked)}
+                onChange={(checked) => handlePropertyChangeWithContentUpdate('showEmail', checked)}
                 label="Afficher l'email"
                 description="Adresse email de l'entreprise"
               />
