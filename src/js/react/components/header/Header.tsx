@@ -454,6 +454,39 @@ export const Header = memo(function Header({
     const elements = state.elements || [];
     const template = state.template || {};
 
+    // Helper functions pour convertir les propriétés en CSS
+    const buildSpacing = (value: any): string => {
+      if (!value) return '';
+      if (typeof value === 'number') return `${value}px`;
+      if (typeof value === 'object') {
+        const top = value.top || 0;
+        const right = value.right || 0;
+        const bottom = value.bottom || 0;
+        const left = value.left || 0;
+        return `${top}px ${right}px ${bottom}px ${left}px`;
+      }
+      return '';
+    };
+
+    const buildBorder = (border: any): string => {
+      if (!border) return '';
+      if (!border.width) return '';
+      const width = border.width || 1;
+      const style = border.style || 'solid';
+      const color = border.color || '#e5e7eb';
+      return `${width}px ${style} ${color}`;
+    };
+
+    const buildFlexLayout = (layout: string | undefined, gap: number = 8): string => {
+      if (!layout) return '';
+      if (layout === 'horizontal') {
+        return `display: flex; flex-direction: row; gap: ${gap}px;`;
+      } else if (layout === 'vertical') {
+        return `display: flex; flex-direction: column; gap: ${gap}px;`;
+      }
+      return '';
+    };
+
     // Construire le HTML simulant un PDF - ESSENTIELLEMENT MINIMAL
     let html = `<!DOCTYPE html>
 <html lang="fr">
@@ -465,7 +498,7 @@ export const Header = memo(function Header({
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
     body { padding: 20px; background: #f5f5f5; }
-    .pdf-wrapper { background: white; display: flex; justify-content: center; }
+    .pdf-wrapper {display: flex; justify-content: center; }
     .pdf-page {
       width: ${canvasWidth}px;
       height: ${canvasHeight}px;
@@ -556,6 +589,18 @@ export const Header = memo(function Header({
             const orderNum = element.text || element.content || '001';
             const format = element.format || 'CMD-{order_number}';
             content = format.replace('{order_number}', orderNum);
+            // contentAlign property
+            if (element.contentAlign) {
+              styles += ` text-align: ${element.contentAlign};`;
+            }
+            // labelPosition et labelText
+            if (element.showLabel && element.labelText) {
+              styles += ` display: flex; flex-direction: column;`;
+              const labelPosition = element.labelPosition || 'above';
+              if (labelPosition === 'above' || labelPosition === 'left') {
+                // Will be handled by flex direction
+              }
+            }
             break;
 
           case 'company_logo':
@@ -633,26 +678,88 @@ export const Header = memo(function Header({
             if (element.showBackground && element.backgroundColor && element.backgroundColor !== 'transparent') {
               styles += ` background-color: ${element.backgroundColor};`;
             }
-            // Padding par défaut pour readabilité
-            styles += ` padding: 8px; overflow: auto;`;
+            // Padding depuis JSON (peut être nombre ou objet {top, right, bottom, left})
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            } else {
+              styles += ` padding: 8px;`;
+            }
+            // Margin depuis JSON
+            if (element.margin) {
+              const marginStr = buildSpacing(element.margin);
+              if (marginStr) styles += ` margin: ${marginStr};`;
+            }
+            // Border depuis JSON (objet {width, style, color})
+            if (element.border) {
+              const borderStr = buildBorder(element.border);
+              if (borderStr) styles += ` border: ${borderStr};`;
+            }
+            // Layout property (vertical ou horizontal)
+            if (element.layout) {
+              const layoutStr = buildFlexLayout(element.layout);
+              if (layoutStr) styles += ` ${layoutStr}`;
+            }
+            styles += ` overflow: auto;`;
             break;
 
           case 'customer_info':
             content = element.content || element.text || '<div>Client</div>';
-            // Ajouter background seulement si backgroundColor défini et pas transparent
+            // Background depuis JSON
             if (element.backgroundColor && element.backgroundColor !== 'transparent' && element.showBackground !== false) {
               styles += ` background-color: ${element.backgroundColor};`;
             }
-            // Ajouter border seulement si showBorders=true ET borderWidth > 0
-            if (element.showBorders && element.borderWidth && element.borderWidth > 0) {
-              styles += ` border: ${element.borderWidth}px solid ${element.borderColor || '#f3f4f6'};`;
+            // Padding depuis JSON (peut être nombre ou objet)
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            } else {
+              styles += ` padding: 8px;`;
             }
-            styles += ` padding: 8px; overflow: auto;`;
+            // Margin depuis JSON
+            if (element.margin) {
+              const marginStr = buildSpacing(element.margin);
+              if (marginStr) styles += ` margin: ${marginStr};`;
+            }
+            // Border depuis JSON (objet {width, style, color})
+            if (element.border) {
+              const borderStr = buildBorder(element.border);
+              if (borderStr) styles += ` border: ${borderStr};`;
+            }
+            // Layout property (vertical ou horizontal)
+            if (element.layout) {
+              const layoutStr = buildFlexLayout(element.layout);
+              if (layoutStr) styles += ` ${layoutStr}`;
+            }
+            // showLabels et labelPosition
+            if (element.showLabels && element.labelPosition) {
+              styles += ` --label-position: ${element.labelPosition};`;
+            }
+            styles += ` overflow: auto;`;
             break;
 
           case 'mentions':
           case 'note':
             content = element.content || element.text || '';
+            // Padding depuis JSON
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            }
+            // Margin depuis JSON
+            if (element.margin) {
+              const marginStr = buildSpacing(element.margin);
+              if (marginStr) styles += ` margin: ${marginStr};`;
+            }
+            // Border depuis JSON
+            if (element.border) {
+              const borderStr = buildBorder(element.border);
+              if (borderStr) styles += ` border: ${borderStr};`;
+            }
+            // Separator property
+            if (element.showSeparator) {
+              styles += ` border-bottom: 1px solid #e5e7eb;`;
+            }
             break;
 
           default:
