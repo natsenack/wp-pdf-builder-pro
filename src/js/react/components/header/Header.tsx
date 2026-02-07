@@ -293,6 +293,12 @@ export const Header = memo(function Header({
     };
   }, [isDraggingModal, dragStart]);
 
+  // Reset du drag quand on change de mode ou on ferme le modal
+  useEffect(() => {
+    setIsDraggingModal(false);
+    setDragStart(null);
+  }, [jsonModalMode, showJsonModal]);
+
   // Convertir JSON to HTML et afficher dans une nouvelle fenêtre
   const convertJsonToHtml = useCallback(async () => {
     if (isGeneratingHtml) return;
