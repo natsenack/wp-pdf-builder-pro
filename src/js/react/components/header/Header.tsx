@@ -882,7 +882,91 @@ export const Header = memo(function Header({
             break;
 
           case 'company_info':
-            content = element.content || element.text || '<div>Entreprise</div>';
+            // Construire le contenu HTML à partir des propriétés du JSON
+            let companyContent = element.content || element.text;
+            
+            // Si pas de contenu prédéfini, construire à partir des propriétés
+            if (!companyContent) {
+              const companyParts: string[] = [];
+              
+              // Nom de l'entreprise
+              if (element.showCompanyName !== false && element.companyName) {
+                const headerFontSize = element.headerFontSize || element.fontSize || 14;
+                const headerFontWeight = element.headerFontWeight || element.fontWeight || 'bold';
+                const headerColor = element.headerTextColor || element.textColor || '#000000';
+                companyParts.push(`<div style="font-size: ${headerFontSize}px; font-weight: ${headerFontWeight}; color: ${headerColor};">${element.companyName}</div>`);
+              }
+              
+              // Adresse
+              if (element.showAddress !== false && element.companyAddress) {
+                let addressText = element.companyAddress;
+                if (element.companyCity) addressText += `, ${element.companyCity}`;
+                const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
+                const bodyColor = element.bodyTextColor || element.textColor || '#666666';
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">${addressText}</div>`);
+              }
+              
+              // Téléphone
+              if (element.showPhone !== false && element.companyPhone) {
+                const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
+                const bodyColor = element.bodyTextColor || element.textColor || '#666666';
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">Tél: ${element.companyPhone}</div>`);
+              }
+              
+              // Email
+              if (element.showEmail !== false && element.companyEmail) {
+                const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
+                const bodyColor = element.bodyTextColor || element.textColor || '#666666';
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">Email: ${element.companyEmail}</div>`);
+              }
+              
+              // Site web
+              if (element.showWebsite !== false && element.companyWebsite) {
+                const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
+                const bodyColor = element.bodyTextColor || element.textColor || '#666666';
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">${element.companyWebsite}</div>`);
+              }
+              
+              // SIRET
+              if (element.showSiret !== false && element.companySiret) {
+                const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
+                const bodyColor = element.bodyTextColor || element.textColor || '#666666';
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">SIRET: ${element.companySiret}</div>`);
+              }
+              
+              // TVA
+              if (element.showVat !== false && element.companyTva) {
+                const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
+                const bodyColor = element.bodyTextColor || element.textColor || '#666666';
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">TVA: ${element.companyTva}</div>`);
+              }
+              
+              // RCS
+              if (element.showRcs !== false && element.companyRcs) {
+                const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
+                const bodyColor = element.bodyTextColor || element.textColor || '#666666';
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">RCS: ${element.companyRcs}</div>`);
+              }
+              
+              // Capital sociale
+              if (element.showCapital !== false && element.companyCapital) {
+                const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
+                const bodyColor = element.bodyTextColor || element.textColor || '#666666';
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">Capital: ${element.companyCapital} €</div>`);
+              }
+              
+              // Assembler le HTML avec le séparateur si layout horizontal
+              if (element.layout === 'horizontal' && element.separator) {
+                // Layout horizontal : joindre avec le séparateur
+                const separator = element.separator || ' • ';
+                companyContent = `<div style="display: flex; gap: 8px; flex-wrap: wrap;">${companyParts.map(p => `<span>${p}</span>`).join(separator)}</div>`;
+              } else {
+                // Layout vertical (défaut) : chaque élément sur une nouvelle ligne
+                companyContent = companyParts.join('');
+              }
+            }
+            
+            content = companyContent || '<div>Entreprise non configurée</div>';
             
             // Background
             if (element.showBackground && element.backgroundColor && element.backgroundColor !== 'transparent') {
