@@ -1484,8 +1484,8 @@ export const Header = memo(function Header({
               style={{
                 flex: 1,
                 overflow: "auto",
-                marginBottom: "16px",
-                minHeight: "75vh",
+                display: "flex",
+                flexDirection: "column",
               }}
             >
               {jsonModalMode === 'json' ? (
@@ -1509,20 +1509,18 @@ export const Header = memo(function Header({
                   )}
                 </pre>
               ) : (
-                <div style={{ padding: "12px", height: '100%' }}>
-                  <iframe
-                    srcDoc={generatedHtml}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      minHeight: '400px',
-                      border: 'none',
-                      borderRadius: '4px',
-                      backgroundColor: '#f5f5f5',
-                    }}
-                    title="Aperçu PDF"
-                  />
-                </div>
+                <iframe
+                  srcDoc={generatedHtml}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    flex: 1,
+                    border: 'none',
+                    borderRadius: '4px',
+                    backgroundColor: '#f5f5f5',
+                  }}
+                  title="Aperçu PDF"
+                />
               )}
             </div>
 
