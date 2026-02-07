@@ -917,6 +917,25 @@ export const Header = memo(function Header({
             break;
 
           case 'company_info':
+            // Récupérer les données d'entreprise (d'abord de l'élément, puis du plugin)
+            const getCompanyDataForHtml = () => {
+              const pluginCompany = (window as any).pdfBuilderData?.company || {};
+              return {
+                name: element.companyName || pluginCompany.name || '',
+                address: element.companyAddress || pluginCompany.address || '',
+                city: element.companyCity || pluginCompany.city || '',
+                phone: element.companyPhone || pluginCompany.phone || '',
+                email: element.companyEmail || pluginCompany.email || '',
+                website: element.companyWebsite || pluginCompany.website || '',
+                siret: element.companySiret || pluginCompany.siret || '',
+                tva: element.companyTva || pluginCompany.tva || '',
+                rcs: element.companyRcs || pluginCompany.rcs || '',
+                capital: element.companyCapital || pluginCompany.capital || '',
+              };
+            };
+            
+            const companyData = getCompanyDataForHtml();
+            
             // Construire le contenu HTML à partir des propriétés du JSON
             let companyContent = element.content || element.text;
             
@@ -925,69 +944,69 @@ export const Header = memo(function Header({
               const companyParts: string[] = [];
               
               // Nom de l'entreprise
-              if (element.showCompanyName !== false && element.companyName) {
+              if (element.showCompanyName !== false && companyData.name) {
                 const headerFontSize = element.headerFontSize || element.fontSize || 14;
                 const headerFontWeight = element.headerFontWeight || element.fontWeight || 'bold';
                 const headerColor = element.headerTextColor || element.textColor || '#000000';
-                companyParts.push(`<div style="font-size: ${headerFontSize}px; font-weight: ${headerFontWeight}; color: ${headerColor};">${element.companyName}</div>`);
+                companyParts.push(`<div style="font-size: ${headerFontSize}px; font-weight: ${headerFontWeight}; color: ${headerColor};">${companyData.name}</div>`);
               }
               
               // Adresse
-              if (element.showAddress !== false && element.companyAddress) {
-                let addressText = element.companyAddress;
-                if (element.companyCity) addressText += `, ${element.companyCity}`;
+              if (element.showAddress !== false && companyData.address) {
+                let addressText = companyData.address;
+                if (companyData.city) addressText += `, ${companyData.city}`;
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
                 companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">${addressText}</div>`);
               }
               
               // Téléphone
-              if (element.showPhone !== false && element.companyPhone) {
+              if (element.showPhone !== false && companyData.phone) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">Tél: ${element.companyPhone}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">Tél: ${companyData.phone}</div>`);
               }
               
               // Email
-              if (element.showEmail !== false && element.companyEmail) {
+              if (element.showEmail !== false && companyData.email) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">Email: ${element.companyEmail}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">Email: ${companyData.email}</div>`);
               }
               
               // Site web
-              if (element.showWebsite !== false && element.companyWebsite) {
+              if (element.showWebsite !== false && companyData.website) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">${element.companyWebsite}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">${companyData.website}</div>`);
               }
               
               // SIRET
-              if (element.showSiret !== false && element.companySiret) {
+              if (element.showSiret !== false && companyData.siret) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">SIRET: ${element.companySiret}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">SIRET: ${companyData.siret}</div>`);
               }
               
               // TVA
-              if (element.showVat !== false && element.companyTva) {
+              if (element.showVat !== false && companyData.tva) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">TVA: ${element.companyTva}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">TVA: ${companyData.tva}</div>`);
               }
               
               // RCS
-              if (element.showRcs !== false && element.companyRcs) {
+              if (element.showRcs !== false && companyData.rcs) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">RCS: ${element.companyRcs}</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">RCS: ${companyData.rcs}</div>`);
               }
               
               // Capital sociale
-              if (element.showCapital !== false && element.companyCapital) {
+              if (element.showCapital !== false && companyData.capital) {
                 const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
                 const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">Capital: ${element.companyCapital} €</div>`);
+                companyParts.push(`<div style="font-size: ${bodyFontSize}px; color: ${bodyColor};">Capital: ${companyData.capital} €</div>`);
               }
               
               // Assembler le HTML avec le séparateur si layout horizontal
