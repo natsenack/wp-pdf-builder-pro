@@ -307,31 +307,54 @@ export const Header = memo(function Header({
     try {
       console.log('[JSON TO HTML] Starting conversion');
 
-      const transformedElements = state.elements && state.elements.length > 0 
-        ? state.elements.map((element: any) => ({
-            ...element,
-            properties: {
-              ...Object.keys(element)
-                .filter(key => !['id', 'type', 'x', 'y', 'width', 'height', 'rotation', 'visible', 'locked', 'createdAt', 'updatedAt'].includes(key))
-                .reduce((obj, key) => ({ ...obj, [key]: element[key] }), {}),
-              ...(element.fillColor && { backgroundColor: element.fillColor }),
-              ...(element.strokeColor && { borderColor: element.strokeColor }),
-              ...(element.strokeWidth && { borderWidth: element.strokeWidth }),
-            }
-          }))
-        : [];
+      const templateId = state.currentTemplateId || state.template?.id;
+      if (!templateId) {
+        alert('❌ Aucun template actuellement édité');
+        return;
+      }
+
+      const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
+      const nonce = (window as any).pdfBuilderNonce;
+
+      // Étape 1: Récupérer les données du serveur
+      console.log('[JSON TO HTML] Fetching data from server...');
+      const fetchFormData = new FormData();
+      fetchFormData.append('action', 'pdf_builder_get_template_elements');
+      fetchFormData.append('template_id', templateId);
+      fetchFormData.append('nonce', nonce);
+
+      const fetchResponse = await fetch(ajaxUrl, {
+        method: 'POST',
+        body: fetchFormData,
+      });
+
+      const fetchData = await fetchResponse.json();
+      if (!fetchData.success) {
+        throw new Error(fetchData.data?.message || 'Erreur lors de la récupération des données');
+      }
+
+      console.log('[JSON TO HTML] Data retrieved from server');
+
+      // Étape 2: Envoyer les données au serveur pour conversion
+      const transformedElements = (fetchData.data.elements || []).map((element: any) => ({
+        ...element,
+        properties: {
+          ...Object.keys(element)
+            .filter(key => !['id', 'type', 'x', 'y', 'width', 'height', 'rotation', 'visible', 'locked', 'createdAt', 'updatedAt'].includes(key))
+            .reduce((obj, key) => ({ ...obj, [key]: element[key] }), {}),
+          ...(element.fillColor && { backgroundColor: element.fillColor }),
+          ...(element.strokeColor && { borderColor: element.strokeColor }),
+          ...(element.strokeWidth && { borderWidth: element.strokeWidth }),
+        }
+      }));
 
       const templateData = {
         elements: transformedElements,
-        canvasWidth: canvasWidth,
-        canvasHeight: canvasHeight,
-        template: state.template,
+        canvasWidth: fetchData.data.canvas?.width || 794,
+        canvasHeight: fetchData.data.canvas?.height || 1123,
+        template: fetchData.data.template,
       };
 
-      // Utilisez l'URL de WordPress si disponible
-      const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
-      const nonce = (window as any).pdfBuilderNonce;
-      
       console.log('[JSON TO HTML] AJAX URL:', ajaxUrl);
       console.log('[JSON TO HTML] Nonce:', nonce);
       console.log('[JSON TO HTML] Template Data:', templateData);
@@ -365,88 +388,35 @@ export const Header = memo(function Header({
       });
 
       const responseText = await response.text();
-
       console.log('[JSON TO HTML] Response Status:', response.status);
       console.log('[JSON TO HTML] Response Text:', responseText);
 
       if (!response.ok) {
         console.error('[JSON TO HTML] Request failed with status:', response.status);
         console.error('[JSON TO HTML] Response body:', responseText);
-        
-        // Afficher une alerte détaillée
-        if (responseText === '0') {
-          alert('❌ Erreur serveur: Authentification échouée ou action non trouvée.\n\nResponse: 0\n\nCela signifie:\n- Le nonce est invalide\n- Ou l\'action AJAX n\'existe pas');
-        } else {
-          alert('❌ Erreur serveur: ' + response.status + '\n\nResponse: ' + responseText);
-        }
-        
-        throw new Error(`Erreur serveur: ${response.status} - ${responseText.substring(0, 100)}`);
+        throw new Error(
+          responseText === '0'
+            ? 'Erreur serveur (nonce invalide ou action manquante)'
+            : responseText || 'Erreur lors de la conversion'
+        );
       }
 
-      if (responseText.trim() === '0') {
-        throw new Error('Erreur d\'authentification');
+      if (responseText === '0') {
+        throw new Error('Erreur serveur: réponse invalide');
       }
 
-      let data: any;
-      try {
-        data = JSON.parse(responseText);
-      } catch (e) {
-        // Si ce n'est pas du JSON, utiliser la réponse comme HTML brut
-        const newWindow = window.open('', '_blank');
-        if (newWindow) {
-          newWindow.document.write(responseText);
-          newWindow.document.close();
-        }
-        return;
-      }
-
-      if (data.success && data.data && data.data.html) {
-        const newWindow = window.open('', '_blank');
-        if (newWindow) {
-          const htmlContent = `
-            <!DOCTYPE html>
-            <html lang="fr">
-            <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Aperçu HTML - ${state.template?.name || 'Template'}</title>
-              <style>
-                body {
-                  margin: 0;
-                  padding: 20px;
-                  background-color: #f5f5f5;
-                  font-family: Arial, sans-serif;
-                }
-                .html-container {
-                  background: white;
-                  padding: 20px;
-                  border-radius: 8px;
-                  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                  max-width: 1200px;
-                  margin: 0 auto;
-                }
-              </style>
-            </head>
-            <body>
-              <div class="html-container">
-                ${data.data.html}
-              </div>
-            </body>
-            </html>
-          `;
-          newWindow.document.write(htmlContent);
-          newWindow.document.close();
-        }
-      } else {
-        throw new Error(data.data?.message || 'Erreur inconnue');
+      const newWindow = window.open('', '_blank');
+      if (newWindow) {
+        newWindow.document.write(responseText);
+        newWindow.document.close();
       }
     } catch (error) {
       console.error('[JSON TO HTML] Error:', error);
-      alert(`❌ Erreur: ${error instanceof Error ? error.message : String(error)}`);
+      alert(`❌ Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
     } finally {
       setIsGeneratingHtml(false);
     }
-  }, [state, isGeneratingHtml]);
+  }, [state.currentTemplateId, state.template?.id, isGeneratingHtml]);
 
   const buttonBaseStyles = {
     padding: "10px 16px",
@@ -483,11 +453,16 @@ export const Header = memo(function Header({
   };
 
   // Fonction pour générer HTML qui simule un PDF avec les paramètres du plugin
-  const generatePDFSimulationHTML = () => {
-    const canvasWidth = state.canvas.width || 794;
-    const canvasHeight = state.canvas.height || 1123;
-    const elements = state.elements || [];
-    const template = state.template || {};
+  const generatePDFSimulationHTML = (
+    elementsInput?: any[],
+    canvasInput?: any,
+    templateInput?: any
+  ) => {
+    // Utiliser les paramètres passés OU les données locales (pour compatibilité)
+    const canvasWidth = (canvasInput?.width || state.canvas?.width || 794);
+    const canvasHeight = (canvasInput?.height || state.canvas?.height || 1123);
+    const elements = elementsInput || state.elements || [];
+    const template = templateInput || state.template || {};
 
     // Helper functions pour convertir les propriétés en CSS
     const buildSpacing = (value: any): string => {
@@ -559,25 +534,18 @@ export const Header = memo(function Header({
     .element { 
       position: absolute; 
       box-sizing: border-box;
-      overflow: hidden;
+      overflow: visible;
       padding: 0;
       margin: 0;
       font-family: Arial, sans-serif;
       font-size: 12px;
       line-height: 1.4;
+      white-space: normal;
     }
     .element > * { 
       word-wrap: break-word;
-      width: 100%;
       margin: 0;
       padding: 0;
-    }
-    .element > div { 
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
     }
     table { 
       border-collapse: collapse;
@@ -663,17 +631,11 @@ export const Header = memo(function Header({
             const globalStylesText = buildGlobalStyles(element);
             if (globalStylesText) styles += ` ${globalStylesText}`;
             
-            // Display flex vertical pour contenu texte
-            styles += ` display: flex; align-items: center; justify-content: flex-start;`;
-            
-            // Ajouter padding par défaut si non spécifié
+            // Ajouter padding/margin/border uniquement s'ils sont spécifiés
             if (element.padding) {
               const paddingStr = buildSpacing(element.padding);
               if (paddingStr) styles += ` padding: ${paddingStr};`;
-            } else if (element.type !== 'separator' && element.type !== 'line') {
-              styles += ` padding: 6px 8px;`;
             }
-            
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
@@ -703,12 +665,10 @@ export const Header = memo(function Header({
             // Appliquer styles globaux (font properties)
             const globalStylesDoc = buildGlobalStyles(element);
             if (globalStylesDoc) styles += ` ${globalStylesDoc}`;
-            // Padding/margin/border avec default
+            // Padding/margin/border uniquement si spécifiés
             if (element.padding) {
               const paddingStr = buildSpacing(element.padding);
               if (paddingStr) styles += ` padding: ${paddingStr};`;
-            } else {
-              styles += ` padding: 8px;`;
             }
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
@@ -1435,15 +1395,45 @@ export const Header = memo(function Header({
   };
 
   // Fonction pour générer et afficher l'aperçu HTML
-  const handleShowHtmlPreview = () => {
+  const handleShowHtmlPreview = async () => {
     setIsGeneratingHtml(true);
     try {
-      const html = generatePDFSimulationHTML();
+      const templateId = state.currentTemplateId || state.template?.id;
+      if (!templateId) {
+        alert('❌ Aucun template actuellement édité');
+        return;
+      }
+
+      const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
+
+      // Récupérer les éléments depuis le serveur
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_get_template_elements');
+      formData.append('template_id', templateId);
+      formData.append('nonce', (window as any).pdfBuilderData?.nonce || '');
+
+      const response = await fetch(ajaxUrl, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.data?.message || 'Erreur lors de la récupération des données');
+      }
+
+      // Générer l'HTML avec les vraies données du serveur
+      const html = generatePDFSimulationHTML(
+        data.data.elements,
+        data.data.canvas,
+        data.data.template
+      );
       setGeneratedHtml(html);
       setJsonModalMode('html');
     } catch (error) {
       console.error('Erreur lors de la génération HTML:', error);
-      alert('Erreur lors de la génération de l\'aperçu HTML');
+      alert(`❌ Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
     } finally {
       setIsGeneratingHtml(false);
     }

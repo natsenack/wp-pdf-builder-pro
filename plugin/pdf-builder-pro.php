@@ -2456,6 +2456,63 @@ function pdf_builder_view_logs_handler() {
     }
 }
 
+/**
+ * AJAX handler - Get template elements only (for HTML preview)
+ * Récupère SEULEMENT les éléments du template depuis la DB
+ * Utilisé pour générer l'aperçu HTML avec les vraies données
+ */
+function pdf_builder_get_template_elements_handler() {
+    // Check permissions
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Permissions insuffisantes']);
+        return;
+    }
+
+    try {
+        $template_id = intval($_POST['template_id'] ?? 0);
+
+        if (!$template_id) {
+            wp_send_json_error(['message' => 'ID du template manquant']);
+            return;
+        }
+
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+        $template = $wpdb->get_row(
+            $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
+            ARRAY_A
+        );
+
+        if (!$template) {
+            wp_send_json_error(['message' => 'Template non trouvé']);
+            return;
+        }
+
+        $template_data = json_decode($template['template_data'], true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            wp_send_json_error(['message' => 'Erreur de décodage JSON']);
+            return;
+        }
+
+        // Retourner SEULEMENT les éléments + canvas settings
+        wp_send_json_success([
+            'elements' => $template_data['elements'] ?? [],
+            'canvas' => $template_data['canvas'] ?? [
+                'width' => 794,
+                'height' => 1123
+            ],
+            'template' => $template_data['template'] ?? []
+        ]);
+
+    } catch (Exception $e) {
+        wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
+    }
+}
+
+// Enregistrer l'action AJAX
+add_action('wp_ajax_pdf_builder_get_template_elements', 'pdf_builder_get_template_elements_handler');
+
 // ====================================================================
 // HOOKS D'ACTIVATION / DÉACTIVATION
 // ====================================================================
