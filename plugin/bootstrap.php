@@ -93,17 +93,25 @@ function pdf_builder_register_early_ajax_handlers() {
             });
         }
         
-        // Load the handler file
+        // Load the handler file directly
         $handler_file = PDF_BUILDER_PLUGIN_DIR . 'preview-system/php/PreviewAjaxHandler.php';
         if (file_exists($handler_file)) {
             require_once $handler_file;
+            error_log('[BOOTSTRAP] PreviewAjaxHandler file loaded successfully');
+        } else {
+            error_log('[BOOTSTRAP] PreviewAjaxHandler file not found: ' . $handler_file);
         }
     }
     
     // Register the AJAX actions
     if (class_exists('PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
+        error_log('[BOOTSTRAP] PreviewAjaxHandler class found, registering actions');
         add_action('wp_ajax_pdf_builder_generate_html_preview', [PDF_Builder\PreviewSystem\PreviewAjaxHandler::class, 'generateHtmlPreviewAjax']);
         add_action('wp_ajax_nopriv_pdf_builder_generate_html_preview', [PDF_Builder\PreviewSystem\PreviewAjaxHandler::class, 'generateHtmlPreviewAjax']);
+        add_action('wp_ajax_pdf_builder_generate_preview', [PDF_Builder\PreviewSystem\PreviewAjaxHandler::class, 'generatePreviewAjax']);
+        add_action('wp_ajax_nopriv_pdf_builder_generate_preview', [PDF_Builder\PreviewSystem\PreviewAjaxHandler::class, 'generatePreviewAjax']);
+    } else {
+        error_log('[BOOTSTRAP] PreviewAjaxHandler class not found after loading');
     }
 }
 
