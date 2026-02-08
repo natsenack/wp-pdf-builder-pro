@@ -827,6 +827,8 @@ const drawProductTable = (
           ctx.fillStyle = normalizeColor("#f0f0f0");
           ctx.fillRect(cellX, cellY, cellWidth, cellHeight);
         }
+        // ✅ FIX: Restaurer la couleur de texte après le rendu de l'image
+        ctx.fillStyle = textColor;
       } else {
         // Gestion du texte qui dépasse
         const maxWidth = col.width * (element.width - 16) - 8;
