@@ -2640,6 +2640,20 @@ function pdf_builder_robust_save_template() {
     
     if (is_array($template_data) && isset($template_data['elements'])) {
         error_log('[ROBUST SAVE] ✅ Valid structure: ' . count($template_data['elements']) . ' elements found');
+        
+        // 🔍 NEW: Find and log company_logo element position in RECEIVED data
+        $company_logo_element = null;
+        foreach ($template_data['elements'] as $el) {
+            if (isset($el['id']) && strpos($el['id'], 'company_logo') !== false) {
+                $company_logo_element = $el;
+                break;
+            }
+        }
+        if ($company_logo_element) {
+            error_log('[ROBUST SAVE] 🔍 RECEIVED company_logo element: x=' . $company_logo_element['x'] . ', y=' . $company_logo_element['y']);
+        } else {
+            error_log('[ROBUST SAVE] ⚠️  company_logo element NOT FOUND in received data');
+        }
     } else {
         error_log('[ROBUST SAVE] ⚠️  Warning: Template data structure unexpected');
         error_log('[ROBUST SAVE] Data keys: ' . implode(', ', array_keys((array)$template_data)));
