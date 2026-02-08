@@ -8,7 +8,6 @@ interface ToolbarProps {
 }
 
 export function Toolbar({ className }: ToolbarProps) {
-  console.log('🔧 [TOOLBAR] Composant Toolbar rendu');
 
   const { state, dispatch, setMode, undo, redo, reset, toggleGrid, toggleGuides, setCanvas, zoomIn, zoomOut, resetZoom } = useBuilder();
   const canvasSettings = useCanvasSettings();

@@ -1646,13 +1646,6 @@ export const Canvas = function Canvas({
   height,
   className,
 }: CanvasProps) {
-  // DEBUG: Log component initialization and data reception
-  console.log('🚀 [Canvas DEBUG] Component initialized, checking window data:', {
-    windowPdfBuilderData: window.pdfBuilderData,
-    license: window.pdfBuilderData?.license,
-    canvasSettings: window.pdfBuilderData?.canvasSettings
-  });
-
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
 
