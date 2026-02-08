@@ -307,107 +307,74 @@ export const Header = memo(function Header({
     try {
       console.log('[JSON TO HTML] Starting conversion');
 
-      const templateId = state.currentTemplateId || state.template?.id;
-      if (!templateId) {
-        alert('❌ Aucun template actuellement édité');
+      // Capturer l'image du canvas directement
+      const canvasImageData = (window as any).pdfBuilderCaptureCanvasPreview?.();
+      
+      if (!canvasImageData) {
+        alert('❌ Impossible de capturer le canvas. Assurez-vous que le canvas est visible.');
         return;
       }
 
-      const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
-      const nonce = (window as any).pdfBuilderNonce;
+      console.log('[JSON TO HTML] Canvas captured successfully');
 
-      // Étape 1: Récupérer les données du serveur
-      console.log('[JSON TO HTML] Fetching data from server...');
-      const fetchFormData = new FormData();
-      fetchFormData.append('action', 'pdf_builder_get_template_elements');
-      fetchFormData.append('template_id', templateId);
-      fetchFormData.append('nonce', nonce);
-
-      const fetchResponse = await fetch(ajaxUrl, {
-        method: 'POST',
-        body: fetchFormData,
-      });
-
-      const fetchData = await fetchResponse.json();
-      if (!fetchData.success) {
-        throw new Error(fetchData.data?.message || 'Erreur lors de la récupération des données');
-      }
-
-      console.log('[JSON TO HTML] Data retrieved from server');
-
-      // Étape 2: Envoyer les données au serveur pour conversion
-      const transformedElements = (fetchData.data.elements || []).map((element: any) => ({
-        ...element,
-        properties: {
-          ...Object.keys(element)
-            .filter(key => !['id', 'type', 'x', 'y', 'width', 'height', 'rotation', 'visible', 'locked', 'createdAt', 'updatedAt'].includes(key))
-            .reduce((obj, key) => ({ ...obj, [key]: element[key] }), {}),
-          ...(element.fillColor && { backgroundColor: element.fillColor }),
-          ...(element.strokeColor && { borderColor: element.strokeColor }),
-          ...(element.strokeWidth && { borderWidth: element.strokeWidth }),
-        }
-      }));
-
-      const templateData = {
-        elements: transformedElements,
-        canvasWidth: fetchData.data.canvas?.width || 794,
-        canvasHeight: fetchData.data.canvas?.height || 1123,
-        template: fetchData.data.template,
-      };
-
-      console.log('[JSON TO HTML] AJAX URL:', ajaxUrl);
-      console.log('[JSON TO HTML] Nonce:', nonce);
-      console.log('[JSON TO HTML] Template Data:', templateData);
-
-      const requestData = {
-        action: 'pdf_builder_generate_html_preview',
-        nonce: nonce,
-        data: JSON.stringify({
-          pageOptions: {
-            template: templateData
-          }
-        })
-      };
-
-      const params = new URLSearchParams();
-      Object.entries(requestData).forEach(([key, value]) => {
-        params.append(key, String(value));
-      });
-
-      console.log('[JSON TO HTML] Form Data:', params.toString());
-      console.log('[JSON TO HTML] Action: pdf_builder_generate_html_preview');
-      console.log('[JSON TO HTML] Data length:', String(requestData.data).length);
-
-      const response = await fetch(ajaxUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: params.toString(),
-        credentials: 'same-origin',
-      });
-
-      const responseText = await response.text();
-      console.log('[JSON TO HTML] Response Status:', response.status);
-      console.log('[JSON TO HTML] Response Text:', responseText);
-
-      if (!response.ok) {
-        console.error('[JSON TO HTML] Request failed with status:', response.status);
-        console.error('[JSON TO HTML] Response body:', responseText);
-        throw new Error(
-          responseText === '0'
-            ? 'Erreur serveur (nonce invalide ou action manquante)'
-            : responseText || 'Erreur lors de la conversion'
-        );
-      }
-
-      if (responseText === '0') {
-        throw new Error('Erreur serveur: réponse invalide');
-      }
+      // Créer un HTML simple avec l'image du canvas
+      const html = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Export JSON to HTML - Aperçu</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      padding: 20px; 
+      background: #f5f5f5;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .preview {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #e5e7eb;
+    }
+    .info {
+      margin-top: 20px;
+      padding: 12px;
+      background: #f0f9ff;
+      border-left: 4px solid #0ea5e9;
+      border-radius: 4px;
+      color: #0c4a6e;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="preview">
+      <img src="${canvasImageData}" alt="Aperçu du canvas" />
+      <div class="info">
+        ✅ Cet aperçu est une capture exacte du canvas React. Il est pixel-parfait identique à l'éditeur.
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
 
       const newWindow = window.open('', '_blank');
       if (newWindow) {
-        newWindow.document.write(responseText);
+        newWindow.document.write(html);
         newWindow.document.close();
       }
     } catch (error) {
@@ -416,7 +383,7 @@ export const Header = memo(function Header({
     } finally {
       setIsGeneratingHtml(false);
     }
-  }, [state.currentTemplateId, state.template?.id, isGeneratingHtml]);
+  }, [isGeneratingHtml]);
 
   const buttonBaseStyles = {
     padding: "10px 16px",
@@ -1429,37 +1396,69 @@ export const Header = memo(function Header({
   const handleShowHtmlPreview = async () => {
     setIsGeneratingHtml(true);
     try {
-      const templateId = state.currentTemplateId || state.template?.id;
-      if (!templateId) {
-        alert('❌ Aucun template actuellement édité');
+      // Capturer l'image du canvas directement
+      const canvasImageData = (window as any).pdfBuilderCaptureCanvasPreview?.();
+      
+      if (!canvasImageData) {
+        alert('❌ Impossible de capturer le canvas. Assurez-vous que le canvas est visible.');
         return;
       }
 
-      const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
+      // Créer un HTML simple avec l'image du canvas
+      const html = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aperçu PDF</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      padding: 20px; 
+      background: #f5f5f5;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .preview {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #e5e7eb;
+    }
+    .info {
+      margin-top: 20px;
+      padding: 12px;
+      background: #f0f9ff;
+      border-left: 4px solid #0ea5e9;
+      border-radius: 4px;
+      color: #0c4a6e;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="preview">
+      <img src="${canvasImageData}" alt="Aperçu du canvas" />
+      <div class="info">
+        ✅ Cet aperçu est une capture exacte du canvas React. Il est pixel-parfait identique à l'éditeur.
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
 
-      // Récupérer les éléments depuis le serveur
-      const formData = new FormData();
-      formData.append('action', 'pdf_builder_get_template_elements');
-      formData.append('template_id', templateId);
-      formData.append('nonce', (window as any).pdfBuilderData?.nonce || '');
-
-      const response = await fetch(ajaxUrl, {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (!data.success) {
-        throw new Error(data.data?.message || 'Erreur lors de la récupération des données');
-      }
-
-      // Générer l'HTML avec les vraies données du serveur
-      const html = generatePDFSimulationHTML(
-        data.data.elements,
-        data.data.canvas,
-        data.data.template
-      );
       setGeneratedHtml(html);
       setJsonModalMode('html');
     } catch (error) {

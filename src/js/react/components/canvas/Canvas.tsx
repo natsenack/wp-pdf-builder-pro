@@ -3699,6 +3699,29 @@ export const Canvas = function Canvas({
     customBg: canvasSettings?.containerBackgroundColor
   });
 
+  // ✅ Exposer une fonction pour capturer l'image du canvas
+  useEffect(() => {
+    const captureCanvasPreview = () => {
+      if (canvasRef.current) {
+        try {
+          // Retourner l'image PNG du canvas en base64
+          return canvasRef.current.toDataURL('image/png');
+        } catch (error) {
+          console.error('Erreur lors de la capture du canvas:', error);
+          return null;
+        }
+      }
+      return null;
+    };
+
+    // Exposer la fonction globalement
+    (window as any).pdfBuilderCaptureCanvasPreview = captureCanvasPreview;
+
+    return () => {
+      delete (window as any).pdfBuilderCaptureCanvasPreview;
+    };
+  }, []);
+
   return (
     <>
       <div
