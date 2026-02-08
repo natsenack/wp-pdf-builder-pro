@@ -8,35 +8,24 @@ import { createRoot } from 'react-dom/client';
 import { PDFBuilder } from './PDFBuilder';
 import '../../css/main.css';
 
-// Debug logging
-console.log('[PDF Builder] ===== REACT APP INITIALIZING =====');
-console.log('[PDF Builder] React version:', React.version);
-console.log('[PDF Builder] Timestamp:', new Date().toISOString());
-console.log('[PDF Builder] Window available:', typeof window !== 'undefined');
-console.log('[PDF Builder] Document available:', typeof document !== 'undefined');
+
 
 // API for WordPress integration
 const pdfBuilderReactAPI = {
   initPDFBuilderReact: function(containerId: string = 'pdf-builder-react-root') {
-    console.log('[PDF Builder] initPDFBuilderReact called with container:', containerId);
 
     try {
       const container = document.getElementById(containerId);
       if (!container) {
-        console.error('[PDF Builder] Container not found:', containerId);
         return false;
       }
-
-      console.log('[PDF Builder] Container found, creating React root...');
 
       // Create React root if it doesn't exist
       if (!container._reactRoot) {
         container._reactRoot = createRoot(container);
-        console.log('[PDF Builder] React root created');
       }
 
       // Render the PDF Builder component
-      console.log('[PDF Builder] Rendering PDFBuilder component...');
       container._reactRoot.render(
         React.createElement(PDFBuilder, {
           containerId,
@@ -44,11 +33,9 @@ const pdfBuilderReactAPI = {
         })
       );
 
-      console.log('[PDF Builder] ✅ PDF Builder React app initialized successfully');
       return true;
 
     } catch (error) {
-      console.error('[PDF Builder] ❌ Failed to initialize React app:', error);
       return false;
     }
   },

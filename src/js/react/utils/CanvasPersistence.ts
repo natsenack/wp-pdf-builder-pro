@@ -42,26 +42,7 @@ export function serializeCanvasData(
     elements = [];
   }
 
-  // LOG: See what positions are in memory BEFORE serialization
-  if (elements.length > 0) {
-    console.log('[CanvasPersistence] SERIALIZE INPUT - ALL elements:', 
-      elements.map((el) => ({
-        id: el.id,
-        x: el.x, 
-        y: el.y,
-        type: el.type
-      }))
-    );
-    const companyLogo = elements.find((el) => el.id.includes('company_logo'));
-    if (companyLogo) {
-      console.log('[CanvasPersistence] SERIALIZE INPUT - company_logo element:', { 
-        id: companyLogo.id,
-        x: companyLogo.x, 
-        y: companyLogo.y,
-        type: companyLogo.type
-      });
-    }
-  }
+
 
   const cleanElements = elements.map((el, idx) => {
     if (!el || typeof el !== 'object') {
@@ -116,26 +97,7 @@ export function serializeCanvasData(
 
   try {
     const jsonString = JSON.stringify(data);
-    // LOG: Show what's in the JSON after serialization
-    if (cleanElements.length > 0) {
-      console.log('[CanvasPersistence] SERIALIZE OUTPUT - ALL elements AFTER stringify:', 
-        cleanElements.map((el) => ({
-          id: el.id,
-          x: el.x,
-          y: el.y,
-          type: el.type
-        }))
-      );
-      const companyLogo = cleanElements.find((el) => el.id.includes('company_logo'));
-      if (companyLogo) {
-        console.log('[CanvasPersistence] SERIALIZE OUTPUT - company_logo element AFTER stringify:', {
-          id: companyLogo.id,
-          x: companyLogo.x,
-          y: companyLogo.y,
-          jsonLength: jsonString.length
-        });
-      }
-    }
+
     return jsonString;
   } catch (error) {
     return JSON.stringify({ elements: [], canvasWidth: canvasState.width, canvasHeight: canvasState.height, version: '1.0' });
@@ -161,26 +123,7 @@ export function deserializeCanvasData(
 ): { elements: Element[]; canvas: CanvasState } {
   let data: any = null;
 
-  // Log what we're deserializing
-  if (typeof jsonData === 'string') {
-    console.log('[CanvasPersistence] DESERIALIZE - Received STRING, length:', jsonData.length);
-    try {
-      const parsed = JSON.parse(jsonData);
-      console.log('[CanvasPersistence] DESERIALIZE - Parsed JSON, elements count:', parsed?.elements?.length || 0);
-      if (parsed?.elements && parsed.elements[0]) {
-        console.log('[CanvasPersistence] DESERIALIZE - First element x/y:', { x: parsed.elements[0].x, y: parsed.elements[0].y });
-      }
-      data = parsed;
-    } catch (error) {
-      console.error('[CanvasPersistence] Erreur parsing JSON:', error);
-      return { elements: [], canvas: { width: 210, height: 297 } };
-    }
-  } else if (typeof jsonData === 'object' && jsonData !== null) {
-    data = jsonData;
-  } else {
-    console.warn('[CanvasPersistence] Format invalide');
-    return { elements: [], canvas: { width: 210, height: 297 } };
-  }
+
 
   // Normaliser la structure (support de différentes clés ancien/nouveau)
   let elements: unknown[] = [];
@@ -301,10 +244,7 @@ export function deserializeCanvasData(
     normalizedElements.push(normalizedElement);
   }
 
-  // Log final avant return
-  if (normalizedElements.length > 0 && normalizedElements[0].x !== undefined) {
-    console.log('[CanvasPersistence] DESERIALIZE - RETURN - First element x/y:', { x: normalizedElements[0].x, y: normalizedElements[0].y });
-  }
+
 
   // Canvas state normalisé
   const normalizedCanvas: CanvasState = {

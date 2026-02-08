@@ -464,26 +464,7 @@ export function useTemplate() {
       if (!templateId) throw new Error("Aucun template chargé");
       if (!state.template.name?.trim()) return;
 
-      // 🔍 DEBUG: What's in state.elements RIGHT NOW?
-      if (state.elements.length > 0) {
-        console.log('[💾 SAVE STATE DEBUG] ALL elements in state.elements:', 
-          state.elements.map((el: any) => ({
-            id: el.id,
-            x: el.x,
-            y: el.y,
-            type: el.type
-          }))
-        );
-        // Find the company logo element specifically
-        const companyLogo = state.elements.find((el: any) => el.id.includes('company_logo'));
-        if (companyLogo) {
-          console.log('[💾 SAVE STATE DEBUG] DRAGGED element (company_logo) in state:', {
-            id: companyLogo.id,
-            x: companyLogo.x,
-            y: companyLogo.y
-          });
-        }
-      }
+
 
       // Sérialiser les données du canvas
       const jsonData = serializeCanvasData(
@@ -502,71 +483,32 @@ export function useTemplate() {
       formData.append("template_name", state.template.name);
       formData.append("template_description", state.template.description || "");
       
-      // 🔍 LOG: Capture the jsonData BEFORE FormData
-      console.log('[💾 FORMDATA DEBUG] jsonData BEFORE FormData.append:');
-      console.log('[💾 FORMDATA DEBUG] jsonData length:', jsonData.length);
-      const parsedBefore = JSON.parse(jsonData);
-      const companyLogoBefore = parsedBefore.elements.find((el: any) => el.id?.includes('company_logo'));
-      console.log('[💾 FORMDATA DEBUG] company_logo in jsonData:', {
-        x: companyLogoBefore?.x,
-        y: companyLogoBefore?.y,
-        type: companyLogoBefore?.type
-      });
+
       
       formData.append("template_data", jsonData);
       ClientNonceManager.addToFormData(formData);
 
-      // 🔍 LOG: Verify FormData contains correct data
-      console.log('[💾 FORMDATA DEBUG] FormData entries:');
-      const templateDataFromForm = formData.get("template_data") as string;
-      console.log('[💾 FORMDATA DEBUG] template_data from FormData length:', templateDataFromForm.length);
-      console.log('[💾 FORMDATA DEBUG] template_data FIRST 200 chars:', templateDataFromForm.substring(0, 200));
-      const parsedFromForm = JSON.parse(templateDataFromForm);
-      const companyLogoFromForm = parsedFromForm.elements.find((el: any) => el.id?.includes('company_logo'));
-      console.log('[💾 FORMDATA DEBUG] company_logo from FormData:', {
-        x: companyLogoFromForm?.x,
-        y: companyLogoFromForm?.y,
-        type: companyLogoFromForm?.type
-      });
 
-      // 🔍 LOG 3: AVANT requête AJAX
-      console.log('[💾 SAVE DIAGNOSTIC] Envoi AJAX:', {
-        url: ClientNonceManager.getAjaxUrl(),
-        templateId,
-        templateName: state.template.name,
-        templateDataLength: jsonData.length,
-        nonce: ClientNonceManager.getCurrentNonce()
-      });
+
+
 
       const response = await fetch(ClientNonceManager.getAjaxUrl(), {
         method: "POST",
         body: formData,
       });
 
-      // 🔍 LOG 4: APRÈS réponse AJAX
-      console.log('[💾 SAVE DIAGNOSTIC] Réponse HTTP:', {
-        status: response.status,
-        statusText: response.statusText,
-        headers: {
-          contentType: response.headers.get('content-type')
-        }
-      });
+
 
       if (!response.ok) {
         const errorText = await response.text();
         debugError('[SAVE] HTTP Error:', response.status, errorText);
-        console.error('[💾 SAVE DIAGNOSTIC] HTTP Error body:', errorText);
+
         throw new Error(`Erreur HTTP: ${response.status}`);
       }
 
       const result = await response.json();
 
-      // 🔍 LOG 5: Réponse du serveur
-      console.log('[💾 SAVE DIAGNOSTIC] Réponse serveur:', {
-        success: result.success,
-        data: result.data,
-        error: result.error
-      });
+
 
       if (!result.success) {
         debugError('[SAVE] Save failed:', result.data);

@@ -24,7 +24,6 @@
                 // Emergency fallback - create a basic API that shows an error
                 window.pdfBuilderReact = {
                     initPDFBuilderReact: function(containerId) {
-                        console.error('[MODULE EXECUTOR] Emergency fallback: React bundle failed to initialize properly');
                         if (containerId) {
                             const container = document.getElementById(containerId);
                             if (container) {

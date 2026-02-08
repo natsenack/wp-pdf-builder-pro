@@ -113,10 +113,6 @@ function pdf_builder_inject_nonce() {
     };
     window.pdfBuilderNonce = '%NONCE%';
     
-    console.warn('[BOOTSTRAP] Injection du nonce et AJAX URL');
-    console.log('[BOOTSTRAP] nonce =', window.pdfBuilderNonce);
-    console.log('[BOOTSTRAP] ajaxUrl =', window.pdfBuilderData.ajaxUrl);
-    
 })();
 </script>
 
