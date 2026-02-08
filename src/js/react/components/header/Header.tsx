@@ -627,6 +627,17 @@ export const Header = memo(function Header({
           case 'dynamic_text':
             content = element.text || element.content || 'Texte';
             if (element.autoWrap !== false) styles += ` white-space: pre-wrap; overflow-wrap: break-word;`;
+            
+            // Gérer l'alignement vertical comme dans Canvas
+            if (element.verticalAlign === 'middle' || element.verticalAlign === 'center') {
+              styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
+            } else if (element.verticalAlign === 'bottom') {
+              styles += ` display: flex; align-items: flex-end; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
+            } else {
+              // top alignment (default)
+              styles += ` display: flex; align-items: flex-start; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
+            }
+            
             // Appliquer styles globaux (font properties)
             const globalStylesText = buildGlobalStyles(element);
             if (globalStylesText) styles += ` ${globalStylesText}`;
@@ -685,6 +696,16 @@ export const Header = memo(function Header({
             const format = element.format || 'CMD-{order_number}';
             let orderContent = format.replace('{order_number}', orderNum);
             const globalStylesOrder = buildGlobalStyles(element);
+            
+            // Gérer l'alignement vertical comme dans Canvas
+            if (element.verticalAlign === 'middle' || element.verticalAlign === 'center') {
+              styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
+            } else if (element.verticalAlign === 'bottom') {
+              styles += ` display: flex; align-items: flex-end; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
+            } else {
+              // top alignment (default)
+              styles += ` display: flex; align-items: flex-start; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
+            }
             
             // Si label à afficher
             if (element.showLabel && element.labelText) {
@@ -1329,6 +1350,16 @@ export const Header = memo(function Header({
             const invoiceFormat = element.format || 'FAC-{order_number}';
             let invoiceContent = invoiceFormat.replace('{order_number}', invoiceNum);
             const globalStylesInvoice = buildGlobalStyles(element);
+            
+            // Gérer l'alignement vertical comme dans Canvas
+            if (element.verticalAlign === 'middle' || element.verticalAlign === 'center') {
+              styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
+            } else if (element.verticalAlign === 'bottom') {
+              styles += ` display: flex; align-items: flex-end; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
+            } else {
+              // top alignment (default)
+              styles += ` display: flex; align-items: flex-start; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
+            }
             
             // Si label à afficher
             if (element.showLabel && element.labelText) {
