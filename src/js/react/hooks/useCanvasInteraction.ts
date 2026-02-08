@@ -274,6 +274,15 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         completeUpdates.alignment = elementAsRecord.alignment;
       }
 
+      // 🔍 LOG DEBUG
+      if (elementId.includes('logo')) {
+        console.log(`[🔍 DRAG UPDATE] Element ${elementId}:`, {
+          element_keys: Object.keys(element),
+          updates_keys: Object.keys(completeUpdates),
+          completeUpdates
+        });
+      }
+
       dispatch({
         type: 'UPDATE_ELEMENT',
         payload: {

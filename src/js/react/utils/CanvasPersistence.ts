@@ -51,7 +51,7 @@ export function serializeCanvasData(
       return null;
     }
 
-    return {
+    const serialized = {
       // Propriétés de base (toujours présentes)
       id: el.id || `element-${idx}`,
       type: el.type || 'unknown',
@@ -63,6 +63,18 @@ export function serializeCanvasData(
       // Propriétés spécifiques (preservées telles quelles via spread)
       ...el,
     };
+
+    // 🔍 LOG DEBUG
+    if (el.type === 'company_logo') {
+      console.log(`[🔍 SERIALIZE] Element ${el.id} (${el.type}):`, {
+        original_keys: Object.keys(el),
+        original: el,
+        serialized_keys: Object.keys(serialized),
+        serialized
+      });
+    }
+
+    return serialized;
   }).filter((el): el is Element => el !== null);
 
   // Canvas data avec défauts
