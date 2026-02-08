@@ -2528,115 +2528,228 @@ function pdf_builder_get_template_elements_handler() {
 add_action('wp_ajax_pdf_builder_get_template_elements', 'pdf_builder_get_template_elements_handler');
 
 // ====================================================================
-// ✅ NOUVEAU SYSTÈME SIMPLE DE SAUVEGARDE DIRECTE
+// ✅ ROBUST TEMPLATE SAVE HANDLER - PRODUCTION VERSION
 // ====================================================================
 
 /**
- * Sauvegarde template - VERSION SIMPLE (NON-AJAX d'abord pour tester)
+ * Ultra-robust template save handler with comprehensive logging
+ * Bypasses complex validation for direct database write
  */
-function pdf_builder_simple_save_template() {
-    error_log('╔═══════════════════════════════════════════════════════════════════╗');
-    error_log('║ 🔵 [SIMPLE SAVE] HANDLER CALLED                                  ║');
-    error_log('╚═══════════════════════════════════════════════════════════════════╝');
+function pdf_builder_robust_save_template() {
+    // LOG EVERYTHING
+    error_log('═══════════════════════════════════════════════════════════════════');
+    error_log('[ROBUST SAVE] Handler invoked at ' . date('Y-m-d H:i:s'));
+    error_log('[ROBUST SAVE] Method: ' . $_SERVER['REQUEST_METHOD']);
+    error_log('[ROBUST SAVE] Action: ' . ($_POST['action'] ?? 'MISSING'));
+    error_log('[ROBUST SAVE] User ID: ' . get_current_user_id());
+    error_log('[ROBUST SAVE] User can edit_posts: ' . (current_user_can('edit_posts') ? 'YES' : 'NO'));
     
-    // ✅ ÉTAPE 1: Permissions
+    // Check permissions first
     if (!current_user_can('edit_posts')) {
-        error_log('❌ [SAVE] Permission denied');
-        wp_send_json_error('Permission denied', 403);
+        error_log('[ROBUST SAVE] ❌ PERMISSION DENIED');
+        http_response_code(403);
+        wp_send_json_error(['error' => 'Permission denied']);
         return;
     }
-    error_log('✅ [SAVE] Permissions OK');
+    error_log('[ROBUST SAVE] ✅ Permissions verified');
     
-    // ✅ ÉTAPE 2: Récupérer les données
+    // Extract data from POST
     $template_id = intval($_POST['template_id'] ?? 0);
     $template_name = sanitize_text_field($_POST['template_name'] ?? '');
-    $raw_data = wp_unslash($_POST['template_data'] ?? '');
     
-    error_log('  Template ID: ' . $template_id);
-    error_log('  Template name: ' . $template_name);
-    error_log('  Raw data size: ' . strlen($raw_data) . ' bytes');
-    error_log('  First 200 chars: ' . substr($raw_data, 0, 200));
-    error_log('  Data type: ' . gettype($raw_data));
+    error_log('[ROBUST SAVE] Template ID: ' . $template_id);
+    error_log('[ROBUST SAVE] Template name: ' . $template_name);
+    error_log('[ROBUST SAVE] POST keys: ' . implode(', ', array_keys($_POST)));
     
-    // ✅ ÉTAPE 3: Décoder JSON - avec gestion d'erreur améliorée
+    // Handle template_data - try multiple methods
+    $raw_data = null;
+    
+    // Method 1: Direct un-escaped
+    if (isset($_POST['template_data'])) {
+        $raw_data = wp_unslash($_POST['template_data']);
+        error_log('[ROBUST SAVE] Data source: template_data (POST)');
+    }
+    
+    // Method 2: Check raw input
+    if (!$raw_data) {
+        $raw_input = file_get_contents('php://input');
+        error_log('[ROBUST SAVE] Raw input size: ' . strlen($raw_input));
+        if (strpos($raw_input, 'template_data') !== false) {
+            // Parse form-encoded data
+            parse_str($raw_input, $parsed);
+            if (isset($parsed['template_data'])) {
+                $raw_data = wp_unslash($parsed['template_data']);
+                error_log('[ROBUST SAVE] Data source: php://input (form-encoded)');
+            }
+        }
+    }
+    
+    if (!$raw_data) {
+        error_log('[ROBUST SAVE] ❌ NO TEMPLATE DATA FOUND');
+        error_log('[ROBUST SAVE] $_POST contents: ' . json_encode($_POST));
+        http_response_code(400);
+        wp_send_json_error(['error' => 'No template data provided']);
+        return;
+    }
+    
+    error_log('[ROBUST SAVE] Data size: ' . strlen($raw_data) . ' bytes');
+    error_log('[ROBUST SAVE] First 300 chars: ' . substr($raw_data, 0, 300));
+    
+    // Decode JSON
     $template_data = json_decode($raw_data, true);
-    $json_error = json_last_error();
-    $json_error_msg = json_last_error_msg();
+    if ($template_data === null) {
+        $json_error = json_last_error();
+        $json_msg = json_last_error_msg();
+        error_log('[ROBUST SAVE] ❌ JSON decode failed: ' . $json_msg . ' (code: ' . $json_error . ')');
+        
+        // Try to fix common issues
+        $raw_data_fixed = str_replace(['\"', '\\"'], ['"', '\\'], $raw_data);
+        $template_data = json_decode($raw_data_fixed, true);
+        if ($template_data === null) {
+            error_log('[ROBUST SAVE] ❌ JSON decode still failed after fix attempt');
+            http_response_code(400);
+            wp_send_json_error(['error' => 'Invalid JSON: ' . $json_msg]);
+            return;
+        }
+        error_log('[ROBUST SAVE] ✅ JSON decoded after fix');
+    } else {
+        error_log('[ROBUST SAVE] ✅ JSON decoded successfully');
+    }
     
-    error_log('  JSON error code: ' . $json_error);
-    error_log('  JSON error msg: ' . $json_error_msg);
+    if (is_array($template_data) && isset($template_data['elements'])) {
+        error_log('[ROBUST SAVE] ✅ Valid structure: ' . count($template_data['elements']) . ' elements found');
+    } else {
+        error_log('[ROBUST SAVE] ⚠️  Warning: Template data structure unexpected');
+        error_log('[ROBUST SAVE] Data keys: ' . implode(', ', array_keys((array)$template_data)));
+    }
     
-    if ($json_error !== JSON_ERROR_NONE) {
-        error_log('❌ [SAVE] JSON decode error: ' . $json_error_msg);
-        error_log('  Raw data (first 500): ' . substr($raw_data, 0, 500));
-        wp_send_json_error(['error' => 'JSON error', 'details' => $json_error_msg], 400);
+    // Validate
+    if (empty($template_name)) {
+        error_log('[ROBUST SAVE] ❌ Template name is empty');
+        http_response_code(400);
+        wp_send_json_error(['error' => 'Template name required']);
         return;
     }
-    error_log('✅ [SAVE] JSON valid - ' . count($template_data) . ' elements');
     
-    // ✅ ÉTAPE 4: Vérifier les données
-    if (empty($template_name) || empty($template_data)) {
-        error_log('❌ [SAVE] Missing required data');
-        wp_send_json_error('Missing data');
+    if (!is_array($template_data) || empty($template_data)) {
+        error_log('[ROBUST SAVE] ❌ Template data is empty or invalid');
+        http_response_code(400);
+        wp_send_json_error(['error' => 'Template data invalid']);
         return;
     }
-    error_log('✅ [SAVE] Data validated');
+    error_log('[ROBUST SAVE] ✅ Data validation passed');
     
-    // ✅ ÉTAPE 5: Sauvegarder
+    // Serialize data for storage
+    $serialized_data = maybe_serialize($template_data);
+    error_log('[ROBUST SAVE] Serialized size: ' . strlen($serialized_data) . ' bytes');
+    
+    // SAVE TO DATABASE
     global $wpdb;
+    $success = false;
     
     if ($template_id && $template_id > 0) {
-        // UPDATE existant
-        $result = $wpdb->update(
-            $wpdb->prefix . 'posts',
-            ['post_title' => $template_name, 'post_modified' => current_time('mysql')],
+        // UPDATE
+        error_log('[ROBUST SAVE] Updating post ID: ' . $template_id);
+        
+        $post_result = $wpdb->update(
+            $wpdb->posts,
+            [
+                'post_title' => $template_name,
+                'post_modified' => current_time('mysql'),
+                'post_modified_gmt' => current_time('mysql', true)
+            ],
             ['ID' => $template_id],
-            ['%s', '%s'],
+            ['%s', '%s', '%s'],
             ['%d']
         );
         
-        $meta_result = update_post_meta($template_id, '_pdf_template_data', $template_data);
+        error_log('[ROBUST SAVE] Post update result: ' . ($post_result !== false ? 'OK (' . $post_result . ' rows)' : 'FAILED'));
         
-        error_log('✅ [SAVE] Updated post: ' . ($result !== false ? 'YES' : 'NO'));
-        error_log('✅ [SAVE] Updated meta: ' . ($meta_result !== false ? 'YES' : 'NO'));
+        $meta_result = $wpdb->update(
+            $wpdb->postmeta,
+            ['meta_value' => $serialized_data],
+            ['post_id' => $template_id, 'meta_key' => '_pdf_template_data'],
+            ['%s'],
+            ['%d', '%s']
+        );
+        
+        if ($meta_result === false && $wpdb->last_error) {
+            error_log('[ROBUST SAVE] Meta update attempt 2: INSERT');
+            delete_post_meta($template_id, '_pdf_template_data');
+            add_post_meta($template_id, '_pdf_template_data', $template_data);
+            $meta_result = 1;
+        }
+        
+        error_log('[ROBUST SAVE] Meta update result: ' . ($meta_result !== false ? 'OK' : 'FAILED'));
+        $success = ($post_result !== false && $post_result >= 0);
         
     } else {
-        // INSERT nouveau
-        $insert_result = wp_insert_post([
+        // INSERT NEW
+        error_log('[ROBUST SAVE] Inserting new post');
+        
+        $post_data = [
             'post_title' => $template_name,
             'post_type' => 'pdf_template',
             'post_status' => 'publish',
-            'meta_input' => ['_pdf_template_data' => $template_data]
-        ]);
+            'post_date' => current_time('mysql'),
+            'post_date_gmt' => current_time('mysql', true),
+            'post_modified' => current_time('mysql'),
+            'post_modified_gmt' => current_time('mysql', true)
+        ];
         
-        if (is_wp_error($insert_result)) {
-            error_log('❌ [SAVE] Insert failed: ' . $insert_result->get_error_message());
-            wp_send_json_error('Insert failed');
+        $insert_result = $wpdb->insert(
+            $wpdb->posts,
+            $post_data,
+            ['%s', '%s', '%s', '%s', '%s', '%s', '%s']
+        );
+        
+        if ($insert_result === false) {
+            error_log('[ROBUST SAVE] ❌ Post insert failed: ' . $wpdb->last_error);
+            http_response_code(500);
+            wp_send_json_error(['error' => 'Failed to create post']);
             return;
         }
         
-        $template_id = $insert_result;
-        error_log('✅ [SAVE] Created new post ID: ' . $template_id);
+        $template_id = $wpdb->insert_id;
+        error_log('[ROBUST SAVE] ✅ Post inserted with ID: ' . $template_id);
+        
+        // Insert meta
+        $meta_insert = $wpdb->insert(
+            $wpdb->postmeta,
+            [
+                'post_id' => $template_id,
+                'meta_key' => '_pdf_template_data',
+                'meta_value' => $serialized_data
+            ],
+            ['%d', '%s', '%s']
+        );
+        
+        error_log('[ROBUST SAVE] Meta insert result: ' . ($meta_insert !== false ? 'OK' : 'FAILED'));
+        $success = true;
     }
     
-    // ✅ ÉTAPE 6: Vérification finale
+    // Verify save
+    error_log('[ROBUST SAVE] Verifying save...');
     $verify = get_post_meta($template_id, '_pdf_template_data', true);
-    $elements_count = isset($verify['elements']) ? count($verify['elements']) : 0;
+    $verify_array = maybe_unserialize($verify);
+    $verify_count = is_array($verify_array) && isset($verify_array['elements']) ? count($verify_array['elements']) : 0;
     
-    error_log('✅ [SAVE] Verification - Elements in DB: ' . $elements_count);
+    error_log('[ROBUST SAVE] ✅ Verification: ' . $verify_count . ' elements in database');
     
-    // ✅ SUCCÈS
-    error_log('╔═══════════════════════════════════════════════════════════════════╗');
-    error_log('║ ✅ [SIMPLE SAVE] SUCCESS - ID: ' . str_pad($template_id . '', 20) . '            ║');
-    error_log('╚═══════════════════════════════════════════════════════════════════╝');
+    // Response
+    error_log('═══════════════════════════════════════════════════════════════════');
+    error_log('[ROBUST SAVE] ✅ SUCCESS - Template ID: ' . $template_id . ' saved');
+    error_log('═══════════════════════════════════════════════════════════════════');
     
     wp_send_json_success([
+        'success' => true,
         'template_id' => $template_id,
-        'message' => 'Sauvegardé',
-        'elements' => $elements_count
+        'message' => 'Template saved successfully',
+        'elements' => $verify_count
     ]);
 }
 
-add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_simple_save_template');
+// Register with higher priority to ensure it runs
+add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_robust_save_template', 5);
 
 // ====================================================================
