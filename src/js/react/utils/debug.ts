@@ -67,26 +67,24 @@ declare global {
 // Fonction de logging conditionnel
 export function debugLog(...args: unknown[]) {
   if (isDebugEnabled()) {
-    
+    console.log(...args);
   }
 }
 
 // Fonction de debug pour les sauvegardes (activable séparément)
 export function debugSave(...args: unknown[]) {
   if (isDebugEnabled()) {
-    
+    console.log('[SAVE DEBUG]', ...args);
   }
 }
 
 export function debugError(...args: unknown[]) {
-  if (isDebugEnabled()) {
-    
-  }
+  console.error(...args);
 }
 
 export function debugWarn(...args: unknown[]) {
   if (isDebugEnabled()) {
-    
+    console.warn(...args);
   }
 }
 

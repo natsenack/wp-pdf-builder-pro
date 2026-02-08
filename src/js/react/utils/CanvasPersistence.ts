@@ -40,26 +40,13 @@ export function serializeCanvasData(
 ): string {
   // Valider les éléments
   if (!Array.isArray(elements)) {
-    console.warn('[CanvasPersistence] Elements n\'est pas un array, utilisant []');
     elements = [];
   }
 
   // Nettoyer et valider chaque élément
-  console.group('[CanvasPersistence] serialize - Cleaning ' + elements.length + ' elements');
   const cleanElements = elements.map((el, idx) => {
     if (!el || typeof el !== 'object') {
-      console.warn(`[CanvasPersistence] Element ${idx} invalide`);
       return null;
-    }
-
-    // 🔍 LOG BEFORE SERIALIZE
-    if (idx < 3) {
-      console.log(`[BEFORE] Element ${idx} (${el.type}):`, {
-        x: el.x,
-        y: el.y,
-        width: el.width,
-        height: el.height
-      });
     }
 
     // ✅ CRITICAL FIX: D'abord le spread, PUIS on écrase avec les valeurs validées
@@ -76,23 +63,8 @@ export function serializeCanvasData(
       height: typeof el.height === 'number' ? el.height : 100,
     };
 
-    // 🔍 LOG AFTER SERIALIZE
-    if (idx < 3) {
-      console.log(`[AFTER] Element ${idx} (${el.type}):`, {
-        x: serialized.x,
-        y: serialized.y,
-        width: serialized.width,
-        height: serialized.height
-      });
-    }
-
-    // 🔍 LOG DEBUG FOR ALL ELEMENT TYPES
-    console.log(`[🔍 SERIALIZE] Element ${idx}/${elements.length} (${serialized.type}): x=${serialized.x}, y=${serialized.y}, w=${serialized.width}, h=${serialized.height}`);
-
     return serialized;
   }).filter((el): el is Element => el !== null);
-  console.groupEnd();
-  console.log('[CanvasPersistence] SERIALIZED: ' + cleanElements.length + ' elements ready to serialize');
 
   // Canvas data avec défauts
   const canvasState: CanvasState = {
@@ -117,12 +89,6 @@ export function serializeCanvasData(
     
     // Verify positions are in the JSON
     const parsed = JSON.parse(json);
-    if (parsed.elements && parsed.elements.length > 0) {
-      console.log('[CanvasPersistence] VERIFY JSON: ' + parsed.elements.length + ' elements');
-      parsed.elements.slice(0, 3).forEach((el, idx) => {
-        console.log(`  [${idx}] ${el.type}: x=${el.x}, y=${el.y}, w=${el.width}, h=${el.height}`);
-      });
-    }
     return json;
   } catch (error) {
     console.error('[CanvasPersistence] Erreur sérialisation:', error);
@@ -302,7 +268,7 @@ export function validateCanvasData(data: CanvasData): {
       
       // ✅ NOUVEAU: Validation des éléments RealData
       if (el.isRealDataElement && !el.realDataKey) {
-        console.warn(`Element ${idx} (${el.type}): RealDataElement sans realDataKey`);
+        errors.push(`Element ${idx} (${el.type}): RealDataElement sans realDataKey`);
       }
     });
   }
@@ -328,27 +294,5 @@ export function debugCanvasData(
   data: CanvasData,
   label: string = 'Canvas Data'
 ): void {
-  console.group(`🔍 ${label}`);
-  console.log('✅ Elements:', data.elements.length);
-  
-  // Compter les éléments RealData
-  const realDataElements = data.elements.filter(el => el.isRealDataElement);
-  if (realDataElements.length > 0) {
-    console.log('  📊 RealData elements:', realDataElements.length);
-    realDataElements.forEach((el, idx) => {
-      console.log(
-        `    ${idx}. ${el.type} (key: ${el.realDataKey})`
-      );
-    });
-  }
-  
-  data.elements.slice(0, 3).forEach((el, idx) => {
-    const realDataTag = el.isRealDataElement ? ' [RealData]' : '';
-    console.log(
-      `  ${idx}. ${el.type} (${el.width}x${el.height} @ ${el.x},${el.y})${realDataTag}`
-    );
-  });
-  console.log('✅ Canvas:', `${data.canvas.width}x${data.canvas.height}`);
-  console.log('✅ Version:', data.version);
-  console.groupEnd();
+  // Nettoyage: fonction de debug silencieuse - les logs vrais vont via console.error seulement
 }

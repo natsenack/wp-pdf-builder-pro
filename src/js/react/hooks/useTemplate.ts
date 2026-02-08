@@ -44,10 +44,6 @@ export function useTemplate() {
   // Charger un template existant
   const loadExistingTemplate = useCallback(
     async (templateId: string) => {
-      console.log('[LOAD TEMPLATE] Starting load for template ID:', templateId);
-      console.log('[LOAD TEMPLATE] window.pdfBuilderData:', window.pdfBuilderData);
-      console.log('[LOAD TEMPLATE] hasExistingData:', window.pdfBuilderData?.hasExistingData);
-      console.log('[LOAD TEMPLATE] existingTemplate:', window.pdfBuilderData?.existingTemplate);
       
       
       
@@ -180,35 +176,9 @@ export function useTemplate() {
           );
         }
 
-        // 🔍 AUDIT COMPLET: Log ce qui arrive du serveur
-        console.group(`🔍 AUDIT LOAD - Template ID: ${templateId}`);
-        console.log('📥 Données reçues du serveur:');
-        console.log('  - result.data keys:', result.data ? Object.keys(result.data) : 'undefined');
-        
         // ✅ FIX: ajaxGetTemplate() retourne {template: {...}, template_name: '...', ...}
         // On doit accéder à result.data.template pour obtenir l'objet template réel
         const templateData = result.data?.template || result.data || {};
-        console.log('  - Nombre d\'éléments:', Array.isArray(templateData.elements) ? templateData.elements.length : 'N/A');
-        
-        if (Array.isArray(templateData.elements)) {
-          templateData.elements.forEach((el, idx) => {
-            if (idx < 3) {
-              console.group(`    Element ${idx} (${el.type})`);
-              console.log('    Propriétés reçues:');
-              Object.entries(el).forEach(([key, value]) => {
-                if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-                  console.log(`      - ${key}: ${value}`);
-                } else if (value === null || value === undefined) {
-                  console.log(`      - ${key}: ${value}`);
-                } else {
-                  console.log(`      - ${key}: ${typeof value}`);
-                }
-              });
-              console.groupEnd();
-            }
-          });
-        }
-        console.groupEnd();
 
         // 🔍 Récupérer les éléments du templateData pour parsing
         const ajaxTemplateName = result.data
@@ -494,25 +464,6 @@ export function useTemplate() {
       if (!templateId) throw new Error("Aucun template chargé");
       if (!state.template.name?.trim()) return;
 
-      console.group('💾 [SAVE TEMPLATE] Starting save operation');
-      console.log('[SAVE] Template ID:', templateId);
-      console.log('[SAVE] Template name:', state.template.name);
-      console.log('[SAVE] Elements count:', state.elements.length);
-      console.log('[SAVE] Canvas width:', state.template.canvasWidth || canvasSettings.canvasWidth);
-      console.log('[SAVE] Canvas height:', state.template.canvasHeight || canvasSettings.canvasHeight);
-      
-      // Log first 2 elements
-      if (state.elements.length > 0) {
-        console.log('[SAVE] First elements:');
-        state.elements.slice(0, 2).forEach((el, idx) => {
-          console.log(`  [${idx}] ${el.type}: x=${el.x}, y=${el.y}, w=${el.width}, h=${el.height}, updatedAt=${el.updatedAt}`);
-        });
-        console.log('[🔴 DRAG DEBUG] saveTemplate - All elements being sent to server:');
-        state.elements.forEach((el, idx) => {
-          console.log(`  [${idx}] ${el.id} @ (${el.x}, ${el.y})`);
-        });
-      }
-
       // ✅ UTILISER LA COUCHE UNIFIÉE
       // Sérialiser les données du canvas (éléments + canvas state)
       const jsonData = serializeCanvasData(
@@ -523,29 +474,7 @@ export function useTemplate() {
         }
       );
 
-      console.log('[SAVE] Serialized data length:', jsonData.length);
       debugLog(`💾 SAVE - ${state.elements.length} éléments, ID: ${templateId}`);
-
-      // 🔍 LOG: Vérifier ce qui est sauvegardé
-      const parsedJson = JSON.parse(jsonData);
-      console.log('[SAVE] Parsed JSON structure:', {
-        elementsCount: parsedJson.elements?.length,
-        canvasWidth: parsedJson.canvasWidth,
-        canvasHeight: parsedJson.canvasHeight,
-        version: parsedJson.version
-      });
-      
-      const logoElement = parsedJson.elements.find((el: any) => el.type === 'company_logo');
-      if (logoElement) {
-        console.log(`[💾 SAVE JSON] Logo element data:`, {
-          id: logoElement.id,
-          x: logoElement.x,
-          y: logoElement.y,
-          width: logoElement.width,
-          height: logoElement.height,
-          logoUrl: logoElement.logoUrl
-        });
-      }
 
       // Préparer la requête
       const formData = new FormData();
@@ -556,15 +485,10 @@ export function useTemplate() {
       formData.append("template_data", jsonData);
       ClientNonceManager.addToFormData(formData);
 
-      console.log('[SAVE] FormData prepared, sending AJAX request to:', ClientNonceManager.getAjaxUrl());
-      console.log('[SAVE] With action: pdf_builder_save_template');
-
       const response = await fetch(ClientNonceManager.getAjaxUrl(), {
         method: "POST",
         body: formData,
       });
-
-      console.log('[SAVE] AJAX response status:', response.status);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -602,9 +526,6 @@ export function useTemplate() {
         );
       }
 
-      console.log('✅ SAUVEGARDE RÉUSSIE');
-      console.groupEnd();
-
       dispatch({
         type: "SAVE_TEMPLATE",
         payload: {
@@ -639,16 +560,7 @@ export function useTemplate() {
   ]);
 
   const previewTemplate = useCallback(() => {
-    console.log('[USE TEMPLATE HOOK] ===== PREVIEW TEMPLATE CALLED =====');
-    console.log('[USE TEMPLATE HOOK] previewTemplate function executed at:', new Date().toISOString());
-    console.log('[USE TEMPLATE HOOK] Current template state:');
-    console.log('[USE TEMPLATE HOOK] - template name:', state.template.name);
-    console.log('[USE TEMPLATE HOOK] - template description:', state.template.description);
-    console.log('[USE TEMPLATE HOOK] - elements count:', state.elements?.length || 0);
-    console.log('[USE TEMPLATE HOOK] - showPreviewModal before:', state.showPreviewModal);
-    console.log('[USE TEMPLATE HOOK] Dispatching SET_SHOW_PREVIEW_MODAL with payload: true');
     dispatch({ type: "SET_SHOW_PREVIEW_MODAL", payload: true });
-    console.log('[USE TEMPLATE HOOK] SET_SHOW_PREVIEW_MODAL dispatched successfully');
   }, [dispatch]);
 
   // ✅ NEW: Exposer loadTemplateForPreview au niveau global pour que le header puisse l'appeler

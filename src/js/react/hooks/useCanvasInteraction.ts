@@ -201,40 +201,29 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     // ✅ MODIFICATION: Gérer le drag multiple
     const selectedIds = lastState.selection.selectedElements;
     if (selectedIds.length === 0) {
-      console.log('[🔴 DRAG DEBUG] No selected elements');
       return;
     }
-
-    console.log('[🔴 DRAG DEBUG] performDragUpdate called, selectedIds:', selectedIds);
 
     // Calculer le delta de déplacement de la souris depuis le début du drag
     const mouseDeltaX = currentMouseX - dragMouseStartRef.current.x;
     const mouseDeltaY = currentMouseY - dragMouseStartRef.current.y;
 
-    console.log('[🔴 DRAG DEBUG] Mouse delta:', { mouseDeltaX, mouseDeltaY, currentMouseX, currentMouseY }, 'dragStart:', dragMouseStartRef.current);
-
     // Mettre à jour tous les éléments sélectionnés
     selectedIds.forEach(elementId => {
       const element = lastState.elements.find(el => el.id === elementId);
       if (!element) {
-        console.log(`[🔴 DRAG DEBUG] Element ${elementId} not found in state`);
         return;
       }
 
       // Récupérer la position de départ de cet élément spécifique
       const elementStartPos = dragStartRef.current[elementId];
       if (!elementStartPos) {
-        console.log(`[🔴 DRAG DEBUG] No dragStart position for element ${elementId}`);
         return;
       }
-
-      console.log(`[🔴 DRAG DEBUG] Processing element ${elementId}, startPos:`, elementStartPos);
 
       // Calculer la nouvelle position en appliquant le delta de la souris à la position de départ
       let finalX = elementStartPos.x + mouseDeltaX;
       let finalY = elementStartPos.y + mouseDeltaY;
-
-      console.log(`[🔴 DRAG DEBUG] ${elementId} initial calc: finalX=${finalX}, finalY=${finalY}`);
 
       // ✅ AJOUT: Logique d'accrochage à la grille
       if (lastState.template.snapToGrid && lastState.canvas.gridSize > 0) {
@@ -268,8 +257,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       if (finalY < 0) finalY = 0;
       if (finalY + minVisibleHeight > canvasHeightPx) finalY = canvasHeightPx - minVisibleHeight;
 
-      console.log(`[🔴 DRAG DEBUG] ${elementId} after clamp: finalX=${finalX}, finalY=${finalY}`);
-
       // ✅ CORRECTION 6: Améliorer la préservation des propriétés
       const completeUpdates: Record<string, unknown> = { x: finalX, y: finalY };
 
@@ -292,18 +279,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         completeUpdates.alignment = elementAsRecord.alignment;
       }
 
-      console.log(`[🔴 DRAG DEBUG] ${elementId} dispatching UPDATE_ELEMENT with x=${finalX}, y=${finalY}`);
-
-      // 🔍 LOG DEBUG
-      if (elementId.includes('logo')) {
-        console.log(`[🔍 DRAG UPDATE] Element ${elementId}:`, {
-          x: finalX,
-          y: finalY,
-          width: element.width,
-          height: element.height,
-          logoUrl: (elementAsRecord.logoUrl as string) || 'N/A'
-        });
-      }
+      // Dispatch update - position changes are tracked internally
 
       dispatch({
         type: 'UPDATE_ELEMENT',
@@ -314,7 +290,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       });
     });
 
-    console.log('[🔴 DRAG DEBUG] performDragUpdate completed, clearing pendingDragUpdateRef');
     pendingDragUpdateRef.current = null;
   }, [dispatch, canvasWidth, canvasHeight]);
 
@@ -762,13 +737,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
           dragStartRef.current = { [clickedElement.id]: { x: clickedElement.x, y: clickedElement.y } };
           dragMouseStartRef.current = { x, y };  // Position souris
           selectedElementRef.current = clickedElement.id;
-          console.log('[🔴 DRAG DEBUG] handleMouseDown - Single-element drag started:', { 
-            elementId: clickedElement.id,
-            startX: clickedElement.x,
-            startY: clickedElement.y,
-            mouseX: x,
-            mouseY: y
-          });
+          // Single-element drag started
           event.preventDefault();
           return;
         }
@@ -787,12 +756,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
         dragStartRef.current = startPositions;
         dragMouseStartRef.current = { x, y };  // Position souris
         selectedElementRef.current = clickedElement.id;
-        console.log('[🔴 DRAG DEBUG] handleMouseDown - Multi-element drag started:', { 
-          selectedCount: state.selection.selectedElements.length,
-          elementIds: state.selection.selectedElements,
-          dragStartRef: dragStartRef.current,
-          dragMouseStart: dragMouseStartRef.current
-        });
+        // Multi-element drag started
         event.preventDefault();
         return;
       }
@@ -1189,7 +1153,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       // performDragUpdate calculera la nouvelle position pour chaque élément individuellement
       const now = Date.now();
       if (now - lastUpdateTimeRef.current > 16) {
-        console.log('[🔴 DRAG DEBUG] handleMouseMove - Queuing drag update:', { x, y, selectedCount: selectedElementsRef.current.length });
         pendingDragUpdateRef.current = { x, y };
         performDragUpdate();
         lastUpdateTimeRef.current = now;
