@@ -532,38 +532,39 @@ const drawProductTable = (
   const currency = "€";
 
   // ✅ RECALCUL DYNAMIQUE: Recalculer les totals en fonction des propriétés actives
-  // et des valeurs réelles de l'élément
+  // Ordre CRITIQUE: 1) Lire valeurs 2) Appliquer flags 3) Recalculer totals
   
-  // Lire les valeurs de base depuis les totals ou les propriétés directes
+  // 1) Lire les valeurs de base depuis les totals ou les propriétés directes
   let shippingCost = totals.shippingCost || (props.shippingCost as any) || 0;
   let taxRate = totals.taxRate || (props.taxRate as any) || 0;
   let globalDiscount = totals.discount || (props.globalDiscount as any) || 0;
   
-  // Calculer le sous-total à partir des produits
+  // 2) APPLIQUER LES FLAGS ACTIFS - Mettre à zéro les éléments désactivés AVANT calcul
+  if (!showShipping) {
+    shippingCost = 0;
+  }
+  if (!showTax) {
+    taxRate = 0; // Si TVA non affichée, ne pas l'appliquer
+  }
+  if (!showGlobalDiscount) {
+    globalDiscount = 0; // Si remise non affichée, ne pas l'appliquer
+  }
+  
+  // 3) Calculer le sous-total à partir des produits
   const subtotal = products.reduce((sum, p) => sum + (p.total || 0), 0);
   
-  // Recalculer les taxes si actif, sinon zéro
+  // 4) Ajouter les frais supplémentaires si présents
+  const totalFees = fees.reduce((sum, f) => sum + (f.total || 0), 0);
+  
+  // 5) Recalculer les taxes maintenant (avec les valeurs finales après flags)
   let taxAmount = 0;
-  if (showTax && taxRate > 0) {
+  if (taxRate > 0 && showTax) {
     // Appliquer la TVA sur : sous-total + frais de port - remise globale
     const taxableBase = subtotal + shippingCost - globalDiscount;
     taxAmount = (taxableBase * taxRate) / 100;
   }
   
-  // Réappliquer la remise globale seulement si elle est affichée
-  if (!showGlobalDiscount) {
-    globalDiscount = 0;
-  }
-  
-  // Réappliquer frais de port seulement s'ils sont affichés
-  if (!showShipping) {
-    shippingCost = 0;
-  }
-  
-  // Ajouter les frais supplémentaires si présents
-  const totalFees = fees.reduce((sum, f) => sum + (f.total || 0), 0);
-  
-  // Calculer le TOTAL FINAL: subtotal + frais de port + TVA + frais supplémentaires - remise
+  // 6) Calculer le TOTAL FINAL: subtotal + frais de port + TVA + frais supplémentaires - remise
   const finalTotal = subtotal + shippingCost + taxAmount + totalFees - globalDiscount;
 
   // Configuration des colonnes
