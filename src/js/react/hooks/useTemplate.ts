@@ -183,7 +183,11 @@ export function useTemplate() {
         // 🔍 AUDIT COMPLET: Log ce qui arrive du serveur
         console.group(`🔍 AUDIT LOAD - Template ID: ${templateId}`);
         console.log('📥 Données reçues du serveur:');
-        const templateData = result.data || {};
+        console.log('  - result.data keys:', result.data ? Object.keys(result.data) : 'undefined');
+        
+        // ✅ FIX: ajaxGetTemplate() retourne {template: {...}, template_name: '...', ...}
+        // On doit accéder à result.data.template pour obtenir l'objet template réel
+        const templateData = result.data?.template || result.data || {};
         console.log('  - Nombre d\'éléments:', Array.isArray(templateData.elements) ? templateData.elements.length : 'N/A');
         
         if (Array.isArray(templateData.elements)) {

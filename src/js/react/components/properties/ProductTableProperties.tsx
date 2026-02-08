@@ -100,7 +100,13 @@ const Toggle = ({ checked, onChange, label, description }: {
     <div style={{
       fontSize: '11px',
       color: '#666',
-      lineHeight: '1.4'
+      lineHeight: '1.4',
+      wordWrap: 'break-word',
+      wordBreak: 'break-word',
+      whiteSpace: 'normal',
+      textAlign: 'left',
+      width: '100%',
+      overflow: 'hidden'
     }}>
       {description}
     </div>
@@ -264,6 +270,13 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                 onChange={(checked) => onChange(element.id, 'showQuantity', checked)}
                 label="Afficher la quantité"
                 description="Colonne quantité des produits"
+              />
+
+              <Toggle
+                checked={element.showImage !== false}
+                onChange={(checked) => onChange(element.id, 'showImage', checked)}
+                label="Afficher les images"
+                description="Colonne des images produits"
               />
             </div>
           </div>

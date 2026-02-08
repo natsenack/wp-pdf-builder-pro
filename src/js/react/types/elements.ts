@@ -19,6 +19,7 @@ export interface ProductTableProduct {
   price: number;
   total: number;
   description?: string;
+  image?: string; // URL de l'image produit
 }
 
 // ✅ NEW: Structure pour les frais du tableau
@@ -218,6 +219,7 @@ export interface ProductTableElement extends BaseElement {
   showSku?: boolean;
   showDescription?: boolean;
   showQuantity?: boolean;
+  showImage?: boolean; // ✅ NEW: Afficher les images des produits
   showShipping?: boolean;
   showTax?: boolean;
   showGlobalDiscount?: boolean;
