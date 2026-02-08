@@ -654,9 +654,28 @@ const drawProductTable = (
     }
   }
 
-  // Normaliser les largeurs
-  const totalWidth = columns.reduce((sum, col) => sum + col.width, 0);
-  columns.forEach((col) => (col.width = col.width / totalWidth));
+  // ✅ FIX: Colonne image avec largeur FIXE (en pixels)
+  const IMAGE_COLUMN_WIDTH_PX = 70; // Largeur fixe pour images
+  
+  // Séparer les colonnes image et autres
+  const imageColumnIndex = columns.findIndex(col => col.key === "image");
+  const hasImageColumn = imageColumnIndex !== -1;
+  const tableWidthPixels = element.width - 16;
+  const availableWidthPixels = hasImageColumn ? tableWidthPixels - IMAGE_COLUMN_WIDTH_PX : tableWidthPixels;
+  
+  // Normaliser seulement les colonnes non-image
+  const nonImageColumns = columns.filter((_, i) => i !== imageColumnIndex);
+  const totalWidthNonImage = nonImageColumns.reduce((sum, col) => sum + col.width, 0);
+  
+  // Recalculer les largeurs proportionnelles pour les colonnes non-image
+  nonImageColumns.forEach((col) => {
+    col.width = (col.width / totalWidthNonImage) * (availableWidthPixels / tableWidthPixels);
+  });
+  
+  // Fixer la largeur de la colonne image
+  if (hasImageColumn) {
+    columns[imageColumnIndex].width = IMAGE_COLUMN_WIDTH_PX / tableWidthPixels;
+  }
 
   // Calcul des positions X des colonnes
   let currentX = 8;

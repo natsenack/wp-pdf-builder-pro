@@ -164,7 +164,7 @@ class TableRenderer
         
         // Mapping des colonnes disponibles avec leurs labels et largeurs
         $columnDefaults = [
-            'image'    => ['label' => 'Image', 'width' => '10%', 'align' => 'center'],
+            'image'    => ['label' => 'Image', 'width' => '70px', 'align' => 'center'],
             'name'     => ['label' => 'Produit', 'width' => '40%', 'align' => 'left'],
             'sku'      => ['label' => 'SKU', 'width' => '15%', 'align' => 'left'],
             'quantity' => ['label' => 'Qté', 'width' => '10%', 'align' => 'center'],
@@ -407,6 +407,12 @@ class TableRenderer
         $css[] = '  padding: 8px 12px;';
         $css[] = '  border: 1px solid #ddd;';
         $css[] = '  vertical-align: middle;';
+        $css[] = '}';
+// ✅ Styles des cellules d'image avec largeur fixe
+        $css[] = '.pdf-product-table th:first-child, .pdf-product-table td:first-child {';
+        $css[] = '  width: 70px;';
+        $css[] = '  min-width: 70px;';
+        $css[] = '  max-width: 70px;';
         $css[] = '}';
 // Styles des cellules avec images (augmenter la hauteur)
         $css[] = '.pdf-product-table td:first-child img, .pdf-product-table td img {';
