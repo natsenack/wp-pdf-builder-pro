@@ -2681,141 +2681,72 @@ function pdf_builder_robust_save_template() {
     error_log('[ROBUST SAVE] JSON size: ' . strlen($json_data) . ' bytes');
     error_log('[ROBUST SAVE] First 300 chars: ' . substr($json_data, 0, 300));
     
-    // SAVE TO DATABASE
+    // SAVE DIRECTLY TO pdf_builder_templates TABLE ONLY
     global $wpdb;
+    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
     $success = false;
     
     if ($template_id && $template_id > 0) {
-        // UPDATE
-        error_log('[ROBUST SAVE] Updating post ID: ' . $template_id);
+        // UPDATE existing template
+        error_log('[ROBUST SAVE] Updating template ID: ' . $template_id);
         
-        $post_result = $wpdb->update(
-            $wpdb->posts,
+        $update_result = $wpdb->update(
+            $table_templates,
             [
-                'post_title' => $template_name,
-                'post_modified' => current_time('mysql'),
-                'post_modified_gmt' => current_time('mysql', true)
+                'name' => $template_name,
+                'template_data' => $json_data,
+                'updated_at' => current_time('mysql')
             ],
-            ['ID' => $template_id],
+            ['id' => $template_id],
             ['%s', '%s', '%s'],
             ['%d']
         );
         
-        error_log('[ROBUST SAVE] Post update result: ' . ($post_result !== false ? 'OK (' . $post_result . ' rows)' : 'FAILED'));
-        
-        $meta_result = $wpdb->update(
-            $wpdb->postmeta,
-            ['meta_value' => $json_data],
-            ['post_id' => $template_id, 'meta_key' => '_pdf_template_data'],
-            ['%s'],
-            ['%d', '%s']
-        );
-        
-        if ($meta_result === false && $wpdb->last_error) {
-            error_log('[ROBUST SAVE] Meta update attempt 2: INSERT');
-            delete_post_meta($template_id, '_pdf_template_data');
-            add_post_meta($template_id, '_pdf_template_data', $json_data);
-            $meta_result = 1;
-        }
-        
-        error_log('[ROBUST SAVE] Meta update result: ' . ($meta_result !== false ? 'OK' : 'FAILED'));
-        $success = ($post_result !== false && $post_result >= 0);
-        
-        // 🔧 FIX: ALSO save to pdf_builder_templates table (used by loadTemplateRobust)
-        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_templates'") == $table_templates;
-        
-        if ($table_exists) {
-            $custom_table_result = $wpdb->update(
-                $table_templates,
-                [
-                    'name' => $template_name,
-                    'template_data' => $json_data,
-                    'updated_at' => current_time('mysql')
-                ],
-                ['id' => $template_id],
-                ['%s', '%s', '%s'],
-                ['%d']
-            );
-            error_log('[ROBUST SAVE] Custom table update result: ' . ($custom_table_result !== false ? 'OK' : 'FAILED or NO CHANGE'));
-        } else {
-            error_log('[ROBUST SAVE] ⚠️  pdf_builder_templates table does NOT exist, skipping custom table save');
-        }
+        error_log('[ROBUST SAVE] Table update result: ' . ($update_result !== false ? 'OK' : 'FAILED'));
+        $success = ($update_result !== false);
         
     } else {
-        // INSERT NEW
-        error_log('[ROBUST SAVE] Inserting new post');
-        
-        $post_data = [
-            'post_title' => $template_name,
-            'post_type' => 'pdf_template',
-            'post_status' => 'publish',
-            'post_date' => current_time('mysql'),
-            'post_date_gmt' => current_time('mysql', true),
-            'post_modified' => current_time('mysql'),
-            'post_modified_gmt' => current_time('mysql', true)
-        ];
+        // INSERT NEW template
+        error_log('[ROBUST SAVE] Inserting new template');
         
         $insert_result = $wpdb->insert(
-            $wpdb->posts,
-            $post_data,
-            ['%s', '%s', '%s', '%s', '%s', '%s', '%s']
+            $table_templates,
+            [
+                'name' => $template_name,
+                'template_data' => $json_data,
+                'created_at' => current_time('mysql'),
+                'updated_at' => current_time('mysql')
+            ],
+            ['%s', '%s', '%s', '%s']
         );
         
         if ($insert_result === false) {
-            error_log('[ROBUST SAVE] ❌ Post insert failed: ' . $wpdb->last_error);
+            error_log('[ROBUST SAVE] ❌ Table insert failed: ' . $wpdb->last_error);
             http_response_code(500);
-            wp_send_json_error(['error' => 'Failed to create post']);
+            wp_send_json_error(['error' => 'Failed to create template']);
             return;
         }
         
         $template_id = $wpdb->insert_id;
-        error_log('[ROBUST SAVE] ✅ Post inserted with ID: ' . $template_id);
-        
-        // Insert meta
-        $meta_insert = $wpdb->insert(
-            $wpdb->postmeta,
-            [
-                'post_id' => $template_id,
-                'meta_key' => '_pdf_template_data',
-                'meta_value' => $json_data
-            ],
-            ['%d', '%s', '%s']
-        );
-        
-        error_log('[ROBUST SAVE] Meta insert result: ' . ($meta_insert !== false ? 'OK' : 'FAILED'));
+        error_log('[ROBUST SAVE] ✅ Template inserted with ID: ' . $template_id);
         $success = true;
-        
-        // 🔧 FIX: ALSO save to pdf_builder_templates table (used by loadTemplateRobust) for new templates
-        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_templates'") == $table_templates;
-        
-        if ($table_exists) {
-            $custom_table_insert = $wpdb->insert(
-                $table_templates,
-                [
-                    'id' => $template_id,
-                    'name' => $template_name,
-                    'template_data' => $json_data,
-                    'created_at' => current_time('mysql'),
-                    'updated_at' => current_time('mysql')
-                ],
-                ['%d', '%s', '%s', '%s', '%s']
-            );
-            error_log('[ROBUST SAVE] Custom table insert result: ' . ($custom_table_insert !== false ? 'OK' : 'FAILED'));
-        } else {
-            error_log('[ROBUST SAVE] ⚠️  pdf_builder_templates table does NOT exist, skipping custom table insert');
-        }
     }
     
-    // Verify save
+    // Verify save by reading from pdf_builder_templates
     error_log('[ROBUST SAVE] Verifying save...');
-    $verify = get_post_meta($template_id, '_pdf_template_data', true);
-    // ✅ FIX: We save as JSON, so decode as JSON (not maybe_unserialize)
-    $verify_array = json_decode($verify, true);
-    $verify_count = is_array($verify_array) && isset($verify_array['elements']) ? count($verify_array['elements']) : 0;
+    $verify_row = $wpdb->get_row(
+        $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
+        ARRAY_A
+    );
     
-    error_log('[ROBUST SAVE] ✅ Verification: ' . $verify_count . ' elements in database');
+    if ($verify_row) {
+        $verify_array = json_decode($verify_row['template_data'], true);
+        $verify_count = is_array($verify_array) && isset($verify_array['elements']) ? count($verify_array['elements']) : 0;
+        error_log('[ROBUST SAVE] ✅ Verification: ' . $verify_count . ' elements in database');
+    } else {
+        $verify_count = 0;
+        error_log('[ROBUST SAVE] ⚠️  Verification: Template not found in database');
+    }
     
     // Response
     error_log('═══════════════════════════════════════════════════════════════════');
