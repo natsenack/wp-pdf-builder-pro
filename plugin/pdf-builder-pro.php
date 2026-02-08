@@ -2876,6 +2876,57 @@ function pdf_builder_test_ajax() {
 }
 add_action('wp_ajax_pdf_builder_test_ajax', 'pdf_builder_test_ajax');
 
+/**
+ * AJAX Handler: Convert JSON template to HTML
+ * Used by React frontend for preview generation
+ */
+function pdf_builder_render_template_html() {
+    // Check permissions
+    if (!current_user_can('edit_posts')) {
+        wp_send_json_error(['error' => 'Permission denied']);
+        return;
+    }
+
+    // Get template data from POST
+    $template_data = isset($_POST['template_data']) ? json_decode(sanitize_text_field($_POST['template_data']), true) : [];
+    $order_data = isset($_POST['order_data']) ? json_decode(sanitize_text_field($_POST['order_data']), true) : [];
+
+    if (empty($template_data)) {
+        wp_send_json_error(['error' => 'No template data provided']);
+        return;
+    }
+
+    try {
+        // Load the HTML generator classes
+        require_once __DIR__ . '/src/HTMLGenerators/ElementGeneratorBase.php';
+        require_once __DIR__ . '/src/HTMLGenerators/ElementGeneratorFactory.php';
+        require_once __DIR__ . '/src/HTMLGenerators/DocumentHTMLGenerator.php';
+
+        // Load all generator classes
+        $generators_dir = __DIR__ . '/src/HTMLGenerators/Generators/';
+        foreach (glob($generators_dir . '*.php') as $file) {
+            require_once $file;
+        }
+
+        // Create generator and generate HTML
+        $generator = new \PDF_Builder\HTMLGenerators\DocumentHTMLGenerator($template_data, $order_data);
+        $html = $generator->generateContent();
+
+        wp_send_json_success([
+            'html' => $html,
+            'success' => true
+        ]);
+
+    } catch (\Exception $e) {
+        error_log('pdf_builder_render_template_html error: ' . $e->getMessage());
+        wp_send_json_error([
+            'error' => 'HTML generation failed: ' . $e->getMessage()
+        ]);
+    }
+}
+add_action('wp_ajax_pdf_builder_render_template_html', 'pdf_builder_render_template_html');
+add_action('wp_ajax_nopriv_pdf_builder_render_template_html', 'pdf_builder_render_template_html');
+
 // Register the robust save handler
 add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_robust_save_template', 5);
 

@@ -321,147 +321,41 @@ export const Header = memo(function Header({
 
     setIsGeneratingHtml(true);
     try {
-      console.log('[JSON TO HTML] Starting conversion using local data');
+      console.log('[JSON TO HTML] Starting conversion via PHP endpoint');
 
-      // Utiliser directement les données locales au lieu d'un appel AJAX
-      const elements = state.elements || [];
-      const canvas = {
-        width: canvasWidth,
-        height: canvasHeight
+      // Prepare template data
+      const templateData = {
+        canvasWidth,
+        canvasHeight,
+        elements: state.elements || []
       };
 
-      // Créer un canvas temporaire pour redessiner
-      const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = canvas.width;
-      tempCanvas.height = canvas.height;
+      // Call PHP endpoint to render HTML
+      const response = await fetch((window as any).ajaxurl || '/wp-admin/admin-ajax.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          action: 'pdf_builder_render_template_html',
+          template_data: JSON.stringify(templateData),
+          order_data: JSON.stringify({}) // Add order data if available
+        })
+      });
 
-      const ctx = tempCanvas.getContext('2d');
-      if (!ctx) {
-        throw new Error('Impossible de créer un contexte canvas');
-      }
+      const result = await response.json();
 
-      // Redessiner les éléments
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      if (result.success && result.data.html) {
+        console.log('[JSON TO HTML] HTML generated successfully');
 
-      // Fonction helper pour dessiner le contenu simplifié
-      const drawElement = (element: any) => {
-        if (element.visible === false) return;
-
-        ctx.save();
-        ctx.translate(element.x || 0, element.y || 0);
-
-        if (element.rotation) {
-          const centerX = (element.width || 0) / 2;
-          const centerY = (element.height || 0) / 2;
-          ctx.translate(centerX, centerY);
-          ctx.rotate((element.rotation * Math.PI) / 180);
-          ctx.translate(-centerX, -centerY);
+        // Open in new window
+        const newWindow = window.open('', '_blank');
+        if (newWindow) {
+          newWindow.document.write(result.data.html);
+          newWindow.document.close();
         }
-
-        // Fond
-        if (element.backgroundColor && element.backgroundColor !== 'transparent' && element.showBackground !== false) {
-          ctx.fillStyle = element.backgroundColor;
-          ctx.fillRect(0, 0, element.width || 100, element.height || 50);
-        }
-
-        // Bordure
-        if (element.borderWidth && element.borderWidth > 0) {
-          ctx.strokeStyle = element.borderColor || '#e5e7eb';
-          ctx.lineWidth = element.borderWidth;
-          ctx.strokeRect(0, 0, element.width || 100, element.height || 50);
-        }
-
-        // Texte
-        ctx.fillStyle = element.textColor || '#000000';
-        ctx.font = `${element.fontStyle || 'normal'} ${element.fontWeight || 'normal'} ${element.fontSize || 12}px ${element.fontFamily || 'Arial'}`;
-        ctx.textAlign = element.textAlign || 'left';
-        ctx.textBaseline = element.verticalAlign === 'middle' ? 'middle' : element.verticalAlign === 'bottom' ? 'bottom' : 'top';
-
-        let textX = 0;
-        let textY = element.verticalAlign === 'middle' ? (element.height || 50) / 2 : element.verticalAlign === 'bottom' ? (element.height || 50) - 5 : 5;
-
-        if (element.textAlign === 'center') {
-          textX = (element.width || 100) / 2;
-        } else if (element.textAlign === 'right') {
-          textX = (element.width || 100) - 5;
-        } else {
-          textX = 5;
-        }
-
-        const text = element.text || element.content || element.title || '';
-        if (text) {
-          ctx.fillText(text.toString().substring(0, 50), textX, textY);
-        }
-
-        ctx.restore();
-      };
-
-      // Dessiner tous les éléments
-      elements.forEach(drawElement);
-
-      // Capturer en PNG base64
-      const canvasImageData = tempCanvas.toDataURL('image/png');
-
-      // Créer l'HTML avec l'image
-      const html = `<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Export JSON to HTML - ${templateName || 'Aperçu'}</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      padding: 20px;
-      background: #f5f5f5;
-      font-family: Arial, sans-serif;
-    }
-    .container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .preview {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    img {
-      display: block;
-      max-width: 100%;
-      height: auto;
-      border: 1px solid #e5e7eb;
-    }
-    .info {
-      margin-top: 20px;
-      padding: 12px;
-      background: #f0f9ff;
-      border-left: 4px solid #0ea5e9;
-      border-radius: 4px;
-      color: #0c4a6e;
-      font-size: 13px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="preview">
-      <img src="${canvasImageData}" alt="Aperçu du JSON" />
-      <div class="info">
-        ✅ Cet aperçu utilise vos données actuelles (non sauvegardées). Sauvegardez d'abord si vous voulez voir la version finale.
-      </div>
-    </div>
-  </div>
-</body>
-</html>`;
-
-      const newWindow = window.open('', '_blank');
-      if (newWindow) {
-        newWindow.document.write(html);
-        newWindow.document.close();
+      } else {
+        throw new Error(result.data?.error || 'Failed to generate HTML');
       }
     } catch (error) {
       console.error('[JSON TO HTML] Error:', error);
