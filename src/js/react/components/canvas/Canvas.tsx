@@ -455,6 +455,12 @@ const drawProductTable = (
   const showGlobalDiscount = props.showGlobalDiscount !== false;
   const textColor = normalizeColor(props.textColor || "#000000");
   const borderRadius = props.borderRadius || 0;
+  
+  // ✅ NEW: Utiliser element.columns pour les colonnes dynamiques
+  const showImage = props.columns?.image !== false;
+  const showName = props.columns?.name !== false;
+  const showPrice = props.columns?.price !== false;
+  const showTotal = props.columns?.total !== false;
 
   // ✅ NEW: Utiliser la structure ProductTableData (products + fees + totals)
   // Au lieu de calculer manuellement
@@ -569,19 +575,34 @@ const drawProductTable = (
   }
 
   const columns: TableColumn[] = [];
-  columns.push({
-    key: "name",
-    label: "Produit",
-    width:
-      showSku && showDescription
-        ? 0.35
-        : showSku || showDescription
-        ? 0.45
-        : 0.55,
-    align: "left",
-    x: 0,
-  });
-  if (showSku)
+  
+  // ✅ NEW: Ajouter la colonne 'image' en premier si activée
+  if (showImage) {
+    columns.push({
+      key: "image",
+      label: "Img",
+      width: 0.08,
+      align: "center",
+      x: 0,
+    });
+  }
+  
+  if (showName) {
+    columns.push({
+      key: "name",
+      label: "Produit",
+      width:
+        showSku && showDescription
+          ? 0.35
+          : showSku || showDescription
+          ? 0.45
+          : 0.55,
+      align: "left",
+      x: 0,
+    });
+  }
+  
+  if (showSku) {
     columns.push({
       key: "sku",
       label: "SKU",
@@ -589,7 +610,9 @@ const drawProductTable = (
       align: "left",
       x: 0,
     });
-  if (showDescription)
+  }
+  
+  if (showDescription) {
     columns.push({
       key: "description",
       label: "Description",
@@ -597,7 +620,9 @@ const drawProductTable = (
       align: "left",
       x: 0,
     });
-  if (showQuantity)
+  }
+  
+  if (showQuantity) {
     columns.push({
       key: "qty",
       label: "Qté",
@@ -605,20 +630,27 @@ const drawProductTable = (
       align: "center",
       x: 0,
     });
-  columns.push({
-    key: "price",
-    label: "Prix",
-    width: 0.12,
-    align: "right",
-    x: 0,
-  });
-  columns.push({
-    key: "total",
-    label: "Total",
-    width: 0.12,
-    align: "right",
-    x: 0,
-  });
+  }
+  
+  if (showPrice) {
+    columns.push({
+      key: "price",
+      label: "Prix",
+      width: 0.12,
+      align: "right",
+      x: 0,
+    });
+  }
+  
+  if (showTotal) {
+    columns.push({
+      key: "total",
+      label: "Total",
+      width: 0.12,
+      align: "right",
+      x: 0,
+    });
+  }
 
   // Normaliser les largeurs
   const totalWidth = columns.reduce((sum, col) => sum + col.width, 0);
@@ -740,7 +772,14 @@ const drawProductTable = (
           : col.x;
 
       let text = "";
+      let isImage = false;
+      let imageUrl = "";
+      
       switch (col.key) {
+        case "image":
+          isImage = true;
+          imageUrl = product.image || "";
+          break;
         case "name":
           text = product.name;
           break;
@@ -766,26 +805,47 @@ const drawProductTable = (
           text = `${product.total.toFixed(2)}${currency}`;
           break;
       }
-
-      // Gestion du texte qui dépasse
-      const maxWidth = col.width * (element.width - 16) - 8;
-      if (ctx.measureText(text).width > maxWidth && col.key === "name") {
-        // Tronquer avec "..."
-        let truncated = text;
-        while (
-          ctx.measureText(truncated + "...").width > maxWidth &&
-          truncated.length > 0
-        ) {
-          truncated = truncated.slice(0, -1);
+      
+      // ✅ NEW: Rendre l'image ou un placeholder
+      if (isImage) {
+        const cellWidth = col.width * (element.width - 16);
+        const cellHeight = rowHeight - 2;
+        const cellX = col.x;
+        const cellY = rowY - rowHeight / 2 + 2;
+        
+        if (imageUrl) {
+          // TODO: Charger et afficher l'image (nécessite du cache d'images)
+          // Pour maintenant, afficher un placeholder
+          ctx.fillStyle = normalizeColor("#f0f0f0");
+          ctx.fillRect(cellX, cellY, cellWidth, cellHeight);
+          ctx.fillStyle = normalizeColor("#999999");
+          ctx.font = `${fontSize}px ${fontFamily}`;
+          ctx.textAlign = "center";
+          ctx.fillText("📷", cellX + cellWidth / 2, cellY + cellHeight / 2);
+        } else {
+          // Pas d'image, afficher un espace gris
+          ctx.fillStyle = normalizeColor("#f0f0f0");
+          ctx.fillRect(cellX, cellY, cellWidth, cellHeight);
         }
-        text = truncated + "...";
-      }
+      } else {
+        // Gestion du texte qui dépasse
+        const maxWidth = col.width * (element.width - 16) - 8;
+        if (ctx.measureText(text).width > maxWidth && col.key === "name") {
+          // Tronquer avec "..."
+          let truncated = text;
+          while (
+            ctx.measureText(truncated + "...").width > maxWidth &&
+            truncated.length > 0
+          ) {
+            truncated = truncated.slice(0, -1);
+          }
+          text = truncated + "...";
+        }
 
-      ctx.fillText(text, textX, rowY + rowHeight / 2);
+        ctx.fillText(text, textX, rowY + rowHeight / 2);
+      }
     });
   });
-
-  // Positionnement pour la section des totaux (après toutes les lignes de produits)
   currentY = 55 + products.length * (rowHeight + 4) + 8;
 
   // ✅ NEW: Section des frais (si des frais existent)
