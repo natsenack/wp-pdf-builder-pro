@@ -221,7 +221,8 @@ class TemplateManager
     public function ajaxSaveTemplateV3()
     {
         try {
-            // $this->debug_log('TemplateManager ajaxSaveTemplateV3 called');
+            // 🔍 AUDIT PHP SAVE: Log what arrives from React
+            error_log('🔍 [PHP AUDIT SAVE] ajaxSaveTemplateV3 called');
             
             // 🔧 CORRECTION: Utiliser NonceManager unifié pour sécurité cohérente
             // Accepter les éditeurs ET les admins pour la sauvegarde
@@ -243,12 +244,28 @@ class TemplateManager
             $template_name = isset($_POST['template_name']) ? \sanitize_text_field($_POST['template_name']) : '';
             $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : null;
 
-            // $this->debug_log('Template data received - name: ' . $template_name . ', id: ' . $template_id . ', data size: ' . strlen($_POST['template_data'] ?? ''));
+            // 🔍 AUDIT: Log raw POST data size
+            error_log('📥 [PHP AUDIT] Raw $_POST[template_data] size: ' . strlen($_POST['template_data'] ?? '') . ' bytes');
+            error_log('📥 [PHP AUDIT] Template name: ' . $template_name);
+            error_log('📥 [PHP AUDIT] Template ID: ' . ($template_id ?: 'NEW'));
 
             if (!$template_data || empty($template_name)) {
                 // $this->debug_log('Données de template ou nom manquant');
                 \wp_send_json_error('Données de template ou nom manquant');
                 return;
+            }
+
+            // 🔍 AUDIT: Log parsed template structure
+            error_log('🔍 [PHP AUDIT] Parsed template_data type: ' . gettype($template_data));
+            error_log('🔍 [PHP AUDIT] Number of elements: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'N/A'));
+            
+            // Log first 3 elements for inspection
+            if (isset($template_data['elements']) && is_array($template_data['elements'])) {
+                for ($i = 0; $i < min(3, count($template_data['elements'])); $i++) {
+                    $el = $template_data['elements'][$i];
+                    error_log('  Element ' . $i . ' (' . ($el['type'] ?? 'unknown') . '): ' . 
+                        json_encode(array_slice($el, 0, 10)) . '...');
+                }
             }
 
             // Créer ou mettre à jour le post template
@@ -267,9 +284,11 @@ class TemplateManager
             if ($template_id) {
                 $post_data['ID'] = $template_id;
                 // $this->debug_log('Updating existing template ID: ' . $template_id);
+                error_log('🔄 [PHP AUDIT] UPDATING existing template ID: ' . $template_id);
                 $result = \wp_update_post($post_data);
             } else {
                 // $this->debug_log('Creating new template');
+                error_log('✨ [PHP AUDIT] CREATING new template');
                 $result = \wp_insert_post($post_data);
             }
 
@@ -277,6 +296,16 @@ class TemplateManager
                 // $this->debug_log('Error saving template: ' . $result->get_error_message());
                 \wp_send_json_error('Erreur lors de la sauvegarde: ' . $result->get_error_message());
                 return;
+            }
+
+            // 🔍 AUDIT: Verify what was actually saved to DB
+            error_log('✅ [PHP AUDIT] Template saved with ID: ' . $result);
+            $saved_data = \get_post_meta($result, '_pdf_template_data', true);
+            error_log('✅ [PHP AUDIT] Data verified from DB - Number of elements: ' . 
+                (isset($saved_data['elements']) ? count($saved_data['elements']) : 'N/A'));
+            
+            if (isset($saved_data['elements']) && is_array($saved_data['elements'])) {
+                error_log('✅ [PHP AUDIT] First element from DB: ' . json_encode($saved_data['elements'][0]));
             }
 
             // $this->debug_log('Template saved successfully with ID: ' . $result);
