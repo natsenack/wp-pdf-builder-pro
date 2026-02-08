@@ -49,19 +49,43 @@ export function serializeCanvasData(
       return null;
     }
 
-    // Spreader d'abord pour avoir TOUTES les propriétés, puis valider positions
-    const serialized = {
-      ...el,  // Spreader en premier
+    // ✅ EXPLICIT serialization: Only copy properties we want, ensure x/y are numbers
+    // Don't use spread ...el because it can copy corrupted properties
+    const serialized: any = {
+      // Propriétés requises
+      id: String(el.id || `element-${idx}`),
+      type: String(el.type || 'unknown'),
       
-      // Valider les propriétés clés
-      id: el.id || `element-${idx}`,
-      type: el.type || 'unknown',
-      // Positions: convertir en nombre, ne jamais reset à 0 si undefined
-      x: el.x !== undefined ? (typeof el.x === 'number' ? el.x : parseFloat(String(el.x)) || 0) : 0,
-      y: el.y !== undefined ? (typeof el.y === 'number' ? el.y : parseFloat(String(el.y)) || 0) : 0,
-      width: el.width !== undefined ? (typeof el.width === 'number' ? el.width : parseFloat(String(el.width)) || 100) : 100,
-      height: el.height !== undefined ? (typeof el.height === 'number' ? el.height : parseFloat(String(el.height)) || 100) : 100,
+      // Positions - CRITICAL: Must be numbers, never undefined or NaN
+      x: typeof el.x === 'number' ? el.x : (Number(el.x) || 0),
+      y: typeof el.y === 'number' ? el.y : (Number(el.y) || 0),
+      width: typeof el.width === 'number' ? el.width : (Number(el.width) || 100),
+      height: typeof el.height === 'number' ? el.height : (Number(el.height) || 100),
+      
+      // Propriétés visibilité/interaction
+      visible: el.visible !== false,
+      locked: el.locked === true,
+      rotation: typeof el.rotation === 'number' ? el.rotation : 0,
+      opacity: typeof el.opacity === 'number' ? el.opacity : 1,
     };
+
+    // Copier TOUTES les autres propriétés de el (styles, contenu, etc)
+    // mais sans surcharger les propriétés critiques ci-dessus
+    for (const key in el) {
+      if (el.hasOwnProperty(key)) {
+        // Skip if already set (critical properties)
+        if (['id', 'type', 'x', 'y', 'width', 'height', 'visible', 'locked', 'rotation', 'opacity'].includes(key)) {
+          continue;
+        }
+        // Skip functions and complex objects that can't be JSON serialized
+        const val = (el as any)[key];
+        if (typeof val === 'function') {
+          continue;
+        }
+        // Copy the property
+        serialized[key] = val;
+      }
+    }
 
     return serialized;
   }).filter((el): el is Element => el !== null);
