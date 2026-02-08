@@ -140,23 +140,38 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   const nonce = (window as any).pdfBuilderData?.nonce || '';
   const templateId = (window as any).pdfBuilderData?.templateId || null;
 
+  console.log('[AUTO-SAVE INIT] Starting useSaveStateV2 hook with:', {
+    templateId,
+    elementsCount: elements.length,
+    nonce: nonce ? 'DEFINED' : 'UNDEFINED'
+  });
+
   const autoSaveConfig = useSaveStateV2({
     templateId: templateId || undefined,
     elements,
     nonce,
     autoSaveInterval: 5 * 60 * 1000, // 5 minutes entre les sauvegardes
     onSaveStart: () => {
+      console.log('[AUTO-SAVE CALLBACK] Save started');
       debugLog("💾 PDFBuilderContent: Auto-save started");
     },
     onSaveSuccess: (savedAt: string) => {
+      console.log('[AUTO-SAVE CALLBACK] Save successful at:', savedAt);
       debugLog("✅ PDFBuilderContent: Auto-save successful at:", savedAt);
       if (typeof window !== "undefined" && window.showSuccessNotification) {
         window.showSuccessNotification("Auto-sauvegardé");
       }
     },
     onSaveError: (error: string) => {
+      console.error('[AUTO-SAVE CALLBACK] Save error:', error);
       debugError("❌ PDFBuilderContent: Auto-save failed:", error);
     },
+  });
+
+  console.log('[AUTO-SAVE INIT] useSaveStateV2 hook initialized with state:', {
+    state: autoSaveConfig.state,
+    isSaving: autoSaveConfig.isSaving,
+    lastSavedAt: autoSaveConfig.lastSavedAt,
   });
 
   debugLog("🔄 PDFBuilderContent: Auto-save config initialized:", {
