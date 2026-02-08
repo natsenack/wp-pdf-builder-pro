@@ -2528,8 +2528,30 @@ function pdf_builder_get_template_elements_handler() {
 add_action('wp_ajax_pdf_builder_get_template_elements', 'pdf_builder_get_template_elements_handler');
 
 // ====================================================================
-// ✅ ROBUST TEMPLATE SAVE HANDLER - PRODUCTION VERSION
+// ✅ ULTIMATE DEBUG + SAVE HANDLER
 // ====================================================================
+
+/**
+ * Raw request logger - fired FIRST before any processing
+ */
+function pdf_builder_ajax_debug_log() {
+    if ($_POST['action'] === 'pdf_builder_save_template') {
+        error_log('═══════════════════════════════════════════════════════════════════');
+        error_log('[DEBUG] RAW AJAX REQUEST RECEIVED');
+        error_log('[DEBUG] Time: ' . date('Y-m-d H:i:s.u'));
+        error_log('[DEBUG] REQUEST METHOD: ' . $_SERVER['REQUEST_METHOD']);
+        error_log('[DEBUG] CONTENT TYPE: ' . ($_SERVER['CONTENT_TYPE'] ?? 'NOT SET'));
+        error_log('[DEBUG] $_POST keys: ' . implode(', ', array_keys($_POST)));
+        error_log('[DEBUG] $_POST size: ' . strlen(json_encode($_POST)) . ' bytes');
+        error_log('[DEBUG] php://input available: ' . (function_exists('file_get_contents') ? 'YES' : 'NO'));
+        
+        $raw_input = file_get_contents('php://input');
+        error_log('[DEBUG] php://input size: ' . strlen($raw_input) . ' bytes');
+        error_log('[DEBUG] First 500 chars of php://input: ' . substr($raw_input, 0, 500));
+        error_log('═══════════════════════════════════════════════════════════════════');
+    }
+}
+add_action('init', 'pdf_builder_ajax_debug_log', 1);
 
 /**
  * Ultra-robust template save handler with comprehensive logging
@@ -2749,7 +2771,15 @@ function pdf_builder_robust_save_template() {
     ]);
 }
 
-// Register with higher priority to ensure it runs
+// Add this test handler to check if AJAX is even working
+function pdf_builder_test_ajax() {
+    error_log('[TEST AJAX] Handler called - method: ' . $_SERVER['REQUEST_METHOD']);
+    error_log('[TEST AJAX] $_POST: ' . json_encode($_POST));
+    wp_send_json_success(['test' => 'success', 'time' => time()]);
+}
+add_action('wp_ajax_pdf_builder_test_ajax', 'pdf_builder_test_ajax');
+
+// Register the robust save handler
 add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_robust_save_template', 5);
 
 // ====================================================================
