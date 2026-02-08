@@ -1292,6 +1292,56 @@ const getCompanyData = (props: CompanyInfoElementProperties) => {
   return baseData;
 };
 
+// Fonction pour générer le texte formaté des informations d'entreprise
+const generateCompanyInfoText = (props: CompanyInfoElementProperties): string => {
+  const companyData = getCompanyData(props);
+
+  // Configuration d'affichage
+  const displayConfig = {
+    companyName: props.showCompanyName !== false,
+    address: props.showAddress !== false,
+    phone: props.showPhone !== false,
+    email: props.showEmail !== false,
+    siret: props.showSiret !== false,
+    vat: props.showVat !== false,
+    rcs: props.showRcs !== false,
+    capital: props.showCapital !== false,
+  };
+
+  const lines: string[] = [];
+
+  // Ajouter le nom de l'entreprise
+  if (shouldDisplayValue(companyData.name, displayConfig.companyName)) {
+    lines.push(companyData.name);
+  }
+
+  // Ajouter l'adresse
+  if (shouldDisplayValue(companyData.address, displayConfig.address)) {
+    lines.push(companyData.address);
+    if (shouldDisplayValue(companyData.city, displayConfig.address)) {
+      lines.push(companyData.city);
+    }
+  }
+
+  // Ajouter les autres informations
+  const infoFields = [
+    [companyData.siret, displayConfig.siret, 'SIRET'],
+    [companyData.tva, displayConfig.vat, 'TVA'],
+    [companyData.rcs, displayConfig.rcs, 'RCS'],
+    [companyData.capital, displayConfig.capital, 'Capital'],
+    [companyData.email, displayConfig.email, 'Email'],
+    [companyData.phone, displayConfig.phone, 'Téléphone'],
+  ];
+
+  infoFields.forEach(([value, show, label]) => {
+    if (shouldDisplayValue(value as string, show as boolean)) {
+      lines.push(`${value}`);
+    }
+  });
+
+  return lines.join('\n');
+};
+
 // Fonction helper pour vérifier si une valeur doit être affichée
 const shouldDisplayValue = (value: string, showFlag: boolean) =>
   showFlag && value && value !== 'Non indiqué';
@@ -1315,34 +1365,6 @@ const drawCompanyInfo = (
 ) => {
   const props = element as CompanyInfoElement;
 
-  // ✅ NOUVELLE LOGIQUE : Si l'élément a un champ "text", l'utiliser directement
-  if (element.text && element.text.trim()) {
-    // Utiliser le texte unifié avec formatage simple
-    const fontSize = props.fontSize || 12;
-    const fontFamily = props.fontFamily || "Arial";
-    const fontWeight = props.fontWeight || "normal";
-    const fontStyle = props.fontStyle || "normal";
-    const textColor = normalizeColor(props.textColor || "#000000");
-
-    ctx.fillStyle = textColor;
-    ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
-    ctx.textAlign = "left";
-
-    // Diviser le texte en lignes et les dessiner
-    const lines = element.text.split('\n');
-    let y = 20;
-
-    lines.forEach(line => {
-      if (line.trim()) {
-        ctx.fillText(line.trim(), 10, y);
-        y += fontSize * 1.2; // Espacement entre lignes
-      }
-    });
-
-    return; // Sortir car on a utilisé le texte unifié
-  }
-
-  // 🔄 ANCIENNE LOGIQUE : Utiliser les propriétés individuelles (pour compatibilité)
   // Configuration des polices
   const fontSize = props.fontSize || 12;
   const fontConfig = {

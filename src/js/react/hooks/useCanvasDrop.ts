@@ -127,73 +127,12 @@ export const useCanvasDrop = ({
       const width = (dragData.defaultProps.width as number) || 100;
       const height = (dragData.defaultProps.height as number) || 50;
 
-      let elementProps = { ...dragData.defaultProps };
-
-      // ✅ TRAITEMENT SPÉCIAL pour company_info : récupérer les données dynamiques
-      if (dragData.type === 'company_info') {
-        // Récupérer les données d'entreprise depuis le plugin ou les données par défaut
-        const pluginCompany = (window as any).pdfBuilderData?.company || {};
-        const companyData = {
-          name: pluginCompany.name || 'Mon Entreprise',
-          address: pluginCompany.address || '123 Rue de l\'Entreprise',
-          city: pluginCompany.city || 'Ville',
-          phone: pluginCompany.phone || '01 23 45 67 89',
-          email: pluginCompany.email || 'contact@monentreprise.com',
-          website: pluginCompany.website || 'www.monentreprise.com',
-          siret: pluginCompany.siret || '123 456 789 00012',
-          tva: pluginCompany.tva || 'FR 12 345 678 901',
-          rcs: pluginCompany.rcs || 'RCS Ville B 123 456 789',
-          capital: pluginCompany.capital || '10 000 €',
-        };
-
-        // Construire le texte formaté avec toutes les informations
-        const companyLines: string[] = [];
-
-        if (companyData.name) companyLines.push(companyData.name);
-        if (companyData.address) companyLines.push(companyData.address);
-        if (companyData.city) companyLines.push(companyData.city);
-        if (companyData.phone) companyLines.push(`Tél: ${companyData.phone}`);
-        if (companyData.email) companyLines.push(`Email: ${companyData.email}`);
-        if (companyData.website) companyLines.push(companyData.website);
-        if (companyData.siret) companyLines.push(`SIRET: ${companyData.siret}`);
-        if (companyData.tva) companyLines.push(`TVA: ${companyData.tva}`);
-        if (companyData.rcs) companyLines.push(`RCS: ${companyData.rcs}`);
-        if (companyData.capital) companyLines.push(`Capital: ${companyData.capital}`);
-
-        // Remplacer les propriétés individuelles par un champ "text" unifié
-        elementProps = {
-          ...elementProps,
-          text: companyLines.join('\n'), // Toutes les données dans un champ text
-          // Supprimer les propriétés individuelles maintenant inutiles
-          companyName: undefined,
-          companyAddress: undefined,
-          companyCity: undefined,
-          companyPhone: undefined,
-          companyEmail: undefined,
-          companyWebsite: undefined,
-          companySiret: undefined,
-          companyTva: undefined,
-          companyRcs: undefined,
-          companyCapital: undefined,
-          // Garder les flags d'affichage pour la compatibilité
-          showCompanyName: true,
-          showAddress: true,
-          showPhone: true,
-          showEmail: true,
-          showWebsite: true,
-          showSiret: true,
-          showVat: true,
-          showRcs: true,
-          showCapital: true,
-        };
-      }
-
       // Fusion des propriétés par défaut avec les propriétés calculées
       const element: Element = {
         id: elementId,
         type: dragData.type as Element["type"], // Type assertion sécurisé
         // Propriétés par défaut (peuvent être overriden par position)
-        ...elementProps,
+        ...dragData.defaultProps,
         // Position calculée (override x, y des defaultProps)
         x: position.x,
         y: position.y,
