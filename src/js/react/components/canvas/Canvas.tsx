@@ -520,13 +520,16 @@ const drawProductTable = (
   }
 
   const fees = props.fees || [];
-  const totals = props.totals || {
-    subtotal: 0,
-    shippingCost: 0,
-    taxCost: 0,
-    taxRate: 0,
-    discount: 0,
-    total: 0,
+  
+  // 🔴 FALLBACK: Si pas de totals, utiliser des valeurs fictives cohérentes avec les produits
+  // Subtotal calculé à partir des produits fictifs (total = 329.95€)
+  let totals = props.totals || {
+    subtotal: 329.95,        // Somme des produits fictifs
+    shippingCost: 10.00,     // 10€ de frais de port fictifs
+    taxCost: 62.99,          // TVA fictive (20% sur 314.95)
+    taxRate: 20,             // 20% TVA fictive
+    discount: 20.00,         // 20€ de remise fictive
+    total: 382.94,           // Calculé: 329.95 + 10 - 20 + 62.99
   };
 
   const currency = "€";
