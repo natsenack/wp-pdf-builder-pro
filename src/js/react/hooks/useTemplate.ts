@@ -465,13 +465,24 @@ export function useTemplate() {
       if (!state.template.name?.trim()) return;
 
       // 🔍 DEBUG: What's in state.elements RIGHT NOW?
-      if (state.elements.length > 0 && state.elements[0]) {
-        console.log('[💾 SAVE STATE DEBUG] state.elements[0] positions BEFORE serialize:', {
-          id: state.elements[0].id,
-          x: state.elements[0].x,
-          y: state.elements[0].y,
-          type: state.elements[0].type
-        });
+      if (state.elements.length > 0) {
+        console.log('[💾 SAVE STATE DEBUG] ALL elements in state.elements:', 
+          state.elements.map((el: any) => ({
+            id: el.id,
+            x: el.x,
+            y: el.y,
+            type: el.type
+          }))
+        );
+        // Find the company logo element specifically
+        const companyLogo = state.elements.find((el: any) => el.id.includes('company_logo'));
+        if (companyLogo) {
+          console.log('[💾 SAVE STATE DEBUG] DRAGGED element (company_logo) in state:', {
+            id: companyLogo.id,
+            x: companyLogo.x,
+            y: companyLogo.y
+          });
+        }
       }
 
       // Sérialiser les données du canvas

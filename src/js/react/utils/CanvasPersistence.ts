@@ -43,13 +43,24 @@ export function serializeCanvasData(
   }
 
   // LOG: See what positions are in memory BEFORE serialization
-  if (elements.length > 0 && elements[0]) {
-    console.log('[CanvasPersistence] SERIALIZE INPUT - First element BEFORE serialize:', { 
-      id: elements[0].id,
-      x: elements[0].x, 
-      y: elements[0].y,
-      type: elements[0].type
-    });
+  if (elements.length > 0) {
+    console.log('[CanvasPersistence] SERIALIZE INPUT - ALL elements:', 
+      elements.map((el) => ({
+        id: el.id,
+        x: el.x, 
+        y: el.y,
+        type: el.type
+      }))
+    );
+    const companyLogo = elements.find((el) => el.id.includes('company_logo'));
+    if (companyLogo) {
+      console.log('[CanvasPersistence] SERIALIZE INPUT - company_logo element:', { 
+        id: companyLogo.id,
+        x: companyLogo.x, 
+        y: companyLogo.y,
+        type: companyLogo.type
+      });
+    }
   }
 
   const cleanElements = elements.map((el, idx) => {
@@ -106,13 +117,24 @@ export function serializeCanvasData(
   try {
     const jsonString = JSON.stringify(data);
     // LOG: Show what's in the JSON after serialization
-    if (cleanElements.length > 0 && cleanElements[0]) {
-      console.log('[CanvasPersistence] SERIALIZE OUTPUT - First element AFTER stringify:', {
-        id: cleanElements[0].id,
-        x: cleanElements[0].x,
-        y: cleanElements[0].y,
-        jsonLength: jsonString.length
-      });
+    if (cleanElements.length > 0) {
+      console.log('[CanvasPersistence] SERIALIZE OUTPUT - ALL elements AFTER stringify:', 
+        cleanElements.map((el) => ({
+          id: el.id,
+          x: el.x,
+          y: el.y,
+          type: el.type
+        }))
+      );
+      const companyLogo = cleanElements.find((el) => el.id.includes('company_logo'));
+      if (companyLogo) {
+        console.log('[CanvasPersistence] SERIALIZE OUTPUT - company_logo element AFTER stringify:', {
+          id: companyLogo.id,
+          x: companyLogo.x,
+          y: companyLogo.y,
+          jsonLength: jsonString.length
+        });
+      }
     }
     return jsonString;
   } catch (error) {
