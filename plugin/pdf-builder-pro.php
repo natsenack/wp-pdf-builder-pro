@@ -1693,9 +1693,6 @@ function pdf_builder_save_template_handler() {
                 $count++;
             }
         }
-            return;
-        }
-
 
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
