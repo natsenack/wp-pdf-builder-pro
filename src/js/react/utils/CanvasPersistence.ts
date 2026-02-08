@@ -45,10 +45,21 @@ export function serializeCanvasData(
   }
 
   // Nettoyer et valider chaque élément
+  console.group('[CanvasPersistence] serialize - Cleaning ' + elements.length + ' elements');
   const cleanElements = elements.map((el, idx) => {
     if (!el || typeof el !== 'object') {
       console.warn(`[CanvasPersistence] Element ${idx} invalide`);
       return null;
+    }
+
+    // 🔍 LOG BEFORE SERIALIZE
+    if (idx < 3) {
+      console.log(`[BEFORE] Element ${idx} (${el.type}):`, {
+        x: el.x,
+        y: el.y,
+        width: el.width,
+        height: el.height
+      });
     }
 
     // ✅ CRITICAL FIX: D'abord le spread, PUIS on écrase avec les valeurs validées
@@ -65,20 +76,23 @@ export function serializeCanvasData(
       height: typeof el.height === 'number' ? el.height : 100,
     };
 
-    // 🔍 LOG DEBUG
-    if (el.type === 'company_logo') {
-      console.log(`[🔍 SERIALIZE] Element ${el.id} (${el.type}):`, {
+    // 🔍 LOG AFTER SERIALIZE
+    if (idx < 3) {
+      console.log(`[AFTER] Element ${idx} (${el.type}):`, {
         x: serialized.x,
         y: serialized.y,
         width: serialized.width,
-        height: serialized.height,
-        logoUrl: serialized.logoUrl,
-        all_keys: Object.keys(serialized).sort()
+        height: serialized.height
       });
     }
 
+    // 🔍 LOG DEBUG FOR ALL ELEMENT TYPES
+    console.log(`[🔍 SERIALIZE] Element ${idx}/${elements.length} (${serialized.type}): x=${serialized.x}, y=${serialized.y}, w=${serialized.width}, h=${serialized.height}`);
+
     return serialized;
   }).filter((el): el is Element => el !== null);
+  console.groupEnd();
+  console.log('[CanvasPersistence] SERIALIZED: ' + cleanElements.length + ' elements ready to serialize');
 
   // Canvas data avec défauts
   const canvasState: CanvasState = {
@@ -98,7 +112,18 @@ export function serializeCanvasData(
 
   // Retourner en JSON
   try {
-    return JSON.stringify(data);
+    const json = JSON.stringify(data);
+    console.log('[CanvasPersistence] JSON serialization complete, length:', json.length);
+    
+    // Verify positions are in the JSON
+    const parsed = JSON.parse(json);
+    if (parsed.elements && parsed.elements.length > 0) {
+      console.log('[CanvasPersistence] VERIFY JSON: ' + parsed.elements.length + ' elements');
+      parsed.elements.slice(0, 3).forEach((el, idx) => {
+        console.log(`  [${idx}] ${el.type}: x=${el.x}, y=${el.y}, w=${el.width}, h=${el.height}`);
+      });
+    }
+    return json;
   } catch (error) {
     console.error('[CanvasPersistence] Erreur sérialisation:', error);
     return JSON.stringify({ elements: [], canvas: canvasState, version: '1.0' });

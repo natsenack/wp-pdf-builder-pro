@@ -1675,9 +1675,24 @@ function pdf_builder_save_template_handler() {
         // Decode and validate JSON
         $decoded_data = json_decode($template_data, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-
-
+            error_log('[PDF_BUILDER_SAVE] ❌ JSON decode error: ' . json_last_error_msg());
             wp_send_json_error('Données JSON invalides');
+            return;
+        }
+
+        error_log('[PDF_BUILDER_SAVE] ✅ JSON valid');
+        
+        // Log element positions
+        if (isset($decoded_data['elements']) && is_array($decoded_data['elements']) && count($decoded_data['elements']) > 0) {
+            error_log('[PDF_BUILDER_SAVE] Elements in data: ' . count($decoded_data['elements']));
+            $count = 0;
+            foreach ($decoded_data['elements'] as $el) {
+                if ($count < 3) {
+                    error_log('[PDF_BUILDER_SAVE]   Element[' . $count . '] ' . ($el['type'] ?? 'unknown') . ': x=' . ($el['x'] ?? 'MISSING') . ', y=' . ($el['y'] ?? 'MISSING') . ', w=' . ($el['width'] ?? 'MISSING') . ', h=' . ($el['height'] ?? 'MISSING'));
+                }
+                $count++;
+            }
+        }
             return;
         }
 
@@ -1685,21 +1700,21 @@ function pdf_builder_save_template_handler() {
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
+        error_log('[PDF_BUILDER_SAVE] Checking if template ID ' . $template_id . ' exists in DB...');
 
         // Check if template exists
         $existing = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_templates WHERE id = %d", $template_id));
         if (!$existing) {
-
+            error_log('[PDF_BUILDER_SAVE] ❌ Template ID ' . $template_id . ' NOT FOUND in DB');
             // Log all existing templates for debugging
             $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates", ARRAY_A);
-
+            error_log('[PDF_BUILDER_SAVE] Available templates: ' . json_encode($all_templates));
             wp_send_json_error('Template non trouvé');
             return;
         }
 
-
-        // Log before update
-
+        error_log('[PDF_BUILDER_SAVE] ✅ Template ID ' . $template_id . ' found in DB');
+        error_log('[PDF_BUILDER_SAVE] About to UPDATE with ' . strlen($template_data) . ' chars of data');
 
         // Update template
         $result = $wpdb->update(
@@ -1714,15 +1729,17 @@ function pdf_builder_save_template_handler() {
         );
 
         if ($result === false) {
-
-
-
+            error_log('[PDF_BUILDER_SAVE] ❌ Update FAILED - wpdb error: ' . $wpdb->last_error);
             wp_send_json_error('Erreur lors de la sauvegarde');
             return;
         }
 
+        error_log('[PDF_BUILDER_SAVE] ✅ Update SUCCESS - ' . $result . ' row(s) updated');
 
-
+        // Verify the data was saved
+        $verify_data = $wpdb->get_var($wpdb->prepare("SELECT LENGTH(template_data) FROM $table_templates WHERE id = %d", $template_id));
+        error_log('[PDF_BUILDER_SAVE] ✅ Verification - saved data length: ' . $verify_data . ' chars');
+        error_log('[PDF_BUILDER_SAVE] ==================== SAVE HANDLER SUCCESS ====================');
 
         wp_send_json_success([
             'message' => 'Template sauvegardé avec succès',
@@ -1731,8 +1748,8 @@ function pdf_builder_save_template_handler() {
         ]);
 
     } catch (Exception $e) {
-
-
+        error_log('[PDF_BUILDER_SAVE] ❌ Exception: ' . $e->getMessage());
+        error_log('[PDF_BUILDER_SAVE] ❌ Stack: ' . $e->getTraceAsString());
         wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
     }
 }

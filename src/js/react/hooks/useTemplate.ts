@@ -494,6 +494,21 @@ export function useTemplate() {
       if (!templateId) throw new Error("Aucun template chargé");
       if (!state.template.name?.trim()) return;
 
+      console.group('💾 [SAVE TEMPLATE] Starting save operation');
+      console.log('[SAVE] Template ID:', templateId);
+      console.log('[SAVE] Template name:', state.template.name);
+      console.log('[SAVE] Elements count:', state.elements.length);
+      console.log('[SAVE] Canvas width:', state.template.canvasWidth || canvasSettings.canvasWidth);
+      console.log('[SAVE] Canvas height:', state.template.canvasHeight || canvasSettings.canvasHeight);
+      
+      // Log first 2 elements
+      if (state.elements.length > 0) {
+        console.log('[SAVE] First elements:');
+        state.elements.slice(0, 2).forEach((el, idx) => {
+          console.log(`  [${idx}] ${el.type}: x=${el.x}, y=${el.y}, w=${el.width}, h=${el.height}`);
+        });
+      }
+
       // ✅ UTILISER LA COUCHE UNIFIÉE
       // Sérialiser les données du canvas (éléments + canvas state)
       const jsonData = serializeCanvasData(
@@ -504,10 +519,18 @@ export function useTemplate() {
         }
       );
 
+      console.log('[SAVE] Serialized data length:', jsonData.length);
       debugLog(`💾 SAVE - ${state.elements.length} éléments, ID: ${templateId}`);
 
       // 🔍 LOG: Vérifier ce qui est sauvegardé
       const parsedJson = JSON.parse(jsonData);
+      console.log('[SAVE] Parsed JSON structure:', {
+        elementsCount: parsedJson.elements?.length,
+        canvasWidth: parsedJson.canvasWidth,
+        canvasHeight: parsedJson.canvasHeight,
+        version: parsedJson.version
+      });
+      
       const logoElement = parsedJson.elements.find((el: any) => el.type === 'company_logo');
       if (logoElement) {
         console.log(`[💾 SAVE JSON] Logo element data:`, {
@@ -529,18 +552,27 @@ export function useTemplate() {
       formData.append("template_data", jsonData);
       ClientNonceManager.addToFormData(formData);
 
+      console.log('[SAVE] FormData prepared, sending AJAX request to:', ClientNonceManager.getAjaxUrl());
+      console.log('[SAVE] With action: pdf_builder_save_template');
+
       const response = await fetch(ClientNonceManager.getAjaxUrl(), {
         method: "POST",
         body: formData,
       });
 
+      console.log('[SAVE] AJAX response status:', response.status);
+
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[SAVE] HTTP Error:', response.status, errorText);
         throw new Error(`Erreur HTTP: ${response.status}`);
       }
 
       const result = await response.json();
+      console.log('[SAVE] AJAX response:', result);
 
       if (!result.success) {
+        console.error('[SAVE] Save failed:', result.data);
         if (result.data?.code === "nonce_invalid") {
           try {
             let freshNonce = result.data?.nonce;
@@ -567,6 +599,7 @@ export function useTemplate() {
       }
 
       console.log('✅ SAUVEGARDE RÉUSSIE');
+      console.groupEnd();
 
       dispatch({
         type: "SAVE_TEMPLATE",
