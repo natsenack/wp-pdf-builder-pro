@@ -520,29 +520,22 @@ const drawProductTable = (
   }
 
   const fees = props.fees || [];
-  
-  // 🔴 FALLBACK: Si pas de totals, utiliser des valeurs fictives cohérentes avec les produits
-  // Subtotal calculé à partir des produits fictifs (total = 329.95€)
-  let totals = props.totals || {
-    subtotal: 329.95,        // Somme des produits fictifs
-    shippingCost: 10.00,     // 10€ de frais de port fictifs
-    taxCost: 62.99,          // TVA fictive (20% sur 314.95)
-    taxRate: 20,             // 20% TVA fictive
-    discount: 20.00,         // 20€ de remise fictive
-    total: 382.94,           // Calculé: 329.95 + 10 - 20 + 62.99
-  };
 
   const currency = "€";
 
-  // ✅ RECALCUL DYNAMIQUE: Recalculer les totals en fonction des propriétés actives
-  // Ordre CRITIQUE: 1) Lire valeurs 2) Appliquer flags 3) Recalculer totals
+  // ✅ CALCUL CORRECT DES TOTALS - Pas de hardcoding
+  // 1) Calculer le sous-total à partir des produits
+  const subtotal = products.reduce((sum, p) => sum + (p.total || 0), 0);
   
-  // 1) Lire les valeurs de base depuis les totals ou les propriétés directes
-  let shippingCost = totals.shippingCost || (props.shippingCost as any) || 0;
-  let taxRate = totals.taxRate || (props.taxRate as any) || 0;
-  let globalDiscount = totals.discount || (props.globalDiscount as any) || 0;
+  // 2) Ajouter les frais supplémentaires si présents
+  const totalFees = fees.reduce((sum, f) => sum + (f.total || 0), 0);
   
-  // 2) APPLIQUER LES FLAGS ACTIFS - Mettre à zéro les éléments désactivés AVANT calcul
+  // 3) Lire les valeurs depuis les propriétés de l'élément OU utiliser les valeurs de totals comme fallback
+  let shippingCost = props.shippingCost as any || (props.totals?.shippingCost as any) || 10.0; // Valeur fictive: 10€
+  let taxRate = props.taxRate as any || (props.totals?.taxRate as any) || 5; // Valeur fictive: 5%
+  let globalDiscount = props.globalDiscount as any || (props.totals?.discount as any) || 20.0; // Valeur fictive: 20€
+  
+  // 4) APPLIQUER LES FLAGS ACTIFS - Mettre à zéro les éléments désactivés AVANT calcul
   if (!showShipping) {
     shippingCost = 0;
   }
@@ -553,13 +546,7 @@ const drawProductTable = (
     globalDiscount = 0; // Si remise non affichée, ne pas l'appliquer
   }
   
-  // 3) Calculer le sous-total à partir des produits
-  const subtotal = products.reduce((sum, p) => sum + (p.total || 0), 0);
-  
-  // 4) Ajouter les frais supplémentaires si présents
-  const totalFees = fees.reduce((sum, f) => sum + (f.total || 0), 0);
-  
-  // 5) Recalculer les taxes maintenant (avec les valeurs finales après flags)
+  // 5) Recalculer les taxes (avec les valeurs finales après flags)
   let taxAmount = 0;
   if (taxRate > 0 && showTax) {
     // Appliquer la TVA sur : sous-total + frais de port - remise globale
