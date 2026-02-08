@@ -1151,7 +1151,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       return;
     }
 
-    if (isDraggingRef.current && selectedElementRef.current) {
+    if (isDraggingRef.current && selectedElementsRef.current.length > 0) {
       // ✅ OPTIMISATION FLUIDITÉ: Pour le drag multiple, passer directement les coordonnées actuelles de la souris
       // performDragUpdate calculera la nouvelle position pour chaque élément individuellement
       const now = Date.now();
