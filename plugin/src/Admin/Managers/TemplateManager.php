@@ -273,11 +273,15 @@ class TemplateManager
                 'post_title' => $template_name,
                 'post_type' => 'pdf_template',
                 'post_status' => 'publish',
-                'meta_input' => [
+            ];
+
+            // meta_input seulement pour insert, pas pour update
+            if (!$template_id) {
+                $post_data['meta_input'] = [
                     '_pdf_template_data' => $template_data,
                     '_pdf_template_type' => 'custom',
-                ]
-            ];
+                ];
+            }
 
             // $this->debug_log('Post data prepared: ' . print_r($post_data, true));
 
@@ -286,6 +290,13 @@ class TemplateManager
                 // $this->debug_log('Updating existing template ID: ' . $template_id);
                 error_log('🔄 [PHP AUDIT] UPDATING existing template ID: ' . $template_id);
                 $result = \wp_update_post($post_data);
+                
+                if (!\is_wp_error($result)) {
+                    // ✅ FIX: Use update_post_meta for UPDATE operations (not meta_input)
+                    error_log('🔄 [PHP AUDIT] Updating meta fields with update_post_meta()');
+                    \update_post_meta($template_id, '_pdf_template_data', $template_data);
+                    \update_post_meta($template_id, '_pdf_template_type', 'custom');
+                }
             } else {
                 // $this->debug_log('Creating new template');
                 error_log('✨ [PHP AUDIT] CREATING new template');
