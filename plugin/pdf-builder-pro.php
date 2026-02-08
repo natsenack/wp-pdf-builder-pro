@@ -56,6 +56,13 @@ add_action('plugins_loaded', function() {
     // ENREGISTRER LES ACTIONS AJAX TRÈS TÔT
     add_action('wp_ajax_pdf_builder_show_notification', 'pdf_builder_test_notification_handler');
     add_action('wp_ajax_nopriv_pdf_builder_show_notification', 'pdf_builder_test_notification_handler');
+
+    // ENREGISTRER LA METABOX PDF POUR LES COMMANDES WOOCOMMERCE
+    if (class_exists('WooCommerce') || class_exists('WC_Order')) {
+        if (class_exists('PDF_Builder\Admin\PDF_Builder_Order_Metabox')) {
+            \PDF_Builder\Admin\PDF_Builder_Order_Metabox::register();
+        }
+    }
     
     // Add action links to plugin list (Paramètres et Passer en Pro)
     add_filter('plugin_action_links_wp-pdf-builder-pro/pdf-builder-pro.php', function($links) {
