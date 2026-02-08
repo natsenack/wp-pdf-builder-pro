@@ -18,8 +18,7 @@ class Security_Limits_Handler
         \add_action('plugins_loaded', [__CLASS__, 'applySecurityLimits'], 5);
 // Valider la taille des fichiers uploadés
         \add_filter('upload_size_limit', [__CLASS__, 'validateUploadSize']);
-// Ajouter un hook pour vérifier la taille des templates avant génération
-        \add_action('pdf_builder_before_generate', [__CLASS__, 'validateTemplateSize']);
+// PDF generation system removed - validateTemplateSize no longer needed
     }
 
     /**

@@ -174,8 +174,7 @@ class PDF_Builder_WooCommerce_Integration
     public function registerAjaxHooks()
     {
         // AJAX handlers pour WooCommerce - gérés par le manager
-        add_action('wp_ajax_pdf_builder_generate_pdf', [$this, 'ajax_generate_order_pdf'], 1);
-        add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf'], 1); // Alias pour compatibilité
+        // PDF generation removed - system disabled
         add_action('wp_ajax_pdf_builder_save_order_canvas', [$this, 'ajax_save_order_canvas'], 1);
         add_action('wp_ajax_pdf_builder_load_order_canvas', [$this, 'ajax_load_order_canvas'], 1);
         add_action('wp_ajax_pdf_builder_get_canvas_elements', [$this, 'ajax_get_canvas_elements'], 1);
@@ -362,11 +361,6 @@ class PDF_Builder_WooCommerce_Integration
         $order_statuses = function_exists('wc_get_order_statuses') ? \wc_get_order_statuses() : [];
         $status_label = isset($order_statuses['wc-' . $order_status]) ? $order_statuses['wc-' . $order_status] : ucfirst($order_status);
 
-        // Déterminer si le template a été trouvé via mapping ou fallback
-        $template_source = 'par défaut';
-        if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
-            $template_source = 'configuré pour ce statut';
-        }
         ?>
         <div class="pdf-meta-box">
             <div class="pdf-template-section">
@@ -374,60 +368,14 @@ class PDF_Builder_WooCommerce_Integration
                     📄 <?php echo __('Template:', 'pdf-builder-pro'); ?> <?php echo esc_html($selected_template ? $selected_template['name'] : __('Aucun template disponible', 'pdf-builder-pro')); ?>
                 </div>
                 <div style="color: #6c757d; font-size: 14px; margin-bottom: 15px;">
-                    <?php echo __('Statut:', 'pdf-builder-pro'); ?> <strong><?php echo esc_html($status_label); ?></strong> |
-                    <?php echo __('Type détecté:', 'pdf-builder-pro'); ?> <strong><?php echo esc_html($document_type_label); ?></strong> |
-                    <?php echo __('Source:', 'pdf-builder-pro'); ?> <em><?php echo esc_html($template_source); ?></em>
+                    <?php echo __('Statut:', 'pdf-builder-pro'); ?> <strong><?php echo esc_html($status_label); ?></strong>
                 </div>
-
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <?php if ($selected_template) : ?>
-                    <button type="button" id="pdf-generate-btn" class="button button-secondary" style="padding: 8px 16px;">
-                        📄 <?php echo __('Générer PDF', 'pdf-builder-pro'); ?>
-                    </button>
-                    <?php endif; ?>
+                <div style="padding: 10px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; color: #856404;">
+                    <strong>⚠️ <?php echo __('PDF Generation System Has Been Disabled', 'pdf-builder-pro'); ?></strong><br>
+                    <small><?php echo __('The PDF generation system has been removed. The editor is now available for template design only.', 'pdf-builder-pro'); ?></small>
                 </div>
             </div>
         </div>
-
-        <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            var orderId = <?php echo intval($order_id); ?>;
-            var templateId = <?php echo intval($selected_template ? $selected_template['id'] : 0); ?>;
-            var nonce = '<?php echo \wp_create_nonce('pdf_builder_order_actions'); ?>';
-
-            // Passer les IDs globalement
-            if (!window.pdf_builder) {
-                window.pdf_builder = {};
-            }
-            window.pdf_builder.orderId = orderId;
-            window.pdf_builder.templateId = templateId;
-            window.pdf_builder.nonce = nonce;
-
-            // Bouton génération PDF
-            $('#pdf-generate-btn').on('click', function() {
-                generatePDF(orderId, templateId, nonce);
-            });
-        });
-
-        function generatePDF(orderId, templateId, nonce) {
-            // Générer le PDF
-            jQuery.ajax({
-                url: ajaxurl,
-                type: 'POST',
-                data: {
-                    action: 'pdf_builder_generate_order_pdf',
-                    order_id: orderId,
-                    template_id: templateId,
-                    nonce: nonce
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Télécharger le fichier
-                        var link = document.createElement('a');
-                        link.href = response.data.download_url;
-                        link.download = response.data.filename;
-                        document.body.appendChild(link);
-                        link.click();
                         document.body.removeChild(link);
                     } else {
                         alert('Erreur: ' + response.data);

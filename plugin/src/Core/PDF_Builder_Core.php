@@ -109,7 +109,7 @@ class PdfBuilderCore
             // 'PDF_Builder_Feature_Manager.php', // Chargé dans bootstrap.php
             // 'PDF_Builder_Feature_Manager.php', // Chargé dans bootstrap.php
             // 'PDF_Builder_License_Manager.php', // Chargé dans bootstrap.php
-            'PDF_Builder_PDF_Generator.php',
+            // 'PDF_Builder_PDF_Generator.php', // PDF generation system removed
             'PDF_Builder_Resize_Manager.php',
             'PDF_Builder_Settings_Manager.php',
             'PDF_Builder_Template_Manager.php'
@@ -160,18 +160,15 @@ class PdfBuilderCore
         $load_pdf_controller_now = true;
         if (!did_action('plugins_loaded')) {
             $load_pdf_controller_now = true;
-        } elseif (!function_exists('pdf_builder_is_woocommerce_active') || !pdf_builder_is_woocommerce_active()) {
+        } else {
             $load_pdf_controller_now = false;
-            add_action('plugins_loaded', function() {
-                if (function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active() && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
-                    require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
-                }
-            }, 5);
+            // PDF generation system removed - controller no longer available
         }
 
-        if ($load_pdf_controller_now && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
-            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
-        }
+        // PDF generation system removed - controller no longer loads
+        // if ($load_pdf_controller_now && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
+        //     require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
+        // }
 
         // Charger le handler AJAX d'image de prévisualisation
         if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php')) {

@@ -601,16 +601,6 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><code>pdf_builder_before_generate</code></td>
-                            <td>Avant la génération PDF</td>
-                            <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>pdf_builder_after_generate</code></td>
-                            <td>Après la génération PDF réussie</td>
-                            <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
-                        </tr>
-                        <tr>
                             <td><code>pdf_builder_template_data</code></td>
                             <td>Filtre les données de template</td>
                             <td><span style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px;">filter</span></td>

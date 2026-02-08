@@ -410,64 +410,14 @@
      * Générer un aperçu du modèle
      */
     function generatePreview(slug) {
-        showLoadingState();
-
-        $.ajax({
-            url: pdfBuilderPredefined.ajaxUrl,
-            type: 'POST',
-            data: {
-                action: 'pdf_builder_generate_template_preview',
-                slug: slug,
-                nonce: pdfBuilderPredefined.nonce
-            },
-            success: function(response) {
-                hideLoadingState();
-
-                if (response.success) {
-                    // Afficher l'aperçu dans une modale
-                    showPreviewModal(response.data.preview_svg, slug);
-                    refreshTemplatesList(); // Actualiser pour voir le nouvel aperçu
-                } else {
-                    showErrorMessage(response.data.message || pdfBuilderPredefined.strings.previewError);
-                }
-            },
-            error: function() {
-                hideLoadingState();
-                showErrorMessage(pdfBuilderPredefined.strings.previewError);
-            }
-        });
+        showErrorMessage('Preview generation has been disabled');
     }
 
     /**
      * Régénérer un aperçu du modèle
      */
     function regeneratePreview(slug) {
-        showLoadingState();
-
-        $.ajax({
-            url: pdfBuilderPredefined.ajaxUrl,
-            type: 'POST',
-            data: {
-                action: 'pdf_builder_generate_template_preview',
-                slug: slug,
-                nonce: pdfBuilderPredefined.nonce
-            },
-            success: function(response) {
-                hideLoadingState();
-
-                if (response.success) {
-                    // Afficher un message de succès et actualiser la liste
-                    showSuccessMessage('Aperçu régénéré avec succès !');
-                    refreshTemplatesList(); // Actualiser pour voir le nouvel aperçu
-                } else {
-                    showErrorMessage(response.data.message || pdfBuilderPredefined.strings.previewError);
-                }
-            },
-            error: function() {
-                hideLoadingState();
-                showErrorMessage(pdfBuilderPredefined.strings.previewError);
-            }
-        });
+        showErrorMessage('Preview generation has been disabled');
     }
 
     /**

@@ -693,10 +693,7 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'templates/admin/predefined-templates-manager.php';
     }
 
-    // Charger le contrôleur PDF
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
-    }
+    // PDF generation system removed - controller no longer available
 
     // Charger les handlers AJAX pour les paramètres
 

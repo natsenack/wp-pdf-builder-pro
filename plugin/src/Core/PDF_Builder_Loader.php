@@ -202,7 +202,7 @@ class PDF_Builder_Loader {
             // 'PDF_Builder_Drag_Drop_Manager.php', // Chargé dans bootstrap.php
             // 'PDF_Builder_Feature_Manager.php', // Chargé dans bootstrap.php
             // 'PDF_Builder_License_Manager.php', // Chargé dans bootstrap.php
-            'PDF_Builder_PDF_Generator.php',
+            // 'PDF_Builder_PDF_Generator.php', // PDF generation system removed
             'PDF_Builder_Resize_Manager.php',
             'PDF_Builder_Settings_Manager.php',
             'PDF_Builder_Template_Manager.php'

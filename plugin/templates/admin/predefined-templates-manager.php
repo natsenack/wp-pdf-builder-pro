@@ -29,7 +29,7 @@ class PDF_Builder_Predefined_Templates_Manager
         add_action('wp_ajax_pdf_builder_save_predefined_template', [$this, 'ajaxSavePredefinedTemplate']);
         add_action('wp_ajax_pdf_builder_load_predefined_template', [$this, 'ajaxLoadPredefinedTemplate']);
         add_action('wp_ajax_pdf_builder_delete_predefined_template', [$this, 'ajaxDeletePredefinedTemplate']);
-        add_action('wp_ajax_pdf_builder_generate_template_preview', [$this, 'ajaxGenerateTemplatePreview']);
+        // PDF generation action removed - system disabled
         add_action('wp_ajax_pdf_builder_refresh_nonce', [$this, 'ajaxRefreshNonce']);
 // Paramètres développeur
         add_action('wp_ajax_pdf_builder_developer_auth', [$this, 'ajaxDeveloperAuth']);
