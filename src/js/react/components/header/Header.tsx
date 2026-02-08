@@ -318,43 +318,23 @@ export const Header = memo(function Header({
   // Convertir JSON to HTML et afficher dans une nouvelle fenêtre
   const convertJsonToHtml = useCallback(async () => {
     if (isGeneratingHtml) return;
-    
+
     setIsGeneratingHtml(true);
     try {
-      console.log('[JSON TO HTML] Starting conversion');
+      console.log('[JSON TO HTML] Starting conversion using local data');
 
-      const templateId = state.currentTemplateId || state.template?.id;
-      if (!templateId) {
-        alert('❌ Aucun template actuellement édité');
-        return;
-      }
-
-      const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
-
-      // Récupérer les données SAUVEGARDÉES du serveur
-      const formData = new FormData();
-      formData.append('action', 'pdf_builder_get_template_elements');
-      formData.append('template_id', templateId);
-      formData.append('nonce', (window as any).pdfBuilderData?.nonce || '');
-
-      const response = await fetch(ajaxUrl, {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await response.json();
-      if (!data.success) {
-        throw new Error(data.data?.message || 'Erreur lors de la récupération des données');
-      }
-
-      const elements = data.data.elements || [];
-      const canvas = data.data.canvas || { width: 794, height: 1123 };
+      // Utiliser directement les données locales au lieu d'un appel AJAX
+      const elements = state.elements || [];
+      const canvas = {
+        width: canvasWidth,
+        height: canvasHeight
+      };
 
       // Créer un canvas temporaire pour redessiner
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = canvas.width;
       tempCanvas.height = canvas.height;
-      
+
       const ctx = tempCanvas.getContext('2d');
       if (!ctx) {
         throw new Error('Impossible de créer un contexte canvas');
@@ -429,11 +409,11 @@ export const Header = memo(function Header({
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Export JSON to HTML - ${data.data.template?.name || 'Aperçu'}</title>
+  <title>Export JSON to HTML - ${templateName || 'Aperçu'}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      padding: 20px; 
+    body {
+      padding: 20px;
       background: #f5f5f5;
       font-family: Arial, sans-serif;
     }
@@ -471,7 +451,7 @@ export const Header = memo(function Header({
     <div class="preview">
       <img src="${canvasImageData}" alt="Aperçu du JSON" />
       <div class="info">
-        ✅ Cet aperçu prévisualise vos données SAUVEGARDÉES (JSON du serveur). Il est fidèle à ce qui sera généré.
+        ✅ Cet aperçu utilise vos données actuelles (non sauvegardées). Sauvegardez d'abord si vous voulez voir la version finale.
       </div>
     </div>
   </div>
@@ -489,7 +469,7 @@ export const Header = memo(function Header({
     } finally {
       setIsGeneratingHtml(false);
     }
-  }, [isGeneratingHtml]);
+  }, [isGeneratingHtml, state.elements, canvasWidth, canvasHeight, templateName]);
 
   const buttonBaseStyles = {
     padding: "10px 16px",

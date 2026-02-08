@@ -454,7 +454,6 @@ const drawProductTable = (
   const fontStyle = props.fontStyle || "normal";
   const showSku = props.showSku !== false;
   const showDescription = props.showDescription !== false;
-  const showQuantity = props.showQuantity !== false;
   const showShipping = props.showShipping !== false;
   const showTax = props.showTax !== false;
   const showGlobalDiscount = props.showGlobalDiscount !== false;
@@ -464,6 +463,7 @@ const drawProductTable = (
   // ✅ NEW: Utiliser element.columns pour les colonnes dynamiques
   const showImage = props.columns?.image !== false;
   const showName = props.columns?.name !== false;
+  const showQuantity = props.columns?.quantity !== false;
   const showPrice = props.columns?.price !== false;
   const showTotal = props.columns?.total !== false;
 

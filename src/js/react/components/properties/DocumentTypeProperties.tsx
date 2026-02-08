@@ -132,7 +132,7 @@ export function DocumentTypeProperties({ element, onChange, activeTab, setActive
   ];
 
   return (
-    <div style={{ padding: '16px', backgroundColor: '#ffffff', borderRadius: '8px', marginBottom: '16px' }}>
+    <div style={{backgroundColor: '#ffffff', borderRadius: '8px', marginBottom: '16px' }}>
       {/* Onglets */}
       <div style={{ display: 'flex', marginBottom: '16px' }}>
         <button
