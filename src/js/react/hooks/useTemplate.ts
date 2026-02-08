@@ -464,6 +464,16 @@ export function useTemplate() {
       if (!templateId) throw new Error("Aucun template chargé");
       if (!state.template.name?.trim()) return;
 
+      // 🔍 DEBUG: What's in state.elements RIGHT NOW?
+      if (state.elements.length > 0 && state.elements[0]) {
+        console.log('[💾 SAVE STATE DEBUG] state.elements[0] positions BEFORE serialize:', {
+          id: state.elements[0].id,
+          x: state.elements[0].x,
+          y: state.elements[0].y,
+          type: state.elements[0].type
+        });
+      }
+
       // Sérialiser les données du canvas
       const jsonData = serializeCanvasData(
         state.elements,

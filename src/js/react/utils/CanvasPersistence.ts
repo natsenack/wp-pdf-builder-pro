@@ -42,6 +42,16 @@ export function serializeCanvasData(
     elements = [];
   }
 
+  // LOG: See what positions are in memory BEFORE serialization
+  if (elements.length > 0 && elements[0]) {
+    console.log('[CanvasPersistence] SERIALIZE INPUT - First element BEFORE serialize:', { 
+      id: elements[0].id,
+      x: elements[0].x, 
+      y: elements[0].y,
+      type: elements[0].type
+    });
+  }
+
   const cleanElements = elements.map((el, idx) => {
     if (!el || typeof el !== 'object') {
       return null;
@@ -94,7 +104,17 @@ export function serializeCanvasData(
   };
 
   try {
-    return JSON.stringify(data);
+    const jsonString = JSON.stringify(data);
+    // LOG: Show what's in the JSON after serialization
+    if (cleanElements.length > 0 && cleanElements[0]) {
+      console.log('[CanvasPersistence] SERIALIZE OUTPUT - First element AFTER stringify:', {
+        id: cleanElements[0].id,
+        x: cleanElements[0].x,
+        y: cleanElements[0].y,
+        jsonLength: jsonString.length
+      });
+    }
+    return jsonString;
   } catch (error) {
     return JSON.stringify({ elements: [], canvasWidth: canvasState.width, canvasHeight: canvasState.height, version: '1.0' });
   }
