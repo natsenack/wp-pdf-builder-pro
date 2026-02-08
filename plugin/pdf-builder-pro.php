@@ -2661,9 +2661,11 @@ function pdf_builder_robust_save_template() {
     }
     error_log('[ROBUST SAVE] ✅ Data validation passed');
     
-    // Serialize data for storage
-    $serialized_data = maybe_serialize($template_data);
-    error_log('[ROBUST SAVE] Serialized size: ' . strlen($serialized_data) . ' bytes');
+    // 🔧 FIX: Keep data as JSON string, don't use maybe_serialize()
+    // We receive JSON, we validate as array, but save as JSON to match the load path
+    $json_data = json_encode($template_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    error_log('[ROBUST SAVE] JSON size: ' . strlen($json_data) . ' bytes');
+    error_log('[ROBUST SAVE] First 300 chars: ' . substr($json_data, 0, 300));
     
     // SAVE TO DATABASE
     global $wpdb;
@@ -2689,7 +2691,7 @@ function pdf_builder_robust_save_template() {
         
         $meta_result = $wpdb->update(
             $wpdb->postmeta,
-            ['meta_value' => $serialized_data],
+            ['meta_value' => $json_data],
             ['post_id' => $template_id, 'meta_key' => '_pdf_template_data'],
             ['%s'],
             ['%d', '%s']
@@ -2698,7 +2700,7 @@ function pdf_builder_robust_save_template() {
         if ($meta_result === false && $wpdb->last_error) {
             error_log('[ROBUST SAVE] Meta update attempt 2: INSERT');
             delete_post_meta($template_id, '_pdf_template_data');
-            add_post_meta($template_id, '_pdf_template_data', $template_data);
+            add_post_meta($template_id, '_pdf_template_data', $json_data);
             $meta_result = 1;
         }
         
@@ -2741,7 +2743,7 @@ function pdf_builder_robust_save_template() {
             [
                 'post_id' => $template_id,
                 'meta_key' => '_pdf_template_data',
-                'meta_value' => $serialized_data
+                'meta_value' => $json_data
             ],
             ['%d', '%s', '%s']
         );
