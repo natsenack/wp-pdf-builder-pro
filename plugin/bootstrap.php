@@ -58,69 +58,6 @@ if (!$composer_autoloader_found) {
 }
 
 // ========================================================================
-// ✅ REGISTRATION DES HANDLERS AJAX TÔT
-// ========================================================================
-function pdf_builder_register_early_ajax_handlers() {
-    // Load essential dependencies for AJAX
-    if (!class_exists('PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
-        // Load autoloader first
-        $autoload_path = PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
-        if (file_exists($autoload_path)) {
-            require_once $autoload_path;
-            error_log('[BOOTSTRAP] Composer autoloader loaded successfully');
-        }
-        
-        // Load custom autoloader if needed
-        if (!function_exists('PDF_Builder\\PreviewSystem\\wp_remote_retrieve_body')) {
-            spl_autoload_register(function($class) {
-                $prefix_map = [
-                    'PDF_Builder\\' => 'src/',
-                    'PDF_Builder_Pro\\' => 'src/',
-                ];
-                
-                foreach ($prefix_map as $prefix => $base_dir) {
-                    $len = strlen($prefix);
-                    if (strncmp($prefix, $class, $len) === 0) {
-                        $relative_class = substr($class, $len);
-                        $file = PDF_BUILDER_PLUGIN_DIR . $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-                        
-                        if (file_exists($file)) {
-                            require $file;
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            });
-        }
-        
-        // Force load the PreviewAjaxHandler file directly
-        $handler_file = PDF_BUILDER_PLUGIN_DIR . 'preview-system/php/PreviewAjaxHandler.php';
-        if (file_exists($handler_file)) {
-            require_once $handler_file;
-            error_log('[BOOTSTRAP] PreviewAjaxHandler file loaded successfully from: ' . $handler_file);
-        } else {
-            error_log('[BOOTSTRAP] PreviewAjaxHandler file not found at: ' . $handler_file);
-        }
-    }
-    
-    // Register the AJAX actions
-    if (class_exists('PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
-        error_log('[BOOTSTRAP] PreviewAjaxHandler class found, registering actions');
-        add_action('wp_ajax_pdf_builder_generate_html_preview', [PDF_Builder\PreviewSystem\PreviewAjaxHandler::class, 'generateHtmlPreviewAjax']);
-        add_action('wp_ajax_nopriv_pdf_builder_generate_html_preview', [PDF_Builder\PreviewSystem\PreviewAjaxHandler::class, 'generateHtmlPreviewAjax']);
-        add_action('wp_ajax_pdf_builder_generate_preview', [PDF_Builder\PreviewSystem\PreviewAjaxHandler::class, 'generatePreviewAjax']);
-        add_action('wp_ajax_nopriv_pdf_builder_generate_preview', [PDF_Builder\PreviewSystem\PreviewAjaxHandler::class, 'generatePreviewAjax']);
-        error_log('[BOOTSTRAP] AJAX actions registered successfully');
-    } else {
-        error_log('[BOOTSTRAP] PreviewAjaxHandler class not found after loading');
-    }
-}
-
-// Register early AJAX handlers
-add_action('init', 'pdf_builder_register_early_ajax_handlers', 1);
-
-// ========================================================================
 // ✅ INJECTION DU NONCE DANS LE HEAD - TRÈS TÔT
 // Cela s'exécute avant admin_head et garantit que le nonce est disponible
 // ========================================================================
@@ -688,12 +625,7 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Canvas_AJAX_Handler.php';
     }
 
-    // Charger le gestionnaire de modèles prédéfinis
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'templates/admin/predefined-templates-manager.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'templates/admin/predefined-templates-manager.php';
-    }
-
-    // PDF generation system removed - controller no longer available
+    // PDF generation system removed
 
     // Charger les handlers AJAX pour les paramètres
 
@@ -1033,13 +965,7 @@ function pdf_builder_register_essential_ajax_hooks()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Template_Manager.php';
     }
 
-    // Charger et initialiser le PreviewAjaxHandler
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'preview-system/php/PreviewAjaxHandler.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'preview-system/php/PreviewAjaxHandler.php';
-        if (class_exists('PDF_Builder\\PreviewSystem\\PreviewAjaxHandler')) {
-            \PDF_Builder\PreviewSystem\PreviewAjaxHandler::init();
-        }
-    }
+    // Preview system removed - no handlers to load
 
     // PDF_Builder_Admin.php déjà chargé plus haut
 
@@ -1090,10 +1016,8 @@ function pdf_builder_load_core_on_demand()
             'pdf_builder_save_freemium_mode',
             'pdf_builder_update_onboarding_step',
             'pdf_builder_save_template_assignment',
-            'pdf_builder_mark_onboarding_complete',
-            // Actions AJAX du Preview System
-            'pdf_builder_generate_html_preview',
-            'pdf_builder_generate_preview'
+            'pdf_builder_mark_onboarding_complete'
+            // Preview system removed
         ];
         if (in_array($_REQUEST['action'], $pdf_builder_ajax_actions)) {
             $load_core = true;

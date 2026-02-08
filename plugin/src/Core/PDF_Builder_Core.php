@@ -156,24 +156,7 @@ class PdfBuilderCore
             require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
         }
 
-        // Charger le contrôleur PDF - différé si WooCommerce n'est pas disponible
-        $load_pdf_controller_now = true;
-        if (!did_action('plugins_loaded')) {
-            $load_pdf_controller_now = true;
-        } else {
-            $load_pdf_controller_now = false;
-            // PDF generation system removed - controller no longer available
-        }
-
-        // PDF generation system removed - controller no longer loads
-        // if ($load_pdf_controller_now && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php')) {
-        //     require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
-        // }
-
-        // Preview image handler removed - system disabled
-        // if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php')) {
-        //     require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
-        // }
+        // PDF generation system removed
     }
 
     /**

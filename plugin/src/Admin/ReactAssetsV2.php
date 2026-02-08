@@ -360,20 +360,13 @@ class ReactAssets {
             true
         );
         
-        // Integration preview (après que pdf-preview-api-client soit enqueueé)
-        \wp_enqueue_script(
-            'pdf-preview-integration',
-            $plugin_url . 'assets/js/pdf-preview-integration.min.js',
-            ['jquery', 'pdf-preview-api-client'],
-            $version,
-            true
-        );
+        // Preview system removed - integration disabled
         
         // React init script (dépendance finale)
         \wp_enqueue_script(
             'pdf-builder-react-init',
             $plugin_url . 'assets/js/pdf-builder-react-init.min.js',
-            ['pdf-builder-react-wrapper-v2', 'pdf-preview-integration'],
+            ['pdf-builder-react-wrapper-v2'],
             $version,
             true
         );

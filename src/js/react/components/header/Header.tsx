@@ -7,33 +7,15 @@ import React, {
 } from "react";
 import { TemplateState } from "../../types/elements";
 import { useBuilder } from "../../contexts/builder/BuilderContext";
-import { usePreview } from "../../hooks/usePreview";
+// Preview system removed
 
 console.log('[REACT HEADER COMPONENT] ===== FILE LOADED =====');
 console.log('[REACT HEADER COMPONENT] Component file loaded and executing at:', new Date().toISOString());
 console.log('[REACT HEADER COMPONENT] React available:', typeof React);
 console.log('[REACT HEADER COMPONENT] useState available:', typeof useState);
 console.log('[REACT HEADER COMPONENT] useBuilder available:', typeof useBuilder);
-console.log('[REACT HEADER COMPONENT] usePreview available:', typeof usePreview);
 import { useCanvasSettings } from "../../contexts/CanvasSettingsContext";
 import { debugLog, debugError } from "../../utils/debug";
-
-// Extension de Window pour l'API Preview
-declare global {
-  interface Window {
-    pdfPreviewAPI?: {
-      generateEditorPreview: (
-        templateData: Record<string, unknown>,
-        options?: { format?: string; quality?: number }
-      ) => Promise<Record<string, unknown>>;
-      generateOrderPreview: (
-        templateData: Record<string, unknown>,
-        orderId: number,
-        options?: { format?: string; quality?: number }
-      ) => Promise<Record<string, unknown>>;
-    };
-  }
-}
 
 interface HeaderProps {
   templateName: string;
@@ -121,19 +103,17 @@ export const Header = memo(function Header({
     availableOrientations: ["portrait", "landscape"],
   });
 
-  // Utiliser le hook usePreview pour la gestion de l'aperçu
-  const {
-    isModalOpen: showPreviewModal,
-    openModal: openPreviewModal,
-    closeModal: closePreviewModal,
-    isGenerating: isGeneratingPreview,
-    previewUrl: previewImageUrl,
-    error: previewError,
-    format: previewFormat,
-    setFormat: setPreviewFormat,
-    generatePreview,
-    clearPreview,
-  } = usePreview();
+  // Preview system removed
+  const showPreviewModal = false;
+  const openPreviewModal = () => {};
+  const closePreviewModal = () => {};
+  const isGeneratingPreview = false;
+  const previewImageUrl = null;
+  const previewError = null;
+  const previewFormat = "pdf";
+  const setPreviewFormat = () => {};
+  const generatePreview = () => {};
+  const clearPreview = () => {};
 
   // Debug logging
   useEffect(() => {

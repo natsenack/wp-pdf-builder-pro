@@ -77,7 +77,6 @@ class PdfBuilderAdminNew
     private $html_renderer = null;
     private $template_processor = null;
     private $data_utils = null;
-    private $pdf_generator = null;
     private $utils = null;
     private $thumbnail_manager = null;
     private $script_loader = null;
@@ -157,7 +156,8 @@ class PdfBuilderAdminNew
         // Initialiser AjaxHandler APRÈS template_processor
         $this->ajax_handler = new \PDF_Builder\Admin\Handlers\AjaxHandler($this);
 
-        $this->pdf_generator = new \PDF_Builder\Admin\Generators\PDFGenerator($this);
+        // PDF generation removed
+        $this->pdf_generator = null;
         $this->utils = new \PDF_Builder\Admin\Utils\Utils($this);
     }
 

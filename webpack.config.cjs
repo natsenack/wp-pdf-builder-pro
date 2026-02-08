@@ -23,7 +23,7 @@ module.exports = {
     "notifications": "./src/js/admin/notifications.js",
     "pdf-builder-wrap": "./src/js/admin/pdf-builder-wrap.js",
     "pdf-builder-init": "./src/js/admin/pdf-builder-init.js",
-    "pdf-preview-integration": "./src/js/admin/pdf-preview-integration.js",
+    // Preview system removed
     "notifications-css": "./src/css/notifications.css",
   },
   output: {
