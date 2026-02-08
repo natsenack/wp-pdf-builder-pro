@@ -813,7 +813,7 @@ const drawProductTable = (
         const cellWidth = col.width * (element.width - 16);
         const cellHeight = rowHeight - 2;
         const cellX = col.x;
-        const cellY = rowY - rowHeight / 2 + 2;
+        const cellY = rowY + 1; // ✅ FIX: Positionner la cellule au début de la ligne (pas au-dessus)
         
         // Dessiner le fond de la cellule
         ctx.fillStyle = normalizeColor("#f0f0f0");
