@@ -170,10 +170,10 @@ class PdfBuilderCore
         //     require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
         // }
 
-        // Charger le handler AJAX d'image de prévisualisation
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php')) {
-            require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
-        }
+        // Preview image handler removed - system disabled
+        // if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php')) {
+        //     require_once PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/preview-image-handler.php';
+        // }
     }
 
     /**
