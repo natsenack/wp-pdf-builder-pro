@@ -91,12 +91,15 @@ export function configureRealDataElement<T extends Element>(
     return element;
   }
 
-  return {
-    ...element,
-    isRealDataElement: true,
-    defaultTestValue: DEFAULT_TEST_VALUES[type],
-    realDataKey: REAL_DATA_KEYS[type],
-  } as T;
+  // ✅ Better approach: create new object keeping all properties
+  const configured = { ...element } as T;
+  
+  // Add RealData properties
+  (configured as any).isRealDataElement = true;
+  (configured as any).defaultTestValue = DEFAULT_TEST_VALUES[type];
+  (configured as any).realDataKey = REAL_DATA_KEYS[type];
+  
+  return configured;
 }
 
 /**

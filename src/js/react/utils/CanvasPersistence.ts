@@ -38,21 +38,19 @@ export function serializeCanvasData(
   elements: Element[],
   canvas: Partial<CanvasState> = {}
 ): string {
-  // Valider les éléments
   if (!Array.isArray(elements)) {
     elements = [];
   }
 
-  // Nettoyer et valider chaque élément
   const cleanElements = elements.map((el, idx) => {
     if (!el || typeof el !== 'object') {
       return null;
     }
 
-    // ✅ EXPLICIT serialization avec spread-first approach
+    // Copy TOUTES les propriétés d'abord
     const serialized: any = { ...el };
     
-    // Override les propriétés critiques
+    // Valider et fixer les propriétés critiques
     serialized.id = String(el.id || `element-${idx}`);
     serialized.type = String(el.type || 'unknown');
     serialized.x = typeof el.x === 'number' ? el.x : (Number(el.x) || 0);
@@ -64,9 +62,18 @@ export function serializeCanvasData(
     serialized.rotation = typeof el.rotation === 'number' ? el.rotation : 0;
     serialized.opacity = typeof el.opacity === 'number' ? el.opacity : 1;
     
-    // Supprimer les propriétés inutilisables
+    // ✅ CRITICAL FIX: Convert Date objects to ISO strings
+    if (serialized.createdAt instanceof Date) {
+      serialized.createdAt = serialized.createdAt.toISOString();
+    }
+    if (serialized.updatedAt instanceof Date) {
+      serialized.updatedAt = serialized.updatedAt.toISOString();
+    }
+    
+    // Supprimer propriétés non-sérialisables
     Object.keys(serialized).forEach(key => {
-      if (typeof serialized[key] === 'function' || serialized[key] === undefined) {
+      const val = serialized[key];
+      if (typeof val === 'function' || (val instanceof Date) || val === undefined) {
         delete serialized[key];
       }
     });
@@ -74,13 +81,11 @@ export function serializeCanvasData(
     return serialized;
   }).filter((el): el is Element => el !== null);
 
-  // Canvas data
   const canvasState: CanvasState = {
     width: typeof canvas.width === 'number' ? canvas.width : 210,
     height: typeof canvas.height === 'number' ? canvas.height : 297,
   };
 
-  // Structure finale
   const data: any = {
     elements: cleanElements,
     canvasWidth: canvasState.width,
@@ -88,10 +93,8 @@ export function serializeCanvasData(
     version: '1.0',
   };
 
-  // Retourner en JSON
   try {
-    const json = JSON.stringify(data);
-    return json;
+    return JSON.stringify(data);
   } catch (error) {
     return JSON.stringify({ elements: [], canvasWidth: canvasState.width, canvasHeight: canvasState.height, version: '1.0' });
   }
@@ -174,13 +177,30 @@ export function deserializeCanvasData(
     // Build with spread FIRST to keep all properties
     const normalizedElement: any = { ...element };
     
-    // Then OVERRIDE critical properties
+    // Then OVERRIDE critical properties with validated values
     normalizedElement.id = (element.id as string) || `element-${idx}`;
     normalizedElement.type = ((element.type as string) || 'unknown').replace(/-/g, '_');
     normalizedElement.x = Number(element.x) || 0;
     normalizedElement.y = Number(element.y) || 0;
     normalizedElement.width = Number(element.width) || 100;
     normalizedElement.height = Number(element.height) || 100;
+    normalizedElement.visible = element.visible !== false;
+    normalizedElement.locked = element.locked === true;
+    normalizedElement.rotation = Number(element.rotation) || 0;
+    normalizedElement.opacity = Number(element.opacity) || 1;
+    
+    // ✅ CRITICAL FIX: Convert ISO date strings back to Date objects
+    if (typeof element.createdAt === 'string') {
+      normalizedElement.createdAt = new Date(element.createdAt);
+    } else if (!(element.createdAt instanceof Date)) {
+      normalizedElement.createdAt = new Date();
+    }
+    
+    if (typeof element.updatedAt === 'string') {
+      normalizedElement.updatedAt = new Date(element.updatedAt);
+    } else if (!(element.updatedAt instanceof Date)) {
+      normalizedElement.updatedAt = new Date();
+    }
 
     // ✅ NOUVEAU: Appliquer les valeurs via ValueResolver si c'est un RealDataElement
     // En mode édition: récupère les données du canvas (getProductTableFromElement)
