@@ -505,7 +505,11 @@ export function useTemplate() {
       if (state.elements.length > 0) {
         console.log('[SAVE] First elements:');
         state.elements.slice(0, 2).forEach((el, idx) => {
-          console.log(`  [${idx}] ${el.type}: x=${el.x}, y=${el.y}, w=${el.width}, h=${el.height}`);
+          console.log(`  [${idx}] ${el.type}: x=${el.x}, y=${el.y}, w=${el.width}, h=${el.height}, updatedAt=${el.updatedAt}`);
+        });
+        console.log('[🔴 DRAG DEBUG] saveTemplate - All elements being sent to server:');
+        state.elements.forEach((el, idx) => {
+          console.log(`  [${idx}] ${el.id} @ (${el.x}, ${el.y})`);
         });
       }
 

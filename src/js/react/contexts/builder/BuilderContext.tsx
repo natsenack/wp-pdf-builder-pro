@@ -274,10 +274,18 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
           updatedAt: new Date()  // Always update timestamp
         };
         
+        console.log('[🔴 DRAG DEBUG] UPDATE_ELEMENT reducer - Updated element:', {
+          elementId: action.payload.id,
+          newX: (action.payload.updates as any).x,
+          newY: (action.payload.updates as any).y,
+          updatedAt: updated.updatedAt
+        });
+        
         return updated;
       };
 
       const updatedElements = state.elements.map(updateElement);
+      console.log('[🔴 DRAG DEBUG] UPDATE_ELEMENT reducer - Total elements in state:', updatedElements.length);
       
       return {
         ...state,
