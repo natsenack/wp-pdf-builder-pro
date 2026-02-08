@@ -73,55 +73,7 @@ class AjaxHandler
      */
     public function ajaxGeneratePdfFromCanvas()
     {
-        try {
-            // Valider les permissions et nonce de manière unifiée
-            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
-            if (!$validation['success']) {
-                if ($validation['code'] === 'nonce_invalid') {
-                    NonceManager::sendNonceErrorResponse();
-                } else {
-                    NonceManager::sendPermissionErrorResponse();
-                }
-                return;
-            }
-
-            // Récupérer les données
-            $template_data_raw = $_POST['template_data'] ?? '';
-            $template_data_json = \PDF_Builder\Admin\Utils\Utils::sanitizeJsonInput($template_data_raw);
-            $template_data = json_decode($template_data_json, true);
-            $order_id = isset($_POST['order_id']) ? \intval($_POST['order_id']) : null;
-
-            if (!$template_data) {
-                \wp_send_json_error('Données de template manquantes');
-                return;
-            }
-
-            // Générer le PDF
-            $pdf_content = $this->admin->generateUnifiedHtml($template_data, $order_id);
-
-            if (!$pdf_content) {
-                \wp_send_json_error('Erreur lors de la génération du PDF');
-                return;
-            }
-
-            // Générer le PDF avec TCPDF ou autre
-            $pdf_generator = new \PDF_Builder\Controllers\PdfBuilderProGenerator();
-            $pdf_file = $pdf_generator->generateFromHtml($pdf_content, 'canvas_template_' . time() . '.pdf');
-
-            if (!$pdf_file) {
-                \wp_send_json_error('Erreur lors de la création du fichier PDF');
-                return;
-            }
-
-            \wp_send_json_success([
-                'pdf_url' => $pdf_file['url'],
-                'pdf_path' => $pdf_file['path'],
-                'message' => 'PDF généré avec succès'
-            ]);
-
-        } catch (Exception $e) {
-            \wp_send_json_error('Erreur: ' . $e->getMessage());
-        }
+        \wp_send_json_error('PDF generation system has been disabled');
     }
 
     /**
@@ -129,35 +81,7 @@ class AjaxHandler
      */
     public function ajaxDownloadPdf()
     {
-        try {
-            // Valider les permissions et nonce de manière unifiée
-            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
-            if (!$validation['success']) {
-                if ($validation['code'] === 'nonce_invalid') {
-                    NonceManager::sendNonceErrorResponse();
-                } else {
-                    NonceManager::sendPermissionErrorResponse();
-                }
-                return;
-            }
-
-            $pdf_path = isset($_POST['pdf_path']) ? \sanitize_text_field($_POST['pdf_path']) : '';
-
-            if (empty($pdf_path) || !file_exists($pdf_path)) {
-                \wp_send_json_error('Fichier PDF introuvable');
-                return;
-            }
-
-            // Forcer le téléchargement
-            header('Content-Type: application/pdf');
-            header('Content-Disposition: attachment; filename="' . basename($pdf_path) . '"');
-            header('Content-Length: ' . filesize($pdf_path));
-            readfile($pdf_path);
-            exit;
-
-        } catch (Exception $e) {
-            \wp_send_json_error('Erreur lors du téléchargement: ' . $e->getMessage());
-        }
+        \wp_send_json_error('PDF generation system has been disabled');
     }
 
     /**
@@ -397,40 +321,8 @@ class AjaxHandler
      */
     public function ajaxGenerateOrderPdf()
     {
-        try {
-            // Valider les permissions et nonce de manière unifiée
-            $validation = NonceManager::validateRequest(NonceManager::ADMIN_CAPABILITY);
-            if (!$validation['success']) {
-                if ($validation['code'] === 'nonce_invalid') {
-                    NonceManager::sendNonceErrorResponse();
-                } else {
-                    NonceManager::sendPermissionErrorResponse();
-                }
-                return;
-            }
-
-            $order_id = isset($_POST['order_id']) ? \absint($_POST['order_id']) : 0;
-            $template_id = isset($_POST['template_id']) ? \absint($_POST['template_id']) : 0;
-
-            if (!$order_id || !$template_id) {
-                \wp_send_json_error('ID de commande ou template manquant');
-                return;
-            }
-
-            // Générer le PDF de commande
-            $result = $this->admin->generateOrderPdf($order_id, $template_id);
-
-            if ($result && isset($result['url'])) {
-                \wp_send_json_success([
-                    'pdf_url' => $result['url'],
-                    'message' => 'PDF de commande généré avec succès'
-                ]);
-            } else {
-                \wp_send_json_error('Erreur lors de la génération du PDF de commande');
-            }
-
-        } catch (Exception $e) {
-            \wp_send_json_error('Erreur: ' . $e->getMessage());
+        \wp_send_json_error('PDF generation system has been disabled');
+    }
         }
     }
 

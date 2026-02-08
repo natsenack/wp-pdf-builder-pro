@@ -2,12 +2,12 @@ import { useEffect, useCallback, useMemo } from "react";
 import { useBuilder } from "../contexts/builder/BuilderContext";
 import { useCanvasSettings } from "../contexts/CanvasSettingsContext";
 import { LoadTemplatePayload, TemplateState } from "../types/elements";
-import { debugError, debugWarn } from "../utils/debug";
+import { debugError, debugWarn, debugLog } from "../utils/debug";
 import {
-  normalizeElementsBeforeSave,
-  normalizeElementsAfterLoad,
-  debugElementState,
-} from "../utils/elementNormalization";
+  serializeCanvasData,
+  deserializeCanvasData,
+  debugCanvasData,
+} from "../utils/CanvasPersistence";
 import { ClientNonceManager } from "../utils/ClientNonceManager";
 
 export function useTemplate() {
@@ -61,124 +61,26 @@ export function useTemplate() {
         ) {
           
           const templateData = window.pdfBuilderData.existingTemplate;
-          
-          
-          
-          
+          const templateName = templateData?.name?.trim() 
+            ? templateData.name 
+            : `[Template ${templateId}]`;
 
-          // Utiliser le nom du JSON en priorité (s'il existe et n'est pas vide), sinon le nom de la DB, sinon fallback explicite
-          const templateName =
-            templateData?.name && templateData.name.trim() !== ""
-              ? templateData.name
-              : templateData?._db_name && templateData._db_name.trim() !== ""
-              ? templateData._db_name
-              : `[NOM NON RÉCUPÉRÉ - ID: ${templateId}]`;
-          
-          // 
-
-          // Parse JSON strings if needed
-          let elements = [];
-          let canvasData = null;
-          try {
-            if (typeof templateData.elements === "string") {
-              elements = JSON.parse(templateData.elements);
-            } else if (Array.isArray(templateData.elements)) {
-              elements = templateData.elements;
-            } else {
-              elements = [];
-            }
-
-            if (templateData.canvasWidth && templateData.canvasHeight) {
-              canvasData = {
-                width: templateData.canvasWidth,
-                height: templateData.canvasHeight,
-              };
-            } else if (typeof templateData.canvas === "string") {
-              canvasData = JSON.parse(templateData.canvas);
-            } else if (
-              templateData.canvas &&
-              typeof templateData.canvas === "object"
-            ) {
-              canvasData = templateData.canvas;
-            } else {
-              canvasData = { width: 210, height: 297 };
-            }
-          } catch (parseError) {
-            debugError(
-              "❌ [LOAD TEMPLATE] Erreur de parsing des données localisées:",
-              parseError
-            );
-            elements = [];
-            canvasData = { width: 210, height: 297 };
-          }
-
-          const normalizedElements = normalizeElementsAfterLoad(
-            elements as any
-          );
-          const enrichedElements = normalizedElements.map(
-            (el: Record<string, unknown>) => {
-              let enrichedElement = { ...el };
-              if (el.type === "company_logo" && !el.src && !el.logoUrl) {
-                const logoUrl = (el.defaultSrc as string) || "";
-                if (logoUrl) {
-                  enrichedElement.src = logoUrl;
-                }
-              }
-              if (enrichedElement.createdAt) {
-                try {
-                  const createdAt = new Date(
-                    enrichedElement.createdAt as string | number | Date
-                  );
-                  enrichedElement.createdAt = isNaN(createdAt.getTime())
-                    ? new Date()
-                    : createdAt;
-                } catch {
-                  enrichedElement.createdAt = new Date();
-                }
-              } else {
-                enrichedElement.createdAt = new Date();
-              }
-              if (enrichedElement.updatedAt) {
-                try {
-                  const updatedAt = new Date(
-                    enrichedElement.updatedAt as string | number | Date
-                  );
-                  enrichedElement.updatedAt = isNaN(updatedAt.getTime())
-                    ? new Date()
-                    : updatedAt;
-                } catch {
-                  enrichedElement.updatedAt = new Date();
-                }
-              } else {
-                enrichedElement.updatedAt = new Date();
-              }
-              return enrichedElement;
-            }
+          // ✅ UTILISER LA COUCHE UNIFIÉE DE DÉSÉRIALISATION
+          const { elements, canvas } = deserializeCanvasData(
+            templateData.template_data || templateData
           );
 
-          let lastSavedDate: Date;
-          try {
-            if (templateData.updated_at) {
-              lastSavedDate = new Date(templateData.updated_at);
-              if (isNaN(lastSavedDate.getTime())) {
-                lastSavedDate = new Date();
-              }
-            } else {
-              lastSavedDate = new Date();
-            }
-          } catch {
-            lastSavedDate = new Date();
-          }
+          debugLog(`📂 LOAD - ${elements.length} éléments depuis données localisées`);
+          debugCanvasData({ elements, canvas, version: '1.0' }, 'Données chargées');
 
           dispatch({
             type: "LOAD_TEMPLATE",
             payload: {
               id: templateId,
               name: templateName,
-              elements: enrichedElements,
-              canvas: canvasData,
-              lastSaved: lastSavedDate,
-              // Restaurer les paramètres du template depuis les données chargées
+              elements,
+              canvas,
+              lastSaved: new Date(),
               showGuides: templateData.showGuides ?? true,
               snapToGrid: templateData.snapToGrid ?? false,
               marginTop: templateData.marginTop ?? 0,
@@ -322,156 +224,25 @@ export function useTemplate() {
           );
         }
 
-        // Parse JSON strings
-        let elements = [];
-        let canvasData = null;
-        try {
-          // Check if elements is already an object or needs parsing
-          if (typeof templateData.elements === "string") {
-            elements = JSON.parse(templateData.elements);
-          } else if (Array.isArray(templateData.elements)) {
-            elements = templateData.elements;
-          } else {
-            elements = [];
-          }
+        // ✅ UTILISER LA COUCHE UNIFIÉE POUR LE FALLBACK AUSSI
+        const { elements, canvas } = deserializeCanvasData(templateData);
 
-          // ✅ CORRECTION: Support both old format (canvas: {width, height}) and new format (canvasWidth, canvasHeight)
-          if (templateData.canvasWidth && templateData.canvasHeight) {
-            canvasData = {
-              width: templateData.canvasWidth,
-              height: templateData.canvasHeight,
-            };
-          } else if (typeof templateData.canvas === "string") {
-            canvasData = JSON.parse(templateData.canvas);
-          } else if (
-            templateData.canvas &&
-            typeof templateData.canvas === "object"
-          ) {
-            canvasData = templateData.canvas;
-          } else {
-            canvasData = { width: 210, height: 297 };
-          }
-        } catch (parseError) {
-          debugError("❌ [LOAD TEMPLATE] Erreur de parsing:", parseError);
-          elements = [];
-          canvasData = { width: 210, height: 297 };
-        }
-
-        // ✅ NORMALISER LES ÉLÉMENTS APRÈS CHARGE (CRITIQUE!)
-        // Cela garantit que contentAlign, labelPosition, etc. sont préservés
-        const normalizedElements = normalizeElementsAfterLoad(elements as any);
-        
-        // 🔍 AUDIT: Comparer avant/après normalisation
-        console.group('🔍 AUDIT AFTER NORMALIZATION');
-        console.log(`Nombre d'éléments après normaliseElementsAfterLoad: ${normalizedElements.length}`);
-        if (normalizedElements.length > 0) {
-          normalizedElements.slice(0, 3).forEach((el, idx) => {
-            console.group(`  Element ${idx} après normalisation (${el.type})`);
-            console.log('Propriétés:');
-            Object.entries(el).forEach(([key, value]) => {
-              if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-                console.log(`    - ${key}: ${value}`);
-              } else if (value === null || value === undefined) {
-                console.log(`    - ${key}: ${value}`);
-              } else {
-                console.log(`    - ${key}: ${typeof value}`);
-              }
-            });
-            console.groupEnd();
-          });
-        }
-        console.groupEnd();
-        
-        debugElementState(normalizedElements as any, "APRÈS CHARGEMENT");
-
-        // 🏷️ Enrichir les éléments company_logo avec src si manquant et convertir les dates
-        const enrichedElements = normalizedElements.map(
-          (el: Record<string, unknown>) => {
-            let enrichedElement = { ...el };
-
-            // ✅ CORRECTION: Enrichir les éléments company_logo SEULEMENT si src ET logoUrl sont vides
-            if (el.type === "company_logo" && !el.src && !el.logoUrl) {
-              // Essayer d'obtenir le logo depuis les propriétés de l'élément
-              const logoUrl = (el.defaultSrc as string) || "";
-              if (logoUrl) {
-                enrichedElement.src = logoUrl;
-              }
-            }
-
-            // Convertir les propriétés de date en objets Date valides
-            if (enrichedElement.createdAt) {
-              try {
-                const createdAt = new Date(
-                  enrichedElement.createdAt as string | number | Date
-                );
-                enrichedElement.createdAt = isNaN(createdAt.getTime())
-                  ? new Date()
-                  : createdAt;
-              } catch {
-                enrichedElement.createdAt = new Date();
-              }
-            } else {
-              enrichedElement.createdAt = new Date();
-            }
-
-            if (enrichedElement.updatedAt) {
-              try {
-                const updatedAt = new Date(
-                  enrichedElement.updatedAt as string | number | Date
-                );
-                enrichedElement.updatedAt = isNaN(updatedAt.getTime())
-                  ? new Date()
-                  : updatedAt;
-              } catch {
-                enrichedElement.updatedAt = new Date();
-              }
-            } else {
-              enrichedElement.updatedAt = new Date();
-            }
-
-            return enrichedElement;
-          }
-        );
-
-        enrichedElements
-          .slice(0, 3)
-          .forEach((_el: Record<string, unknown>, _idx: number) => {});
-
-        // Créer une date valide pour lastSaved
-        let lastSavedDate: Date;
-        try {
-          if (templateData.updated_at) {
-            lastSavedDate = new Date(templateData.updated_at);
-            // Vérifier si la date est valide
-            if (isNaN(lastSavedDate.getTime())) {
-              lastSavedDate = new Date();
-            }
-          } else {
-            lastSavedDate = new Date();
-          }
-        } catch {
-          lastSavedDate = new Date();
-        }
-
-        // 🔍 Log final des éléments order_number avant envoi au contexte
-        const finalOrderNumberElements = enrichedElements.filter(
-          (el: Record<string, unknown>) => el.type === "order_number"
-        );
+        debugLog(`📂 LOAD FALLBACK - ${elements.length} éléments depuis AJAX`);
+        debugCanvasData({ elements, canvas, version: '1.0' }, 'Données AJAX');
 
         dispatch({
           type: "LOAD_TEMPLATE",
           payload: {
             id: templateId,
-            name: templateName,
-            elements: enrichedElements,
-            canvas: canvasData,
-            lastSaved: lastSavedDate,
-            // Restaurer les paramètres du template depuis les données chargées
-            showGuides: templateData.showGuides ?? true,
-            snapToGrid: templateData.snapToGrid ?? false,
-            marginTop: templateData.marginTop ?? 0,
-            marginBottom: templateData.marginBottom ?? 0,
-            description: templateData.description ?? "",
+            name: templateName || `[Template ${templateId}]`,
+            elements,
+            canvas,
+            lastSaved: new Date(),
+            showGuides: (fallbackTemplateData as any)?.showGuides ?? true,
+            snapToGrid: (fallbackTemplateData as any)?.snapToGrid ?? false,
+            marginTop: (fallbackTemplateData as any)?.marginTop ?? 0,
+            marginBottom: (fallbackTemplateData as any)?.marginBottom ?? 0,
+            description: (fallbackTemplateData as any)?.description ?? "",
           } as LoadTemplatePayload,
         });
 
@@ -611,135 +382,29 @@ export function useTemplate() {
 
     try {
       const templateId = getTemplateIdFromUrl();
+      if (!templateId) throw new Error("Aucun template chargé");
+      if (!state.template.name?.trim()) return;
 
-      if (!templateId) {
-        throw new Error("Aucun template chargé pour la sauvegarde");
-      }
-
-      if (!state.template.name || state.template.name.trim() === "") {
-        return;
-      }
-
-      if (!ClientNonceManager.getAjaxUrl()) {
-        throw new Error("URL AJAX non disponible");
-      }
-
-      if (!ClientNonceManager.isValid()) {
-        throw new Error("Nonce non disponible");
-      }
-
-      // 🔍 AUDIT COMPLET: Log ce qui est dans state.elements AVANT sauvegarde
-      console.group(`🔍 AUDIT SAVE - Template ID: ${templateId}`);
-      console.log('📋 state.elements.length:', state.elements.length);
-      state.elements.forEach((el, idx) => {
-        console.group(`  Element ${idx} (${el.type})`);
-        console.log('  Propriétés sauvegardées:');
-        Object.entries(el).forEach(([key, value]) => {
-          if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-            console.log(`    - ${key}: ${value}`);
-          } else if (value === null || value === undefined) {
-            console.log(`    - ${key}: ${value}`);
-          } else {
-            console.log(`    - ${key}: ${typeof value}`);
-          }
-        });
-        console.groupEnd();
-      });
-      console.groupEnd();
-
-      const normalizedElements = normalizeElementsBeforeSave(
-        state.elements as any
-      );
-      debugElementState(normalizedElements as any, "AVANT SAUVEGARDE");
-
-      // 🔍 AUDIT: Log ce qui est VRAIMENT envoé au serveur
-      const templateData = {
-        elements: normalizedElements,
-        version: "1.0",
-        name: state.template.name,
-        description: state.template.description,
-        canvasWidth: state.template.canvasWidth || canvasSettings.canvasWidth,
-        canvasHeight: state.template.canvasHeight || canvasSettings.canvasHeight,
-        canvasUnit: canvasSettings.canvasUnit,
-        canvasOrientation: canvasSettings.canvasOrientation,
-        canvasBackgroundColor: canvasSettings.canvasBackgroundColor,
-        containerBackgroundColor: canvasSettings.containerBackgroundColor,
-        borderColor: canvasSettings.borderColor,
-        borderWidth: canvasSettings.borderWidth,
-        shadowEnabled: canvasSettings.shadowEnabled,
-        marginTop: state.template.marginTop || canvasSettings.marginTop,
-        marginRight: canvasSettings.marginRight,
-        marginBottom: state.template.marginBottom || canvasSettings.marginBottom,
-        marginLeft: canvasSettings.marginLeft,
-        showMargins: canvasSettings.showMargins,
-        gridShow: canvasSettings.gridShow,
-        gridSize: canvasSettings.gridSize,
-        gridColor: canvasSettings.gridColor,
-        gridSnapEnabled: canvasSettings.gridSnapEnabled,
-        gridSnapTolerance: canvasSettings.gridSnapTolerance,
-        guidesEnabled: canvasSettings.guidesEnabled,
-        zoomDefault: canvasSettings.zoomDefault,
-        zoomMin: canvasSettings.zoomMin,
-        zoomMax: canvasSettings.zoomMax,
-        zoomStep: canvasSettings.zoomStep,
-        navigationEnabled: canvasSettings.navigationEnabled,
-        selectionDragEnabled: canvasSettings.selectionDragEnabled,
-        selectionMultiSelectEnabled: canvasSettings.selectionMultiSelectEnabled,
-        selectionRotationEnabled: canvasSettings.selectionRotationEnabled,
-        selectionCopyPasteEnabled: canvasSettings.selectionCopyPasteEnabled,
-        selectionShowHandles: canvasSettings.selectionShowHandles,
-        selectionHandleSize: canvasSettings.selectionHandleSize,
-        selectionHandleColor: canvasSettings.selectionHandleColor,
-        canvasSelectionMode: canvasSettings.canvasSelectionMode,
-        exportQuality: canvasSettings.exportQuality,
-        exportFormat: canvasSettings.exportFormat,
-        exportCompression: canvasSettings.exportCompression,
-        exportIncludeMetadata: canvasSettings.exportIncludeMetadata,
-        historyUndoLevels: canvasSettings.historyUndoLevels,
-        historyRedoLevels: canvasSettings.historyRedoLevels,
-        showGuides: state.template.showGuides,
-        snapToGrid: state.template.snapToGrid,
-      };
-
-      console.group('📤 JSON ENVOYÉ AU SERVEUR');
-      console.log('Nombre d\'éléments:', templateData.elements.length);
-      templateData.elements.forEach((el, idx) => {
-        if (idx < 3) { // Afficher seulement les 3 premiers
-          console.log(`Element ${idx}:`, JSON.stringify(el).substring(0, 200) + '...');
+      // ✅ UTILISER LA COUCHE UNIFIÉE
+      // Sérialiser les données du canvas (éléments + canvas state)
+      const jsonData = serializeCanvasData(
+        state.elements,
+        {
+          width: state.template.canvasWidth || canvasSettings.canvasWidth,
+          height: state.template.canvasHeight || canvasSettings.canvasHeight,
         }
-      });
-      console.groupEnd();
+      );
 
+      debugLog(`💾 SAVE - ${state.elements.length} éléments, ID: ${templateId}`);
+
+      // Préparer la requête
       const formData = new FormData();
       formData.append("action", "pdf_builder_save_template");
       formData.append("template_id", templateId);
-      formData.append(
-        "template_name",
-        state.template.name || "Nouveau template"
-      );
+      formData.append("template_name", state.template.name);
       formData.append("template_description", state.template.description || "");
-      formData.append("template_data", JSON.stringify(templateData));
-
+      formData.append("template_data", jsonData);
       ClientNonceManager.addToFormData(formData);
-
-      formData.append("show_guides", state.template.showGuides ? "1" : "0");
-      formData.append("snap_to_grid", state.template.snapToGrid ? "1" : "0");
-      formData.append(
-        "margin_top",
-        (state.template.marginTop || 0).toString()
-      );
-      formData.append(
-        "margin_bottom",
-        (state.template.marginBottom || 0).toString()
-      );
-      formData.append(
-        "canvas_width",
-        (state.template.canvasWidth || canvasSettings.canvasWidth).toString()
-      );
-      formData.append(
-        "canvas_height",
-        (state.template.canvasHeight || canvasSettings.canvasHeight).toString()
-      );
 
       const response = await fetch(ClientNonceManager.getAjaxUrl(), {
         method: "POST",

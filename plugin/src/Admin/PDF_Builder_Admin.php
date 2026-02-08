@@ -156,8 +156,6 @@ class PdfBuilderAdminNew
         // Initialiser AjaxHandler APRÈS template_processor
         $this->ajax_handler = new \PDF_Builder\Admin\Handlers\AjaxHandler($this);
 
-        // PDF generation removed
-        $this->pdf_generator = null;
         $this->utils = new \PDF_Builder\Admin\Utils\Utils($this);
     }
 
