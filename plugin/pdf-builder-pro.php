@@ -2528,11 +2528,106 @@ function pdf_builder_get_template_elements_handler() {
 add_action('wp_ajax_pdf_builder_get_template_elements', 'pdf_builder_get_template_elements_handler');
 
 // ====================================================================
-// HOOKS D'ACTIVATION / DÉACTIVATION
+// ✅ NOUVEAU SYSTÈME SIMPLE DE SAUVEGARDE DIRECTE
 // ====================================================================
 
-// Enregistrer la fonction d'activation du plugin
-register_activation_hook(__FILE__, 'pdf_builder_activate');
+/**
+ * Sauvegarde template - VERSION SIMPLE (NON-AJAX d'abord pour tester)
+ */
+function pdf_builder_simple_save_template() {
+    error_log('╔═══════════════════════════════════════════════════════════════════╗');
+    error_log('║ 🔵 [SIMPLE SAVE] HANDLER CALLED                                  ║');
+    error_log('╚═══════════════════════════════════════════════════════════════════╝');
+    
+    // ✅ ÉTAPE 1: Permissions
+    if (!current_user_can('edit_posts')) {
+        error_log('❌ [SAVE] Permission denied');
+        wp_send_json_error('Permission denied', 403);
+        return;
+    }
+    error_log('✅ [SAVE] Permissions OK');
+    
+    // ✅ ÉTAPE 2: Récupérer les données
+    $template_id = intval($_POST['template_id'] ?? 0);
+    $template_name = sanitize_text_field($_POST['template_name'] ?? '');
+    $raw_data = $_POST['template_data'] ?? '';
+    
+    error_log('  Template ID: ' . $template_id);
+    error_log('  Template name: ' . $template_name);
+    error_log('  Data size: ' . strlen($raw_data) . ' bytes');
+    
+    // ✅ ÉTAPE 3: Décoder JSON
+    $template_data = json_decode($raw_data, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        error_log('❌ [SAVE] JSON decode error: ' . json_last_error_msg());
+        wp_send_json_error('JSON error');
+        return;
+    }
+    error_log('✅ [SAVE] JSON valid');
+    
+    // ✅ ÉTAPE 4: Vérifier les données
+    if (empty($template_name) || empty($template_data)) {
+        error_log('❌ [SAVE] Missing required data');
+        wp_send_json_error('Missing data');
+        return;
+    }
+    error_log('✅ [SAVE] Data validated');
+    
+    // ✅ ÉTAPE 5: Sauvegarder
+    global $wpdb;
+    
+    if ($template_id && $template_id > 0) {
+        // UPDATE existant
+        $result = $wpdb->update(
+            $wpdb->prefix . 'posts',
+            ['post_title' => $template_name, 'post_modified' => current_time('mysql')],
+            ['ID' => $template_id],
+            ['%s', '%s'],
+            ['%d']
+        );
+        
+        $meta_result = update_post_meta($template_id, '_pdf_template_data', $template_data);
+        
+        error_log('✅ [SAVE] Updated post: ' . ($result !== false ? 'YES' : 'NO'));
+        error_log('✅ [SAVE] Updated meta: ' . ($meta_result !== false ? 'YES' : 'NO'));
+        
+    } else {
+        // INSERT nouveau
+        $insert_result = wp_insert_post([
+            'post_title' => $template_name,
+            'post_type' => 'pdf_template',
+            'post_status' => 'publish',
+            'meta_input' => ['_pdf_template_data' => $template_data]
+        ]);
+        
+        if (is_wp_error($insert_result)) {
+            error_log('❌ [SAVE] Insert failed: ' . $insert_result->get_error_message());
+            wp_send_json_error('Insert failed');
+            return;
+        }
+        
+        $template_id = $insert_result;
+        error_log('✅ [SAVE] Created new post ID: ' . $template_id);
+    }
+    
+    // ✅ ÉTAPE 6: Vérification finale
+    $verify = get_post_meta($template_id, '_pdf_template_data', true);
+    $elements_count = isset($verify['elements']) ? count($verify['elements']) : 0;
+    
+    error_log('✅ [SAVE] Verification - Elements in DB: ' . $elements_count);
+    
+    // ✅ SUCCÈS
+    error_log('╔═══════════════════════════════════════════════════════════════════╗');
+    error_log('║ ✅ [SIMPLE SAVE] SUCCESS - ID: ' . str_pad($template_id . '', 20) . '            ║');
+    error_log('╚═══════════════════════════════════════════════════════════════════╝');
+    
+    wp_send_json_success([
+        'template_id' => $template_id,
+        'message' => 'Sauvegardé',
+        'elements' => $elements_count
+    ]);
+}
 
-// Enregistrer la fonction de désactivation du plugin
-register_deactivation_hook(__FILE__, 'pdf_builder_deactivate');
+add_action('wp_ajax_pdf_builder_save_template', 'pdf_builder_simple_save_template');
+
+// ====================================================================
