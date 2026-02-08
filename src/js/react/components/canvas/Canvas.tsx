@@ -1315,6 +1315,34 @@ const drawCompanyInfo = (
 ) => {
   const props = element as CompanyInfoElement;
 
+  // ✅ NOUVELLE LOGIQUE : Si l'élément a un champ "text", l'utiliser directement
+  if (element.text && element.text.trim()) {
+    // Utiliser le texte unifié avec formatage simple
+    const fontSize = props.fontSize || 12;
+    const fontFamily = props.fontFamily || "Arial";
+    const fontWeight = props.fontWeight || "normal";
+    const fontStyle = props.fontStyle || "normal";
+    const textColor = normalizeColor(props.textColor || "#000000");
+
+    ctx.fillStyle = textColor;
+    ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
+    ctx.textAlign = "left";
+
+    // Diviser le texte en lignes et les dessiner
+    const lines = element.text.split('\n');
+    let y = 20;
+
+    lines.forEach(line => {
+      if (line.trim()) {
+        ctx.fillText(line.trim(), 10, y);
+        y += fontSize * 1.2; // Espacement entre lignes
+      }
+    });
+
+    return; // Sortir car on a utilisé le texte unifié
+  }
+
+  // 🔄 ANCIENNE LOGIQUE : Utiliser les propriétés individuelles (pour compatibilité)
   // Configuration des polices
   const fontSize = props.fontSize || 12;
   const fontConfig = {
