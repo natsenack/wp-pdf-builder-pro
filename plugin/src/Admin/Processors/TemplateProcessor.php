@@ -116,75 +116,109 @@ class TemplateProcessor
     public function getDefaultInvoiceTemplate()
     {
         return array(
-            'canvas' => array(
-                'width' => 595,
-                'height' => 842,
-                'zoom' => 1,
-                'pan' => array('x' => 0, 'y' => 0)
-            ),
-            'pages' => array(
+            'elements' => array(
                 array(
-                    'margins' => array('top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20),
-                    'elements' => array(
-                        array(
-                            'id' => 'company_name',
-                            'type' => 'text',
-                            'position' => array('x' => 50, 'y' => 50),
-                            'size' => array('width' => 200, 'height' => 30),
-                            'style' => array('fontSize' => 18, 'fontWeight' => 'bold', 'color' => '#000000'),
-                            'content' => 'Ma Société'
-                        ),
-                        array(
-                            'id' => 'invoice_title',
-                            'type' => 'text',
-                            'position' => array('x' => 400, 'y' => 50),
-                            'size' => array('width' => 150, 'height' => 30),
-                            'style' => array('fontSize' => 20, 'fontWeight' => 'bold', 'color' => '#000000'),
-                            'content' => 'FACTURE'
-                        ),
-                        array(
-                            'id' => 'invoice_number',
-                            'type' => 'invoice_number',
-                            'position' => array('x' => 400, 'y' => 90),
-                            'size' => array('width' => 150, 'height' => 25),
-                            'style' => array('fontSize' => 14, 'color' => '#000000'),
-                            'content' => 'N° de facture'
-                        ),
-                        array(
-                            'id' => 'invoice_date',
-                            'type' => 'invoice_date',
-                            'position' => array('x' => 400, 'y' => 120),
-                            'size' => array('width' => 150, 'height' => 25),
-                            'style' => array('fontSize' => 14, 'color' => '#000000'),
-                            'content' => 'Date'
-                        ),
-                        array(
-                            'id' => 'customer_info',
-                            'type' => 'customer_info',
-                            'position' => array('x' => 50, 'y' => 150),
-                            'size' => array('width' => 250, 'height' => 80),
-                            'style' => array('fontSize' => 12, 'color' => '#000000'),
-                            'content' => 'Informations client'
-                        ),
-                        array(
-                            'id' => 'products_table',
-                            'type' => 'product_table',
-                            'position' => array('x' => 50, 'y' => 250),
-                            'size' => array('width' => 500, 'height' => 200),
-                            'style' => array('fontSize' => 12, 'color' => '#000000'),
-                            'content' => 'Tableau produits'
-                        ),
-                        array(
-                            'id' => 'total',
-                            'type' => 'total',
-                            'position' => array('x' => 400, 'y' => 500),
-                            'size' => array('width' => 150, 'height' => 30),
-                            'style' => array('fontSize' => 16, 'fontWeight' => 'bold', 'color' => '#000000'),
-                            'content' => 'Total'
-                        )
-                    )
+                    'id' => 'company_name',
+                    'type' => 'text',
+                    'x' => 50,
+                    'y' => 50,
+                    'width' => 200,
+                    'height' => 30,
+                    'visible' => true,
+                    'locked' => false,
+                    'rotation' => 0,
+                    'opacity' => 1,
+                    'style' => array('fontSize' => 18, 'fontWeight' => 'bold', 'color' => '#000000'),
+                    'content' => 'Ma Société'
+                ),
+                array(
+                    'id' => 'invoice_title',
+                    'type' => 'text',
+                    'x' => 400,
+                    'y' => 50,
+                    'width' => 150,
+                    'height' => 30,
+                    'visible' => true,
+                    'locked' => false,
+                    'rotation' => 0,
+                    'opacity' => 1,
+                    'style' => array('fontSize' => 20, 'fontWeight' => 'bold', 'color' => '#000000'),
+                    'content' => 'FACTURE'
+                ),
+                array(
+                    'id' => 'invoice_number',
+                    'type' => 'invoice_number',
+                    'x' => 400,
+                    'y' => 90,
+                    'width' => 150,
+                    'height' => 25,
+                    'visible' => true,
+                    'locked' => false,
+                    'rotation' => 0,
+                    'opacity' => 1,
+                    'style' => array('fontSize' => 14, 'color' => '#000000'),
+                    'content' => 'N° de facture'
+                ),
+                array(
+                    'id' => 'invoice_date',
+                    'type' => 'invoice_date',
+                    'x' => 400,
+                    'y' => 120,
+                    'width' => 150,
+                    'height' => 25,
+                    'visible' => true,
+                    'locked' => false,
+                    'rotation' => 0,
+                    'opacity' => 1,
+                    'style' => array('fontSize' => 14, 'color' => '#000000'),
+                    'content' => 'Date'
+                ),
+                array(
+                    'id' => 'customer_info',
+                    'type' => 'customer_info',
+                    'x' => 50,
+                    'y' => 150,
+                    'width' => 250,
+                    'height' => 80,
+                    'visible' => true,
+                    'locked' => false,
+                    'rotation' => 0,
+                    'opacity' => 1,
+                    'style' => array('fontSize' => 12, 'color' => '#000000'),
+                    'content' => 'Informations client'
+                ),
+                array(
+                    'id' => 'products_table',
+                    'type' => 'product_table',
+                    'x' => 50,
+                    'y' => 250,
+                    'width' => 500,
+                    'height' => 200,
+                    'visible' => true,
+                    'locked' => false,
+                    'rotation' => 0,
+                    'opacity' => 1,
+                    'style' => array('fontSize' => 12, 'color' => '#000000'),
+                    'content' => 'Tableau produits'
+                ),
+                array(
+                    'id' => 'total',
+                    'type' => 'total',
+                    'x' => 400,
+                    'y' => 500,
+                    'width' => 150,
+                    'height' => 30,
+                    'visible' => true,
+                    'locked' => false,
+                    'rotation' => 0,
+                    'opacity' => 1,
+                    'style' => array('fontSize' => 16, 'fontWeight' => 'bold', 'color' => '#000000'),
+                    'content' => 'Total'
                 )
-            )
+            ),
+            'canvasWidth' => 595,
+            'canvasHeight' => 842,
+            'version' => '1.0'
         );
     }
 

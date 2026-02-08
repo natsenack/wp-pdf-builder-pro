@@ -123,7 +123,17 @@ export function deserializeCanvasData(
 ): { elements: Element[]; canvas: CanvasState } {
   let data: any = null;
 
-
+  // Parse JSON string or use object directly
+  if (typeof jsonData === 'string') {
+    try {
+      data = JSON.parse(jsonData);
+    } catch (error) {
+      console.error('[CanvasPersistence] Failed to parse JSON data:', error);
+      data = {};
+    }
+  } else if (typeof jsonData === 'object' && jsonData !== null) {
+    data = jsonData;
+  }
 
   // Normaliser la structure (support de différentes clés ancien/nouveau)
   let elements: unknown[] = [];
