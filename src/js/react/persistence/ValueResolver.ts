@@ -84,14 +84,19 @@ const DEFAULT_TEST_PRODUCT_TABLE: ProductTableData = {
       description: 'Description du produit 2',
     },
   ],
-  fees: [],  // ✅ REFACTOR: Frais au même niveau que produits
+  fees: [
+    {
+      name: 'Frais de service',
+      total: 15.00,
+    },
+  ],  // ✅ REFACTOR: Frais au même niveau que produits
   totals: {
     subtotal: 109.97,
     shippingCost: 9.99,
     taxCost: 16.50,
     taxRate: 15,
     discount: 0,
-    total: 136.46,
+    total: 151.46,  // 109.97 + 9.99 + 16.50 + 15.00 = 151.46
   },
 };
 
