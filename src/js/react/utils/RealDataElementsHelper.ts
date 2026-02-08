@@ -128,10 +128,7 @@ export function createRealDataElement(
 export function configureRealDataElements(elements: Element[]): Element[] {
   return elements.map(el => {
     if (isRealDataElementType(el.type) && !el.isRealDataElement) {
-      console.log(`[CONFIG_REALDATA] Before: ${el.type} ${el.id} - x=${el.x}, y=${el.y}`);
-      const configured = configureRealDataElement(el);
-      console.log(`[CONFIG_REALDATA] After:  ${configured.type} ${configured.id} - x=${configured.x}, y=${configured.y}`);
-      return configured;
+      return configureRealDataElement(el);
     }
     return el;
   });

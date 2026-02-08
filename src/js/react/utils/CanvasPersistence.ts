@@ -49,70 +49,42 @@ export function serializeCanvasData(
       return null;
     }
 
-    // ✅ EXPLICIT serialization: Only copy properties we want, ensure x/y are numbers
-    // Don't use spread ...el because it can copy corrupted properties
-    const elX = typeof el.x === 'number' ? el.x : (Number(el.x) || 0);
-    const elY = typeof el.y === 'number' ? el.y : (Number(el.y) || 0);
+    // ✅ EXPLICIT serialization avec spread-first approach
+    const serialized: any = { ...el };
     
-    // 🔍 LOG: Positions avant sérialisation
-    console.log(`[SERIALIZE] El ${idx} (${String(el.id)}) BEFORE: x=${el.x} (type: ${typeof el.x}), y=${el.y} (type: ${typeof el.y})`);
-    console.log(`[SERIALIZE] El ${idx} AFTER CONVERSION: x=${elX}, y=${elY}`);
+    // Override les propriétés critiques
+    serialized.id = String(el.id || `element-${idx}`);
+    serialized.type = String(el.type || 'unknown');
+    serialized.x = typeof el.x === 'number' ? el.x : (Number(el.x) || 0);
+    serialized.y = typeof el.y === 'number' ? el.y : (Number(el.y) || 0);
+    serialized.width = typeof el.width === 'number' ? el.width : (Number(el.width) || 100);
+    serialized.height = typeof el.height === 'number' ? el.height : (Number(el.height) || 100);
+    serialized.visible = el.visible !== false;
+    serialized.locked = el.locked === true;
+    serialized.rotation = typeof el.rotation === 'number' ? el.rotation : 0;
+    serialized.opacity = typeof el.opacity === 'number' ? el.opacity : 1;
     
-    const serialized: any = {
-      // Propriétés requises
-      id: String(el.id || `element-${idx}`),
-      type: String(el.type || 'unknown'),
-      
-      // Positions - CRITICAL: Must be numbers, never undefined or NaN
-      x: elX,
-      y: elY,
-      width: typeof el.width === 'number' ? el.width : (Number(el.width) || 100),
-      height: typeof el.height === 'number' ? el.height : (Number(el.height) || 100),
-      
-      // Propriétés visibilité/interaction
-      visible: el.visible !== false,
-      locked: el.locked === true,
-      rotation: typeof el.rotation === 'number' ? el.rotation : 0,
-      opacity: typeof el.opacity === 'number' ? el.opacity : 1,
-    };
-
-    // Copier TOUTES les autres propriétés de el (styles, contenu, etc)
-    // mais sans surcharger les propriétés critiques ci-dessus
-    for (const key in el) {
-      if (el.hasOwnProperty(key)) {
-        // Skip if already set (critical properties)
-        if (['id', 'type', 'x', 'y', 'width', 'height', 'visible', 'locked', 'rotation', 'opacity'].includes(key)) {
-          continue;
-        }
-        // Skip functions and complex objects that can't be JSON serialized
-        const val = (el as any)[key];
-        if (typeof val === 'function') {
-          continue;
-        }
-        // Copy the property
-        serialized[key] = val;
+    // Supprimer les propriétés inutilisables
+    Object.keys(serialized).forEach(key => {
+      if (typeof serialized[key] === 'function' || serialized[key] === undefined) {
+        delete serialized[key];
       }
-    }
-
-    // 🔍 LOG: Positions après sérialisation
-    console.log(`[SERIALIZE] El ${idx} FINAL JSON: x=${serialized.x}, y=${serialized.y}`);
-
+    });
+    
     return serialized;
   }).filter((el): el is Element => el !== null);
 
-  // Canvas data avec défauts
+  // Canvas data
   const canvasState: CanvasState = {
     width: typeof canvas.width === 'number' ? canvas.width : 210,
     height: typeof canvas.height === 'number' ? canvas.height : 297,
   };
 
-  // Structure finale - CORRESPONDRE AU VALIDATEUR PHP
-  // PHP attend: { elements, canvasWidth, canvasHeight, version }
-  // Pas: { elements, canvas: { width, height }, version }
+  // Structure finale
   const data: any = {
     elements: cleanElements,
-    canvasWidth: canvasState.width,    // ✅ Clé attendue par PHP
-    canvasHeight: canvasState.height,  // ✅ Clé attendue par PHP
+    canvasWidth: canvasState.width,
+    canvasHeight: canvasState.height,
     version: '1.0',
   };
 
@@ -199,27 +171,16 @@ export function deserializeCanvasData(
 
     const element = el as Record<string, unknown>;
     
-    // 🔍 LOG DESERIALIZE: Check positions avant normalisation
-    console.log(`[DESERIALIZE] El ${idx} RAW from JSON: x=${element.x} (type: ${typeof element.x}), y=${element.y} (type: ${typeof element.y})`);
+    // Build with spread FIRST to keep all properties
+    const normalizedElement: any = { ...element };
     
-    const normalizedX = Number(element.x) || 0;
-    const normalizedY = Number(element.y) || 0;
-    
-    console.log(`[DESERIALIZE] El ${idx} AFTER Number(): x=${normalizedX}, y=${normalizedY}`);
-    
-    const normalizedElement: Element = {
-      // Toutes les propriétés de l'élément d'abord
-      ...element,
-      // Puis valider/corriger les propriétés clés APRÈS le spread
-      id: (element.id as string) || `element-${idx}`,
-      type: ((element.type as string) || 'unknown').replace(/-/g, '_'),
-      x: normalizedX,
-      y: normalizedY,
-      width: Number(element.width) || 100,
-      height: Number(element.height) || 100,
-    } as Element;
-
-    console.log(`[DESERIALIZE] El ${idx} FINAL after spread: x=${normalizedElement.x}, y=${normalizedElement.y}`);
+    // Then OVERRIDE critical properties
+    normalizedElement.id = (element.id as string) || `element-${idx}`;
+    normalizedElement.type = ((element.type as string) || 'unknown').replace(/-/g, '_');
+    normalizedElement.x = Number(element.x) || 0;
+    normalizedElement.y = Number(element.y) || 0;
+    normalizedElement.width = Number(element.width) || 100;
+    normalizedElement.height = Number(element.height) || 100;
 
     // ✅ NOUVEAU: Appliquer les valeurs via ValueResolver si c'est un RealDataElement
     // En mode édition: récupère les données du canvas (getProductTableFromElement)
