@@ -1639,7 +1639,7 @@ function pdf_builder_preprocess_elements_text($elements) {
 
         // Traiter les éléments company_info
         if ($element['type'] === 'company_info') {
-            $element['text'] = pdf_builder_generate_company_info_text($element);
+            $element['content'] = pdf_builder_generate_company_info_text($element);
         }
     }
 
@@ -1650,16 +1650,27 @@ function pdf_builder_preprocess_elements_text($elements) {
  * Génère le texte formaté pour un élément company_info
  */
 function pdf_builder_generate_company_info_text($element) {
-    // Récupérer les données de l'entreprise depuis les options WordPress
-    $company_name = get_option('pdf_builder_company_name', '');
-    $company_address = get_option('pdf_builder_company_address', '');
-    $company_city = get_option('pdf_builder_company_city', '');
-    $company_siret = get_option('pdf_builder_company_siret', '');
-    $company_tva = get_option('pdf_builder_company_tva', '');
-    $company_rcs = get_option('pdf_builder_company_rcs', '');
-    $company_capital = get_option('pdf_builder_company_capital', '');
-    $company_email = get_option('pdf_builder_company_email', '');
-    $company_phone = get_option('pdf_builder_company_phone', '');
+    // Récupérer d'abord les données depuis l'élément lui-même (valeurs définies dans l'éditeur)
+    $company_name = $element['companyName'] ?? '';
+    $company_address = $element['companyAddress'] ?? '';
+    $company_city = $element['companyCity'] ?? '';
+    $company_siret = $element['companySiret'] ?? '';
+    $company_tva = $element['companyTva'] ?? '';
+    $company_rcs = $element['companyRcs'] ?? '';
+    $company_capital = $element['companyCapital'] ?? '';
+    $company_email = $element['companyEmail'] ?? '';
+    $company_phone = $element['companyPhone'] ?? '';
+
+    // Si les données ne sont pas définies dans l'élément, récupérer depuis les options WordPress
+    if (empty($company_name)) $company_name = pdf_builder_get_option('pdf_builder_company_name', '');
+    if (empty($company_address)) $company_address = pdf_builder_get_option('pdf_builder_company_address', '');
+    if (empty($company_city)) $company_city = pdf_builder_get_option('pdf_builder_company_city', '');
+    if (empty($company_siret)) $company_siret = pdf_builder_get_option('pdf_builder_company_siret', '');
+    if (empty($company_tva)) $company_tva = pdf_builder_get_option('pdf_builder_company_tva', '');
+    if (empty($company_rcs)) $company_rcs = pdf_builder_get_option('pdf_builder_company_rcs', '');
+    if (empty($company_capital)) $company_capital = pdf_builder_get_option('pdf_builder_company_capital', '');
+    if (empty($company_email)) $company_email = pdf_builder_get_option('pdf_builder_company_email', '');
+    if (empty($company_phone)) $company_phone = pdf_builder_get_option('pdf_builder_company_phone', '');
 
     // Configuration d'affichage depuis l'élément
     $display_config = [
@@ -2764,6 +2775,12 @@ function pdf_builder_robust_save_template() {
         return;
     }
     error_log('[ROBUST SAVE] ✅ Data validation passed');
+    
+    // Pré-traiter les éléments pour générer le contenu textuel
+    if (isset($template_data['elements']) && is_array($template_data['elements'])) {
+        $template_data['elements'] = pdf_builder_preprocess_elements_text($template_data['elements']);
+        error_log('[ROBUST SAVE] ✅ Elements preprocessed for text generation');
+    }
     
     // 🔧 FIX: Keep data as JSON string, don't use maybe_serialize()
     // We receive JSON, we validate as array, but save as JSON to match the load path
