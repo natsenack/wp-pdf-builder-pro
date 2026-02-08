@@ -5,9 +5,7 @@ import { PropertiesPanel } from "./properties/PropertiesPanel";
 import { Header } from "./header/Header";
 import { ElementLibrary } from "./element-library/ElementLibrary";
 import { useTemplate } from "../hooks/useTemplate";
-import { useSaveStateV2 } from "../hooks/useSaveStateV2";
 import { useCanvasSettings, DEFAULT_SETTINGS } from "../contexts/CanvasSettingsContext";
-import { useElements } from "../contexts/builder/BuilderContext";
 import {
   DEFAULT_CANVAS_WIDTH,
   DEFAULT_CANVAS_HEIGHT,
@@ -127,58 +125,6 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   const canvasSettings = useCanvasSettings();
 
   debugLog("🎨 PDFBuilderContent: Canvas settings:", canvasSettings);
-
-  // ✅ AUTO-SAVE: Obtenir les éléments du canvas
-  const { elements } = useElements();
-
-  debugLog("📦 PDFBuilderContent: Elements from useElements:", {
-    elementsCount: elements.length,
-    elementIds: elements.slice(0, 3).map((el: any) => el.id)
-  });
-
-  // ✅ AUTO-SAVE: Configurer l'auto-save automatique
-  const nonce = (window as any).pdfBuilderData?.nonce || '';
-  const templateId = (window as any).pdfBuilderData?.templateId || null;
-
-  console.log('[AUTO-SAVE INIT] Starting useSaveStateV2 hook with:', {
-    templateId,
-    elementsCount: elements.length,
-    nonce: nonce ? 'DEFINED' : 'UNDEFINED'
-  });
-
-  const autoSaveConfig = useSaveStateV2({
-    templateId: templateId || undefined,
-    elements,
-    nonce,
-    autoSaveInterval: 5 * 60 * 1000, // 5 minutes entre les sauvegardes
-    onSaveStart: () => {
-      console.log('[AUTO-SAVE CALLBACK] Save started');
-      debugLog("💾 PDFBuilderContent: Auto-save started");
-    },
-    onSaveSuccess: (savedAt: string) => {
-      console.log('[AUTO-SAVE CALLBACK] Save successful at:', savedAt);
-      debugLog("✅ PDFBuilderContent: Auto-save successful at:", savedAt);
-      if (typeof window !== "undefined" && window.showSuccessNotification) {
-        window.showSuccessNotification("Auto-sauvegardé");
-      }
-    },
-    onSaveError: (error: string) => {
-      console.error('[AUTO-SAVE CALLBACK] Save error:', error);
-      debugError("❌ PDFBuilderContent: Auto-save failed:", error);
-    },
-  });
-
-  console.log('[AUTO-SAVE INIT] useSaveStateV2 hook initialized with state:', {
-    state: autoSaveConfig.state,
-    isSaving: autoSaveConfig.isSaving,
-    lastSavedAt: autoSaveConfig.lastSavedAt,
-  });
-
-  debugLog("🔄 PDFBuilderContent: Auto-save config initialized:", {
-    state: autoSaveConfig.state,
-    isSaving: autoSaveConfig.isSaving,
-    lastSavedAt: autoSaveConfig.lastSavedAt,
-  });
 
 
   // Vérifier les erreurs de chargement des paramètres du canvas
