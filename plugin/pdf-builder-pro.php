@@ -2721,6 +2721,27 @@ function pdf_builder_robust_save_template() {
         error_log('[ROBUST SAVE] Meta update result: ' . ($meta_result !== false ? 'OK' : 'FAILED'));
         $success = ($post_result !== false && $post_result >= 0);
         
+        // 🔧 FIX: ALSO save to pdf_builder_templates table (used by loadTemplateRobust)
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_templates'") == $table_templates;
+        
+        if ($table_exists) {
+            $custom_table_result = $wpdb->update(
+                $table_templates,
+                [
+                    'name' => $template_name,
+                    'template_data' => $json_data,
+                    'updated_at' => current_time('mysql')
+                ],
+                ['id' => $template_id],
+                ['%s', '%s', '%s'],
+                ['%d']
+            );
+            error_log('[ROBUST SAVE] Custom table update result: ' . ($custom_table_result !== false ? 'OK' : 'FAILED or NO CHANGE'));
+        } else {
+            error_log('[ROBUST SAVE] ⚠️  pdf_builder_templates table does NOT exist, skipping custom table save');
+        }
+        
     } else {
         // INSERT NEW
         error_log('[ROBUST SAVE] Inserting new post');
@@ -2764,6 +2785,27 @@ function pdf_builder_robust_save_template() {
         
         error_log('[ROBUST SAVE] Meta insert result: ' . ($meta_insert !== false ? 'OK' : 'FAILED'));
         $success = true;
+        
+        // 🔧 FIX: ALSO save to pdf_builder_templates table (used by loadTemplateRobust) for new templates
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_templates'") == $table_templates;
+        
+        if ($table_exists) {
+            $custom_table_insert = $wpdb->insert(
+                $table_templates,
+                [
+                    'id' => $template_id,
+                    'name' => $template_name,
+                    'template_data' => $json_data,
+                    'created_at' => current_time('mysql'),
+                    'updated_at' => current_time('mysql')
+                ],
+                ['%d', '%s', '%s', '%s', '%s']
+            );
+            error_log('[ROBUST SAVE] Custom table insert result: ' . ($custom_table_insert !== false ? 'OK' : 'FAILED'));
+        } else {
+            error_log('[ROBUST SAVE] ⚠️  pdf_builder_templates table does NOT exist, skipping custom table insert');
+        }
     }
     
     // Verify save
