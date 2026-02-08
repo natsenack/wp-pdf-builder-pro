@@ -626,6 +626,11 @@ export function useTemplate() {
       dispatch({ type: "SET_TEMPLATE_SAVING", payload: false });
     }
   }, [
+    state.elements,
+    state.template.canvasWidth,
+    state.template.canvasHeight,
+    state.template.name,
+    state.template.description,
     getTemplateIdFromUrl,
   ]);
 
