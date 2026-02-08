@@ -106,12 +106,21 @@ class PreviewDataAjax
         foreach ($order->get_items('line_item') as $item) {
             $product = $item->get_product();
             if ($product) {
+                // Récupérer l'image du produit
+                $product_image_url = '';
+                if ($product->get_image_id()) {
+                    $product_image_url = wp_get_attachment_url($product->get_image_id());
+                } else {
+                    $product_image_url = wc_placeholder_img_src('woocommerce_gallery');
+                }
+
                 $products[] = array(
                     'name'     => $item->get_name(),
                     'sku'      => $product->get_sku() ?: 'N/A',
                     'quantity' => $item->get_quantity(),
                     'price'    => floatval($item->get_total() / $item->get_quantity()),
                     'total'    => floatval($item->get_total()),
+                    'image'    => $product_image_url // NOUVEAU: URL de l'image produit
                 );
             }
         }

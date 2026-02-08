@@ -160,15 +160,35 @@ class TableRenderer
     private function getTableColumns(array $properties): array
     {
         $columnsConfig = $properties['columns'] ?? self::DEFAULT_COLUMNS;
-// Validation et normalisation des colonnes
+        
+        // Mapping des colonnes disponibles avec leurs labels et largeurs
+        $columnDefaults = [
+            'image'    => ['label' => 'Image', 'width' => '10%', 'align' => 'center'],
+            'name'     => ['label' => 'Produit', 'width' => '40%', 'align' => 'left'],
+            'sku'      => ['label' => 'SKU', 'width' => '15%', 'align' => 'left'],
+            'quantity' => ['label' => 'Qté', 'width' => '10%', 'align' => 'center'],
+            'price'    => ['label' => 'Prix', 'width' => '15%', 'align' => 'right'],
+            'total'    => ['label' => 'Total', 'width' => '15%', 'align' => 'right']
+        ];
+
+        // Validation et normalisation des colonnes
         $columns = [];
         foreach ($columnsConfig as $key => $config) {
-            $columns[$key] = [
-                'label' => $config['label'] ?? ucfirst($key),
-                'width' => $config['width'] ?? 'auto',
-                'align' => $config['align'] ?? 'left',
-                'visible' => $config['visible'] ?? true
-            ];
+            // Gérer deux formats:
+            // 1. Format simple booléen: { image: true, name: true }
+            // 2. Format complet: { image: { label: ..., width: ..., visible: true } }
+            $isVisible = $config === true || (is_array($config) && ($config['visible'] ?? true));
+            
+            if ($isVisible) {
+                $defaults = $columnDefaults[$key] ?? ['label' => ucfirst($key), 'width' => 'auto', 'align' => 'left'];
+                
+                $columns[$key] = [
+                    'label' => is_array($config) ? ($config['label'] ?? $defaults['label']) : $defaults['label'],
+                    'width' => is_array($config) ? ($config['width'] ?? $defaults['width']) : $defaults['width'],
+                    'align' => is_array($config) ? ($config['align'] ?? $defaults['align']) : $defaults['align'],
+                    'visible' => true
+                ];
+            }
         }
 
         return $columns;
@@ -266,6 +286,17 @@ class TableRenderer
     private function formatCellValue(string $columnKey, array $product, array $properties): string
     {
         switch ($columnKey) {
+            case 'image':
+                // Afficher l'image du produit
+                $image_url = $product['image'] ?? '';
+                if (!empty($image_url)) {
+                    return sprintf(
+                        '<img src="%s" alt="%s" style="max-width: 60px; max-height: 60px; object-fit: contain;">',
+                        esc_attr($image_url),
+                        esc_attr($product['name'] ?? 'Produit')
+                    );
+                }
+                return '<div style="width: 60px; height: 60px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; color: #ccc;">📷</div>';
             case 'product':
                   $name = htmlspecialchars($product['name']);
                 if (!empty($product['sku'])) {
