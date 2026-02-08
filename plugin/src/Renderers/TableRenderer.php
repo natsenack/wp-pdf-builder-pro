@@ -292,12 +292,12 @@ class TableRenderer
                 $image_url = $product['image'] ?? '';
                 if (!empty($image_url)) {
                     return sprintf(
-                        '<img src="%s" alt="%s" style="max-width: 60px; max-height: 60px; object-fit: contain;">',
+                        '<img src="%s" alt="%s" style="max-width: 40px; max-height: 40px; object-fit: contain;">',
                         esc_attr($image_url),
                         esc_attr($product['name'] ?? 'Produit')
                     );
                 }
-                return '<div style="width: 60px; height: 60px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; color: #ccc;">📷</div>';
+                return '<div style="width: 40px; height: 40px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; color: #ccc;">📷</div>';
             case 'product':
                   $name = htmlspecialchars($product['name']);
                 if (!empty($product['sku'])) {
@@ -416,8 +416,8 @@ class TableRenderer
         $css[] = '}';
 // Styles des cellules avec images (augmenter la hauteur)
         $css[] = '.pdf-product-table td:first-child img, .pdf-product-table td img {';
-        $css[] = '  max-width: 60px;';
-        $css[] = '  max-height: 60px;';
+        $css[] = '  max-width: 40px;';
+        $css[] = '  max-height: 40px;';
         $css[] = '  vertical-align: middle;';
         $css[] = '}';
 // Styles de l'en-tête
