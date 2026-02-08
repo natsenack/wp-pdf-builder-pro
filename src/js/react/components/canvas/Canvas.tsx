@@ -574,82 +574,82 @@ const drawProductTable = (
     x: number;
   }
 
-  const columns: TableColumn[] = [];
-  
-  // ✅ NEW: Ajouter la colonne 'image' en premier si activée
-  if (showImage) {
-    columns.push({
+  // ✅ NEW: Définir les largeurs de base pour TOUTES les colonnes
+  // avant de les normaliser ensemble
+  const columnDefs: Array<{
+    key: string;
+    label: string;
+    width: number;
+    align: "left" | "center" | "right";
+    show: boolean;
+  }> = [
+    {
       key: "image",
       label: "Img",
       width: 0.08,
       align: "center",
-      x: 0,
-    });
-  }
-  
-  if (showName) {
-    columns.push({
+      show: showImage,
+    },
+    {
       key: "name",
       label: "Produit",
-      width:
-        showSku && showDescription
-          ? 0.35
-          : showSku || showDescription
-          ? 0.45
-          : 0.55,
+      width: showSku && showDescription
+        ? 0.35
+        : showSku || showDescription
+        ? 0.45
+        : 0.55,
       align: "left",
-      x: 0,
-    });
-  }
-  
-  if (showSku) {
-    columns.push({
+      show: showName,
+    },
+    {
       key: "sku",
       label: "SKU",
       width: 0.15,
       align: "left",
-      x: 0,
-    });
-  }
-  
-  if (showDescription) {
-    columns.push({
+      show: showSku,
+    },
+    {
       key: "description",
       label: "Description",
       width: 0.25,
       align: "left",
-      x: 0,
-    });
-  }
-  
-  if (showQuantity) {
-    columns.push({
+      show: showDescription,
+    },
+    {
       key: "qty",
       label: "Qté",
       width: 0.08,
       align: "center",
-      x: 0,
-    });
-  }
-  
-  if (showPrice) {
-    columns.push({
+      show: showQuantity,
+    },
+    {
       key: "price",
       label: "Prix",
       width: 0.12,
       align: "right",
-      x: 0,
-    });
-  }
-  
-  if (showTotal) {
-    columns.push({
+      show: showPrice,
+    },
+    {
       key: "total",
       label: "Total",
       width: 0.12,
       align: "right",
-      x: 0,
-    });
+      show: showTotal,
+    },
+  ];
+
+  // ✅ NEW: Ajouter seulement les colonnes affichées
+  const columns: TableColumn[] = [];
+  for (const colDef of columnDefs) {
+    if (colDef.show) {
+      columns.push({
+        key: colDef.key,
+        label: colDef.label,
+        width: colDef.width,
+        align: colDef.align,
+        x: 0,
+      });
+    }
   }
 
   // Normaliser les largeurs
