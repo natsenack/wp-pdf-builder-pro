@@ -119,10 +119,16 @@ export function deserializeCanvasData(
 ): { elements: Element[]; canvas: CanvasState } {
   let data: any = null;
 
-  // Parser si string
+  // Log what we're deserializing
   if (typeof jsonData === 'string') {
+    console.log('[CanvasPersistence] DESERIALIZE - Received STRING, length:', jsonData.length);
     try {
-      data = JSON.parse(jsonData);
+      const parsed = JSON.parse(jsonData);
+      console.log('[CanvasPersistence] DESERIALIZE - Parsed JSON, elements count:', parsed?.elements?.length || 0);
+      if (parsed?.elements && parsed.elements[0]) {
+        console.log('[CanvasPersistence] DESERIALIZE - First element x/y:', { x: parsed.elements[0].x, y: parsed.elements[0].y });
+      }
+      data = parsed;
     } catch (error) {
       console.error('[CanvasPersistence] Erreur parsing JSON:', error);
       return { elements: [], canvas: { width: 210, height: 297 } };
@@ -251,6 +257,11 @@ export function deserializeCanvasData(
     }
 
     normalizedElements.push(normalizedElement);
+  }
+
+  // Log final avant return
+  if (normalizedElements.length > 0 && normalizedElements[0].x !== undefined) {
+    console.log('[CanvasPersistence] DESERIALIZE - RETURN - First element x/y:', { x: normalizedElements[0].x, y: normalizedElements[0].y });
   }
 
   // Canvas state normalisé
