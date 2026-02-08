@@ -2550,7 +2550,7 @@ function pdf_builder_simple_save_template() {
     // ✅ ÉTAPE 2: Récupérer les données
     $template_id = intval($_POST['template_id'] ?? 0);
     $template_name = sanitize_text_field($_POST['template_name'] ?? '');
-    $raw_data = $_POST['template_data'] ?? '';
+    $raw_data = wp_unslash($_POST['template_data'] ?? '');
     
     error_log('  Template ID: ' . $template_id);
     error_log('  Template name: ' . $template_name);
