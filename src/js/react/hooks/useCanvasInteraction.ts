@@ -277,9 +277,11 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
       // 🔍 LOG DEBUG
       if (elementId.includes('logo')) {
         console.log(`[🔍 DRAG UPDATE] Element ${elementId}:`, {
-          element_keys: Object.keys(element),
-          updates_keys: Object.keys(completeUpdates),
-          completeUpdates
+          x: finalX,
+          y: finalY,
+          width: element.width,
+          height: element.height,
+          logoUrl: (elementAsRecord.logoUrl as string) || 'N/A'
         });
       }
 

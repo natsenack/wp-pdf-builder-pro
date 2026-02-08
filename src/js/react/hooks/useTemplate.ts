@@ -506,6 +506,20 @@ export function useTemplate() {
 
       debugLog(`💾 SAVE - ${state.elements.length} éléments, ID: ${templateId}`);
 
+      // 🔍 LOG: Vérifier ce qui est sauvegardé
+      const parsedJson = JSON.parse(jsonData);
+      const logoElement = parsedJson.elements.find((el: any) => el.type === 'company_logo');
+      if (logoElement) {
+        console.log(`[💾 SAVE JSON] Logo element data:`, {
+          id: logoElement.id,
+          x: logoElement.x,
+          y: logoElement.y,
+          width: logoElement.width,
+          height: logoElement.height,
+          logoUrl: logoElement.logoUrl
+        });
+      }
+
       // Préparer la requête
       const formData = new FormData();
       formData.append("action", "pdf_builder_save_template");

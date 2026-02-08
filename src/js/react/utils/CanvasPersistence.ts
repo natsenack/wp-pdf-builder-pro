@@ -51,26 +51,29 @@ export function serializeCanvasData(
       return null;
     }
 
+    // ✅ CRITICAL FIX: D'abord le spread, PUIS on écrase avec les valeurs validées
+    // Cela évite que `...el` écrase les valeurs par défaut
     const serialized = {
-      // Propriétés de base (toujours présentes)
+      ...el,  // ← SPREADER EN PREMIER pour avoir toutes les propriétés
+      
+      // Propriétés de base (validées et garanties de présence)
       id: el.id || `element-${idx}`,
       type: el.type || 'unknown',
-      x: typeof el.x === 'number' ? el.x : 0,
-      y: typeof el.y === 'number' ? el.y : 0,
+      x: typeof el.x === 'number' ? el.x : 0,      // ← valider ET écraser
+      y: typeof el.y === 'number' ? el.y : 0,      // ← valider ET écraser
       width: typeof el.width === 'number' ? el.width : 100,
       height: typeof el.height === 'number' ? el.height : 100,
-
-      // Propriétés spécifiques (preservées telles quelles via spread)
-      ...el,
     };
 
     // 🔍 LOG DEBUG
     if (el.type === 'company_logo') {
       console.log(`[🔍 SERIALIZE] Element ${el.id} (${el.type}):`, {
-        original_keys: Object.keys(el),
-        original: el,
-        serialized_keys: Object.keys(serialized),
-        serialized
+        x: serialized.x,
+        y: serialized.y,
+        width: serialized.width,
+        height: serialized.height,
+        logoUrl: serialized.logoUrl,
+        all_keys: Object.keys(serialized).sort()
       });
     }
 
