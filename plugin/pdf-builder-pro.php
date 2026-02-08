@@ -2535,7 +2535,7 @@ add_action('wp_ajax_pdf_builder_get_template_elements', 'pdf_builder_get_templat
  * Raw request logger - fired FIRST before any processing
  */
 function pdf_builder_ajax_debug_log() {
-    if ($_POST['action'] === 'pdf_builder_save_template') {
+    if (isset($_POST['action']) && $_POST['action'] === 'pdf_builder_save_template') {
         error_log('═══════════════════════════════════════════════════════════════════');
         error_log('[DEBUG] RAW AJAX REQUEST RECEIVED');
         error_log('[DEBUG] Time: ' . date('Y-m-d H:i:s.u'));
