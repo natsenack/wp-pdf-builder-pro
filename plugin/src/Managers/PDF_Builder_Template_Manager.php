@@ -422,6 +422,15 @@ class PDF_Builder_Template_Manager
                 }
 
                 if ($existing_template) {
+                    // LOG: Vérifier ce qu'on va sauvegarder
+                    error_log('[PDF_SAVE] Template ID: ' . $template_id);
+                    error_log('[PDF_SAVE] Data length: ' . strlen($template_data));
+                    $parsed = json_decode($template_data, true);
+                    error_log('[PDF_SAVE] Elements count: ' . count($parsed['elements'] ?? []));
+                    if (!empty($parsed['elements'])) {
+                        error_log('[PDF_SAVE] First element: ' . json_encode($parsed['elements'][0]));
+                    }
+                    
                     // Mise à jour dans la table personnalisée
                     $result = $wpdb->update(
                         $table_templates,
@@ -438,6 +447,8 @@ class PDF_Builder_Template_Manager
                     if ($result === false) {
                         throw new \Exception('Erreur de mise à jour dans la table personnalisée: ' . $wpdb->last_error);
                     }
+                    
+                    error_log('[PDF_SAVE] Update result: ' . ($result !== false ? 'SUCCESS' : 'FAILED'));
                     
                     // Decode template data for thumbnail generation
                     $saved_decoded = json_decode($template_data, true);
