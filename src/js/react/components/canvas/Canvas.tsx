@@ -529,16 +529,42 @@ const drawProductTable = (
     total: 0,
   };
 
-  // Utiliser les valeurs des totals (NEW structure)
-  const shippingCost = totals.shippingCost || 0;
-  const taxRate = totals.taxRate || 0;
-  const globalDiscount = totals.discount || 0;
   const currency = "€";
 
-  // ✅ NEW: Les calculs sont déjà faits dans totals, utiliser directement
-  const subtotal = totals.subtotal || 0;
-  const taxAmount = totals.taxCost || 0;
-  const finalTotal = totals.total || 0;
+  // ✅ RECALCUL DYNAMIQUE: Recalculer les totals en fonction des propriétés actives
+  // et des valeurs réelles de l'élément
+  
+  // Lire les valeurs de base depuis les totals ou les propriétés directes
+  let shippingCost = totals.shippingCost || (props.shippingCost as any) || 0;
+  let taxRate = totals.taxRate || (props.taxRate as any) || 0;
+  let globalDiscount = totals.discount || (props.globalDiscount as any) || 0;
+  
+  // Calculer le sous-total à partir des produits
+  const subtotal = products.reduce((sum, p) => sum + (p.total || 0), 0);
+  
+  // Recalculer les taxes si actif, sinon zéro
+  let taxAmount = 0;
+  if (showTax && taxRate > 0) {
+    // Appliquer la TVA sur : sous-total + frais de port - remise globale
+    const taxableBase = subtotal + shippingCost - globalDiscount;
+    taxAmount = (taxableBase * taxRate) / 100;
+  }
+  
+  // Réappliquer la remise globale seulement si elle est affichée
+  if (!showGlobalDiscount) {
+    globalDiscount = 0;
+  }
+  
+  // Réappliquer frais de port seulement s'ils sont affichés
+  if (!showShipping) {
+    shippingCost = 0;
+  }
+  
+  // Ajouter les frais supplémentaires si présents
+  const totalFees = fees.reduce((sum, f) => sum + (f.total || 0), 0);
+  
+  // Calculer le TOTAL FINAL: subtotal + frais de port + TVA + frais supplémentaires - remise
+  const finalTotal = subtotal + shippingCost + taxAmount + totalFees - globalDiscount;
 
   // Configuration des colonnes
   interface TableColumn {
