@@ -70,6 +70,9 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     lastUpdate: Date.now()
   });
 
+  // ✅ Throttling for drag updates
+  const lastUpdateTimeRef = useRef<number>(0);
+
   // ✅ CORRECTION 5: Dernier state connu pour éviter closure stale
   const lastKnownStateRef = useRef(state);
 
@@ -189,7 +192,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   // ✅ OPTIMISATION FLUIDITÉ: Fonction pour effectuer les updates de drag avec RAF
   const performDragUpdate = useCallback(() => {
     if (!pendingDragUpdateRef.current) {
-      rafIdRef.current = null;
       return;
     }
 
@@ -199,7 +201,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     // ✅ MODIFICATION: Gérer le drag multiple
     const selectedIds = lastState.selection.selectedElements;
     if (selectedIds.length === 0) {
-      rafIdRef.current = null;
       return;
     }
 
@@ -295,7 +296,6 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     });
 
     pendingDragUpdateRef.current = null;
-    rafIdRef.current = null;
   }, [dispatch, canvasWidth, canvasHeight]);
 
   // ✅ OPTIMISATION FLUIDITÉ: Fonction pour effectuer les updates de rotation avec RAF
@@ -1154,11 +1154,11 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
     if (isDraggingRef.current && selectedElementRef.current) {
       // ✅ OPTIMISATION FLUIDITÉ: Pour le drag multiple, passer directement les coordonnées actuelles de la souris
       // performDragUpdate calculera la nouvelle position pour chaque élément individuellement
-      pendingDragUpdateRef.current = { x, y };
-
-      // Programmer l'update avec RAF limité si pas déjà programmé
-      if (rafIdRef.current === null) {
-        rafIdRef.current = requestAnimationFrameLimited(performDragUpdate);
+      const now = Date.now();
+      if (now - lastUpdateTimeRef.current > 16) {
+        pendingDragUpdateRef.current = { x, y };
+        performDragUpdate();
+        lastUpdateTimeRef.current = now;
       }
     } else if (isResizingRef.current && selectedElementRef.current && resizeHandleRef.current) {
       debugLog(`[CanvasInteraction] Resizing element ${selectedElementRef.current} with handle ${resizeHandleRef.current} at (${x.toFixed(1)}, ${y.toFixed(1)})`);

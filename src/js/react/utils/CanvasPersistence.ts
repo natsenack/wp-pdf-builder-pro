@@ -179,14 +179,15 @@ export function deserializeCanvasData(
 
     const element = el as Record<string, unknown>;
     const normalizedElement: Element = {
+      // Toutes les propriétés de l'élément d'abord
+      ...element,
+      // Puis valider/corriger les propriétés clés APRÈS le spread
       id: (element.id as string) || `element-${idx}`,
       type: ((element.type as string) || 'unknown').replace(/-/g, '_'),
       x: Number(element.x) || 0,
       y: Number(element.y) || 0,
       width: Number(element.width) || 100,
       height: Number(element.height) || 100,
-      // Toutes les autres propriétés préservées
-      ...element,
     } as Element;
 
     // ✅ NOUVEAU: Appliquer les valeurs via ValueResolver si c'est un RealDataElement

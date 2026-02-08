@@ -148,6 +148,12 @@ export function initPDFBuilderReact() {
   // console.log('🚀 [WORDPRESS-ENTRY] initPDFBuilderReact FUNCTION CALLED - STARTING INITIALIZATION');
   addDebugToDOM('💥 initPDFBuilderReact STARTED at ' + new Date().toISOString());
 
+  // Check if already initialized globally
+  if ((window as any).pdfBuilderReactInitialized) {
+    addDebugToDOM('✅ Already initialized globally, returning true');
+    return true;
+  }
+
   try {
     // Step 1: Check container
     const container = document.getElementById('pdf-builder-react-root');
@@ -236,6 +242,9 @@ export function initPDFBuilderReact() {
       root.render(<PDFBuilder />);
       
       addDebugToDOM('✅ PDFBuilder rendered');
+
+      // Mark as initialized globally
+      (window as any).pdfBuilderReactInitialized = true;
     } catch (renderError) {
       const error = renderError instanceof Error ? renderError : new Error(String(renderError));
       

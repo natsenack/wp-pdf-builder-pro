@@ -576,6 +576,14 @@ export function useTemplate() {
         },
       });
 
+      // Update window.pdfBuilderData to reflect the latest saved data
+      // This prevents issues if the component re-mounts and loads old data
+      if (window.pdfBuilderData && window.pdfBuilderData.existingTemplate) {
+        window.pdfBuilderData.existingTemplate.template_data = jsonData;
+        window.pdfBuilderData.existingTemplate.name = state.template.name;
+        window.pdfBuilderData.existingTemplate.description = state.template.description || "";
+      }
+
       return true;
     } catch (error) {
       debugError("[PDF_BUILDER_FRONTEND] Save failed:", error);
