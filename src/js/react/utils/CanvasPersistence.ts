@@ -49,18 +49,18 @@ export function serializeCanvasData(
       return null;
     }
 
-    // ✅ CRITICAL FIX: D'abord le spread, PUIS on écrase avec les valeurs validées
-    // Cela évite que `...el` écrase les valeurs par défaut
+    // Spreader d'abord pour avoir TOUTES les propriétés, puis valider positions
     const serialized = {
-      ...el,  // ← SPREADER EN PREMIER pour avoir toutes les propriétés
+      ...el,  // Spreader en premier
       
-      // Propriétés de base (validées et garanties de présence)
+      // Valider les propriétés clés
       id: el.id || `element-${idx}`,
       type: el.type || 'unknown',
-      x: typeof el.x === 'number' ? el.x : 0,      // ← valider ET écraser
-      y: typeof el.y === 'number' ? el.y : 0,      // ← valider ET écraser
-      width: typeof el.width === 'number' ? el.width : 100,
-      height: typeof el.height === 'number' ? el.height : 100,
+      // Positions: convertir en nombre, ne jamais reset à 0 si undefined
+      x: el.x !== undefined ? (typeof el.x === 'number' ? el.x : parseFloat(String(el.x)) || 0) : 0,
+      y: el.y !== undefined ? (typeof el.y === 'number' ? el.y : parseFloat(String(el.y)) || 0) : 0,
+      width: el.width !== undefined ? (typeof el.width === 'number' ? el.width : parseFloat(String(el.width)) || 100) : 100,
+      height: el.height !== undefined ? (typeof el.height === 'number' ? el.height : parseFloat(String(el.height)) || 100) : 100,
     };
 
     return serialized;
@@ -85,14 +85,9 @@ export function serializeCanvasData(
   // Retourner en JSON
   try {
     const json = JSON.stringify(data);
-    console.log('[CanvasPersistence] JSON serialization complete, length:', json.length);
-    
-    // Verify positions are in the JSON
-    const parsed = JSON.parse(json);
     return json;
   } catch (error) {
-    console.error('[CanvasPersistence] Erreur sérialisation:', error);
-    return JSON.stringify({ elements: [], canvas: canvasState, version: '1.0' });
+    return JSON.stringify({ elements: [], canvasWidth: canvasState.width, canvasHeight: canvasState.height, version: '1.0' });
   }
 }
 

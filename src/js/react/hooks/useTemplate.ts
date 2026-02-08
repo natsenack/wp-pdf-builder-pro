@@ -464,8 +464,7 @@ export function useTemplate() {
       if (!templateId) throw new Error("Aucun template chargé");
       if (!state.template.name?.trim()) return;
 
-      // ✅ UTILISER LA COUCHE UNIFIÉE
-      // Sérialiser les données du canvas (éléments + canvas state)
+      // Sérialiser les données du canvas
       const jsonData = serializeCanvasData(
         state.elements,
         {
@@ -473,7 +472,6 @@ export function useTemplate() {
           height: state.template.canvasHeight || canvasSettings.canvasHeight,
         }
       );
-
       debugLog(`💾 SAVE - ${state.elements.length} éléments, ID: ${templateId}`);
 
       // Préparer la requête
@@ -485,18 +483,44 @@ export function useTemplate() {
       formData.append("template_data", jsonData);
       ClientNonceManager.addToFormData(formData);
 
+      // 🔍 LOG 3: AVANT requête AJAX
+      console.log('[💾 SAVE DIAGNOSTIC] Envoi AJAX:', {
+        url: ClientNonceManager.getAjaxUrl(),
+        templateId,
+        templateName: state.template.name,
+        templateDataLength: jsonData.length,
+        nonce: ClientNonceManager.getCurrentNonce()
+      });
+
       const response = await fetch(ClientNonceManager.getAjaxUrl(), {
         method: "POST",
         body: formData,
       });
 
+      // 🔍 LOG 4: APRÈS réponse AJAX
+      console.log('[💾 SAVE DIAGNOSTIC] Réponse HTTP:', {
+        status: response.status,
+        statusText: response.statusText,
+        headers: {
+          contentType: response.headers.get('content-type')
+        }
+      });
+
       if (!response.ok) {
         const errorText = await response.text();
         debugError('[SAVE] HTTP Error:', response.status, errorText);
+        console.error('[💾 SAVE DIAGNOSTIC] HTTP Error body:', errorText);
         throw new Error(`Erreur HTTP: ${response.status}`);
       }
 
       const result = await response.json();
+
+      // 🔍 LOG 5: Réponse du serveur
+      console.log('[💾 SAVE DIAGNOSTIC] Réponse serveur:', {
+        success: result.success,
+        data: result.data,
+        error: result.error
+      });
 
       if (!result.success) {
         debugError('[SAVE] Save failed:', result.data);
