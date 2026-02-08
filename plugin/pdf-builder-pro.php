@@ -2755,7 +2755,8 @@ function pdf_builder_robust_save_template() {
     // Verify save
     error_log('[ROBUST SAVE] Verifying save...');
     $verify = get_post_meta($template_id, '_pdf_template_data', true);
-    $verify_array = maybe_unserialize($verify);
+    // ✅ FIX: We save as JSON, so decode as JSON (not maybe_unserialize)
+    $verify_array = json_decode($verify, true);
     $verify_count = is_array($verify_array) && isset($verify_array['elements']) ? count($verify_array['elements']) : 0;
     
     error_log('[ROBUST SAVE] ✅ Verification: ' . $verify_count . ' elements in database');

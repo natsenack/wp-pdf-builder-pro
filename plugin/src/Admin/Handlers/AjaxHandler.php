@@ -45,8 +45,9 @@ class AjaxHandler
     {
         // Hook AJAX unifié principal - point d'entrée unique pour toutes les actions de sauvegarde
         \add_action('wp_ajax_pdf_builder_ajax_handler', [$this, 'ajaxUnifiedHandler']);
-        \add_action('wp_ajax_pdf_builder_save_template_v3', [$this, 'ajaxSaveTemplateV3']);
-        \add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
+        // DISABLED: Use pdf_builder_robust_save_template() instead (pdf-builder-pro.php line 2785)
+        // \add_action('wp_ajax_pdf_builder_save_template_v3', [$this, 'ajaxSaveTemplateV3']);
+        // \add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajaxSaveTemplateV3']);
         \add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajaxLoadTemplate']);
         \add_action('wp_ajax_pdf_builder_get_template', [$this, 'ajaxGetTemplate']);
         \add_action('wp_ajax_pdf_builder_get_fresh_nonce', [$this, 'ajaxGetFreshNonce']);
