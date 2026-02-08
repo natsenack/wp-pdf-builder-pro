@@ -252,31 +252,38 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
             </div>
             <div style={{ paddingLeft: '8px' }}>
               <Toggle
-                checked={element.showSku !== false}
-                onChange={(checked) => onChange(element.id, 'showSku', checked)}
-                label="Afficher les SKU"
-                description="Colonne des références produit"
+                checked={(element.columns?.image ?? true) === true}
+                onChange={(checked) => onChange(element.id, 'columns', { ...(element.columns || {}), image: checked })}
+                label="Afficher les images"
+                description="Colonne des images produits"
               />
 
               <Toggle
-                checked={element.showDescription !== false}
-                onChange={(checked) => onChange(element.id, 'showDescription', checked)}
-                label="Afficher les descriptions"
-                description="Colonne des descriptions courtes"
+                checked={(element.columns?.name ?? true) === true}
+                onChange={(checked) => onChange(element.id, 'columns', { ...(element.columns || {}), name: checked })}
+                label="Afficher les noms"
+                description="Colonne des noms de produits"
               />
 
               <Toggle
-                checked={element.showQuantity !== false}
-                onChange={(checked) => onChange(element.id, 'showQuantity', checked)}
+                checked={(element.columns?.quantity ?? true) === true}
+                onChange={(checked) => onChange(element.id, 'columns', { ...(element.columns || {}), quantity: checked })}
                 label="Afficher la quantité"
                 description="Colonne quantité des produits"
               />
 
               <Toggle
-                checked={element.showImage !== false}
-                onChange={(checked) => onChange(element.id, 'showImage', checked)}
-                label="Afficher les images"
-                description="Colonne des images produits"
+                checked={(element.columns?.price ?? true) === true}
+                onChange={(checked) => onChange(element.id, 'columns', { ...(element.columns || {}), price: checked })}
+                label="Afficher les prix"
+                description="Colonne prix unitaire"
+              />
+
+              <Toggle
+                checked={(element.columns?.total ?? true) === true}
+                onChange={(checked) => onChange(element.id, 'columns', { ...(element.columns || {}), total: checked })}
+                label="Afficher les totaux"
+                description="Colonne montants totaux"
               />
             </div>
           </div>

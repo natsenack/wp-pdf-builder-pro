@@ -87,10 +87,30 @@ const repairProductTableProperties = (elements: Element[]): Element[] => {
     textColor: '#374151'
   };
 
+  const defaultColumns = {
+    image: true,
+    name: true,
+    quantity: true,
+    price: true,
+    total: true
+  };
+
   return elements.map(element => {
     if (element.type !== 'product_table') return element;
 
     const repairedElement = { ...element } as Element & ProductTableProperties;
+
+    // ✅ Ajouter les colonnes manquantes avec défauts
+    if (!repairedElement.columns || typeof repairedElement.columns !== 'object') {
+      (repairedElement as Record<string, unknown>).columns = { ...defaultColumns };
+    } else {
+      // Remplir les colonnes manquantes avec les défauts
+      Object.keys(defaultColumns).forEach(col => {
+        if (!(col in (repairedElement.columns || {}))) {
+          (repairedElement.columns as Record<string, boolean>)[col] = defaultColumns[col as keyof typeof defaultColumns];
+        }
+      });
+    }
 
     // Ajouter les propriétés manquantes
     Object.keys(defaultProperties).forEach(prop => {
