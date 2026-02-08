@@ -63,7 +63,7 @@ export const useCanvasInteraction = ({ canvasRef, canvasWidth = 794, canvasHeigh
   // ✅ SYSTÈME PARAMÈTRES: FPS limiting et monitoring de performance
   const lastFrameTimeRef = useRef<number>(0);
   const frameCountRef = useRef<number>(0);
-  const fpsIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const fpsIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const performanceMetricsRef = useRef({
     fps: 0,
     memoryUsage: 0,

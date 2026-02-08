@@ -190,7 +190,7 @@ export function deserializeCanvasData(
         isRealDataElement: true,
         testValue: normalizedElement.defaultTestValue,
         realDataKey: normalizedElement.realDataKey,
-        element: normalizedElement,  // ✅ Passer l'élément pour que getValue() puisse récupérer les données du canvas
+        element: normalizedElement as any,  // ✅ Cast to any for flexibility with different element types
       };
 
       const resolvedValue = resolver.getValue(config);
@@ -202,30 +202,30 @@ export function deserializeCanvasData(
         if (tableData && typeof tableData === 'object') {
           // Injecter les produits
           if (Array.isArray(tableData.products)) {
-            normalizedElement.products = tableData.products;
+            (normalizedElement as any).products = tableData.products;
           }
           // ✅ REFACTOR: Injecter les frais au même niveau que produits (pas dans totals)
           if (Array.isArray(tableData.fees)) {
-            normalizedElement.fees = tableData.fees;
+            (normalizedElement as any).fees = tableData.fees;
           }
           // Injecter les totaux
           if (tableData.totals) {
-            normalizedElement.totals = tableData.totals;
+            (normalizedElement as any).totals = tableData.totals;
             // Aussi mettre à jour les propriétés individuelles pour compatibilité
-            normalizedElement.shippingCost = tableData.totals.shippingCost;
-            normalizedElement.taxRate = tableData.totals.taxRate;
-            normalizedElement.globalDiscount = tableData.totals.discount;
+            (normalizedElement as any).shippingCost = tableData.totals.shippingCost;
+            (normalizedElement as any).taxRate = tableData.totals.taxRate;
+            (normalizedElement as any).globalDiscount = tableData.totals.discount;
           }
         }
       } else if (normalizedElement.type === 'customer_info') {
         // Pour customer_info, mettre à jour le contenu/metadata
-        normalizedElement.metadata = {
-          ...(normalizedElement.metadata || {}),
+        (normalizedElement as any).metadata = {
+          ...(normalizedElement as any).metadata || {},
           customerData: resolvedValue,
         };
       } else if (normalizedElement.type === 'company_info' || normalizedElement.type === 'order_number') {
         // Pour company_info et order_number, mettre à jour content/text
-        normalizedElement.content = String(resolvedValue || normalizedElement.defaultTestValue || '');
+        (normalizedElement as any).content = String(resolvedValue || normalizedElement.defaultTestValue || '');
       }
     }
 
@@ -273,12 +273,13 @@ export function validateCanvasData(data: CanvasData): {
     });
   }
 
-  // Canvas
-  if (!data.canvas) {
-    errors.push('Canvas manquant');
-  } else {
-    if (!data.canvas.width) errors.push('Canvas: width manquant');
-    if (!data.canvas.height) errors.push('Canvas: height manquant');
+  // Canvas - Utiliser les bonnes clés (canvasWidth, canvasHeight, pas canvas.width/height)
+  const anyData = data as any;
+  if (typeof anyData.canvasWidth !== 'number') {
+    errors.push('Canvas: canvasWidth invalide');
+  }
+  if (typeof anyData.canvasHeight !== 'number') {
+    errors.push('Canvas: canvasHeight invalide');
   }
 
   return {

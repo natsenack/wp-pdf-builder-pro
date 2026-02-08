@@ -492,15 +492,14 @@ export function useTemplate() {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('[SAVE] HTTP Error:', response.status, errorText);
+        debugError('[SAVE] HTTP Error:', response.status, errorText);
         throw new Error(`Erreur HTTP: ${response.status}`);
       }
 
       const result = await response.json();
-      console.log('[SAVE] AJAX response:', result);
 
       if (!result.success) {
-        console.error('[SAVE] Save failed:', result.data);
+        debugError('[SAVE] Save failed:', result.data);
         if (result.data?.code === "nonce_invalid") {
           try {
             let freshNonce = result.data?.nonce;

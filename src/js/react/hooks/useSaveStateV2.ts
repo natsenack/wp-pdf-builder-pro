@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
 import { Element } from '../types/elements';
 import { debugError, debugSave, debugLog } from '../utils/debug';
+import { serializeCanvasData } from '../utils/CanvasPersistence';
 
 /**
  * Hook simplifié pour auto-save
@@ -66,10 +67,10 @@ export function useSaveStateV2({
 
   // Refs pour tracking
   const elementsHashRef = useRef<string>('');
-  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const saveRequestTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const savedStateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const autoSaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveRequestTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const savedStateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastSaveTimeRef = useRef<number>(0);
   const inProgressRef = useRef<boolean>(false);
 
@@ -152,49 +153,41 @@ export function useSaveStateV2({
         setProgress(Math.min(90, currentProgress));
       }, 150);
 
-      // Nettoyer les éléments
-      const cleanElements = elements.map(el => {
-        const cleaned: Record<string, unknown> = {};
-        Object.keys(el).forEach(key => {
-          if (typeof el[key as keyof Element] !== 'function' && !key.startsWith('__')) {
-            cleaned[key] = el[key as keyof Element];
-          }
-        });
-        return cleaned;
+      // ✅ CRITICAL FIX: Use the unified persistence layer
+      // This ensures consistency with deserialization and the PHP backend
+      const canvasWidth = (window as any).pdfBuilderData?.canvasWidth || 794;
+      const canvasHeight = (window as any).pdfBuilderData?.canvasHeight || 1123;
+
+      // Utiliser la couche unifiée de sérialisation
+      const serializedData = serializeCanvasData(elements, {
+        width: canvasWidth,
+        height: canvasHeight,
       });
 
-      // 🔍 DEBUG: Log elements being sent
-
-      if (cleanElements.length > 0) {
-        debugSave('[SAVE V2] Éléments nettoyés à envoyer:', cleanElements.length, 'éléments');
-        debugSave('[SAVE V2] Premier élément exemple:', cleanElements[0]);
-
-        // Check for company_logo specifically
-        cleanElements.forEach((el, idx) => {
-          const elType = (el as Record<string, unknown>)?.type;
-          const elSrc = (el as Record<string, unknown>)?.src;
-          if (elType === 'company_logo') {
-
-          }
-        });
+      // Parser pour validation
+      let templateStructure: Record<string, unknown>;
+      try {
+        templateStructure = JSON.parse(serializedData);
+      } catch (e) {
+        throw new Error(`Erreur lors du parsing des données sérialisées: ${e}`);
       }
 
-      // Faire la requête
+      if (!templateStructure.elements || !Array.isArray(templateStructure.elements)) {
+        throw new Error('Éléments manquants après sérialisation');
+      }
+
+      debugSave('[SAVE V2] Éléments sérialisés:', (templateStructure.elements as unknown[]).length, 'éléments');
+      debugSave('[SAVE V2] canvasWidth:', templateStructure.canvasWidth, 'canvasHeight:', templateStructure.canvasHeight);
+
+      // ✅ CRITICAL FIX: Get AJAX URL from window object (consistent with frontend)
       const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
       debugLog('[PDF Builder] useSaveStateV2 - URL AJAX:', ajaxUrl);
-
-      const templateStructure = {
-        elements: cleanElements,
-        canvasWidth: 794, // Default A4 width in pixels
-        canvasHeight: 1123, // Default A4 height in pixels
-        version: '1.0'
-      };
 
       const requestBody = new URLSearchParams({
         'action': 'pdf_builder_save_template',
         'nonce': nonce,
         'template_id': templateId.toString(),
-        'template_data': JSON.stringify(templateStructure),
+        'template_data': serializedData,  // ✅ Utiliser directement serializedData au lieu de re-stringify
         'template_name': `Template ${templateId.toString()}`
       });
 
@@ -202,7 +195,7 @@ export function useSaveStateV2({
         action: 'pdf_builder_save_template',
         nonce: nonce ? 'DEFINED' : 'UNDEFINED',
         template_id: templateId.toString(),
-        template_data_length: JSON.stringify(templateStructure).length,
+        template_data_length: serializedData.length,  // ✅ Utiliser la longueur directe
         template_name: `Template ${templateId.toString()}`
       });
 
@@ -237,17 +230,8 @@ export function useSaveStateV2({
       const data = await response.json();
       debugLog('[PDF Builder] useSaveStateV2 - Données JSON reçues:', data);
 
-      if (data.data?.elements_saved) {
-        debugSave('[SAVE V2] Réponse serveur - éléments sauvegardés:', data.data.elements_saved.length);
-
-        if (data.data.elements_saved.length > 0) {
-
-          data.data.elements_saved.forEach((el: any, idx: number) => {
-            if (el?.type === 'company_logo') {
-
-            }
-          });
-        }
+      if (data.data?.element_count !== undefined) {
+        debugSave('[SAVE V2] Réponse serveur - éléments sauvegardés:', data.data.element_count);
       }
       if (!data.success) {
         throw new Error(data.data?.message || 'Erreur serveur');
