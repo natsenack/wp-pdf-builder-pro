@@ -17,7 +17,8 @@ import { ValueResolver, type RealOrderData, type ElementValueConfig } from '../p
 
 export interface CanvasData {
   elements: Element[];
-  canvas: CanvasState;
+  canvasWidth: number;   // ✅ Propriété attendue par le validateur PHP
+  canvasHeight: number;  // ✅ Propriété attendue par le validateur PHP
   version: string;
 }
 
@@ -70,10 +71,13 @@ export function serializeCanvasData(
     height: typeof canvas.height === 'number' ? canvas.height : 297,
   };
 
-  // Structure finale
-  const data: CanvasData = {
+  // Structure finale - CORRESPONDRE AU VALIDATEUR PHP
+  // PHP attend: { elements, canvasWidth, canvasHeight, version }
+  // Pas: { elements, canvas: { width, height }, version }
+  const data: any = {
     elements: cleanElements,
-    canvas: canvasState,
+    canvasWidth: canvasState.width,    // ✅ Clé attendue par PHP
+    canvasHeight: canvasState.height,  // ✅ Clé attendue par PHP
     version: '1.0',
   };
 
