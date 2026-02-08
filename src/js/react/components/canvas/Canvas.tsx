@@ -547,10 +547,12 @@ const drawProductTable = (
   }
   
   // 5) Recalculer les taxes (avec les valeurs finales après flags)
+  // ⚠️ ATTENTION: La remise NE s'applique PAS au calcul de TVA
+  // TVA = (subtotal + frais) * taux, puis la remise s'applique APRÈS
   let taxAmount = 0;
   if (taxRate > 0 && showTax) {
-    // Appliquer la TVA sur : sous-total + frais de port - remise globale
-    const taxableBase = subtotal + shippingCost - globalDiscount;
+    // Appliquer la TVA sur : sous-total + frais de port SEULEMENT (pas sur remise)
+    const taxableBase = subtotal + shippingCost;
     taxAmount = (taxableBase * taxRate) / 100;
   }
   
