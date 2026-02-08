@@ -321,49 +321,89 @@ export const Header = memo(function Header({
 
     setIsGeneratingHtml(true);
     try {
-      console.log('[JSON TO HTML] Starting conversion via PHP endpoint');
+      console.log('[PREVIEW] Générant aperçu du canvas...');
 
-      // Prepare template data
-      const templateData = {
-        canvasWidth,
-        canvasHeight,
-        elements: state.elements || []
-      };
+      // Récupérer le canvas
+      const canvas = document.querySelector('canvas');
+      if (!canvas) {
+        throw new Error('Canvas non trouvé');
+      }
 
-      // Call PHP endpoint to render HTML
-      const response = await fetch((window as any).ajaxurl || '/wp-admin/admin-ajax.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          action: 'pdf_builder_render_template_html',
-          template_data: JSON.stringify(templateData),
-          order_data: JSON.stringify({}) // Add order data if available
-        })
-      });
+      // Convertir en image PNG
+      const imageData = canvas.toDataURL('image/png');
 
-      const result = await response.json();
+      // Créer l'HTML simple
+      const html = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aperçu - ${templateName || 'Template'}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      padding: 20px;
+      background: #f5f5f5;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .preview {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      max-width: 900px;
+    }
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ddd;
+    }
+    .info {
+      margin-top: 20px;
+      padding: 12px;
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 4px;
+      color: #155724;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="preview">
+      <img src="${imageData}" alt="Aperçu du template" />
+      <div class="info">
+        ✅ Cet aperçu montre exactement ce que tu vois dans l'éditeur
+      </div>
+    </div>
+  </div>
+</body>
+</html>`;
 
-      if (result.success && result.data.html) {
-        console.log('[JSON TO HTML] HTML generated successfully');
-
-        // Open in new window
-        const newWindow = window.open('', '_blank');
-        if (newWindow) {
-          newWindow.document.write(result.data.html);
-          newWindow.document.close();
-        }
+      // Ouvrir dans une nouvelle fenêtre
+      const newWindow = window.open('', '_blank');
+      if (newWindow) {
+        newWindow.document.write(html);
+        newWindow.document.close();
+        console.log('[PREVIEW] Aperçu généré avec succès');
       } else {
-        throw new Error(result.data?.error || 'Failed to generate HTML');
+        throw new Error('Impossible d\'ouvrir une nouvelle fenêtre');
       }
     } catch (error) {
-      console.error('[JSON TO HTML] Error:', error);
+      console.error('[PREVIEW] Erreur:', error);
       alert(`❌ Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
     } finally {
       setIsGeneratingHtml(false);
     }
-  }, [isGeneratingHtml, state.elements, canvasWidth, canvasHeight, templateName]);
+  }, [isGeneratingHtml, templateName]);
 
   const buttonBaseStyles = {
     padding: "10px 16px",
