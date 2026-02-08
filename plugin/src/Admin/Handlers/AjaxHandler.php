@@ -323,8 +323,6 @@ class AjaxHandler
     {
         \wp_send_json_error('PDF generation system has been disabled');
     }
-        }
-    }
 
     /**
      * Vérifier la base de données
