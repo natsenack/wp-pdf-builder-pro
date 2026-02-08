@@ -1984,22 +1984,7 @@ export const Header = memo(function Header({
 
         <button
           onClick={() => {
-            console.log('[REACT HEADER] ===== APERÇU BUTTON CLICKED =====');
-            console.log('[REACT HEADER] Aperçu button clicked - opening preview modal');
-            console.log('[REACT HEADER] Current state before opening modal:');
-            console.log('[REACT HEADER] - showPreviewModal:', showPreviewModal);
-            console.log('[REACT HEADER] - isGeneratingPreview:', isGeneratingPreview);
-            console.log('[REACT HEADER] - previewImageUrl:', previewImageUrl);
-            console.log('[REACT HEADER] - previewError:', previewError);
-            console.log('[REACT HEADER] - previewFormat:', previewFormat);
-            console.log('[REACT HEADER] - Template state elements count:', state.elements?.length || 0);
-            console.log('[REACT HEADER] - Template state has content:', !!(state.elements && state.elements.length > 0));
-            console.log('[REACT HEADER] - usePreview hook available:', typeof usePreview);
-            console.log('[REACT HEADER] - openModal function available:', typeof openPreviewModal);
-            console.log('[REACT HEADER] About to call openPreviewModal()');
             openPreviewModal();
-            console.log('[REACT HEADER] openPreviewModal() called successfully');
-            console.log('[REACT HEADER] ===== APERÇU BUTTON CLICK HANDLER COMPLETED =====');
           }}
           onMouseEnter={() => setHoveredButton("preview")}
           onMouseLeave={() => setHoveredButton(null)}
@@ -2950,40 +2935,16 @@ export const Header = memo(function Header({
                 <div style={{ marginBottom: "20px" }}>
                   <button
                     onClick={async () => {
-                      console.log('[HEADER COMPONENT] ===== MODAL PREVIEW BUTTON CLICKED =====');
-                      console.log('[HEADER COMPONENT] Preview button clicked in modal');
-                      console.log('[HEADER COMPONENT] Timestamp:', Date.now());
-                      console.log('[HEADER COMPONENT] State template:', state.template);
-                      console.log('[HEADER COMPONENT] State template ID:', state.template?.id);
-                      console.log('[HEADER COMPONENT] State elements:', state.elements);
-                      console.log('[HEADER COMPONENT] State elements count:', state.elements?.length || 0);
-                      console.log('[HEADER COMPONENT] Preview format:', previewFormat);
-                      console.log('[HEADER COMPONENT] Is generating:', isGeneratingPreview);
-                      console.log('[HEADER COMPONENT] generatePreview function available:', typeof generatePreview);
-                      console.log('[HEADER COMPONENT] About to call generatePreview');
-
-                      await generatePreview(
-                        {
-                          ...state.template,
-                          elements: state.elements,
-                          template_id: state.template?.id || window.pdfBuilderData?.templateId || null,
-                        },
-                        {
-                          format: previewFormat,
-                          quality: 150,
-                        }
-                      );
-
-                      console.log('[HEADER COMPONENT] generatePreview call completed');
+                      // Preview generation would go here
                     }}
-                    disabled={isGeneratingPreview}
+                    disabled={false}
                     style={{
                       padding: "12px 24px",
-                      backgroundColor: isGeneratingPreview ? "#ccc" : "#007cba",
+                      backgroundColor: "#007cba",
                       color: "#fff",
                       border: "none",
                       borderRadius: "6px",
-                      cursor: isGeneratingPreview ? "not-allowed" : "pointer",
+                      cursor: "pointer",
                       fontSize: "16px",
                       fontWeight: "500",
                       display: "flex",
@@ -2991,17 +2952,10 @@ export const Header = memo(function Header({
                       gap: "8px",
                     }}
                   >
-                    {isGeneratingPreview ? (
-                      <>
-                        <span>⟳</span>
-                        <span>Génération en cours...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>🎨</span>
-                        <span>Générer l&apos;aperçu</span>
-                      </>
-                    )}
+                    <>
+                      <span>🎨</span>
+                      <span>Générer l&apos;aperçu</span>
+                    </>
                   </button>
                 </div>
 

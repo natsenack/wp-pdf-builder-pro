@@ -59,7 +59,6 @@ const pdfBuilderReactAPI = {
       }
       return false;
     } catch (error) {
-      console.error('[PDF Builder] Error destroying React app:', error);
       return false;
     }
   }
@@ -68,12 +67,7 @@ const pdfBuilderReactAPI = {
 // Make API globally available
 if (typeof window !== 'undefined') {
   window.pdfBuilderReact = pdfBuilderReactAPI;
-  console.log('[PDF Builder] window.pdfBuilderReact API assigned');
-} else {
-  console.error('[PDF Builder] Window not available - cannot assign global API');
 }
-
-console.log('[PDF Builder] ===== REACT APP INITIALIZATION COMPLETE =====');
 
 // Export for potential module usage
 export default pdfBuilderReactAPI;

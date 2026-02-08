@@ -355,15 +355,8 @@ class AdminScriptLoader
                     const root = document.getElementById('pdf-builder-react-root');
                     if (root && root.children.length === 0) {
                         if (window.pdfBuilderReact && window.pdfBuilderReact.initPDFBuilderReact) {
-                            console.log('🔍 [FOOTER INIT CHECK] Calling manual init...');
                             window.pdfBuilderReact.initPDFBuilderReact('pdf-builder-react-root');
-                        } else {
-                            console.log('🔍 [FOOTER INIT CHECK] pdfBuilderReact not available for manual init');
                         }
-                    } else if (root && root.children.length > 0) {
-                        console.log('🔍 [FOOTER INIT CHECK] Root has children, app seems initialized');
-                    } else {
-                        console.log('🔍 [FOOTER INIT CHECK] Root not found or no children');
                     }
                 }, 1000);
                 </script>
@@ -835,20 +828,20 @@ class AdminScriptLoader
         // Add a safety check script that forces initialization
         wp_add_inline_script('pdf-builder-react-executor', '
             window.__pdfBuilderReactBundleLoaded = true;
-            console.log("[BUNDLE CHECK] Bundle loaded, pdfBuilderReact available:", typeof window.pdfBuilderReact);
+
 
             // If still not available after 100ms, something is wrong with the bundle
             setTimeout(function() {
                 if (!window.pdfBuilderReact) {
-                    console.warn("[BUNDLE CHECK] pdfBuilderReact not found, checking webpack export");
+
                     // Check if webpack exported it as window.pdfBuilderReact
                     if (window.pdfBuilderReact) {
-                        console.log("[BUNDLE CHECK] Found webpack export!");
+
                     } else {
-                        console.warn("[BUNDLE CHECK] pdfBuilderReact not found, creating fallback");
+
                         window.pdfBuilderReact = {
                             initPDFBuilderReact: function() {
-                                console.error("[BUNDLE] Error: React bundle failed to initialize");
+
                                 return false;
                             },
                             _isFallback: true,
@@ -965,7 +958,6 @@ class AdminScriptLoader
         // AJOUTER UN TEST DE CHARGEMENT DES SCRIPTS REACT
         wp_add_inline_script('jquery', '
             (function() {
-                console.log("🔍 [DOM CHECK] Starting DOM script check...");
                 
                 // Vérifier immédiatement si les scripts sont dans le DOM
                 setTimeout(function() {
