@@ -272,14 +272,33 @@ export function useTemplate() {
           );
         }
 
+        // 🔍 AUDIT COMPLET: Log ce qui arrive du serveur
+        console.group(`🔍 AUDIT LOAD - Template ID: ${templateId}`);
+        console.log('📥 Données reçues du serveur:');
+        const templateData = result.data || {};
+        console.log('  - Nombre d\'éléments:', Array.isArray(templateData.elements) ? templateData.elements.length : 'N/A');
         
-        
-        
-        
+        if (Array.isArray(templateData.elements)) {
+          templateData.elements.forEach((el, idx) => {
+            if (idx < 3) {
+              console.group(`    Element ${idx} (${el.type})`);
+              console.log('    Propriétés reçues:');
+              Object.entries(el).forEach(([key, value]) => {
+                if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+                  console.log(`      - ${key}: ${value}`);
+                } else if (value === null || value === undefined) {
+                  console.log(`      - ${key}: ${value}`);
+                } else {
+                  console.log(`      - ${key}: ${typeof value}`);
+                }
+              });
+              console.groupEnd();
+            }
+          });
+        }
+        console.groupEnd();
 
-        const templateData = result.data
-          ? result.data.template
-          : result.template;
+        // 🔍 Récupérer les éléments du templateData pour parsing
         const ajaxTemplateName = result.data
           ? result.data.template_name || result.data.name
           : result.name || result.template_name;
@@ -341,6 +360,28 @@ export function useTemplate() {
         // ✅ NORMALISER LES ÉLÉMENTS APRÈS CHARGE (CRITIQUE!)
         // Cela garantit que contentAlign, labelPosition, etc. sont préservés
         const normalizedElements = normalizeElementsAfterLoad(elements as any);
+        
+        // 🔍 AUDIT: Comparer avant/après normalisation
+        console.group('🔍 AUDIT AFTER NORMALIZATION');
+        console.log(`Nombre d'éléments après normaliseElementsAfterLoad: ${normalizedElements.length}`);
+        if (normalizedElements.length > 0) {
+          normalizedElements.slice(0, 3).forEach((el, idx) => {
+            console.group(`  Element ${idx} après normalisation (${el.type})`);
+            console.log('Propriétés:');
+            Object.entries(el).forEach(([key, value]) => {
+              if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+                console.log(`    - ${key}: ${value}`);
+              } else if (value === null || value === undefined) {
+                console.log(`    - ${key}: ${value}`);
+              } else {
+                console.log(`    - ${key}: ${typeof value}`);
+              }
+            });
+            console.groupEnd();
+          });
+        }
+        console.groupEnd();
+        
         debugElementState(normalizedElements as any, "APRÈS CHARGEMENT");
 
         // 🏷️ Enrichir les éléments company_logo avec src si manquant et convertir les dates
@@ -566,113 +607,82 @@ export function useTemplate() {
 
   // Sauvegarder un template manuellement
   const saveTemplate = useCallback(async () => {
-    // 
     dispatch({ type: "SET_TEMPLATE_SAVING", payload: true });
 
     try {
       const templateId = getTemplateIdFromUrl();
-      // 
 
       if (!templateId) {
         throw new Error("Aucun template chargé pour la sauvegarde");
       }
 
-      // Vérifier que le template est complètement chargé
       if (!state.template.name || state.template.name.trim() === "") {
-        // 
-        return; // Ne pas lancer d'erreur, juste ignorer
+        return;
       }
-
-      // 
 
       if (!ClientNonceManager.getAjaxUrl()) {
         throw new Error("URL AJAX non disponible");
       }
 
       if (!ClientNonceManager.isValid()) {
-        
         throw new Error("Nonce non disponible");
       }
 
-      
-      
-      
+      // 🔍 AUDIT COMPLET: Log ce qui est dans state.elements AVANT sauvegarde
+      console.group(`🔍 AUDIT SAVE - Template ID: ${templateId}`);
+      console.log('📋 state.elements.length:', state.elements.length);
+      state.elements.forEach((el, idx) => {
+        console.group(`  Element ${idx} (${el.type})`);
+        console.log('  Propriétés sauvegardées:');
+        Object.entries(el).forEach(([key, value]) => {
+          if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+            console.log(`    - ${key}: ${value}`);
+          } else if (value === null || value === undefined) {
+            console.log(`    - ${key}: ${value}`);
+          } else {
+            console.log(`    - ${key}: ${typeof value}`);
+          }
+        });
+        console.groupEnd();
+      });
+      console.groupEnd();
 
-      // ✅ NORMALISER LES ÉLÉMENTS AVANT SAUVEGARDE
-      // Cela garantit que contentAlign, labelPosition, etc. ne sont jamais perdus
       const normalizedElements = normalizeElementsBeforeSave(
         state.elements as any
       );
       debugElementState(normalizedElements as any, "AVANT SAUVEGARDE");
 
-      // 🔍 DEBUG: Log complet des propriétés des éléments avant sauvegarde
-      // 
-      // 
-
-      // Vérifier les propriétés spéciales
-      normalizedElements.forEach((el, idx) => {
-        // 
-        // Chercher des propriétés avec emoji ou "interactions"
-        Object.keys(el).forEach((key) => {
-          if (
-            key.includes("🎯") ||
-            key.includes("interactions") ||
-            key.includes("comportement") ||
-            key.includes("behavior")
-          ) {
-            // 
-          }
-        });
-      });
-
-      // Structure complète pour la sauvegarde avec TOUS les styles et paramètres de mise en page
+      // 🔍 AUDIT: Log ce qui est VRAIMENT envoé au serveur
       const templateData = {
-        // Éléments avec tous leurs styles préservés
         elements: normalizedElements,
-        
-        // Version
         version: "1.0",
-        
-        // Paramètres du template
         name: state.template.name,
         description: state.template.description,
-        
-        // ========== DIMENSIONS & ORIENTATION ==========
         canvasWidth: state.template.canvasWidth || canvasSettings.canvasWidth,
         canvasHeight: state.template.canvasHeight || canvasSettings.canvasHeight,
         canvasUnit: canvasSettings.canvasUnit,
         canvasOrientation: canvasSettings.canvasOrientation,
-        
-        // ========== COULEURS & APPARENCE ==========
         canvasBackgroundColor: canvasSettings.canvasBackgroundColor,
         containerBackgroundColor: canvasSettings.containerBackgroundColor,
         borderColor: canvasSettings.borderColor,
         borderWidth: canvasSettings.borderWidth,
         shadowEnabled: canvasSettings.shadowEnabled,
-        
-        // ========== MARGES & ESPACES ==========
         marginTop: state.template.marginTop || canvasSettings.marginTop,
         marginRight: canvasSettings.marginRight,
         marginBottom: state.template.marginBottom || canvasSettings.marginBottom,
         marginLeft: canvasSettings.marginLeft,
         showMargins: canvasSettings.showMargins,
-        
-        // ========== GRILLE & GUIDES ==========
         gridShow: canvasSettings.gridShow,
         gridSize: canvasSettings.gridSize,
         gridColor: canvasSettings.gridColor,
         gridSnapEnabled: canvasSettings.gridSnapEnabled,
         gridSnapTolerance: canvasSettings.gridSnapTolerance,
         guidesEnabled: canvasSettings.guidesEnabled,
-        
-        // ========== ZOOM & NAVIGATION ==========
         zoomDefault: canvasSettings.zoomDefault,
         zoomMin: canvasSettings.zoomMin,
         zoomMax: canvasSettings.zoomMax,
         zoomStep: canvasSettings.zoomStep,
         navigationEnabled: canvasSettings.navigationEnabled,
-        
-        // ========== SÉLECTION & INTERACTION ==========
         selectionDragEnabled: canvasSettings.selectionDragEnabled,
         selectionMultiSelectEnabled: canvasSettings.selectionMultiSelectEnabled,
         selectionRotationEnabled: canvasSettings.selectionRotationEnabled,
@@ -681,21 +691,24 @@ export function useTemplate() {
         selectionHandleSize: canvasSettings.selectionHandleSize,
         selectionHandleColor: canvasSettings.selectionHandleColor,
         canvasSelectionMode: canvasSettings.canvasSelectionMode,
-        
-        // ========== EXPORT ==========
         exportQuality: canvasSettings.exportQuality,
         exportFormat: canvasSettings.exportFormat,
         exportCompression: canvasSettings.exportCompression,
         exportIncludeMetadata: canvasSettings.exportIncludeMetadata,
-        
-        // ========== HISTORIQUE ==========
         historyUndoLevels: canvasSettings.historyUndoLevels,
         historyRedoLevels: canvasSettings.historyRedoLevels,
-        
-        // ========== COMPORTEMENT DE L'ÉDITEUR ==========
         showGuides: state.template.showGuides,
         snapToGrid: state.template.snapToGrid,
       };
+
+      console.group('📤 JSON ENVOYÉ AU SERVEUR');
+      console.log('Nombre d\'éléments:', templateData.elements.length);
+      templateData.elements.forEach((el, idx) => {
+        if (idx < 3) { // Afficher seulement les 3 premiers
+          console.log(`Element ${idx}:`, JSON.stringify(el).substring(0, 200) + '...');
+        }
+      });
+      console.groupEnd();
 
       const formData = new FormData();
       formData.append("action", "pdf_builder_save_template");
@@ -707,13 +720,14 @@ export function useTemplate() {
       formData.append("template_description", state.template.description || "");
       formData.append("template_data", JSON.stringify(templateData));
 
-      // Utiliser le gestionnaire de nonce unifié
       ClientNonceManager.addToFormData(formData);
 
-      // Ajouter les paramètres du template
       formData.append("show_guides", state.template.showGuides ? "1" : "0");
       formData.append("snap_to_grid", state.template.snapToGrid ? "1" : "0");
-      formData.append("margin_top", (state.template.marginTop || 0).toString());
+      formData.append(
+        "margin_top",
+        (state.template.marginTop || 0).toString()
+      );
       formData.append(
         "margin_bottom",
         (state.template.marginBottom || 0).toString()
@@ -737,37 +751,25 @@ export function useTemplate() {
       }
 
       const result = await response.json();
-      
-      
-      
 
       if (!result.success) {
-        // Gestion d'erreur nonce - tentative de récupération automatique
         if (result.data?.code === "nonce_invalid") {
-          
-
           try {
-            // ✅ CORRECTION: Utiliser le nonce frais fourni par le serveur dans la réponse d'erreur
             let freshNonce = result.data?.nonce;
-            
 
             if (!freshNonce) {
-              // Fallback: si le serveur n'a pas fourni de nonce, en récupérer un nouveau
               freshNonce = await ClientNonceManager.refreshNonce(
                 ClientNonceManager.getCurrentNonce() || undefined
               );
             } else {
-              // Utiliser le nonce frais du serveur
               ClientNonceManager.setNonce(freshNonce);
             }
 
             if (freshNonce) {
-              
-              // ✅ CORRECTION: Refaire la SAUVEGARDE (pas le chargement!) avec le nouveau nonce
               return await saveTemplate();
             }
           } catch (nonceError) {
-            
+            // error
           }
         }
 
@@ -776,7 +778,8 @@ export function useTemplate() {
         );
       }
 
-      // Sauvegarde réussie
+      console.log('✅ SAUVEGARDE RÉUSSIE');
+
       dispatch({
         type: "SAVE_TEMPLATE",
         payload: {
@@ -794,10 +797,6 @@ export function useTemplate() {
       dispatch({ type: "SET_TEMPLATE_SAVING", payload: false });
     }
   }, [
-    state.elements,
-    state.template.name,
-    dispatch,
-    canvasSettings,
     getTemplateIdFromUrl,
   ]);
 
