@@ -337,7 +337,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
         <>
           {/* Accordéon Disposition */}
           <Accordion title="Disposition" defaultOpen={true}>
-            <div style={{ marginBottom: '0' }}>
+            <div style={{ marginBottom: '12px' }}>
               <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
                 Type de disposition
               </label>
@@ -356,6 +356,18 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
                 <option value="horizontal">Horizontale</option>
                 <option value="compact">Compacte</option>
               </select>
+            </div>
+
+            {/* ✅ NEW: Padding control */}
+            <div style={{ marginBottom: '0' }}>
+              <NumericPropertyInput
+                label="Padding interne (px)"
+                value={element.padding || 12}
+                defaultValue={12}
+                min={0}
+                max={50}
+                onChange={(value) => onChange(element.id, 'padding', value)}
+              />
             </div>
           </Accordion>
 

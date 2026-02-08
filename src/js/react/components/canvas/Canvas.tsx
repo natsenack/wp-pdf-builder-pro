@@ -205,14 +205,14 @@ const applyShapeStyle = (ctx: CanvasRenderingContext2D, colors: ReturnType<typeo
 };
 
 // Fonction helper pour calculer la position X selon l'alignement du texte
-const calculateTextAlignX = (element: Element, align: string = "left") => {
+const calculateTextAlignX = (element: Element, align: string = "left", padding: number = 0) => {
   switch (align) {
     case "center":
       return element.width / 2;
     case "right":
-      return element.width;
+      return element.width - padding;
     default:
-      return 0;
+      return padding;
   }
 };
 
@@ -280,8 +280,11 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
 
   setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign, props.verticalAlign);
 
-  const x = calculateTextAlignX(element, props.textAlign);
-  const y = calculateTextY(element, props.verticalAlign, fontConfig.size, 0);
+  // ✅ NEW: Ajouter du padding
+  const padding = props.padding || 12;
+
+  const x = calculateTextAlignX(element, props.textAlign, padding);
+  const y = calculateTextY(element, props.verticalAlign, fontConfig.size, padding);
 
   ctx.fillText(props.text || "Text", x, y);
 };
@@ -1073,6 +1076,8 @@ const drawCustomerInfo = (
   const fontFamily = props.fontFamily || "Arial";
   const fontWeight = props.fontWeight || "normal";
   const fontStyle = props.fontStyle || "normal";
+  // ✅ NEW: Ajouter du padding
+  const padding = props.padding || 12;
   // Propriétés de police pour l'en-tête
   const headerFontSize = props.headerFontSize || fontSize + 2;
   const headerFontFamily = props.headerFontFamily || fontFamily;
@@ -1173,7 +1178,7 @@ const drawCustomerInfo = (
       compactText += (compactText ? " • " : "") + customerData.phone;
     
     // Wrap text if too long
-    const maxWidth = element.width - 20;
+    const maxWidth = element.width - (padding * 2);
     const words = compactText.split(" ");
     let line = "";
     for (let i = 0; i < words.length; i++) {
@@ -1198,13 +1203,13 @@ const drawCustomerInfo = (
   let startY: number;
   switch (verticalAlign) {
     case "middle":
-      startY = Math.max(10, (element.height - totalContentHeight) / 2);
+      startY = Math.max(padding, (element.height - totalContentHeight) / 2);
       break;
     case "bottom":
-      startY = Math.max(10, element.height - totalContentHeight - 10);
+      startY = Math.max(padding, element.height - totalContentHeight - padding);
       break;
     default: // top
-      startY = 10;
+      startY = padding;
   }
 
   let y = startY;
@@ -1212,7 +1217,7 @@ const drawCustomerInfo = (
   // En-tête
   if (showHeaders) {
     ctx.fillStyle = normalizeColor(props.headerTextColor || "#111827");
-    ctx.fillText("Informations Client", 10, y);
+    ctx.fillText("Informations Client", padding, y);
     y += 25;
     ctx.fillStyle = normalizeColor(props.textColor || "#000000");
   }
@@ -1221,7 +1226,7 @@ const drawCustomerInfo = (
 
   // Dessiner les lignes
   lines.forEach((lineText) => {
-    ctx.fillText(lineText, 10, y);
+    ctx.fillText(lineText, padding, y);
     y += 18;
   });
 };

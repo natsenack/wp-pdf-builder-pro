@@ -600,6 +600,8 @@ export interface CustomerInfoElementProperties extends BaseElementProperties {
   showHeaders?: boolean;
   showBorders?: boolean;
   showFullName?: boolean;
+  // ✅ NEW: Padding interne
+  padding?: number;
   // Propriétés de style
   headerTextColor?: string;
   verticalAlign?: 'top' | 'middle' | 'bottom';
@@ -808,6 +810,8 @@ export interface CustomerInfoElement extends BaseElement {
   showHeaders?: boolean;
   showBorders?: boolean;
   showFullName?: boolean;
+  // ✅ NEW: Padding interne
+  padding?: number;
   // Propriétés de style
   headerTextColor?: string;
   verticalAlign?: 'top' | 'middle' | 'bottom';

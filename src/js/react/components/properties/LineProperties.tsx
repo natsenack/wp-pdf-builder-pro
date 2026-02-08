@@ -191,6 +191,17 @@ export function LineProperties({ element, onChange, activeTab, setActiveTab }: L
             />
           </div>
           )}
+
+          <div style={{ marginBottom: '12px' }}>
+            <NumericPropertyInput
+              label="Padding interne (px)"
+              value={element.padding || 12}
+              defaultValue={12}
+              min={0}
+              max={50}
+              onChange={(value) => onChange(element.id, 'padding', value)}
+            />
+          </div>
         </>
       )}
     </>

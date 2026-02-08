@@ -320,6 +320,17 @@ export function TextProperties({ element, onChange, activeTab, setActiveTab }: T
           </div>
 
           <div style={{ marginBottom: '12px' }}>
+            <NumericPropertyInput
+              label="Padding interne (px)"
+              value={element.padding || 12}
+              defaultValue={12}
+              min={0}
+              max={50}
+              onChange={(value) => onChange(element.id, 'padding', value)}
+            />
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
               Opacité <span style={{ color: '#666', fontSize: '10px' }}>({Math.round((element.opacity || 1) * 100)}%)</span>
             </label>
