@@ -1337,6 +1337,14 @@ if (file_exists($templates_ajax_path)) {
     require_once $templates_ajax_path;
 }
 
+// Inclure le handler pour les données d'aperçu (preview avec données réelles)
+$preview_data_ajax_path = PDF_BUILDER_PLUGIN_DIR . 'src/AJAX/PreviewDataAjax.php';
+if (file_exists($preview_data_ajax_path)) {
+    require_once $preview_data_ajax_path;
+    // ✅ CRUCIAL: Instancier la classe pour enregistrer l'action AJAX
+    new \PDF_Builder\AJAX\PreviewDataAjax();
+}
+
 // ============================================================================
 // INITIALISER LES PARAMÈTRES CANVAS PAR DÉFAUT
 // ============================================================================

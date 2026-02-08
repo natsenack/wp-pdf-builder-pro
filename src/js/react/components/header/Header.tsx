@@ -103,17 +103,58 @@ export const Header = memo(function Header({
     availableOrientations: ["portrait", "landscape"],
   });
 
-  // Preview system removed
-  const showPreviewModal = false;
-  const openPreviewModal = () => {};
-  const closePreviewModal = () => {};
-  const isGeneratingPreview = false;
-  const previewImageUrl = null;
-  const previewError = null;
-  const previewFormat = "pdf";
-  const setPreviewFormat = () => {};
-  const generatePreview = () => {};
-  const clearPreview = () => {};
+  // Preview system - GET from BuilderContext state
+  const { state: builderState } = useBuilder();
+  const showPreviewModal = builderState.showPreviewModal || false;
+  const [previewOrderId, setPreviewOrderId] = useState<string>('');
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
+  
+  const openPreviewModal = () => {
+    builderState.dispatch?.({ type: 'SET_SHOW_PREVIEW_MODAL', payload: true });
+    setPreviewOrderId('');
+    setPreviewError(null);
+  };
+  
+  const closePreviewModal = () => {
+    builderState.dispatch?.({ type: 'SET_SHOW_PREVIEW_MODAL', payload: false });
+    setPreviewError(null);
+  };
+  
+  const handlePreviewWithOrder = useCallback(async () => {
+    if (!previewOrderId) {
+      setPreviewError('Veuillez entrer un ID de commande');
+      return;
+    }
+    
+    setIsLoadingPreview(true);
+    setPreviewError(null);
+    
+    try {
+      // Appeler useTemplate.loadTemplateForPreview
+      // Mais on doit l'exposer... créons un fallback pour maintenant
+      debugLog(`📊 [PREVIEW] Chargement de l'aperçu pour commande ${previewOrderId}`);
+      
+      // Vérifier que loadTemplateForPreview est disponible
+      if (typeof window !== 'undefined' && (window as any).pdfBuilderLoadTemplateForPreview) {
+        const templateId = builderState.template?.id;
+        if (!templateId) {
+          setPreviewError('Template ID manquant');
+          return;
+        }
+        
+        await (window as any).pdfBuilderLoadTemplateForPreview(templateId, previewOrderId);
+        closePreviewModal();
+      } else {
+        setPreviewError('Fonction d\'aperçu non disponible, rechargez la page');
+      }
+    } catch (error) {
+      debugError('❌ [PREVIEW] Erreur:', error);
+      setPreviewError(`Erreur: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      setIsLoadingPreview(false);
+    }
+  }, [previewOrderId, builderState.template?.id]);
 
   // Debug logging
   useEffect(() => {
@@ -2680,26 +2721,14 @@ export const Header = memo(function Header({
             justifyContent: "center",
             zIndex: 1001,
           }}
-          onLoad={() => {
-            console.log('[REACT HEADER] ===== PREVIEW MODAL RENDERING =====');
-            console.log('[REACT HEADER] Preview modal is open');
-            console.log('[REACT HEADER] Modal state:');
-            console.log('[REACT HEADER] - showPreviewModal:', showPreviewModal);
-            console.log('[REACT HEADER] - isGeneratingPreview:', isGeneratingPreview);
-            console.log('[REACT HEADER] - previewImageUrl:', previewImageUrl);
-            console.log('[REACT HEADER] - previewError:', previewError);
-            console.log('[REACT HEADER] - previewFormat:', previewFormat);
-            console.log('[REACT HEADER] - htmlPreviewContent length:', state.htmlPreviewContent?.length || 0);
-            console.log('[REACT HEADER] Modal rendering timestamp:', Date.now());
-          }}
         >
           <div
             style={{
               backgroundColor: "#ffffff",
               borderRadius: "8px",
               padding: "24px",
-              maxWidth: "90vw",
-              width: state.htmlPreviewContent ? "90vw" : "600px",
+              maxWidth: "500px",
+              width: "90vw",
               maxHeight: "90vh",
               overflow: "auto",
               boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
@@ -2721,15 +2750,10 @@ export const Header = memo(function Header({
                   color: "#1a1a1a",
                 }}
               >
-                {state.htmlPreviewContent ? "Aperçu HTML du PDF" : "Aperçu du PDF"}
+                ✅ Aperçu avec Données Réelles
               </h3>
               <button
-                onClick={() => {
-                  closePreviewModal();
-                  clearPreview();
-                  // Vider aussi le contenu HTML de l'aperçu
-                  state.dispatch({ type: 'SET_HTML_PREVIEW_CONTENT', payload: '' });
-                }}
+                onClick={closePreviewModal}
                 style={{
                   background: "none",
                   border: "none",
@@ -2746,6 +2770,113 @@ export const Header = memo(function Header({
                 title="Fermer"
               >
                 ×
+              </button>
+            </div>
+            
+            {/* Formulaire pour choisir une commande */}
+            <div style={{ marginBottom: "20px" }}>
+              <label
+                htmlFor="previewOrderId"
+                style={{
+                  display: "block",
+                  marginBottom: "8px",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  color: "#374151",
+                }}
+              >
+                ID de Commande WooCommerce:
+              </label>
+              <input
+                id="previewOrderId"
+                type="number"
+                min="1"
+                placeholder="Ex: 123"
+                value={previewOrderId}
+                onChange={(e) => setPreviewOrderId(e.target.value)}
+                disabled={isLoadingPreview}
+                style={{
+                  width: "100%",
+                  padding: "10px 12px",
+                  fontSize: "14px",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "6px",
+                  fontFamily: "monospace",
+                  boxSizing: "border-box",
+                  opacity: isLoadingPreview ? 0.6 : 1,
+                  cursor: isLoadingPreview ? "not-allowed" : "auto",
+                }}
+              />
+              <p
+                style={{
+                  fontSize: "12px",
+                  color: "#6b7280",
+                  marginTop: "6px",
+                  marginBottom: 0,
+                }}
+              >
+                📝 Entrez l'ID d'une commande WooCommerce existante
+              </p>
+            </div>
+
+            {/* Message d'erreur */}
+            {previewError && (
+              <div
+                style={{
+                  padding: "12px",
+                  marginBottom: "16px",
+                  backgroundColor: "#fee2e2",
+                  color: "#991b1b",
+                  borderRadius: "6px",
+                  fontSize: "14px",
+                  border: "1px solid #fecaca",
+                }}
+              >
+                ❌ {previewError}
+              </div>
+            )}
+
+            {/* Boutons */}
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                justifyContent: "flex-end",
+              }}
+            >
+              <button
+                onClick={closePreviewModal}
+                disabled={isLoadingPreview}
+                style={{
+                  padding: "10px 16px",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  border: "1px solid #d1d5db",
+                  backgroundColor: "#ffffff",
+                  color: "#374151",
+                  borderRadius: "6px",
+                  cursor: isLoadingPreview ? "not-allowed" : "pointer",
+                  opacity: isLoadingPreview ? 0.6 : 1,
+                }}
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handlePreviewWithOrder}
+                disabled={isLoadingPreview || !previewOrderId}
+                style={{
+                  padding: "10px 16px",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  border: "none",
+                  backgroundColor: isLoadingPreview || !previewOrderId ? "#9ca3af" : "#007acc",
+                  color: "#ffffff",
+                  borderRadius: "6px",
+                  cursor: isLoadingPreview || !previewOrderId ? "not-allowed" : "pointer",
+                  opacity: isLoadingPreview || !previewOrderId ? 0.6 : 1,
+                }}
+              >
+                {isLoadingPreview ? "⏳ Chargement..." : "📊 Charger l'Aperçu"}
               </button>
             </div>
 

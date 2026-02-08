@@ -456,141 +456,38 @@ const drawProductTable = (
   const textColor = normalizeColor(props.textColor || "#000000");
   const borderRadius = props.borderRadius || 0;
 
-  let products: Array<{
-    sku: string;
-    name: string;
-    description: string;
-    qty: number;
-    price: number;
-    discount: number;
-    total: number;
-  }>;
-  let shippingCost: number;
-  let taxRate: number;
-  let globalDiscount: number;
-  let orderFees: number;
-  let currency: string;
+  // ✅ NEW: Utiliser la structure ProductTableData (products + fees + totals)
+  // Au lieu de calculer manuellement
+  const products = (props.products || []).map(p => ({
+    sku: p.sku || 'N/A',
+    name: p.name,
+    description: p.description || '',
+    qty: p.quantity,
+    price: p.price,
+    discount: 0, // Les remises sont dans totals.discount
+    total: p.total,
+  }));
 
-  // Utiliser les données WooCommerce si en mode commande, sinon données fictives
-  // ✅ BUGFIX-015: Validate WooCommerceManager access safely
-  if (state.previewMode === "command" && wooCommerceManager?.getOrderData?.()) {
-    const orderData = wooCommerceManager.getOrderData();
-    if (orderData) {
-      const orderItems = wooCommerceManager.getOrderItems?.() || [];
-      const orderTotals = wooCommerceManager.getOrderTotals?.() || {
-        shipping: 0,
-        tax: 0,
-        subtotal: 0,
-        discount: 0,
-      };
+  const fees = props.fees || [];
+  const totals = props.totals || {
+    subtotal: 0,
+    shippingCost: 0,
+    taxCost: 0,
+    taxRate: 0,
+    discount: 0,
+    total: 0,
+  };
 
-      products = orderItems;
-      shippingCost = orderTotals.shipping;
-      taxRate =
-        orderTotals.tax > 0
-          ? (orderTotals.tax / orderTotals.subtotal) * 100
-          : 20;
-      globalDiscount = orderTotals.discount;
-      orderFees = 0; // Les frais de commande sont déjà inclus dans les items
-      currency = orderData.currency || "€";
-    } else {
-      // Fallback if orderData is null despite passing the check - use demo data
-      shippingCost = props.shippingCost || 8.5;
-      taxRate = props.taxRate || 20;
-      globalDiscount = props.globalDiscount || 5;
-      orderFees = props.orderFees || 2.5;
-      currency = "€";
+  // Utiliser les valeurs des totals (NEW structure)
+  const shippingCost = totals.shippingCost || 0;
+  const taxRate = totals.taxRate || 0;
+  const globalDiscount = totals.discount || 0;
+  const currency = "€";
 
-      products = [
-        {
-          sku: "DEMO-001",
-          name: "Sample Product",
-          description: "Demo product",
-          qty: 1,
-          price: 29.99,
-          discount: 0,
-          total: 29.99,
-        },
-      ];
-    }
-  } else {
-    // Données fictives pour le mode éditeur
-    shippingCost = props.shippingCost || 8.5;
-    taxRate = props.taxRate || 20;
-    globalDiscount = props.globalDiscount || 5;
-    orderFees = props.orderFees || 2.5;
-    currency = "€";
-
-    products = [
-      {
-        sku: "TSHIRT-001",
-        name: "T-shirt Premium Bio",
-        description: "T-shirt en coton biologique, coupe slim",
-        qty: 2,
-        price: 29.99,
-        discount: 0,
-        total: 59.98,
-      },
-      {
-        sku: "JEAN-045",
-        name: "Jean Slim Fit Noir",
-        description: "Jean stretch confort, taille haute",
-        qty: 1,
-        price: 89.99,
-        discount: 10.0,
-        total: 79.99,
-      },
-      {
-        sku: "SHOES-089",
-        name: "Chaussures Running Pro",
-        description: "Chaussures de running avec semelle amortissante",
-        qty: 1,
-        price: 129.99,
-        discount: 0,
-        total: 129.99,
-      },
-      {
-        sku: "HOODIE-112",
-        name: "Sweat à Capuche",
-        description: "Sweat molletonné, capuche ajustable",
-        qty: 1,
-        price: 49.99,
-        discount: 5.0,
-        total: 44.99,
-      },
-    ];
-  }
-
-  // Calcul du total avec remises (même logique pour données fictives et réelles)
-  const subtotal = products.reduce(
-    (sum, product) => sum + product.price * product.qty,
-    0
-  );
-  const itemDiscounts = products.reduce(
-    (sum, product) => sum + product.discount,
-    0
-  );
-  const subtotalAfterItemDiscounts = subtotal - itemDiscounts;
-
-  // Sous-total incluant les frais de commande
-  const subtotalWithOrderFees = subtotalAfterItemDiscounts + orderFees;
-
-  // Appliquer la remise globale sur le sous-total incluant les frais de commande (seulement si affichée)
-  const globalDiscountAmount =
-    globalDiscount > 0 && showGlobalDiscount
-      ? (subtotalWithOrderFees * globalDiscount) / 100
-      : 0;
-  const subtotalAfterGlobalDiscount =
-    subtotalWithOrderFees - globalDiscountAmount; // Ajouter les frais de port (seulement si affichés)
-  const subtotalWithShipping =
-    subtotalAfterGlobalDiscount + (showShipping ? shippingCost : 0);
-
-  // Calculer les taxes (seulement si affichées)
-  const taxAmount =
-    taxRate > 0 && showTax ? (subtotalWithShipping * taxRate) / 100 : 0;
-
-  // Total final
-  const finalTotal = subtotalWithShipping + taxAmount;
+  // ✅ NEW: Les calculs sont déjà faits dans totals, utiliser directement
+  const subtotal = totals.subtotal || 0;
+  const taxAmount = totals.taxCost || 0;
+  const finalTotal = totals.total || 0;
 
   // Configuration des colonnes
   interface TableColumn {
@@ -821,6 +718,32 @@ const drawProductTable = (
   // Positionnement pour la section des totaux (après toutes les lignes de produits)
   currentY = 55 + products.length * (rowHeight + 4) + 8;
 
+  // ✅ NEW: Section des frais (si des frais existent)
+  if (fees && fees.length > 0) {
+    // Ligne de séparation avant les frais
+    ctx.strokeStyle = normalizeColor("#d1d5db");
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(element.width - 200, currentY);
+    ctx.lineTo(element.width - 8, currentY);
+    ctx.stroke();
+
+    currentY += 18;
+
+    // Afficher les frais
+    ctx.font = `normal ${fontSize}px Arial`;
+    ctx.fillStyle = textColor;
+    ctx.textAlign = "left";
+
+    fees.forEach((fee) => {
+      ctx.fillText(fee.name + ":", element.width - 200, currentY);
+      ctx.textAlign = "right";
+      ctx.fillText(`+${fee.total.toFixed(2)}${currency}`, element.width - 8, currentY);
+      ctx.textAlign = "left";
+      currentY += 18;
+    });
+  }
+
   // Section des totaux
 
   // Ligne de séparation avant les totaux
@@ -835,30 +758,28 @@ const drawProductTable = (
 
   // Affichage des totaux
   ctx.font = `bold ${fontSize}px Arial`;
-  ctx.fillStyle = textColor; // Utiliser la couleur du texte
+  ctx.fillStyle = textColor;
   ctx.textAlign = "left";
 
   const totalsY = currentY;
   ctx.fillText("Sous-total:", element.width - 200, totalsY);
   ctx.textAlign = "right";
   ctx.fillText(
-    `${subtotalWithOrderFees.toFixed(2)}${currency}`,
+    `${subtotal.toFixed(2)}${currency}`,
     element.width - 8,
     totalsY
   );
 
   currentY += 18;
 
-  // Remises combinées (articles + globale) - proviennent de coupons WooCommerce
-  const totalDiscounts =
-    itemDiscounts + (showGlobalDiscount ? globalDiscountAmount : 0);
-  if (totalDiscounts > 0) {
+  // Remise globale
+  if (globalDiscount > 0 && showGlobalDiscount) {
     ctx.textAlign = "left";
-    ctx.fillStyle = normalizeColor("#059669"); // Garder le vert pour la remise (couleur spéciale)
-    ctx.fillText("Coupon:", element.width - 200, currentY);
+    ctx.fillStyle = normalizeColor("#059669"); // Vert pour la remise
+    ctx.fillText("Remise:", element.width - 200, currentY);
     ctx.textAlign = "right";
     ctx.fillText(
-      `-${totalDiscounts.toFixed(2)}${currency}`,
+      `-${globalDiscount.toFixed(2)}${currency}`,
       element.width - 8,
       currentY
     );
@@ -868,11 +789,11 @@ const drawProductTable = (
   // Frais de port
   if (shippingCost > 0 && showShipping) {
     ctx.textAlign = "left";
-    ctx.fillStyle = textColor; // Utiliser la couleur du texte
+    ctx.fillStyle = textColor;
     ctx.fillText("Frais de port:", element.width - 200, currentY);
     ctx.textAlign = "right";
     ctx.fillText(
-      `${shippingCost.toFixed(2)}${currency}`,
+      `+${shippingCost.toFixed(2)}${currency}`,
       element.width - 8,
       currentY
     );
@@ -882,28 +803,28 @@ const drawProductTable = (
   // Taxes
   if (taxAmount > 0 && showTax) {
     ctx.textAlign = "left";
-    ctx.fillStyle = textColor; // Utiliser la couleur du texte
-    ctx.fillText(`TVA (${taxRate}%):`, element.width - 200, currentY);
+    ctx.fillStyle = textColor;
+    ctx.fillText(`TVA (${taxRate.toFixed(0)}%):`, element.width - 200, currentY);
     ctx.textAlign = "right";
     ctx.fillText(
-      `${taxAmount.toFixed(2)}${currency}`,
+      `+${taxAmount.toFixed(2)}${currency}`,
       element.width - 8,
       currentY
     );
     currentY += 18;
   }
 
-  currentY += 8; // Plus d'espace avant la ligne de séparation du total
-  ctx.strokeStyle = textColor; // Utiliser la couleur du texte pour la ligne
+  currentY += 8;
+  ctx.strokeStyle = textColor;
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(element.width - 200, currentY - 5);
   ctx.lineTo(element.width - 8, currentY - 5);
   ctx.stroke();
 
-  currentY += 8; // Plus d'espace après la ligne de séparation
+  currentY += 8;
   ctx.font = `${fontStyle} bold ${fontSize + 2}px ${fontFamily}`;
-  ctx.fillStyle = textColor; // Utiliser la couleur du texte pour le total
+  ctx.fillStyle = textColor;
   ctx.textAlign = "left";
   ctx.fillText("TOTAL:", element.width - 200, currentY);
   ctx.textAlign = "right";

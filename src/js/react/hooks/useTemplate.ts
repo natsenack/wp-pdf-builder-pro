@@ -9,6 +9,7 @@ import {
   debugCanvasData,
 } from "../utils/CanvasPersistence";
 import { ClientNonceManager } from "../utils/ClientNonceManager";
+import { configureRealDataElements } from "../utils/RealDataElementsHelper";  // ✅ NEW: Auto-configure RealData elements
 
 export function useTemplate() {
   const { state, dispatch } = useBuilder();
@@ -66,19 +67,24 @@ export function useTemplate() {
             : `[Template ${templateId}]`;
 
           // ✅ UTILISER LA COUCHE UNIFIÉE DE DÉSÉRIALISATION
+          // Mode édition: utiliser les valeurs fictives
           const { elements, canvas } = deserializeCanvasData(
-            templateData.template_data || templateData
+            templateData.template_data || templateData,
+            { mode: 'editor' }
           );
 
-          debugLog(`📂 LOAD - ${elements.length} éléments depuis données localisées`);
-          debugCanvasData({ elements, canvas, version: '1.0' }, 'Données chargées');
+          // ✅ Initialiser les propriétés RealData sur les éléments
+          const configuredElements = configureRealDataElements(elements);
+
+          debugLog(`📂 LOAD - ${configuredElements.length} éléments depuis données localisées`);
+          debugCanvasData({ elements: configuredElements, canvas, version: '1.0' }, 'Données chargées');
 
           dispatch({
             type: "LOAD_TEMPLATE",
             payload: {
               id: templateId,
               name: templateName,
-              elements,
+              elements: configuredElements,
               canvas,
               lastSaved: new Date(),
               showGuides: templateData.showGuides ?? true,
@@ -225,17 +231,21 @@ export function useTemplate() {
         }
 
         // ✅ UTILISER LA COUCHE UNIFIÉE POUR LE FALLBACK AUSSI
-        const { elements, canvas } = deserializeCanvasData(templateData);
+        // Mode édition: utiliser les valeurs fictives
+        const { elements, canvas } = deserializeCanvasData(templateData, { mode: 'editor' });
 
-        debugLog(`📂 LOAD FALLBACK - ${elements.length} éléments depuis AJAX`);
-        debugCanvasData({ elements, canvas, version: '1.0' }, 'Données AJAX');
+        // ✅ Initialiser les propriétés RealData sur les éléments
+        const configuredElements = configureRealDataElements(elements);
+
+        debugLog(`📂 LOAD FALLBACK - ${configuredElements.length} éléments depuis AJAX`);
+        debugCanvasData({ elements: configuredElements, canvas, version: '1.0' }, 'Données AJAX');
 
         dispatch({
           type: "LOAD_TEMPLATE",
           payload: {
             id: templateId,
-            name: templateName || `[Template ${templateId}]`,
-            elements,
+            name: templateName,
+            elements: configuredElements,
             canvas,
             lastSaved: new Date(),
             showGuides: (fallbackTemplateData as any)?.showGuides ?? true,
@@ -331,6 +341,101 @@ export function useTemplate() {
       }
     },
     [dispatch]
+  );
+
+  /**
+   * 📊 Charger template en mode APERÇU (preview)
+   * 
+   * Récupère les données réelles WooCommerce pour une commande
+   * et charge le template avec ces données injectées
+   * (aperçu miroir avec vraies données)
+   */
+  const loadTemplateForPreview = useCallback(
+    async (templateId: string, orderId: string | number) => {
+      try {
+        // 1️⃣ D'abord, récupérer les données réelles de la commande
+        debugLog(`📊 [PREVIEW] Récupération des données pour commande ID ${orderId}`);
+        
+        const orderDataUrl = ClientNonceManager.addToUrl(
+          `${ClientNonceManager.getAjaxUrl()}?action=pdf_builder_get_order_data_for_preview&orderId=${orderId}`
+        );
+
+        const orderDataResponse = await fetch(orderDataUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+          body: JSON.stringify({
+            nonce: window.pdfBuilderData?.nonce || '',
+          }),
+        });
+
+        if (!orderDataResponse.ok) {
+          throw new Error(`Erreur HTTP ${orderDataResponse.status}: Impossible de récupérer les données de la commande`);
+        }
+
+        const orderDataResult = await orderDataResponse.json();
+        if (!orderDataResult.success) {
+          throw new Error(orderDataResult.data?.message || 'Erreur lors de la récupération des données');
+        }
+
+        const realOrderData = orderDataResult.data;
+        debugLog(`✅ [PREVIEW] ${Object.keys(realOrderData).length} propriétés récupérées pour la commande`);
+        debugLog('[PREVIEW] Données:', realOrderData);
+
+        // 2️⃣ Charger le template avec les données réelles en mode preview
+        const templateLoaded = await loadExistingTemplate(templateId);
+        if (!templateLoaded) {
+          throw new Error('Impossible de charger le template');
+        }
+
+        // 3️⃣ Récupérer les éléments du state et les déserialiser en mode preview
+        // (C'est fait dans BuilderContext après SET_ELEMENTS)
+        const templateData = window.pdfBuilderData?.existingTemplate;
+        if (!templateData) {
+          throw new Error('Données du template manquantes');
+        }
+
+        // 4️⃣ Réinjecter avec les données réelles
+        const { elements, canvas } = deserializeCanvasData(
+          templateData.template_data || templateData,
+          {
+            mode: 'preview',
+            realOrderData: realOrderData
+          }
+        );
+
+        // 🔧 Initialiser les propriétés RealData (même si déjà en mode preview)
+        const configuredElements = configureRealDataElements(elements);
+
+        debugLog(`📊 [PREVIEW] ${configuredElements.length} éléments chargés avec données réelles`);
+        debugCanvasData({ elements: configuredElements, canvas, version: '1.0' }, '📊 Aperçu avec données réelles');
+
+        // 5️⃣ Dispatcher pour mettre à jour le canvas avec les éléments du preview
+        dispatch({
+          type: 'SET_ELEMENTS',
+          payload: configuredElements
+        });
+
+        // 6️⃣ Mettre à jour le state de preview
+        dispatch({
+          type: 'SET_PREVIEW_MODE',
+          payload: 'preview'
+        });
+        
+        dispatch({
+          type: 'SET_ORDER_ID',
+          payload: String(orderId)
+        });
+
+        return true;
+      } catch (error) {
+        debugError('❌ [PREVIEW] Erreur lors du chargement de l\'aperçu:', error);
+        return false;
+      }
+    },
+    [dispatch, loadExistingTemplate]
   );
 
   // 🎯 DISABLED: Event-based template loading causes race conditions with useEffect
@@ -478,6 +583,13 @@ export function useTemplate() {
     console.log('[USE TEMPLATE HOOK] SET_SHOW_PREVIEW_MODAL dispatched successfully');
   }, [dispatch]);
 
+  // ✅ NEW: Exposer loadTemplateForPreview au niveau global pour que le header puisse l'appeler
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).pdfBuilderLoadTemplateForPreview = loadTemplateForPreview;
+    }
+  }, [loadTemplateForPreview]);
+
   const newTemplate = useCallback(() => {
     dispatch({ type: "NEW_TEMPLATE" });
   }, [dispatch]);
@@ -518,6 +630,7 @@ export function useTemplate() {
       newTemplate,
       setTemplateModified,
       updateTemplateSettings,
+      loadTemplateForPreview,  // ✅ NEW: Charger template avec données réelles
     }),
     [
       state.template.id,
@@ -541,6 +654,7 @@ export function useTemplate() {
       newTemplate,
       setTemplateModified,
       updateTemplateSettings,
+      loadTemplateForPreview,  // ✅ NEW: Ajouter aux dépendances
       getTemplateIdFromUrl,
     ]
   );

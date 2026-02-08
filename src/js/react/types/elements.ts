@@ -11,6 +11,40 @@ export interface Size {
 
 export interface Bounds extends Point, Size {}
 
+// ✅ NEW: Structure pour les produits du tableau
+export interface ProductTableProduct {
+  name: string;
+  sku?: string;
+  quantity: number;
+  price: number;
+  total: number;
+  description?: string;
+}
+
+// ✅ NEW: Structure pour les frais du tableau
+export interface ProductTableFee {
+  name: string;
+  total: number;
+}
+
+// ✅ NEW: Structure pour les totaux du tableau
+export interface ProductTableTotals {
+  subtotal: number;
+  shippingCost: number;
+  taxCost: number;
+  taxRate: number;
+  discount: number;
+  total: number;
+}
+
+// ✅ NEW: Structure complète pour les données product_table
+// Les frais sont au même niveau que les produits, pas imbriqués dans les totaux
+export interface ProductTableData {
+  products: ProductTableProduct[];
+  fees: ProductTableFee[];  // ✅ REFACTOR: Frais au même niveau que produits
+  totals: ProductTableTotals;
+}
+
 export interface TemplateState {
   id?: string;
   name?: string;
@@ -42,6 +76,16 @@ export interface BaseElement {
   locked: boolean;
   createdAt: Date;
   updatedAt: Date;
+  
+  // ✅ NEW: Support pour données réelles vs fictives
+  /** Indique si cet élément utilise des données réelles (WooCommerce) */
+  isRealDataElement?: boolean;
+  
+  /** Valeur fictive/par défaut affichée en édition */
+  defaultTestValue?: unknown;
+  
+  /** Identifiant de la propriété réelle à récupérer depuis WooCommerce */
+  realDataKey?: string;
 }
 
 export interface BaseElementProperties {
@@ -225,9 +269,17 @@ export interface ProductTableElement extends BaseElement {
   globalDiscount?: number;
   orderFees?: number;
   verticalAlign?: 'top' | 'middle' | 'bottom';
-}
-
-export interface MentionsElement extends BaseElement {
+  
+  // ✅ NEW: Données produits, frais et totaux
+  /** Produits affichés dans le tableau (fictifs en édition, réels en aperçu) */
+  products?: ProductTableProduct[];
+  
+  /** Frais (port, paiement, emballage, etc.) affichés au même niveau que produits */
+  fees?: ProductTableFee[];
+  
+  /** Totaux du tableau (subtotaux, taxes, remise, total final) */
+  totals?: ProductTableTotals;
+}export interface MentionsElement extends BaseElement {
   type: 'mentions';
   mentionType?: string;
   selectedMentions?: string[];

@@ -9,9 +9,11 @@
  * - Format JSON simple et standard: { elements: [], canvas: {} }
  * - Pas de support legacy
  * - Normalisation automatique et transparente
+ * - Support des valeurs fictives vs réelles via ValueResolver
  */
 
 import type { Element } from '../types/elements';
+import { ValueResolver, type RealOrderData, type ElementValueConfig } from '../persistence/ValueResolver';
 
 export interface CanvasData {
   elements: Element[];
@@ -90,9 +92,16 @@ export function serializeCanvasData(
  * - Valide la structure
  * - Normalise automatiquement
  * - Retourne { elements, canvas } propres
+ * 
+ * @param jsonData - Données JSON à désérialiser
+ * @param options - Configuration optionnelle (mode, données réelles)
  */
 export function deserializeCanvasData(
-  jsonData: string | object
+  jsonData: string | object,
+  options?: {
+    mode?: 'editor' | 'preview';
+    realOrderData?: RealOrderData | null;
+  }
 ): { elements: Element[]; canvas: CanvasState } {
   let data: any = null;
 
@@ -139,6 +148,10 @@ export function deserializeCanvasData(
     if (data.canvasHeight) canvas.height = data.canvasHeight;
   }
 
+  // Créer ValueResolver pour appliquer les données réelles si mode preview
+  const isEditorMode = !options || options.mode !== 'preview';
+  const resolver = new ValueResolver(!isEditorMode, options?.realOrderData || null);
+
   // Normaliser les éléments
   const normalizedElements: Element[] = [];
   for (let idx = 0; idx < elements.length; idx++) {
@@ -146,7 +159,7 @@ export function deserializeCanvasData(
     if (!el || typeof el !== 'object') continue;
 
     const element = el as Record<string, unknown>;
-    normalizedElements.push({
+    const normalizedElement: Element = {
       id: (element.id as string) || `element-${idx}`,
       type: ((element.type as string) || 'unknown').replace(/-/g, '_'),
       x: Number(element.x) || 0,
@@ -155,7 +168,57 @@ export function deserializeCanvasData(
       height: Number(element.height) || 100,
       // Toutes les autres propriétés préservées
       ...element,
-    } as Element);
+    } as Element;
+
+    // ✅ NOUVEAU: Appliquer les valeurs via ValueResolver si c'est un RealDataElement
+    // En mode édition: récupère les données du canvas (getProductTableFromElement)
+    // En mode preview: récupère les données réelles de WooCommerce (buildProductTableData)
+    if (normalizedElement.isRealDataElement) {
+      const config: ElementValueConfig = {
+        elementType: normalizedElement.type,
+        isRealDataElement: true,
+        testValue: normalizedElement.defaultTestValue,
+        realDataKey: normalizedElement.realDataKey,
+        element: normalizedElement,  // ✅ Passer l'élément pour que getValue() puisse récupérer les données du canvas
+      };
+
+      const resolvedValue = resolver.getValue(config);
+      
+      // Injecter la valeur résolue dans l'élément selon son type
+      if (normalizedElement.type === 'product_table') {
+        // Pour product_table: resolvedValue est un ProductTableData={ products[], fees[], totals{} }
+        const tableData = resolvedValue as any; // ProductTableData
+        if (tableData && typeof tableData === 'object') {
+          // Injecter les produits
+          if (Array.isArray(tableData.products)) {
+            normalizedElement.products = tableData.products;
+          }
+          // ✅ REFACTOR: Injecter les frais au même niveau que produits (pas dans totals)
+          if (Array.isArray(tableData.fees)) {
+            normalizedElement.fees = tableData.fees;
+          }
+          // Injecter les totaux
+          if (tableData.totals) {
+            normalizedElement.totals = tableData.totals;
+            // Aussi mettre à jour les propriétés individuelles pour compatibilité
+            normalizedElement.shippingCost = tableData.totals.shippingCost;
+            normalizedElement.taxRate = tableData.totals.taxRate;
+            normalizedElement.globalDiscount = tableData.totals.discount;
+          }
+        }
+      } else if (normalizedElement.type === 'customer_info') {
+        // Pour customer_info, mettre à jour le contenu/metadata
+        normalizedElement.metadata = {
+          ...(normalizedElement.metadata || {}),
+          customerData: resolvedValue,
+        };
+      } else if (normalizedElement.type === 'company_info' || normalizedElement.type === 'order_number') {
+        // Pour company_info et order_number, mettre à jour content/text
+        normalizedElement.content = String(resolvedValue || normalizedElement.defaultTestValue || '');
+      }
+    }
+
+    normalizedElements.push(normalizedElement);
   }
 
   // Canvas state normalisé
@@ -169,6 +232,8 @@ export function deserializeCanvasData(
     canvas: normalizedCanvas,
   };
 }
+
+
 
 /**
  * VALIDER: Vérifie que les données sont complètes et valides
@@ -189,6 +254,11 @@ export function validateCanvasData(data: CanvasData): {
       if (!el.type) errors.push(`Element ${idx}: manque type`);
       if (typeof el.x !== 'number') errors.push(`Element ${idx}: x invalide`);
       if (typeof el.y !== 'number') errors.push(`Element ${idx}: y invalide`);
+      
+      // ✅ NOUVEAU: Validation des éléments RealData
+      if (el.isRealDataElement && !el.realDataKey) {
+        console.warn(`Element ${idx} (${el.type}): RealDataElement sans realDataKey`);
+      }
     });
   }
 
@@ -215,9 +285,22 @@ export function debugCanvasData(
 ): void {
   console.group(`🔍 ${label}`);
   console.log('✅ Elements:', data.elements.length);
+  
+  // Compter les éléments RealData
+  const realDataElements = data.elements.filter(el => el.isRealDataElement);
+  if (realDataElements.length > 0) {
+    console.log('  📊 RealData elements:', realDataElements.length);
+    realDataElements.forEach((el, idx) => {
+      console.log(
+        `    ${idx}. ${el.type} (key: ${el.realDataKey})`
+      );
+    });
+  }
+  
   data.elements.slice(0, 3).forEach((el, idx) => {
+    const realDataTag = el.isRealDataElement ? ' [RealData]' : '';
     console.log(
-      `  ${idx}. ${el.type} (${el.width}x${el.height} @ ${el.x},${el.y})`
+      `  ${idx}. ${el.type} (${el.width}x${el.height} @ ${el.x},${el.y})${realDataTag}`
     );
   });
   console.log('✅ Canvas:', `${data.canvas.width}x${data.canvas.height}`);
