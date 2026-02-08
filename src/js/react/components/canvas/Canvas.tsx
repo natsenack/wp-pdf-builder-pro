@@ -421,7 +421,9 @@ const drawImageWithObjectFit = (
 const drawProductTable = (
   ctx: CanvasRenderingContext2D,
   element: Element,
-  state: BuilderState
+  state: BuilderState,
+  imageCache?: MutableRefObject<Map<string, { image: HTMLImageElement; size: number; lastUsed: number }>>,
+  setImageLoadCount?: (fn: (prev: number) => number) => void
 ) => {
   const props = element as ProductTableElement;
 
@@ -813,20 +815,94 @@ const drawProductTable = (
         const cellX = col.x;
         const cellY = rowY - rowHeight / 2 + 2;
         
-        if (imageUrl) {
-          // TODO: Charger et afficher l'image (nécessite du cache d'images)
-          // Pour maintenant, afficher un placeholder
-          ctx.fillStyle = normalizeColor("#f0f0f0");
-          ctx.fillRect(cellX, cellY, cellWidth, cellHeight);
+        // Dessiner le fond de la cellule
+        ctx.fillStyle = normalizeColor("#f0f0f0");
+        ctx.fillRect(cellX, cellY, cellWidth, cellHeight);
+        
+        if (imageUrl && imageCache) {
+          // Vérifier si l'image est en cache
+          let cachedImage = imageCache.current.get(imageUrl);
+          
+          if (!cachedImage) {
+            // Charger l'image dans le cache
+            const img = document.createElement("img");
+            img.crossOrigin = "anonymous";
+            img.src = imageUrl;
+            
+            img.onload = () => {
+              const size = estimateImageMemorySize(img);
+              imageCache.current.set(imageUrl, {
+                image: img,
+                size: size,
+                lastUsed: Date.now(),
+              });
+              cleanupImageCache(imageCache);
+              // Forcer un redraw du canvas quand l'image se charge
+              if (setImageLoadCount) {
+                setImageLoadCount((prev) => prev + 1);
+              }
+            };
+            
+            img.onerror = () => {
+              debugWarn(`[Canvas ProductTable] Failed to load image: ${imageUrl}`);
+            };
+            
+            // Afficher un placeholder en attendant
+            ctx.fillStyle = normalizeColor("#999999");
+            ctx.font = `${fontSize}px ${fontFamily}`;
+            ctx.textAlign = "center";
+            ctx.fillText("⏳", cellX + cellWidth / 2, cellY + cellHeight / 2);
+          } else {
+            // Image en cache, l'afficher
+            const img = cachedImage.image;
+            cachedImage.lastUsed = Date.now();
+            
+            // Vérifier que l'image est bien chargée
+            if (img.complete && img.naturalHeight !== 0) {
+              // Calculer les dimensions de l'image pour respecter le ratio et tenir dans la cellule
+              const imgWidth = img.naturalWidth;
+              const imgHeight = img.naturalHeight;
+              const imgRatio = imgWidth / imgHeight;
+              const cellRatio = cellWidth / cellHeight;
+              
+              let drawWidth = cellWidth;
+              let drawHeight = cellHeight;
+              let drawX = cellX;
+              let drawY = cellY;
+              
+              // Contenir l'image dans la cellule en respectant le ratio
+              if (imgRatio > cellRatio) {
+                // Image plus large
+                drawHeight = cellWidth / imgRatio;
+                drawY = cellY + (cellHeight - drawHeight) / 2;
+              } else {
+                // Image plus haute
+                drawWidth = cellHeight * imgRatio;
+                drawX = cellX + (cellWidth - drawWidth) / 2;
+              }
+              
+              // Dessiner l'image
+              try {
+                ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+              } catch (e) {
+                debugWarn("[Canvas ProductTable] Error drawing image:", e);
+              }
+            } else {
+              // Image en cache mais pas encore chargée
+              ctx.fillStyle = normalizeColor("#999999");
+              ctx.font = `${fontSize}px ${fontFamily}`;
+              ctx.textAlign = "center";
+              ctx.fillText("⏳", cellX + cellWidth / 2, cellY + cellHeight / 2);
+            }
+          }
+        } else if (!imageUrl) {
+          // Pas d'URL d'image, afficher un placeholder vide
           ctx.fillStyle = normalizeColor("#999999");
           ctx.font = `${fontSize}px ${fontFamily}`;
           ctx.textAlign = "center";
           ctx.fillText("📷", cellX + cellWidth / 2, cellY + cellHeight / 2);
-        } else {
-          // Pas d'image, afficher un espace gris
-          ctx.fillStyle = normalizeColor("#f0f0f0");
-          ctx.fillRect(cellX, cellY, cellWidth, cellHeight);
         }
+        
         // ✅ FIX: Restaurer la couleur de texte après le rendu de l'image
         ctx.fillStyle = textColor;
       } else {
@@ -2662,7 +2738,7 @@ export const Canvas = function Canvas({
           break;
         case "product_table":
           debugLog(`[Canvas] Rendering product table element: ${element.id}`);
-          drawProductTable(ctx, element, currentState);
+          drawProductTable(ctx, element, currentState, imageCache, setImageLoadCount);
           break;
         case "customer_info":
           debugLog(`[Canvas] Rendering customer info element: ${element.id}`);

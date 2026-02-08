@@ -144,7 +144,8 @@ class TableRenderer
                 'price' => $item['price'] ?? 0,
                 'total' => $item['total'] ?? 0,
                 'sku' => $item['sku'] ?? '',
-                'variation' => $item['variation'] ?? []
+                'variation' => $item['variation'] ?? [],
+                'image' => $item['image'] ?? '' // ✅ NEW: URL de l'image depuis le contexte
             ];
         }
 
@@ -405,7 +406,13 @@ class TableRenderer
         $css[] = '.pdf-product-table th, .pdf-product-table td {';
         $css[] = '  padding: 8px 12px;';
         $css[] = '  border: 1px solid #ddd;';
-        $css[] = '  vertical-align: top;';
+        $css[] = '  vertical-align: middle;';
+        $css[] = '}';
+// Styles des cellules avec images (augmenter la hauteur)
+        $css[] = '.pdf-product-table td:first-child img, .pdf-product-table td img {';
+        $css[] = '  max-width: 60px;';
+        $css[] = '  max-height: 60px;';
+        $css[] = '  vertical-align: middle;';
         $css[] = '}';
 // Styles de l'en-tête
         $css[] = '.pdf-product-table th {';
