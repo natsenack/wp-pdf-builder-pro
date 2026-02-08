@@ -6,17 +6,11 @@
 (function() {
     'use strict';
 
-    console.log('[MODULE EXECUTOR] Starting PDF Builder React module execution check...');
-
     // Check if the React bundle has already set window.pdfBuilderReact
     function checkReactAPI() {
         if (window.pdfBuilderReact && typeof window.pdfBuilderReact.initPDFBuilderReact === 'function') {
-            console.log('[MODULE EXECUTOR] ✓ window.pdfBuilderReact is available and has initPDFBuilderReact function');
-            console.log('[MODULE EXECUTOR] API object:', window.pdfBuilderReact);
             return true;
         } else {
-            console.log('[MODULE EXECUTOR] ✗ window.pdfBuilderReact not available or missing initPDFBuilderReact function');
-            console.log('[MODULE EXECUTOR] Current window.pdfBuilderReact:', window.pdfBuilderReact);
             return false;
         }
     }
@@ -26,7 +20,6 @@
         // If not available immediately, wait a bit and check again
         setTimeout(function() {
             if (!checkReactAPI()) {
-                console.warn('[MODULE EXECUTOR] React API still not available after delay, creating emergency fallback');
 
                 // Emergency fallback - create a basic API that shows an error
                 window.pdfBuilderReact = {
@@ -50,11 +43,7 @@
                     _isEmergencyFallback: true,
                     _error: 'React bundle initialization failed'
                 };
-
-                console.log('[MODULE EXECUTOR] Emergency fallback API created');
             }
         }, 500);
     }
-
-    console.log('[MODULE EXECUTOR] Module execution check completed');
 })();

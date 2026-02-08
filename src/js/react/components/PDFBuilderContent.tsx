@@ -49,11 +49,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   width = DEFAULT_CANVAS_WIDTH,
   height = DEFAULT_CANVAS_HEIGHT,
   className,
-}: PDFBuilderContentProps) {  console.log('[PDF BUILDER CONTENT] ===== COMPONENT INITIALIZED =====');
-  console.log('[PDF BUILDER CONTENT] Props received:', { width, height, className });
-  console.log('[PDF BUILDER CONTENT] Timestamp:', Date.now());
-  console.log('[PDF BUILDER CONTENT] Window object available:', typeof window);
-  console.log('[PDF BUILDER CONTENT] Document object available:', typeof document);  debugLog("🏗️ PDFBuilderContent: Component initialized with props:", {
+}: PDFBuilderContentProps) {  debugLog("🏗️ PDFBuilderContent: Component initialized with props:", {
     width,
     height,
     className,

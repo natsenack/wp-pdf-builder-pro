@@ -47,9 +47,6 @@ class AdminScriptLoader
     {
         error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url'));
 
-        // AJOUTER UN SCRIPT DE TEST AU DÉBUT, PEU IMPORTE LA CONDITION
-        wp_add_inline_script('jquery', 'console.log("=== PDF BUILDER TEST SCRIPT LOADED AT START ==="); console.log("Timestamp:", Date.now()); console.log("Location:", window.location.href); console.log("Hook:", "' . $hook . '");', 'before');
-
         // Ajouter un filtre pour corriger les templates Elementor qui sont chargés comme des scripts JavaScript
         // Appliquer toujours, pas seulement sur les pages PDF Builder
         \add_filter('script_loader_tag', [$this, 'fixElementorTemplates'], 10, 3);
@@ -284,7 +281,7 @@ class AdminScriptLoader
         $preview_client_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-preview-api-client.min.js';
         if (file_exists($preview_client_js)) {
             // AJOUTER UN SCRIPT DE TEST TRÈS SIMPLE
-            wp_add_inline_script('jquery', 'console.log("=== PDF BUILDER TEST SCRIPT LOADED ==="); console.log("Timestamp:", Date.now()); console.log("Location:", window.location.href);', 'before');
+
             
             // Define variables BEFORE loading the script
             $preview_data = [
@@ -346,25 +343,17 @@ class AdminScriptLoader
             \add_action('admin_footer-pdf-builder_page_pdf-builder-react-editor', function() {
                 ?>
                 <script>
-                console.log('🔍 [FOOTER DOM CHECK] Starting DOM script check...');
                 let scripts = document.querySelectorAll('script[src*="pdf-builder-react"]');
-                console.log('🔍 [FOOTER DOM CHECK] Scripts pdf-builder-react trouvés dans DOM: ' + scripts.length);
                 scripts.forEach((script, index) => {
-                    console.log('🔍 [FOOTER DOM CHECK] Script ' + index + ': ' + script.src);
                 });
                 let initScript = document.querySelector('script[src*="pdf-builder-react-init.min.js"]');
-                console.log('🔍 [FOOTER DOM CHECK] Script pdf-builder-react-init.min.js found in DOM: ' + (initScript ? 'YES' : 'NO'));
                 let mainScript = document.querySelector('script[src*="pdf-builder-react.min.js"]');
-                console.log('🔍 [FOOTER DOM CHECK] Script pdf-builder-react.min.js found in DOM: ' + (mainScript ? 'YES' : 'NO'));
                 let wrapperScript = document.querySelector('script[src*="pdf-builder-react-wrapper.min.js"]');
-                console.log('🔍 [FOOTER DOM CHECK] Script pdf-builder-react-wrapper.min.js found in DOM: ' + (wrapperScript ? 'YES' : 'NO'));
 
                 // Manual init if not done
                 setTimeout(function() {
-                    console.log('🔍 [FOOTER INIT CHECK] Checking if React app is initialized...');
                     const root = document.getElementById('pdf-builder-react-root');
                     if (root && root.children.length === 0) {
-                        console.log('🔍 [FOOTER INIT CHECK] Root is empty, trying manual init...');
                         if (window.pdfBuilderReact && window.pdfBuilderReact.initPDFBuilderReact) {
                             console.log('🔍 [FOOTER INIT CHECK] Calling manual init...');
                             window.pdfBuilderReact.initPDFBuilderReact('pdf-builder-react-root');
@@ -988,31 +977,22 @@ class AdminScriptLoader
                             foundScripts.push(src);
                         }
                     }
-                    console.log("🔍 [DOM CHECK] Scripts pdf-builder-react trouvés dans DOM:", foundScripts.length);
                     foundScripts.forEach(function(url, index) {
-                        console.log("🔍 [DOM CHECK] Script " + (index + 1) + ":", url);
                     });
                     
                     // Tester si les scripts spécifiques sont présents
                     var initScript = document.querySelector(\'script[src*="pdf-builder-react-init.min.js"]\');
-                    console.log("🔍 [DOM CHECK] Script pdf-builder-react-init.min.js found in DOM:", initScript ? "YES" : "NO");
                     if (initScript) {
-                        console.log("🔍 [DOM CHECK] Init script URL:", initScript.src);
                     }
                     
                     var mainScript = document.querySelector(\'script[src*="pdf-builder-react.min.js"]\');
-                    console.log("🔍 [DOM CHECK] Script pdf-builder-react.min.js found in DOM:", mainScript ? "YES" : "NO");
                     if (mainScript) {
-                        console.log("🔍 [DOM CHECK] Main script URL:", mainScript.src);
                     }
                 }, 500);
                 
                 // Tester le chargement après un délai plus long
                 setTimeout(function() {
-                    console.log("🔍 [EXECUTION CHECK] Checking if scripts executed...");
-                    console.log("🔍 [EXECUTION CHECK] window.pdfBuilderReact available:", typeof window.pdfBuilderReact !== "undefined");
                     if (window.pdfBuilderReact) {
-                        console.log("🔍 [EXECUTION CHECK] initPDFBuilderReact function available:", typeof window.pdfBuilderReact.initPDFBuilderReact !== "undefined");
                     }
                 }, 2000);
             })();
