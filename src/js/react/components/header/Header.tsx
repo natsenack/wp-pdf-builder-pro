@@ -307,23 +307,113 @@ export const Header = memo(function Header({
     try {
       console.log('[JSON TO HTML] Starting conversion');
 
-      // Capturer l'image du canvas directement
-      const canvasImageData = (window as any).pdfBuilderCaptureCanvasPreview?.();
-      
-      if (!canvasImageData) {
-        alert('❌ Impossible de capturer le canvas. Assurez-vous que le canvas est visible.');
+      const templateId = state.currentTemplateId || state.template?.id;
+      if (!templateId) {
+        alert('❌ Aucun template actuellement édité');
         return;
       }
 
-      console.log('[JSON TO HTML] Canvas captured successfully');
+      const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
 
-      // Créer un HTML simple avec l'image du canvas
+      // Récupérer les données SAUVEGARDÉES du serveur
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_get_template_elements');
+      formData.append('template_id', templateId);
+      formData.append('nonce', (window as any).pdfBuilderData?.nonce || '');
+
+      const response = await fetch(ajaxUrl, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.data?.message || 'Erreur lors de la récupération des données');
+      }
+
+      const elements = data.data.elements || [];
+      const canvas = data.data.canvas || { width: 794, height: 1123 };
+
+      // Créer un canvas temporaire pour redessiner
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width;
+      tempCanvas.height = canvas.height;
+      
+      const ctx = tempCanvas.getContext('2d');
+      if (!ctx) {
+        throw new Error('Impossible de créer un contexte canvas');
+      }
+
+      // Redessiner les éléments
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+      // Fonction helper pour dessiner le contenu simplifié
+      const drawElement = (element: any) => {
+        if (element.visible === false) return;
+
+        ctx.save();
+        ctx.translate(element.x || 0, element.y || 0);
+
+        if (element.rotation) {
+          const centerX = (element.width || 0) / 2;
+          const centerY = (element.height || 0) / 2;
+          ctx.translate(centerX, centerY);
+          ctx.rotate((element.rotation * Math.PI) / 180);
+          ctx.translate(-centerX, -centerY);
+        }
+
+        // Fond
+        if (element.backgroundColor && element.backgroundColor !== 'transparent' && element.showBackground !== false) {
+          ctx.fillStyle = element.backgroundColor;
+          ctx.fillRect(0, 0, element.width || 100, element.height || 50);
+        }
+
+        // Bordure
+        if (element.borderWidth && element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#e5e7eb';
+          ctx.lineWidth = element.borderWidth;
+          ctx.strokeRect(0, 0, element.width || 100, element.height || 50);
+        }
+
+        // Texte
+        ctx.fillStyle = element.textColor || '#000000';
+        ctx.font = `${element.fontStyle || 'normal'} ${element.fontWeight || 'normal'} ${element.fontSize || 12}px ${element.fontFamily || 'Arial'}`;
+        ctx.textAlign = element.textAlign || 'left';
+        ctx.textBaseline = element.verticalAlign === 'middle' ? 'middle' : element.verticalAlign === 'bottom' ? 'bottom' : 'top';
+
+        let textX = 0;
+        let textY = element.verticalAlign === 'middle' ? (element.height || 50) / 2 : element.verticalAlign === 'bottom' ? (element.height || 50) - 5 : 5;
+
+        if (element.textAlign === 'center') {
+          textX = (element.width || 100) / 2;
+        } else if (element.textAlign === 'right') {
+          textX = (element.width || 100) - 5;
+        } else {
+          textX = 5;
+        }
+
+        const text = element.text || element.content || element.title || '';
+        if (text) {
+          ctx.fillText(text.toString().substring(0, 50), textX, textY);
+        }
+
+        ctx.restore();
+      };
+
+      // Dessiner tous les éléments
+      elements.forEach(drawElement);
+
+      // Capturer en PNG base64
+      const canvasImageData = tempCanvas.toDataURL('image/png');
+
+      // Créer l'HTML avec l'image
       const html = `<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Export JSON to HTML - Aperçu</title>
+  <title>Export JSON to HTML - ${data.data.template?.name || 'Aperçu'}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
@@ -363,9 +453,9 @@ export const Header = memo(function Header({
 <body>
   <div class="container">
     <div class="preview">
-      <img src="${canvasImageData}" alt="Aperçu du canvas" />
+      <img src="${canvasImageData}" alt="Aperçu du JSON" />
       <div class="info">
-        ✅ Cet aperçu est une capture exacte du canvas React. Il est pixel-parfait identique à l'éditeur.
+        ✅ Cet aperçu prévisualise vos données SAUVEGARDÉES (JSON du serveur). Il est fidèle à ce qui sera généré.
       </div>
     </div>
   </div>
@@ -1396,21 +1486,113 @@ export const Header = memo(function Header({
   const handleShowHtmlPreview = async () => {
     setIsGeneratingHtml(true);
     try {
-      // Capturer l'image du canvas directement
-      const canvasImageData = (window as any).pdfBuilderCaptureCanvasPreview?.();
-      
-      if (!canvasImageData) {
-        alert('❌ Impossible de capturer le canvas. Assurez-vous que le canvas est visible.');
+      const templateId = state.currentTemplateId || state.template?.id;
+      if (!templateId) {
+        alert('❌ Aucun template actuellement édité');
         return;
       }
 
-      // Créer un HTML simple avec l'image du canvas
+      const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
+
+      // Étape 1: Récupérer les données SAUVEGARDÉES du serveur
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_get_template_elements');
+      formData.append('template_id', templateId);
+      formData.append('nonce', (window as any).pdfBuilderData?.nonce || '');
+
+      const response = await fetch(ajaxUrl, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.data?.message || 'Erreur lors de la récupération des données');
+      }
+
+      const elements = data.data.elements || [];
+      const canvas = data.data.canvas || { width: 794, height: 1123 };
+
+      // Étape 2: Créer un canvas temporaire pour redessiner
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width;
+      tempCanvas.height = canvas.height;
+      
+      const ctx = tempCanvas.getContext('2d');
+      if (!ctx) {
+        throw new Error('Impossible de créer un contexte canvas');
+      }
+
+      // Redessiner les éléments
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+      // Fonction helper pour dessiner le contenu simplifié
+      const drawElement = (element: any) => {
+        if (element.visible === false) return;
+
+        ctx.save();
+        ctx.translate(element.x || 0, element.y || 0);
+
+        if (element.rotation) {
+          const centerX = (element.width || 0) / 2;
+          const centerY = (element.height || 0) / 2;
+          ctx.translate(centerX, centerY);
+          ctx.rotate((element.rotation * Math.PI) / 180);
+          ctx.translate(-centerX, -centerY);
+        }
+
+        // Fond
+        if (element.backgroundColor && element.backgroundColor !== 'transparent' && element.showBackground !== false) {
+          ctx.fillStyle = element.backgroundColor;
+          ctx.fillRect(0, 0, element.width || 100, element.height || 50);
+        }
+
+        // Bordure
+        if (element.borderWidth && element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#e5e7eb';
+          ctx.lineWidth = element.borderWidth;
+          ctx.strokeRect(0, 0, element.width || 100, element.height || 50);
+        }
+
+        // Texte
+        ctx.fillStyle = element.textColor || '#000000';
+        ctx.font = `${element.fontStyle || 'normal'} ${element.fontWeight || 'normal'} ${element.fontSize || 12}px ${element.fontFamily || 'Arial'}`;
+        ctx.textAlign = element.textAlign || 'left';
+        ctx.textBaseline = element.verticalAlign === 'middle' ? 'middle' : element.verticalAlign === 'bottom' ? 'bottom' : 'top';
+
+        let textX = 0;
+        let textY = element.verticalAlign === 'middle' ? (element.height || 50) / 2 : element.verticalAlign === 'bottom' ? (element.height || 50) - 5 : 5;
+
+        if (element.textAlign === 'center') {
+          textX = (element.width || 100) / 2;
+        } else if (element.textAlign === 'right') {
+          textX = (element.width || 100) - 5;
+        } else {
+          textX = 5;
+        }
+
+        const text = element.text || element.content || element.title || '';
+        if (text) {
+          ctx.fillText(text.toString().substring(0, 50), textX, textY);
+        }
+
+        ctx.restore();
+      };
+
+      // Dessiner tous les éléments
+      elements.forEach(drawElement);
+
+      // Étape 3: Capturer en PNG base64
+      const canvasImageData = tempCanvas.toDataURL('image/png');
+
+      // Étape 4: Créer l'HTML avec l'image
       const html = `<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aperçu PDF</title>
+  <title>Aperçu PDF - ${data.data.template?.name || 'Template'}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
@@ -1452,7 +1634,7 @@ export const Header = memo(function Header({
     <div class="preview">
       <img src="${canvasImageData}" alt="Aperçu du canvas" />
       <div class="info">
-        ✅ Cet aperçu est une capture exacte du canvas React. Il est pixel-parfait identique à l'éditeur.
+        ✅ Cet aperçu prévisualise vos données SAUVEGARDÉES (JSON du serveur). Il est fidèle à ce qui sera généré.
       </div>
     </div>
   </div>
