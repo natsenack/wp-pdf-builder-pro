@@ -2554,16 +2554,25 @@ function pdf_builder_simple_save_template() {
     
     error_log('  Template ID: ' . $template_id);
     error_log('  Template name: ' . $template_name);
-    error_log('  Data size: ' . strlen($raw_data) . ' bytes');
+    error_log('  Raw data size: ' . strlen($raw_data) . ' bytes');
+    error_log('  First 200 chars: ' . substr($raw_data, 0, 200));
+    error_log('  Data type: ' . gettype($raw_data));
     
-    // ✅ ÉTAPE 3: Décoder JSON
+    // ✅ ÉTAPE 3: Décoder JSON - avec gestion d'erreur améliorée
     $template_data = json_decode($raw_data, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        error_log('❌ [SAVE] JSON decode error: ' . json_last_error_msg());
-        wp_send_json_error('JSON error');
+    $json_error = json_last_error();
+    $json_error_msg = json_last_error_msg();
+    
+    error_log('  JSON error code: ' . $json_error);
+    error_log('  JSON error msg: ' . $json_error_msg);
+    
+    if ($json_error !== JSON_ERROR_NONE) {
+        error_log('❌ [SAVE] JSON decode error: ' . $json_error_msg);
+        error_log('  Raw data (first 500): ' . substr($raw_data, 0, 500));
+        wp_send_json_error(['error' => 'JSON error', 'details' => $json_error_msg], 400);
         return;
     }
-    error_log('✅ [SAVE] JSON valid');
+    error_log('✅ [SAVE] JSON valid - ' . count($template_data) . ' elements');
     
     // ✅ ÉTAPE 4: Vérifier les données
     if (empty($template_name) || empty($template_data)) {
