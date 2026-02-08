@@ -51,14 +51,21 @@ export function serializeCanvasData(
 
     // ✅ EXPLICIT serialization: Only copy properties we want, ensure x/y are numbers
     // Don't use spread ...el because it can copy corrupted properties
+    const elX = typeof el.x === 'number' ? el.x : (Number(el.x) || 0);
+    const elY = typeof el.y === 'number' ? el.y : (Number(el.y) || 0);
+    
+    // 🔍 LOG: Positions avant sérialisation
+    console.log(`[SERIALIZE] El ${idx} (${String(el.id)}) BEFORE: x=${el.x} (type: ${typeof el.x}), y=${el.y} (type: ${typeof el.y})`);
+    console.log(`[SERIALIZE] El ${idx} AFTER CONVERSION: x=${elX}, y=${elY}`);
+    
     const serialized: any = {
       // Propriétés requises
       id: String(el.id || `element-${idx}`),
       type: String(el.type || 'unknown'),
       
       // Positions - CRITICAL: Must be numbers, never undefined or NaN
-      x: typeof el.x === 'number' ? el.x : (Number(el.x) || 0),
-      y: typeof el.y === 'number' ? el.y : (Number(el.y) || 0),
+      x: elX,
+      y: elY,
       width: typeof el.width === 'number' ? el.width : (Number(el.width) || 100),
       height: typeof el.height === 'number' ? el.height : (Number(el.height) || 100),
       
@@ -86,6 +93,9 @@ export function serializeCanvasData(
         serialized[key] = val;
       }
     }
+
+    // 🔍 LOG: Positions après sérialisation
+    console.log(`[SERIALIZE] El ${idx} FINAL JSON: x=${serialized.x}, y=${serialized.y}`);
 
     return serialized;
   }).filter((el): el is Element => el !== null);
@@ -188,17 +198,28 @@ export function deserializeCanvasData(
     if (!el || typeof el !== 'object') continue;
 
     const element = el as Record<string, unknown>;
+    
+    // 🔍 LOG DESERIALIZE: Check positions avant normalisation
+    console.log(`[DESERIALIZE] El ${idx} RAW from JSON: x=${element.x} (type: ${typeof element.x}), y=${element.y} (type: ${typeof element.y})`);
+    
+    const normalizedX = Number(element.x) || 0;
+    const normalizedY = Number(element.y) || 0;
+    
+    console.log(`[DESERIALIZE] El ${idx} AFTER Number(): x=${normalizedX}, y=${normalizedY}`);
+    
     const normalizedElement: Element = {
       // Toutes les propriétés de l'élément d'abord
       ...element,
       // Puis valider/corriger les propriétés clés APRÈS le spread
       id: (element.id as string) || `element-${idx}`,
       type: ((element.type as string) || 'unknown').replace(/-/g, '_'),
-      x: Number(element.x) || 0,
-      y: Number(element.y) || 0,
+      x: normalizedX,
+      y: normalizedY,
       width: Number(element.width) || 100,
       height: Number(element.height) || 100,
     } as Element;
+
+    console.log(`[DESERIALIZE] El ${idx} FINAL after spread: x=${normalizedElement.x}, y=${normalizedElement.y}`);
 
     // ✅ NOUVEAU: Appliquer les valeurs via ValueResolver si c'est un RealDataElement
     // En mode édition: récupère les données du canvas (getProductTableFromElement)
