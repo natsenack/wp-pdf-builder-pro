@@ -218,20 +218,24 @@ class TemplateManager
     /**
      * Sauvegarder un template (AJAX)
      */
+    /**
+     * ✅ NOUVELLE FONCTION: Sauvegarde robuste et testée
+     */
     public function ajaxSaveTemplateV3()
     {
+        error_log('═══════════════════════════════════════════════════════════════════');
+        error_log('🔄 [SAVE] DÉBUT - NOUVEAU SYSTÈME DE SAUVEGARDE');
+        error_log('═══════════════════════════════════════════════════════════════════');
+        
         try {
-            // 🔍 AUDIT PHP SAVE: Log what arrives from React
-            error_log('🔍 [PHP AUDIT SAVE] ajaxSaveTemplateV3 called');
-            
-            // 🔧 CORRECTION: Utiliser NonceManager unifié pour sécurité cohérente
-            // Accepter les éditeurs ET les admins pour la sauvegarde
-            // (Les deux peuvent créer/éditer les PDF templates)
+            // ✅ ÉTAPE 1: Validation nonce et permissions
+            error_log('✅ [SAVE] Étape 1: Validation nonce et permissions');
             $validation = \PDF_Builder\Admin\Handlers\NonceManager::validateRequest(
                 \PDF_Builder\Admin\Handlers\NonceManager::MIN_CAPABILITY
             );
             
             if (!$validation['success']) {
+                error_log('❌ [SAVE] Validation échouée: ' . $validation['message']);
                 if ($validation['code'] === 'nonce_invalid') {
                     \PDF_Builder\Admin\Handlers\NonceManager::sendNonceErrorResponse();
                 } else {
@@ -239,93 +243,176 @@ class TemplateManager
                 }
                 return;
             }
-
-            $template_data = isset($_POST['template_data']) ? json_decode(stripslashes($_POST['template_data']), true) : null;
+            error_log('✅ [SAVE] Nonce et permissions OK');
+            
+            // ✅ ÉTAPE 2: Récupérer et décoder les données POST
+            error_log('✅ [SAVE] Étape 2: Récupération des données POST');
+            
+            // Récupérer les paramètres
+            $raw_template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
             $template_name = isset($_POST['template_name']) ? \sanitize_text_field($_POST['template_name']) : '';
-            $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : null;
-
-            // 🔍 AUDIT: Log raw POST data size
-            error_log('📥 [PHP AUDIT] Raw $_POST[template_data] size: ' . strlen($_POST['template_data'] ?? '') . ' bytes');
-            error_log('📥 [PHP AUDIT] Template name: ' . $template_name);
-            error_log('📥 [PHP AUDIT] Template ID: ' . ($template_id ?: 'NEW'));
-
-            if (!$template_data || empty($template_name)) {
-                // $this->debug_log('Données de template ou nom manquant');
-                \wp_send_json_error('Données de template ou nom manquant');
+            $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : 0;
+            
+            error_log('  - Raw data size: ' . strlen($raw_template_data) . ' bytes');
+            error_log('  - Template name: ' . $template_name);
+            error_log('  - Template ID: ' . ($template_id ?: 'NEW'));
+            
+            // Décoder le JSON
+            $template_data = json_decode($raw_template_data, true);
+            
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $error_msg = 'JSON decode error: ' . json_last_error_msg();
+                error_log('❌ [SAVE] ' . $error_msg);
+                \wp_send_json_error($error_msg);
                 return;
             }
-
-            // 🔍 AUDIT: Log parsed template structure
-            error_log('🔍 [PHP AUDIT] Parsed template_data type: ' . gettype($template_data));
-            error_log('🔍 [PHP AUDIT] Number of elements: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'N/A'));
             
-            // Log first 3 elements for inspection
-            if (isset($template_data['elements']) && is_array($template_data['elements'])) {
-                for ($i = 0; $i < min(3, count($template_data['elements'])); $i++) {
+            error_log('✅ [SAVE] JSON décodé correctement');
+            
+            // ✅ ÉTAPE 3: Validation des données
+            error_log('✅ [SAVE] Étape 3: Validation des données');
+            
+            if (empty($template_data)) {
+                error_log('❌ [SAVE] template_data vide après décodage');
+                \wp_send_json_error('Données template vides');
+                return;
+            }
+            
+            if (empty($template_name)) {
+                error_log('❌ [SAVE] template_name vide');
+                \wp_send_json_error('Nom du template requis');
+                return;
+            }
+            
+            // Vérifier la structure des données
+            $elements_count = isset($template_data['elements']) && is_array($template_data['elements']) 
+                ? count($template_data['elements']) 
+                : 0;
+            
+            error_log('  - Nombre d\'éléments: ' . $elements_count);
+            error_log('  - Canvas: ' . ($template_data['canvasWidth'] ?? 'N/A') . 'x' . ($template_data['canvasHeight'] ?? 'N/A'));
+            
+            if ($elements_count > 0) {
+                for ($i = 0; $i < min(2, $elements_count); $i++) {
                     $el = $template_data['elements'][$i];
-                    error_log('  Element ' . $i . ' (' . ($el['type'] ?? 'unknown') . '): ' . 
-                        json_encode(array_slice($el, 0, 10)) . '...');
+                    error_log('    [' . $i . '] ' . ($el['type'] ?? 'unknown') . ': x=' . ($el['x'] ?? '?') . ', y=' . ($el['y'] ?? '?'));
                 }
             }
-
-            // Créer ou mettre à jour le post template
-            $post_data = [
-                'post_title' => $template_name,
-                'post_type' => 'pdf_template',
-                'post_status' => 'publish',
-            ];
-
-            // meta_input seulement pour insert, pas pour update
-            if (!$template_id) {
-                $post_data['meta_input'] = [
-                    '_pdf_template_data' => $template_data,
-                    '_pdf_template_type' => 'custom',
-                ];
-            }
-
-            // $this->debug_log('Post data prepared: ' . print_r($post_data, true));
-
-            if ($template_id) {
-                $post_data['ID'] = $template_id;
-                // $this->debug_log('Updating existing template ID: ' . $template_id);
-                error_log('🔄 [PHP AUDIT] UPDATING existing template ID: ' . $template_id);
-                $result = \wp_update_post($post_data);
+            
+            error_log('✅ [SAVE] Validation OK');
+            
+            // ✅ ÉTAPE 4: Déterminer si INSERT ou UPDATE
+            error_log('✅ [SAVE] Étape 4: Déterminer INSERT vs UPDATE');
+            
+            if ($template_id && $template_id > 0) {
+                // UPDATE existant
+                error_log('  → Mode: UPDATE (ID=' . $template_id . ')');
                 
-                if (!\is_wp_error($result)) {
-                    // ✅ FIX: Use update_post_meta for UPDATE operations (not meta_input)
-                    error_log('🔄 [PHP AUDIT] Updating meta fields with update_post_meta()');
-                    \update_post_meta($template_id, '_pdf_template_data', $template_data);
-                    \update_post_meta($template_id, '_pdf_template_type', 'custom');
+                // Vérifier que le post existe
+                $existing_post = \get_post($template_id);
+                if (!$existing_post || $existing_post->post_type !== 'pdf_template') {
+                    error_log('❌ [SAVE] Le post avec l\'ID ' . $template_id . ' n\'existe pas ou n\'est pas un pdf_template');
+                    \wp_send_json_error('Template non trouvé');
+                    return;
                 }
+                
+                error_log('✅ [SAVE] Le post existe, on peut updater');
+                
+                // ✅ ÉTAPE 5: UPDATE le post
+                error_log('✅ [SAVE] Étape 5: Mise à jour du post');
+                
+                $update_result = \wp_update_post([
+                    'ID' => $template_id,
+                    'post_title' => $template_name,
+                    'post_status' => 'publish',
+                ], true);
+                
+                if (\is_wp_error($update_result)) {
+                    $error = $update_result->get_error_message();
+                    error_log('❌ [SAVE] wp_update_post échoué: ' . $error);
+                    \wp_send_json_error('Erreur: ' . $error);
+                    return;
+                }
+                
+                error_log('✅ [SAVE] Post mis à jour avec succès');
+                
+                // ✅ ÉTAPE 6: UPDATE les meta
+                error_log('✅ [SAVE] Étape 6: Mise à jour des meta');
+                
+                $meta_update_data = \update_post_meta($template_id, '_pdf_template_data', $template_data);
+                $meta_update_type = \update_post_meta($template_id, '_pdf_template_type', 'custom');
+                
+                error_log('  - _pdf_template_data updated: ' . ($meta_update_data !== false ? 'YES' : 'NO'));
+                error_log('  - _pdf_template_type updated: ' . ($meta_update_type !== false ? 'YES' : 'NO'));
+                
             } else {
-                // $this->debug_log('Creating new template');
-                error_log('✨ [PHP AUDIT] CREATING new template');
-                $result = \wp_insert_post($post_data);
+                // INSERT nouveau
+                error_log('  → Mode: INSERT (nouveau template)');
+                
+                // ✅ ÉTAPE 5: INSERT le post
+                error_log('✅ [SAVE] Étape 5: Création du post');
+                
+                $insert_result = \wp_insert_post([
+                    'post_title' => $template_name,
+                    'post_type' => 'pdf_template',
+                    'post_status' => 'publish',
+                    'meta_input' => [
+                        '_pdf_template_data' => $template_data,
+                        '_pdf_template_type' => 'custom',
+                    ]
+                ], true);
+                
+                if (\is_wp_error($insert_result)) {
+                    $error = $insert_result->get_error_message();
+                    error_log('❌ [SAVE] wp_insert_post échoué: ' . $error);
+                    \wp_send_json_error('Erreur: ' . $error);
+                    return;
+                }
+                
+                $template_id = $insert_result;
+                error_log('✅ [SAVE] Post créé avec succès (ID=' . $template_id . ')');
             }
-
-            if (\is_wp_error($result)) {
-                // $this->debug_log('Error saving template: ' . $result->get_error_message());
-                \wp_send_json_error('Erreur lors de la sauvegarde: ' . $result->get_error_message());
+            
+            // ✅ ÉTAPE 7: Vérification finale en base de données
+            error_log('✅ [SAVE] Étape 7: Vérification en base de données');
+            
+            $verified_data = \get_post_meta($template_id, '_pdf_template_data', true);
+            
+            if (empty($verified_data)) {
+                error_log('❌ [SAVE] PROBLÈME: Les données ne sont pas en base de données!');
+                error_log('    Template ID: ' . $template_id);
+                error_log('    Résultat get_post_meta: ' . (empty($verified_data) ? 'VIDE' : 'OK'));
+                \wp_send_json_error('Erreur de vérification: les données n\'ont pas pu être sauvegardées correctement');
                 return;
             }
-
-            // 🔍 AUDIT: Verify what was actually saved to DB
-            error_log('✅ [PHP AUDIT] Template saved with ID: ' . $result);
-            $saved_data = \get_post_meta($result, '_pdf_template_data', true);
-            error_log('✅ [PHP AUDIT] Data verified from DB - Number of elements: ' . 
-                (isset($saved_data['elements']) ? count($saved_data['elements']) : 'N/A'));
             
-            if (isset($saved_data['elements']) && is_array($saved_data['elements'])) {
-                error_log('✅ [PHP AUDIT] First element from DB: ' . json_encode($saved_data['elements'][0]));
+            $verified_elements = isset($verified_data['elements']) && is_array($verified_data['elements']) 
+                ? count($verified_data['elements']) 
+                : 0;
+                
+            error_log('✅ [SAVE] Vérification OK');
+            error_log('  - Template ID: ' . $template_id);
+            error_log('  - Éléments en DB: ' . $verified_elements);
+            
+            if ($verified_elements > 0) {
+                $first_el = $verified_data['elements'][0];
+                error_log('  - Premier élément: ' . ($first_el['type'] ?? 'unknown') . ' @ x=' . ($first_el['x'] ?? '?') . ', y=' . ($first_el['y'] ?? '?'));
             }
-
-            // $this->debug_log('Template saved successfully with ID: ' . $result);
+            
+            // ✅ SUCCÈS
+            error_log('═══════════════════════════════════════════════════════════════════');
+            error_log('✅ [SAVE] SUCCÈS TOTAL - Template ID: ' . $template_id);
+            error_log('═══════════════════════════════════════════════════════════════════');
+            
             \wp_send_json_success([
-                'template_id' => $result,
-                'message' => 'Template sauvegardé avec succès'
+                'template_id' => $template_id,
+                'message' => 'Template sauvegardé avec succès',
+                'saved_elements' => $verified_elements
             ]);
-
+            
         } catch (Exception $e) {
+            error_log('❌ [SAVE] EXCEPTION: ' . $e->getMessage());
+            error_log('  Stack: ' . $e->getTraceAsString());
             \wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
