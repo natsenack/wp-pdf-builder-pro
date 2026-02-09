@@ -92,10 +92,11 @@ class PDFEditorPreferences {
     private function init_hooks() {
         add_action('wp_ajax_pdf_editor_save_preferences', array($this, 'ajax_save_preferences'));
         add_action('wp_ajax_pdf_editor_get_preferences', array($this, 'ajax_get_preferences'));
-        // Enregistrer un script wp-preferences vide pour satisfaire les dépendances
-        add_action('wp_default_scripts', array($this, 'register_empty_wp_preferences'), 10);
+        // Enregistrer wp-preferences très tôt
+        add_action('wp_default_scripts', array($this, 'register_empty_wp_preferences'), 0);
+        add_action('init', array($this, 'register_empty_wp_preferences'), 0);
         // Désactiver les scripts wp-preferences par défaut sur les pages admin
-        add_action('admin_enqueue_scripts', array($this, 'dequeue_wp_preferences'), 9999);
+        add_action('admin_enqueue_scripts', array($this, 'dequeue_wp_preferences'), 0);
         // Charger AVANT les scripts wp-preferences par défaut
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'), 1);
     }
@@ -303,27 +304,39 @@ class PDFEditorPreferences {
     /**
      * Enregistrer un script wp-preferences vide pour éviter les erreurs de dépendance
      */
-    public function register_empty_wp_preferences($wp_scripts) {
-        // Vérifier si wp-preferences n'est pas déjà enregistré
+    public function register_empty_wp_preferences() {
+        global $wp_scripts;
+        
+        // Enregistrer les scripts vides pour satisfaire les dépendances
         if (!isset($wp_scripts->registered['wp-preferences'])) {
-            // Enregistrer un script vide pour satisfaire les dépendances
-            wp_register_script('wp-preferences', false, array(), false, false);
-            wp_register_script('wp-preferences-persistence', false, array(), false, false);
+            wp_register_script('wp-preferences', '', array(), null, false);
+        }
+        if (!isset($wp_scripts->registered['wp-preferences-persistence'])) {
+            wp_register_script('wp-preferences-persistence', '', array(), null, false);
         }
     }
 
     public function dequeue_wp_preferences($hook) {
-        // Désactiver les scripts wp-preferences qui causent des erreurs REST API
+        // Désactiver les scripts wp-preferences qui causent des erreurs
         wp_dequeue_script('wp-preferences');
         wp_dequeue_script('wp-preferences-persistence');
-        wp_deregister_script('wp-preferences');
-        wp_deregister_script('wp-preferences-persistence');
+        
+        // Désenregistrer les scripts seulement s'ils existent
+        global $wp_scripts;
+        if (isset($wp_scripts->registered['wp-preferences'])) {
+            wp_deregister_script('wp-preferences');
+        }
+        if (isset($wp_scripts->registered['wp-preferences-persistence'])) {
+            wp_deregister_script('wp-preferences-persistence');
+        }
 
         // Désactiver les styles associés si nécessaire
         wp_dequeue_style('wp-preferences');
-        wp_deregister_style('wp-preferences');
-
-
+        
+        global $wp_styles;
+        if (isset($wp_styles->registered['wp-preferences'])) {
+            wp_deregister_style('wp-preferences');
+        }
     }
 
     /**
