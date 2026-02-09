@@ -181,9 +181,9 @@ Write-Host "`n1 Detection des fichiers..." -ForegroundColor Magenta
 $filesToDeploy = @()
 
 if ($All) {
-    Write-Log "Mode complet: tous les fichiers du plugin" "INFO"
+    Write-Log "Mode complet: tous les fichiers du plugin (IncludeVendor=$IncludeVendor)" "INFO"
     
-    # Simple et fiable: prendre tous les fichiers et exclure précisemment
+    # Simple et fiable: prendre tous les fichiers et exclure uniquement les essentiels
     $filesToDeploy = @(Get-ChildItem -Path $PluginDir -Recurse -File | Where-Object {
         $path = $_.FullName
         $relativePath = $_.FullName.Replace($PluginDir, '').TrimStart('\')
@@ -197,14 +197,7 @@ if ($All) {
         # Exclure les répertoires de dev
         if ($path -match '\\(node_modules|tests)\\'){ return $false }
         
-        # Exclure les fichiers source TypeScript
-        if ($path -match '\.(ts|tsx|map)$') { return $false }
-        
-        # Exclure les fichiers temporaires et logs
-        if ($path -match '\.(log|tmp|md)$') { return $false }
-        if ($path -match 'README') { return $false }
-        
-        # Inclure tout le reste
+        # Inclure TOUT le reste (fichiers source TS, MD, logs, etc.)
         return $true
     })
 } else {
