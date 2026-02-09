@@ -147,23 +147,14 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
 /**
  * Chargement unique et centralisé de l'autoloader Composer
  * Évite les chargements redondants dans différents fichiers
- * SEULEMENT après que WordPress soit complètement chargé
+ * SEULEMENT pendant la phase plugins_loaded, jamais au niveau global
  */
-if (function_exists('did_action')) {
-    if (did_action('muplugins_loaded')) {
-        // WordPress est déjà suffisamment chargé
-        if (!class_exists('Dompdf\Dompdf') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php')) {
-            require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
-        }
-    } else {
-        // Attendre que WordPress soit prêt
-        add_action('muplugins_loaded', function() {
-            if (!class_exists('Dompdf\Dompdf') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php')) {
-                require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
-            }
-        }, 1);
+// JAMAIS au niveau global - toujours différer jusqu'à plugins_loaded
+add_action('plugins_loaded', function() {
+    if (!class_exists('Dompdf\Dompdf') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
     }
-}
+}, 1);
 
 // ============================================================================
 // ✅ FONCTIONS WRAPPER POUR LA TABLE PERSONNALISÉE DE PARAMÈTRES
