@@ -126,7 +126,8 @@ SCRIPT;
     echo $script;
 }
 
-add_action('admin_head', 'pdf_builder_inject_nonce', 1);
+// DÉSACTIVER CE HOOK POUR L'INSTANT - IL CAUSE UNE ERREUR D'INITIALISATION
+// add_action('admin_head', 'pdf_builder_inject_nonce', 1);
 
 // Supprimer les vérifications directes qui peuvent s'exécuter trop tôt
 // Les logs seront faits dans les fonctions hookées si nécessaire
@@ -140,34 +141,28 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
 }
 
 // ============================================================================
-// ✅ CHARGER LE GESTIONNAIRE DE DÉSACTIVATION (TRÈS TÔT)
-// ============================================================================
-// Charger le gestionnaire de désactivation avant tout pour intercepter les requêtes
-if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Deactivation_Handler.php')) {
-    require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Deactivation_Handler.php';
-}
-
-// ============================================================================
-// ✅ CHARGER LE SYSTÈME CENTRALISÉ DE GESTION DES NONCES
-// ============================================================================
-// Charger le registre et le validateur de nonces (sécurité critique)
-if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Nonce_Registry.php')) {
-    require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Nonce_Registry.php';
-}
-if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Nonce_Validator.php')) {
-    require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Nonce_Validator.php';
-}
-
-// ============================================================================
 // ✅ CHARGEMENT CENTRALISÉ DE L'AUTOLOADER COMPOSER
 // ============================================================================
 
 /**
  * Chargement unique et centralisé de l'autoloader Composer
  * Évite les chargements redondants dans différents fichiers
+ * SEULEMENT après que WordPress soit complètement chargé
  */
-if (!class_exists('Dompdf\Dompdf') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php')) {
-    require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+if (function_exists('did_action')) {
+    if (did_action('muplugins_loaded')) {
+        // WordPress est déjà suffisamment chargé
+        if (!class_exists('Dompdf\Dompdf') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+        }
+    } else {
+        // Attendre que WordPress soit prêt
+        add_action('muplugins_loaded', function() {
+            if (!class_exists('Dompdf\Dompdf') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php')) {
+                require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+            }
+        }, 1);
+    }
 }
 
 // ============================================================================
@@ -366,14 +361,26 @@ function pdf_builder_diagnose_onboarding_manager() {
     return $message;
 }
 
-// ============================================================================
-// INITIALISATION DIFFÉRÉE - UNIQUEMENT APRÈS QUE WORDPRESS SOIT CHARGÉ
-// ============================================================================
-
 // Tous les hooks et initialisations sont maintenant différés jusqu'à ce que WordPress soit prêt
 if (function_exists('add_action')) {
     // Initialiser l'Onboarding Manager une fois WordPress chargé
     add_action('plugins_loaded', function() {
+        // ============================================================================
+        // ✅ CHARGER LES ÉLÉMENTS CRITIQUES (PLUGINS_LOADED)
+        // ============================================================================
+        // Charger le gestionnaire de désactivation
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Deactivation_Handler.php')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Deactivation_Handler.php';
+        }
+        
+        // Charger le registre et le validateur de nonces (sécurité critique)
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Nonce_Registry.php')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Nonce_Registry.php';
+        }
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Nonce_Validator.php')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Nonce_Validator.php';
+        }
+        
         // Charger les utilitaires d'urgence si nécessaire
         pdf_builder_load_utilities_emergency();
 
@@ -523,19 +530,10 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/core/config-manager.php';
     }
 
-
-
-    // HOTFIX: Charger le correctif pour les notifications avant PDF_Builder_Core
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'hotfix-notifications.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'hotfix-notifications.php';
-    }
-
     // Charger la classe principale PDF_Builder_Core depuis src/
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Core.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Core.php';
     }
-
-    // Forcer le déploiement - marqueur de test
 
     // Charger les utilitaires essentiels depuis src/utilities/
     $utilities = array(
