@@ -52,6 +52,9 @@ if (!function_exists('wp_json_encode')) {
     function wp_json_encode($data, $options = 0, $depth = 512) {}
 }
 
+// Protéger contre un chargement double
+if (!class_exists('PDFEditorPreferences')) {
+
 class PDFEditorPreferences {
 
     private static $instance = null;
@@ -494,5 +497,7 @@ class PDFEditorPreferences {
         return ob_get_clean();
     }
 }
+
+} // Fin de if (!class_exists('PDFEditorPreferences'))
 
 
