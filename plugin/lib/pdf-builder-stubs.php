@@ -386,9 +386,8 @@ if (!function_exists('wp_generate_password')) {
     function wp_generate_password($length = 12, $special_chars = true): string { return ''; }
 }
 
-if (!function_exists('wp_tempnam')) {
-    function wp_tempnam($dir = '', $prefix = ''): string { return ''; }
-}
+// NOTE: wp_tempnam was added in WordPress 6.7 - removed stub to avoid redeclaration conflict
+// WordPress 6.7+ provides native wp_tempnam(), so we don't need a stub
 
 if (!function_exists('wp_json_encode')) {
     function wp_json_encode($data, $options = 0, $depth = 512): string { return ''; }
