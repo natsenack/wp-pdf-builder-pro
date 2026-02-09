@@ -181,24 +181,14 @@ Write-Host "`n1 Detection des fichiers..." -ForegroundColor Magenta
 $filesToDeploy = @()
 
 if ($All) {
-    Write-Log "Mode complet: tous les fichiers du plugin (IncludeVendor=$IncludeVendor)" "INFO"
-    
-    # Simple et fiable: prendre tous les fichiers et exclure uniquement les essentiels
+    Write-Log "Mode complet: tous les fichiers du plugin" "INFO"
+    $exclusions = @('\\\.git\\', 'node_modules', 'tests', 'temp\.js$', 'composer-setup\.php$', 'phpstan\.neon$', '\.log$', '\.tmp$', 'plugin\\resources\\assets\\js\\dist\\plugin\\resources\\assets', '\.ts$', '\.tsx$', '\.map$', '\.md$', 'README', 'config\.ts', 'tsconfig')
+    if (-not $IncludeVendor) {
+        $exclusions += 'vendor'
+    }
     $filesToDeploy = @(Get-ChildItem -Path $PluginDir -Recurse -File | Where-Object {
         $path = $_.FullName
-        $relativePath = $_.FullName.Replace($PluginDir, '').TrimStart('\')
-        
-        # Exclure .git
-        if ($path -match '\\\.git\\') { return $false }
-        
-        # Exclure vendor si pas demandé
-        if (-not $IncludeVendor -and $relativePath.StartsWith('vendor\')) { return $false }
-        
-        # Exclure les répertoires de dev
-        if ($path -match '\\(node_modules|tests)\\'){ return $false }
-        
-        # Inclure TOUT le reste (fichiers source TS, MD, logs, etc.)
-        return $true
+        -not ($exclusions | Where-Object { $path -match $_ })
     })
 } else {
     Write-Log "Mode normal: fichiers modifiés" "INFO"
