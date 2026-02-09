@@ -1,0 +1,325 @@
+<?php
+
+namespace PDF_Builder\Managers;
+
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Direct access not allowed');
+}
+/**
+ * PDF Builder Feature Manager
+ * Gestion des fonctionnalités freemium
+ */
+
+
+
+class PDF_Builder_Feature_Manager
+{
+    /**
+     * Définition des fonctionnalités et leurs restrictions
+     */
+    private static $features = [
+        // FREE FEATURES - Toujours disponibles
+        'basic_templates' => [
+            'free' => true,
+            'premium' => true,
+            'name' => 'Templates de base',
+            'description' => '4 templates prédéfinis (Facture, Devis, Reçu, Autre)'
+        ],
+        'basic_elements' => [
+            'free' => true,
+            'premium' => true,
+            'name' => 'Éléments standards',
+            'description' => 'Texte, image, ligne, rectangle'
+        ],
+        'woocommerce_integration' => [
+            'free' => true,
+            'premium' => true,
+            'name' => 'Intégration WooCommerce',
+            'description' => 'Variables de commande et produit'
+        ],
+
+        // LIMITED FREE FEATURES - Avec limites
+        'pdf_generation' => [
+            'free' => true,
+            'premium' => true,
+            'limit' => 50, // 50 PDFs par mois
+            'name' => 'Génération PDF',
+            'description' => 'Création de documents PDF'
+        ],
+
+        // PREMIUM FEATURES - Payantes uniquement
+        'advanced_templates' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Templates avancés',
+            'description' => 'Bibliothèque complète de templates personnalisables'
+        ],
+        'premium_elements' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Éléments premium',
+            'description' => 'Codes-barres, QR codes, graphiques, signatures'
+        ],
+        'bulk_generation' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Génération en masse',
+            'description' => 'Création multiple de PDFs'
+        ],
+        'api_access' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'API développeur',
+            'description' => 'Accès complet à l\'API REST'
+        ],
+        'white_label' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'White-label',
+            'description' => 'Rebranding et personnalisation complète'
+        ],
+        'multi_format_export' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Export multi-format',
+            'description' => 'PDF, PNG, JPG, SVG'
+        ],
+        'priority_support' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Support prioritaire',
+            'description' => 'Support 24/7 avec SLA garanti'
+        ],
+        'advanced_analytics' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Analytics avancés',
+            'description' => 'Tableaux de bord détaillés et rapports'
+        ],
+
+        // CANVAS DISPLAY SETTINGS - Premium features
+        'high_dpi' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Résolutions élevées',
+            'description' => 'DPI 300 et 600 pour haute qualité'
+        ],
+        'extended_formats' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Formats étendus',
+            'description' => 'A3, Letter, Legal, Étiquettes'
+        ],
+        'custom_colors' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Couleurs personnalisées',
+            'description' => 'Fond et bordures du canvas'
+        ],
+        'grid_navigation' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Navigation grille et guides',
+            'description' => 'Grille, guides et accrochage magnétique'
+        ],
+        'advanced_selection' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Modes de sélection avancés',
+            'description' => 'Sélection multiple et par groupe'
+        ],
+        'keyboard_shortcuts' => [
+            'free' => false,
+            'premium' => true,
+            'name' => 'Raccourcis clavier',
+            'description' => 'Raccourcis clavier pour navigation rapide'
+        ],
+    ];
+
+    /**
+     * Vérifier si une fonctionnalité peut être utilisée
+     */
+    public static function canUseFeature($feature_name)
+    {
+        $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+        $is_premium = $license_manager->is_premium();
+
+        if (!isset(self::$features[$feature_name])) {
+            return false;
+        }
+
+        $feature = self::$features[$feature_name];
+
+        if ($is_premium) {
+            return $feature['premium'];
+        }
+
+        // Pour les utilisateurs free, vérifier les limites d'usage
+        if (isset($feature['limit'])) {
+            return self::checkUsageLimit($feature_name, $feature['limit']);
+        }
+
+        return $feature['free'];
+    }
+
+    /**
+     * Vérifier les limites d'usage pour les utilisateurs free
+     */
+    private static function checkUsageLimit($feature_name, $limit)
+    {
+        $usage_key = 'pdf_builder_usage_' . $feature_name;
+        $current_usage = get_option($usage_key, 0);
+        $reset_time = get_option($usage_key . '_reset', 0);
+
+        $now = time();
+        $month_start = strtotime('first day of this month');
+
+        // Reset counter monthly
+        if ($reset_time < $month_start) {
+            update_option($usage_key, 0);
+            update_option($usage_key . '_reset', $month_start);
+            $current_usage = 0;
+        }
+
+        return $current_usage < $limit;
+    }
+
+    /**
+     * Incrémenter le compteur d'usage
+     */
+    public static function incrementUsage($feature_name)
+    {
+        if (!isset(self::$features[$feature_name])) {
+            return false;
+        }
+
+        $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+        if ($license_manager->is_premium()) {
+            return true; // Pas de limite pour premium
+        }
+
+        $usage_key = 'pdf_builder_usage_' . $feature_name;
+        $current_usage = get_option($usage_key, 0);
+        update_option($usage_key, $current_usage + 1);
+
+        return true;
+    }
+
+    /**
+     * Obtenir l'usage actuel pour une fonctionnalité
+     */
+    public static function getCurrentUsage($feature_name)
+    {
+        if (!isset(self::$features[$feature_name])) {
+            return 0;
+        }
+
+        return pdf_builder_get_option('pdf_builder_usage_' . $feature_name, 0);
+    }
+
+    /**
+     * Obtenir la limite pour une fonctionnalité
+     */
+    public static function getFeatureLimit($feature_name)
+    {
+        if (!isset(self::$features[$feature_name]) || !isset(self::$features[$feature_name]['limit'])) {
+            return -1; // Pas de limite
+        }
+
+        return self::$features[$feature_name]['limit'];
+    }
+
+    /**
+     * Obtenir toutes les fonctionnalités disponibles
+     */
+    public static function getAllFeatures()
+    {
+        return self::$features;
+    }
+
+    /**
+     * Obtenir les fonctionnalités disponibles pour l'utilisateur actuel
+     */
+    public static function getAvailableFeatures()
+    {
+        $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+        $is_premium = $license_manager->is_premium();
+        $available_features = [];
+
+        foreach (self::$features as $key => $feature) {
+            $can_use = $is_premium ? $feature['premium'] : $feature['free'];
+
+            if ($can_use) {
+                // Vérifier les limites pour free users
+                if (!$is_premium && isset($feature['limit'])) {
+                    $can_use = self::checkUsageLimit($key, $feature['limit']);
+                }
+            }
+
+            if ($can_use) {
+                $available_features[$key] = $feature;
+            }
+        }
+
+        return $available_features;
+    }
+
+    /**
+     * Obtenir les fonctionnalités premium (pour les suggestions d'upgrade)
+     */
+    public static function getPremiumFeatures()
+    {
+        $premium_features = [];
+
+        foreach (self::$features as $key => $feature) {
+            if (!$feature['free'] && $feature['premium']) {
+                $premium_features[$key] = $feature;
+            }
+        }
+
+        return $premium_features;
+    }
+
+    /**
+     * Vérifier si une fonctionnalité est premium
+     */
+    public static function isPremiumFeature($feature_name)
+    {
+        if (!isset(self::$features[$feature_name])) {
+            return false;
+        }
+
+        return !self::$features[$feature_name]['free'] && self::$features[$feature_name]['premium'];
+    }
+
+    /**
+     * Obtenir les détails d'une fonctionnalité
+     */
+    public static function getFeatureDetails($feature_name)
+    {
+        if (!isset(self::$features[$feature_name])) {
+            return null;
+        }
+
+        $feature = self::$features[$feature_name];
+        $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+        $is_premium = $license_manager->is_premium();
+
+        return [
+            'name' => $feature['name'],
+            'description' => $feature['description'],
+            'is_premium' => self::isPremiumFeature($feature_name),
+            'can_use' => self::canUseFeature($feature_name),
+            'current_usage' => self::getCurrentUsage($feature_name),
+            'limit' => self::getFeatureLimit($feature_name),
+            'is_available' => $is_premium ? $feature['premium'] : $feature['free']
+        ];
+    }
+}
+
+
+
+
+
+
