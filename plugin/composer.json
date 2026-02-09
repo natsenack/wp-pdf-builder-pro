@@ -12,11 +12,13 @@
   },
   "autoload": {
     "psr-4": {
-      "PDF_Builder\\": ["src/", "config/"],
+      "PDF_Builder\\": [
+        "src/",
+        "config/"
+      ],
       "PDF_Builder_Pro\\": "src/"
     },
     "files": [
-      "lib/pdf-builder-stubs.php",
       "src/Core/PDF_Builder_Path_Validator.php",
       "src/Core/PDF_Builder_Rate_Limiter.php",
       "src/Core/PDF_Builder_Security_Validator.php"

@@ -2,11 +2,11 @@
   "folders": [
     {
       "path": ".",
-      "name": "📦 V2 (Production Ready)"
+      "name": "📦 V2 (Production Ready)",
     },
     {
-      "path": "D:/Users/romain/Downloads/woo-pdf-invoice-builder"
-    }
+      "path": "D:/Users/romain/Downloads/woo-pdf-invoice-builder",
+    },
   ],
   "settings": {
     "typescript.enablePromptUseWorkspaceTsdk": true,
@@ -15,14 +15,15 @@
     "search.exclude": {
       "**/node_modules": true,
       "dist": true,
-      "build": true
+      "build": true,
     },
     "files.exclude": {
-      "**/.DS_Store": true
+      "**/.DS_Store": true,
+      "**/vendor": false,
     },
     "files.watcherExclude": {
       "**/node_modules/**": true,
-      "**/.git/**": true
+      "**/.git/**": true,
     },
     "powershell.cwd": "📦 V2 (Production Ready)",
     "intelephense.files.associations": ["*.php"],
@@ -98,15 +99,15 @@
       "Zend OPcache",
       "zip",
       "zlib",
-      "wordpress"
-    ]
+      "wordpress",
+    ],
   },
   "extensions": {
     "recommendations": [
       "esbenp.prettier-vscode",
       "dbaeumer.vscode-eslint",
       "ms-vscode.vscode-typescript-next",
-      "bradlc.vscode-tailwindcss"
-    ]
-  }
+      "bradlc.vscode-tailwindcss",
+    ],
+  },
 }

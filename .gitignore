@@ -25,7 +25,7 @@ build/logs/
 # ----------------------------------
 # PHP / Composer
 # ----------------------------------
-plugin/vendor/
+# plugin/vendor/
 plugin/composer.phar
 plugin/composer-setup.php
 plugin/composer.lock
