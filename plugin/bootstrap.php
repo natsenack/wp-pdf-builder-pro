@@ -829,7 +829,7 @@ function pdf_builder_load_admin_components()
     // CHARGER LE GESTIONNAIRE DE PRÉFÉRENCES DE L'ÉDITEUR PDF
     // Maintenant chargé automatiquement par autoloader PSR-4
     if (class_exists('PDF_Builder\\Core\\PDFEditorPreferences')) {
-        PDFEditorPreferences::get_instance();
+        \PDF_Builder\Core\PDFEditorPreferences::get_instance();
     }
 
     // Charger les fonctions globales de préférences si elles ne sont pas déjà définies
@@ -838,7 +838,7 @@ function pdf_builder_load_admin_components()
          * Obtenir une préférence utilisateur
          */
         function pdf_builder_get_user_preference($key, $default = null) {
-            $preferences = PDFEditorPreferences::get_instance();
+            $preferences = \PDF_Builder\Core\PDFEditorPreferences::get_instance();
             $all_prefs = $preferences->get_preferences();
             return isset($all_prefs[$key]) ? $all_prefs[$key] : $default;
         }
@@ -847,7 +847,7 @@ function pdf_builder_load_admin_components()
          * Sauvegarder une préférence utilisateur
          */
         function pdf_builder_set_user_preference($key, $value) {
-            $preferences = PDFEditorPreferences::get_instance();
+            $preferences = \PDF_Builder\Core\PDFEditorPreferences::get_instance();
             $current = $preferences->get_preferences();
             $current[$key] = $value;
             return $preferences->save_preferences($current);
@@ -857,7 +857,7 @@ function pdf_builder_load_admin_components()
          * Obtenir toutes les préférences utilisateur
          */
         function pdf_builder_get_all_user_preferences() {
-            $preferences = PDFEditorPreferences::get_instance();
+            $preferences = \PDF_Builder\Core\PDFEditorPreferences::get_instance();
             return $preferences->get_preferences();
         }
     }

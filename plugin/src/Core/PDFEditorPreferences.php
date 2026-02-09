@@ -4,6 +4,8 @@
  * Remplace wp-preferences pour éviter les erreurs REST API
  */
 
+namespace PDF_Builder\Core;
+
 if (!defined('ABSPATH')) {
     exit;
 }
