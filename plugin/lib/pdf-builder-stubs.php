@@ -318,13 +318,9 @@ if (!function_exists('get_users')) {
     function get_users($args = []) {}
 }
 
-if (!function_exists('get_core_updates')) {
-    function get_core_updates() {}
-}
-
-if (!function_exists('get_plugin_updates')) {
-    function get_plugin_updates() {}
-}
+// NOTE: Removed get_core_updates() and get_plugin_updates() stubs to avoid redeclaration conflicts
+// These are WordPress core functions loaded in wp-admin/includes/update.php
+// See: https://github.com/WordPress/WordPress/blob/master/wp-admin/includes/update.php
 
 // ============================================================================
 // WORDPRESS PLUGIN FUNCTIONS
