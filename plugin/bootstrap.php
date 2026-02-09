@@ -1506,8 +1506,12 @@ if (file_exists($migration_ajax_path)) {
 // FIN DU BOOTSTRAP
 // ============================================================================
 
-// Initialiser le bootstrap du plugin - maintenant géré dans pdf-builder-pro.php
-// add_action('plugins_loaded', 'pdf_builder_load_bootstrap', 5); // Supprimé - géré dans pdf-builder-pro.php
+// ============================================================================
+// INITIALISATION DU BOOTSTRAP PRINCIPAL
+// ============================================================================
+
+// Appeler le bootstrap lors du hook plugins_loaded avec une priorité très élevée
+add_action('plugins_loaded', 'pdf_builder_load_bootstrap', 5);
 
 
 
