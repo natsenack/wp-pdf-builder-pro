@@ -92,11 +92,10 @@ class PDFEditorPreferences {
     private function init_hooks() {
         add_action('wp_ajax_pdf_editor_save_preferences', array($this, 'ajax_save_preferences'));
         add_action('wp_ajax_pdf_editor_get_preferences', array($this, 'ajax_get_preferences'));
-        // Enregistrer wp-preferences très tôt
-        add_action('wp_default_scripts', array($this, 'register_empty_wp_preferences'), 0);
-        add_action('init', array($this, 'register_empty_wp_preferences'), 0);
+        // Enregistrer wp-preferences TRÈS TÔT - avant que WordPress n'enregistre ses propres scripts
+        add_action('plugins_loaded', array($this, 'register_empty_wp_preferences'), -1000);
         // Désactiver les scripts wp-preferences par défaut sur les pages admin
-        add_action('admin_enqueue_scripts', array($this, 'dequeue_wp_preferences'), 0);
+        add_action('admin_enqueue_scripts', array($this, 'dequeue_wp_preferences'), -1000);
         // Charger AVANT les scripts wp-preferences par défaut
         add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'), 1);
     }
@@ -302,41 +301,20 @@ class PDFEditorPreferences {
      * Désactiver les scripts wp-preferences par défaut
      */
     /**
-     * Enregistrer un script wp-preferences vide pour éviter les erreurs de dépendance
+     * Enregistrer les scripts wp-preferences vides pour éviter les erreurs de dépendance
+     * Appelé très tôt (plugins_loaded avec priorité -1000) pour devancer WordPress
      */
     public function register_empty_wp_preferences() {
-        global $wp_scripts;
-        
-        // Enregistrer les scripts vides pour satisfaire les dépendances
-        if (!isset($wp_scripts->registered['wp-preferences'])) {
-            wp_register_script('wp-preferences', '', array(), null, false);
-        }
-        if (!isset($wp_scripts->registered['wp-preferences-persistence'])) {
-            wp_register_script('wp-preferences-persistence', '', array(), null, false);
-        }
+        // Enregistrer les scripts vides avec un source vide
+        wp_register_script('wp-preferences', '', array(), null);
+        wp_register_script('wp-preferences-persistence', '', array(), null);
     }
 
     public function dequeue_wp_preferences($hook) {
-        // Désactiver les scripts wp-preferences qui causent des erreurs
+        // Désactiver les scripts wp-preferences qui causeraient des conflits
         wp_dequeue_script('wp-preferences');
         wp_dequeue_script('wp-preferences-persistence');
-        
-        // Désenregistrer les scripts seulement s'ils existent
-        global $wp_scripts;
-        if (isset($wp_scripts->registered['wp-preferences'])) {
-            wp_deregister_script('wp-preferences');
-        }
-        if (isset($wp_scripts->registered['wp-preferences-persistence'])) {
-            wp_deregister_script('wp-preferences-persistence');
-        }
-
-        // Désactiver les styles associés si nécessaire
         wp_dequeue_style('wp-preferences');
-        
-        global $wp_styles;
-        if (isset($wp_styles->registered['wp-preferences'])) {
-            wp_deregister_style('wp-preferences');
-        }
     }
 
     /**
