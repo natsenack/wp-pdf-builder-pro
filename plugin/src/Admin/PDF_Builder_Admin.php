@@ -890,10 +890,13 @@ class PdfBuilderAdminNew
 
         // Hooks WooCommerce - Délégation vers le manager
         \add_action('init', function() {
-            if (\did_action('plugins_loaded') && defined('WC_VERSION') && $this->woocommerce_integration !== null) {
-                \add_action('add_meta_boxes_shop_order', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
-                if (defined('WC_VERSION') && version_compare(WC_VERSION, '7.1', '>=')) {
-                    \add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this->woocommerce_integration, 'addWoocommerceOrderMetaBox']);
+            if (\did_action('plugins_loaded') && defined('WC_VERSION')) {
+                $woo_integration = $this->getWooCommerceIntegration();
+                if ($woo_integration !== null) {
+                    \add_action('add_meta_boxes_shop_order', [$woo_integration, 'addWoocommerceOrderMetaBox']);
+                    if (defined('WC_VERSION') && version_compare(WC_VERSION, '7.1', '>=')) {
+                        \add_action('add_meta_boxes_woocommerce_page_wc-orders', [$woo_integration, 'addWoocommerceOrderMetaBox']);
+                    }
                 }
             }
         });
