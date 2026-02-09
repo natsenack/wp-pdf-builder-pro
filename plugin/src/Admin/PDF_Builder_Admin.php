@@ -119,6 +119,9 @@ class PdfBuilderAdminNew
         $this->initServicesAndLoaders();
         $this->initConditionalModules();
 
+        // ✅ ENREGISTRER LES HOOKS WOOCOMMERCE TRÈS TÔT (AVANT is_admin check)
+        $this->registerWooCommerceHooks();
+
         $this->initHooks();
     }
 
@@ -870,6 +873,34 @@ class PdfBuilderAdminNew
     }
 
     /**
+     * Enregistre les hooks WooCommerce (fait très tôt, avant is_admin check)
+     */
+    private function registerWooCommerceHooks()
+    {
+        // Enregistrer les meta boxes WooCommerce sur le hook init
+        // On utilise une closure pour éviter les problèmes de timing
+        \add_action('init', function() {
+            // WooCommerce doit être activé
+            if (!defined('WC_VERSION')) {
+                return;
+            }
+
+            // Obtenir l'intégration WooCommerce
+            $woo_integration = $this->getWooCommerceIntegration();
+            if ($woo_integration === null) {
+                return;
+            }
+
+            // Enregistrer les meta boxes
+            \add_action('add_meta_boxes_shop_order', [$woo_integration, 'addWoocommerceOrderMetaBox']);
+            
+            if (version_compare(WC_VERSION, '7.1', '>=')) {
+                \add_action('add_meta_boxes_woocommerce_page_wc-orders', [$woo_integration, 'addWoocommerceOrderMetaBox']);
+            }
+        }, 5);
+    }
+
+    /**
      * Hooks d'administration de base
      */
     private function initAdminHooks()
@@ -881,25 +912,12 @@ class PdfBuilderAdminNew
     }
 
     /**
-     * Hooks conditionnels (WooCommerce, etc.)
+     * Hooks conditionnels (autres que WooCommerce)
      */
     private function initConditionalHooks()
     {
         // Le gestionnaire de modèles prédéfinis est déjà chargé dans bootstrap.php
         // include_once self::TEMPLATES_DIR . '/predefined-templates-manager.php';
-
-        // Hooks WooCommerce - Délégation vers le manager
-        \add_action('init', function() {
-            if (\did_action('plugins_loaded') && defined('WC_VERSION')) {
-                $woo_integration = $this->getWooCommerceIntegration();
-                if ($woo_integration !== null) {
-                    \add_action('add_meta_boxes_shop_order', [$woo_integration, 'addWoocommerceOrderMetaBox']);
-                    if (defined('WC_VERSION') && version_compare(WC_VERSION, '7.1', '>=')) {
-                        \add_action('add_meta_boxes_woocommerce_page_wc-orders', [$woo_integration, 'addWoocommerceOrderMetaBox']);
-                    }
-                }
-            }
-        });
     }
 
     /**
