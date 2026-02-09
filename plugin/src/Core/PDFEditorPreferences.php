@@ -92,6 +92,8 @@ class PDFEditorPreferences {
     private function init_hooks() {
         add_action('wp_ajax_pdf_editor_save_preferences', array($this, 'ajax_save_preferences'));
         add_action('wp_ajax_pdf_editor_get_preferences', array($this, 'ajax_get_preferences'));
+        // Enregistrer un script wp-preferences vide pour satisfaire les dépendances
+        add_action('wp_default_scripts', array($this, 'register_empty_wp_preferences'), 10);
         // Désactiver les scripts wp-preferences par défaut sur les pages admin
         add_action('admin_enqueue_scripts', array($this, 'dequeue_wp_preferences'), 9999);
         // Charger AVANT les scripts wp-preferences par défaut
@@ -298,6 +300,18 @@ class PDFEditorPreferences {
     /**
      * Désactiver les scripts wp-preferences par défaut
      */
+    /**
+     * Enregistrer un script wp-preferences vide pour éviter les erreurs de dépendance
+     */
+    public function register_empty_wp_preferences($wp_scripts) {
+        // Vérifier si wp-preferences n'est pas déjà enregistré
+        if (!isset($wp_scripts->registered['wp-preferences'])) {
+            // Enregistrer un script vide pour satisfaire les dépendances
+            wp_register_script('wp-preferences', false, array(), false, false);
+            wp_register_script('wp-preferences-persistence', false, array(), false, false);
+        }
+    }
+
     public function dequeue_wp_preferences($hook) {
         // Désactiver les scripts wp-preferences qui causent des erreurs REST API
         wp_dequeue_script('wp-preferences');
