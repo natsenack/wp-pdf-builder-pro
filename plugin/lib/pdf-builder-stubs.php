@@ -616,39 +616,35 @@ if (!function_exists('load_plugin_textdomain')) {
 // DOMPDF CLASSES
 // ============================================================================
 
-namespace Dompdf {
-    if (!class_exists('\Dompdf\Dompdf')) {
+if (!class_exists('\Dompdf\Dompdf')) {
         class Dompdf {
-            public function __construct(array $options = []) {}
-            public function loadHtml($html, $encoding = null) {}
-            public function loadHtmlFile($filename) {}
-            public function render() {}
-            public function output() {}
-            public function stream($filename = 'document.pdf', $options = []) {}
-            public function getCanvas() {}
-            public function setProtocol($protocol = 'file://') {}
-            public function setPaper($paper = 'letter', $orientation = 'portrait') {}
-            public function getOptions() {}
-            public function setOptions($options) {}
-        }
-    }
-
-    if (!class_exists('\Dompdf\Options')) {
-        class Options {
-            public function __construct(array $options = []) {}
-            public function set(string $key, $value) {}
-            public function get(string $key) {}
-            public function setFontDir($path) {}
-            public function setFontCache($path) {}
-            public function getChroot() {}
-            public function setChroot($chroot) {}
-            public function getBasePath() {}
-            public function setBasePath($base_path) {}
-        }
+        public function __construct(array $options = []) {}
+        public function loadHtml($html, $encoding = null) {}
+        public function loadHtmlFile($filename) {}
+        public function render() {}
+        public function output() {}
+        public function stream($filename = 'document.pdf', $options = []) {}
+        public function getCanvas() {}
+        public function setProtocol($protocol = 'file://') {}
+        public function setPaper($paper = 'letter', $orientation = 'portrait') {}
+        public function getOptions() {}
+        public function setOptions($options) {}
     }
 }
 
-// ============================================================================
+if (!class_exists('\Dompdf\Options')) {
+    class Options {
+        public function __construct(array $options = []) {}
+        public function set(string $key, $value) {}
+        public function get(string $key) {}
+        public function setFontDir($path) {}
+        public function setFontCache($path) {}
+        public function getChroot() {}
+        public function setChroot($chroot) {}
+        public function getBasePath() {}
+        public function setBasePath($base_path) {}
+    }
+}
 // TCPDF CLASSES
 // ============================================================================
 
@@ -717,8 +713,7 @@ if (!class_exists('\TCPDF', false)) {
 // PDF BUILDER CUSTOM FUNCTIONS
 // ============================================================================
 
-namespace {
-    if (!function_exists('pdf_builder_get_option')) {
+if (!function_exists('pdf_builder_get_option')) {
         /**
          * Get a PDF Builder option value
          * @param string $option Option name
@@ -799,7 +794,6 @@ namespace {
             return $default;
         }
     }
-}
 
 // ============================================================================
 // CUSTOM CLASSES

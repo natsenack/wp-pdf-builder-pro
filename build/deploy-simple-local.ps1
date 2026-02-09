@@ -1,13 +1,11 @@
-# Script de déploiement local pour PDF Builder Pro
-# Reproduit deploy-simple.ps1 pour déploiement local
-# domaine : threeaxe.fr
-#le script ne doit pas etre modifier sans la permission de l'utilisateur
+# Script de déploiement LOCAL pour PDF Builder Pro
+# Copie conforme de deploy-simple.ps1 mais avec déploiement en local
+# Usage: .\deploy-simple-local.ps1 [-All] [-IncludeVendor] [-SkipConnectionTest]
 
 param(
     [switch]$All,
     [switch]$SkipConnectionTest,
-    [switch]$IncludeVendor,
-    [string]$ConfigFile = "ftp-config.json"
+    [switch]$IncludeVendor
 )
 
 # Paramètres par défaut pour les options supprimées
@@ -18,12 +16,10 @@ $DryRun = $false
 $ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-# Configuration pour déploiement local
-$DestDir = "D:\site\wp\wp-content\plugins\pdf-builder-pro"
+# Configuration locale
+$LocalPath = "D:\site\wp\wp-content\plugins\pdf-builder-pro"
 
-# Vérifier la sécurité de la configuration (non applicable pour local)
-
-# Variables de configuration
+# Détecter automatiquement le répertoire de travail
 $WorkingDir = Split-Path $PSScriptRoot -Parent
 
 # Vérifier que le répertoire de travail est valide
@@ -34,7 +30,7 @@ if (!(Test-Path (Join-Path $WorkingDir "plugin"))) {
 }
 
 $PluginDir = Join-Path $WorkingDir "plugin"
-$LogFile = Join-Path $PSScriptRoot "deployment.log"
+$LogFile = Join-Path $PSScriptRoot "deployment-local.log"
 
 # Fonction de logging
 function Write-Log {
@@ -54,129 +50,119 @@ function Write-Log {
 # Fonction pour vérifier si un répertoire existe localement
 function Test-LocalDirectoryExists {
     param([string]$localDir)
-    return Test-Path $localDir
+    return Test-Path $localDir -PathType Container
 }
 
-# Fonction pour créer un répertoire localement
+# Fonction pour créer un répertoire localement (récursif)
 function New-LocalDirectory {
     param([string]$localDir)
     if (!(Test-Path $localDir)) {
-        New-Item -ItemType Directory -Path $localDir -Force | Out-Null
-        Write-Log "Répertoire créé: $localDir" "SUCCESS"
-    } else {
-        Write-Log "Répertoire existe déjà: $localDir" "INFO"
-    }
-}
-
-# Fonction pour lister récursivement tous les fichiers localement
-function Get-LocalFiles {
-    param([string]$localPath = "")
-    $files = @()
-    $fullPath = if ($localPath) { Join-Path $DestDir $localPath } else { $DestDir }
-    if (Test-Path $fullPath) {
-        Get-ChildItem -Path $fullPath -Recurse -File | ForEach-Object {
-            $relativePath = $_.FullName.Replace("$DestDir\", "").Replace("\", "/")
-            $files += $relativePath
-        }
-    }
-    return $files
-}
-
-# Fonction pour supprimer un fichier localement
-function Remove-LocalFile {
-    param([string]$localPath)
-    $fullPath = Join-Path $DestDir $localPath
-    if (Test-Path $fullPath) {
-        Remove-Item -Path $fullPath -Force
-        return $true
-    }
-    return $false
-}
-
-# Fonction pour vérifier l'intégrité d'un fichier déployé localement
-function Test-DeployedFileIntegrity {
-    param([string]$localPath, [string]$expectedContent = "")
-    try {
-        $fullPath = Join-Path $DestDir $localPath
-        if (!(Test-Path $fullPath)) {
-            Write-Log "Fichier non trouvé: $localPath" "ERROR"
+        Write-Log "Création répertoire local: $localDir" "INFO"
+        try {
+            New-Item -ItemType Directory -Path $localDir -Force -ErrorAction Stop | Out-Null
+            Write-Log "Répertoire créé: $localDir" "SUCCESS"
+            return $true
+        } catch {
+            Write-Log "Erreur création répertoire $localDir : $($_.Exception.Message)" "ERROR"
             return $false
         }
+    } else {
+        Write-Log "Répertoire existe déjà: $localDir" "INFO"
+        return $true
+    }
+}
 
-        $content = Get-Content -Path $fullPath -Raw -Encoding UTF8
+# Fonction pour supprimer un fichier local
+function Remove-LocalFile {
+    param([string]$filePath)
+    try {
+        Remove-Item -Path $filePath -Force -ErrorAction Stop
+        return $true
+    } catch {
+        Write-Log "Erreur suppression $filePath : $($_.Exception.Message)" "ERROR"
+        return $false
+    }
+}
 
-        # Calculer le hash du contenu déployé
-        $deployedHash = [System.BitConverter]::ToString([System.Security.Cryptography.SHA256]::Create().ComputeHash([System.Text.Encoding]::UTF8.GetBytes($content))).Replace("-", "").ToLower()
-
-        # Comparer avec le hash du fichier local si disponible
-        $localFilePath = Join-Path $WorkingDir "plugin\$localPath"
-        if (Test-Path $localFilePath) {
-            $localBytes = [System.IO.File]::ReadAllBytes($localFilePath)
-            $localHash = [System.BitConverter]::ToString([System.Security.Cryptography.SHA256]::Create().ComputeHash($localBytes)).Replace("-", "").ToLower()
-            $localSize = $localBytes.Length
-
+function Test-DeployedFileIntegrity {
+    param([string]$relativePath, [string]$expectedContent = "")
+    try {
+        $localFilePath = Join-Path $LocalPath $relativePath
+        
+        if (!(Test-Path $localFilePath)) {
+            Write-Log "Fichier non trouvé: $localFilePath" "ERROR"
+            return $false
+        }
+        
+        # Vérifier la date de modification du fichier
+        $fileInfo = Get-Item $localFilePath
+        $lastModified = $fileInfo.LastWriteTime
+        
+        $timeSinceModified = [DateTime]::Now - $lastModified
+        if ($timeSinceModified.TotalMinutes -gt 5) {
+            Write-Log "ATTENTION: Fichier $relativePath modifié il y a plus de 5 minutes ($lastModified)" "WARN"
+        } else {
+            Write-Log "Date modification récente: $relativePath ($lastModified)" "SUCCESS"
+        }
+        
+        # Lire le contenu du fichier
+        $contentBytes = [System.IO.File]::ReadAllBytes($localFilePath)
+        $content = [System.Text.Encoding]::UTF8.GetString($contentBytes)
+        
+        # Comparer avec le hash du fichier source
+        $sourceFilePath = Join-Path $PluginDir $relativePath
+        if (Test-Path $sourceFilePath) {
+            $sourceBytes = [System.IO.File]::ReadAllBytes($sourceFilePath)
+            $sourceHash = [System.BitConverter]::ToString([System.Security.Cryptography.SHA256]::Create().ComputeHash($sourceBytes)).Replace("-", "").ToLower()
+            
+            $deployedHash = [System.BitConverter]::ToString([System.Security.Cryptography.SHA256]::Create().ComputeHash($contentBytes)).Replace("-", "").ToLower()
+            
             # Vérifier la taille exacte en octets
-            $contentBytes = [System.Text.Encoding]::UTF8.GetBytes($content)
-            if ($contentBytes.Length -ne $localSize) {
-                Write-Log "SIZE MISMATCH: $localPath - Local: $localSize, Deployed: $($contentBytes.Length)" "ERROR"
+            if ($contentBytes.Length -ne $sourceBytes.Length) {
+                Write-Log "SIZE MISMATCH: $relativePath - Source: $($sourceBytes.Length), Deployed: $($contentBytes.Length)" "ERROR"
                 return $false
             }
-
-            if ($deployedHash -ne $localHash) {
-                Write-Log "HASH MISMATCH: $localPath - Local: $localHash, Deployed: $deployedHash" "ERROR"
+            
+            if ($deployedHash -ne $sourceHash) {
+                Write-Log "HASH MISMATCH: $relativePath - Source: $sourceHash, Deployed: $deployedHash" "ERROR"
                 Write-Log "Contenu déployé corrompu ou différent" "ERROR"
                 return $false
             }
-            Write-Log "Hash vérifié: $localPath" "SUCCESS"
+            Write-Log "Hash vérifié: $relativePath" "SUCCESS"
         }
-
+        
         # Vérifications d'intégrité
         if ($content.Length -eq 0) {
-            Write-Log "Fichier vide détecté: $localPath" "ERROR"
+            Write-Log "Fichier vide détecté: $relativePath" "ERROR"
             return $false
         }
-
-        # Pour les fichiers PHP, vérifier qu'ils contiennent du code PHP valide
-        if ($localPath -like "*.php") {
+        
+        # Pour les fichiers PHP
+        if ($relativePath -like "*.php") {
             $firstLine = ($content -split "`n" | Where-Object { $_.Trim() -ne "" })[0].Trim()
             $hasPhpTag = $content -match "<\?php"
             $hasValidStart = $firstLine -match "^(/\*|\*\*|//|namespace|use|class|function|if|define)" -or $hasPhpTag
-
+            
             if (-not $hasValidStart) {
-                Write-Log "Fichier PHP invalide (pas de code PHP valide): $localPath" "ERROR"
+                Write-Log "Fichier PHP invalide (pas de code PHP valide): $relativePath" "ERROR"
                 Write-Log "Première ligne: '$firstLine'" "ERROR"
                 return $false
             }
-
-            # Vérifications spécifiques pour les fichiers critiques
-            if ($localPath -eq "src/Core/PDF_Builder_Unified_Ajax_Handler.php") {
+            
+            # Vérifications spécifiques
+            if ($relativePath -eq "src/Core/PDF_Builder_Unified_Ajax_Handler.php") {
                 if ($content -notmatch "class PDF_Builder_Unified_Ajax_Handler") {
-                    Write-Log "Classe PDF_Builder_Unified_Ajax_Handler non trouvée dans le fichier déployé" "ERROR"
+                    Write-Log "Classe PDF_Builder_Unified_Ajax_Handler non trouvée" "ERROR"
                     return $false
                 }
                 Write-Log "Classe PDF_Builder_Unified_Ajax_Handler trouvée et valide" "SUCCESS"
             }
-            elseif ($localPath -eq "pdf-builder-pro.php") {
-                if ($content -notmatch "PDF_Builder_Unified_Ajax_Handler") {
-                    Write-Log "Référence à PDF_Builder_Unified_Ajax_Handler manquante dans pdf-builder-pro.php" "WARN"
-                }
-            }
-            elseif ($localPath -eq "src/Core/core/autoloader.php") {
-                if ($content -notmatch "PDF_Builder_Unified_Ajax_Handler") {
-                    Write-Log "Autoloader ne couvre pas PDF_Builder_Unified_Ajax_Handler" "WARN"
-                }
-            }
         }
-
-        # Vérification de contenu attendu si fourni
-        if ($expectedContent -and $content -notmatch [regex]::Escape($expectedContent)) {
-            Write-Log "Contenu attendu non trouvé dans: $localPath" "WARN"
-        }
-
-        Write-Log "Intégrité OK: $localPath ($($content.Length) caractères)" "SUCCESS"
+        
+        Write-Log "Intégrité OK: $relativePath ($($content.Length) caractères)" "SUCCESS"
         return $true
     } catch {
-        Write-Log "Erreur vérification $localPath : $($_.Exception.Message)" "ERROR"
+        Write-Log "Erreur vérification $relativePath : $($_.Exception.Message)" "ERROR"
         return $false
     }
 }
@@ -185,6 +171,7 @@ Write-Host "🚀 DÉPLOIEMENT LOCAL PDF BUILDER PRO" -ForegroundColor Cyan
 $mode = if ($All) { "COMPLET (-All)" } else { "MODIFIÉ UNIQUEMENT" }
 $vendorMode = if ($IncludeVendor) { "AVEC VENDOR" } else { "SANS VENDOR" }
 Write-Host "Mode: $mode | $vendorMode" -ForegroundColor Yellow
+Write-Host "Destination: $LocalPath" -ForegroundColor Yellow
 Write-Host ("=" * 60) -ForegroundColor White
 Write-Log "Début du déploiement en mode $mode ($vendorMode)"
 
@@ -212,9 +199,7 @@ if ($All) {
     $filesToDeploy = @($allFiles | ForEach-Object { Get-Item (Join-Path $WorkingDir $_) })
 }
 
-# Compiled files are already included in the main detection
-
-# Always include critical compiled files (force add even if not detected as modified)
+# Always include critical compiled files
 $criticalCompiledFiles = @(
     "plugin/assets/js/pdf-builder-react-wrapper.min.js"
     "plugin/assets/js/pdf-builder-react.min.js"
@@ -260,18 +245,15 @@ Write-Log "Début de la compilation webpack" "INFO"
 
 Push-Location $WorkingDir
 try {
-    # Vérifier si npm est disponible
     $npmAvailable = Get-Command npm -ErrorAction SilentlyContinue
     if (-not $npmAvailable) {
         Write-Log "npm n'est pas disponible, compilation ignorée" "WARN"
     } else {
-        # Vérifier si package.json existe
         if (Test-Path "package.json") {
             Write-Log "Lancement de npm run build" "INFO"
             $buildResult = & npm run build 2>&1
             $buildExitCode = $LASTEXITCODE
-
-            # Afficher la sortie de webpack
+            
             foreach ($line in $buildResult) {
                 if ($line -match "ERROR" -or $line -match "error") {
                     Write-Log "Webpack: $line" "ERROR"
@@ -283,7 +265,7 @@ try {
                     Write-Log "Webpack: $line" "INFO"
                 }
             }
-
+            
             if ($buildExitCode -eq 0) {
                 Write-Log "Compilation webpack réussie" "SUCCESS"
             } else {
@@ -308,14 +290,11 @@ Write-Host "`n2.5 Git add..." -ForegroundColor Magenta
 Write-Log "Ajout des fichiers modifiés à Git" "INFO"
 Push-Location $WorkingDir
 try {
-    # Utiliser git add avec gestion des erreurs d'ignore
     $gitAddResult = & git add . 2>&1
     if ($LASTEXITCODE -ne 0) {
-        # Si git add échoue à cause des fichiers ignorés, essayer avec --ignore-errors
         Write-Log "Tentative avec --ignore-errors" "INFO"
         & git add --ignore-errors . 2>$null
     } else {
-        # Vérifier s'il y a des vraies erreurs (pas seulement des avertissements)
         $errorMessages = @()
         foreach ($result in $gitAddResult) {
             $message = $result.ToString()
@@ -328,7 +307,6 @@ try {
         }
     }
 
-    # Force add critical compiled files
     $criticalCompiledFiles = @(
         "plugin/assets/js/pdf-builder-react-wrapper.min.js"
         "plugin/assets/js/ajax-throttle.min.js"
@@ -351,43 +329,34 @@ try {
     Pop-Location
 }
 
-# 3 COPIE LOCALE
-Write-Host "`n3 Copie locale..." -ForegroundColor Magenta
+# 3 COPIE LOCAL
+Write-Host "`n3 Copie des fichiers en local..." -ForegroundColor Magenta
 Write-Log "Début de la copie locale" "INFO"
 
 $startTime = Get-Date
 $copyCount = 0
 $errorCount = 0
 
-# Test connexion au répertoire local
-if (!$SkipConnectionTest) {
-    Write-Log "Test de connexion au répertoire local" "INFO"
-    if (!(Test-Path $DestDir)) {
-        Write-Log "Répertoire de destination introuvable: $DestDir" "ERROR"
-        exit 1
-    }
-    Write-Log "Connexion au répertoire local OK" "SUCCESS"
+# Vérifier que le répertoire destination existe
+if (!(Test-Path $LocalPath)) {
+    Write-Log "Création du répertoire de destination: $LocalPath" "INFO"
+    New-Item -ItemType Directory -Path $LocalPath -Force | Out-Null
 }
 
 # Créer tous les répertoires nécessaires avant la copie
 Write-Host "`n3.1 Création des répertoires..." -ForegroundColor Magenta
 $directoriesToCreate = @()
 foreach ($file in $filesToDeploy) {
-    if ($file.PSObject.Properties.Match('RelativePath').Count -gt 0) {
-        $relativePath = $file.RelativePath
-    } else {
-        $relativePath = $file.FullName.Replace("$PluginDir\", "").Replace("\", "/")
-    }
-    $localDir = [System.IO.Path]::GetDirectoryName($relativePath)
-    if ($localDir) {
-        $localDir = $localDir -replace '\\', '/'
-        $segments = $localDir -split '/' | Where-Object { $_ }
+    $relativePath = $file.FullName.Replace("$PluginDir\", "").Replace("\", "/")
+    $remoteDir = [System.IO.Path]::GetDirectoryName($relativePath)
+    if ($remoteDir) {
+        $remoteDir = $remoteDir -replace '\\', '/'
+        $segments = $remoteDir -split '/' | Where-Object { $_ }
         $currentPath = ""
         foreach ($segment in $segments) {
             $currentPath += "/$segment"
-            $fullLocalPath = Join-Path $DestDir $currentPath
-            if ($directoriesToCreate -notcontains $fullLocalPath) {
-                $directoriesToCreate += $fullLocalPath
+            if ($directoriesToCreate -notcontains $currentPath) {
+                $directoriesToCreate += $currentPath
             }
         }
     }
@@ -397,31 +366,38 @@ Write-Log "Création de $($directoriesToCreate.Count) répertoire(s)" "INFO"
 $dirProgressId = 2
 Write-Progress -Id $dirProgressId -Activity "Création répertoires" -Status "Initialisation..." -PercentComplete 0
 $dirCompleted = 0
+$dirErrors = 0
 foreach ($dir in $directoriesToCreate) {
     $dirPercent = [math]::Round(($dirCompleted / $directoriesToCreate.Count) * 100)
     Write-Progress -Id $dirProgressId -Activity "Création répertoires" -Status "$dir" -PercentComplete $dirPercent
-    New-LocalDirectory $dir
+    Write-Log "Création répertoire: $dir" "INFO"
+    $dirWindows = $dir.TrimStart('/').Replace('/', '\')
+    $localDir = Join-Path $LocalPath $dirWindows
+    $result = New-LocalDirectory $localDir
+    if (-not $result) {
+        $dirErrors++
+        Write-Host "❌ Erreur création répertoire: $localDir" -ForegroundColor Red
+    }
     $dirCompleted++
 }
 Write-Progress -Id $dirProgressId -Activity "Création répertoires" -Completed
-Write-Host "   ✅ Répertoires créés" -ForegroundColor Green
 
-# Copie des fichiers
+if ($dirErrors -gt 0) {
+    Write-Host "❌ $dirErrors erreur(s) lors de la création des répertoires" -ForegroundColor Red
+    Write-Log "Création des répertoires: $dirErrors erreur(s)" "ERROR"
+} else {
+    Write-Host "   ✅ Répertoires créés" -ForegroundColor Green
+}
+
+# Copie avec parallélisation
 Write-Host "`n3.2 Copie des fichiers..." -ForegroundColor Magenta
 $copyProgressId = 3
 Write-Progress -Id $copyProgressId -Activity "Copie locale" -Status "Initialisation..." -PercentComplete 0
-$jobs = New-Object System.Collections.ArrayList
 $completed = 0
 $copyStartTime = Get-Date
 
 foreach ($file in $filesToDeploy) {
-    # Calculer le chemin relatif sans le préfixe "plugin/"
-    if ($file.PSObject.Properties.Match('RelativePath').Count -gt 0) {
-        $relativePath = $file.RelativePath
-    } else {
-        $relativePath = $file.FullName.Replace("$PluginDir\", "").Replace("\", "/")
-    }
-    $localFilePath = $relativePath
+    $relativePath = $file.FullName.Replace("$PluginDir\", "").Replace("\", "/")
     $percentComplete = [math]::Round(($completed / $filesToDeploy.Count) * 100)
     $elapsed = (Get-Date) - $copyStartTime
     $speed = if ($elapsed.TotalSeconds -gt 0) { [math]::Round($completed / $elapsed.TotalSeconds, 2) } else { 0 }
@@ -434,10 +410,20 @@ foreach ($file in $filesToDeploy) {
         continue
     }
 
-    # Copie locale
     try {
-        $destFilePath = Join-Path $DestDir $localFilePath
-        Copy-Item -Path $file.FullName -Destination $destFilePath -Force
+        $sourceFile = $file.FullName
+        # Convertir les slashes forward en backslashes pour Windows
+        $relativePathWindows = $relativePath.Replace("/", "\")
+        $localFile = Join-Path $LocalPath $relativePathWindows
+        
+        # S'assurer que le répertoire parent existe avec l'API .NET directement
+        $parentDir = [System.IO.Path]::GetDirectoryName($localFile)
+        if ($parentDir) {
+            [System.IO.Directory]::CreateDirectory($parentDir) | Out-Null
+        }
+        
+        # Utiliser l'API .NET directement pour la copie
+        [System.IO.File]::Copy($sourceFile, $localFile, $true)
         Write-Log "Copie réussie: $relativePath" "SUCCESS"
         $copyCount++
     } catch {
@@ -489,9 +475,6 @@ if ($integrityErrors -gt 0) {
     Write-Log "ÉCHEC: $integrityErrors fichier(s) critique(s) défaillant(s)" "ERROR"
     Write-Host "`n❌ INTÉGRITÉ COMPROMISE - Redéploiement recommandé" -ForegroundColor Red
     if (!$DryRun) { exit 1 }
-} elseif ($integrityWarnings -gt 0) {
-    Write-Log "AVERTISSEMENT: $integrityWarnings fichier(s) critique(s) avec problèmes temporaires" "WARN"
-    Write-Host "`n⚠️  INTÉGRITÉ PARTIELLE - $integrityWarnings fichier(s) avec avertissements" -ForegroundColor Yellow
 } else {
     Write-Log "Intégrité des fichiers critiques vérifiée" "SUCCESS"
     Write-Host "`n✅ INTÉGRITÉ VÉRIFIÉE" -ForegroundColor Green
@@ -502,7 +485,6 @@ if ($Clean -and !$DryRun) {
     Write-Host "`n5 Nettoyage..." -ForegroundColor Magenta
     Write-Log "Début du nettoyage" "INFO"
 
-    # Supprimer fichiers déplacés connus
     $oldFiles = @(
         "src/backend/core/Core/PDF_Builder_Nonce_Manager.php",
         "src/backend/core/Core/PDF_Builder_Performance_Monitor.php",
@@ -510,22 +492,14 @@ if ($Clean -and !$DryRun) {
         "src/backend/core/Core/core/PdfBuilderAutoloader.php"
     )
     foreach ($file in $oldFiles) {
-        if (Remove-LocalFile $file) {
-            Write-Log "Fichier obsolète supprimé: $file" "INFO"
+        $localFile = Join-Path $LocalPath $file
+        if (Test-Path $localFile) {
+            if (Remove-LocalFile $localFile) {
+                Write-Log "Fichier obsolète supprimé: $file" "INFO"
+            }
         }
     }
 
-    # Supprimer fichiers obsolètes
-    $localFiles = $filesToDeploy | ForEach-Object {
-        $_.FullName.Replace("$WorkingDir\", "").Replace("\", "/").Replace("plugin/", "")
-    }
-    $destFiles = Get-LocalFiles
-    $toDelete = $destFiles | Where-Object { $localFiles -notcontains $_ }
-    foreach ($file in $toDelete) {
-        if (Remove-LocalFile $file) {
-            Write-Log "Fichier obsolète supprimé: $file" "INFO"
-        }
-    }
     Write-Log "Nettoyage terminé" "SUCCESS"
 }
 
@@ -538,7 +512,7 @@ if (!$DryRun) {
     try {
         $status = & git status --porcelain
         if ($status) {
-            $message = "deploy local: $(Get-Date -Format 'dd/MM/yyyy HH:mm') - $($filesToDeploy.Count) fichiers"
+            $message = "deploy: $(Get-Date -Format 'dd/MM/yyyy HH:mm') - $($filesToDeploy.Count) fichiers (local)"
             if ($All) { $message += " (complet)" }
             & git commit -m $message
             $currentBranch = & git branch --show-current
@@ -554,5 +528,6 @@ if (!$DryRun) {
     }
 }
 
-Write-Host "`n🎉 DÉPLOIEMENT TERMINÉ !" -ForegroundColor Green
-Write-Log "Fin du déploiement" "INFO"
+Write-Host "`n🎉 DÉPLOIEMENT LOCAL TERMINÉ !" -ForegroundColor Green
+Write-Log "Fin du déploiement local" "INFO"
+
