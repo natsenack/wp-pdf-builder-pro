@@ -182,13 +182,30 @@ $filesToDeploy = @()
 
 if ($All) {
     Write-Log "Mode complet: tous les fichiers du plugin" "INFO"
-    $exclusions = @('\\\.git\\', 'node_modules', 'tests', 'temp\.js$', 'composer-setup\.php$', 'phpstan\.neon$', '\.log$', '\.tmp$', 'plugin\\resources\\assets\\js\\dist\\plugin\\resources\\assets', '\.ts$', '\.tsx$', '\.map$', '\.md$', 'README', 'config\.ts', 'tsconfig')
-    if (-not $IncludeVendor) {
-        $exclusions += 'vendor'
-    }
+    
+    # Simple et fiable: prendre tous les fichiers et exclure précisemment
     $filesToDeploy = @(Get-ChildItem -Path $PluginDir -Recurse -File | Where-Object {
         $path = $_.FullName
-        -not ($exclusions | Where-Object { $path -match $_ })
+        $relativePath = $_.FullName.Replace($PluginDir, '').TrimStart('\')
+        
+        # Exclure .git
+        if ($path -match '\\\.git\\') { return $false }
+        
+        # Exclure vendor si pas demandé
+        if (-not $IncludeVendor -and $relativePath.StartsWith('vendor\')) { return $false }
+        
+        # Exclure les répertoires de dev
+        if ($path -match '\\(node_modules|tests)\\'){ return $false }
+        
+        # Exclure les fichiers source TypeScript
+        if ($path -match '\.(ts|tsx|map)$') { return $false }
+        
+        # Exclure les fichiers temporaires et logs
+        if ($path -match '\.(log|tmp|md)$') { return $false }
+        if ($path -match 'README') { return $false }
+        
+        # Inclure tout le reste
+        return $true
     })
 } else {
     Write-Log "Mode normal: fichiers modifiés" "INFO"
@@ -331,7 +348,20 @@ try {
 
 # 3 COPIE LOCAL
 Write-Host "`n3 Copie des fichiers en local..." -ForegroundColor Magenta
-Write-Log "Début de la copie locale" "INFO"
+Write-Log "Début de la copie locale vers: $LocalPath" "INFO"
+
+if ($filesToDeploy.Count -eq 0) {
+    Write-Log "❌ AUCUN FICHIER À COPIER! Vérifiez les exclusions." "ERROR"
+    exit 1
+}
+
+Write-Log "Fichiers à copier: $($filesToDeploy.Count)" "INFO"
+
+# Afficher quelques fichiers de debug
+$filesToDeploy | Select-Object -First 5 | ForEach-Object {
+    Write-Log "DEBUG: À copier: $($_.FullName)" "INFO"
+}
+
 
 $startTime = Get-Date
 $copyCount = 0
@@ -342,6 +372,11 @@ if (!(Test-Path $LocalPath)) {
     Write-Log "Création du répertoire de destination: $LocalPath" "INFO"
     New-Item -ItemType Directory -Path $LocalPath -Force | Out-Null
 }
+
+Write-Log "Répertoire destination: $LocalPath (existe: $(Test-Path $LocalPath))" "INFO"
+
+# Vérifier qu'on copie vraiment vers le bon endroit
+Write-Log "Vérification: [0]=$($filesToDeploy[0].FullName) copié vers $(Join-Path $LocalPath 'test.txt')" "INFO"
 
 # Créer tous les répertoires nécessaires avant la copie
 Write-Host "`n3.1 Création des répertoires..." -ForegroundColor Magenta

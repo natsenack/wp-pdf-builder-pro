@@ -12,50 +12,35 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
 // ========================================================================
 // ✅ CHARGEMENT DE L'AUTOLOADER COMPOSER OU PERSONNALISÉ
 // ========================================================================
+// DIFFÉRER LE CHARGEMENT - NE PAS EXÉCUTER AU NIVEAU GLOBAL
+// L'autoloader sera chargé dans le hook plugins_loaded ci-dessous
 $autoload_path = PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
-
-// Chercher l'autoloader Composer valide
-$composer_autoloader_found = false;
-if (file_exists($autoload_path)) {
-    $autoload_content = file_get_contents($autoload_path);
-    // Vérifier que l'autoloader n'est pas vide
-    if (!empty($autoload_content) && strlen($autoload_content) > 100) {
-        require_once $autoload_path;
-        $composer_autoloader_found = true;
-        error_log('[BOOTSTRAP] Composer autoloader loaded successfully');
-    } else {
-        error_log('[BOOTSTRAP] Composer autoloader is empty, using PSR-4 fallback');
-    }
-} else {
-
-}
+$composer_autoloader_found = false; // Flag utilisé par le hook plugins_loaded
 
 // Si Composer n'est pas disponible, créer un autoloader PSR-4 personnalisé
-if (!$composer_autoloader_found) {
-    spl_autoload_register(function($class) {
-        // Namespaces personnalisés
-        $prefix_map = [
-            'PDF_Builder\\' => 'src/',
-            'PDF_Builder_Pro\\' => 'src/',
-        ];
+spl_autoload_register(function($class) {
+    // Namespaces personnalisés
+    $prefix_map = [
+        'PDF_Builder\\' => 'src/',
+        'PDF_Builder_Pro\\' => 'src/',
+    ];
 
-        foreach ($prefix_map as $prefix => $base_dir) {
-            $len = strlen($prefix);
-            if (strncmp($prefix, $class, $len) === 0) {
-                // Remplacer le namespace par le chemin réel
-                $relative_class = substr($class, $len);
-                $file = PDF_BUILDER_PLUGIN_DIR . $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-                
-                if (file_exists($file)) {
-                    require $file;
-                    return true;
-                }
+    foreach ($prefix_map as $prefix => $base_dir) {
+        $len = strlen($prefix);
+        if (strncmp($prefix, $class, $len) === 0) {
+            // Remplacer le namespace par le chemin réel
+            $relative_class = substr($class, $len);
+            $file = PDF_BUILDER_PLUGIN_DIR . $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+            
+            if (file_exists($file)) {
+                require $file;
+                return true;
             }
         }
-        return false;
-    });
-    error_log('[BOOTSTRAP] PSR-4 autoloader registered as fallback');
-}
+    }
+    return false;
+});
+error_log('[BOOTSTRAP] PSR-4 autoloader registered as fallback');
 
 // ========================================================================
 // ✅ INJECTION DU NONCE DANS LE HEAD - TRÈS TÔT
