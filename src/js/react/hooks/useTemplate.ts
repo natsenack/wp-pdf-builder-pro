@@ -427,6 +427,11 @@ export function useTemplate() {
   // ✅ Dépendance vide: charger une seule fois au montage du composant
   useEffect(() => {
     const templateId = getTemplateIdFromUrl();
+    
+    // Détecter le mode preview depuis l'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const isPreviewMode = urlParams.get('preview') === '1';
+    const orderId = urlParams.get('order_id');
 
     if (templateId) {
       // Timeout de sécurité : forcer isLoading à false après 10 secondes si le chargement échoue
@@ -437,17 +442,32 @@ export function useTemplate() {
         dispatch({ type: "SET_TEMPLATE_LOADING", payload: false });
       }, 10000);
 
-      // Charger le template avec gestion d'erreur améliorée
-      loadExistingTemplate(templateId)
-        .then(() => {
-          clearTimeout(loadingTimeout);
-        })
-        .catch((error) => {
-          clearTimeout(loadingTimeout);
-          debugError("[useTemplate] Template loading failed:", error);
-          // Force isLoading to false on error
-          dispatch({ type: "SET_TEMPLATE_LOADING", payload: false });
-        });
+      // Si mode preview avec order_id, charger l'aperçu avec données réelles
+      if (isPreviewMode && orderId) {
+        debugLog(`🔍 [PREVIEW] Détection du mode preview pour commande #${orderId}`);
+        loadTemplateForPreview(templateId, orderId)
+          .then(() => {
+            clearTimeout(loadingTimeout);
+            debugLog('✅ [PREVIEW] Aperçu chargé avec succès');
+          })
+          .catch((error) => {
+            clearTimeout(loadingTimeout);
+            debugError("[useTemplate] Preview loading failed:", error);
+            dispatch({ type: "SET_TEMPLATE_LOADING", payload: false });
+          });
+      } else {
+        // Charger le template en mode édition normale
+        loadExistingTemplate(templateId)
+          .then(() => {
+            clearTimeout(loadingTimeout);
+          })
+          .catch((error) => {
+            clearTimeout(loadingTimeout);
+            debugError("[useTemplate] Template loading failed:", error);
+            // Force isLoading to false on error
+            dispatch({ type: "SET_TEMPLATE_LOADING", payload: false });
+          });
+      }
     } else {
       // Si pas de template ID, forcer isLoading à false pour nouveau template
       dispatch({ type: "NEW_TEMPLATE" });

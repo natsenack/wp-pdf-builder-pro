@@ -5,6 +5,7 @@ import { PropertiesPanel } from "./properties/PropertiesPanel";
 import { Header } from "./header/Header";
 import { ElementLibrary } from "./element-library/ElementLibrary";
 import { useTemplate } from "../hooks/useTemplate";
+import { useBuilder } from "../contexts/builder/BuilderContext";
 import { useCanvasSettings, DEFAULT_SETTINGS } from "../contexts/CanvasSettingsContext";
 import {
   DEFAULT_CANVAS_WIDTH,
@@ -49,11 +50,15 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   width = DEFAULT_CANVAS_WIDTH,
   height = DEFAULT_CANVAS_HEIGHT,
   className,
-}: PDFBuilderContentProps) {  debugLog("🏗️ PDFBuilderContent: Component initialized with props:", {
+}: PDFBuilderContentProps) {  
+  debugLog("🏗️ PDFBuilderContent: Component initialized with props:", {
     width,
     height,
     className,
   });
+
+  const { state } = useBuilder();
+  const isPreviewMode = state.previewMode === 'command';
 
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [isPropertiesPanelOpen, setIsPropertiesPanelOpen] = useState(false);
@@ -73,6 +78,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     isHeaderFixed,
     isPropertiesPanelOpen,
     manualSaveSuccess,
+    isPreviewMode,
   });
 
   // Hooks responsives
@@ -221,38 +227,42 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
           backgroundColor: "#ffffff",
           border: "none",
           borderRadius: "0px",
-          paddingTop: isHeaderFixed ? "132px" : "0px",
+          paddingTop: isHeaderFixed && !isPreviewMode ? "132px" : "0px",
           transition: "padding 0.3s ease",
         }}
       >
-        {/* Header en haut */}
-        <Header
-          templateName={templateName || ""}
-          templateDescription={templateDescription || ""}
-          canvasWidth={canvasWidth || 794}
-          canvasHeight={canvasHeight || 1123}
-          showGuides={showGuides || true}
-          snapToGrid={snapToGrid || false}
-          isNewTemplate={isNewTemplate}
-          isModified={isModified}
-          isSaving={isSaving}
-          isLoading={isLoading}
-          isEditingExistingTemplate={isEditingExistingTemplate}
-          onSave={saveTemplateWithAutoSave}
-          onPreview={previewTemplate}
-          onNewTemplate={newTemplate}
-          onUpdateTemplateSettings={updateTemplateSettings}
-        />
+        {/* Header en haut - masqué en mode preview */}
+        {!isPreviewMode && (
+          <Header
+            templateName={templateName || ""}
+            templateDescription={templateDescription || ""}
+            canvasWidth={canvasWidth || 794}
+            canvasHeight={canvasHeight || 1123}
+            showGuides={showGuides || true}
+            snapToGrid={snapToGrid || false}
+            isNewTemplate={isNewTemplate}
+            isModified={isModified}
+            isSaving={isSaving}
+            isLoading={isLoading}
+            isEditingExistingTemplate={isEditingExistingTemplate}
+            onSave={saveTemplateWithAutoSave}
+            onPreview={previewTemplate}
+            onNewTemplate={newTemplate}
+            onUpdateTemplateSettings={updateTemplateSettings}
+          />
+        )}
 
-        {/* Toolbar sous le header */}
-        <div style={{ flexShrink: 0, padding: "12px 12px 0 12px" }}>
-          <Toolbar />
-        </div>
+        {/* Toolbar sous le header - masqué en mode preview */}
+        {!isPreviewMode && (
+          <div style={{ flexShrink: 0, padding: "12px 12px 0 12px" }}>
+            <Toolbar />
+          </div>
+        )}
 
         {/* Contenu principal */}
-        <div style={{ display: "flex", flex: 1, gap: "0", padding: "12px" }}>
-          {/* Sidebar des éléments WooCommerce */}
-          <ElementLibrary />
+        <div style={{ display: "flex", flex: 1, gap: "0", padding: isPreviewMode ? "0" : "12px" }}>
+          {/* Sidebar des éléments WooCommerce - masqué en mode preview */}
+          {!isPreviewMode && <ElementLibrary />}
 
           {/* Zone centrale avec le canvas */}
           <div
@@ -383,54 +393,56 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
               )}
             </div>
 
-            {/* Bouton toggle pour le panneau de propriétés */}
-            <button
-              onClick={() => {
-                debugLog(
-                  "🔘 PDFBuilderContent: Properties panel toggle clicked, current state:",
+            {/* Bouton toggle pour le panneau de propriétés - masqué en mode preview */}
+            {!isPreviewMode && (
+              <button
+                onClick={() => {
+                  debugLog(
+                    "🔘 PDFBuilderContent: Properties panel toggle clicked, current state:",
+                    isPropertiesPanelOpen
+                  );
+                  setIsPropertiesPanelOpen(!isPropertiesPanelOpen);
+                  debugLog(
+                    "🔄 PDFBuilderContent: Properties panel state changed to:",
+                    !isPropertiesPanelOpen
+                  );
+                }}
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  right: isPropertiesPanelOpen ? "-12px" : "0px",
+                  transform: "translateY(-50%)",
+                  zIndex: 20,
+                  padding: "8px 6px",
+                  backgroundColor: "#007acc",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px 0 0 4px",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "24px",
+                  height: "60px",
+                  writingMode: "vertical-rl",
+                  textOrientation: "mixed",
+                }}
+                title={
                   isPropertiesPanelOpen
-                );
-                setIsPropertiesPanelOpen(!isPropertiesPanelOpen);
-                debugLog(
-                  "🔄 PDFBuilderContent: Properties panel state changed to:",
-                  !isPropertiesPanelOpen
-                );
-              }}
-              style={{
-                position: "absolute",
-                top: "50%",
-                right: isPropertiesPanelOpen ? "-12px" : "0px",
-                transform: "translateY(-50%)",
-                zIndex: 20,
-                padding: "8px 6px",
-                backgroundColor: "#007acc",
-                color: "white",
-                border: "none",
-                borderRadius: "4px 0 0 4px",
-                cursor: "pointer",
-                fontSize: "14px",
-                fontWeight: "bold",
-                boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "24px",
-                height: "60px",
-                writingMode: "vertical-rl",
-                textOrientation: "mixed",
-              }}
-              title={
-                isPropertiesPanelOpen
-                  ? "Fermer le panneau de propriétés"
-                  : "Ouvrir le panneau de propriétés"
-              }
-            >
-              {isPropertiesPanelOpen ? "▷" : "◁"}
-            </button>
+                    ? "Fermer le panneau de propriétés"
+                    : "Ouvrir le panneau de propriétés"
+                }
+              >
+                {isPropertiesPanelOpen ? "▷" : "◁"}
+              </button>
+            )}
           </div>
 
-          {/* Panneau de propriétés à droite */}
-          {isPropertiesPanelOpen && (
+          {/* Panneau de propriétés à droite - masqué en mode preview */}
+          {!isPreviewMode && isPropertiesPanelOpen && (
             <div
               style={{
                 flexShrink: 0,
