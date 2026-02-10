@@ -95,6 +95,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Actions de génération PDF
         add_action('wp_ajax_pdf_builder_generate_pdf', [$this, 'handle_generate_pdf']);
+        error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_generate_pdf");
     }
 
     /**
