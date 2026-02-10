@@ -725,6 +725,33 @@ class AdminScriptLoader
             }
         }
 
+        // ✅ PREVIEW MODE: Charger les données réelles de la commande
+        if (isset($_GET['order_id']) && \intval($_GET['order_id']) > 0 && isset($_GET['preview']) && $_GET['preview'] === '1') {
+            $order_id = \intval($_GET['order_id']);
+            $localize_data['previewMode'] = true;
+            $localize_data['previewOrderId'] = $order_id;
+            
+            error_log('[WP AdminScriptLoader] PREVIEW MODE activated for order ID: ' . $order_id);
+            
+            // Charger les vraies données de la commande WooCommerce
+            if (class_exists('WC_Order')) {
+                $order = \wc_get_order($order_id);
+                if ($order) {
+                    // Extraire les données de la commande à injecter dans React
+                    require_once PDF_BUILDER_PLUGIN_DIR . 'config/data/WooCommerceDataProvider.php';
+                    $data_provider = new \PDF_Builder\Data\WooCommerceDataProvider($order_id);
+                    $order_data = $data_provider->getData();
+                    
+                    $localize_data['previewOrderData'] = $order_data;
+                    error_log('[WP AdminScriptLoader] Preview order data loaded for order #' . $order_id);
+                } else {
+                    error_log('[WP AdminScriptLoader] Order not found: ' . $order_id);
+                }
+            } else {
+                error_log('[WP AdminScriptLoader] WooCommerce not available for preview mode');
+            }
+        }
+
         // Charger les données du template prédéfini si predefined_template est fourni
         if (isset($_GET['predefined_template']) && !empty($_GET['predefined_template'])) {
             $predefined_slug = \sanitize_key($_GET['predefined_template']);

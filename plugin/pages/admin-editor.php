@@ -6,7 +6,12 @@
  */
 
 // Vérifier les permissions WordPress
-if (!current_user_can('manage_options')) {
+// En mode preview, autoriser les utilisateurs avec droits WooCommerce
+$is_preview_mode = isset($_GET['preview']) && $_GET['preview'] === '1';
+$has_permission = current_user_can('manage_options') || 
+                  ($is_preview_mode && current_user_can('edit_shop_orders'));
+
+if (!$has_permission) {
     wp_die(__('Accès refusé', 'pdf-builder-pro'));
 }
 
