@@ -291,56 +291,129 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
               }}
             >
               {/* Indicateur de dimensions avec format et DPI */}
-              <div
-                style={{
-                  position: "absolute",
-                  top: "8px",
-                  right: "8px",
-                  backgroundColor: "rgba(0, 122, 204, 0.9)",
-                  color: "white",
-                  padding: "4px 8px",
-                  borderRadius: "4px",
-                  fontSize: "12px",
-                  fontWeight: "bold",
-                  zIndex: 10,
-                }}
-              >
-                {(() => {
-                  const format =
-                    (window as any).pdfBuilderCanvasSettings
-                      ?.default_canvas_format || "A4";
-                  const dpi =
-                    (window as any).pdfBuilderCanvasSettings
-                      ?.default_canvas_dpi || 96;
-                  const orientation =
-                    (window as any).pdfBuilderCanvasSettings
-                      ?.default_canvas_orientation || "portrait";
-                  const paperFormats = (window as any)
-                    .pdfBuilderPaperFormats || {
-                    A4: { width: 210, height: 297 },
-                    A3: { width: 297, height: 420 },
-                    A5: { width: 148, height: 210 },
-                    Letter: { width: 215.9, height: 279.4 },
-                    Legal: { width: 215.9, height: 355.6 },
-                    Tabloid: { width: 279.4, height: 431.8 },
-                  };
+              {!isPreviewMode && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "8px",
+                    right: "8px",
+                    backgroundColor: "rgba(0, 122, 204, 0.9)",
+                    color: "white",
+                    padding: "4px 8px",
+                    borderRadius: "4px",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    zIndex: 10,
+                  }}
+                >
+                  {(() => {
+                    const format =
+                      (window as any).pdfBuilderCanvasSettings
+                        ?.default_canvas_format || "A4";
+                    const dpi =
+                      (window as any).pdfBuilderCanvasSettings
+                        ?.default_canvas_dpi || 96;
+                    const orientation =
+                      (window as any).pdfBuilderCanvasSettings
+                        ?.default_canvas_orientation || "portrait";
+                    const paperFormats = (window as any)
+                      .pdfBuilderPaperFormats || {
+                      A4: { width: 210, height: 297 },
+                      A3: { width: 297, height: 420 },
+                      A5: { width: 148, height: 210 },
+                      Letter: { width: 215.9, height: 279.4 },
+                      Legal: { width: 215.9, height: 355.6 },
+                      Tabloid: { width: 279.4, height: 431.8 },
+                    };
 
-                  // Récupérer les dimensions en mm
-                  const dimsMM = paperFormats[format] || paperFormats["A4"];
+                    // Récupérer les dimensions en mm
+                    const dimsMM = paperFormats[format] || paperFormats["A4"];
 
-                  // Calculer les dimensions en pixels avec le DPI actuel
-                  const pixelsPerMM = dpi / 25.4;
-                  let widthPx = Math.round(dimsMM.width * pixelsPerMM);
-                  let heightPx = Math.round(dimsMM.height * pixelsPerMM);
+                    // Calculer les dimensions en pixels avec le DPI actuel
+                    const pixelsPerMM = dpi / 25.4;
+                    let widthPx = Math.round(dimsMM.width * pixelsPerMM);
+                    let heightPx = Math.round(dimsMM.height * pixelsPerMM);
 
-                  // Inverser si orientation paysage
-                  if (orientation === "landscape") {
-                    [widthPx, heightPx] = [heightPx, widthPx];
-                  }
+                    // Inverser si orientation paysage
+                    if (orientation === "landscape") {
+                      [widthPx, heightPx] = [heightPx, widthPx];
+                    }
 
-                  return `${format}: ${widthPx}×${heightPx}px (${dpi} DPI)`;
-                })()}
-              </div>
+                    return `${format}: ${widthPx}×${heightPx}px (${dpi} DPI)`;
+                  })()}
+                </div>
+              )}
+
+              {/* Bouton Générer PDF en mode preview */}
+              {isPreviewMode && (
+                <button
+                  onClick={() => {
+                    // Récupérer les paramètres URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const templateId = urlParams.get('template_id');
+                    const orderId = urlParams.get('order_id');
+                    
+                    if (!templateId || !orderId) {
+                      if (window.showErrorNotification) {
+                        window.showErrorNotification('Paramètres manquants pour générer le PDF');
+                      }
+                      return;
+                    }
+
+                    // Construire l'URL de génération PDF
+                    const pdfUrl = `${window.location.origin}/wp-admin/admin-ajax.php?action=pdf_builder_generate_pdf&template_id=${templateId}&order_id=${orderId}`;
+                    
+                    // Ouvrir dans un nouvel onglet
+                    window.open(pdfUrl, '_blank');
+                  }}
+                  style={{
+                    position: "absolute",
+                    top: "16px",
+                    right: "16px",
+                    backgroundColor: "#0073aa",
+                    color: "white",
+                    padding: "12px 24px",
+                    borderRadius: "6px",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    border: "none",
+                    cursor: "pointer",
+                    boxShadow: "0 2px 8px rgba(0, 115, 170, 0.3)",
+                    zIndex: 10,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    transition: "all 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#005a87";
+                    e.currentTarget.style.transform = "translateY(-1px)";
+                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 115, 170, 0.4)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "#0073aa";
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "0 2px 8px rgba(0, 115, 170, 0.3)";
+                  }}
+                  title="Télécharger le PDF"
+                >
+                  <svg 
+                    width="16" 
+                    height="16" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  Générer PDF
+                </button>
+              )}
 
               {/* ✅ Loading spinner overlay */}
               {isLoading && (
