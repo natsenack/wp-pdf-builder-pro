@@ -738,9 +738,9 @@ class AdminScriptLoader
                 $order = \wc_get_order($order_id);
                 if ($order) {
                     // Extraire les données de la commande à injecter dans React
-                    require_once PDF_BUILDER_PLUGIN_DIR . 'config/data/WooCommerceDataProvider.php';
-                    $data_provider = new \PDF_Builder\Data\WooCommerceDataProvider($order_id);
-                    $order_data = $data_provider->getData();
+                    require_once PDF_BUILDER_PLUGIN_DIR . 'src/Generators/OrderDataExtractor.php';
+                    $data_extractor = new \PDF_Builder\Generators\OrderDataExtractor($order);
+                    $order_data = $data_extractor->get_all_data();
                     
                     $localize_data['previewOrderData'] = $order_data;
                     error_log('[WP AdminScriptLoader] Preview order data loaded for order #' . $order_id);
