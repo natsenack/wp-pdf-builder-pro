@@ -33,6 +33,9 @@ class OrderDataExtractor
         // Produits
         $this->extracted_data['products'] = $this->extract_products_data();
         
+        // Frais supplémentaires
+        $this->extracted_data['fees'] = $this->extract_fees_data();
+        
         // Adresses
         $this->extracted_data['billing'] = $this->extract_billing_address();
         $this->extracted_data['shipping'] = $this->extract_shipping_address();
@@ -89,20 +92,49 @@ class OrderDataExtractor
                 continue;
             }
             
+            $unit_price = $item->get_quantity() > 0 ? $item->get_total() / $item->get_quantity() : 0;
+            
             $products[] = [
                 'id' => $product->get_id(),
                 'sku' => $product->get_sku(),
                 'name' => $item->get_name(),
                 'quantity' => $item->get_quantity(),
-                'price' => wc_price($item->get_total() / $item->get_quantity()),
+                'price' => wc_price($unit_price),
+                'price_raw' => (float) $unit_price,
                 'total' => wc_price($item->get_total()),
+                'total_raw' => (float) $item->get_total(),
                 'subtotal' => wc_price($item->get_subtotal()),
+                'subtotal_raw' => (float) $item->get_subtotal(),
                 'tax' => wc_price($item->get_total_tax()),
+                'tax_raw' => (float) $item->get_total_tax(),
                 'variation_data' => $this->extract_variation_data($item),
             ];
         }
         
         return $products;
+    }
+
+    /**
+     * Extrait les frais supplémentaires (fees)
+     */
+    private function extract_fees_data(): array
+    {
+        $fees = [];
+        
+        foreach ($this->order->get_fees() as $fee_id => $fee) {
+            $fees[] = [
+                'id' => $fee_id,
+                'name' => $fee->get_name(),
+                'amount' => wc_price($fee->get_amount()),
+                'amount_raw' => (float) $fee->get_amount(),
+                'total' => wc_price($fee->get_total()),
+                'total_raw' => (float) $fee->get_total(),
+                'tax' => wc_price($fee->get_total_tax()),
+                'tax_raw' => (float) $fee->get_total_tax(),
+            ];
+        }
+        
+        return $fees;
     }
 
     /**

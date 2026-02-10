@@ -554,7 +554,13 @@ const drawProductTable = (
     ];
   }
 
-  const fees = props.fees || [];
+  // ✅ Get real fees in preview mode
+  let fees: Array<{ name: string; total: number }>;
+  if (state.previewMode === "command") {
+    fees = wooCommerceManager.getOrderFees();
+  } else {
+    fees = props.fees || [];
+  }
 
   const currency = "€";
 
@@ -572,6 +578,7 @@ const drawProductTable = (
     shippingCost = orderTotals.shipping;
     taxAmount = orderTotals.tax;
     globalDiscount = orderTotals.discount;
+    // Calculate fees total
     totalFees = fees.reduce((sum, f) => sum + (f.total || 0), 0);
   } else {
     // ✅ CALCUL CORRECT DES TOTALS - Pas de hardcoding

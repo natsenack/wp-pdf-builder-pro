@@ -31,9 +31,23 @@ interface PreviewOrderData {
     name: string;
     quantity: number;
     price: string;
+    price_raw: number;
     total: string;
+    total_raw: number;
     subtotal: string;
+    subtotal_raw: number;
     tax: string;
+    tax_raw: number;
+  }>;
+  fees: Array<{
+    id: number | string;
+    name: string;
+    amount: string;
+    amount_raw: number;
+    total: string;
+    total_raw: number;
+    tax: string;
+    tax_raw: number;
   }>;
   billing: {
     first_name: string;
@@ -213,21 +227,15 @@ export class WooCommerceElementsManager {
     const previewData = window.pdfBuilderData?.previewOrderData;
     if (previewData?.products && Array.isArray(previewData.products)) {
       return previewData.products.map(product => {
-        // Remove HTML tags from price strings and convert to numbers
-        const stripPrice = (priceStr: string): number => {
-          const cleaned = priceStr.replace(/<[^>]*>/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
-          return parseFloat(cleaned) || 0;
-        };
-
-        const subtotal = stripPrice(product.subtotal);
-        const total = stripPrice(product.total);
+        const subtotal = product.subtotal_raw || 0;
+        const total = product.total_raw || 0;
         
         return {
           sku: product.sku || `SKU-${product.id}`,
           name: product.name,
           description: '', // Description not available in preview data
           qty: product.quantity,
-          price: stripPrice(product.price),
+          price: product.price_raw || 0,
           discount: Math.max(0, subtotal - total),
           total: total
         };
@@ -247,6 +255,25 @@ export class WooCommerceElementsManager {
       discount: this.calculateItemDiscount(item),
       total: parseFloat(item.total)
     }));
+  }
+
+  /**
+   * Obtient les frais supplémentaires
+   */
+  getOrderFees(): Array<{
+    name: string;
+    total: number;
+  }> {
+    // Check for preview data first
+    const previewData = window.pdfBuilderData?.previewOrderData;
+    if (previewData?.fees && Array.isArray(previewData.fees)) {
+      return previewData.fees.map(fee => ({
+        name: fee.name,
+        total: fee.total_raw || 0
+      }));
+    }
+
+    return [];
   }
 
   /**
