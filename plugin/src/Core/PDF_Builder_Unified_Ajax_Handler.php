@@ -92,6 +92,9 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         // Actions canvas
         add_action('wp_ajax_pdf_builder_save_canvas_settings', [$this, 'handle_save_canvas_settings']);
+        
+        // Actions de génération PDF
+        add_action('wp_ajax_pdf_builder_generate_pdf', [$this, 'handle_generate_pdf']);
     }
 
     /**
@@ -2469,6 +2472,187 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         return $templates[$template_id] ?? '<h1>Template</h1><p>Contenu par défaut</p>';
      }
+
+    /**
+     * Handler pour générer un PDF depuis le mode preview
+     */
+    public function handle_generate_pdf() {
+        // Vérifier les permissions - doit être connecté et avoir les droits de gestion WooCommerce
+        if (!is_user_logged_in() || !current_user_can('edit_shop_orders')) {
+            wp_die('Permission refusée', '', ['response' => 403]);
+        }
+
+        $template_id = sanitize_text_field($_GET['template_id'] ?? '');
+        $order_id = intval($_GET['order_id'] ?? 0);
+
+        if (!$template_id || !$order_id) {
+            wp_die('Paramètres manquants', '', ['response' => 400]);
+        }
+
+        try {
+            // Vérifier que WooCommerce est actif
+            if (!function_exists('wc_get_order')) {
+                wp_die('WooCommerce n\'est pas actif', '', ['response' => 500]);
+            }
+
+            $order = wc_get_order($order_id);
+            if (!$order) {
+                wp_die('Commande introuvable', '', ['response' => 404]);
+            }
+
+            // Récupérer le template
+            $template = $this->get_template($template_id);
+            if (!$template) {
+                wp_die('Modèle introuvable', '', ['response' => 404]);
+            }
+
+            // Générer l'HTML avec les vraies données
+            $html = $this->generate_template_html($template, $order);
+
+            // Pour l'instant, retourner l'HTML
+            // TODO: Implémenter la conversion en PDF avec dompdf
+            header('Content-Type: text/html; charset=utf-8');
+            header('Content-Disposition: inline; filename="invoice-' . $order_id . '.html"');
+            echo $html;
+            exit;
+        } catch (Exception $e) {
+            error_log('[PDF Builder] Erreur génération PDF: ' . $e->getMessage());
+            wp_die('Erreur: ' . $e->getMessage(), '', ['response' => 500]);
+        }
+    }
+
+    /**
+     * Récupère un template spécifique
+     */
+    private function get_template($template_id) {
+        $templates_option = get_option('pdf_builder_templates', '{}');
+        $templates_data = json_decode($templates_option, true);
+
+        if (is_array($templates_data)) {
+            foreach ($templates_data as $template) {
+                if (($template['id'] ?? '') == $template_id) {
+                    return $template;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Génère l'HTML du template avec les vraies données de commande
+     */
+    private function generate_template_html($template, $order) {
+        // Utiliser l'OrderDataExtractor pour récupérer les données
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Generators/OrderDataExtractor.php';
+        $data_extractor = new \PDF_Builder\Generators\OrderDataExtractor($order);
+        $all_data = $data_extractor->get_all_data();
+
+        // Générer un HTML simple pour l'instant
+        // TODO: Utiliser le vrai moteur de template avec canvas
+        $html = '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>' . esc_html($template['name'] ?? 'Facture') . '</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            color: #333;
+        }
+        h1 {
+            color: #0073aa;
+            border-bottom: 2px solid #0073aa;
+            padding-bottom: 10px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #555;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #0073aa;
+            color: white;
+        }
+        .total {
+            font-weight: bold;
+            font-size: 1.2em;
+            text-align: right;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>' . esc_html($template['name'] ?? 'Facture') . '</h1>
+    
+    <div class="section">
+        <h2>Informations Client</h2>
+        <p><strong>Nom:</strong> ' . esc_html($all_data['customer']['full_name']) . '</p>
+        <p><strong>Email:</strong> ' . esc_html($all_data['customer']['email']) . '</p>
+        <p><strong>Téléphone:</strong> ' . esc_html($all_data['customer']['phone']) . '</p>
+        <p><strong>Adresse:</strong> ' . esc_html($all_data['billing']['full_address']) . '</p>
+    </div>
+
+    <div class="section">
+        <h2>Informations Commande</h2>
+        <p><strong>Numéro:</strong> ' . esc_html($all_data['order']['order_number']) . '</p>
+        <p><strong>Date:</strong> ' . esc_html($all_data['order']['date_formatted']) . '</p>
+        <p><strong>Statut:</strong> ' . esc_html($all_data['order']['status_label']) . '</p>
+    </div>
+
+    <div class="section">
+        <h2>Produits</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Prix unitaire</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>';
+        
+        foreach ($all_data['products'] as $product) {
+            $html .= '<tr>
+                <td>' . esc_html($product['name']) . '</td>
+                <td>' . esc_html($product['quantity']) . '</td>
+                <td>' . $product['price'] . '</td>
+                <td>' . $product['total'] . '</td>
+            </tr>';
+        }
+        
+        $html .= '</tbody>
+        </table>
+    </div>
+
+    <div class="total">
+        <p>Sous-total: ' . $all_data['totals']['subtotal'] . '</p>
+        <p>Frais de port: ' . $all_data['totals']['shipping'] . '</p>
+        <p>TVA: ' . $all_data['totals']['tax'] . '</p>
+        <p style="color: #0073aa;">TOTAL: ' . $all_data['totals']['total'] . '</p>
+    </div>
+</body>
+</html>';
+
+        return $html;
+    }
 }
 
 
