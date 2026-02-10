@@ -4,6 +4,84 @@ import {
   WooCommerceCustomer
 } from './woocommerce-types';
 
+// Interface pour les données de preview injectées par PHP
+interface PreviewOrderData {
+  customer: {
+    id: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+    full_name: string;
+  };
+  order: {
+    id: number;
+    order_number: string;
+    date: string;
+    date_formatted: string;
+    status: string;
+    payment_method: string;
+    shipping_method: string;
+    currency: string;
+    notes: string;
+  };
+  products: Array<{
+    id: number;
+    sku: string;
+    name: string;
+    quantity: number;
+    price: string;
+    total: string;
+    subtotal: string;
+    tax: string;
+  }>;
+  billing: {
+    first_name: string;
+    last_name: string;
+    company: string;
+    address_1: string;
+    address_2: string;
+    city: string;
+    state: string;
+    postcode: string;
+    country: string;
+    full_address: string;
+  };
+  shipping: {
+    first_name: string;
+    last_name: string;
+    company: string;
+    address_1: string;
+    address_2: string;
+    city: string;
+    state: string;
+    postcode: string;
+    country: string;
+    full_address: string;
+  };
+  totals: {
+    subtotal: string;
+    subtotal_raw: number;
+    shipping: string;
+    shipping_raw: number;
+    tax: string;
+    tax_raw: number;
+    discount: string;
+    discount_raw: number;
+    total: string;
+    total_raw: number;
+  };
+}
+
+// Extension de Window pour les données PDF Builder
+declare global {
+  interface Window {
+    pdfBuilderData?: {
+      previewOrderData?: PreviewOrderData;
+    };
+  }
+}
+
 export class WooCommerceElementsManager {
   private orderData: WooCommerceOrder | null = null;
   private customerData: WooCommerceCustomer | null = null;
@@ -47,6 +125,12 @@ export class WooCommerceElementsManager {
    * Obtient le numéro de commande formaté
    */
   getOrderNumber(): string {
+    // Check for preview data first
+    const previewData = window.pdfBuilderData?.previewOrderData;
+    if (previewData?.order?.order_number) {
+      return previewData.order.order_number;
+    }
+
     if (!this.orderData) return 'CMD-XXXX-XXXX';
     return this.orderData.order_number || `CMD-${this.orderData.id}`;
   }
@@ -60,6 +144,23 @@ export class WooCommerceElementsManager {
     email: string;
     phone: string;
   } {
+    // Check for preview data first
+    const previewData = window.pdfBuilderData?.previewOrderData;
+    if (previewData?.customer && previewData?.billing) {
+      const { customer, billing } = previewData;
+      return {
+        name: customer.full_name || `${customer.first_name} ${customer.last_name}`.trim() || 'Client Inconnu',
+        address: billing.full_address || [
+          billing.address_1,
+          billing.address_2,
+          `${billing.postcode} ${billing.city}`,
+          billing.country
+        ].filter(Boolean).join(', ') || 'Adresse non disponible',
+        email: customer.email || 'email@inconnu.com',
+        phone: customer.phone || '+33 0 00 00 00 00'
+      };
+    }
+
     if (!this.customerData && !this.orderData) {
       return {
         name: 'Client Inconnu',
@@ -108,6 +209,31 @@ export class WooCommerceElementsManager {
     discount: number;
     total: number;
   }> {
+    // Check for preview data first
+    const previewData = window.pdfBuilderData?.previewOrderData;
+    if (previewData?.products && Array.isArray(previewData.products)) {
+      return previewData.products.map(product => {
+        // Remove HTML tags from price strings and convert to numbers
+        const stripPrice = (priceStr: string): number => {
+          const cleaned = priceStr.replace(/<[^>]*>/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
+          return parseFloat(cleaned) || 0;
+        };
+
+        const subtotal = stripPrice(product.subtotal);
+        const total = stripPrice(product.total);
+        
+        return {
+          sku: product.sku || `SKU-${product.id}`,
+          name: product.name,
+          description: '', // Description not available in preview data
+          qty: product.quantity,
+          price: stripPrice(product.price),
+          discount: Math.max(0, subtotal - total),
+          total: total
+        };
+      });
+    }
+
     if (!this.orderData) {
       return [];
     }
@@ -134,6 +260,20 @@ export class WooCommerceElementsManager {
     total: number;
     currency: string;
   } {
+    // Check for preview data first
+    const previewData = window.pdfBuilderData?.previewOrderData;
+    if (previewData?.totals && previewData?.order) {
+      const { totals, order } = previewData;
+      return {
+        subtotal: totals.subtotal_raw || 0,
+        discount: totals.discount_raw || 0,
+        shipping: totals.shipping_raw || 0,
+        tax: totals.tax_raw || 0,
+        total: totals.total_raw || 0,
+        currency: order.currency || 'EUR'
+      };
+    }
+
     if (!this.orderData) {
       return {
         subtotal: 0,
@@ -165,6 +305,12 @@ export class WooCommerceElementsManager {
    * Obtient la date de commande formatée
    */
   getOrderDate(): string {
+    // Check for preview data first
+    const previewData = window.pdfBuilderData?.previewOrderData;
+    if (previewData?.order?.date_formatted) {
+      return previewData.order.date_formatted;
+    }
+
     if (!this.orderData) return new Date().toLocaleDateString('fr-FR');
     return new Date(this.orderData.date_created).toLocaleDateString('fr-FR');
   }
