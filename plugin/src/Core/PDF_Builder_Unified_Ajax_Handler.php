@@ -2552,7 +2552,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         $template = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT * FROM {$table_name} WHERE id = %d",
+                "SELECT * FROM {$table_name} WHERE template_id = %d",
                 $template_id
             ),
             ARRAY_A
@@ -2564,8 +2564,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             return $this->get_fallback_template($template_id);
         }
         
-        error_log("[PDF Builder] Template trouvé: " . ($template['name'] ?? 'sans nom'));
+        error_log("[PDF Builder] Template trouvé: " . ($template['template_name'] ?? 'sans nom'));
         error_log("[PDF Builder] Template data length: " . strlen($template['template_data'] ?? ''));
+        error_log("[PDF Builder] Template JSON preview: " . substr($template['template_data'] ?? '', 0, 200));
         
         return $template;
     }
