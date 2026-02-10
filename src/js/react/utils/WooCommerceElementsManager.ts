@@ -227,15 +227,15 @@ export class WooCommerceElementsManager {
     const previewData = window.pdfBuilderData?.previewOrderData;
     if (previewData?.products && Array.isArray(previewData.products)) {
       return previewData.products.map(product => {
-        const subtotal = product.subtotal_raw || 0;
-        const total = product.total_raw || 0;
+        const subtotal = Number(product.subtotal_raw) || 0;
+        const total = Number(product.total_raw) || 0;
         
         return {
           sku: product.sku || `SKU-${product.id}`,
           name: product.name,
           description: '', // Description not available in preview data
-          qty: product.quantity,
-          price: product.price_raw || 0,
+          qty: Number(product.quantity) || 0,
+          price: Number(product.price_raw) || 0,
           discount: Math.max(0, subtotal - total),
           total: total
         };
@@ -269,7 +269,7 @@ export class WooCommerceElementsManager {
     if (previewData?.fees && Array.isArray(previewData.fees)) {
       return previewData.fees.map(fee => ({
         name: fee.name,
-        total: fee.total_raw || 0
+        total: Number(fee.total_raw) || 0
       }));
     }
 
@@ -292,11 +292,11 @@ export class WooCommerceElementsManager {
     if (previewData?.totals && previewData?.order) {
       const { totals, order } = previewData;
       return {
-        subtotal: totals.subtotal_raw || 0,
-        discount: totals.discount_raw || 0,
-        shipping: totals.shipping_raw || 0,
-        tax: totals.tax_raw || 0,
-        total: totals.total_raw || 0,
+        subtotal: Number(totals.subtotal_raw) || 0,
+        discount: Number(totals.discount_raw) || 0,
+        shipping: Number(totals.shipping_raw) || 0,
+        tax: Number(totals.tax_raw) || 0,
+        total: Number(totals.total_raw) || 0,
         currency: order.currency || 'EUR'
       };
     }

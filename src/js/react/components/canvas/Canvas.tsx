@@ -481,15 +481,29 @@ const drawProductTable = (
   if (state.previewMode === "command") {
     // Get real order items from WooCommerce
     const orderItems = wooCommerceManager.getOrderItems();
-    products = orderItems.map(item => ({
-      sku: item.sku,
-      name: item.name,
-      description: item.description,
-      qty: item.qty,
-      price: item.price,
-      discount: item.discount,
-      total: item.total,
-    }));
+    const orderFees = wooCommerceManager.getOrderFees();
+    
+    // Combine products and fees into one array
+    products = [
+      ...orderItems.map(item => ({
+        sku: item.sku,
+        name: item.name,
+        description: item.description,
+        qty: item.qty,
+        price: item.price,
+        discount: item.discount,
+        total: item.total,
+      })),
+      ...orderFees.map(fee => ({
+        sku: 'FEE',
+        name: fee.name,
+        description: '',
+        qty: 1,
+        price: fee.total,
+        discount: 0,
+        total: fee.total,
+      }))
+    ];
   } else {
     // Use props.products in editor mode
     products = (props.products || []).map(p => ({
@@ -554,13 +568,8 @@ const drawProductTable = (
     ];
   }
 
-  // ✅ Get real fees in preview mode
-  let fees: Array<{ name: string; total: number }>;
-  if (state.previewMode === "command") {
-    fees = wooCommerceManager.getOrderFees();
-  } else {
-    fees = props.fees || [];
-  }
+  // Fees are now included in products array for preview mode
+  const fees = state.previewMode === "command" ? [] : (props.fees || []);
 
   const currency = "€";
 
@@ -570,16 +579,22 @@ const drawProductTable = (
   let taxAmount: number;
   let globalDiscount: number;
   let totalFees = 0;
+  let taxRate = 0; // Pour l'affichage du %
 
   if (state.previewMode === "command") {
     // Get real order totals from WooCommerce
     const orderTotals = wooCommerceManager.getOrderTotals();
-    subtotal = orderTotals.subtotal;
-    shippingCost = orderTotals.shipping;
-    taxAmount = orderTotals.tax;
-    globalDiscount = orderTotals.discount;
-    // Calculate fees total
-    totalFees = fees.reduce((sum, f) => sum + (f.total || 0), 0);
+    // Calculate subtotal from products (includes fees already)
+    subtotal = products.reduce((sum, p) => sum + (Number(p.total) || 0), 0);
+    shippingCost = Number(orderTotals.shipping) || 0;
+    taxAmount = Number(orderTotals.tax) || 0;
+    globalDiscount = Number(orderTotals.discount) || 0;
+    // Calculate tax rate for display
+    if (subtotal > 0 && taxAmount > 0) {
+      taxRate = (taxAmount / subtotal) * 100;
+    }
+    // Fees already included in products array
+    totalFees = 0;
   } else {
     // ✅ CALCUL CORRECT DES TOTALS - Pas de hardcoding
     // 1) Calculer le sous-total à partir des produits
@@ -590,7 +605,7 @@ const drawProductTable = (
     
     // 3) Lire les valeurs depuis les propriétés de l'élément OU utiliser les valeurs de totals comme fallback
     shippingCost = props.shippingCost as any || (props.totals?.shippingCost as any) || 10.0; // Valeur fictive: 10€
-    const taxRate = props.taxRate as any || (props.totals?.taxRate as any) || 5; // Valeur fictive: 5%
+    taxRate = props.taxRate as any || (props.totals?.taxRate as any) || 5; // Valeur fictive: 5%
     globalDiscount = props.globalDiscount as any || (props.totals?.discount as any) || 20.0; // Valeur fictive: 20€
     
     // Calculate tax from rate
@@ -989,32 +1004,6 @@ const drawProductTable = (
   });
   currentY = 55 + products.length * (rowHeight + 4) + 8;
 
-  // ✅ NEW: Section des frais (si des frais existent)
-  if (fees && fees.length > 0) {
-    // Ligne de séparation avant les frais
-    ctx.strokeStyle = normalizeColor("#d1d5db");
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(element.width - 200, currentY);
-    ctx.lineTo(element.width - 8, currentY);
-    ctx.stroke();
-
-    currentY += 18;
-
-    // Afficher les frais
-    ctx.font = `normal ${fontSize}px Arial`;
-    ctx.fillStyle = textColor;
-    ctx.textAlign = "left";
-
-    fees.forEach((fee) => {
-      ctx.fillText(fee.name + ":", element.width - 200, currentY);
-      ctx.textAlign = "right";
-      ctx.fillText(`+${fee.total.toFixed(2)}${currency}`, element.width - 8, currentY);
-      ctx.textAlign = "left";
-      currentY += 18;
-    });
-  }
-
   // Section des totaux
 
   // Ligne de séparation avant les totaux
@@ -1075,7 +1064,8 @@ const drawProductTable = (
   if (taxAmount > 0 && showTax) {
     ctx.textAlign = "left";
     ctx.fillStyle = textColor;
-    ctx.fillText(`TVA (${taxRate.toFixed(0)}%):`, element.width - 200, currentY);
+    const taxLabel = taxRate > 0 ? `TVA (${taxRate.toFixed(1)}%):` : 'TVA:';
+    ctx.fillText(taxLabel, element.width - 200, currentY);
     ctx.textAlign = "right";
     ctx.fillText(
       `+${taxAmount.toFixed(2)}${currency}`,
