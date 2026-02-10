@@ -103,69 +103,31 @@ export const Header = memo(function Header({
     availableOrientations: ["portrait", "landscape"],
   });
 
-  // Preview system - GET from BuilderContext state
-  const showPreviewModal = state.showPreviewModal || false;
-  const [previewOrderId, setPreviewOrderId] = useState<string>("");
-  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
-  const [previewError, setPreviewError] = useState<string | null>(null);
-  const [previewFormat, setPreviewFormat] = useState<'png' | 'jpg' | 'pdf'>('png');
-  const [previewImageUrl, setPreviewImageUrl] = useState<string>("");
+  // Preview system - Simple solution: ouvrir un nouvel onglet avec l'order_id
+  const handlePreview = () => {
+    const orderId = prompt(
+      "Entrez l'ID de la commande WooCommerce pour l'aperçu :",
+      ""
+    );
 
-  const openPreviewModal = () => {
-    dispatch({ type: "SET_SHOW_PREVIEW_MODAL", payload: true });
-    setPreviewOrderId("");
-    setPreviewError(null);
-  };
+    if (!orderId || orderId.trim() === "") {
+      return; // Annulé ou vide
+    }
 
-  const closePreviewModal = () => {
-    dispatch({ type: "SET_SHOW_PREVIEW_MODAL", payload: false });
-    setPreviewError(null);
-  };
-
-  const handlePreviewWithOrder = useCallback(async () => {
-    if (!previewOrderId) {
-      setPreviewError("Veuillez entrer un ID de commande");
+    const templateId = state.template?.id;
+    if (!templateId) {
+      alert("Erreur: Template ID manquant. Veuillez d'abord enregistrer le template.");
       return;
     }
 
-    setIsLoadingPreview(true);
-    setPreviewError(null);
-
-    try {
-      // Appeler useTemplate.loadTemplateForPreview
-      // Mais on doit l'exposer... créons un fallback pour maintenant
-      debugLog(
-        `📊 [PREVIEW] Chargement de l'aperçu pour commande ${previewOrderId}`,
-      );
-
-      // Vérifier que loadTemplateForPreview est disponible
-      if (
-        typeof window !== "undefined" &&
-        (window as any).pdfBuilderLoadTemplateForPreview
-      ) {
-        const templateId = state.template?.id;
-        if (!templateId) {
-          setPreviewError("Template ID manquant");
-          return;
-        }
-
-        await (window as any).pdfBuilderLoadTemplateForPreview(
-          templateId,
-          previewOrderId,
-        );
-        closePreviewModal();
-      } else {
-        setPreviewError("Fonction d'aperçu non disponible, rechargez la page");
-      }
-    } catch (error) {
-      debugError("❌ [PREVIEW] Erreur:", error);
-      setPreviewError(
-        `Erreur: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    } finally {
-      setIsLoadingPreview(false);
-    }
-  }, [previewOrderId, state.template?.id]);
+    // Construire l'URL pour ouvrir le template en mode aperçu
+    const previewUrl = `/wp-admin/admin.php?page=pdf-builder-editor&template_id=${templateId}&order_id=${orderId.trim()}&preview=1`;
+    
+    debugLog(`📊 [PREVIEW] Ouverture aperçu: ${previewUrl}`);
+    
+    // Ouvrir dans un nouvel onglet
+    window.open(previewUrl, '_blank');
+  };
 
   // Debug logging
   useEffect(() => {
@@ -220,8 +182,6 @@ export const Header = memo(function Header({
 
     loadOrientationPermissions();
   }, []);
-
-  useEffect(() => {}, [showPreviewModal]);
 
   // Synchroniser les états locaux avec les props quand elles changent
   useEffect(() => {
@@ -2205,9 +2165,7 @@ export const Header = memo(function Header({
         </div>
 
         <button
-          onClick={() => {
-            openPreviewModal();
-          }}
+          onClick={handlePreview}
           onMouseEnter={() => setHoveredButton("preview")}
           onMouseLeave={() => setHoveredButton(null)}
           style={{
@@ -2215,7 +2173,7 @@ export const Header = memo(function Header({
             opacity: isSaving ? 0.6 : 1,
             pointerEvents: isSaving ? "none" : "auto",
           }}
-          title="Générer un aperçu du PDF (Image ou PDF)"
+          title="Aperçu avec une vraie commande (nouvel onglet)"
         >
           <span>👁️</span>
           <span>Aperçu</span>
@@ -2938,353 +2896,6 @@ export const Header = memo(function Header({
                 Fermer
               </button>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modale d'aperçu PDF/HTML */}
-      {showPreviewModal && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1001,
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              borderRadius: "8px",
-              padding: "24px",
-              maxWidth: "500px",
-              width: "90vw",
-              maxHeight: "90vh",
-              overflow: "auto",
-              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "20px",
-              }}
-            >
-              <h3
-                style={{
-                  margin: 0,
-                  fontSize: "18px",
-                  fontWeight: "600",
-                  color: "#1a1a1a",
-                }}
-              >
-                ✅ Aperçu avec Données Réelles
-              </h3>
-              <button
-                onClick={closePreviewModal}
-                style={{
-                  background: "none",
-                  border: "none",
-                  fontSize: "24px",
-                  cursor: "pointer",
-                  color: "#666",
-                  padding: "0",
-                  width: "30px",
-                  height: "30px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-                title="Fermer"
-              >
-                ×
-              </button>
-            </div>
-
-            {/* Formulaire pour choisir une commande */}
-            <div style={{ marginBottom: "20px" }}>
-              <label
-                htmlFor="previewOrderId"
-                style={{
-                  display: "block",
-                  marginBottom: "8px",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  color: "#374151",
-                }}
-              >
-                ID de Commande WooCommerce:
-              </label>
-              <input
-                id="previewOrderId"
-                type="number"
-                min="1"
-                placeholder="Ex: 123"
-                value={previewOrderId}
-                onChange={(e) => setPreviewOrderId(e.target.value)}
-                disabled={isLoadingPreview}
-                style={{
-                  width: "100%",
-                  padding: "10px 12px",
-                  fontSize: "14px",
-                  border: "1px solid #d1d5db",
-                  borderRadius: "6px",
-                  fontFamily: "monospace",
-                  boxSizing: "border-box",
-                  opacity: isLoadingPreview ? 0.6 : 1,
-                  cursor: isLoadingPreview ? "not-allowed" : "auto",
-                }}
-              />
-              <p
-                style={{
-                  fontSize: "12px",
-                  color: "#6b7280",
-                  marginTop: "6px",
-                  marginBottom: 0,
-                }}
-              >
-                📝 Entrez l'ID d'une commande WooCommerce existante
-              </p>
-            </div>
-
-            {/* Message d'erreur */}
-            {previewError && (
-              <div
-                style={{
-                  padding: "12px",
-                  marginBottom: "16px",
-                  backgroundColor: "#fee2e2",
-                  color: "#991b1b",
-                  borderRadius: "6px",
-                  fontSize: "14px",
-                  border: "1px solid #fecaca",
-                }}
-              >
-                ❌ {previewError}
-              </div>
-            )}
-
-            {/* Boutons */}
-            <div
-              style={{
-                display: "flex",
-                gap: "12px",
-                justifyContent: "flex-end",
-              }}
-            >
-              <button
-                onClick={closePreviewModal}
-                disabled={isLoadingPreview}
-                style={{
-                  padding: "10px 16px",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  border: "1px solid #d1d5db",
-                  backgroundColor: "#ffffff",
-                  color: "#374151",
-                  borderRadius: "6px",
-                  cursor: isLoadingPreview ? "not-allowed" : "pointer",
-                  opacity: isLoadingPreview ? 0.6 : 1,
-                }}
-              >
-                Annuler
-              </button>
-              <button
-                onClick={handlePreviewWithOrder}
-                disabled={isLoadingPreview || !previewOrderId}
-                style={{
-                  padding: "10px 16px",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  border: "none",
-                  backgroundColor:
-                    isLoadingPreview || !previewOrderId ? "#9ca3af" : "#007acc",
-                  color: "#ffffff",
-                  borderRadius: "6px",
-                  cursor:
-                    isLoadingPreview || !previewOrderId
-                      ? "not-allowed"
-                      : "pointer",
-                  opacity: isLoadingPreview || !previewOrderId ? 0.6 : 1,
-                }}
-              >
-                {isLoadingPreview ? "⏳ Chargement..." : "📊 Charger l'Aperçu"}
-              </button>
-            </div>
-
-            {/* Contenu conditionnel basé sur le type d'aperçu */}
-            {state.htmlPreviewContent ? (
-              /* Aperçu HTML */
-              <div>
-                <div
-                  style={{
-                    marginBottom: "16px",
-                    padding: "12px",
-                    backgroundColor: "#f8f9fa",
-                    borderRadius: "4px",
-                    fontSize: "14px",
-                    color: "#666",
-                  }}
-                >
-                  <strong>ℹ️ Aperçu HTML:</strong> Cette prévisualisation montre
-                  comment votre PDF sera rendu avec les paramètres actuels du
-                  plugin.
-                </div>
-                <div
-                  style={{
-                    border: "1px solid #ddd",
-                    borderRadius: "4px",
-                    padding: "16px",
-                    backgroundColor: "#fafafa",
-                    maxHeight: "600px",
-                    overflow: "auto",
-                  }}
-                  dangerouslySetInnerHTML={{ __html: state.htmlPreviewContent }}
-                />
-              </div>
-            ) : (
-              /* Aperçu PDF (format image) - contenu existant */
-              <>
-                {/* Options de format */}
-                <div style={{ marginBottom: "20px" }}>
-                  <label
-                    style={{
-                      display: "block",
-                      fontSize: "14px",
-                      fontWeight: "500",
-                      color: "#333",
-                      marginBottom: "8px",
-                    }}
-                  >
-                    Format d&apos;export :
-                  </label>
-                  <div style={{ display: "flex", gap: "10px" }}>
-                    {[
-                      { value: "png", label: "PNG", icon: "🖼️" },
-                      { value: "jpg", label: "JPG", icon: "📷" },
-                      { value: "pdf", label: "PDF", icon: "📄" },
-                    ].map((format) => (
-                      <button
-                        key={format.value}
-                        onClick={() =>
-                          setPreviewFormat(
-                            format.value as "png" | "jpg" | "pdf",
-                          )
-                        }
-                        style={{
-                          padding: "8px 16px",
-                          border: `2px solid ${
-                            previewFormat === format.value ? "#007cba" : "#ddd"
-                          }`,
-                          borderRadius: "6px",
-                          backgroundColor:
-                            previewFormat === format.value ? "#f0f8ff" : "#fff",
-                          color:
-                            previewFormat === format.value ? "#007cba" : "#333",
-                          cursor: "pointer",
-                          fontSize: "14px",
-                          fontWeight: "500",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "6px",
-                        }}
-                      >
-                        <span>{format.icon}</span>
-                        <span>{format.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Bouton de génération */}
-                <div style={{ marginBottom: "20px" }}>
-                  <button
-                    onClick={async () => {
-                      // Preview generation would go here
-                    }}
-                    disabled={false}
-                    style={{
-                      padding: "12px 24px",
-                      backgroundColor: "#007cba",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                      fontSize: "16px",
-                      fontWeight: "500",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <>
-                      <span>🎨</span>
-                      <span>Générer l&apos;aperçu</span>
-                    </>
-                  </button>
-                </div>
-
-                {/* Affichage de l'erreur */}
-                {previewError && (
-                  <div
-                    style={{
-                      padding: "12px",
-                      backgroundColor: "#f8d7da",
-                      border: "1px solid #f5c6cb",
-                      borderRadius: "4px",
-                      color: "#721c24",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    <strong>Erreur:</strong> {previewError}
-                  </div>
-                )}
-
-                {/* Affichage de l'aperçu */}
-                {previewImageUrl && (
-                  <div style={{ textAlign: "center" }}>
-                    <img
-                      src={previewImageUrl}
-                      alt="Aperçu du PDF"
-                      style={{
-                        maxWidth: "100%",
-                        maxHeight: "400px",
-                        border: "1px solid #ddd",
-                        borderRadius: "4px",
-                        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-                      }}
-                    />
-                    <div style={{ marginTop: "10px" }}>
-                      <a
-                        href={previewImageUrl}
-                        download={`apercu-${
-                          templateName || "template"
-                        }.${previewFormat}`}
-                        style={{
-                          padding: "8px 16px",
-                          backgroundColor: "#28a745",
-                          color: "#fff",
-                          textDecoration: "none",
-                          borderRadius: "4px",
-                          fontSize: "14px",
-                          fontWeight: "500",
-                        }}
-                      >
-                        💾 Télécharger
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
           </div>
         </div>
       )}
