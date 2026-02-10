@@ -51,8 +51,16 @@ class PreviewDataAjax
                 ]);
             }
 
-            // 2. Vérifier le nonce
-            $nonce = isset($_POST['nonce']) ? \sanitize_text_field($_POST['nonce']) : '';
+            // 2. Lire les données JSON du body si présentes
+            $json_body = json_decode(file_get_contents('php://input'), true);
+            
+            // 3. Vérifier le nonce (priorité: GET, puis JSON body, puis POST)
+            $nonce = isset($_GET['nonce']) 
+                ? \sanitize_text_field($_GET['nonce']) 
+                : (isset($json_body['nonce']) 
+                    ? \sanitize_text_field($json_body['nonce']) 
+                    : (isset($_POST['nonce']) ? \sanitize_text_field($_POST['nonce']) : ''));
+                    
             if (!\pdf_builder_verify_nonce($nonce, 'pdf_builder_preview')) {
                 \wp_send_json_error([
                     'message' => 'Nonce invalide',
@@ -60,8 +68,13 @@ class PreviewDataAjax
                 ]);
             }
 
-            // 3. Récupérer et valider l'ID commande
-            $order_id = isset($_POST['orderId']) ? \intval($_POST['orderId']) : 0;
+            // 4. Récupérer et valider l'ID commande (GET priority, then JSON, then POST)
+            $order_id = isset($_GET['orderId']) 
+                ? \intval($_GET['orderId']) 
+                : (isset($json_body['orderId']) 
+                    ? \intval($json_body['orderId']) 
+                    : (isset($_POST['orderId']) ? \intval($_POST['orderId']) : 0));
+                    
             if (empty($order_id)) {
                 \wp_send_json_error([
                     'message' => 'Paramètre orderId manquant ou invalide',
