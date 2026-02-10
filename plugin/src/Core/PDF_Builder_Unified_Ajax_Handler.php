@@ -2661,7 +2661,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>' . esc_html($template['name'] ?? 'Document') . '</title>
+    <title>' . esc_html($template['template_name'] ?? 'Document') . '</title>
     <style>
         * {
             margin: 0;
@@ -2842,14 +2842,14 @@ class PDF_Builder_Unified_Ajax_Handler {
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>' . esc_html($template['name'] ?? 'Facture') . '</title>
+    <title>' . esc_html($template['template_name'] ?? 'Facture') . '</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; background: #ffffff; }
         h1 { color: #0073aa; border-bottom: 2px solid #0073aa; padding-bottom: 10px; }
     </style>
 </head>
 <body>
-    <h1>' . esc_html($template['name'] ?? 'Facture') . '</h1>
+    <h1>' . esc_html($template['template_name'] ?? 'Facture') . '</h1>
     <p>Template canvas invalide - affichage de secours</p>
     <p>Commande: ' . esc_html($all_data['order']['order_number']) . '</p>
     <p>Client: ' . esc_html($all_data['customer']['full_name']) . '</p>
