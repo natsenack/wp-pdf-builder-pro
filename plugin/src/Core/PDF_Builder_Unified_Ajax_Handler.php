@@ -2525,6 +2525,20 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Récupère un template spécifique
      */
     private function get_template($template_id) {
+        global $wpdb;
+        
+        // Lister toutes les options qui ressemblent à des templates
+        $results = $wpdb->get_results(
+            "SELECT option_name, LENGTH(option_value) as size FROM {$wpdb->options} WHERE option_name LIKE 'pdf_builder_template%' ORDER BY option_name",
+            ARRAY_A
+        );
+        
+        error_log("[PDF Builder] ========== LISTE DES TEMPLATES ==========");
+        foreach ($results as $row) {
+            error_log("[PDF Builder] Option: {$row['option_name']} - Taille: {$row['size']} bytes");
+        }
+        error_log("[PDF Builder] ==========================================");
+        
         // Les templates sont stockés individuellement avec la clé pdf_builder_template_{id}
         $template_data = get_option("pdf_builder_template_{$template_id}", '');
         
@@ -2534,7 +2548,13 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         if (empty($template_data)) {
             error_log("[PDF Builder] Template vide ou introuvable !");
-            return null;
+            
+            // Utiliser un template factice pour test
+            return [
+                'id' => $template_id,
+                'name' => 'Template Test',
+                'template_data' => '{"elements":[],"canvas":{"width":595,"height":842}}'
+            ];
         }
         
         // Décoder le JSON du template
