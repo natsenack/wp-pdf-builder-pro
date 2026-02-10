@@ -2477,43 +2477,60 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Handler pour générer un PDF depuis le mode preview
      */
     public function handle_generate_pdf() {
+        error_log("[PDF Builder] ========== GÉNÉRATION PDF DÉMARRÉE ==========");
+        error_log("[PDF Builder] GET params: " . json_encode($_GET));
+        
         // Vérifier les permissions - doit être connecté et avoir les droits de gestion WooCommerce
         if (!is_user_logged_in() || !current_user_can('edit_shop_orders')) {
+            error_log("[PDF Builder] Permission refusée");
             wp_die('Permission refusée', '', ['response' => 403]);
         }
 
         $template_id = sanitize_text_field($_GET['template_id'] ?? '');
         $order_id = intval($_GET['order_id'] ?? 0);
+        
+        error_log("[PDF Builder] Template ID: '{$template_id}', Order ID: {$order_id}");
 
         if (!$template_id || !$order_id) {
+            error_log("[PDF Builder] Paramètres manquants");
             wp_die('Paramètres manquants', '', ['response' => 400]);
         }
 
         try {
             // Vérifier que WooCommerce est actif
             if (!function_exists('wc_get_order')) {
+                error_log("[PDF Builder] WooCommerce non actif");
                 wp_die('WooCommerce n\'est pas actif', '', ['response' => 500]);
             }
 
             $order = wc_get_order($order_id);
             if (!$order) {
+                error_log("[PDF Builder] Commande #{$order_id} introuvable");
                 wp_die('Commande introuvable', '', ['response' => 404]);
             }
+            
+            error_log("[PDF Builder] Commande #{$order_id} trouvée");
 
             // Récupérer le template
             $template = $this->get_template($template_id);
             if (!$template) {
+                error_log("[PDF Builder] Template '{$template_id}' introuvable");
                 wp_die('Modèle introuvable', '', ['response' => 404]);
             }
+            
+            error_log("[PDF Builder] Template '{$template_id}' trouvé: " . (isset($template['name']) ? $template['name'] : 'sans nom'));
 
             // Générer l'HTML avec les vraies données
+            error_log("[PDF Builder] Début génération HTML");
             $html = $this->generate_template_html($template, $order);
+            error_log("[PDF Builder] HTML généré - Longueur: " . strlen($html) . " caractères");
 
             // Pour l'instant, retourner l'HTML
             // TODO: Implémenter la conversion en PDF avec dompdf
             header('Content-Type: text/html; charset=utf-8');
             header('Content-Disposition: inline; filename="invoice-' . $order_id . '.html"');
             echo $html;
+            error_log("[PDF Builder] HTML envoyé au navigateur");
             exit;
         } catch (Exception $e) {
             error_log('[PDF Builder] Erreur génération PDF: ' . $e->getMessage());
