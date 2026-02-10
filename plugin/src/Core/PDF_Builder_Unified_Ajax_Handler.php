@@ -2552,7 +2552,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         $template = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT * FROM {$table_name} WHERE template_id = %d",
+                "SELECT * FROM {$table_name} WHERE id = %d",
                 $template_id
             ),
             ARRAY_A
@@ -2564,7 +2564,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             return $this->get_fallback_template($template_id);
         }
         
-        error_log("[PDF Builder] Template trouvé: " . ($template['template_name'] ?? 'sans nom'));
+        error_log("[PDF Builder] Template trouvé: " . ($template['name'] ?? 'sans nom'));
         error_log("[PDF Builder] Template data length: " . strlen($template['template_data'] ?? ''));
         error_log("[PDF Builder] Template JSON preview: " . substr($template['template_data'] ?? '', 0, 200));
         
@@ -2661,7 +2661,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>' . esc_html($template['template_name'] ?? 'Document') . '</title>
+    <title>' . esc_html($template['name'] ?? 'Document') . '</title>
     <style>
         * {
             margin: 0;
@@ -2842,14 +2842,14 @@ class PDF_Builder_Unified_Ajax_Handler {
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>' . esc_html($template['template_name'] ?? 'Facture') . '</title>
+    <title>' . esc_html($template['name'] ?? 'Facture') . '</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; background: #ffffff; }
         h1 { color: #0073aa; border-bottom: 2px solid #0073aa; padding-bottom: 10px; }
     </style>
 </head>
 <body>
-    <h1>' . esc_html($template['template_name'] ?? 'Facture') . '</h1>
+    <h1>' . esc_html($template['name'] ?? 'Facture') . '</h1>
     <p>Template canvas invalide - affichage de secours</p>
     <p>Commande: ' . esc_html($all_data['order']['order_number']) . '</p>
     <p>Client: ' . esc_html($all_data['customer']['full_name']) . '</p>
