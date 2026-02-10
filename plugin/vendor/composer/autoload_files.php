@@ -6,7 +6,6 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    '5bdf057635526b69104ee169be406ef9' => $baseDir . '/lib/pdf-builder-stubs.php',
     '04700c54b3121af201b1f5e8be277152' => $baseDir . '/src/Core/PDF_Builder_Path_Validator.php',
     '26a918a6e6ee4098c53a735635ac19d3' => $baseDir . '/src/Core/PDF_Builder_Rate_Limiter.php',
     '4e57cf88a32a953591dea69244eb38a4' => $baseDir . '/src/Core/PDF_Builder_Security_Validator.php',

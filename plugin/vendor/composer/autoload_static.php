@@ -7,7 +7,6 @@ namespace Composer\Autoload;
 class ComposerStaticInit0ec2d3c96889deb21cf7260b235209f7
 {
     public static $files = array (
-        '5bdf057635526b69104ee169be406ef9' => __DIR__ . '/../..' . '/lib/pdf-builder-stubs.php',
         '04700c54b3121af201b1f5e8be277152' => __DIR__ . '/../..' . '/src/Core/PDF_Builder_Path_Validator.php',
         '26a918a6e6ee4098c53a735635ac19d3' => __DIR__ . '/../..' . '/src/Core/PDF_Builder_Rate_Limiter.php',
         '4e57cf88a32a953591dea69244eb38a4' => __DIR__ . '/../..' . '/src/Core/PDF_Builder_Security_Validator.php',
