@@ -2527,9 +2527,14 @@ class PDF_Builder_Unified_Ajax_Handler {
     private function get_template($template_id) {
         $templates_option = get_option('pdf_builder_templates', '{}');
         $templates_data = json_decode($templates_option, true);
+        
+        error_log("[PDF Builder] Template ID recherché: " . var_export($template_id, true));
+        error_log("[PDF Builder] Templates option: " . substr($templates_option, 0, 500));
+        error_log("[PDF Builder] Templates data: " . var_export($templates_data, true));
 
         if (is_array($templates_data)) {
             foreach ($templates_data as $template) {
+                error_log("[PDF Builder] Comparaison - Template ID: " . var_export($template['id'] ?? 'N/A', true) . " avec " . var_export($template_id, true));
                 if (($template['id'] ?? '') == $template_id) {
                     return $template;
                 }
