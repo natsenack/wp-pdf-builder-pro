@@ -2565,13 +2565,54 @@ class PDF_Builder_Unified_Ajax_Handler {
         error_log("[PDF Builder] Template data: " . substr($template_data, 0, 500));
         
         if (empty($template_data)) {
-            error_log("[PDF Builder] Template vide ou introuvable !");
+            error_log("[PDF Builder] Template vide ou introuvable ! Utilisation du fallback avec données de test");
             
-            // Utiliser un template factice pour test
+            // Utiliser un template factice pour test avec quelques éléments
+            $fallback_template = [
+                'elements' => [
+                    [
+                        'type' => 'text',
+                        'x' => 50,
+                        'y' => 50,
+                        'width' => 200,
+                        'height' => 40,
+                        'content' => 'FACTURE',
+                        'styles' => [
+                            'fontSize' => 32,
+                            'fontWeight' => 'bold',
+                            'color' => '#0073aa'
+                        ]
+                    ],
+                    [
+                        'type' => 'customerInfo',
+                        'x' => 50,
+                        'y' => 120,
+                        'width' => 250,
+                        'height' => 120,
+                        'styles' => [
+                            'fontSize' => 14
+                        ]
+                    ],
+                    [
+                        'type' => 'table',
+                        'x' => 50,
+                        'y' => 280,
+                        'width' => 495,
+                        'height' => 200
+                    ]
+                ],
+                'canvas' => [
+                    'width' => 595,
+                    'height' => 842,
+                    'dpi' => 72,
+                    'orientation' => 'portrait'
+                ]
+            ];
+            
             return [
                 'id' => $template_id,
-                'name' => 'Template Test',
-                'template_data' => '{"elements":[],"canvas":{"width":595,"height":842}}'
+                'name' => 'Template Test (Fallback)',
+                'template_data' => $fallback_template
             ];
         }
         
