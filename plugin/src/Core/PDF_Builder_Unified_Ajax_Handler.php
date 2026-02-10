@@ -2545,85 +2545,86 @@ class PDF_Builder_Unified_Ajax_Handler {
     private function get_template($template_id) {
         global $wpdb;
         
-        // Lister toutes les options qui ressemblent à des templates
-        $results = $wpdb->get_results(
-            "SELECT option_name, LENGTH(option_value) as size FROM {$wpdb->options} WHERE option_name LIKE 'pdf_builder_template%' ORDER BY option_name",
+        // Les templates sont stockés dans la table wp_pdf_builder_templates
+        $table_name = $wpdb->prefix . 'pdf_builder_templates';
+        
+        error_log("[PDF Builder] Recherche template ID '{$template_id}' dans table {$table_name}");
+        
+        $template = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT * FROM {$table_name} WHERE id = %d",
+                $template_id
+            ),
             ARRAY_A
         );
         
-        error_log("[PDF Builder] ========== LISTE DES TEMPLATES ==========");
-        foreach ($results as $row) {
-            error_log("[PDF Builder] Option: {$row['option_name']} - Taille: {$row['size']} bytes");
-        }
-        error_log("[PDF Builder] ==========================================");
-        
-        // Les templates sont stockés individuellement avec la clé pdf_builder_template_{id}
-        $template_data = get_option("pdf_builder_template_{$template_id}", '');
-        
-        error_log("[PDF Builder] Template ID recherché: " . var_export($template_id, true));
-        error_log("[PDF Builder] Template option key: pdf_builder_template_{$template_id}");
-        error_log("[PDF Builder] Template data: " . substr($template_data, 0, 500));
-        
-        if (empty($template_data)) {
-            error_log("[PDF Builder] Template vide ou introuvable ! Utilisation du fallback avec données de test");
-            
-            // Utiliser un template factice pour test avec quelques éléments
-            $fallback_template = [
-                'elements' => [
-                    [
-                        'type' => 'text',
-                        'x' => 50,
-                        'y' => 50,
-                        'width' => 200,
-                        'height' => 40,
-                        'content' => 'FACTURE',
-                        'styles' => [
-                            'fontSize' => 32,
-                            'fontWeight' => 'bold',
-                            'color' => '#0073aa'
-                        ]
-                    ],
-                    [
-                        'type' => 'customerInfo',
-                        'x' => 50,
-                        'y' => 120,
-                        'width' => 250,
-                        'height' => 120,
-                        'styles' => [
-                            'fontSize' => 14
-                        ]
-                    ],
-                    [
-                        'type' => 'table',
-                        'x' => 50,
-                        'y' => 280,
-                        'width' => 495,
-                        'height' => 200
-                    ]
-                ],
-                'canvas' => [
-                    'width' => 595,
-                    'height' => 842,
-                    'dpi' => 72,
-                    'orientation' => 'portrait'
-                ]
-            ];
-            
-            return [
-                'id' => $template_id,
-                'name' => 'Template Test (Fallback)',
-                'template_data' => $fallback_template
-            ];
+        if (!$template) {
+            error_log("[PDF Builder] Template #{$template_id} introuvable dans la table");
+            error_log("[PDF Builder] Utilisation du template fallback");
+            return $this->get_fallback_template($template_id);
         }
         
-        // Décoder le JSON du template
-        $template = json_decode($template_data, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log("[PDF Builder] Erreur JSON: " . json_last_error_msg());
-            return null;
-        }
+        error_log("[PDF Builder] Template trouvé: " . ($template['name'] ?? 'sans nom'));
+        error_log("[PDF Builder] Template data length: " . strlen($template['template_data'] ?? ''));
         
         return $template;
+    }
+    
+    /**
+     * Génère un template de secours pour les tests
+     */
+    private function get_fallback_template($template_id) {
+
+    /**
+     * Génère un template de secours pour les tests
+     */
+    private function get_fallback_template($template_id) {
+        $fallback_template = [
+            'elements' => [
+                [
+                    'type' => 'text',
+                    'x' => 50,
+                    'y' => 50,
+                    'width' => 200,
+                    'height' => 40,
+                    'content' => 'FACTURE',
+                    'styles' => [
+                        'fontSize' => 32,
+                        'fontWeight' => 'bold',
+                        'color' => '#0073aa'
+                    ]
+                ],
+                [
+                    'type' => 'customerInfo',
+                    'x' => 50,
+                    'y' => 120,
+                    'width' => 250,
+                    'height' => 120,
+                    'styles' => [
+                        'fontSize' => 14
+                    ]
+                ],
+                [
+                    'type' => 'table',
+                    'x' => 50,
+                    'y' => 280,
+                    'width' => 495,
+                    'height' => 200
+                ]
+            ],
+            'canvas' => [
+                'width' => 595,
+                'height' => 842,
+                'dpi' => 72,
+                'orientation' => 'portrait'
+            ]
+        ];
+        
+        return [
+            'id' => $template_id,
+            'name' => 'Template Test (Fallback)',
+            'template_data' => $fallback_template
+        ];
     }
 
     /**
