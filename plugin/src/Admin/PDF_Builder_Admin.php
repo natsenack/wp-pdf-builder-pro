@@ -1165,7 +1165,12 @@ class PdfBuilderAdminNew
      */
     public function reactEditorPage()
     {
-        if (!$this->checkAdminPermissions()) {
+        // En mode preview, autoriser les utilisateurs avec droits WooCommerce
+        $is_preview_mode = isset($_GET['preview']) && $_GET['preview'] === '1';
+        $has_permission = $this->checkAdminPermissions() || 
+                          ($is_preview_mode && \current_user_can('edit_shop_orders'));
+
+        if (!$has_permission) {
             \wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 

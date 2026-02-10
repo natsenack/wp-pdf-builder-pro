@@ -121,7 +121,7 @@ export const Header = memo(function Header({
     }
 
     // Construire l'URL pour ouvrir le template en mode aperçu
-    const previewUrl = `/wp-admin/admin.php?page=pdf-builder-editor&template_id=${templateId}&order_id=${orderId.trim()}&preview=1`;
+    const previewUrl = `/wp-admin/admin.php?page=pdf-builder-react-editor&template_id=${templateId}&order_id=${orderId.trim()}&preview=1`;
     
     debugLog(`📊 [PREVIEW] Ouverture aperçu: ${previewUrl}`);
     
