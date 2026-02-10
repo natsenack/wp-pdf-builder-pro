@@ -2569,11 +2569,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         return $template;
     }
-    
-    /**
-     * Génère un template de secours pour les tests
-     */
-    private function get_fallback_template($template_id) {
 
     /**
      * Génère un template de secours pour les tests
