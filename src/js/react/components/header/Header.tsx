@@ -108,6 +108,7 @@ export const Header = memo(function Header({
   const [previewOrderId, setPreviewOrderId] = useState<string>("");
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
+  const [previewFormat, setPreviewFormat] = useState<'png' | 'jpg' | 'pdf'>('png');
 
   const openPreviewModal = () => {
     dispatch({ type: "SET_SHOW_PREVIEW_MODAL", payload: true });
