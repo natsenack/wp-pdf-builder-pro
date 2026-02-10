@@ -316,6 +316,21 @@ export class WooCommerceElementsManager {
   }
 
   /**
+   * Obtient le numéro de facture formaté
+   */
+  getInvoiceNumber(): string {
+    // Check for preview data first
+    const previewData = window.pdfBuilderData?.previewOrderData;
+    if (previewData?.order?.order_number) {
+      // Format invoice number from order number
+      return `INV-${previewData.order.order_number}`;
+    }
+
+    if (!this.orderData) return 'INV-2024-00001';
+    return `INV-${this.orderData.order_number || this.orderData.id}`;
+  }
+
+  /**
    * Réinitialise les données
    */
   reset(): void {

@@ -467,17 +467,41 @@ const drawProductTable = (
   const showPrice = props.columns?.price !== false;
   const showTotal = props.columns?.total !== false;
 
-  // ✅ NEW: Utiliser la structure ProductTableData (products + fees + totals)
-  // Au lieu de calculer manuellement
-  let products = (props.products || []).map(p => ({
-    sku: p.sku || 'N/A',
-    name: p.name,
-    description: p.description || '',
-    qty: p.quantity,
-    price: p.price,
-    discount: 0, // Les remises sont dans totals.discount
-    total: p.total,
-  }));
+  // ✅ NEW: Use real WooCommerce data in preview mode
+  let products: Array<{
+    sku: string;
+    name: string;
+    description: string;
+    qty: number;
+    price: number;
+    discount: number;
+    total: number;
+  }>;
+
+  if (state.previewMode === "command") {
+    // Get real order items from WooCommerce
+    const orderItems = wooCommerceManager.getOrderItems();
+    products = orderItems.map(item => ({
+      sku: item.sku,
+      name: item.name,
+      description: item.description,
+      qty: item.qty,
+      price: item.price,
+      discount: item.discount,
+      total: item.total,
+    }));
+  } else {
+    // Use props.products in editor mode
+    products = (props.products || []).map(p => ({
+      sku: p.sku || 'N/A',
+      name: p.name,
+      description: p.description || '',
+      qty: p.quantity,
+      price: p.price,
+      discount: 0, // Les remises sont dans totals.discount
+      total: p.total,
+    }));
+  }
 
   // 🔴 FIX: Si pas de produits, utiliser les données fictives par défaut
   if (!products || products.length === 0) {
@@ -534,40 +558,50 @@ const drawProductTable = (
 
   const currency = "€";
 
-  // ✅ CALCUL CORRECT DES TOTALS - Pas de hardcoding
-  // 1) Calculer le sous-total à partir des produits
-  const subtotal = products.reduce((sum, p) => sum + (p.total || 0), 0);
+  // ✅ Use real WooCommerce totals in preview mode
+  let subtotal: number;
+  let shippingCost: number;
+  let taxAmount: number;
+  let globalDiscount: number;
+  let totalFees = 0;
+
+  if (state.previewMode === "command") {
+    // Get real order totals from WooCommerce
+    const orderTotals = wooCommerceManager.getOrderTotals();
+    subtotal = orderTotals.subtotal;
+    shippingCost = orderTotals.shipping;
+    taxAmount = orderTotals.tax;
+    globalDiscount = orderTotals.discount;
+    totalFees = fees.reduce((sum, f) => sum + (f.total || 0), 0);
+  } else {
+    // ✅ CALCUL CORRECT DES TOTALS - Pas de hardcoding
+    // 1) Calculer le sous-total à partir des produits
+    subtotal = products.reduce((sum, p) => sum + (p.total || 0), 0);
+    
+    // 2) Ajouter les frais supplémentaires si présents
+    totalFees = fees.reduce((sum, f) => sum + (f.total || 0), 0);
+    
+    // 3) Lire les valeurs depuis les propriétés de l'élément OU utiliser les valeurs de totals comme fallback
+    shippingCost = props.shippingCost as any || (props.totals?.shippingCost as any) || 10.0; // Valeur fictive: 10€
+    const taxRate = props.taxRate as any || (props.totals?.taxRate as any) || 5; // Valeur fictive: 5%
+    globalDiscount = props.globalDiscount as any || (props.totals?.discount as any) || 20.0; // Valeur fictive: 20€
+    
+    // Calculate tax from rate
+    taxAmount = showTax && taxRate > 0 ? (subtotal + shippingCost) * taxRate / 100 : 0;
+  }
   
-  // 2) Ajouter les frais supplémentaires si présents
-  const totalFees = fees.reduce((sum, f) => sum + (f.total || 0), 0);
-  
-  // 3) Lire les valeurs depuis les propriétés de l'élément OU utiliser les valeurs de totals comme fallback
-  let shippingCost = props.shippingCost as any || (props.totals?.shippingCost as any) || 10.0; // Valeur fictive: 10€
-  let taxRate = props.taxRate as any || (props.totals?.taxRate as any) || 5; // Valeur fictive: 5%
-  let globalDiscount = props.globalDiscount as any || (props.totals?.discount as any) || 20.0; // Valeur fictive: 20€
-  
-  // 4) APPLIQUER LES FLAGS ACTIFS - Mettre à zéro les éléments désactivés AVANT calcul
+  // 4) APPLIQUER LES FLAGS ACTIFS - Mettre à zéro les éléments désactivés
   if (!showShipping) {
     shippingCost = 0;
   }
   if (!showTax) {
-    taxRate = 0; // Si TVA non affichée, ne pas l'appliquer
+    taxAmount = 0; // Si TVA non affichée, ne pas l'appliquer
   }
   if (!showGlobalDiscount) {
     globalDiscount = 0; // Si remise non affichée, ne pas l'appliquer
   }
   
-  // 5) Recalculer les taxes (avec les valeurs finales après flags)
-  // ⚠️ ATTENTION: La remise NE s'applique PAS au calcul de TVA
-  // TVA = (subtotal + frais) * taux, puis la remise s'applique APRÈS
-  let taxAmount = 0;
-  if (taxRate > 0 && showTax) {
-    // Appliquer la TVA sur : sous-total + frais de port SEULEMENT (pas sur remise)
-    const taxableBase = subtotal + shippingCost;
-    taxAmount = (taxableBase * taxRate) / 100;
-  }
-  
-  // 6) Calculer le TOTAL FINAL: subtotal + frais de port + TVA + frais supplémentaires - remise
+  // 5) Calculer le TOTAL FINAL: subtotal + frais de port + TVA + frais supplémentaires - remise
   const finalTotal = subtotal + shippingCost + taxAmount + totalFees - globalDiscount;
 
   // Configuration des colonnes
