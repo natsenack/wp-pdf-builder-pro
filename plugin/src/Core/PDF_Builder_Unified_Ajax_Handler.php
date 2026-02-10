@@ -2576,106 +2576,227 @@ class PDF_Builder_Unified_Ajax_Handler {
         $data_extractor = new \PDF_Builder\Generators\OrderDataExtractor($order);
         $all_data = $data_extractor->get_all_data();
 
-        // Générer un HTML simple pour l'instant
-        // TODO: Utiliser le vrai moteur de template avec canvas
+        // Récupérer les données du template
+        $template_data = null;
+        if (isset($template['template_data'])) {
+            if (is_string($template['template_data'])) {
+                $template_data = json_decode($template['template_data'], true);
+            } else {
+                $template_data = $template['template_data'];
+            }
+        }
+
+        if (!$template_data || !isset($template_data['canvas']) || !isset($template_data['elements'])) {
+            error_log("[PDF Builder] Template data invalide ou manquante");
+            return $this->generate_fallback_html($template, $all_data);
+        }
+
+        $canvas = $template_data['canvas'];
+        $elements = $template_data['elements'];
+
+        // Dimensions du canvas (en points pour PDF, 1pt = 1/72 inch)
+        $width = $canvas['width'] ?? 595;  // A4 portrait
+        $height = $canvas['height'] ?? 842;
+        $dpi = $canvas['dpi'] ?? 72;
+        $orientation = $canvas['orientation'] ?? 'portrait';
+
+        // Début du HTML
+        $html = '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>' . esc_html($template['name'] ?? 'Document') . '</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .pdf-canvas {
+            position: relative;
+            width: ' . $width . 'px;
+            height: ' . $height . 'px;
+            background: #ffffff;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        .element {
+            position: absolute;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="pdf-canvas">';
+
+        // Générer chaque élément
+        foreach ($elements as $element) {
+            $html .= $this->render_element($element, $all_data);
+        }
+
+        $html .= '
+    </div>
+</body>
+</html>';
+
+        return $html;
+    }
+
+    /**
+     * Génère le HTML d'un élément
+     */
+    private function render_element($element, $order_data) {
+        $type = $element['type'] ?? 'text';
+        $x = $element['x'] ?? 0;
+        $y = $element['y'] ?? 0;
+        $width = $element['width'] ?? 100;
+        $height = $element['height'] ?? 30;
+        
+        // Styles de base
+        $styles = "left: {$x}px; top: {$y}px; width: {$width}px; height: {$height}px;";
+        
+        // Styles additionnels
+        if (isset($element['styles'])) {
+            $elem_styles = $element['styles'];
+            
+            if (isset($elem_styles['fontSize'])) {
+                $styles .= " font-size: {$elem_styles['fontSize']}px;";
+            }
+            if (isset($elem_styles['fontWeight'])) {
+                $styles .= " font-weight: {$elem_styles['fontWeight']};";
+            }
+            if (isset($elem_styles['fontStyle'])) {
+                $styles .= " font-style: {$elem_styles['fontStyle']};";
+            }
+            if (isset($elem_styles['color'])) {
+                $styles .= " color: {$elem_styles['color']};";
+            }
+            if (isset($elem_styles['backgroundColor'])) {
+                $styles .= " background-color: {$elem_styles['backgroundColor']};";
+            }
+            if (isset($elem_styles['textAlign'])) {
+                $styles .= " text-align: {$elem_styles['textAlign']};";
+            }
+            if (isset($elem_styles['padding'])) {
+                $styles .= " padding: {$elem_styles['padding']}px;";
+            }
+            if (isset($elem_styles['borderWidth']) && $elem_styles['borderWidth'] > 0) {
+                $border_color = $elem_styles['borderColor'] ?? '#000000';
+                $styles .= " border: {$elem_styles['borderWidth']}px solid {$border_color};";
+            }
+        }
+
+        // Contenu de l'élément
+        $content = $this->get_element_content($element, $order_data);
+        
+        // Type spécifique
+        if ($type === 'image' && isset($element['src'])) {
+            return '<div class="element" style="' . $styles . '"><img src="' . esc_url($element['src']) . '" style="width: 100%; height: 100%; object-fit: contain;" /></div>';
+        } elseif ($type === 'table') {
+            return $this->render_table_element($element, $order_data, $styles);
+        } else {
+            // Text, customerInfo, orderInfo, etc.
+            return '<div class="element" style="' . $styles . '">' . $content . '</div>';
+        }
+    }
+
+    /**
+     * Récupère le contenu d'un élément en fonction de son type
+     */
+    private function get_element_content($element, $order_data) {
+        $type = $element['type'] ?? 'text';
+        
+        switch ($type) {
+            case 'customerInfo':
+                return $this->render_customer_info($order_data);
+            case 'orderInfo':
+                return $this->render_order_info($order_data);
+            case 'invoiceNumber':
+                return '<strong>Facture N° ' . esc_html($order_data['order']['order_number']) . '</strong>';
+            case 'date':
+                return esc_html($order_data['order']['date_formatted']);
+            case 'text':
+            default:
+                return esc_html($element['content'] ?? '');
+        }
+    }
+
+    /**
+     * Génère le HTML des informations client
+     */
+    private function render_customer_info($order_data) {
+        $html = '<div style="line-height: 1.6;">';
+        $html .= '<strong>' . esc_html($order_data['customer']['full_name']) . '</strong><br>';
+        $html .= esc_html($order_data['customer']['email']) . '<br>';
+        if (!empty($order_data['customer']['phone'])) {
+            $html .= esc_html($order_data['customer']['phone']) . '<br>';
+        }
+        $html .= esc_html($order_data['billing']['full_address']);
+        $html .= '</div>';
+        return $html;
+    }
+
+    /**
+     * Génère le HTML des informations de commande
+     */
+    private function render_order_info($order_data) {
+        $html = '<div style="line-height: 1.6;">';
+        $html .= '<strong>Commande:</strong> ' . esc_html($order_data['order']['order_number']) . '<br>';
+        $html .= '<strong>Date:</strong> ' . esc_html($order_data['order']['date_formatted']) . '<br>';
+        $html .= '<strong>Statut:</strong> ' . esc_html($order_data['order']['status_label']);
+        $html .= '</div>';
+        return $html;
+    }
+
+    /**
+     * Génère le HTML d'un tableau de produits
+     */
+    private function render_table_element($element, $order_data, $base_styles) {
+        $html = '<div class="element" style="' . $base_styles . '">';
+        $html .= '<table style="width:100%; border-collapse: collapse;">';
+        $html .= '<thead><tr>';
+        $html .= '<th style="border: 1px solid #ddd; padding: 8px; background: #f5f5f5;">Produit</th>';
+        $html .= '<th style="border: 1px solid #ddd; padding: 8px; background: #f5f5f5; width: 60px;">Qté</th>';
+        $html .= '<th style="border: 1px solid #ddd; padding: 8px; background: #f5f5f5; width: 80px;">Prix</th>';
+        $html .= '<th style="border: 1px solid #ddd; padding: 8px; background: #f5f5f5; width: 80px;">Total</th>';
+        $html .= '</tr></thead><tbody>';
+        
+        foreach ($order_data['products'] as $product) {
+            $html .= '<tr>';
+            $html .= '<td style="border: 1px solid #ddd; padding: 8px;">' . esc_html($product['name']) . '</td>';
+            $html .= '<td style="border: 1px solid #ddd; padding: 8px; text-align: center;">' . esc_html($product['quantity']) . '</td>';
+            $html .= '<td style="border: 1px solid #ddd; padding: 8px; text-align: right;">' . $product['price'] . '</td>';
+            $html .= '<td style="border: 1px solid #ddd; padding: 8px; text-align: right;">' . $product['total'] . '</td>';
+            $html .= '</tr>';
+        }
+        
+        $html .= '</tbody></table></div>';
+        return $html;
+    }
+
+    /**
+     * Génère un HTML de secours si le template n'est pas valide
+     */
+    private function generate_fallback_html($template, $all_data) {
         $html = '<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>' . esc_html($template['name'] ?? 'Facture') . '</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            color: #333;
-        }
-        h1 {
-            color: #0073aa;
-            border-bottom: 2px solid #0073aa;
-            padding-bottom: 10px;
-        }
-        .section {
-            margin: 20px 0;
-            padding: 15px;
-            background: #f9f9f9;
-            border-radius: 4px;
-        }
-        .section h2 {
-            margin-top: 0;
-            color: #555;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background: #0073aa;
-            color: white;
-        }
-        .total {
-            font-weight: bold;
-            font-size: 1.2em;
-            text-align: right;
-            margin: 20px 0;
-        }
+        body { font-family: Arial, sans-serif; margin: 40px; background: #ffffff; }
+        h1 { color: #0073aa; border-bottom: 2px solid #0073aa; padding-bottom: 10px; }
     </style>
 </head>
 <body>
     <h1>' . esc_html($template['name'] ?? 'Facture') . '</h1>
-    
-    <div class="section">
-        <h2>Informations Client</h2>
-        <p><strong>Nom:</strong> ' . esc_html($all_data['customer']['full_name']) . '</p>
-        <p><strong>Email:</strong> ' . esc_html($all_data['customer']['email']) . '</p>
-        <p><strong>Téléphone:</strong> ' . esc_html($all_data['customer']['phone']) . '</p>
-        <p><strong>Adresse:</strong> ' . esc_html($all_data['billing']['full_address']) . '</p>
-    </div>
-
-    <div class="section">
-        <h2>Informations Commande</h2>
-        <p><strong>Numéro:</strong> ' . esc_html($all_data['order']['order_number']) . '</p>
-        <p><strong>Date:</strong> ' . esc_html($all_data['order']['date_formatted']) . '</p>
-        <p><strong>Statut:</strong> ' . esc_html($all_data['order']['status_label']) . '</p>
-    </div>
-
-    <div class="section">
-        <h2>Produits</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Produit</th>
-                    <th>Quantité</th>
-                    <th>Prix unitaire</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>';
-        
-        foreach ($all_data['products'] as $product) {
-            $html .= '<tr>
-                <td>' . esc_html($product['name']) . '</td>
-                <td>' . esc_html($product['quantity']) . '</td>
-                <td>' . $product['price'] . '</td>
-                <td>' . $product['total'] . '</td>
-            </tr>';
-        }
-        
-        $html .= '</tbody>
-        </table>
-    </div>
-
-    <div class="total">
-        <p>Sous-total: ' . $all_data['totals']['subtotal'] . '</p>
-        <p>Frais de port: ' . $all_data['totals']['shipping'] . '</p>
-        <p>TVA: ' . $all_data['totals']['tax'] . '</p>
-        <p style="color: #0073aa;">TOTAL: ' . $all_data['totals']['total'] . '</p>
-    </div>
+    <p>Template canvas invalide - affichage de secours</p>
+    <p>Commande: ' . esc_html($all_data['order']['order_number']) . '</p>
+    <p>Client: ' . esc_html($all_data['customer']['full_name']) . '</p>
 </body>
 </html>';
 
