@@ -52,34 +52,39 @@ export const Header = memo(function Header({
   const deferredIsSaving = useDeferredValue(isSaving);
   const deferredIsLoading = useDeferredValue(isLoading);
   const deferredIsEditingExistingTemplate = useDeferredValue(
-    isEditingExistingTemplate
+    isEditingExistingTemplate,
   );
   // Debug logging
   useEffect(() => {}, []);
 
-  const { state } = useBuilder();
+  const { state, dispatch } = useBuilder();
   const canvasSettings = useCanvasSettings();
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showJsonModal, setShowJsonModal] = useState(false);
-  const [jsonModalMode, setJsonModalMode] = useState<'json' | 'html'>('json');
+  const [jsonModalMode, setJsonModalMode] = useState<"json" | "html">("json");
   const [copySuccess, setCopySuccess] = useState(false);
   const [isGeneratingHtml, setIsGeneratingHtml] = useState(false);
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
-  const [generatedHtml, setGeneratedHtml] = useState<string>('');
+  const [generatedHtml, setGeneratedHtml] = useState<string>("");
   const [performanceMetrics, setPerformanceMetrics] = useState({
     fps: 0,
     memoryUsage: 0,
-    lastUpdate: 0
+    lastUpdate: 0,
   });
   const [editedTemplateName, setEditedTemplateName] = useState(templateName);
   const [editedTemplateDescription, setEditedTemplateDescription] =
     useState(templateDescription);
-  
+
   // États pour le drag du modal JSON
-  const [modalPosition, setModalPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [modalPosition, setModalPosition] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
   const [isDraggingModal, setIsDraggingModal] = useState(false);
-  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
+  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(
+    null,
+  );
   const [editedCanvasWidth, setEditedCanvasWidth] = useState(canvasWidth);
   const [editedCanvasHeight, setEditedCanvasHeight] = useState(canvasHeight);
   const [canvasOrientation, setCanvasOrientation] = useState<
@@ -99,57 +104,66 @@ export const Header = memo(function Header({
   });
 
   // Preview system - GET from BuilderContext state
-  const { state: builderState } = useBuilder();
-  const showPreviewModal = builderState.showPreviewModal || false;
-  const [previewOrderId, setPreviewOrderId] = useState<string>('');
+  const showPreviewModal = state.showPreviewModal || false;
+  const [previewOrderId, setPreviewOrderId] = useState<string>("");
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
   const [previewError, setPreviewError] = useState<string | null>(null);
-  
+
   const openPreviewModal = () => {
-    builderState.dispatch?.({ type: 'SET_SHOW_PREVIEW_MODAL', payload: true });
-    setPreviewOrderId('');
+    dispatch({ type: "SET_SHOW_PREVIEW_MODAL", payload: true });
+    setPreviewOrderId("");
     setPreviewError(null);
   };
-  
+
   const closePreviewModal = () => {
-    builderState.dispatch?.({ type: 'SET_SHOW_PREVIEW_MODAL', payload: false });
+    dispatch({ type: "SET_SHOW_PREVIEW_MODAL", payload: false });
     setPreviewError(null);
   };
-  
+
   const handlePreviewWithOrder = useCallback(async () => {
     if (!previewOrderId) {
-      setPreviewError('Veuillez entrer un ID de commande');
+      setPreviewError("Veuillez entrer un ID de commande");
       return;
     }
-    
+
     setIsLoadingPreview(true);
     setPreviewError(null);
-    
+
     try {
       // Appeler useTemplate.loadTemplateForPreview
       // Mais on doit l'exposer... créons un fallback pour maintenant
-      debugLog(`📊 [PREVIEW] Chargement de l'aperçu pour commande ${previewOrderId}`);
-      
+      debugLog(
+        `📊 [PREVIEW] Chargement de l'aperçu pour commande ${previewOrderId}`,
+      );
+
       // Vérifier que loadTemplateForPreview est disponible
-      if (typeof window !== 'undefined' && (window as any).pdfBuilderLoadTemplateForPreview) {
-        const templateId = builderState.template?.id;
+      if (
+        typeof window !== "undefined" &&
+        (window as any).pdfBuilderLoadTemplateForPreview
+      ) {
+        const templateId = state.template?.id;
         if (!templateId) {
-          setPreviewError('Template ID manquant');
+          setPreviewError("Template ID manquant");
           return;
         }
-        
-        await (window as any).pdfBuilderLoadTemplateForPreview(templateId, previewOrderId);
+
+        await (window as any).pdfBuilderLoadTemplateForPreview(
+          templateId,
+          previewOrderId,
+        );
         closePreviewModal();
       } else {
-        setPreviewError('Fonction d\'aperçu non disponible, rechargez la page');
+        setPreviewError("Fonction d'aperçu non disponible, rechargez la page");
       }
     } catch (error) {
-      debugError('❌ [PREVIEW] Erreur:', error);
-      setPreviewError(`Erreur: ${error instanceof Error ? error.message : String(error)}`);
+      debugError("❌ [PREVIEW] Erreur:", error);
+      setPreviewError(
+        `Erreur: ${error instanceof Error ? error.message : String(error)}`,
+      );
     } finally {
       setIsLoadingPreview(false);
     }
-  }, [previewOrderId, builderState.template?.id]);
+  }, [previewOrderId, state.template?.id]);
 
   // Debug logging
   useEffect(() => {
@@ -171,27 +185,33 @@ export const Header = memo(function Header({
     const loadOrientationPermissions = () => {
       try {
         // Utiliser les variables window directement au lieu d'un appel AJAX
-        const availableOrientations = (window as any).availableOrientations || ['portrait', 'landscape'];
-        
+        const availableOrientations = (window as any).availableOrientations || [
+          "portrait",
+          "landscape",
+        ];
+
         const orientationPermissions = {
-          allowPortrait: availableOrientations.includes('portrait'),
-          allowLandscape: availableOrientations.includes('landscape'),
-          defaultOrientation: ((window as any).pdfBuilderCanvasSettings?.default_canvas_orientation || 'portrait') as 'portrait' | 'landscape',
-          availableOrientations: availableOrientations
+          allowPortrait: availableOrientations.includes("portrait"),
+          allowLandscape: availableOrientations.includes("landscape"),
+          defaultOrientation: ((window as any).pdfBuilderCanvasSettings
+            ?.default_canvas_orientation || "portrait") as
+            | "portrait"
+            | "landscape",
+          availableOrientations: availableOrientations,
         };
 
         setOrientationPermissions(orientationPermissions);
       } catch (error) {
         debugError(
           "Erreur lors du chargement des permissions d'orientation",
-          error
+          error,
         );
         // Fallback en cas d'erreur
         setOrientationPermissions({
           allowPortrait: true,
           allowLandscape: true,
-          defaultOrientation: 'portrait',
-          availableOrientations: ['portrait', 'landscape']
+          defaultOrientation: "portrait",
+          availableOrientations: ["portrait", "landscape"],
         });
       }
     };
@@ -224,10 +244,10 @@ export const Header = memo(function Header({
       const updateMetrics = () => {
         // Simuler la récupération des métriques (dans un vrai cas, on utiliserait getPerformanceMetrics du hook)
         const now = Date.now();
-        setPerformanceMetrics(prev => ({
+        setPerformanceMetrics((prev) => ({
           fps: Math.floor(Math.random() * 20) + 40, // Simulation FPS 40-60
           memoryUsage: Math.floor(Math.random() * 50) + 80, // Simulation mémoire 80-130MB
-          lastUpdate: now
+          lastUpdate: now,
         }));
       };
 
@@ -240,7 +260,7 @@ export const Header = memo(function Header({
 
   // State pour le throttling du scroll
   const [scrollTimeout, setScrollTimeout] = useState<NodeJS.Timeout | null>(
-    null
+    null,
   );
 
   // Optimisation: mémoriser le handler de scroll avec throttling
@@ -254,7 +274,7 @@ export const Header = memo(function Header({
         // Le header devient fixe après 120px de scroll
         setIsHeaderFixed(scrollTop > 120);
         setScrollTimeout(null);
-      }, 50)
+      }, 50),
     ); // Délai de 50ms pour éviter les changements trop fréquents
   }, [scrollTimeout]);
 
@@ -300,12 +320,12 @@ export const Header = memo(function Header({
       setDragStart(null);
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isDraggingModal, dragStart]);
 
@@ -321,16 +341,16 @@ export const Header = memo(function Header({
 
     setIsGeneratingHtml(true);
     try {
-      console.log('[PREVIEW] Générant aperçu du canvas...');
+      console.log("[PREVIEW] Générant aperçu du canvas...");
 
       // Récupérer le canvas
-      const canvas = document.querySelector('canvas');
+      const canvas = document.querySelector("canvas");
       if (!canvas) {
-        throw new Error('Canvas non trouvé');
+        throw new Error("Canvas non trouvé");
       }
 
       // Convertir en image PNG
-      const imageData = canvas.toDataURL('image/png');
+      const imageData = canvas.toDataURL("image/png");
 
       // Créer l'HTML simple
       const html = `<!DOCTYPE html>
@@ -338,7 +358,7 @@ export const Header = memo(function Header({
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aperçu - ${templateName || 'Template'}</title>
+  <title>Aperçu - ${templateName || "Template"}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -389,17 +409,19 @@ export const Header = memo(function Header({
 </html>`;
 
       // Ouvrir dans une nouvelle fenêtre
-      const newWindow = window.open('', '_blank');
+      const newWindow = window.open("", "_blank");
       if (newWindow) {
         newWindow.document.write(html);
         newWindow.document.close();
-        console.log('[PREVIEW] Aperçu généré avec succès');
+        console.log("[PREVIEW] Aperçu généré avec succès");
       } else {
-        throw new Error('Impossible d\'ouvrir une nouvelle fenêtre');
+        throw new Error("Impossible d'ouvrir une nouvelle fenêtre");
       }
     } catch (error) {
-      console.error('[PREVIEW] Erreur:', error);
-      alert(`❌ Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
+      console.error("[PREVIEW] Erreur:", error);
+      alert(
+        `❌ Erreur: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      );
     } finally {
       setIsGeneratingHtml(false);
     }
@@ -443,57 +465,66 @@ export const Header = memo(function Header({
   const generatePDFSimulationHTML = (
     elementsInput?: any[],
     canvasInput?: any,
-    templateInput?: any
+    templateInput?: any,
   ) => {
     // Utiliser les paramètres passés OU les données locales (pour compatibilité)
-    const canvasWidth = (canvasInput?.width || state.canvas?.width || 794);
-    const canvasHeight = (canvasInput?.height || state.canvas?.height || 1123);
+    const canvasWidth = canvasInput?.width || state.canvas?.width || 794;
+    const canvasHeight = canvasInput?.height || state.canvas?.height || 1123;
     const elements = elementsInput || state.elements || [];
     const template = templateInput || state.template || {};
 
     // Helper functions pour convertir les propriétés en CSS
     const buildSpacing = (value: any): string => {
-      if (!value) return '';
-      if (typeof value === 'number') return `${value}px`;
-      if (typeof value === 'object') {
+      if (!value) return "";
+      if (typeof value === "number") return `${value}px`;
+      if (typeof value === "object") {
         const top = value.top || 0;
         const right = value.right || 0;
         const bottom = value.bottom || 0;
         const left = value.left || 0;
         return `${top}px ${right}px ${bottom}px ${left}px`;
       }
-      return '';
+      return "";
     };
 
     const buildBorder = (border: any): string => {
-      if (!border) return '';
-      if (!border.width) return '';
+      if (!border) return "";
+      if (!border.width) return "";
       const width = border.width || 1;
-      const style = border.style || 'solid';
-      const color = border.color || '#e5e7eb';
+      const style = border.style || "solid";
+      const color = border.color || "#e5e7eb";
       return `${width}px ${style} ${color}`;
     };
 
-    const buildFlexLayout = (layout: string | undefined, gap: number = 8): string => {
-      if (!layout) return '';
-      if (layout === 'horizontal') {
+    const buildFlexLayout = (
+      layout: string | undefined,
+      gap: number = 8,
+    ): string => {
+      if (!layout) return "";
+      if (layout === "horizontal") {
         return `display: flex; flex-direction: row; gap: ${gap}px;`;
-      } else if (layout === 'vertical') {
+      } else if (layout === "vertical") {
         return `display: flex; flex-direction: column; gap: ${gap}px;`;
       }
-      return '';
+      return "";
     };
 
     // Helper pour générer les styles globaux applicables au contenu interne
     const buildGlobalStyles = (el: any): string => {
-      let globalStyle = '';
+      let globalStyle = "";
       if (el.fontFamily) globalStyle += `font-family: ${el.fontFamily};`;
-      if (el.fontWeight && el.fontWeight !== 'normal') globalStyle += `font-weight: ${el.fontWeight};`;
-      if (el.fontStyle && el.fontStyle !== 'normal') globalStyle += `font-style: ${el.fontStyle};`;
-      if (el.textDecoration && el.textDecoration !== 'none') globalStyle += `text-decoration: ${el.textDecoration};`;
-      if (el.textTransform && el.textTransform !== 'none') globalStyle += `text-transform: ${el.textTransform};`;
-      if (el.letterSpacing && el.letterSpacing !== 'normal') globalStyle += `letter-spacing: ${el.letterSpacing};`;
-      if (el.wordSpacing && el.wordSpacing !== 'normal') globalStyle += `word-spacing: ${el.wordSpacing};`;
+      if (el.fontWeight && el.fontWeight !== "normal")
+        globalStyle += `font-weight: ${el.fontWeight};`;
+      if (el.fontStyle && el.fontStyle !== "normal")
+        globalStyle += `font-style: ${el.fontStyle};`;
+      if (el.textDecoration && el.textDecoration !== "none")
+        globalStyle += `text-decoration: ${el.textDecoration};`;
+      if (el.textTransform && el.textTransform !== "none")
+        globalStyle += `text-transform: ${el.textTransform};`;
+      if (el.letterSpacing && el.letterSpacing !== "normal")
+        globalStyle += `letter-spacing: ${el.letterSpacing};`;
+      if (el.wordSpacing && el.wordSpacing !== "normal")
+        globalStyle += `word-spacing: ${el.wordSpacing};`;
       if (el.lineHeight) globalStyle += `line-height: ${el.lineHeight};`;
       return globalStyle;
     };
@@ -504,7 +535,7 @@ export const Header = memo(function Header({
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aperçu PDF - ${template.name || 'Template'}</title>
+  <title>Aperçu PDF - ${template.name || "Template"}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
@@ -564,71 +595,90 @@ export const Header = memo(function Header({
 
         // Construire les styles UNIQUEMENT à partir du JSON
         let styles = `left: ${x}px; top: ${y}px; width: ${w}px; height: ${h}px;`;
-        
+
         // ===== FONT STYLES =====
         if (element.fontSize) styles += ` font-size: ${element.fontSize}px;`;
-        if (element.fontFamily) styles += ` font-family: ${element.fontFamily};`;
-        if (element.fontWeight && element.fontWeight !== 'normal') styles += ` font-weight: ${element.fontWeight};`;
-        if (element.fontStyle && element.fontStyle !== 'normal') styles += ` font-style: ${element.fontStyle};`;
-        if (element.textDecoration && element.textDecoration !== 'none') styles += ` text-decoration: ${element.textDecoration};`;
-        if (element.lineHeight) styles += ` line-height: ${element.lineHeight};`;
-        if (element.letterSpacing && element.letterSpacing !== 'normal') styles += ` letter-spacing: ${element.letterSpacing};`;
-        if (element.wordSpacing && element.wordSpacing !== 'normal') styles += ` word-spacing: ${element.wordSpacing};`;
-        if (element.textTransform && element.textTransform !== 'none') styles += ` text-transform: ${element.textTransform};`;
+        if (element.fontFamily)
+          styles += ` font-family: ${element.fontFamily};`;
+        if (element.fontWeight && element.fontWeight !== "normal")
+          styles += ` font-weight: ${element.fontWeight};`;
+        if (element.fontStyle && element.fontStyle !== "normal")
+          styles += ` font-style: ${element.fontStyle};`;
+        if (element.textDecoration && element.textDecoration !== "none")
+          styles += ` text-decoration: ${element.textDecoration};`;
+        if (element.lineHeight)
+          styles += ` line-height: ${element.lineHeight};`;
+        if (element.letterSpacing && element.letterSpacing !== "normal")
+          styles += ` letter-spacing: ${element.letterSpacing};`;
+        if (element.wordSpacing && element.wordSpacing !== "normal")
+          styles += ` word-spacing: ${element.wordSpacing};`;
+        if (element.textTransform && element.textTransform !== "none")
+          styles += ` text-transform: ${element.textTransform};`;
         if (element.textAlign) styles += ` text-align: ${element.textAlign};`;
-        if (element.verticalAlign && element.verticalAlign !== 'baseline') styles += ` vertical-align: ${element.verticalAlign};`;
-        
+        if (element.verticalAlign && element.verticalAlign !== "baseline")
+          styles += ` vertical-align: ${element.verticalAlign};`;
+
         // ===== COLORS =====
         if (element.textColor) styles += ` color: ${element.textColor};`;
         // backgroundColor seulement si showBackground=true OU si backgroundColor n'est pas transparent
-        if (element.backgroundColor && element.backgroundColor !== 'transparent' && element.showBackground !== false) {
+        if (
+          element.backgroundColor &&
+          element.backgroundColor !== "transparent" &&
+          element.showBackground !== false
+        ) {
           styles += ` background-color: ${element.backgroundColor};`;
         }
-        
+
         // ===== BORDERS & RADIUS =====
         if (element.borderWidth && element.borderWidth > 0) {
-          styles += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
+          styles += ` border: ${element.borderWidth}px solid ${element.borderColor || "#e5e7eb"};`;
         }
         if (element.borderRadius && element.borderRadius > 0) {
           styles += ` border-radius: ${element.borderRadius}px;`;
         }
-        
+
         // ===== SHADOWS =====
         if (element.shadowBlur && element.shadowBlur > 0) {
           const offsetX = element.shadowOffsetX || 0;
           const offsetY = element.shadowOffsetY || 0;
           const blur = element.shadowBlur || 0;
-          const color = element.shadowColor || '#000000';
+          const color = element.shadowColor || "#000000";
           styles += ` box-shadow: ${offsetX}px ${offsetY}px ${blur}px ${color};`;
         }
-        
-        // ===== TRANSFORMS & OPACITY =====
-        if (element.rotation && element.rotation !== 0) styles += ` transform: rotate(${element.rotation}deg);`;
-        if (element.opacity !== undefined && element.opacity < 1) styles += ` opacity: ${element.opacity};`;
 
-        let content = '';
+        // ===== TRANSFORMS & OPACITY =====
+        if (element.rotation && element.rotation !== 0)
+          styles += ` transform: rotate(${element.rotation}deg);`;
+        if (element.opacity !== undefined && element.opacity < 1)
+          styles += ` opacity: ${element.opacity};`;
+
+        let content = "";
 
         // ===== CONTENU PAR TYPE D'ÉLÉMENT =====
         switch (element.type) {
-          case 'text':
-          case 'dynamic_text':
-            content = element.text || element.content || 'Texte';
-            if (element.autoWrap !== false) styles += ` white-space: pre-wrap; overflow-wrap: break-word;`;
-            
+          case "text":
+          case "dynamic_text":
+            content = element.text || element.content || "Texte";
+            if (element.autoWrap !== false)
+              styles += ` white-space: pre-wrap; overflow-wrap: break-word;`;
+
             // Gérer l'alignement vertical comme dans Canvas
-            if (element.verticalAlign === 'middle' || element.verticalAlign === 'center') {
-              styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
-            } else if (element.verticalAlign === 'bottom') {
-              styles += ` display: flex; align-items: flex-end; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
+            if (
+              element.verticalAlign === "middle" ||
+              element.verticalAlign === "center"
+            ) {
+              styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === "center" ? "center" : element.textAlign === "right" ? "flex-end" : "flex-start"};`;
+            } else if (element.verticalAlign === "bottom") {
+              styles += ` display: flex; align-items: flex-end; justify-content: ${element.textAlign === "center" ? "center" : element.textAlign === "right" ? "flex-end" : "flex-start"};`;
             } else {
               // top alignment (default)
-              styles += ` display: flex; align-items: flex-start; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
+              styles += ` display: flex; align-items: flex-start; justify-content: ${element.textAlign === "center" ? "center" : element.textAlign === "right" ? "flex-end" : "flex-start"};`;
             }
-            
+
             // Appliquer styles globaux (font properties)
             const globalStylesText = buildGlobalStyles(element);
             if (globalStylesText) styles += ` ${globalStylesText}`;
-            
+
             // Ajouter padding/margin/border uniquement s'ils sont spécifiés
             if (element.padding) {
               const paddingStr = buildSpacing(element.padding);
@@ -644,7 +694,9 @@ export const Header = memo(function Header({
             }
             // Layout property avec gap calculé
             if (element.layout) {
-              const lineHeightValue = element.lineHeight ? parseFloat(element.lineHeight) : 1.2;
+              const lineHeightValue = element.lineHeight
+                ? parseFloat(element.lineHeight)
+                : 1.2;
               const fontSize = element.fontSize || 12;
               const gap = Math.round(fontSize * (lineHeightValue - 1));
               const layoutStr = buildFlexLayout(element.layout, gap);
@@ -652,11 +704,15 @@ export const Header = memo(function Header({
             }
             break;
 
-          case 'document_type':
-            content = element.title || element.text || element.content || 'FACTURE';
+          case "document_type":
+            content =
+              element.title || element.text || element.content || "FACTURE";
             // Si verticalAlign est middle, utiliser flex
-            if (element.verticalAlign === 'middle' || element.verticalAlign === 'center') {
-              styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === 'center' ? 'center' : 'flex-start'};`;
+            if (
+              element.verticalAlign === "middle" ||
+              element.verticalAlign === "center"
+            ) {
+              styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === "center" ? "center" : "flex-start"};`;
             } else {
               styles += ` display: flex; align-items: center;`;
             }
@@ -678,39 +734,45 @@ export const Header = memo(function Header({
             }
             break;
 
-          case 'order_number':
-            const orderNum = element.text || element.content || '001';
-            const format = element.format || 'CMD-{order_number}';
-            let orderContent = format.replace('{order_number}', orderNum);
+          case "order_number":
+            const orderNum = element.text || element.content || "001";
+            const format = element.format || "CMD-{order_number}";
+            let orderContent = format.replace("{order_number}", orderNum);
             const globalStylesOrder = buildGlobalStyles(element);
-            
+
             // Gérer l'alignement vertical comme dans Canvas
-            if (element.verticalAlign === 'middle' || element.verticalAlign === 'center') {
-              styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
-            } else if (element.verticalAlign === 'bottom') {
-              styles += ` display: flex; align-items: flex-end; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
+            if (
+              element.verticalAlign === "middle" ||
+              element.verticalAlign === "center"
+            ) {
+              styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === "center" ? "center" : element.textAlign === "right" ? "flex-end" : "flex-start"};`;
+            } else if (element.verticalAlign === "bottom") {
+              styles += ` display: flex; align-items: flex-end; justify-content: ${element.textAlign === "center" ? "center" : element.textAlign === "right" ? "flex-end" : "flex-start"};`;
             } else {
               // top alignment (default)
-              styles += ` display: flex; align-items: flex-start; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
+              styles += ` display: flex; align-items: flex-start; justify-content: ${element.textAlign === "center" ? "center" : element.textAlign === "right" ? "flex-end" : "flex-start"};`;
             }
-            
+
             // Si label à afficher
             if (element.showLabel && element.labelText) {
-              const labelText = element.labelText || 'Order:';
-              const headerFontSize = element.headerFontSize || element.fontSize || 12;
-              const numberFontSize = element.numberFontSize || element.fontSize || 14;
-              const labelColor = element.headerTextColor || element.textColor || '#000000';
-              const numberColor = element.textColor || '#000000';
-              
+              const labelText = element.labelText || "Order:";
+              const headerFontSize =
+                element.headerFontSize || element.fontSize || 12;
+              const numberFontSize =
+                element.numberFontSize || element.fontSize || 14;
+              const labelColor =
+                element.headerTextColor || element.textColor || "#000000";
+              const numberColor = element.textColor || "#000000";
+
               orderContent = `
                 <div style="display: flex; flex-direction: column; gap: 4px;">
-                  <div style="font-size: ${headerFontSize}px; color: ${labelColor}; font-weight: ${element.headerFontWeight || 'normal'}; ${globalStylesOrder}">${labelText}</div>
-                  <div style="font-size: ${numberFontSize}px; color: ${numberColor}; font-weight: ${element.fontWeight || 'normal'}; ${globalStylesOrder}">${orderContent}</div>
+                  <div style="font-size: ${headerFontSize}px; color: ${labelColor}; font-weight: ${element.headerFontWeight || "normal"}; ${globalStylesOrder}">${labelText}</div>
+                  <div style="font-size: ${numberFontSize}px; color: ${numberColor}; font-weight: ${element.fontWeight || "normal"}; ${globalStylesOrder}">${orderContent}</div>
                 </div>
               `;
             }
             content = orderContent;
-            
+
             // contentAlign property
             if (element.contentAlign) {
               styles += ` text-align: ${element.contentAlign};`;
@@ -730,18 +792,21 @@ export const Header = memo(function Header({
             }
             break;
 
-          case 'company_logo':
-          case 'image':
+          case "company_logo":
+          case "image":
             if (element.src) {
               const globalStylesImg = buildGlobalStyles(element);
               let imgStyles = `width: 100%; height: 100%; display: block;`;
-              if (element.objectFit) imgStyles += ` object-fit: ${element.objectFit};`;
-              if (element.opacity !== undefined && element.opacity < 1) imgStyles += ` opacity: ${element.opacity};`;
-              if (element.borderRadius && element.borderRadius > 0) imgStyles += ` border-radius: ${element.borderRadius}px;`;
+              if (element.objectFit)
+                imgStyles += ` object-fit: ${element.objectFit};`;
+              if (element.opacity !== undefined && element.opacity < 1)
+                imgStyles += ` opacity: ${element.opacity};`;
+              if (element.borderRadius && element.borderRadius > 0)
+                imgStyles += ` border-radius: ${element.borderRadius}px;`;
               if (globalStylesImg) imgStyles += ` ${globalStylesImg}`;
               content = `<img src="${element.src}" style="${imgStyles}" />`;
             } else {
-              content = '📦';
+              content = "📦";
             }
             // Padding/margin/border pour le conteneur
             if (element.padding) {
@@ -758,20 +823,20 @@ export const Header = memo(function Header({
             }
             break;
 
-          case 'line':
-          case 'separator':
-            content = '';
+          case "line":
+          case "separator":
+            content = "";
             let lineWidth = element.strokeWidth || 1;
-            let lineColor = element.strokeColor || '#000000';
-            let lineStyle = element.borderStyle || 'solid';
-            
+            let lineColor = element.strokeColor || "#000000";
+            let lineStyle = element.borderStyle || "solid";
+
             // Support pour les styles de bordure alternatives
             if (element.style) {
               lineStyle = element.style;
             }
-            
+
             styles += ` border-top: ${lineWidth}px ${lineStyle} ${lineColor};`;
-            
+
             // Padding/margin
             if (element.padding) {
               const paddingStr = buildSpacing(element.padding);
@@ -783,164 +848,249 @@ export const Header = memo(function Header({
             }
             break;
 
-          case 'product_table':
-          case 'table':
+          case "product_table":
+          case "table":
             // Styles du TABLEAU - appliqués à partir du JSON
             let tableStyles = `border-collapse: collapse; width: 100%;`;
-            
+
             // Police globale - utiliser globalFontSize/Family si présentes, sinon fallback
-            if (element.globalFontSize) tableStyles += ` font-size: ${element.globalFontSize}px;`;
-            else if (element.fontSize) tableStyles += ` font-size: ${element.fontSize}px;`;
-            
-            if (element.globalFontFamily) tableStyles += ` font-family: ${element.globalFontFamily};`;
-            else if (element.fontFamily) tableStyles += ` font-family: ${element.fontFamily};`;
-            
-            if (element.fontWeight && element.fontWeight !== 'normal') tableStyles += ` font-weight: ${element.fontWeight};`;
-            if (element.fontStyle && element.fontStyle !== 'normal') tableStyles += ` font-style: ${element.fontStyle};`;
-            if (element.textDecoration && element.textDecoration !== 'none') tableStyles += ` text-decoration: ${element.textDecoration};`;
-            if (element.lineHeight) tableStyles += ` line-height: ${element.lineHeight};`;
-            if (element.letterSpacing && element.letterSpacing !== 'normal') tableStyles += ` letter-spacing: ${element.letterSpacing};`;
-            if (element.wordSpacing && element.wordSpacing !== 'normal') tableStyles += ` word-spacing: ${element.wordSpacing};`;
-            if (element.backgroundColor && element.backgroundColor !== 'transparent') tableStyles += ` background-color: ${element.backgroundColor};`;
-            
+            if (element.globalFontSize)
+              tableStyles += ` font-size: ${element.globalFontSize}px;`;
+            else if (element.fontSize)
+              tableStyles += ` font-size: ${element.fontSize}px;`;
+
+            if (element.globalFontFamily)
+              tableStyles += ` font-family: ${element.globalFontFamily};`;
+            else if (element.fontFamily)
+              tableStyles += ` font-family: ${element.fontFamily};`;
+
+            if (element.fontWeight && element.fontWeight !== "normal")
+              tableStyles += ` font-weight: ${element.fontWeight};`;
+            if (element.fontStyle && element.fontStyle !== "normal")
+              tableStyles += ` font-style: ${element.fontStyle};`;
+            if (element.textDecoration && element.textDecoration !== "none")
+              tableStyles += ` text-decoration: ${element.textDecoration};`;
+            if (element.lineHeight)
+              tableStyles += ` line-height: ${element.lineHeight};`;
+            if (element.letterSpacing && element.letterSpacing !== "normal")
+              tableStyles += ` letter-spacing: ${element.letterSpacing};`;
+            if (element.wordSpacing && element.wordSpacing !== "normal")
+              tableStyles += ` word-spacing: ${element.wordSpacing};`;
+            if (
+              element.backgroundColor &&
+              element.backgroundColor !== "transparent"
+            )
+              tableStyles += ` background-color: ${element.backgroundColor};`;
+
             // Styles pour les cellules du corps
             let cellStyles = `padding: 8px;`;
-            if (element.textAlign) cellStyles += ` text-align: ${element.textAlign};`;
-            if (element.verticalAlign && element.verticalAlign !== 'baseline') cellStyles += ` vertical-align: ${element.verticalAlign};`;
-            if (element.showBorders && element.borderWidth) cellStyles += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
-            if (element.bodyTextColor) cellStyles += ` color: ${element.bodyTextColor};`;
-            else if (element.textColor) cellStyles += ` color: ${element.textColor};`;
-            if (element.bodyBackgroundColor && element.bodyBackgroundColor !== 'transparent') cellStyles += ` background-color: ${element.bodyBackgroundColor};`;
-            if (element.bodyFontSize) cellStyles += ` font-size: ${element.bodyFontSize}px;`;
-            if (element.bodyFontFamily) cellStyles += ` font-family: ${element.bodyFontFamily};`;
-            if (element.bodyFontWeight) cellStyles += ` font-weight: ${element.bodyFontWeight};`;
-            if (element.bodyFontStyle) cellStyles += ` font-style: ${element.bodyFontStyle};`;
-            
+            if (element.textAlign)
+              cellStyles += ` text-align: ${element.textAlign};`;
+            if (element.verticalAlign && element.verticalAlign !== "baseline")
+              cellStyles += ` vertical-align: ${element.verticalAlign};`;
+            if (element.showBorders && element.borderWidth)
+              cellStyles += ` border: ${element.borderWidth}px solid ${element.borderColor || "#e5e7eb"};`;
+            if (element.bodyTextColor)
+              cellStyles += ` color: ${element.bodyTextColor};`;
+            else if (element.textColor)
+              cellStyles += ` color: ${element.textColor};`;
+            if (
+              element.bodyBackgroundColor &&
+              element.bodyBackgroundColor !== "transparent"
+            )
+              cellStyles += ` background-color: ${element.bodyBackgroundColor};`;
+            if (element.bodyFontSize)
+              cellStyles += ` font-size: ${element.bodyFontSize}px;`;
+            if (element.bodyFontFamily)
+              cellStyles += ` font-family: ${element.bodyFontFamily};`;
+            if (element.bodyFontWeight)
+              cellStyles += ` font-weight: ${element.bodyFontWeight};`;
+            if (element.bodyFontStyle)
+              cellStyles += ` font-style: ${element.bodyFontStyle};`;
+
             // Styles pour les en-têtes
             let headerStyle = `padding: 8px;`;
-            if (element.textAlign) headerStyle += ` text-align: ${element.textAlign};`;
-            if (element.verticalAlign && element.verticalAlign !== 'baseline') headerStyle += ` vertical-align: ${element.verticalAlign};`;
-            if (element.showBorders && element.borderWidth) headerStyle += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
-            if (element.headerBackgroundColor && element.headerBackgroundColor !== 'transparent') headerStyle += ` background-color: ${element.headerBackgroundColor};`;
-            if (element.headerTextColor) headerStyle += ` color: ${element.headerTextColor};`;
-            if (element.headerFontSize) headerStyle += ` font-size: ${element.headerFontSize}px;`;
-            if (element.headerFontFamily) headerStyle += ` font-family: ${element.headerFontFamily};`;
-            if (element.headerFontWeight) headerStyle += ` font-weight: ${element.headerFontWeight};`;
-            if (element.headerFontStyle) headerStyle += ` font-style: ${element.headerFontStyle};`;
-            
+            if (element.textAlign)
+              headerStyle += ` text-align: ${element.textAlign};`;
+            if (element.verticalAlign && element.verticalAlign !== "baseline")
+              headerStyle += ` vertical-align: ${element.verticalAlign};`;
+            if (element.showBorders && element.borderWidth)
+              headerStyle += ` border: ${element.borderWidth}px solid ${element.borderColor || "#e5e7eb"};`;
+            if (
+              element.headerBackgroundColor &&
+              element.headerBackgroundColor !== "transparent"
+            )
+              headerStyle += ` background-color: ${element.headerBackgroundColor};`;
+            if (element.headerTextColor)
+              headerStyle += ` color: ${element.headerTextColor};`;
+            if (element.headerFontSize)
+              headerStyle += ` font-size: ${element.headerFontSize}px;`;
+            if (element.headerFontFamily)
+              headerStyle += ` font-family: ${element.headerFontFamily};`;
+            if (element.headerFontWeight)
+              headerStyle += ` font-weight: ${element.headerFontWeight};`;
+            if (element.headerFontStyle)
+              headerStyle += ` font-style: ${element.headerFontStyle};`;
+
             // Styles pour les lignes de données
             let rowStyle = `padding: 8px;`;
-            if (element.textAlign) rowStyle += ` text-align: ${element.textAlign};`;
-            if (element.verticalAlign && element.verticalAlign !== 'baseline') rowStyle += ` vertical-align: ${element.verticalAlign};`;
-            if (element.showBorders && element.borderWidth) rowStyle += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
-            if (element.rowTextColor) rowStyle += ` color: ${element.rowTextColor};`;
-            else if (element.textColor) rowStyle += ` color: ${element.textColor};`;
-            if (element.rowFontSize) rowStyle += ` font-size: ${element.rowFontSize}px;`;
-            if (element.rowFontFamily) rowStyle += ` font-family: ${element.rowFontFamily};`;
-            if (element.rowFontWeight) rowStyle += ` font-weight: ${element.rowFontWeight};`;
-            if (element.rowFontStyle) rowStyle += ` font-style: ${element.rowFontStyle};`;
-            
+            if (element.textAlign)
+              rowStyle += ` text-align: ${element.textAlign};`;
+            if (element.verticalAlign && element.verticalAlign !== "baseline")
+              rowStyle += ` vertical-align: ${element.verticalAlign};`;
+            if (element.showBorders && element.borderWidth)
+              rowStyle += ` border: ${element.borderWidth}px solid ${element.borderColor || "#e5e7eb"};`;
+            if (element.rowTextColor)
+              rowStyle += ` color: ${element.rowTextColor};`;
+            else if (element.textColor)
+              rowStyle += ` color: ${element.textColor};`;
+            if (element.rowFontSize)
+              rowStyle += ` font-size: ${element.rowFontSize}px;`;
+            if (element.rowFontFamily)
+              rowStyle += ` font-family: ${element.rowFontFamily};`;
+            if (element.rowFontWeight)
+              rowStyle += ` font-weight: ${element.rowFontWeight};`;
+            if (element.rowFontStyle)
+              rowStyle += ` font-style: ${element.rowFontStyle};`;
+
             // Styles pour la ligne totale
             let totalStyle = `padding: 8px;`;
-            if (element.textAlign) totalStyle += ` text-align: ${element.textAlign};`;
-            if (element.verticalAlign && element.verticalAlign !== 'baseline') totalStyle += ` vertical-align: ${element.verticalAlign};`;
-            if (element.showBorders && element.borderWidth) totalStyle += ` border: ${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'};`;
-            if (element.totalTextColor) totalStyle += ` color: ${element.totalTextColor};`;
-            else if (element.textColor) totalStyle += ` color: ${element.textColor};`;
-            if (element.totalFontSize) totalStyle += ` font-size: ${element.totalFontSize}px;`;
-            if (element.totalFontFamily) totalStyle += ` font-family: ${element.totalFontFamily};`;
-            if (element.totalFontWeight) totalStyle += ` font-weight: ${element.totalFontWeight};`;
-            if (element.totalFontStyle) totalStyle += ` font-style: ${element.totalFontStyle};`;
+            if (element.textAlign)
+              totalStyle += ` text-align: ${element.textAlign};`;
+            if (element.verticalAlign && element.verticalAlign !== "baseline")
+              totalStyle += ` vertical-align: ${element.verticalAlign};`;
+            if (element.showBorders && element.borderWidth)
+              totalStyle += ` border: ${element.borderWidth}px solid ${element.borderColor || "#e5e7eb"};`;
+            if (element.totalTextColor)
+              totalStyle += ` color: ${element.totalTextColor};`;
+            else if (element.textColor)
+              totalStyle += ` color: ${element.textColor};`;
+            if (element.totalFontSize)
+              totalStyle += ` font-size: ${element.totalFontSize}px;`;
+            if (element.totalFontFamily)
+              totalStyle += ` font-family: ${element.totalFontFamily};`;
+            if (element.totalFontWeight)
+              totalStyle += ` font-weight: ${element.totalFontWeight};`;
+            if (element.totalFontStyle)
+              totalStyle += ` font-style: ${element.totalFontStyle};`;
             totalStyle += ` font-weight: bold;`;
-            
+
             const tableId = `table-${element.id}`;
-            let tableCSS = '';
-            
+            let tableCSS = "";
+
             // CSS pour lignes alternées
             if (element.showAlternatingRows && element.alternateRowColor) {
               tableCSS = `<style>#${tableId} tbody tr:nth-child(odd) td { background-color: ${element.alternateRowColor}; }</style>`;
             }
-            
+
             // Génération du contenu du tableau à partir du JSON
             if (element.content) {
               // Si le contenu HTML existe, l'utiliser
               let wrappedContent = element.content
                 .replace(/<th([^>]*)>/g, `<th style="${headerStyle}"$1>`)
                 .replace(/<td([^>]*)>/g, `<td style="${cellStyles}"$1>`);
-              content = tableCSS + `<table id="${tableId}" style="${tableStyles}">${wrappedContent}</table>`;
+              content =
+                tableCSS +
+                `<table id="${tableId}" style="${tableStyles}">${wrappedContent}</table>`;
             } else {
               // Sinon, créer un tableau d'exemple basé sur les propriétés
               const cols = [
-                element.showSku ? 'SKU' : null,
-                'Produit',
-                element.showDescription ? 'Description' : null,
-                element.showQuantity ? 'Qty' : 'Quantité',
-                'Prix Unit.',
-                'Total',
-                element.showShipping ? 'Shipping' : null,
-                element.showTax ? 'Tax' : null,
+                element.showSku ? "SKU" : null,
+                "Produit",
+                element.showDescription ? "Description" : null,
+                element.showQuantity ? "Qty" : "Quantité",
+                "Prix Unit.",
+                "Total",
+                element.showShipping ? "Shipping" : null,
+                element.showTax ? "Tax" : null,
               ].filter(Boolean);
-              
+
               // Calcul des montants pour la ligne totale
-              const baseAmount = 100.00;
+              const baseAmount = 100.0;
               const quantity = 1;
               const subtotal = baseAmount * quantity;
-              const shippingCost = element.shippingCost || 10.00;
+              const shippingCost = element.shippingCost || 10.0;
               const globalDiscount = element.globalDiscount || 0;
-              const taxRate = (element.taxRate || 0.20);
+              const taxRate = element.taxRate || 0.2;
               const taxAmount = (subtotal - globalDiscount) * taxRate;
-              const total = subtotal + shippingCost - globalDiscount + taxAmount + (element.orderFees || 0);
-              
-              let tableHTML = tableCSS + `<table id="${tableId}" style="${tableStyles}">`;
-              
+              const total =
+                subtotal +
+                shippingCost -
+                globalDiscount +
+                taxAmount +
+                (element.orderFees || 0);
+
+              let tableHTML =
+                tableCSS + `<table id="${tableId}" style="${tableStyles}">`;
+
               // En-têtes - affichés uniquement si showHeaders n'est pas false
               if (element.showHeaders !== false) {
                 tableHTML += `<thead><tr>`;
-                tableHTML += cols.map(col => `<th style="${headerStyle}">${col}</th>`).join('');
+                tableHTML += cols
+                  .map((col) => `<th style="${headerStyle}">${col}</th>`)
+                  .join("");
                 tableHTML += `</tr></thead>`;
               }
-              
+
               tableHTML += `<tbody>`;
               // Ligne de données
               tableHTML += `<tr>`;
-              tableHTML += cols.map((col) => {
-                let cellValue = 'N/A';
-                if (col === 'SKU') cellValue = 'SKU001';
-                else if (col === 'Produit') cellValue = 'Produit Exemple';
-                else if (col === 'Description') cellValue = 'Description du produit';
-                else if (col === 'Qty' || col === 'Quantité') cellValue = quantity.toString();
-                else if (col === 'Prix Unit.') cellValue = baseAmount.toFixed(2) + ' €';
-                else if (col === 'Total') cellValue = subtotal.toFixed(2) + ' €';
-                else if (col === 'Shipping') cellValue = shippingCost.toFixed(2) + ' €';
-                else if (col === 'Tax') cellValue = taxAmount.toFixed(2) + ' €';
-                return `<td style="${rowStyle}">${cellValue}</td>`;
-              }).join('');
+              tableHTML += cols
+                .map((col) => {
+                  let cellValue = "N/A";
+                  if (col === "SKU") cellValue = "SKU001";
+                  else if (col === "Produit") cellValue = "Produit Exemple";
+                  else if (col === "Description")
+                    cellValue = "Description du produit";
+                  else if (col === "Qty" || col === "Quantité")
+                    cellValue = quantity.toString();
+                  else if (col === "Prix Unit.")
+                    cellValue = baseAmount.toFixed(2) + " €";
+                  else if (col === "Total")
+                    cellValue = subtotal.toFixed(2) + " €";
+                  else if (col === "Shipping")
+                    cellValue = shippingCost.toFixed(2) + " €";
+                  else if (col === "Tax")
+                    cellValue = taxAmount.toFixed(2) + " €";
+                  return `<td style="${rowStyle}">${cellValue}</td>`;
+                })
+                .join("");
               tableHTML += `</tr>`;
-              
+
               // Ligne de discount global si activée
               if (element.showGlobalDiscount && globalDiscount > 0) {
                 tableHTML += `<tr><td colspan="${cols.length - 1}" style="${rowStyle}">Discount:</td><td style="${rowStyle}">-${globalDiscount.toFixed(2)} €</td></tr>`;
               }
-              
+
               // Ligne totale
               tableHTML += `<tr>`;
-              tableHTML += cols.map((col, idx) => {
-                let totalValue = 'N/A';
-                if (idx === cols.length - 1) {
-                  totalValue = total.toFixed(2) + ' €';
-                } else if (col === 'Produit') {
-                  totalValue = 'TOTAL';
-                } else if (col === 'SKU' || col === 'Description' || col === 'Qty' || col === 'Quantité' || col === 'Prix Unit.' || col === 'Shipping' || col === 'Tax') {
-                  totalValue = '';
-                }
-                return `<td style="${totalStyle}">${totalValue}</td>`;
-              }).join('');
+              tableHTML += cols
+                .map((col, idx) => {
+                  let totalValue = "N/A";
+                  if (idx === cols.length - 1) {
+                    totalValue = total.toFixed(2) + " €";
+                  } else if (col === "Produit") {
+                    totalValue = "TOTAL";
+                  } else if (
+                    col === "SKU" ||
+                    col === "Description" ||
+                    col === "Qty" ||
+                    col === "Quantité" ||
+                    col === "Prix Unit." ||
+                    col === "Shipping" ||
+                    col === "Tax"
+                  ) {
+                    totalValue = "";
+                  }
+                  return `<td style="${totalStyle}">${totalValue}</td>`;
+                })
+                .join("");
               tableHTML += `</tr>`;
-              
+
               tableHTML += `</tbody></table>`;
               content = tableHTML;
             }
-            
+
             // Ajouter styles de padding/margin/border si présents
             if (element.padding) {
               const paddingStr = buildSpacing(element.padding);
@@ -956,153 +1106,234 @@ export const Header = memo(function Header({
             }
             break;
 
-          case 'company_info':
+          case "company_info":
             // Helper pour valider si une valeur doit être affichée
             const isValidValue = (value: string | any): boolean => {
-              return value && value.toString().trim() !== '' && value !== 'Non indiqué';
+              return (
+                value &&
+                value.toString().trim() !== "" &&
+                value !== "Non indiqué"
+              );
             };
-            
+
             // Récupérer les données d'entreprise (d'abord de l'élément, puis du plugin)
             const getCompanyDataForHtml = () => {
-              const pluginCompany = (window as any).pdfBuilderData?.company || {};
+              const pluginCompany =
+                (window as any).pdfBuilderData?.company || {};
               return {
-                name: element.companyName || pluginCompany.name || '',
-                address: element.companyAddress || pluginCompany.address || '',
-                city: element.companyCity || pluginCompany.city || '',
-                phone: element.companyPhone || pluginCompany.phone || '',
-                email: element.companyEmail || pluginCompany.email || '',
-                website: element.companyWebsite || pluginCompany.website || '',
-                siret: element.companySiret || pluginCompany.siret || '',
-                tva: element.companyTva || pluginCompany.tva || '',
-                rcs: element.companyRcs || pluginCompany.rcs || '',
-                capital: element.companyCapital || pluginCompany.capital || '',
+                name: element.companyName || pluginCompany.name || "",
+                address: element.companyAddress || pluginCompany.address || "",
+                city: element.companyCity || pluginCompany.city || "",
+                phone: element.companyPhone || pluginCompany.phone || "",
+                email: element.companyEmail || pluginCompany.email || "",
+                website: element.companyWebsite || pluginCompany.website || "",
+                siret: element.companySiret || pluginCompany.siret || "",
+                tva: element.companyTva || pluginCompany.tva || "",
+                rcs: element.companyRcs || pluginCompany.rcs || "",
+                capital: element.companyCapital || pluginCompany.capital || "",
               };
             };
-            
+
             const companyData = getCompanyDataForHtml();
-            
+
             // Construire le contenu HTML à partir des propriétés du JSON
             let companyContent = element.content || element.text;
-            
+
             // Si pas de contenu prédéfini, construire à partir des propriétés
             if (!companyContent) {
               const companyParts: string[] = [];
               const globalStylesCompany = buildGlobalStyles(element);
-              
+
               // Nom de l'entreprise
-              if (element.showCompanyName !== false && isValidValue(companyData.name)) {
-                const headerFontSize = element.headerFontSize || element.fontSize || 14;
-                const headerFontWeight = element.headerFontWeight || 'bold';
-                const headerColor = element.headerTextColor || element.textColor || '#000000';
-                companyParts.push(`<div style="font-size: ${headerFontSize}px; font-weight: ${headerFontWeight}; color: ${headerColor}; ${globalStylesCompany}">${companyData.name}</div>`);
+              if (
+                element.showCompanyName !== false &&
+                isValidValue(companyData.name)
+              ) {
+                const headerFontSize =
+                  element.headerFontSize || element.fontSize || 14;
+                const headerFontWeight = element.headerFontWeight || "bold";
+                const headerColor =
+                  element.headerTextColor || element.textColor || "#000000";
+                companyParts.push(
+                  `<div style="font-size: ${headerFontSize}px; font-weight: ${headerFontWeight}; color: ${headerColor}; ${globalStylesCompany}">${companyData.name}</div>`,
+                );
               }
-              
+
               // Adresse
-              if (element.showAddress !== false && isValidValue(companyData.address)) {
+              if (
+                element.showAddress !== false &&
+                isValidValue(companyData.address)
+              ) {
                 let addressText = companyData.address;
-                if (isValidValue(companyData.city)) addressText += `, ${companyData.city}`;
-                const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
-                const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
-                const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">${addressText}</div>`);
+                if (isValidValue(companyData.city))
+                  addressText += `, ${companyData.city}`;
+                const bodyFontSize =
+                  element.bodyFontSize || element.fontSize || 12;
+                const bodyFontWeight =
+                  element.bodyFontWeight || element.fontWeight || "normal";
+                const bodyColor =
+                  element.bodyTextColor || element.textColor || "#666666";
+                companyParts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">${addressText}</div>`,
+                );
               }
-              
+
               // Téléphone
-              if (element.showPhone !== false && isValidValue(companyData.phone)) {
-                const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
-                const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
-                const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">Tél: ${companyData.phone}</div>`);
+              if (
+                element.showPhone !== false &&
+                isValidValue(companyData.phone)
+              ) {
+                const bodyFontSize =
+                  element.bodyFontSize || element.fontSize || 12;
+                const bodyFontWeight =
+                  element.bodyFontWeight || element.fontWeight || "normal";
+                const bodyColor =
+                  element.bodyTextColor || element.textColor || "#666666";
+                companyParts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">Tél: ${companyData.phone}</div>`,
+                );
               }
-              
+
               // Email
-              if (element.showEmail !== false && isValidValue(companyData.email)) {
-                const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
-                const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
-                const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">Email: ${companyData.email}</div>`);
+              if (
+                element.showEmail !== false &&
+                isValidValue(companyData.email)
+              ) {
+                const bodyFontSize =
+                  element.bodyFontSize || element.fontSize || 12;
+                const bodyFontWeight =
+                  element.bodyFontWeight || element.fontWeight || "normal";
+                const bodyColor =
+                  element.bodyTextColor || element.textColor || "#666666";
+                companyParts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">Email: ${companyData.email}</div>`,
+                );
               }
-              
+
               // Site web
-              if (element.showWebsite !== false && isValidValue(companyData.website)) {
-                const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
-                const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
-                const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">${companyData.website}</div>`);
+              if (
+                element.showWebsite !== false &&
+                isValidValue(companyData.website)
+              ) {
+                const bodyFontSize =
+                  element.bodyFontSize || element.fontSize || 12;
+                const bodyFontWeight =
+                  element.bodyFontWeight || element.fontWeight || "normal";
+                const bodyColor =
+                  element.bodyTextColor || element.textColor || "#666666";
+                companyParts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">${companyData.website}</div>`,
+                );
               }
-              
+
               // SIRET
-              if (element.showSiret !== false && isValidValue(companyData.siret)) {
-                const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
-                const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
-                const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">SIRET: ${companyData.siret}</div>`);
+              if (
+                element.showSiret !== false &&
+                isValidValue(companyData.siret)
+              ) {
+                const bodyFontSize =
+                  element.bodyFontSize || element.fontSize || 12;
+                const bodyFontWeight =
+                  element.bodyFontWeight || element.fontWeight || "normal";
+                const bodyColor =
+                  element.bodyTextColor || element.textColor || "#666666";
+                companyParts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">SIRET: ${companyData.siret}</div>`,
+                );
               }
-              
+
               // TVA
               if (element.showVat !== false && isValidValue(companyData.tva)) {
-                const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
-                const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
-                const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">TVA: ${companyData.tva}</div>`);
+                const bodyFontSize =
+                  element.bodyFontSize || element.fontSize || 12;
+                const bodyFontWeight =
+                  element.bodyFontWeight || element.fontWeight || "normal";
+                const bodyColor =
+                  element.bodyTextColor || element.textColor || "#666666";
+                companyParts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">TVA: ${companyData.tva}</div>`,
+                );
               }
-              
+
               // RCS
               if (element.showRcs !== false && isValidValue(companyData.rcs)) {
-                const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
-                const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
-                const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">RCS: ${companyData.rcs}</div>`);
+                const bodyFontSize =
+                  element.bodyFontSize || element.fontSize || 12;
+                const bodyFontWeight =
+                  element.bodyFontWeight || element.fontWeight || "normal";
+                const bodyColor =
+                  element.bodyTextColor || element.textColor || "#666666";
+                companyParts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">RCS: ${companyData.rcs}</div>`,
+                );
               }
-              
+
               // Capital sociale
-              if (element.showCapital !== false && isValidValue(companyData.capital)) {
-                const bodyFontSize = element.bodyFontSize || element.fontSize || 12;
-                const bodyFontWeight = element.bodyFontWeight || element.fontWeight || 'normal';
-                const bodyColor = element.bodyTextColor || element.textColor || '#666666';
-                companyParts.push(`<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">Capital: ${companyData.capital} €</div>`);
+              if (
+                element.showCapital !== false &&
+                isValidValue(companyData.capital)
+              ) {
+                const bodyFontSize =
+                  element.bodyFontSize || element.fontSize || 12;
+                const bodyFontWeight =
+                  element.bodyFontWeight || element.fontWeight || "normal";
+                const bodyColor =
+                  element.bodyTextColor || element.textColor || "#666666";
+                companyParts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">Capital: ${companyData.capital} €</div>`,
+                );
               }
-              
+
               // Assembler le HTML avec le séparateur si layout horizontal
-              if (element.layout === 'horizontal' && element.separator) {
+              if (element.layout === "horizontal" && element.separator) {
                 // Layout horizontal : joindre avec le séparateur
-                const separator = element.separator || ' • ';
-                companyContent = `<div style="display: flex; gap: 8px; flex-wrap: wrap;">${companyParts.map(p => `<span>${p}</span>`).join(separator)}</div>`;
+                const separator = element.separator || " • ";
+                companyContent = `<div style="display: flex; gap: 8px; flex-wrap: wrap;">${companyParts.map((p) => `<span>${p}</span>`).join(separator)}</div>`;
               } else {
                 // Layout vertical (défaut) : chaque élément sur une nouvelle ligne avec espacement
-                const lineHeightValue = element.lineHeight ? parseFloat(element.lineHeight) : 1.2;
+                const lineHeightValue = element.lineHeight
+                  ? parseFloat(element.lineHeight)
+                  : 1.2;
                 const fontSize = element.fontSize || 12;
                 const gap = Math.round(fontSize * (lineHeightValue - 1));
-                companyContent = `<div style="display: flex; flex-direction: column; gap: ${gap}px;">${companyParts.join('')}</div>`;
+                companyContent = `<div style="display: flex; flex-direction: column; gap: ${gap}px;">${companyParts.join("")}</div>`;
               }
             }
-            
-            content = companyContent || '<div>Entreprise non configurée</div>';
-            
+
+            content = companyContent || "<div>Entreprise non configurée</div>";
+
             // Background
-            if (element.showBackground && element.backgroundColor && element.backgroundColor !== 'transparent') {
+            if (
+              element.showBackground &&
+              element.backgroundColor &&
+              element.backgroundColor !== "transparent"
+            ) {
               styles += ` background-color: ${element.backgroundColor};`;
             }
-            
+
             // Border (borderWidth et borderColor au lieu de border objet)
-            if (element.borderWidth && element.borderWidth > 0 && element.borderColor) {
+            if (
+              element.borderWidth &&
+              element.borderWidth > 0 &&
+              element.borderColor
+            ) {
               styles += ` border: ${element.borderWidth}px solid ${element.borderColor};`;
             }
-            
+
             // Rotation
             if (element.rotation && element.rotation !== 0) {
               styles += ` transform: rotate(${element.rotation}deg);`;
             }
-            
+
             // Shadow (box-shadow)
             if (element.shadowBlur && element.shadowBlur > 0) {
               const shadowOffsetX = element.shadowOffsetX || 0;
               const shadowOffsetY = element.shadowOffsetY || 0;
-              const shadowColor = element.shadowColor || '#000000';
+              const shadowColor = element.shadowColor || "#000000";
               const shadowBlur = element.shadowBlur || 0;
               styles += ` box-shadow: ${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px ${shadowColor};`;
             }
-            
+
             // Padding depuis JSON (peut être nombre ou objet {top, right, bottom, left})
             if (element.padding) {
               const paddingStr = buildSpacing(element.padding);
@@ -1110,89 +1341,103 @@ export const Header = memo(function Header({
             } else {
               styles += ` padding: 8px;`;
             }
-            
+
             // Margin depuis JSON
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
             }
-            
+
             // Border depuis JSON (objet {width, style, color})
             if (element.border) {
               const borderStr = buildBorder(element.border);
               if (borderStr) styles += ` border: ${borderStr};`;
             }
-            
+
             // BorderRadius
             if (element.borderRadius && element.borderRadius > 0) {
               styles += ` border-radius: ${element.borderRadius}px;`;
             }
-            
+
             // Layout property (vertical ou horizontal)
             if (element.layout) {
               const layoutStr = buildFlexLayout(element.layout);
               if (layoutStr) styles += ` ${layoutStr}`;
             }
-            
+
             // Separator si activé
             if (element.separator) {
-              styles += ` border-bottom: 1px solid ${element.borderColor || '#e5e7eb'};`;
+              styles += ` border-bottom: 1px solid ${element.borderColor || "#e5e7eb"};`;
             }
-            
+
             styles += ` overflow: auto;`;
             break;
 
-          case 'customer_info':
+          case "customer_info":
             // Générer le contenu du client avec styles appliqués depuis JSON
             if (!element.content && !element.text) {
               const headerFontSize = element.headerFontSize || 14;
-              const headerFontFamily = element.headerFontFamily || 'Arial';
-              const headerFontWeight = element.headerFontWeight || 'bold';
-              const headerFontStyle = element.headerFontStyle || 'normal';
-              const headerTextColor = element.headerTextColor || '#111827';
-              
+              const headerFontFamily = element.headerFontFamily || "Arial";
+              const headerFontWeight = element.headerFontWeight || "bold";
+              const headerFontStyle = element.headerFontStyle || "normal";
+              const headerTextColor = element.headerTextColor || "#111827";
+
               const bodyFontSize = element.bodyFontSize || 12;
-              const bodyFontFamily = element.bodyFontFamily || 'Arial';
-              const bodyFontWeight = element.bodyFontWeight || 'normal';
-              const bodyFontStyle = element.bodyFontStyle || 'normal';
-              const bodyTextColor = element.textColor || '#374151';
-              
+              const bodyFontFamily = element.bodyFontFamily || "Arial";
+              const bodyFontWeight = element.bodyFontWeight || "normal";
+              const bodyFontStyle = element.bodyFontStyle || "normal";
+              const bodyTextColor = element.textColor || "#374151";
+
               const customerParts = [];
-              
+
               if (element.showHeaders !== false) {
-                customerParts.push(`<div style="font-size: ${headerFontSize}px; font-family: ${headerFontFamily}; font-weight: ${headerFontWeight}; font-style: ${headerFontStyle}; color: ${headerTextColor}; margin-bottom: 8px;">Client</div>`);
+                customerParts.push(
+                  `<div style="font-size: ${headerFontSize}px; font-family: ${headerFontFamily}; font-weight: ${headerFontWeight}; font-style: ${headerFontStyle}; color: ${headerTextColor}; margin-bottom: 8px;">Client</div>`,
+                );
               }
-              
+
               if (element.showFullName !== false) {
-                customerParts.push(`<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">Prénom Nom</div>`);
+                customerParts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">Prénom Nom</div>`,
+                );
               }
-              
+
               if (element.showAddress !== false) {
-                customerParts.push(`<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">123 Rue de la Paix, 75000 Paris</div>`);
+                customerParts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">123 Rue de la Paix, 75000 Paris</div>`,
+                );
               }
-              
+
               if (element.showEmail !== false) {
-                customerParts.push(`<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">client@example.com</div>`);
+                customerParts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">client@example.com</div>`,
+                );
               }
-              
+
               if (element.showPhone !== false) {
-                customerParts.push(`<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">+01 23 45 67 89</div>`);
+                customerParts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">+01 23 45 67 89</div>`,
+                );
               }
-              
-              content = customerParts.join('');
+
+              content = customerParts.join("");
             } else {
               content = element.content || element.text;
             }
-            
+
             // Appliquer styles globaux (font properties)
             const globalStylesCustomer = buildGlobalStyles(element);
             if (globalStylesCustomer) styles += ` ${globalStylesCustomer}`;
-            
+
             // Background depuis JSON
-            if (element.backgroundColor && element.backgroundColor !== 'transparent' && element.showBackground !== false) {
+            if (
+              element.backgroundColor &&
+              element.backgroundColor !== "transparent" &&
+              element.showBackground !== false
+            ) {
               styles += ` background-color: ${element.backgroundColor};`;
             }
-            
+
             // Padding depuis JSON (peut être nombre ou objet)
             if (element.padding) {
               const paddingStr = buildSpacing(element.padding);
@@ -1200,131 +1445,156 @@ export const Header = memo(function Header({
             } else {
               styles += ` padding: 8px;`;
             }
-            
+
             // Margin depuis JSON
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
             }
-            
+
             // Border depuis JSON (objet {width, style, color})
             if (element.border) {
               const borderStr = buildBorder(element.border);
               if (borderStr) styles += ` border: ${borderStr};`;
             }
-            
+
             // BorderRadius
             if (element.borderRadius && element.borderRadius > 0) {
               styles += ` border-radius: ${element.borderRadius}px;`;
             }
-            
+
             // Layout property (vertical ou horizontal) avec gap calculé
             if (element.layout) {
-              const lineHeightValue = element.lineHeight ? parseFloat(element.lineHeight) : 1.2;
+              const lineHeightValue = element.lineHeight
+                ? parseFloat(element.lineHeight)
+                : 1.2;
               const fontSize = element.fontSize || 12;
               const gap = Math.round(fontSize * (lineHeightValue - 1));
               const layoutStr = buildFlexLayout(element.layout, gap);
               if (layoutStr) styles += ` ${layoutStr}`;
             }
-            
+
             // showLabels et labelPosition
             if (element.showLabels && element.labelPosition) {
               styles += ` --label-position: ${element.labelPosition};`;
             }
-            
+
             styles += ` overflow: auto;`;
             break;
 
-          case 'mentions':
-          case 'note':
+          case "mentions":
+          case "note":
             // Récupérer les données d'entreprise pour générer les mentions
             const getMentionsDataForHtml = () => {
-              const pluginCompany = (window as any).pdfBuilderData?.company || {};
+              const pluginCompany =
+                (window as any).pdfBuilderData?.company || {};
               return {
-                email: element.email || pluginCompany.email || '',
-                phone: element.phone || pluginCompany.phone || '',
-                siret: element.siret || pluginCompany.siret || '',
-                tva: element.tva || pluginCompany.tva || '',
+                email: element.email || pluginCompany.email || "",
+                phone: element.phone || pluginCompany.phone || "",
+                siret: element.siret || pluginCompany.siret || "",
+                tva: element.tva || pluginCompany.tva || "",
               };
             };
-            
+
             // Si contenu personnalisé, l'utiliser; sinon générer depuis les propriétés
             content = element.content || element.text;
-            
+
             if (!content) {
               const mentionsData = getMentionsDataForHtml();
               const mentionParts: string[] = [];
-              
+
               // Ajouter email si requis et disponible
-              if (element.showEmail !== false && mentionsData.email && mentionsData.email.trim()) {
+              if (
+                element.showEmail !== false &&
+                mentionsData.email &&
+                mentionsData.email.trim()
+              ) {
                 mentionParts.push(mentionsData.email);
               }
-              
+
               // Ajouter téléphone si requis et disponible
-              if (element.showPhone !== false && mentionsData.phone && mentionsData.phone.trim()) {
+              if (
+                element.showPhone !== false &&
+                mentionsData.phone &&
+                mentionsData.phone.trim()
+              ) {
                 mentionParts.push(mentionsData.phone);
               }
-              
+
               // Ajouter SIRET si requis et disponible
-              if (element.showSiret !== false && mentionsData.siret && mentionsData.siret.trim()) {
+              if (
+                element.showSiret !== false &&
+                mentionsData.siret &&
+                mentionsData.siret.trim()
+              ) {
                 mentionParts.push(`SIRET: ${mentionsData.siret}`);
               }
-              
+
               // Ajouter TVA si requis et disponible
-              if (element.showVat !== false && mentionsData.tva && mentionsData.tva.trim()) {
+              if (
+                element.showVat !== false &&
+                mentionsData.tva &&
+                mentionsData.tva.trim()
+              ) {
                 mentionParts.push(`TVA: ${mentionsData.tva}`);
               }
-              
+
               // Assembler avec le séparateur
-              const separator = element.separator || ' • ';
+              const separator = element.separator || " • ";
               content = mentionParts.join(separator);
             }
-            
+
             // Appliquer styles globaux (font properties)
             const globalStylesMentions = buildGlobalStyles(element);
             if (globalStylesMentions) styles += ` ${globalStylesMentions}`;
-            
+
             // Padding depuis JSON
             if (element.padding) {
               const paddingStr = buildSpacing(element.padding);
               if (paddingStr) styles += ` padding: ${paddingStr};`;
             }
-            
+
             // Margin depuis JSON
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
             }
-            
+
             // Border depuis JSON
             if (element.border) {
               const borderStr = buildBorder(element.border);
               if (borderStr) styles += ` border: ${borderStr};`;
             }
-            
+
             // BorderRadius
             if (element.borderRadius && element.borderRadius > 0) {
               styles += ` border-radius: ${element.borderRadius}px;`;
             }
-            
+
             // Background
-            if (element.showBackground && element.backgroundColor && element.backgroundColor !== 'transparent') {
+            if (
+              element.showBackground &&
+              element.backgroundColor &&
+              element.backgroundColor !== "transparent"
+            ) {
               styles += ` background-color: ${element.backgroundColor};`;
             }
-            
+
             // LineHeight depuis propriétés
             if (element.lineHeight) {
               styles += ` line-height: ${element.lineHeight};`;
             }
-            
+
             // Separator property
             if (element.showSeparator) {
-              styles += ` border-bottom: 1px solid ${element.borderColor || '#e5e7eb'};`;
+              styles += ` border-bottom: 1px solid ${element.borderColor || "#e5e7eb"};`;
             }
-            
+
             // Layout property avec gap calculé
             if (element.layout) {
-              const lineHeightValue = element.lineHeight ? parseFloat(element.lineHeight) : 1.2;
+              const lineHeightValue = element.lineHeight
+                ? parseFloat(element.lineHeight)
+                : 1.2;
               const fontSize = element.fontSize || 12;
               const gap = Math.round(fontSize * (lineHeightValue - 1));
               const layoutStr = buildFlexLayout(element.layout, gap);
@@ -1332,39 +1602,48 @@ export const Header = memo(function Header({
             }
             break;
 
-          case 'woocommerce_invoice_number':
-            const invoiceNum = element.text || element.content || '001';
-            const invoiceFormat = element.format || 'FAC-{order_number}';
-            let invoiceContent = invoiceFormat.replace('{order_number}', invoiceNum);
+          case "woocommerce_invoice_number":
+            const invoiceNum = element.text || element.content || "001";
+            const invoiceFormat = element.format || "FAC-{order_number}";
+            let invoiceContent = invoiceFormat.replace(
+              "{order_number}",
+              invoiceNum,
+            );
             const globalStylesInvoice = buildGlobalStyles(element);
-            
+
             // Gérer l'alignement vertical comme dans Canvas
-            if (element.verticalAlign === 'middle' || element.verticalAlign === 'center') {
-              styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
-            } else if (element.verticalAlign === 'bottom') {
-              styles += ` display: flex; align-items: flex-end; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
+            if (
+              element.verticalAlign === "middle" ||
+              element.verticalAlign === "center"
+            ) {
+              styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === "center" ? "center" : element.textAlign === "right" ? "flex-end" : "flex-start"};`;
+            } else if (element.verticalAlign === "bottom") {
+              styles += ` display: flex; align-items: flex-end; justify-content: ${element.textAlign === "center" ? "center" : element.textAlign === "right" ? "flex-end" : "flex-start"};`;
             } else {
               // top alignment (default)
-              styles += ` display: flex; align-items: flex-start; justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};`;
+              styles += ` display: flex; align-items: flex-start; justify-content: ${element.textAlign === "center" ? "center" : element.textAlign === "right" ? "flex-end" : "flex-start"};`;
             }
-            
+
             // Si label à afficher
             if (element.showLabel && element.labelText) {
-              const labelText = element.labelText || 'Invoice:';
-              const headerFontSize = element.headerFontSize || element.fontSize || 12;
-              const numberFontSize = element.numberFontSize || element.fontSize || 14;
-              const labelColor = element.headerTextColor || element.textColor || '#000000';
-              const numberColor = element.textColor || '#000000';
-              
+              const labelText = element.labelText || "Invoice:";
+              const headerFontSize =
+                element.headerFontSize || element.fontSize || 12;
+              const numberFontSize =
+                element.numberFontSize || element.fontSize || 14;
+              const labelColor =
+                element.headerTextColor || element.textColor || "#000000";
+              const numberColor = element.textColor || "#000000";
+
               invoiceContent = `
                 <div style="display: flex; flex-direction: column; gap: 4px;">
-                  <div style="font-size: ${headerFontSize}px; color: ${labelColor}; font-weight: ${element.headerFontWeight || 'normal'}; ${globalStylesInvoice}">${labelText}</div>
-                  <div style="font-size: ${numberFontSize}px; color: ${numberColor}; font-weight: ${element.fontWeight || 'normal'}; ${globalStylesInvoice}">${invoiceContent}</div>
+                  <div style="font-size: ${headerFontSize}px; color: ${labelColor}; font-weight: ${element.headerFontWeight || "normal"}; ${globalStylesInvoice}">${labelText}</div>
+                  <div style="font-size: ${numberFontSize}px; color: ${numberColor}; font-weight: ${element.fontWeight || "normal"}; ${globalStylesInvoice}">${invoiceContent}</div>
                 </div>
               `;
             }
             content = invoiceContent;
-            
+
             // contentAlign property
             if (element.contentAlign) {
               styles += ` text-align: ${element.contentAlign};`;
@@ -1385,12 +1664,20 @@ export const Header = memo(function Header({
             break;
 
           default:
-            content = element.text || element.content || element.label || `[${element.type}]`;
+            content =
+              element.text ||
+              element.content ||
+              element.label ||
+              `[${element.type}]`;
         }
 
         // Wrapper l'élément avec tous les styles + overflow pour contenu interne
         let containerStyles = styles;
-        if (element.type === 'customer_info' || element.type === 'product_table' || element.type === 'company_info') {
+        if (
+          element.type === "customer_info" ||
+          element.type === "product_table" ||
+          element.type === "company_info"
+        ) {
           // Ajouter overflow pour les conteneurs complexes
           containerStyles += ` overflow: hidden;`;
         }
@@ -1418,43 +1705,46 @@ export const Header = memo(function Header({
     try {
       const templateId = state.currentTemplateId || state.template?.id;
       if (!templateId) {
-        alert('❌ Aucun template actuellement édité');
+        alert("❌ Aucun template actuellement édité");
         return;
       }
 
-      const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
+      const ajaxUrl =
+        (window as any).pdfBuilderData?.ajaxUrl || "/wp-admin/admin-ajax.php";
 
       // Étape 1: Récupérer les données SAUVEGARDÉES du serveur
       const formData = new FormData();
-      formData.append('action', 'pdf_builder_get_template_elements');
-      formData.append('template_id', templateId);
-      formData.append('nonce', (window as any).pdfBuilderData?.nonce || '');
+      formData.append("action", "pdf_builder_get_template_elements");
+      formData.append("template_id", templateId);
+      formData.append("nonce", (window as any).pdfBuilderData?.nonce || "");
 
       const response = await fetch(ajaxUrl, {
-        method: 'POST',
+        method: "POST",
         body: formData,
       });
 
       const data = await response.json();
       if (!data.success) {
-        throw new Error(data.data?.message || 'Erreur lors de la récupération des données');
+        throw new Error(
+          data.data?.message || "Erreur lors de la récupération des données",
+        );
       }
 
       const elements = data.data.elements || [];
       const canvas = data.data.canvas || { width: 794, height: 1123 };
 
       // Étape 2: Créer un canvas temporaire pour redessiner
-      const tempCanvas = document.createElement('canvas');
+      const tempCanvas = document.createElement("canvas");
       tempCanvas.width = canvas.width;
       tempCanvas.height = canvas.height;
-      
-      const ctx = tempCanvas.getContext('2d');
+
+      const ctx = tempCanvas.getContext("2d");
       if (!ctx) {
-        throw new Error('Impossible de créer un contexte canvas');
+        throw new Error("Impossible de créer un contexte canvas");
       }
 
       // Redessiner les éléments
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
 
       // Fonction helper pour dessiner le contenu simplifié
@@ -1473,36 +1763,50 @@ export const Header = memo(function Header({
         }
 
         // Fond
-        if (element.backgroundColor && element.backgroundColor !== 'transparent' && element.showBackground !== false) {
+        if (
+          element.backgroundColor &&
+          element.backgroundColor !== "transparent" &&
+          element.showBackground !== false
+        ) {
           ctx.fillStyle = element.backgroundColor;
           ctx.fillRect(0, 0, element.width || 100, element.height || 50);
         }
 
         // Bordure
         if (element.borderWidth && element.borderWidth > 0) {
-          ctx.strokeStyle = element.borderColor || '#e5e7eb';
+          ctx.strokeStyle = element.borderColor || "#e5e7eb";
           ctx.lineWidth = element.borderWidth;
           ctx.strokeRect(0, 0, element.width || 100, element.height || 50);
         }
 
         // Texte
-        ctx.fillStyle = element.textColor || '#000000';
-        ctx.font = `${element.fontStyle || 'normal'} ${element.fontWeight || 'normal'} ${element.fontSize || 12}px ${element.fontFamily || 'Arial'}`;
-        ctx.textAlign = element.textAlign || 'left';
-        ctx.textBaseline = element.verticalAlign === 'middle' ? 'middle' : element.verticalAlign === 'bottom' ? 'bottom' : 'top';
+        ctx.fillStyle = element.textColor || "#000000";
+        ctx.font = `${element.fontStyle || "normal"} ${element.fontWeight || "normal"} ${element.fontSize || 12}px ${element.fontFamily || "Arial"}`;
+        ctx.textAlign = element.textAlign || "left";
+        ctx.textBaseline =
+          element.verticalAlign === "middle"
+            ? "middle"
+            : element.verticalAlign === "bottom"
+              ? "bottom"
+              : "top";
 
         let textX = 0;
-        let textY = element.verticalAlign === 'middle' ? (element.height || 50) / 2 : element.verticalAlign === 'bottom' ? (element.height || 50) - 5 : 5;
+        let textY =
+          element.verticalAlign === "middle"
+            ? (element.height || 50) / 2
+            : element.verticalAlign === "bottom"
+              ? (element.height || 50) - 5
+              : 5;
 
-        if (element.textAlign === 'center') {
+        if (element.textAlign === "center") {
           textX = (element.width || 100) / 2;
-        } else if (element.textAlign === 'right') {
+        } else if (element.textAlign === "right") {
           textX = (element.width || 100) - 5;
         } else {
           textX = 5;
         }
 
-        const text = element.text || element.content || element.title || '';
+        const text = element.text || element.content || element.title || "";
         if (text) {
           ctx.fillText(text.toString().substring(0, 50), textX, textY);
         }
@@ -1514,7 +1818,7 @@ export const Header = memo(function Header({
       elements.forEach(drawElement);
 
       // Étape 3: Capturer en PNG base64
-      const canvasImageData = tempCanvas.toDataURL('image/png');
+      const canvasImageData = tempCanvas.toDataURL("image/png");
 
       // Étape 4: Créer l'HTML avec l'image
       const html = `<!DOCTYPE html>
@@ -1522,7 +1826,7 @@ export const Header = memo(function Header({
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aperçu PDF - ${data.data.template?.name || 'Template'}</title>
+  <title>Aperçu PDF - ${data.data.template?.name || "Template"}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
@@ -1572,10 +1876,12 @@ export const Header = memo(function Header({
 </html>`;
 
       setGeneratedHtml(html);
-      setJsonModalMode('html');
+      setJsonModalMode("html");
     } catch (error) {
-      console.error('Erreur lors de la génération HTML:', error);
-      alert(`❌ Erreur: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
+      console.error("Erreur lors de la génération HTML:", error);
+      alert(
+        `❌ Erreur: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
+      );
     } finally {
       setIsGeneratingHtml(false);
     }
@@ -1771,7 +2077,7 @@ export const Header = memo(function Header({
                     // Ouvrir la page des templates prédéfinis
                     window.open(
                       "/wp-admin/admin.php?page=pdf-builder-templates",
-                      "_blank"
+                      "_blank",
                     );
                     setShowPredefinedTemplates(false);
                   }}
@@ -1806,7 +2112,7 @@ export const Header = memo(function Header({
                     // Ouvrir la page des templates prédéfinis
                     window.open(
                       "/wp-admin/admin.php?page=pdf-builder-templates",
-                      "_blank"
+                      "_blank",
                     );
                     setShowPredefinedTemplates(false);
                   }}
@@ -1841,7 +2147,7 @@ export const Header = memo(function Header({
                     // Ouvrir la page des templates prédéfinis
                     window.open(
                       "/wp-admin/admin.php?page=pdf-builder-templates",
-                      "_blank"
+                      "_blank",
                     );
                     setShowPredefinedTemplates(false);
                   }}
@@ -1877,7 +2183,7 @@ export const Header = memo(function Header({
                     // Ouvrir la page des templates prédéfinis
                     window.open(
                       "/wp-admin/admin.php?page=pdf-builder-templates",
-                      "_blank"
+                      "_blank",
                     );
                     setShowPredefinedTemplates(false);
                   }}
@@ -2052,7 +2358,7 @@ export const Header = memo(function Header({
               });
               alert(
                 "Erreur lors de la sauvegarde: " +
-                  (error instanceof Error ? error.message : "Erreur inconnue")
+                  (error instanceof Error ? error.message : "Erreur inconnue"),
               );
             }
           }}
@@ -2095,10 +2401,10 @@ export const Header = memo(function Header({
             deferredIsLoading
               ? "Chargement du template..."
               : deferredIsModified
-              ? deferredIsEditingExistingTemplate
-                ? "Modifier le template"
-                : "Enregistrer les modifications"
-              : "Aucune modification"
+                ? deferredIsEditingExistingTemplate
+                  ? "Modifier le template"
+                  : "Enregistrer les modifications"
+                : "Aucune modification"
           }
         >
           <span>{deferredIsSaving ? "⟳" : "💾"}</span>
@@ -2106,8 +2412,8 @@ export const Header = memo(function Header({
             {deferredIsSaving
               ? "Enregistrement..."
               : deferredIsEditingExistingTemplate
-              ? "Modifier"
-              : "Enregistrer"}
+                ? "Modifier"
+                : "Enregistrer"}
           </span>
         </button>
       </div>
@@ -2118,7 +2424,8 @@ export const Header = memo(function Header({
           <div className="canvas-modal-container">
             <div className="canvas-modal-header">
               <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "600" }}>
-                <span style={{ fontSize: "24px" }}>📄</span> Paramètres du template
+                <span style={{ fontSize: "24px" }}>📄</span> Paramètres du
+                template
               </h3>
               <button
                 type="button"
@@ -2180,7 +2487,9 @@ export const Header = memo(function Header({
                   />
                   <span className="setting-unit">px</span>
                 </div>
-                <div className="setting-hint">Les dimensions sont contrôlées par l'orientation</div>
+                <div className="setting-hint">
+                  Les dimensions sont contrôlées par l'orientation
+                </div>
               </div>
 
               <div className="setting-group">
@@ -2188,7 +2497,9 @@ export const Header = memo(function Header({
                 <select
                   value={canvasOrientation}
                   onChange={(e) => {
-                    const orientation = e.target.value as "portrait" | "landscape";
+                    const orientation = e.target.value as
+                      | "portrait"
+                      | "landscape";
                     setCanvasOrientation(orientation);
                     // Mettre à jour les dimensions en fonction de l'orientation
                     let newWidth = 794;
@@ -2217,7 +2528,8 @@ export const Header = memo(function Header({
                 {(!orientationPermissions.allowPortrait ||
                   !orientationPermissions.allowLandscape) && (
                   <div className="setting-hint">
-                    Certaines orientations sont désactivées dans les paramètres du plugin.
+                    Certaines orientations sont désactivées dans les paramètres
+                    du plugin.
                   </div>
                 )}
               </div>
@@ -2229,7 +2541,11 @@ export const Header = memo(function Header({
                     <input
                       type="checkbox"
                       checked={showGuides}
-                      onChange={(e) => onUpdateTemplateSettings({ showGuides: e.target.checked })}
+                      onChange={(e) =>
+                        onUpdateTemplateSettings({
+                          showGuides: e.target.checked,
+                        })
+                      }
                       className="setting-checkbox"
                     />
                     Afficher les guides
@@ -2238,7 +2554,11 @@ export const Header = memo(function Header({
                     <input
                       type="checkbox"
                       checked={snapToGrid}
-                      onChange={(e) => onUpdateTemplateSettings({ snapToGrid: e.target.checked })}
+                      onChange={(e) =>
+                        onUpdateTemplateSettings({
+                          snapToGrid: e.target.checked,
+                        })
+                      }
                       className="setting-checkbox"
                     />
                     Aimantation à la grille
@@ -2248,13 +2568,19 @@ export const Header = memo(function Header({
                   <label className="setting-label">Statut</label>
                   <div className="setting-status-tags">
                     {isNewTemplate && (
-                      <span className="status-tag status-new">Nouveau template</span>
+                      <span className="status-tag status-new">
+                        Nouveau template
+                      </span>
                     )}
                     {deferredIsModified && (
-                      <span className="status-tag status-modified">Modifié</span>
+                      <span className="status-tag status-modified">
+                        Modifié
+                      </span>
                     )}
                     {isEditingExistingTemplate && (
-                      <span className="status-tag status-editing">Édition existante</span>
+                      <span className="status-tag status-editing">
+                        Édition existante
+                      </span>
                     )}
                   </div>
                 </div>
@@ -2264,57 +2590,59 @@ export const Header = memo(function Header({
                   <div className="setting-info">
                     <div>Template ID: {templateName || "N/A"}</div>
                     <div>
-                      Dernière modification: {new Date().toLocaleString("fr-FR")}
+                      Dernière modification:{" "}
+                      {new Date().toLocaleString("fr-FR")}
                     </div>
                     <div>
                       État:{" "}
                       {deferredIsSaving
                         ? "Enregistrement..."
                         : deferredIsModified
-                        ? "Modifié"
-                        : "Sauvegardé"}
+                          ? "Modifié"
+                          : "Sauvegardé"}
                     </div>
                     {canvasSettings.performanceMonitoring && (
                       <div>
-                        Performance: {performanceMetrics.fps} FPS, {performanceMetrics.memoryUsage}MB RAM
+                        Performance: {performanceMetrics.fps} FPS,{" "}
+                        {performanceMetrics.memoryUsage}MB RAM
                       </div>
                     )}
                     {canvasSettings.debugMode && (
                       <div>
-                        Debug: FPS Target {canvasSettings.fpsTarget}, Memory Limit {canvasSettings.memoryLimitJs}MB
+                        Debug: FPS Target {canvasSettings.fpsTarget}, Memory
+                        Limit {canvasSettings.memoryLimitJs}MB
                       </div>
                     )}
                   </div>
                 </div>
-
               </div>
             </div>
-              <div className="canvas-modal-footer">
-                <button
-                  onClick={() => setShowSettingsModal(false)}
-                  className="canvas-modal-btn canvas-modal-btn-secondary"
-                >
-                  Annuler
-                </button>
-                <button
-                  onClick={() => {
-                    // Sauvegarder les paramètres du template
-                    onUpdateTemplateSettings({
-                      name: editedTemplateName,
-                      description: editedTemplateDescription,
-                      canvasWidth: editedCanvasWidth,
-                      canvasHeight: editedCanvasHeight,
-                      showGuides: showGuides,
-                      snapToGrid: snapToGrid,
-                    });
+            <div className="canvas-modal-footer">
+              <button
+                onClick={() => setShowSettingsModal(false)}
+                className="canvas-modal-btn canvas-modal-btn-secondary"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={() => {
+                  // Sauvegarder les paramètres du template
+                  onUpdateTemplateSettings({
+                    name: editedTemplateName,
+                    description: editedTemplateDescription,
+                    canvasWidth: editedCanvasWidth,
+                    canvasHeight: editedCanvasHeight,
+                    showGuides: showGuides,
+                    snapToGrid: snapToGrid,
+                  });
 
-                    setShowSettingsModal(false);
-                  }}
-                  className="canvas-modal-btn canvas-modal-btn-primary"
-                >
-                  Sauvegarder
-                </button>
-              </div>
+                  setShowSettingsModal(false);
+                }}
+                className="canvas-modal-btn canvas-modal-btn-primary"
+              >
+                Sauvegarder
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -2350,14 +2678,14 @@ export const Header = memo(function Header({
               top: "50%",
               left: "50%",
               transform: `translate(calc(-50% + ${modalPosition.x}px), calc(-50% + ${modalPosition.y}px))`,
-              transition: isDraggingModal ? 'none' : 'transform 0.1s ease-out',
+              transition: isDraggingModal ? "none" : "transform 0.1s ease-out",
             }}
           >
             {/* Header avec Toggle JSON/HTML */}
             <div
               onMouseDown={(e) => {
                 // Ne pas dragguer si on clique sur un bouton
-                if ((e.target as HTMLElement).closest('button')) return;
+                if ((e.target as HTMLElement).closest("button")) return;
                 setIsDraggingModal(true);
                 setDragStart({ x: e.clientX, y: e.clientY });
               }}
@@ -2368,11 +2696,13 @@ export const Header = memo(function Header({
                 marginBottom: "16px",
                 borderBottom: "1px solid #e0e0e0",
                 paddingBottom: "12px",
-                cursor: isDraggingModal ? 'grabbing' : 'grab',
-                userSelect: 'none',
+                cursor: isDraggingModal ? "grabbing" : "grab",
+                userSelect: "none",
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "12px" }}
+              >
                 <h3
                   style={{
                     margin: 0,
@@ -2381,21 +2711,31 @@ export const Header = memo(function Header({
                     color: "#1a1a1a",
                   }}
                 >
-                  {jsonModalMode === 'json' ? '📋' : '🎨'} {jsonModalMode === 'json' ? 'JSON' : 'Aperçu HTML'}
+                  {jsonModalMode === "json" ? "📋" : "🎨"}{" "}
+                  {jsonModalMode === "json" ? "JSON" : "Aperçu HTML"}
                 </h3>
                 {/* Toggle Buttons */}
-                <div style={{ display: 'flex', gap: '6px', borderRadius: '4px', border: '1px solid #ddd', padding: '3px' }}>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "6px",
+                    borderRadius: "4px",
+                    border: "1px solid #ddd",
+                    padding: "3px",
+                  }}
+                >
                   <button
-                    onClick={() => setJsonModalMode('json')}
+                    onClick={() => setJsonModalMode("json")}
                     style={{
-                      padding: '6px 12px',
-                      border: 'none',
-                      borderRadius: '3px',
-                      backgroundColor: jsonModalMode === 'json' ? '#007cba' : '#f0f0f0',
-                      color: jsonModalMode === 'json' ? '#fff' : '#333',
-                      cursor: 'pointer',
-                      fontSize: '12px',
-                      fontWeight: jsonModalMode === 'json' ? 'bold' : 'normal',
+                      padding: "6px 12px",
+                      border: "none",
+                      borderRadius: "3px",
+                      backgroundColor:
+                        jsonModalMode === "json" ? "#007cba" : "#f0f0f0",
+                      color: jsonModalMode === "json" ? "#fff" : "#333",
+                      cursor: "pointer",
+                      fontSize: "12px",
+                      fontWeight: jsonModalMode === "json" ? "bold" : "normal",
                     }}
                     title="Afficher le JSON"
                   >
@@ -2405,19 +2745,20 @@ export const Header = memo(function Header({
                     onClick={handleShowHtmlPreview}
                     disabled={isGeneratingHtml}
                     style={{
-                      padding: '6px 12px',
-                      border: 'none',
-                      borderRadius: '3px',
-                      backgroundColor: jsonModalMode === 'html' ? '#10a37f' : '#f0f0f0',
-                      color: jsonModalMode === 'html' ? '#fff' : '#333',
-                      cursor: isGeneratingHtml ? 'not-allowed' : 'pointer',
-                      fontSize: '12px',
-                      fontWeight: jsonModalMode === 'html' ? 'bold' : 'normal',
+                      padding: "6px 12px",
+                      border: "none",
+                      borderRadius: "3px",
+                      backgroundColor:
+                        jsonModalMode === "html" ? "#10a37f" : "#f0f0f0",
+                      color: jsonModalMode === "html" ? "#fff" : "#333",
+                      cursor: isGeneratingHtml ? "not-allowed" : "pointer",
+                      fontSize: "12px",
+                      fontWeight: jsonModalMode === "html" ? "bold" : "normal",
                       opacity: isGeneratingHtml ? 0.6 : 1,
                     }}
                     title="Afficher l'aperçu HTML"
                   >
-                    {isGeneratingHtml ? '⏳' : '🎨'} HTML
+                    {isGeneratingHtml ? "⏳" : "🎨"} HTML
                   </button>
                 </div>
               </div>
@@ -2446,7 +2787,7 @@ export const Header = memo(function Header({
                 flexDirection: "column",
               }}
             >
-              {jsonModalMode === 'json' ? (
+              {jsonModalMode === "json" ? (
                 <pre
                   style={{
                     margin: 0,
@@ -2463,19 +2804,19 @@ export const Header = memo(function Header({
                       elements: state.elements,
                     },
                     null,
-                    2
+                    2,
                   )}
                 </pre>
               ) : (
                 <iframe
                   srcDoc={generatedHtml}
                   style={{
-                    width: '100%',
-                    height: '100%',
+                    width: "100%",
+                    height: "100%",
                     flex: 1,
-                    border: 'none',
-                    borderRadius: '4px',
-                    backgroundColor: '#f5f5f5',
+                    border: "none",
+                    borderRadius: "4px",
+                    backgroundColor: "#f5f5f5",
                   }}
                   title="Aperçu PDF"
                 />
@@ -2489,10 +2830,9 @@ export const Header = memo(function Header({
                 gap: "12px",
                 justifyContent: "flex-start",
                 alignItems: "center",
-                flexWrap: 'wrap',
+                flexWrap: "wrap",
               }}
             >
-
               {/* Bouton Copier JSON */}
               <button
                 onClick={() => {
@@ -2503,8 +2843,8 @@ export const Header = memo(function Header({
                         elements: state.elements,
                       },
                       null,
-                      2
-                    )
+                      2,
+                    ),
                   );
                   setCopySuccess(true);
                   setTimeout(() => setCopySuccess(false), 2000);
@@ -2546,7 +2886,7 @@ export const Header = memo(function Header({
                       elements: state.elements,
                     },
                     null,
-                    2
+                    2,
                   );
                   const blob = new Blob([jsonString], {
                     type: "application/json",
@@ -2666,7 +3006,7 @@ export const Header = memo(function Header({
                 ×
               </button>
             </div>
-            
+
             {/* Formulaire pour choisir une commande */}
             <div style={{ marginBottom: "20px" }}>
               <label
@@ -2763,10 +3103,14 @@ export const Header = memo(function Header({
                   fontSize: "14px",
                   fontWeight: "500",
                   border: "none",
-                  backgroundColor: isLoadingPreview || !previewOrderId ? "#9ca3af" : "#007acc",
+                  backgroundColor:
+                    isLoadingPreview || !previewOrderId ? "#9ca3af" : "#007acc",
                   color: "#ffffff",
                   borderRadius: "6px",
-                  cursor: isLoadingPreview || !previewOrderId ? "not-allowed" : "pointer",
+                  cursor:
+                    isLoadingPreview || !previewOrderId
+                      ? "not-allowed"
+                      : "pointer",
                   opacity: isLoadingPreview || !previewOrderId ? 0.6 : 1,
                 }}
               >
@@ -2778,8 +3122,19 @@ export const Header = memo(function Header({
             {state.htmlPreviewContent ? (
               /* Aperçu HTML */
               <div>
-                <div style={{ marginBottom: "16px", padding: "12px", backgroundColor: "#f8f9fa", borderRadius: "4px", fontSize: "14px", color: "#666" }}>
-                  <strong>ℹ️ Aperçu HTML:</strong> Cette prévisualisation montre comment votre PDF sera rendu avec les paramètres actuels du plugin.
+                <div
+                  style={{
+                    marginBottom: "16px",
+                    padding: "12px",
+                    backgroundColor: "#f8f9fa",
+                    borderRadius: "4px",
+                    fontSize: "14px",
+                    color: "#666",
+                  }}
+                >
+                  <strong>ℹ️ Aperçu HTML:</strong> Cette prévisualisation montre
+                  comment votre PDF sera rendu avec les paramètres actuels du
+                  plugin.
                 </div>
                 <div
                   style={{
@@ -2788,7 +3143,7 @@ export const Header = memo(function Header({
                     padding: "16px",
                     backgroundColor: "#fafafa",
                     maxHeight: "600px",
-                    overflow: "auto"
+                    overflow: "auto",
                   }}
                   dangerouslySetInnerHTML={{ __html: state.htmlPreviewContent }}
                 />
@@ -2818,7 +3173,9 @@ export const Header = memo(function Header({
                       <button
                         key={format.value}
                         onClick={() =>
-                          setPreviewFormat(format.value as "png" | "jpg" | "pdf")
+                          setPreviewFormat(
+                            format.value as "png" | "jpg" | "pdf",
+                          )
                         }
                         style={{
                           padding: "8px 16px",
@@ -2932,5 +3289,3 @@ export const Header = memo(function Header({
     </div>
   );
 });
-
-
