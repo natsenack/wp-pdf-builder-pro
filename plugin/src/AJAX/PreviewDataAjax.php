@@ -61,7 +61,7 @@ class PreviewDataAjax
                     ? \sanitize_text_field($json_body['nonce']) 
                     : (isset($_POST['nonce']) ? \sanitize_text_field($_POST['nonce']) : ''));
                     
-            if (!\pdf_builder_verify_nonce($nonce, 'pdf_builder_preview')) {
+            if (!\pdf_builder_verify_nonce($nonce, 'pdf_builder_ajax')) {
                 \wp_send_json_error([
                     'message' => 'Nonce invalide',
                     'code' => 403
