@@ -530,6 +530,12 @@ function builderReducer(state: BuilderState, action: BuilderAction): BuilderStat
       return newState;
     }
 
+    case 'SET_PREVIEW_MODE':
+      return {
+        ...state,
+        previewMode: action.payload
+      };
+
     case 'NEW_TEMPLATE': {
       return {
         ...initialState,

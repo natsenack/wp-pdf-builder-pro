@@ -395,7 +395,7 @@ export function useTemplate() {
         // 6️⃣ Mettre à jour le state de preview
         dispatch({
           type: 'SET_PREVIEW_MODE',
-          payload: 'preview'
+          payload: 'command'
         });
         
         dispatch({
