@@ -2525,23 +2525,26 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Récupère un template spécifique
      */
     private function get_template($template_id) {
-        $templates_option = get_option('pdf_builder_templates', '{}');
-        $templates_data = json_decode($templates_option, true);
+        // Les templates sont stockés individuellement avec la clé pdf_builder_template_{id}
+        $template_data = get_option("pdf_builder_template_{$template_id}", '');
         
         error_log("[PDF Builder] Template ID recherché: " . var_export($template_id, true));
-        error_log("[PDF Builder] Templates option: " . substr($templates_option, 0, 500));
-        error_log("[PDF Builder] Templates data: " . var_export($templates_data, true));
-
-        if (is_array($templates_data)) {
-            foreach ($templates_data as $template) {
-                error_log("[PDF Builder] Comparaison - Template ID: " . var_export($template['id'] ?? 'N/A', true) . " avec " . var_export($template_id, true));
-                if (($template['id'] ?? '') == $template_id) {
-                    return $template;
-                }
-            }
+        error_log("[PDF Builder] Template option key: pdf_builder_template_{$template_id}");
+        error_log("[PDF Builder] Template data: " . substr($template_data, 0, 500));
+        
+        if (empty($template_data)) {
+            error_log("[PDF Builder] Template vide ou introuvable !");
+            return null;
         }
-
-        return null;
+        
+        // Décoder le JSON du template
+        $template = json_decode($template_data, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log("[PDF Builder] Erreur JSON: " . json_last_error_msg());
+            return null;
+        }
+        
+        return $template;
     }
 
     /**
