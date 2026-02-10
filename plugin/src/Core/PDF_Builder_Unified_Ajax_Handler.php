@@ -2642,19 +2642,33 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
         }
 
-        if (!$template_data || !isset($template_data['canvas']) || !isset($template_data['elements'])) {
+        if (!$template_data || !isset($template_data['elements'])) {
             error_log("[PDF Builder] Template data invalide ou manquante");
+            error_log("[PDF Builder] Template data keys: " . (is_array($template_data) ? implode(', ', array_keys($template_data)) : 'NOT ARRAY'));
             return $this->generate_fallback_html($template, $all_data);
         }
 
-        $canvas = $template_data['canvas'];
         $elements = $template_data['elements'];
 
-        // Dimensions du canvas (en points pour PDF, 1pt = 1/72 inch)
-        $width = $canvas['width'] ?? 595;  // A4 portrait
-        $height = $canvas['height'] ?? 842;
-        $dpi = $canvas['dpi'] ?? 72;
-        $orientation = $canvas['orientation'] ?? 'portrait';
+        // Support de deux formats de canvas:
+        // 1. Format avec objet canvas: {canvas: {width, height}, elements: []}
+        // 2. Format plat: {canvasWidth, canvasHeight, elements: []}
+        if (isset($template_data['canvas'])) {
+            // Format avec objet canvas
+            $canvas = $template_data['canvas'];
+            $width = $canvas['width'] ?? 595;
+            $height = $canvas['height'] ?? 842;
+            $dpi = $canvas['dpi'] ?? 72;
+            $orientation = $canvas['orientation'] ?? 'portrait';
+        } else {
+            // Format plat (par défaut)
+            $width = $template_data['canvasWidth'] ?? 595;
+            $height = $template_data['canvasHeight'] ?? 842;
+            $dpi = $template_data['dpi'] ?? 72;
+            $orientation = $template_data['orientation'] ?? 'portrait';
+        }
+
+        error_log("[PDF Builder] Canvas dimensions: {$width}x{$height} px");
 
         // Début du HTML
         $html = '<!DOCTYPE html>
