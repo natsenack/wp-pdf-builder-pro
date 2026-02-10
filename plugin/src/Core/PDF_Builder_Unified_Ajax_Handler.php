@@ -2526,12 +2526,35 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html = $this->generate_template_html($template, $order);
             error_log("[PDF Builder] HTML généré - Longueur: " . strlen($html) . " caractères");
 
-            // Pour l'instant, retourner l'HTML
-            // TODO: Implémenter la conversion en PDF avec dompdf
-            header('Content-Type: text/html; charset=utf-8');
-            header('Content-Disposition: inline; filename="invoice-' . $order_id . '.html"');
-            echo $html;
-            error_log("[PDF Builder] HTML envoyé au navigateur");
+            // Convertir en PDF avec dompdf
+            require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+            
+            $dompdf = new \Dompdf\Dompdf([
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true,
+                'defaultFont' => 'DejaVu Sans',
+                'fontHeightRatio' => 1.1
+            ]);
+            
+            error_log("[PDF Builder] Chargement HTML dans dompdf");
+            $dompdf->loadHtml($html);
+            
+            // Format papier depuis le template
+            $template_data = json_decode($template['template_data'], true);
+            $width = $template_data['canvasWidth'] ?? 595;
+            $height = $template_data['canvasHeight'] ?? 842;
+            $orientation = ($width > $height) ? 'landscape' : 'portrait';
+            
+            error_log("[PDF Builder] Format: {$width}x{$height}px, orientation: {$orientation}");
+            $dompdf->setPaper([0, 0, $width, $height], $orientation);
+            
+            error_log("[PDF Builder] Rendu PDF");
+            $dompdf->render();
+            
+            error_log("[PDF Builder] Envoi du PDF au navigateur");
+            $dompdf->stream('facture-' . $order->get_order_number() . '.pdf', [
+                'Attachment' => false  // false = afficher dans le navigateur, true = télécharger
+            ]);
             exit;
         } catch (Exception $e) {
             error_log('[PDF Builder] Erreur génération PDF: ' . $e->getMessage());
@@ -2677,6 +2700,10 @@ class PDF_Builder_Unified_Ajax_Handler {
     <meta charset="UTF-8">
     <title>' . esc_html($template['name'] ?? 'Document') . '</title>
     <style>
+        @page {
+            margin: 0;
+            size: ' . $width . 'px ' . $height . 'px;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -2684,19 +2711,36 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         body {
             background: #ffffff;
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: "DejaVu Sans", Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
         }
         .pdf-canvas {
             position: relative;
             width: ' . $width . 'px;
             height: ' . $height . 'px;
             background: #ffffff;
-            margin: 0 auto;
+            margin: 0;
+            padding: 0;
             overflow: hidden;
         }
         .element {
             position: absolute;
             overflow: hidden;
+            word-wrap: break-word;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -2789,9 +2833,28 @@ class PDF_Builder_Unified_Ajax_Handler {
                 return '<strong>Facture N° ' . esc_html($order_data['order']['order_number']) . '</strong>';
             case 'date':
                 return esc_html($order_data['order']['date_formatted']);
+            case 'companyInfo':
+                // Info de l'entreprise depuis les settings
+                return '<div style="line-height: 1.6;">' .
+                       '<strong>' . esc_html(get_bloginfo('name')) . '</strong><br>' .
+                       esc_html(get_option('woocommerce_store_address', '')) . '<br>' .
+                       esc_html(get_option('woocommerce_store_city', '')) .
+                       '</div>';
+            case 'total':
+                return '<strong>' . wc_price($order_data['totals']['total']) . '</strong>';
+            case 'subtotal':
+                return wc_price($order_data['totals']['subtotal']);
+            case 'shipping':
+                return wc_price($order_data['totals']['shipping']);
+            case 'tax':
+                return wc_price($order_data['totals']['tax']);
             case 'text':
             default:
-                return esc_html($element['content'] ?? '');
+                // Interpréter le contenu comme HTML si c'est du texte formaté
+                $content = $element['content'] ?? '';
+                // Remplacer les retours à la ligne par des <br>
+                $content = nl2br(esc_html($content));
+                return $content;
         }
     }
 
