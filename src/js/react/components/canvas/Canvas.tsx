@@ -2866,7 +2866,7 @@ export const Canvas = function Canvas({
       );
 
       // Appliquer le fond seulement si showBackground est activé
-      if (props.showBackground !== false) {
+      if (props.showBackground === true) {
         ctx.fillStyle = bgColor;
         ctx.fillRect(0, 0, element.width, element.height);
       }

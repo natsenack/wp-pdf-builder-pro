@@ -3185,8 +3185,12 @@ class PDF_Builder_Unified_Ajax_Handler {
         if (isset($element['textColor'])) {
             $styles .= " color: {$element['textColor']};";
         }
+        // Appliquer le fond seulement si showBackground est activé (ou non défini pour rétrocompatibilité)
         if (isset($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
-            $styles .= " background-color: {$element['backgroundColor']};";
+            // Si showBackground est défini, on le respecte, sinon on affiche le fond pour rétrocompatibilité
+            if (!isset($element['showBackground']) || $element['showBackground'] === true) {
+                $styles .= " background-color: {$element['backgroundColor']};";
+            }
         }
         
         // Bordures

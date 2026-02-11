@@ -286,13 +286,35 @@ export interface ProductTableElement extends BaseElement {
   mentionType?: string;
   selectedMentions?: string[];
   medleySeparator?: string;
+  separator?: string;
   separatorStyle?: string;
+  separatorColor?: string;
+  separatorWidth?: number;
+  showEmail?: boolean;
+  showPhone?: boolean;
+  showSiret?: boolean;
+  showVat?: boolean;
   theme?: string;
   content?: string;
   lineHeight?: number;
   margin?: number;
   padding?: number;
   text?: string;
+  textColor?: string;
+  fontFamily?: string;
+  fontSize?: number;
+  fontWeight?: string;
+  fontStyle?: string;
+  textAlign?: string;
+  textDecoration?: string;
+  textTransform?: string;
+  letterSpacing?: string;
+  wordSpacing?: string;
+  backgroundColor?: string;
+  borderColor?: string;
+  borderWidth?: number;
+  borderStyle?: string;
+  borderRadius?: number;
   showSeparator?: boolean;
   showBackground?: boolean;
 }
@@ -703,28 +725,6 @@ export interface OrderNumberElementProperties extends BaseElementProperties {
   suffix?: string;
   showOrderDate?: boolean;
   dateFormat?: string;
-}
-
-export interface MentionsElementProperties extends BaseTextProperties {
-  mentionType?: string;
-  selectedMentions?: string[];
-  medleySeparator?: string;
-  separator?: string;
-  separatorStyle?: string;
-  separatorColor?: string;
-  separatorWidth?: number;
-  showEmail?: boolean;
-  showPhone?: boolean;
-  showSiret?: boolean;
-  showVat?: boolean;
-  theme?: string;
-  content?: string;
-  lineHeight?: number;
-  margin?: number;
-  padding?: number;
-  text?: string;
-  showSeparator?: boolean;
-  showBackground?: boolean; // Override
 }
 
 // Interface spécifique pour les éléments CompanyInfo
