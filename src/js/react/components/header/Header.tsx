@@ -210,11 +210,34 @@ export const Header = memo(function Header({
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(16,185,129,0.3);
         }
+        .btn-zoom {
+            background: #6b7280;
+            color: white;
+            padding: 12px 16px;
+        }
+        .btn-zoom:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(107,114,128,0.3);
+        }
+        .zoom-level {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 12px 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            min-width: 70px;
+            text-align: center;
+        }
         .content-wrapper {
             display: flex;
             justify-content: center;
             padding: 20px;
             min-height: 100vh;
+            max-width: 50%;
+            margin: 60px auto 0;
+            transition: transform 0.2s;
+            transform-origin: center top;
         }
         @media print {
             body {
@@ -232,6 +255,13 @@ export const Header = memo(function Header({
 </head>
 <body>
     <div class="toolbar">
+        <button class="btn btn-zoom" onclick="zoomOut()" title="Zoom arrière">
+            <span>🔍➖</span>
+        </button>
+        <div class="zoom-level" id="zoomLevel">100%</div>
+        <button class="btn btn-zoom" onclick="zoomIn()" title="Zoom avant">
+            <span>🔍➕</span>
+        </button>
         <button class="btn btn-download" onclick="downloadHTML()">
             <span>📥</span>
             <span>Télécharger HTML</span>
@@ -242,11 +272,34 @@ export const Header = memo(function Header({
         </button>
     </div>
     
-    <div class="content-wrapper">
+    <div class="content-wrapper" id="contentWrapper">
         ${html.replace(/<!DOCTYPE html>.*?<body[^>]*>/is, '').replace(/<\/body>.*?<\/html>/is, '')}
     </div>
     
     <script>
+        let zoomScale = 1.0;
+        const wrapper = document.getElementById('contentWrapper');
+        const zoomLevelDisplay = document.getElementById('zoomLevel');
+        
+        function updateZoom() {
+            wrapper.style.transform = 'scale(' + zoomScale + ')';
+            zoomLevelDisplay.textContent = Math.round(zoomScale * 100) + '%';
+        }
+        
+        function zoomIn() {
+            if (zoomScale < 3.0) {
+                zoomScale += 0.25;
+                updateZoom();
+            }
+        }
+        
+        function zoomOut() {
+            if (zoomScale > 0.25) {
+                zoomScale -= 0.25;
+                updateZoom();
+            }
+        }
+        
         function downloadHTML() {
             const content = \`${html.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;
             const blob = new Blob([content], { type: 'text/html' });
@@ -471,12 +524,34 @@ export const Header = memo(function Header({
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(16,185,129,0.3);
         }
+        .btn-zoom {
+            background: #6b7280;
+            color: white;
+            padding: 12px 16px;
+        }
+        .btn-zoom:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(107,114,128,0.3);
+        }
+        .zoom-level {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 12px 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            min-width: 70px;
+            text-align: center;
+        }
         .image-container {
             margin-top: 60px;
             background: white;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+            max-width: 50%;
+            transition: transform 0.2s;
+            transform-origin: center top;
         }
         img {
             max-width: 100%;
@@ -501,6 +576,13 @@ export const Header = memo(function Header({
 </head>
 <body>
     <div class="toolbar">
+        <button class="btn btn-zoom" onclick="zoomOut()" title="Zoom arrière">
+            <span>🔍➖</span>
+        </button>
+        <div class="zoom-level" id="zoomLevel">100%</div>
+        <button class="btn btn-zoom" onclick="zoomIn()" title="Zoom avant">
+            <span>🔍➕</span>
+        </button>
         <button class="btn btn-download" onclick="downloadImage()">
             <span>📥</span>
             <span>Télécharger</span>
@@ -511,11 +593,34 @@ export const Header = memo(function Header({
         </button>
     </div>
     
-    <div class="image-container">
+    <div class="image-container" id="imageContainer">
         <img src="${imageDataUrl}" alt="Facture ${order_number}" />
     </div>
     
     <script>
+        let zoomScale = 1.0;
+        const container = document.getElementById('imageContainer');
+        const zoomLevelDisplay = document.getElementById('zoomLevel');
+        
+        function updateZoom() {
+            container.style.transform = 'scale(' + zoomScale + ')';
+            zoomLevelDisplay.textContent = Math.round(zoomScale * 100) + '%';
+        }
+        
+        function zoomIn() {
+            if (zoomScale < 3.0) {
+                zoomScale += 0.25;
+                updateZoom();
+            }
+        }
+        
+        function zoomOut() {
+            if (zoomScale > 0.25) {
+                zoomScale -= 0.25;
+                updateZoom();
+            }
+        }
+        
         function downloadImage() {
             const link = document.createElement('a');
             link.href = '${imageDataUrl}';
