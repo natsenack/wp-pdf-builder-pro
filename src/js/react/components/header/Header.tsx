@@ -212,11 +212,17 @@ export const Header = memo(function Header({
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
           const errorData = await response.json();
-          throw new Error(errorData.data?.message || errorData.message || `Erreur ${response.status}`);
+          throw new Error(
+            errorData.data?.message ||
+              errorData.message ||
+              `Erreur ${response.status}`,
+          );
         } else {
           const errorText = await response.text();
           console.error("[PREVIEW] Erreur serveur:", errorText);
-          throw new Error(`Erreur serveur ${response.status}: ${errorText.substring(0, 200)}`);
+          throw new Error(
+            `Erreur serveur ${response.status}: ${errorText.substring(0, 200)}`,
+          );
         }
       }
 
@@ -237,12 +243,13 @@ export const Header = memo(function Header({
         `[PREVIEW] Erreur génération ${format.toUpperCase()}:`,
         error,
       );
-      
+
       // Afficher un message d'erreur clair à l'utilisateur
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       alert(
         `Erreur lors de la génération ${format.toUpperCase()}\n\n${errorMessage}\n\n` +
-        `Vérifiez que Puppeteer ou wkhtmltoimage est installé sur le serveur.`
+          `Vérifiez que Puppeteer ou wkhtmltoimage est installé sur le serveur.`,
       );
       alert(
         `Erreur lors de la génération ${format.toUpperCase()}. Vérifiez la console pour plus de détails.`,
