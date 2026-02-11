@@ -3669,7 +3669,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             $text = $element['text'] ?? 'Conditions générales de vente disponibles sur demande.';
         }
         
-        $html = '<div class="element" style="' . $base_styles . '">';
+        // Supprimer le line-height du base_styles pour éviter la double application
+        $base_styles_clean = preg_replace('/line-height:\s*[^;]+;/', '', $base_styles);
+        
+        $html = '<div class="element" style="' . $base_styles_clean . ' line-height: 1;">';
         
         // Ajouter le séparateur horizontal si activé
         if ($element['showSeparator'] ?? true) {
@@ -3689,7 +3692,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Wrapper le texte avec line-height explicite pour éviter les différences entre navigateurs/Dompdf
         $line_height = $element['lineHeight'] ?? '1.2';
-        $html .= '<div style="line-height: ' . $line_height . ';">' . nl2br(esc_html($text)) . '</div>';
+        $html .= '<span style="display: inline-block; line-height: ' . $line_height . ';">' . nl2br(esc_html($text)) . '</span>';
         $html .= '</div>';
         
         return $html;
