@@ -103,15 +103,22 @@ export const Header = memo(function Header({
     availableOrientations: ["portrait", "landscape"],
   });
 
-  // Preview system - Simple solution: ouvrir un nouvel onglet avec l'order_id
-  const handlePreview = () => {
-    const orderId = prompt(
-      "Entrez l'ID de la commande WooCommerce pour l'aperçu :",
-      ""
-    );
+  // États pour la modale d'aperçu
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewOrderId, setPreviewOrderId] = useState("");
+  const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
 
-    if (!orderId || orderId.trim() === "") {
-      return; // Annulé ou vide
+  // Ouvrir la modale d'aperçu
+  const handlePreview = () => {
+    setShowPreviewModal(true);
+    setPreviewOrderId("");
+  };
+
+  // Générer un PDF via AJAX
+  const generatePDF = async () => {
+    if (!previewOrderId || previewOrderId.trim() === "") {
+      alert("Veuillez entrer un numéro de commande");
+      return;
     }
 
     const templateId = state.template?.id;
@@ -120,13 +127,40 @@ export const Header = memo(function Header({
       return;
     }
 
-    // Construire l'URL pour ouvrir le template en mode aperçu
-    const previewUrl = `/wp-admin/admin.php?page=pdf-builder-react-editor&template_id=${templateId}&order_id=${orderId.trim()}&preview=1`;
-    
-    debugLog(`📊 [PREVIEW] Ouverture aperçu: ${previewUrl}`);
-    
-    // Ouvrir dans un nouvel onglet
-    window.open(previewUrl, '_blank');
+    setIsGeneratingPreview(true);
+    try {
+      const formData = new FormData();
+      formData.append("action", "pdf_builder_generate_pdf");
+      formData.append("template_id", templateId.toString());
+      formData.append("order_id", previewOrderId.trim());
+      formData.append("nonce", (window as any).pdfBuilderNonce || "");
+
+      const response = await fetch((window as any).pdfBuilderData?.ajaxUrl || "/wp-admin/admin-ajax.php", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la génération du PDF");
+      }
+
+      // Ouvrir le PDF dans un nouvel onglet
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, "_blank");
+      
+      setShowPreviewModal(false);
+    } catch (error) {
+      console.error("[PREVIEW] Erreur génération PDF:", error);
+      alert("Erreur lors de la génération du PDF. Vérifiez la console pour plus de détails.");
+    } finally {
+      setIsGeneratingPreview(false);
+    }
+  };
+
+  // PNG/JPG - Fonctionnalité premium
+  const generateImage = (format: "png" | "jpg") => {
+    alert(`La génération en format ${format.toUpperCase()} est une fonctionnalité premium.\n\nContactez le support pour activer cette option.`);
   };
 
   // Debug logging
@@ -2173,7 +2207,7 @@ export const Header = memo(function Header({
             opacity: isSaving ? 0.6 : 1,
             pointerEvents: isSaving ? "none" : "auto",
           }}
-          title="Aperçu avec une vraie commande (nouvel onglet)"
+          title="Générer un aperçu PDF/PNG/JPG avec une commande réelle"
         >
           <span>👁️</span>
           <span>Aperçu</span>
@@ -2601,6 +2635,169 @@ export const Header = memo(function Header({
                 className="canvas-modal-btn canvas-modal-btn-primary"
               >
                 Sauvegarder
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modale d'aperçu avec sélection de format */}
+      {showPreviewModal && (
+        <div className="canvas-modal-overlay" style={{ display: "flex" }}>
+          <div className="canvas-modal-container" style={{ maxWidth: "500px" }}>
+            <div className="canvas-modal-header">
+              <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "600" }}>
+                <span style={{ fontSize: "24px" }}>👁️</span> Générer un aperçu
+              </h3>
+              <button
+                type="button"
+                className="canvas-modal-close"
+                onClick={() => setShowPreviewModal(false)}
+                title="Fermer"
+                style={{
+                  background: "none",
+                  border: "none",
+                  fontSize: "24px",
+                  cursor: "pointer",
+                  color: "#666",
+                  padding: "4px",
+                }}
+              >
+                &times;
+              </button>
+            </div>
+            <div className="canvas-modal-body">
+              <div className="setting-group">
+                <label className="setting-label">
+                  Numéro de commande WooCommerce
+                </label>
+                <input
+                  type="text"
+                  value={previewOrderId}
+                  onChange={(e) => setPreviewOrderId(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter" && !isGeneratingPreview) {
+                      generatePDF();
+                    }
+                  }}
+                  className="setting-input"
+                  placeholder="Ex: 123"
+                  autoFocus
+                  disabled={isGeneratingPreview}
+                />
+                <div className="setting-hint">
+                  Entrez l'ID d'une commande existante pour générer l'aperçu avec les vraies données
+                </div>
+              </div>
+
+              <div className="setting-group" style={{ marginTop: "24px" }}>
+                <label className="setting-label">Format de sortie</label>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr 1fr",
+                    gap: "12px",
+                  }}
+                >
+                  <button
+                    onClick={generatePDF}
+                    disabled={isGeneratingPreview || !previewOrderId.trim()}
+                    style={{
+                      padding: "12px 16px",
+                      border: "2px solid #2271b1",
+                      borderRadius: "6px",
+                      backgroundColor: "#2271b1",
+                      color: "white",
+                      fontSize: "14px",
+                      fontWeight: "600",
+                      cursor: isGeneratingPreview || !previewOrderId.trim() ? "not-allowed" : "pointer",
+                      opacity: isGeneratingPreview || !previewOrderId.trim() ? 0.5 : 1,
+                      transition: "all 0.2s",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <span style={{ fontSize: "24px" }}>📄</span>
+                    <span>PDF</span>
+                  </button>
+
+                  <button
+                    onClick={() => generateImage("png")}
+                    disabled={isGeneratingPreview}
+                    style={{
+                      padding: "12px 16px",
+                      border: "2px solid #d1d5db",
+                      borderRadius: "6px",
+                      backgroundColor: "#f9fafb",
+                      color: "#6b7280",
+                      fontSize: "14px",
+                      fontWeight: "600",
+                      cursor: isGeneratingPreview ? "not-allowed" : "pointer",
+                      opacity: isGeneratingPreview ? 0.5 : 1,
+                      transition: "all 0.2s",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <span style={{ fontSize: "24px" }}>🖼️</span>
+                    <span>PNG</span>
+                    <span style={{ fontSize: "10px", color: "#d97706" }}>Premium</span>
+                  </button>
+
+                  <button
+                    onClick={() => generateImage("jpg")}
+                    disabled={isGeneratingPreview}
+                    style={{
+                      padding: "12px 16px",
+                      border: "2px solid #d1d5db",
+                      borderRadius: "6px",
+                      backgroundColor: "#f9fafb",
+                      color: "#6b7280",
+                      fontSize: "14px",
+                      fontWeight: "600",
+                      cursor: isGeneratingPreview ? "not-allowed" : "pointer",
+                      opacity: isGeneratingPreview ? 0.5 : 1,
+                      transition: "all 0.2s",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <span style={{ fontSize: "24px" }}>🖼️</span>
+                    <span>JPG</span>
+                    <span style={{ fontSize: "10px", color: "#d97706" }}>Premium</span>
+                  </button>
+                </div>
+              </div>
+
+              {isGeneratingPreview && (
+                <div
+                  style={{
+                    marginTop: "16px",
+                    padding: "12px",
+                    backgroundColor: "#dbeafe",
+                    borderRadius: "6px",
+                    textAlign: "center",
+                    color: "#1e40af",
+                    fontSize: "14px",
+                  }}
+                >
+                  ⏳ Génération du PDF en cours...
+                </div>
+              )}
+            </div>
+            <div className="canvas-modal-footer">
+              <button
+                onClick={() => setShowPreviewModal(false)}
+                className="canvas-modal-btn canvas-modal-btn-secondary"
+                disabled={isGeneratingPreview}
+              >
+                Annuler
               </button>
             </div>
           </div>
