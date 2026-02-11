@@ -698,6 +698,39 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
 
         $this->send_success([], 'Template supprimé avec succès');
     }
+    
+    /**
+     * Handlers directs pour les appels depuis React (sans template_action)
+     */
+    public function handle_save_direct() {
+        try {
+            $this->validate_request();
+            $this->handle_save_template();
+        } catch (Exception $e) {
+            $this->log_error('Erreur save template: ' . $e->getMessage());
+            $this->send_error($e->getMessage(), 500);
+        }
+    }
+    
+    public function handle_load_direct() {
+        try {
+            $this->validate_request();
+            $this->handle_load_template();
+        } catch (Exception $e) {
+            $this->log_error('Erreur load template: ' . $e->getMessage());
+            $this->send_error($e->getMessage(), 500);
+        }
+    }
+    
+    public function handle_delete_direct() {
+        try {
+            $this->validate_request();
+            $this->handle_delete_template();
+        } catch (Exception $e) {
+            $this->log_error('Erreur delete template: ' . $e->getMessage());
+            $this->send_error($e->getMessage(), 500);
+        }
+    }
 }
 
 // Inclure les fonctions utilitaires pour les paramètres
@@ -726,11 +759,11 @@ function pdf_builder_init_ajax_handlers() {
     $settings_handler = new PDF_Builder_Settings_Ajax_Handler();
     add_action('wp_ajax_pdf_builder_save_all_settings', [$settings_handler, 'handle']);
 
-    // Template handler - DISABLED: Use pdf_builder_robust_save_template() instead (pdf-builder-pro.php line 2785)
-    // $template_handler = new PDF_Builder_Template_Ajax_Handler();
-    // add_action('wp_ajax_pdf_builder_save_template', [$template_handler, 'handle']);
-    // add_action('wp_ajax_pdf_builder_load_template', [$template_handler, 'handle']);
-    // add_action('wp_ajax_pdf_builder_delete_template', [$template_handler, 'handle']); // Désactivé pour éviter conflit
+    // Template handler - Gère save/load/delete des templates
+    $template_handler = new PDF_Builder_Template_Ajax_Handler();
+    add_action('wp_ajax_pdf_builder_save_template', [$template_handler, 'handle_save_direct']);
+    add_action('wp_ajax_pdf_builder_load_template', [$template_handler, 'handle_load_direct']);
+    add_action('wp_ajax_pdf_builder_delete_template', [$template_handler, 'handle_delete_direct']);
 }
 
 // Initialiser les handlers unifiés
