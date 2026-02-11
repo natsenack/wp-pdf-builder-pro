@@ -3456,7 +3456,8 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Rendu des informations client
      */
     private function render_customer_info_element($element, $order_data, $base_styles) {
-        $html = '<div class="element" style="' . $base_styles . ' line-height: 1.6;">';
+        $line_height = $element['lineHeight'] ?? '1.6';
+        $html = '<div class="element" style="' . $base_styles . ' line-height: ' . $line_height . ';">';
         
         if ($element['showName'] ?? true) {
             $html .= '<strong>' . esc_html($order_data['customer']['full_name']) . '</strong><br>';
@@ -3479,7 +3480,8 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Rendu des informations entreprise
      */
     private function render_company_info_element($element, $order_data, $base_styles) {
-        $html = '<div class="element" style="' . $base_styles . ' line-height: 1.6;">';
+        $line_height = $element['lineHeight'] ?? '1.6';
+        $html = '<div class="element" style="' . $base_styles . ' line-height: ' . $line_height . ';">';
         
         if ($element['showCompanyName'] ?? true) {
             $html .= '<strong>' . esc_html(get_bloginfo('name')) . '</strong><br>';
@@ -3623,7 +3625,8 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function render_dynamic_text($element, $order_data, $base_styles) {
         $text = $element['text'] ?? $element['textTemplate'] ?? 'Signature du client';
-        return '<div class="element" style="' . $base_styles . ' line-height: 1.6;">' . nl2br(esc_html($text)) . '</div>';
+        $line_height = $element['lineHeight'] ?? '1.6';
+        return '<div class="element" style="' . $base_styles . ' line-height: ' . $line_height . ';">' . nl2br(esc_html($text)) . '</div>';
     }
     
     /**
