@@ -104,11 +104,23 @@ abstract class PDF_Builder_Ajax_Base {
                 }
                 break;
             case 'json':
-                $decoded = json_decode($value, true);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    $this->send_error("JSON invalide pour: {$param_name}", 400);
+                // Si c'est déjà un tableau, le retourner directement
+                if (is_array($value)) {
+                    return $value;
                 }
-                $value = $decoded;
+                
+                // Si c'est une string, essayer de la décoder
+                if (is_string($value)) {
+                    $decoded = json_decode($value, true);
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        error_log("[PDF Builder AJAX] JSON decode error for {$param_name}: " . json_last_error_msg());
+                        error_log("[PDF Builder AJAX] JSON preview: " . substr($value, 0, 500));
+                        $this->send_error("JSON invalide pour: {$param_name} - " . json_last_error_msg(), 400);
+                    }
+                    return $decoded;
+                }
+                
+                $this->send_error("Format invalide pour: {$param_name} (attendu: JSON string ou array)", 400);
                 break;
         }
 
