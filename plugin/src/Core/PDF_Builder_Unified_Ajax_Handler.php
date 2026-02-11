@@ -3189,17 +3189,44 @@ class PDF_Builder_Unified_Ajax_Handler {
             $row_index++;
         }
         
-        // Totaux
-        if ($element['showShipping'] ?? true) {
-            $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px; font-weight: bold;">Livraison:</td>';
-            $html .= '<td style="text-align: right; padding: 8px;">' . wc_price($order_data['totals']['shipping']) . '</td></tr>';
+        // Ligne de séparation avant les totaux
+        $html .= '<tr><td colspan="4" style="border-top: 2px solid #ddd; padding: 0;"></td></tr>';
+        
+        // Sous-total (avant remises et frais)
+        if ($element['showSubtotal'] ?? true) {
+            $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px;">Sous-total:</td>';
+            $html .= '<td style="text-align: right; padding: 8px;">' . wc_price($order_data['totals']['subtotal_raw']) . '</td></tr>';
         }
-        if ($element['showTax'] ?? true) {
-            $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px; font-weight: bold;">TVA:</td>';
-            $html .= '<td style="text-align: right; padding: 8px;">' . wc_price($order_data['totals']['tax']) . '</td></tr>';
+        
+        // Réductions (si présentes)
+        if (($element['showDiscount'] ?? true) && $order_data['totals']['discount_raw'] > 0) {
+            $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px; color: #dc2626;">Remise:</td>';
+            $html .= '<td style="text-align: right; padding: 8px; color: #dc2626;">-' . wc_price($order_data['totals']['discount_raw']) . '</td></tr>';
         }
-        $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px; font-weight: bold; font-size: ' . ($element['totalFontSize'] ?? 12) . 'px;">TOTAL:</td>';
-        $html .= '<td style="text-align: right; padding: 8px; font-weight: bold; font-size: ' . ($element['totalFontSize'] ?? 12) . 'px;">' . wc_price($order_data['totals']['total']) . '</td></tr>';
+        
+        // Frais de service (fees)
+        if (isset($order_data['fees']) && !empty($order_data['fees'])) {
+            foreach ($order_data['fees'] as $fee) {
+                $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px;">' . esc_html($fee['name']) . ':</td>';
+                $html .= '<td style="text-align: right; padding: 8px;">' . $fee['total'] . '</td></tr>';
+            }
+        }
+        
+        // Livraison
+        if (($element['showShipping'] ?? true) && $order_data['totals']['shipping_raw'] > 0) {
+            $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px;">Livraison:</td>';
+            $html .= '<td style="text-align: right; padding: 8px;">' . wc_price($order_data['totals']['shipping_raw']) . '</td></tr>';
+        }
+        
+        // TVA
+        if (($element['showTax'] ?? true) && $order_data['totals']['tax_raw'] > 0) {
+            $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px;">TVA:</td>';
+            $html .= '<td style="text-align: right; padding: 8px;">' . wc_price($order_data['totals']['tax_raw']) . '</td></tr>';
+        }
+        
+        // Total final
+        $html .= '<tr style="border-top: 2px solid #333;"><td colspan="3" style="text-align: right; padding: 8px; font-weight: bold; font-size: ' . ($element['totalFontSize'] ?? 14) . 'px;">TOTAL:</td>';
+        $html .= '<td style="text-align: right; padding: 8px; font-weight: bold; font-size: ' . ($element['totalFontSize'] ?? 14) . 'px;">' . wc_price($order_data['totals']['total_raw']) . '</td></tr>';
         
         $html .= '</tbody></table></div>';
         return $html;

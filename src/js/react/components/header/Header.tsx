@@ -292,7 +292,7 @@ export const Header = memo(function Header({
         const canvas = document.createElement("canvas");
         canvas.width = img.width;
         canvas.height = img.height;
-        
+
         const ctx = canvas.getContext("2d");
         if (!ctx) {
           reject(new Error("Impossible de créer le contexte canvas"));
@@ -2827,14 +2827,19 @@ export const Header = memo(function Header({
             <div className="canvas-modal-body">
               <div className="setting-group">
                 <label className="setting-label">
-                  Numéro de commande WooCommerce <span style={{ fontSize: "12px", color: "#e11d48" }}>*</span>
+                  Numéro de commande WooCommerce{" "}
+                  <span style={{ fontSize: "12px", color: "#e11d48" }}>*</span>
                 </label>
                 <input
                   type="text"
                   value={previewOrderId}
                   onChange={(e) => setPreviewOrderId(e.target.value)}
                   onKeyPress={(e) => {
-                    if (e.key === "Enter" && !isGeneratingPreview && previewOrderId.trim()) {
+                    if (
+                      e.key === "Enter" &&
+                      !isGeneratingPreview &&
+                      previewOrderId.trim()
+                    ) {
                       generatePDF();
                     }
                   }}
@@ -2844,7 +2849,8 @@ export const Header = memo(function Header({
                   disabled={isGeneratingPreview}
                 />
                 <div className="setting-hint">
-                  Le numéro de commande est requis pour générer le document avec les vraies données (client, produits, totaux, etc.)
+                  Le numéro de commande est requis pour générer le document avec
+                  les vraies données (client, produits, totaux, etc.)
                 </div>
               </div>
 
@@ -2887,7 +2893,11 @@ export const Header = memo(function Header({
 
                   <button
                     onClick={() => generateImage("png")}
-                    disabled={isGeneratingPreview || !isPremium || !previewOrderId.trim()}
+                    disabled={
+                      isGeneratingPreview ||
+                      !isPremium ||
+                      !previewOrderId.trim()
+                    }
                     title={
                       !isPremium
                         ? "Fonctionnalité premium - Activez votre licence"
@@ -2906,10 +2916,17 @@ export const Header = memo(function Header({
                       fontSize: "14px",
                       fontWeight: "600",
                       cursor:
-                        isGeneratingPreview || !isPremium || !previewOrderId.trim()
+                        isGeneratingPreview ||
+                        !isPremium ||
+                        !previewOrderId.trim()
                           ? "not-allowed"
                           : "pointer",
-                      opacity: isGeneratingPreview || !isPremium || !previewOrderId.trim() ? 0.5 : 1,
+                      opacity:
+                        isGeneratingPreview ||
+                        !isPremium ||
+                        !previewOrderId.trim()
+                          ? 0.5
+                          : 1,
                       transition: "all 0.2s",
                       display: "flex",
                       flexDirection: "column",
@@ -2928,7 +2945,11 @@ export const Header = memo(function Header({
 
                   <button
                     onClick={() => generateImage("jpg")}
-                    disabled={isGeneratingPreview || !isPremium || !previewOrderId.trim()}
+                    disabled={
+                      isGeneratingPreview ||
+                      !isPremium ||
+                      !previewOrderId.trim()
+                    }
                     title={
                       !isPremium
                         ? "Fonctionnalité premium - Activez votre licence"
@@ -2947,10 +2968,17 @@ export const Header = memo(function Header({
                       fontSize: "14px",
                       fontWeight: "600",
                       cursor:
-                        isGeneratingPreview || !isPremium || !previewOrderId.trim()
+                        isGeneratingPreview ||
+                        !isPremium ||
+                        !previewOrderId.trim()
                           ? "not-allowed"
                           : "pointer",
-                      opacity: isGeneratingPreview || !isPremium || !previewOrderId.trim() ? 0.5 : 1,
+                      opacity:
+                        isGeneratingPreview ||
+                        !isPremium ||
+                        !previewOrderId.trim()
+                          ? 0.5
+                          : 1,
                       transition: "all 0.2s",
                       display: "flex",
                       flexDirection: "column",
