@@ -98,6 +98,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_generate_pdf");
         add_action('wp_ajax_pdf_builder_generate_image', [$this, 'handle_generate_image']);
         error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_generate_image");
+        add_action('wp_ajax_pdf_builder_debug_html', [$this, 'handle_debug_html']);
+        error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_debug_html");
         add_action('wp_ajax_pdf_builder_get_preview_html', [$this, 'handle_get_preview_html']);
         error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_get_preview_html");
     }
@@ -2815,6 +2817,46 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'message' => 'Erreur lors de la génération du HTML',
                 'details' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * DEBUG: Affiche le HTML brut pour inspection
+     */
+    public function handle_debug_html() {
+        // Pas de vérification de permission pour debug (à retirer en prod)
+        
+        $template_id = sanitize_text_field($_POST['template_id'] ?? $_GET['template_id'] ?? '');
+        $order_id = intval($_POST['order_id'] ?? $_GET['order_id'] ?? 0);
+        
+        if (!$template_id || !$order_id) {
+            die('Paramètres manquants: template_id=' . $template_id . ', order_id=' . $order_id);
+        }
+
+        try {
+            if (!function_exists('wc_get_order')) {
+                die('WooCommerce n\'est pas actif');
+            }
+
+            $order = wc_get_order($order_id);
+            if (!$order) {
+                die('Commande introuvable: ' . $order_id);
+            }
+
+            $template = $this->get_template($template_id);
+            if (!$template) {
+                die('Template introuvable: ' . $template_id);
+            }
+
+            // Générer le HTML
+            $html = $this->generate_template_html($template, $order);
+            
+            // Afficher directement le HTML
+            header('Content-Type: text/html; charset=UTF-8');
+            echo $html;
+            exit;
+        } catch (Exception $e) {
+            die('Erreur: ' . $e->getMessage());
         }
     }
 
