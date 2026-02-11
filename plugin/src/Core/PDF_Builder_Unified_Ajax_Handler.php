@@ -3673,14 +3673,14 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Ajouter le séparateur horizontal si activé
         if ($element['showSeparator'] ?? true) {
             $separator_style = $element['separatorStyle'] ?? 'solid';
-            $border_color = $element['borderColor'] ?? '#e5e7eb';
-            $border_width = isset($element['borderWidth']) && $element['borderWidth'] > 0 ? $element['borderWidth'] : 1;
+            $separator_color = $element['separatorColor'] ?? '#e5e7eb';
+            $separator_width = isset($element['separatorWidth']) && $element['separatorWidth'] > 0 ? $element['separatorWidth'] : 1;
             
             $hr_style = sprintf(
                 'border: none; border-top: %dpx %s %s; margin: 10px 0;',
-                $border_width,
+                $separator_width,
                 $separator_style,
-                $border_color
+                $separator_color
             );
             
             $html .= '<hr style="' . $hr_style . '" />';

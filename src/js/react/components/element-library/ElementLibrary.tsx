@@ -422,6 +422,8 @@ const WOOCOMMERCE_ELEMENTS = [
       // ===== OPTIONS VISUELLES =====
       showSeparator: true, // Affiche la barre horizontale
       separatorStyle: "solid", // Style: "solid" ou "dashed"
+      separatorColor: "#e5e7eb", // Couleur du séparateur
+      separatorWidth: 1, // Épaisseur du séparateur en px
       showBackground: false,
       
       // ===== STYLES TEXTE =====

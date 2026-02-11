@@ -840,6 +840,44 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             </select>
           </div>
 
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Couleur du séparateur
+            </label>
+            <input
+              type="color"
+              value={element.separatorColor || '#e5e7eb'}
+              onChange={(e) => onChange(element.id, 'separatorColor', e.target.value)}
+              style={{
+                width: '100%',
+                padding: '4px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Épaisseur du séparateur (px)
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="10"
+              value={element.separatorWidth || 1}
+              onChange={(e) => onChange(element.id, 'separatorWidth', parseInt(e.target.value) || 1)}
+              style={{
+                width: '100%',
+                padding: '6px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '12px'
+              }}
+            />
+          </div>
+
           {/* Section Affichage du fond */}
           <div style={{ marginBottom: '16px' }}>
             <div style={{
