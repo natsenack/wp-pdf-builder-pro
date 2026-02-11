@@ -3015,6 +3015,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 </html>';
 
         error_log("[PDF Builder] HTML généré - Longueur totale: " . strlen($html) . " caractères");
+        error_log("[PDF Builder] HTML preview (500 premiers caractères): " . substr($html, 0, 500));
 
         return $html;
     }
