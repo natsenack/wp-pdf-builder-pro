@@ -2829,6 +2829,8 @@ export const Canvas = function Canvas({
         "SARL au capital de 10 000€ - RCS Lyon 123 456 789\nTVA FR 12 345 678 901 - SIRET 123 456 789 00012\ncontact@maboutique.com - +33 4 12 34 56 78";
       const showSeparator = props.showSeparator !== false;
       const separatorStyle = props.separatorStyle || "solid";
+      const separatorColor = props.separatorColor || "#e5e7eb";
+      const separatorWidth = props.separatorWidth || 1;
       const theme = (props.theme || "legal") as keyof typeof themes;
 
       // Définition des thèmes pour les mentions
@@ -2875,8 +2877,8 @@ export const Canvas = function Canvas({
 
       // Dessiner le séparateur si activé
       if (showSeparator) {
-        ctx.strokeStyle = txtColor;
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = normalizeColor(separatorColor);
+        ctx.lineWidth = separatorWidth;
 
         if (separatorStyle === "double") {
           ctx.beginPath();

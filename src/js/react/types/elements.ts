@@ -710,6 +710,8 @@ export interface MentionsElementProperties extends BaseTextProperties {
   selectedMentions?: string[];
   medleySeparator?: string;
   separatorStyle?: string;
+  separatorColor?: string;
+  separatorWidth?: number;
   theme?: string;
   content?: string;
   lineHeight?: number;
