@@ -192,9 +192,9 @@ export const Header = memo(function Header({
 
     setIsGeneratingPreview(true);
     try {
-      // Étape 1: Obtenir le HTML avec les données de commande
+      // Générer le PDF côté serveur avec dompdf
       const formData = new FormData();
-      formData.append("action", "pdf_builder_get_preview_html");
+      formData.append("action", "pdf_builder_generate_pdf");
       formData.append("template_id", templateId.toString());
       formData.append("order_id", previewOrderId.trim());
       formData.append("nonce", (window as any).pdfBuilderNonce || "");
@@ -208,66 +208,30 @@ export const Header = memo(function Header({
       );
 
       if (!response.ok) {
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-          const errorData = await response.json();
-          throw new Error(
-            errorData.data?.message ||
-              errorData.message ||
-              `Erreur ${response.status}`,
-          );
-        } else {
-          throw new Error(`Erreur serveur ${response.status}`);
-        }
+        throw new Error(`Erreur serveur ${response.status}`);
       }
 
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.data?.message || "Erreur inconnue");
+      // Créer un blob et l'ouvrir dans un nouvel onglet
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      
+      // Ouvrir dans un nouvel onglet
+      const newWindow = window.open(url, "_blank");
+      
+      if (!newWindow) {
+        // Si le popup est bloqué, télécharger le fichier
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `facture-${previewOrderId.trim()}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
+      
+      // Nettoyer après un délai
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
 
-      const { html, width, height, order_number } = result.data;
-
-      // Étape 2: Créer un conteneur temporaire pour le HTML
-      const container = document.createElement("div");
-      container.style.position = "absolute";
-      container.style.left = "-9999px";
-      container.style.top = "0";
-      container.style.width = `${width}px`;
-      container.style.height = `${height}px`;
-      container.innerHTML = html;
-      document.body.appendChild(container);
-
-      // Étape 3: Capturer avec html2canvas
-      const html2canvas = (await import("html2canvas")).default;
-      const canvas = await html2canvas(container, {
-        width: width,
-        height: height,
-        scale: 2, // Haute qualité
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: "#ffffff",
-      });
-
-      // Nettoyer le conteneur
-      document.body.removeChild(container);
-
-      // Étape 4: Convertir en blob et ouvrir dans nouvel onglet
-      canvas.toBlob(
-        (blob) => {
-          if (blob) {
-            const url = URL.createObjectURL(blob);
-            window.open(url, "_blank");
-            // Nettoyer après un délai pour laisser le temps au navigateur d'ouvrir
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-            setShowPreviewModal(false);
-          } else {
-            throw new Error("Échec de la création du blob");
-          }
-        },
-        format === "jpg" ? "image/jpeg" : "image/png",
-        0.95,
-      );
+      setShowPreviewModal(false);
     } catch (error) {
       console.error(
         `[PREVIEW] Erreur génération ${format.toUpperCase()}:`,
@@ -282,43 +246,6 @@ export const Header = memo(function Header({
     } finally {
       setIsGeneratingPreview(false);
     }
-  };
-
-  // Convertir PNG en JPEG côté client
-  const convertToJPEG = (dataURL: string): Promise<Blob> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-
-        const ctx = canvas.getContext("2d");
-        if (!ctx) {
-          reject(new Error("Impossible de créer le contexte canvas"));
-          return;
-        }
-
-        // Fond blanc pour JPG (JPG ne supporte pas la transparence)
-        ctx.fillStyle = "#FFFFFF";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
-
-        canvas.toBlob(
-          (blob) => {
-            if (blob) {
-              resolve(blob);
-            } else {
-              reject(new Error("Échec de la conversion en JPEG"));
-            }
-          },
-          "image/jpeg",
-          0.95, // Qualité 95%
-        );
-      };
-      img.onerror = () => reject(new Error("Échec du chargement de l'image"));
-      img.src = dataURL;
-    });
   };
 
   // Debug logging
@@ -2903,7 +2830,7 @@ export const Header = memo(function Header({
                         ? "Fonctionnalité premium - Activez votre licence"
                         : !previewOrderId.trim()
                           ? "Veuillez entrer un numéro de commande"
-                          : "Générer en PNG avec les données de la commande"
+                          : "Aperçu PDF dans un nouvel onglet (Premium)"
                     }
                     style={{
                       padding: "12px 16px",
@@ -2934,8 +2861,8 @@ export const Header = memo(function Header({
                       gap: "4px",
                     }}
                   >
-                    <span style={{ fontSize: "24px" }}>📸</span>
-                    <span>PNG</span>
+                    <span style={{ fontSize: "24px" }}>👁️</span>
+                    <span>Aperçu</span>
                     {!isPremium && (
                       <span style={{ fontSize: "10px", color: "#d97706" }}>
                         Premium
