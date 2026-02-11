@@ -2669,8 +2669,17 @@ class PDF_Builder_Unified_Ajax_Handler {
                         error_log("[PDF Builder] ✅ Génération réussie avec Browsershot");
                     }
                 } catch (\Exception $e) {
-                    error_log("[PDF Builder] ⚠️ Browsershot échoué: " . $e->getMessage());
+                    $error_msg = $e->getMessage();
+                    error_log("[PDF Builder] ⚠️ Browsershot échoué: " . $error_msg);
+                    error_log("[PDF Builder] Stack trace: " . $e->getTraceAsString());
                     error_log("[PDF Builder] Tentative avec wkhtmltoimage...");
+                    
+                    // Si Puppeteer n'est pas installé
+                    if (strpos($error_msg, 'node_modules/puppeteer') !== false || 
+                        strpos($error_msg, 'puppeteer') !== false ||
+                        strpos($error_msg, 'chrome') !== false) {
+                        error_log("[PDF Builder] Puppeteer semble ne pas être installé");
+                    }
                 }
             }
             
@@ -2683,19 +2692,18 @@ class PDF_Builder_Unified_Ajax_Handler {
                     @unlink($temp_html);
                     
                     error_log("[PDF Builder] ❌ Aucune méthode de conversion disponible");
-                    wp_die(
-                        "Aucune méthode de conversion d'image n'est disponible.\n\n" .
-                        "Installez l'une de ces solutions :\n\n" .
-                        "Option 1 (Recommandé) - Puppeteer/Chrome:\n" .
-                        "  npm install -g puppeteer\n\n" .
-                        "Option 2 - wkhtmltoimage:\n" .
-                        "  - Debian/Ubuntu: apt-get install wkhtmltopdf\n" .
-                        "  - CentOS/RHEL: yum install wkhtmltopdf\n" .
-                        "  - macOS: brew install wkhtmltopdf\n" .
-                        "  - Windows: Téléchargez depuis wkhtmltopdf.org",
-                        '',
-                    ['response' => 501]
-                );
+                    
+                    wp_send_json_error([
+                        'message' => "Aucune méthode de conversion d'image n'est disponible.",
+                        'details' => "Pour activer cette fonctionnalité, installez l'une de ces solutions :\n\n" .
+                                    "Option 1 (Recommandé) - Puppeteer/Chrome:\n" .
+                                    "  npm install -g puppeteer\n\n" .
+                                    "Option 2 - wkhtmltoimage:\n" .
+                                    "  - Windows: Téléchargez depuis wkhtmltopdf.org\n" .
+                                    "  - Linux: apt-get install wkhtmltopdf\n" .
+                                    "  - macOS: brew install wkhtmltopdf",
+                        'code' => 'NO_CONVERSION_TOOL'
+                    ], 501);
                 }
                 
                 // Tentative de conversion avec wkhtmltoimage
@@ -2717,7 +2725,12 @@ class PDF_Builder_Unified_Ajax_Handler {
                     @unlink($temp_image);
                     
                     error_log("[PDF Builder] ❌ Échec conversion wkhtmltoimage");
-                    wp_die('Erreur lors de la conversion HTML vers image', '', ['response' => 500]);
+                    
+                    wp_send_json_error([
+                        'message' => 'Erreur lors de la conversion HTML vers image',
+                        'details' => 'wkhtmltoimage a échoué. Vérifiez les logs PHP pour plus de détails.',
+                        'code' => 'CONVERSION_FAILED'
+                    ], 500);
                 }
                 
                 $conversion_success = true;
@@ -2744,7 +2757,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             exit;
         } catch (Exception $e) {
             error_log('[PDF Builder] Erreur génération image: ' . $e->getMessage());
-            wp_die('Erreur: ' . $e->getMessage(), '', ['response' => 500]);
+            error_log('[PDF Builder] Stack trace: ' . $e->getTraceAsString());
+            
+            wp_send_json_error([
+                'message' => 'Erreur lors de la génération de l\'image',
+                'details' => $e->getMessage(),
+                'code' => 'EXCEPTION'
+            ], 500);
         }
     }
 
