@@ -111,10 +111,14 @@ abstract class PDF_Builder_Ajax_Base {
                 
                 // Si c'est une string, essayer de la décoder
                 if (is_string($value)) {
-                    $decoded = json_decode($value, true);
+                    // Supprimer les backslashes ajoutés par magic_quotes ou double-échappement
+                    $cleaned_value = stripslashes($value);
+                    
+                    $decoded = json_decode($cleaned_value, true);
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         error_log("[PDF Builder AJAX] JSON decode error for {$param_name}: " . json_last_error_msg());
-                        error_log("[PDF Builder AJAX] JSON preview: " . substr($value, 0, 500));
+                        error_log("[PDF Builder AJAX] Original value preview: " . substr($value, 0, 200));
+                        error_log("[PDF Builder AJAX] Cleaned value preview: " . substr($cleaned_value, 0, 200));
                         $this->send_error("JSON invalide pour: {$param_name} - " . json_last_error_msg(), 400);
                     }
                     return $decoded;
