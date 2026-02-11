@@ -3385,6 +3385,20 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html .= '</tr>';
         }
         
+        // Frais de service (total des fees)
+        if (isset($order_data['fees']) && !empty($order_data['fees'])) {
+            $fees_total = 0;
+            foreach ($order_data['fees'] as $fee) {
+                $fees_total += floatval($fee['total_raw'] ?? 0);
+            }
+            if ($fees_total > 0) {
+                $html .= '<tr>';
+                $html .= '<td style="' . $summary_label_style . '">Frais:</td>';
+                $html .= '<td style="' . $summary_style . '">' . wc_price($fees_total) . '</td>';
+                $html .= '</tr>';
+            }
+        }
+        
         // Réductions (si présentes)
         if (($element['showDiscount'] ?? true) && $order_data['totals']['discount_raw'] > 0) {
             $discount_style = str_replace($row_color, '#dc2626', $summary_style);
