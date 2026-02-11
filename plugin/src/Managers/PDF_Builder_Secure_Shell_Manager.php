@@ -19,6 +19,11 @@ class PDF_Builder_Secure_Shell_Manager
             'validate_path' => true,
             'allowed_args' => ['--page-size', '--margin-top', '--margin-bottom', '--margin-left', '--margin-right', '--disable-smart-shrinking', '--enable-local-file-access']
         ],
+        'wkhtmltoimage' => [
+            'command' => 'wkhtmltoimage',
+            'validate_path' => true,
+            'allowed_args' => ['--width', '--height', '--format', '--quality', '--enable-local-file-access', '--disable-smart-width']
+        ],
         'node' => [
             'command' => 'node',
             'validate_path' => true,
@@ -239,6 +244,69 @@ class PDF_Builder_Secure_Shell_Manager
     }
 
     /**
+     * Exécute wkhtmltoimage de manière sécurisée
+     * @param string $html_file Chemin vers le fichier HTML source
+     * @param string $image_path Chemin de destination de l'image
+     * @param string $format Format de sortie (png ou jpg)
+     * @param int $width Largeur en pixels
+     * @param int $height Hauteur en pixels (optionnel)
+     * @param int $quality Qualité pour JPG (0-100)
+     * @return bool True si la conversion a réussi
+     */
+    public static function executeWkhtmltoimage($html_file, $image_path, $format = 'png', $width = 794, $height = null, $quality = 90)
+    {
+        // Valider les chemins des fichiers
+        if (!self::isSecureFilePath($html_file)) {
+            error_log("[SECURE_SHELL] HTML file path insecure: {$html_file}");
+            return false;
+        }
+
+        // Valider le format
+        if (!in_array($format, ['png', 'jpg', 'jpeg'])) {
+            error_log("[SECURE_SHELL] Invalid image format: {$format}");
+            return false;
+        }
+
+        // Construire les arguments
+        $args = [
+            '--format', $format,
+            '--width', (string)$width,
+            '--enable-local-file-access',
+            '--disable-smart-width',
+        ];
+
+        // Ajouter la hauteur si spécifiée
+        if ($height !== null) {
+            $args[] = '--height';
+            $args[] = (string)$height;
+        }
+
+        // Ajouter la qualité pour JPG
+        if (in_array($format, ['jpg', 'jpeg'])) {
+            $args[] = '--quality';
+            $args[] = (string)$quality;
+        }
+
+        // Ajouter les chemins source et destination
+        $args[] = $html_file;
+        $args[] = $image_path;
+
+        error_log("[SECURE_SHELL] Executing wkhtmltoimage with args: " . implode(' ', $args));
+
+        $output = self::executeSecureCommand('wkhtmltoimage', $args);
+        
+        $success = $output !== false && file_exists($image_path) && filesize($image_path) > 0;
+        
+        if (!$success) {
+            error_log("[SECURE_SHELL] wkhtmltoimage failed. Output: " . ($output ?: 'No output'));
+        } else {
+            error_log("[SECURE_SHELL] wkhtmltoimage success. File size: " . filesize($image_path) . " bytes");
+        }
+        
+        return $success;
+    }
+
+    /**
      * Exécute Node.js de manière sécurisée
      */
     public static function executeNode($script_path, $args = [])
@@ -268,8 +336,8 @@ class PDF_Builder_Secure_Shell_Manager
         }
 
         // Liste des extensions autorisées pour les fichiers temporaires
-        $allowed_extensions = ['.html', '.pdf', '.js'];
-        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        $allowed_extensions = ['.html', '.pdf', '.js', '.png', '.jpg', '.jpeg'];
+        $extension = strtolower('.' . pathinfo($path, PATHINFO_EXTENSION));
         if (!in_array($extension, $allowed_extensions)) {
             return false;
         }

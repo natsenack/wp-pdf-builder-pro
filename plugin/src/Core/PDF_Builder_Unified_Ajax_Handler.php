@@ -2629,26 +2629,85 @@ class PDF_Builder_Unified_Ajax_Handler {
             error_log("[PDF Builder] Début génération HTML pour image");
             $html = $this->generate_template_html($template, $order);
             
-            // TODO: Implémenter la conversion HTML → Image
-            // Pour l'instant, retourner une erreur explicative
-            error_log("[PDF Builder] Conversion HTML → {$format} non encore implémentée");
-            wp_die(
-                "La génération d'images {$format} sera bientôt disponible. " .
-                "Cette fonctionnalité nécessite l'installation d'une bibliothèque de conversion HTML vers image.",
-                '',
-                ['response' => 501]
-            );
-
-            // Version future avec conversion :
-            /*
-            // Utiliser une bibliothèque comme wkhtmltoimage ou Puppeteer via Node
-            $image_data = $this->convert_html_to_image($html, $format, $width, $height);
+            // Récupérer les dimensions du template
+            $template_data = json_decode($template['template_data'], true);
+            $width = $template_data['canvasWidth'] ?? 794;
+            $height = $template_data['canvasHeight'] ?? 1123;
             
-            header('Content-Type: image/' . $format);
+            error_log("[PDF Builder] Dimensions image: {$width}x{$height}px, format: {$format}");
+            
+            // Créer un fichier HTML temporaire
+            $temp_dir = sys_get_temp_dir();
+            $temp_html = $temp_dir . '/pdf-builder-' . uniqid() . '.html';
+            $temp_image = $temp_dir . '/pdf-builder-' . uniqid() . '.' . $format;
+            
+            error_log("[PDF Builder] Fichiers temporaires: HTML={$temp_html}, Image={$temp_image}");
+            
+            // Écrire le HTML dans le fichier
+            if (file_put_contents($temp_html, $html) === false) {
+                error_log("[PDF Builder] Erreur écriture fichier HTML temporaire");
+                wp_die('Erreur lors de la création du fichier temporaire', '', ['response' => 500]);
+            }
+            
+            // Vérifier que wkhtmltoimage est disponible
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Secure_Shell_Manager.php';
+            
+            if (!\PDF_Builder\Managers\PDF_Builder_Secure_Shell_Manager::isCommandAvailable('wkhtmltoimage')) {
+                // Nettoyer le fichier temporaire
+                @unlink($temp_html);
+                
+                error_log("[PDF Builder] wkhtmltoimage non installé");
+                wp_die(
+                    "wkhtmltoimage n'est pas installé sur le serveur.\n\n" .
+                    "Pour activer la génération d'images, installez wkhtmltoimage :\n" .
+                    "- Debian/Ubuntu: apt-get install wkhtmltopdf\n" .
+                    "- CentOS/RHEL: yum install wkhtmltopdf\n" .
+                    "- macOS: brew install wkhtmltopdf\n" .
+                    "- Windows: Téléchargez depuis wkhtmltopdf.org",
+                    '',
+                    ['response' => 501]
+                );
+            }
+            
+            // Convertir HTML → Image avec wkhtmltoimage
+            error_log("[PDF Builder] Conversion HTML → {$format}");
+            $quality = ($format === 'jpg') ? 90 : null;
+            
+            $success = \PDF_Builder\Managers\PDF_Builder_Secure_Shell_Manager::executeWkhtmltoimage(
+                $temp_html,
+                $temp_image,
+                $format,
+                $width,
+                $height,
+                $quality
+            );
+            
+            if (!$success) {
+                // Nettoyer les fichiers temporaires
+                @unlink($temp_html);
+                @unlink($temp_image);
+                
+                error_log("[PDF Builder] Échec conversion wkhtmltoimage");
+                wp_die('Erreur lors de la conversion HTML vers image', '', ['response' => 500]);
+            }
+            
+            error_log("[PDF Builder] Conversion réussie, envoi de l'image");
+            
+            // Lire le contenu de l'image
+            $image_content = file_get_contents($temp_image);
+            
+            // Nettoyer les fichiers temporaires
+            @unlink($temp_html);
+            @unlink($temp_image);
+            
+            // Envoyer l'image au navigateur
+            $mime_type = ($format === 'png') ? 'image/png' : 'image/jpeg';
+            header('Content-Type: ' . $mime_type);
             header('Content-Disposition: attachment; filename="facture-' . $order->get_order_number() . '.' . $format . '"');
-            echo $image_data;
+            header('Content-Length: ' . strlen($image_content));
+            
+            echo $image_content;
             exit;
-            */
         } catch (Exception $e) {
             error_log('[PDF Builder] Erreur génération image: ' . $e->getMessage());
             wp_die('Erreur: ' . $e->getMessage(), '', ['response' => 500]);
