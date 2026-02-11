@@ -3080,6 +3080,7 @@ class PDF_Builder_Unified_Ajax_Handler {
     private function build_element_styles($element) {
         $styles = '';
         
+        // Polices et texte
         if (isset($element['fontSize'])) {
             $styles .= " font-size: {$element['fontSize']}px;";
         }
@@ -3092,21 +3093,66 @@ class PDF_Builder_Unified_Ajax_Handler {
         if (isset($element['fontStyle'])) {
             $styles .= " font-style: {$element['fontStyle']};";
         }
-        if (isset($element['textColor'])) {
-            $styles .= " color: {$element['textColor']};";
+        if (isset($element['textDecoration'])) {
+            $styles .= " text-decoration: {$element['textDecoration']};";
         }
-        if (isset($element['backgroundColor'])) {
-            $styles .= " background-color: {$element['backgroundColor']};";
+        if (isset($element['textTransform'])) {
+            $styles .= " text-transform: {$element['textTransform']};";
+        }
+        if (isset($element['letterSpacing']) && $element['letterSpacing'] !== 'normal') {
+            $styles .= " letter-spacing: {$element['letterSpacing']};";
+        }
+        if (isset($element['wordSpacing']) && $element['wordSpacing'] !== 'normal') {
+            $styles .= " word-spacing: {$element['wordSpacing']};";
+        }
+        if (isset($element['lineHeight'])) {
+            $styles .= " line-height: {$element['lineHeight']};";
         }
         if (isset($element['textAlign'])) {
             $styles .= " text-align: {$element['textAlign']};";
         }
+        if (isset($element['verticalAlign'])) {
+            $styles .= " vertical-align: {$element['verticalAlign']};";
+        }
+        
+        // Couleurs
+        if (isset($element['textColor'])) {
+            $styles .= " color: {$element['textColor']};";
+        }
+        if (isset($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
+            $styles .= " background-color: {$element['backgroundColor']};";
+        }
+        
+        // Bordures
         if (isset($element['borderWidth']) && $element['borderWidth'] > 0) {
             $border_color = $element['borderColor'] ?? '#000000';
-            $styles .= " border: {$element['borderWidth']}px solid {$border_color};";
+            $border_style = $element['borderStyle'] ?? 'solid';
+            $styles .= " border: {$element['borderWidth']}px {$border_style} {$border_color};";
         }
-        if (isset($element['opacity'])) {
-            $styles .= " opacity: {$element['opacity']};";
+        if (isset($element['borderRadius']) && $element['borderRadius'] > 0) {
+            $styles .= " border-radius: {$element['borderRadius']}px;";
+        }
+        
+        // Opacité
+        if (isset($element['opacity']) && $element['opacity'] < 100) {
+            $opacity_value = $element['opacity'] / 100;
+            $styles .= " opacity: {$opacity_value};";
+        }
+        
+        // Rotation
+        if (isset($element['rotation']) && $element['rotation'] != 0) {
+            $styles .= " transform: rotate({$element['rotation']}deg);";
+        }
+        
+        // Ombre
+        if (isset($element['shadowOffsetX']) || isset($element['shadowOffsetY']) || isset($element['shadowBlur'])) {
+            $offsetX = $element['shadowOffsetX'] ?? 0;
+            $offsetY = $element['shadowOffsetY'] ?? 0;
+            $blur = $element['shadowBlur'] ?? 0;
+            $color = $element['shadowColor'] ?? '#000000';
+            if ($offsetX != 0 || $offsetY != 0 || $blur != 0) {
+                $styles .= " box-shadow: {$offsetX}px {$offsetY}px {$blur}px {$color};";
+            }
         }
         
         return $styles;
@@ -3158,35 +3204,71 @@ class PDF_Builder_Unified_Ajax_Handler {
     private function render_product_table($element, $order_data, $base_styles) {
         $html = '<div class="element" style="' . $base_styles . '">';
         
+        // Récupérer tous les styles depuis le JSON de l'élément
         $show_borders = $element['showBorders'] ?? false;
-        $border_style = $show_borders ? 'border: 1px solid ' . ($element['borderColor'] ?? '#e5e7eb') . ';' : 'border: none;';
+        $border_color = $element['borderColor'] ?? '#e5e7eb';
+        $border_width = $element['borderWidth'] ?? 1;
+        $border_style = $show_borders ? "border: {$border_width}px solid {$border_color};" : 'border: none;';
+        
+        // Couleurs de fond
         $header_bg = $element['headerBackgroundColor'] ?? '#f9fafb';
         $alt_bg = $element['alternateRowColor'] ?? '#f9fafb';
+        $bg_color = $element['backgroundColor'] ?? '#ffffff';
+        
+        // Couleurs de texte
         $header_color = $element['headerTextColor'] ?? '#111827';
         $row_color = $element['rowTextColor'] ?? '#374151';
+        $total_color = $element['totalTextColor'] ?? '#111827';
         
-        $html .= '<table style="width:100%; border-collapse: collapse;">';
+        // Polices header
+        $header_font_size = $element['headerFontSize'] ?? 12;
+        $header_font_family = $element['headerFontFamily'] ?? 'Arial';
+        $header_font_weight = $element['headerFontWeight'] ?? 'bold';
+        $header_font_style = $element['headerFontStyle'] ?? 'normal';
         
+        // Polices lignes
+        $row_font_size = $element['rowFontSize'] ?? 11;
+        $row_font_family = $element['rowFontFamily'] ?? 'Arial';
+        $row_font_weight = $element['rowFontWeight'] ?? 'normal';
+        $row_font_style = $element['rowFontStyle'] ?? 'normal';
+        
+        // Polices total
+        $total_font_size = $element['totalFontSize'] ?? 12;
+        $total_font_family = $element['totalFontFamily'] ?? 'Arial';
+        $total_font_weight = $element['totalFontWeight'] ?? 'bold';
+        $total_font_style = $element['totalFontStyle'] ?? 'normal';
+        
+        $html .= '<table style="width:100%; border-collapse: collapse; background-color: ' . $bg_color . ';">';
+        
+        // En-têtes
         if ($element['showHeaders'] ?? true) {
+            $header_style = $border_style . " padding: 8px; background: {$header_bg}; color: {$header_color}; " .
+                           "font-size: {$header_font_size}px; font-family: {$header_font_family}; " .
+                           "font-weight: {$header_font_weight}; font-style: {$header_font_style};";
+            
             $html .= '<thead><tr>';
-            $html .= '<th style="' . $border_style . ' padding: 8px; background: ' . $header_bg . '; color: ' . $header_color . '; font-weight: bold;">Produit</th>';
-            $html .= '<th style="' . $border_style . ' padding: 8px; background: ' . $header_bg . '; color: ' . $header_color . '; text-align: center; font-weight: bold;">Qté</th>';
-            $html .= '<th style="' . $border_style . ' padding: 8px; background: ' . $header_bg . '; color: ' . $header_color . '; text-align: right; font-weight: bold;">Prix</th>';
-            $html .= '<th style="' . $border_style . ' padding: 8px; background: ' . $header_bg . '; color: ' . $header_color . '; text-align: right; font-weight: bold;">Total</th>';
+            $html .= '<th style="' . $header_style . '">Produit</th>';
+            $html .= '<th style="' . $header_style . ' text-align: center;">Qté</th>';
+            $html .= '<th style="' . $header_style . ' text-align: right;">Prix</th>';
+            $html .= '<th style="' . $header_style . ' text-align: right;">Total</th>';
             $html .= '</tr></thead>';
         }
         
         $html .= '<tbody>';
         $row_index = 0;
         
+        $row_style_base = $border_style . " padding: 8px; color: {$row_color}; " .
+                         "font-size: {$row_font_size}px; font-family: {$row_font_family}; " .
+                         "font-weight: {$row_font_weight}; font-style: {$row_font_style};";
+        
         // Produits
         foreach ($order_data['products'] as $product) {
             $bg = ($element['showAlternatingRows'] ?? true) && ($row_index % 2 === 1) ? $alt_bg : 'transparent';
             $html .= '<tr style="background: ' . $bg . ';">';
-            $html .= '<td style="' . $border_style . ' padding: 8px; color: ' . $row_color . ';">' . esc_html($product['name']) . '</td>';
-            $html .= '<td style="' . $border_style . ' padding: 8px; text-align: center; color: ' . $row_color . ';">' . esc_html($product['quantity']) . '</td>';
-            $html .= '<td style="' . $border_style . ' padding: 8px; text-align: right; color: ' . $row_color . ';">' . $product['price'] . '</td>';
-            $html .= '<td style="' . $border_style . ' padding: 8px; text-align: right; color: ' . $row_color . ';">' . $product['total'] . '</td>';
+            $html .= '<td style="' . $row_style_base . '">' . esc_html($product['name']) . '</td>';
+            $html .= '<td style="' . $row_style_base . ' text-align: center;">' . esc_html($product['quantity']) . '</td>';
+            $html .= '<td style="' . $row_style_base . ' text-align: right;">' . $product['price'] . '</td>';
+            $html .= '<td style="' . $row_style_base . ' text-align: right;">' . $product['total'] . '</td>';
             $html .= '</tr>';
             $row_index++;
         }
@@ -3196,45 +3278,59 @@ class PDF_Builder_Unified_Ajax_Handler {
             foreach ($order_data['fees'] as $fee) {
                 $bg = ($element['showAlternatingRows'] ?? true) && ($row_index % 2 === 1) ? $alt_bg : 'transparent';
                 $html .= '<tr style="background: ' . $bg . ';">';
-                $html .= '<td style="' . $border_style . ' padding: 8px; color: ' . $row_color . ';">' . esc_html($fee['name']) . '</td>';
-                $html .= '<td style="' . $border_style . ' padding: 8px; text-align: center; color: ' . $row_color . ';">1</td>';
-                $html .= '<td style="' . $border_style . ' padding: 8px; text-align: right; color: ' . $row_color . ';">' . $fee['total'] . '</td>';
-                $html .= '<td style="' . $border_style . ' padding: 8px; text-align: right; color: ' . $row_color . ';">' . $fee['total'] . '</td>';
+                $html .= '<td style="' . $row_style_base . '">' . esc_html($fee['name']) . '</td>';
+                $html .= '<td style="' . $row_style_base . ' text-align: center;">1</td>';
+                $html .= '<td style="' . $row_style_base . ' text-align: right;">' . $fee['total'] . '</td>';
+                $html .= '<td style="' . $row_style_base . ' text-align: right;">' . $fee['total'] . '</td>';
                 $html .= '</tr>';
                 $row_index++;
             }
         }
         
         // Ligne de séparation avant les totaux
-        $html .= '<tr><td colspan="4" style="border-top: 2px solid #ddd; padding: 0;"></td></tr>';
+        if ($show_borders) {
+            $html .= '<tr><td colspan="4" style="border-top: 2px solid ' . $border_color . '; padding: 0;"></td></tr>';
+        }
+        
+        // Style pour les lignes de summary (sous-total, remise, livraison, TVA)
+        $summary_style = "text-align: right; padding: 8px; " .
+                        "font-size: {$row_font_size}px; font-family: {$row_font_family}; " .
+                        "font-weight: {$row_font_weight}; color: {$row_color};";
         
         // Sous-total (avant remises et frais)
         if ($element['showSubtotal'] ?? true) {
-            $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px;">Sous-total:</td>';
-            $html .= '<td style="text-align: right; padding: 8px;">' . wc_price($order_data['totals']['subtotal_raw']) . '</td></tr>';
+            $html .= '<tr><td colspan="3" style="' . $summary_style . '">Sous-total:</td>';
+            $html .= '<td style="' . $summary_style . '">' . wc_price($order_data['totals']['subtotal_raw']) . '</td></tr>';
         }
         
         // Réductions (si présentes)
         if (($element['showDiscount'] ?? true) && $order_data['totals']['discount_raw'] > 0) {
-            $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px; color: #dc2626;">Remise:</td>';
-            $html .= '<td style="text-align: right; padding: 8px; color: #dc2626;">-' . wc_price($order_data['totals']['discount_raw']) . '</td></tr>';
+            $discount_style = str_replace($row_color, '#dc2626', $summary_style);
+            $html .= '<tr><td colspan="3" style="' . $discount_style . '">Remise:</td>';
+            $html .= '<td style="' . $discount_style . '">-' . wc_price($order_data['totals']['discount_raw']) . '</td></tr>';
         }
         
         // Livraison
         if (($element['showShipping'] ?? true) && $order_data['totals']['shipping_raw'] > 0) {
-            $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px;">Livraison:</td>';
-            $html .= '<td style="text-align: right; padding: 8px;">' . wc_price($order_data['totals']['shipping_raw']) . '</td></tr>';
+            $html .= '<tr><td colspan="3" style="' . $summary_style . '">Livraison:</td>';
+            $html .= '<td style="' . $summary_style . '">' . wc_price($order_data['totals']['shipping_raw']) . '</td></tr>';
         }
         
         // TVA
         if (($element['showTax'] ?? true) && $order_data['totals']['tax_raw'] > 0) {
-            $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px;">TVA:</td>';
-            $html .= '<td style="text-align: right; padding: 8px;">' . wc_price($order_data['totals']['tax_raw']) . '</td></tr>';
+            $html .= '<tr><td colspan="3" style="' . $summary_style . '">TVA:</td>';
+            $html .= '<td style="' . $summary_style . '">' . wc_price($order_data['totals']['tax_raw']) . '</td></tr>';
         }
         
-        // Total final
-        $html .= '<tr style="border-top: 2px solid #333;"><td colspan="3" style="text-align: right; padding: 8px; font-weight: bold; font-size: ' . ($element['totalFontSize'] ?? 14) . 'px;">TOTAL:</td>';
-        $html .= '<td style="text-align: right; padding: 8px; font-weight: bold; font-size: ' . ($element['totalFontSize'] ?? 14) . 'px;">' . wc_price($order_data['totals']['total_raw']) . '</td></tr>';
+        // Total final - utilise les styles de total personnalisés du JSON
+        $total_style = "text-align: right; padding: 8px; " .
+                      "font-size: {$total_font_size}px; font-family: {$total_font_family}; " .
+                      "font-weight: {$total_font_weight}; font-style: {$total_font_style}; " .
+                      "color: {$total_color};";
+        
+        $separator_style = $show_borders ? "border-top: 2px solid {$border_color};" : "border-top: 2px solid #333;";
+        $html .= '<tr style="' . $separator_style . '"><td colspan="3" style="' . $total_style . '">TOTAL:</td>';
+        $html .= '<td style="' . $total_style . '">' . wc_price($order_data['totals']['total_raw']) . '</td></tr>';
         
         $html .= '</tbody></table></div>';
         return $html;
