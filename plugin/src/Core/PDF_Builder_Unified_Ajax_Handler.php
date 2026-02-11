@@ -2765,6 +2765,12 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function render_element($element, $order_data) {
         $type = $element['type'] ?? 'text';
+        
+        // Vérifier si l'élément est visible
+        if (isset($element['visible']) && $element['visible'] === false) {
+            return '';
+        }
+        
         $x = $element['x'] ?? 0;
         $y = $element['y'] ?? 0;
         $width = $element['width'] ?? 100;
@@ -2773,49 +2779,81 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Styles de base
         $styles = "left: {$x}px; top: {$y}px; width: {$width}px; height: {$height}px;";
         
-        // Styles additionnels
-        if (isset($element['styles'])) {
-            $elem_styles = $element['styles'];
-            
-            if (isset($elem_styles['fontSize'])) {
-                $styles .= " font-size: {$elem_styles['fontSize']}px;";
-            }
-            if (isset($elem_styles['fontWeight'])) {
-                $styles .= " font-weight: {$elem_styles['fontWeight']};";
-            }
-            if (isset($elem_styles['fontStyle'])) {
-                $styles .= " font-style: {$elem_styles['fontStyle']};";
-            }
-            if (isset($elem_styles['color'])) {
-                $styles .= " color: {$elem_styles['color']};";
-            }
-            if (isset($elem_styles['backgroundColor'])) {
-                $styles .= " background-color: {$elem_styles['backgroundColor']};";
-            }
-            if (isset($elem_styles['textAlign'])) {
-                $styles .= " text-align: {$elem_styles['textAlign']};";
-            }
-            if (isset($elem_styles['padding'])) {
-                $styles .= " padding: {$elem_styles['padding']}px;";
-            }
-            if (isset($elem_styles['borderWidth']) && $elem_styles['borderWidth'] > 0) {
-                $border_color = $elem_styles['borderColor'] ?? '#000000';
-                $styles .= " border: {$elem_styles['borderWidth']}px solid {$border_color};";
-            }
-        }
-
-        // Contenu de l'élément
-        $content = $this->get_element_content($element, $order_data);
+        // Appliquer les styles de l'élément
+        $styles .= $this->build_element_styles($element);
         
-        // Type spécifique
-        if ($type === 'image' && isset($element['src'])) {
-            return '<div class="element" style="' . $styles . '"><img src="' . esc_url($element['src']) . '" style="width: 100%; height: 100%; object-fit: contain;" /></div>';
-        } elseif ($type === 'table') {
-            return $this->render_table_element($element, $order_data, $styles);
-        } else {
-            // Text, customerInfo, orderInfo, etc.
-            return '<div class="element" style="' . $styles . '">' . $content . '</div>';
+        // Rendu spécifique par type
+        switch ($type) {
+            case 'product_table':
+                return $this->render_product_table($element, $order_data, $styles);
+            case 'customer_info':
+                return $this->render_customer_info_element($element, $order_data, $styles);
+            case 'company_info':
+                return $this->render_company_info_element($element, $order_data, $styles);
+            case 'company_logo':
+                return $this->render_company_logo($element, $styles);
+            case 'line':
+                return $this->render_line($element, $styles);
+            case 'document_type':
+                return $this->render_document_type($element, $styles);
+            case 'order_number':
+                return $this->render_order_number($element, $order_data, $styles);
+            case 'woocommerce_order_date':
+                return $this->render_order_date($element, $order_data, $styles);
+            case 'woocommerce_invoice_number':
+                return $this->render_invoice_number($element, $order_data, $styles);
+            case 'dynamic_text':
+                return $this->render_dynamic_text($element, $order_data, $styles);
+            case 'mentions':
+                return $this->render_mentions($element, $styles);
+            case 'image':
+                if (isset($element['src'])) {
+                    return '<div class="element" style="' . $styles . '"><img src="' . esc_url($element['src']) . '" style="width: 100%; height: 100%; object-fit: contain;" /></div>';
+                }
+                return '';
+            case 'text':
+            default:
+                $content = $element['content'] ?? '';
+                return '<div class="element" style="' . $styles . '">' . nl2br(esc_html($content)) . '</div>';
         }
+    }
+    
+    /**
+     * Construit les styles CSS d'un élément
+     */
+    private function build_element_styles($element) {
+        $styles = '';
+        
+        if (isset($element['fontSize'])) {
+            $styles .= " font-size: {$element['fontSize']}px;";
+        }
+        if (isset($element['fontFamily'])) {
+            $styles .= " font-family: {$element['fontFamily']};";
+        }
+        if (isset($element['fontWeight'])) {
+            $styles .= " font-weight: {$element['fontWeight']};";
+        }
+        if (isset($element['fontStyle'])) {
+            $styles .= " font-style: {$element['fontStyle']};";
+        }
+        if (isset($element['textColor'])) {
+            $styles .= " color: {$element['textColor']};";
+        }
+        if (isset($element['backgroundColor'])) {
+            $styles .= " background-color: {$element['backgroundColor']};";
+        }
+        if (isset($element['textAlign'])) {
+            $styles .= " text-align: {$element['textAlign']};";
+        }
+        if (isset($element['borderWidth']) && $element['borderWidth'] > 0) {
+            $border_color = $element['borderColor'] ?? '#000000';
+            $styles .= " border: {$element['borderWidth']}px solid {$border_color};";
+        }
+        if (isset($element['opacity'])) {
+            $styles .= " opacity: {$element['opacity']};";
+        }
+        
+        return $styles;
     }
 
     /**
@@ -2859,57 +2897,186 @@ class PDF_Builder_Unified_Ajax_Handler {
     }
 
     /**
-     * Génère le HTML des informations client
+     * Rendu du tableau de produits WooCommerce
      */
-    private function render_customer_info($order_data) {
-        $html = '<div style="line-height: 1.6;">';
-        $html .= '<strong>' . esc_html($order_data['customer']['full_name']) . '</strong><br>';
-        $html .= esc_html($order_data['customer']['email']) . '<br>';
-        if (!empty($order_data['customer']['phone'])) {
-            $html .= esc_html($order_data['customer']['phone']) . '<br>';
-        }
-        $html .= esc_html($order_data['billing']['full_address']);
-        $html .= '</div>';
-        return $html;
-    }
-
-    /**
-     * Génère le HTML des informations de commande
-     */
-    private function render_order_info($order_data) {
-        $html = '<div style="line-height: 1.6;">';
-        $html .= '<strong>Commande:</strong> ' . esc_html($order_data['order']['order_number']) . '<br>';
-        $html .= '<strong>Date:</strong> ' . esc_html($order_data['order']['date_formatted']) . '<br>';
-        $html .= '<strong>Statut:</strong> ' . esc_html($order_data['order']['status_label']);
-        $html .= '</div>';
-        return $html;
-    }
-
-    /**
-     * Génère le HTML d'un tableau de produits
-     */
-    private function render_table_element($element, $order_data, $base_styles) {
+    private function render_product_table($element, $order_data, $base_styles) {
         $html = '<div class="element" style="' . $base_styles . '">';
-        $html .= '<table style="width:100%; border-collapse: collapse;">';
-        $html .= '<thead><tr>';
-        $html .= '<th style="border: 1px solid #ddd; padding: 8px; background: #f5f5f5;">Produit</th>';
-        $html .= '<th style="border: 1px solid #ddd; padding: 8px; background: #f5f5f5; width: 60px;">Qté</th>';
-        $html .= '<th style="border: 1px solid #ddd; padding: 8px; background: #f5f5f5; width: 80px;">Prix</th>';
-        $html .= '<th style="border: 1px solid #ddd; padding: 8px; background: #f5f5f5; width: 80px;">Total</th>';
-        $html .= '</tr></thead><tbody>';
         
-        foreach ($order_data['products'] as $product) {
-            $html .= '<tr>';
-            $html .= '<td style="border: 1px solid #ddd; padding: 8px;">' . esc_html($product['name']) . '</td>';
-            $html .= '<td style="border: 1px solid #ddd; padding: 8px; text-align: center;">' . esc_html($product['quantity']) . '</td>';
-            $html .= '<td style="border: 1px solid #ddd; padding: 8px; text-align: right;">' . $product['price'] . '</td>';
-            $html .= '<td style="border: 1px solid #ddd; padding: 8px; text-align: right;">' . $product['total'] . '</td>';
-            $html .= '</tr>';
+        $show_borders = $element['showBorders'] ?? false;
+        $border_style = $show_borders ? 'border: 1px solid ' . ($element['borderColor'] ?? '#e5e7eb') . ';' : 'border: none;';
+        $header_bg = $element['headerBackgroundColor'] ?? '#f9fafb';
+        $alt_bg = $element['alternateRowColor'] ?? '#f9fafb';
+        $header_color = $element['headerTextColor'] ?? '#111827';
+        $row_color = $element['rowTextColor'] ?? '#374151';
+        
+        $html .= '<table style="width:100%; border-collapse: collapse;">';
+        
+        if ($element['showHeaders'] ?? true) {
+            $html .= '<thead><tr>';
+            $html .= '<th style="' . $border_style . ' padding: 8px; background: ' . $header_bg . '; color: ' . $header_color . '; font-weight: bold;">Produit</th>';
+            $html .= '<th style="' . $border_style . ' padding: 8px; background: ' . $header_bg . '; color: ' . $header_color . '; text-align: center; font-weight: bold;">Qté</th>';
+            $html .= '<th style="' . $border_style . ' padding: 8px; background: ' . $header_bg . '; color: ' . $header_color . '; text-align: right; font-weight: bold;">Prix</th>';
+            $html .= '<th style="' . $border_style . ' padding: 8px; background: ' . $header_bg . '; color: ' . $header_color . '; text-align: right; font-weight: bold;">Total</th>';
+            $html .= '</tr></thead>';
         }
+        
+        $html .= '<tbody>';
+        $row_index = 0;
+        foreach ($order_data['products'] as $product) {
+            $bg = ($element['showAlternatingRows'] ?? true) && ($row_index % 2 === 1) ? $alt_bg : 'transparent';
+            $html .= '<tr style="background: ' . $bg . ';">';
+            $html .= '<td style="' . $border_style . ' padding: 8px; color: ' . $row_color . ';">' . esc_html($product['name']) . '</td>';
+            $html .= '<td style="' . $border_style . ' padding: 8px; text-align: center; color: ' . $row_color . ';">' . esc_html($product['quantity']) . '</td>';
+            $html .= '<td style="' . $border_style . ' padding: 8px; text-align: right; color: ' . $row_color . ';">' . $product['price'] . '</td>';
+            $html .= '<td style="' . $border_style . ' padding: 8px; text-align: right; color: ' . $row_color . ';">' . $product['total'] . '</td>';
+            $html .= '</tr>';
+            $row_index++;
+        }
+        
+        // Totaux
+        if ($element['showShipping'] ?? true) {
+            $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px; font-weight: bold;">Livraison:</td>';
+            $html .= '<td style="text-align: right; padding: 8px;">' . wc_price($order_data['totals']['shipping']) . '</td></tr>';
+        }
+        if ($element['showTax'] ?? true) {
+            $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px; font-weight: bold;">TVA:</td>';
+            $html .= '<td style="text-align: right; padding: 8px;">' . wc_price($order_data['totals']['tax']) . '</td></tr>';
+        }
+        $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px; font-weight: bold; font-size: ' . ($element['totalFontSize'] ?? 12) . 'px;">TOTAL:</td>';
+        $html .= '<td style="text-align: right; padding: 8px; font-weight: bold; font-size: ' . ($element['totalFontSize'] ?? 12) . 'px;">' . wc_price($order_data['totals']['total']) . '</td></tr>';
         
         $html .= '</tbody></table></div>';
         return $html;
     }
+    
+    /**
+     * Rendu des informations client
+     */
+    private function render_customer_info_element($element, $order_data, $base_styles) {
+        $html = '<div class="element" style="' . $base_styles . ' line-height: 1.6;">';
+        
+        if ($element['showName'] ?? true) {
+            $html .= '<strong>' . esc_html($order_data['customer']['full_name']) . '</strong><br>';
+        }
+        if ($element['showEmail'] ?? true) {
+            $html .= esc_html($order_data['customer']['email']) . '<br>';
+        }
+        if (($element['showPhone'] ?? true) && !empty($order_data['customer']['phone'])) {
+            $html .= esc_html($order_data['customer']['phone']) . '<br>';
+        }
+        if ($element['showAddress'] ?? true) {
+            $html .= esc_html($order_data['billing']['full_address']);
+        }
+        
+        $html .= '</div>';
+        return $html;
+    }
+    
+    /**
+     * Rendu des informations entreprise
+     */
+    private function render_company_info_element($element, $order_data, $base_styles) {
+        $html = '<div class="element" style="' . $base_styles . ' line-height: 1.6;">';
+        
+        if ($element['showCompanyName'] ?? true) {
+            $html .= '<strong>' . esc_html(get_bloginfo('name')) . '</strong><br>';
+        }
+        if ($element['showAddress'] ?? true) {
+            $address = get_option('woocommerce_store_address', '');
+            $city = get_option('woocommerce_store_city', '');
+            $postcode = get_option('woocommerce_store_postcode', '');
+            if ($address) $html .= esc_html($address) . '<br>';
+            if ($postcode || $city) $html .= esc_html($postcode . ' ' . $city) . '<br>';
+        }
+        if (($element['showEmail'] ?? true)) {
+            $html .= esc_html(get_option('admin_email', '')) . '<br>';
+        }
+        if (($element['showPhone'] ?? true)) {
+            $phone = get_option('woocommerce_store_phone', '');
+            if ($phone) $html .= esc_html($phone) . '<br>';
+        }
+        if (($element['showSiret'] ?? true) && isset($element['content'])) {
+            $html .= esc_html($element['content']);
+        }
+        
+        $html .= '</div>';
+        return $html;
+    }
+    
+    /**
+     * Rendu du logo entreprise
+     */
+    private function render_company_logo($element, $base_styles) {
+        $src = $element['src'] ?? '';
+        if (!$src) return '';
+        
+        $object_fit = $element['objectFit'] ?? 'contain';
+        return '<div class="element" style="' . $base_styles . '"><img src="' . esc_url($src) . '" style="width: 100%; height: 100%; object-fit: ' . $object_fit . ';" /></div>';
+    }
+    
+    /**
+     * Rendu d'une ligne de séparation
+     */
+    private function render_line($element, $base_styles) {
+        $color = $element['strokeColor'] ?? '#000000';
+        $width = $element['strokeWidth'] ?? 1;
+        return '<div class="element" style="' . $base_styles . ' border-top: ' . $width . 'px solid ' . $color . ';"></div>';
+    }
+    
+    /**
+     * Rendu du type de document
+     */
+    private function render_document_type($element, $base_styles) {
+        $title = $element['title'] ?? 'FACTURE';
+        return '<div class="element" style="' . $base_styles . ' display: flex; align-items: center; justify-content: center;">' .
+               '<strong>' . esc_html($title) . '</strong></div>';
+    }
+    
+    /**
+     * Rendu du numéro de commande
+     */
+    private function render_order_number($element, $order_data, $base_styles) {
+        $number = $order_data['order']['order_number'];
+        $show_label = $element['showLabel'] ?? false;
+        $label = $element['labelText'] ?? 'N° ';
+        
+        $content = $show_label ? $label . $number : 'N° ' . $number;
+        return '<div class="element" style="' . $base_styles . '">' . esc_html($content) . '</div>';
+    }
+    
+    /**
+     * Rendu de la date de commande
+     */
+    private function render_order_date($element, $order_data, $base_styles) {
+        return '<div class="element" style="' . $base_styles . '">' . esc_html($order_data['order']['date_formatted']) . '</div>';
+    }
+    
+    /**
+     * Rendu du numéro de facture
+     */
+    private function render_invoice_number($element, $order_data, $base_styles) {
+        $invoice_number = 'INV-' . $order_data['order']['order_number'];
+        return '<div class="element" style="' . $base_styles . '">' . esc_html($invoice_number) . '</div>';
+    }
+    
+    /**
+     * Rendu de texte dynamique
+     */
+    private function render_dynamic_text($element, $order_data, $base_styles) {
+        $text = $element['text'] ?? $element['textTemplate'] ?? 'Signature du client';
+        return '<div class="element" style="' . $base_styles . ' line-height: 1.6;">' . nl2br(esc_html($text)) . '</div>';
+    }
+    
+    /**
+     * Rendu des mentions légales
+     */
+    private function render_mentions($element, $base_styles) {
+        $text = $element['text'] ?? 'Conditions générales de vente disponibles sur demande.';
+        $font_size = $element['fontSize'] ?? 9;
+        return '<div class="element" style="' . $base_styles . ' font-size: ' . $font_size . 'px; text-align: center;">' . nl2br(esc_html($text)) . '</div>';
+    }
+
+
 
     /**
      * Génère un HTML de secours si le template n'est pas valide
