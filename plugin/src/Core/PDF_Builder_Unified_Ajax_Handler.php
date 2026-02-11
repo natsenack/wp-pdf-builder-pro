@@ -2948,6 +2948,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
 
         error_log("[PDF Builder] Canvas dimensions: {$width}x{$height} px");
+        error_log("[PDF Builder] Nombre d'éléments à rendre: " . count($elements));
 
         // Début du HTML
         $html = '<!DOCTYPE html>
@@ -3013,6 +3014,8 @@ class PDF_Builder_Unified_Ajax_Handler {
 </body>
 </html>';
 
+        error_log("[PDF Builder] HTML généré - Longueur totale: " . strlen($html) . " caractères");
+
         return $html;
     }
 
@@ -3021,9 +3024,13 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function render_element($element, $order_data) {
         $type = $element['type'] ?? 'text';
+        $element_id = $element['id'] ?? 'unknown';
+        
+        error_log("[PDF Builder] Rendu élément : type={$type}, id={$element_id}");
         
         // Vérifier si l'élément est visible
         if (isset($element['visible']) && $element['visible'] === false) {
+            error_log("[PDF Builder] Élément {$element_id} non visible, ignoré");
             return '';
         }
         
@@ -3039,39 +3046,55 @@ class PDF_Builder_Unified_Ajax_Handler {
         $styles .= $this->build_element_styles($element);
         
         // Rendu spécifique par type
+        $rendered = '';
         switch ($type) {
             case 'product_table':
-                return $this->render_product_table($element, $order_data, $styles);
+                $rendered = $this->render_product_table($element, $order_data, $styles);
+                break;
             case 'customer_info':
-                return $this->render_customer_info_element($element, $order_data, $styles);
+                $rendered = $this->render_customer_info_element($element, $order_data, $styles);
+                break;
             case 'company_info':
-                return $this->render_company_info_element($element, $order_data, $styles);
+                $rendered = $this->render_company_info_element($element, $order_data, $styles);
+                break;
             case 'company_logo':
-                return $this->render_company_logo($element, $styles);
+                $rendered = $this->render_company_logo($element, $styles);
+                break;
             case 'line':
-                return $this->render_line($element, $styles);
+                $rendered = $this->render_line($element, $styles);
+                break;
             case 'document_type':
-                return $this->render_document_type($element, $styles);
+                $rendered = $this->render_document_type($element, $styles);
+                break;
             case 'order_number':
-                return $this->render_order_number($element, $order_data, $styles);
+                $rendered = $this->render_order_number($element, $order_data, $styles);
+                break;
             case 'woocommerce_order_date':
-                return $this->render_order_date($element, $order_data, $styles);
+                $rendered = $this->render_order_date($element, $order_data, $styles);
+                break;
             case 'woocommerce_invoice_number':
-                return $this->render_invoice_number($element, $order_data, $styles);
+                $rendered = $this->render_invoice_number($element, $order_data, $styles);
+                break;
             case 'dynamic_text':
-                return $this->render_dynamic_text($element, $order_data, $styles);
+                $rendered = $this->render_dynamic_text($element, $order_data, $styles);
+                break;
             case 'mentions':
-                return $this->render_mentions($element, $styles);
+                $rendered = $this->render_mentions($element, $styles);
+                break;
             case 'image':
                 if (isset($element['src'])) {
-                    return '<div class="element" style="' . $styles . '"><img src="' . esc_url($element['src']) . '" style="width: 100%; height: 100%; object-fit: contain;" /></div>';
+                    $rendered = '<div class="element" style="' . $styles . '"><img src="' . esc_url($element['src']) . '" style="width: 100%; height: 100%; object-fit: contain;" /></div>';
                 }
-                return '';
+                break;
             case 'text':
             default:
                 $content = $element['content'] ?? '';
-                return '<div class="element" style="' . $styles . '">' . nl2br(esc_html($content)) . '</div>';
+                $rendered = '<div class="element" style="' . $styles . '">' . nl2br(esc_html($content)) . '</div>';
+                break;
         }
+        
+        error_log("[PDF Builder] Élément {$element_id} rendu: " . strlen($rendered) . " caractères");
+        return $rendered;
     }
     
     /**
