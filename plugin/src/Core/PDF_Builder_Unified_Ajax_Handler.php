@@ -93,9 +93,11 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Actions canvas
         add_action('wp_ajax_pdf_builder_save_canvas_settings', [$this, 'handle_save_canvas_settings']);
         
-        // Actions de génération PDF
+        // Actions de génération PDF et images
         add_action('wp_ajax_pdf_builder_generate_pdf', [$this, 'handle_generate_pdf']);
         error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_generate_pdf");
+        add_action('wp_ajax_pdf_builder_generate_image', [$this, 'handle_generate_image']);
+        error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_generate_image");
     }
 
     /**
@@ -2558,6 +2560,97 @@ class PDF_Builder_Unified_Ajax_Handler {
             exit;
         } catch (Exception $e) {
             error_log('[PDF Builder] Erreur génération PDF: ' . $e->getMessage());
+            wp_die('Erreur: ' . $e->getMessage(), '', ['response' => 500]);
+        }
+    }
+
+    /**
+     * Génère une image (PNG/JPG) à partir d'un template et d'une commande
+     * Fonctionnalité PREMIUM uniquement
+     */
+    public function handle_generate_image() {
+        error_log("[PDF Builder] ========== GÉNÉRATION IMAGE DÉMARRÉE ==========");
+        error_log("[PDF Builder] POST params: " . json_encode($_POST));
+        
+        // Vérifier les permissions
+        if (!is_user_logged_in() || !current_user_can('edit_shop_orders')) {
+            error_log("[PDF Builder] Permission refusée");
+            wp_die('Permission refusée', '', ['response' => 403]);
+        }
+
+        // Vérifier le statut premium
+        if (class_exists('\PDF_Builder\Managers\PDF_Builder_License_Manager')) {
+            $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+            if (!$license_manager->isPremium()) {
+                error_log("[PDF Builder] Licence premium requise pour la génération d'images");
+                wp_die('Cette fonctionnalité nécessite une licence premium', '', ['response' => 403]);
+            }
+        } else {
+            error_log("[PDF Builder] License Manager non disponible");
+            wp_die('Système de licence non disponible', '', ['response' => 500]);
+        }
+
+        $template_id = sanitize_text_field($_POST['template_id'] ?? '');
+        $order_id = intval($_POST['order_id'] ?? 0);
+        $format = sanitize_text_field($_POST['format'] ?? 'png');
+        
+        error_log("[PDF Builder] Template ID: '{$template_id}', Order ID: {$order_id}, Format: {$format}");
+
+        if (!$template_id || !$order_id || !in_array($format, ['png', 'jpg'])) {
+            error_log("[PDF Builder] Paramètres manquants ou invalides");
+            wp_die('Paramètres manquants ou invalides', '', ['response' => 400]);
+        }
+
+        try {
+            // Vérifier que WooCommerce est actif
+            if (!function_exists('wc_get_order')) {
+                error_log("[PDF Builder] WooCommerce non actif");
+                wp_die('WooCommerce n\'est pas actif', '', ['response' => 500]);
+            }
+
+            $order = wc_get_order($order_id);
+            if (!$order) {
+                error_log("[PDF Builder] Commande #{$order_id} introuvable");
+                wp_die('Commande introuvable', '', ['response' => 404]);
+            }
+            
+            error_log("[PDF Builder] Commande #{$order_id} trouvée");
+
+            // Récupérer le template
+            $template = $this->get_template($template_id);
+            if (!$template) {
+                error_log("[PDF Builder] Template '{$template_id}' introuvable");
+                wp_die('Modèle introuvable', '', ['response' => 404]);
+            }
+            
+            error_log("[PDF Builder] Template '{$template_id}' trouvé");
+
+            // Générer l'HTML avec les vraies données
+            error_log("[PDF Builder] Début génération HTML pour image");
+            $html = $this->generate_template_html($template, $order);
+            
+            // TODO: Implémenter la conversion HTML → Image
+            // Pour l'instant, retourner une erreur explicative
+            error_log("[PDF Builder] Conversion HTML → {$format} non encore implémentée");
+            wp_die(
+                "La génération d'images {$format} sera bientôt disponible. " .
+                "Cette fonctionnalité nécessite l'installation d'une bibliothèque de conversion HTML vers image.",
+                '',
+                ['response' => 501]
+            );
+
+            // Version future avec conversion :
+            /*
+            // Utiliser une bibliothèque comme wkhtmltoimage ou Puppeteer via Node
+            $image_data = $this->convert_html_to_image($html, $format, $width, $height);
+            
+            header('Content-Type: image/' . $format);
+            header('Content-Disposition: attachment; filename="facture-' . $order->get_order_number() . '.' . $format . '"');
+            echo $image_data;
+            exit;
+            */
+        } catch (Exception $e) {
+            error_log('[PDF Builder] Erreur génération image: ' . $e->getMessage());
             wp_die('Erreur: ' . $e->getMessage(), '', ['response' => 500]);
         }
     }
