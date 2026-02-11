@@ -3671,8 +3671,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         $font_size = $element['fontSize'] ?? 9;
         $text_align = $element['textAlign'] ?? 'center';
+        $line_height = $element['lineHeight'] ?? '1.4';
         
-        $html = '<div class="element" style="' . $base_styles . ' font-size: ' . $font_size . 'px; text-align: ' . $text_align . '; line-height: 1.4; padding: 0; margin: 0;">';
+        $html = '<div class="element" style="' . $base_styles . ' font-size: ' . $font_size . 'px; text-align: ' . $text_align . '; line-height: ' . $line_height . '; padding: 0; margin: 0;">';
         
         // Ajouter le séparateur horizontal si activé
         if ($element['showSeparator'] ?? true) {

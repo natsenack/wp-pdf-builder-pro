@@ -42,7 +42,7 @@ export interface ProductTableTotals {
 // Les frais sont au même niveau que les produits, pas imbriqués dans les totaux
 export interface ProductTableData {
   products: ProductTableProduct[];
-  fees: ProductTableFee[];  // ✅ REFACTOR: Frais au même niveau que produits
+  fees: ProductTableFee[]; // ✅ REFACTOR: Frais au même niveau que produits
   totals: ProductTableTotals;
 }
 
@@ -77,14 +77,14 @@ export interface BaseElement {
   locked: boolean;
   createdAt: Date;
   updatedAt: Date;
-  
+
   // ✅ NEW: Support pour données réelles vs fictives
   /** Indique si cet élément utilise des données réelles (WooCommerce) */
   isRealDataElement?: boolean;
-  
+
   /** Valeur fictive/par défaut affichée en édition */
   defaultTestValue?: unknown;
-  
+
   /** Identifiant de la propriété réelle à récupérer depuis WooCommerce */
   realDataKey?: string;
 }
@@ -102,7 +102,7 @@ export interface BaseElementProperties {
 }
 
 export interface OrderNumberElement extends BaseElement {
-  type: 'order_number';
+  type: "order_number";
   // Propriétés d'affichage
   showHeaders?: boolean;
   showBorders?: boolean;
@@ -110,8 +110,8 @@ export interface OrderNumberElement extends BaseElement {
   showLabel?: boolean;
   showDate?: boolean;
   // Propriétés de mise en page
-  contentAlign?: 'left' | 'center' | 'right';
-  labelPosition?: 'above' | 'left' | 'right' | 'below';
+  contentAlign?: "left" | "center" | "right";
+  labelPosition?: "above" | "left" | "right" | "below";
   labelText?: string;
   // Propriétés de police générales
   fontFamily?: string;
@@ -155,7 +155,7 @@ export interface OrderNumberElement extends BaseElement {
 }
 
 export interface WoocommerceOrderDateElement extends BaseElement {
-  type: 'woocommerce_order_date';
+  type: "woocommerce_order_date";
   dateFormat?: string;
   showTime?: boolean;
   fontFamily?: string;
@@ -172,7 +172,7 @@ export interface WoocommerceOrderDateElement extends BaseElement {
 }
 
 export interface WoocommerceInvoiceNumberElement extends BaseElement {
-  type: 'woocommerce_invoice_number';
+  type: "woocommerce_invoice_number";
   prefix?: string;
   suffix?: string;
   fontFamily?: string;
@@ -189,7 +189,7 @@ export interface WoocommerceInvoiceNumberElement extends BaseElement {
 }
 
 export interface DynamicTextElement extends BaseElement {
-  type: 'dynamic_text';
+  type: "dynamic_text";
   text?: string;
   content?: string;
   textTemplate?: string;
@@ -201,7 +201,7 @@ export interface DynamicTextElement extends BaseElement {
   fontFamily?: string;
   fontWeight?: string;
   fontStyle?: string;
-  textAlign?: 'left' | 'center' | 'right';
+  textAlign?: "left" | "center" | "right";
   autoWrap?: boolean;
   bold?: boolean;
   italic?: boolean;
@@ -211,7 +211,7 @@ export interface DynamicTextElement extends BaseElement {
 }
 
 export interface ProductTableElement extends BaseElement {
-  type: 'product_table';
+  type: "product_table";
   // Propriétés d'affichage
   showHeaders?: boolean;
   showBorders?: boolean;
@@ -251,7 +251,7 @@ export interface ProductTableElement extends BaseElement {
   totalFontWeight?: string;
   totalFontStyle?: string;
   // Propriétés d'alignement
-  textAlign?: 'left' | 'center' | 'right';
+  textAlign?: "left" | "center" | "right";
   headerBackgroundColor?: string;
   headerTextColor?: string;
   bodyBackgroundColor?: string;
@@ -270,19 +270,20 @@ export interface ProductTableElement extends BaseElement {
   taxRate?: number;
   globalDiscount?: number;
   orderFees?: number;
-  verticalAlign?: 'top' | 'middle' | 'bottom';
-  
+  verticalAlign?: "top" | "middle" | "bottom";
+
   // ✅ NEW: Données produits, frais et totaux
   /** Produits affichés dans le tableau (fictifs en édition, réels en aperçu) */
   products?: ProductTableProduct[];
-  
+
   /** Frais (port, paiement, emballage, etc.) affichés au même niveau que produits */
   fees?: ProductTableFee[];
-  
+
   /** Totaux du tableau (subtotaux, taxes, remise, total final) */
   totals?: ProductTableTotals;
-}export interface MentionsElement extends BaseElement {
-  type: 'mentions';
+}
+export interface MentionsElement extends BaseElement {
+  type: "mentions";
   mentionType?: string;
   selectedMentions?: string[];
   medleySeparator?: string;
@@ -320,7 +321,7 @@ export interface ProductTableElement extends BaseElement {
 }
 
 export interface CustomerInfoElement extends BaseElement {
-  type: 'customer_info';
+  type: "customer_info";
   showName?: boolean;
   showEmail?: boolean;
   showPhone?: boolean;
@@ -343,9 +344,9 @@ export interface CustomerInfoElement extends BaseElement {
   bodyFontStyle?: string;
   bodyTextColor?: string;
   // Propriétés de mise en page
-  layout?: 'vertical' | 'horizontal';
+  layout?: "vertical" | "horizontal";
   showLabels?: boolean;
-  labelPosition?: 'before' | 'above';
+  labelPosition?: "before" | "above";
   // Propriétés de style générales
   fontFamily?: string;
   fontSize?: number;
@@ -353,7 +354,7 @@ export interface CustomerInfoElement extends BaseElement {
   fontStyle?: string;
   textColor?: string;
   color?: string; // Alias pour textColor pour compatibilité
-  textAlign?: 'left' | 'center' | 'right';
+  textAlign?: "left" | "center" | "right";
   backgroundColor?: string;
   showBackground?: boolean;
   border?: { width?: number; style?: string; color?: string };
@@ -361,10 +362,10 @@ export interface CustomerInfoElement extends BaseElement {
 }
 
 export interface CompanyInfoElement extends BaseElement {
-  type: 'company_info';
+  type: "company_info";
   template?: string;
   fields?: string[];
-  layout?: 'vertical' | 'horizontal';
+  layout?: "vertical" | "horizontal";
   separator?: string;
   // Informations de l'entreprise
   name?: string;
@@ -381,7 +382,7 @@ export interface CompanyInfoElement extends BaseElement {
   fontStyle?: string;
   textColor?: string;
   color?: string; // Alias pour textColor pour compatibilité
-  textAlign?: 'left' | 'center' | 'right';
+  textAlign?: "left" | "center" | "right";
   backgroundColor?: string;
   showBackground?: boolean;
   border?: { width?: number; style?: string; color?: string };
@@ -426,7 +427,7 @@ export interface BuilderState {
   // Propriétés du template
   template: TemplateState;
   // Mode de prévisualisation (éditeur vs commande)
-  previewMode: 'editor' | 'command';
+  previewMode: "editor" | "command";
   orderId?: string;
   // Modal de prévisualisation
   showPreviewModal: boolean;
@@ -435,14 +436,14 @@ export interface BuilderState {
 }
 
 export type BuilderMode =
-  | 'select'
-  | 'rectangle'
-  | 'circle'
-  | 'text'
-  | 'image'
-  | 'line'
-  | 'pan'
-  | 'zoom';
+  | "select"
+  | "rectangle"
+  | "circle"
+  | "text"
+  | "image"
+  | "line"
+  | "pan"
+  | "zoom";
 
 export interface HistoryState {
   past: BuilderState[];
@@ -459,7 +460,7 @@ export interface BuilderConfig {
   maxHistorySize?: number;
   enableKeyboard?: boolean;
   enableContextMenu?: boolean;
-  theme?: 'light' | 'dark';
+  theme?: "light" | "dark";
 }
 
 // Événements
@@ -475,30 +476,44 @@ export interface BuilderEvents {
 
 // Actions pour le reducer
 export type BuilderAction =
-  | { type: 'ADD_ELEMENT'; payload: Element }
-  | { type: 'UPDATE_ELEMENT'; payload: { id: string; updates: Partial<Element> } }
-  | { type: 'REMOVE_ELEMENT'; payload: string }
-  | { type: 'SET_ELEMENTS'; payload: Element[] }
-  | { type: 'SET_SELECTION'; payload: string[] }
-  | { type: 'CLEAR_SELECTION' }
-  | { type: 'SET_CANVAS'; payload: Partial<CanvasState> }
-  | { type: 'SET_MODE'; payload: BuilderMode }
-  | { type: 'SET_DRAG_STATE'; payload: Partial<DragState> }
-  | { type: 'SET_PREVIEW_MODE'; payload: 'editor' | 'command' }
-  | { type: 'SET_SHOW_PREVIEW_MODAL'; payload: boolean }
-  | { type: 'SET_HTML_PREVIEW_CONTENT'; payload: string }
-  | { type: 'SET_ORDER_ID'; payload: string | undefined }
-  | { type: 'UNDO' }
-  | { type: 'REDO' }
-  | { type: 'RESET' }
-  | { type: 'SAVE_TEMPLATE'; payload?: { id?: string; name?: string; lastSaved?: Date } }
-  | { type: 'SET_TEMPLATE_MODIFIED'; payload: boolean }
-  | { type: 'SET_TEMPLATE_SAVING'; payload: boolean }
-  | { type: 'SET_TEMPLATE_LOADING'; payload: boolean }
-  | { type: 'UPDATE_TEMPLATE_SETTINGS'; payload: Partial<TemplateState> }
-  | { type: 'TOGGLE_GUIDES' }
-  | { type: 'LOAD_TEMPLATE'; payload: { id?: string; name?: string; elements?: Element[]; lastSaved?: Date } }
-  | { type: 'NEW_TEMPLATE' };
+  | { type: "ADD_ELEMENT"; payload: Element }
+  | {
+      type: "UPDATE_ELEMENT";
+      payload: { id: string; updates: Partial<Element> };
+    }
+  | { type: "REMOVE_ELEMENT"; payload: string }
+  | { type: "SET_ELEMENTS"; payload: Element[] }
+  | { type: "SET_SELECTION"; payload: string[] }
+  | { type: "CLEAR_SELECTION" }
+  | { type: "SET_CANVAS"; payload: Partial<CanvasState> }
+  | { type: "SET_MODE"; payload: BuilderMode }
+  | { type: "SET_DRAG_STATE"; payload: Partial<DragState> }
+  | { type: "SET_PREVIEW_MODE"; payload: "editor" | "command" }
+  | { type: "SET_SHOW_PREVIEW_MODAL"; payload: boolean }
+  | { type: "SET_HTML_PREVIEW_CONTENT"; payload: string }
+  | { type: "SET_ORDER_ID"; payload: string | undefined }
+  | { type: "UNDO" }
+  | { type: "REDO" }
+  | { type: "RESET" }
+  | {
+      type: "SAVE_TEMPLATE";
+      payload?: { id?: string; name?: string; lastSaved?: Date };
+    }
+  | { type: "SET_TEMPLATE_MODIFIED"; payload: boolean }
+  | { type: "SET_TEMPLATE_SAVING"; payload: boolean }
+  | { type: "SET_TEMPLATE_LOADING"; payload: boolean }
+  | { type: "UPDATE_TEMPLATE_SETTINGS"; payload: Partial<TemplateState> }
+  | { type: "TOGGLE_GUIDES" }
+  | {
+      type: "LOAD_TEMPLATE";
+      payload: {
+        id?: string;
+        name?: string;
+        elements?: Element[];
+        lastSaved?: Date;
+      };
+    }
+  | { type: "NEW_TEMPLATE" };
 
 // Props des composants
 export interface CanvasProps {
@@ -537,7 +552,7 @@ export interface LoadTemplatePayload {
 
 // Propriétés spécifiques pour les éléments
 export interface RectangleElement extends BaseElement {
-  type: 'rectangle';
+  type: "rectangle";
   backgroundColor?: string;
   borderColor?: string;
   borderWidth?: number;
@@ -548,7 +563,7 @@ export interface RectangleElement extends BaseElement {
 }
 
 export interface CircleElement extends BaseElement {
-  type: 'circle';
+  type: "circle";
   backgroundColor?: string;
   borderColor?: string;
   borderWidth?: number;
@@ -558,7 +573,7 @@ export interface CircleElement extends BaseElement {
 }
 
 export interface TextElement extends BaseElement {
-  type: 'text';
+  type: "text";
   text?: string;
   fontSize?: number;
   textColor?: string;
@@ -566,7 +581,7 @@ export interface TextElement extends BaseElement {
   fontFamily?: string;
   fontWeight?: string;
   fontStyle?: string;
-  textAlign?: 'left' | 'center' | 'right';
+  textAlign?: "left" | "center" | "right";
   textDecoration?: string;
   autoWrap?: boolean;
   bold?: boolean;
@@ -575,11 +590,11 @@ export interface TextElement extends BaseElement {
   backgroundColor?: string;
   borderColor?: string;
   borderWidth?: number;
-  verticalAlign?: 'top' | 'middle' | 'bottom';
+  verticalAlign?: "top" | "middle" | "bottom";
 }
 
 export interface LineElement extends BaseElement {
-  type: 'line';
+  type: "line";
   backgroundColor?: string;
   borderColor?: string;
   borderWidth?: number;
@@ -593,7 +608,7 @@ export interface DynamicTextElementProperties extends BaseElementProperties {
 
 export interface DocumentTypeElementProperties extends BaseElementProperties {
   documentType?: string;
-  verticalAlign?: 'top' | 'middle' | 'bottom';
+  verticalAlign?: "top" | "middle" | "bottom";
 }
 
 export interface CustomerInfoElementProperties extends BaseElementProperties {
@@ -618,7 +633,7 @@ export interface CustomerInfoElementProperties extends BaseElementProperties {
   bodyFontWeight?: string;
   bodyFontStyle?: string;
   // Propriétés de mise en page
-  layout?: 'vertical' | 'horizontal';
+  layout?: "vertical" | "horizontal";
   showHeaders?: boolean;
   showBorders?: boolean;
   showFullName?: boolean;
@@ -626,7 +641,7 @@ export interface CustomerInfoElementProperties extends BaseElementProperties {
   padding?: number;
   // Propriétés de style
   headerTextColor?: string;
-  verticalAlign?: 'top' | 'middle' | 'bottom';
+  verticalAlign?: "top" | "middle" | "bottom";
 }
 
 export interface CompanyInfoElementProperties extends BaseElementProperties {
@@ -673,14 +688,23 @@ export interface CompanyInfoElementProperties extends BaseElementProperties {
 }
 
 export interface ImageElement extends BaseElement {
-  type: 'image';
+  type: "image";
   src?: string;
   logoUrl?: string;
   alt?: string;
-  fit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
-  position?: 'center' | 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  fit?: "contain" | "cover" | "fill" | "none" | "scale-down";
+  position?:
+    | "center"
+    | "top"
+    | "bottom"
+    | "left"
+    | "right"
+    | "top-left"
+    | "top-right"
+    | "bottom-left"
+    | "bottom-right";
   opacity?: number;
-  alignment?: 'left' | 'center' | 'right';
+  alignment?: "left" | "center" | "right";
   maintainAspectRatio?: boolean;
 }
 
@@ -691,8 +715,8 @@ export interface OrderNumberElementProperties extends BaseElementProperties {
   showLabel?: boolean;
   showDate?: boolean;
   // Propriétés de mise en page
-  contentAlign?: 'left' | 'center' | 'right';
-  labelPosition?: 'above' | 'left' | 'right' | 'below';
+  contentAlign?: "left" | "center" | "right";
+  labelPosition?: "above" | "left" | "right" | "below";
   labelText?: string;
   // Propriétés de police pour les en-têtes (label)
   headerFontSize?: number;
@@ -729,7 +753,7 @@ export interface OrderNumberElementProperties extends BaseElementProperties {
 
 // Interface spécifique pour les éléments CompanyInfo
 export interface CompanyInfoElement extends BaseElement {
-  type: 'company_info';
+  type: "company_info";
   // Propriétés d'affichage
   showCompanyName?: boolean;
   showAddress?: boolean;
@@ -775,21 +799,30 @@ export interface CompanyInfoElement extends BaseElement {
 
 // Interface spécifique pour les éléments CompanyLogo
 export interface CompanyLogoElement extends BaseElement {
-  type: 'company_logo';
+  type: "company_logo";
   // Propriétés d'image
   src?: string;
   logoUrl?: string;
   alt?: string;
-  fit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
-  position?: 'center' | 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  fit?: "contain" | "cover" | "fill" | "none" | "scale-down";
+  position?:
+    | "center"
+    | "top"
+    | "bottom"
+    | "left"
+    | "right"
+    | "top-left"
+    | "top-right"
+    | "bottom-left"
+    | "bottom-right";
   opacity?: number;
-  alignment?: 'left' | 'center' | 'right';
+  alignment?: "left" | "center" | "right";
   maintainAspectRatio?: boolean;
 }
 
 // Interface spécifique pour les éléments CustomerInfo
 export interface CustomerInfoElement extends BaseElement {
-  type: 'customer_info';
+  type: "customer_info";
   // Propriétés d'affichage
   showName?: boolean;
   showEmail?: boolean;
@@ -813,7 +846,7 @@ export interface CustomerInfoElement extends BaseElement {
   bodyFontWeight?: string;
   bodyFontStyle?: string;
   // Propriétés de mise en page
-  layout?: 'vertical' | 'horizontal';
+  layout?: "vertical" | "horizontal";
   showHeaders?: boolean;
   showBorders?: boolean;
   showFullName?: boolean;
@@ -821,14 +854,14 @@ export interface CustomerInfoElement extends BaseElement {
   padding?: number;
   // Propriétés de style
   headerTextColor?: string;
-  verticalAlign?: 'top' | 'middle' | 'bottom';
+  verticalAlign?: "top" | "middle" | "bottom";
 }
 
 // Interface spécifique pour les éléments DocumentType
 export interface DocumentTypeElement extends BaseElement {
-  type: 'document_type';
+  type: "document_type";
   documentType?: string;
-  verticalAlign?: 'top' | 'middle' | 'bottom';
+  verticalAlign?: "top" | "middle" | "bottom";
 }
 
 // Type union pour tous les éléments supportés
@@ -846,6 +879,3 @@ export type Element =
   | TextElement
   | LineElement
   | DocumentTypeElement;
-
-
-

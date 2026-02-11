@@ -418,14 +418,14 @@ const WOOCOMMERCE_ELEMENTS = [
       mentionType: "dynamic", // Type: "dynamic", "custom", "medley"
       selectedMentions: [], // Pour type "medley" - liste des mentions sélectionnées
       medleySeparator: "\n\n", // Séparateur entre mentions pour medley
-      
+
       // ===== OPTIONS VISUELLES =====
       showSeparator: true, // Affiche la barre horizontale
       separatorStyle: "solid", // Style: "solid" ou "dashed"
       separatorColor: "#e5e7eb", // Couleur du séparateur
       separatorWidth: 1, // Épaisseur du séparateur en px
       showBackground: false,
-      
+
       // ===== STYLES TEXTE =====
       fontSize: 10,
       fontFamily: "Arial",
@@ -438,14 +438,14 @@ const WOOCOMMERCE_ELEMENTS = [
       lineHeight: "1.2",
       textAlign: "left",
       textColor: "#6b7280",
-      
+
       // ===== STYLES FOND & BORDURES =====
       backgroundColor: "transparent",
       borderColor: "#e5e7eb",
       borderWidth: 0,
       borderStyle: "solid",
       borderRadius: 0,
-      
+
       // ===== EFFETS & VISIBILITÉ =====
       rotation: 0,
       opacity: 100,
@@ -485,7 +485,7 @@ export function ElementLibrary({
       defaultProps: element.defaultProps,
     };
     const jsonData = JSON.stringify(dragData);
-    
+
     e.dataTransfer?.setData("application/json", jsonData);
     if (e.dataTransfer) {
       e.dataTransfer.effectAllowed = "copy";
@@ -494,7 +494,6 @@ export function ElementLibrary({
 
   const handleDragEnd = (_e: DragEvent) => {
     // Drag terminé
-    
   };
 
   return (
@@ -651,5 +650,3 @@ export function ElementLibrary({
     </ResponsiveContainer>
   );
 }
-
-

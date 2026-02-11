@@ -1,62 +1,73 @@
-import { MentionsElement } from '../../types/elements';
-import { NumericPropertyInput } from '../ui/NumericPropertyInput';
-import { ColorPropertyInput } from '../ui/ColorPropertyInput';
+import { MentionsElement } from "../../types/elements";
+import { NumericPropertyInput } from "../ui/NumericPropertyInput";
+import { ColorPropertyInput } from "../ui/ColorPropertyInput";
 
 // Composant Toggle personnalisé
-const Toggle = ({ checked, onChange, label, description }: {
+const Toggle = ({
+  checked,
+  onChange,
+  label,
+  description,
+}: {
   checked: boolean;
   onChange: (checked: boolean) => void;
   label: string;
   description: string;
 }) => (
-  <div style={{ marginBottom: '12px' }}>
-    <div style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '6px'
-    }}>
-      <label style={{
-        fontSize: '12px',
-        fontWeight: 'bold',
-        color: '#333',
-        flex: 1
-      }}>
+  <div style={{ marginBottom: "12px" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "6px",
+      }}
+    >
+      <label
+        style={{
+          fontSize: "12px",
+          fontWeight: "bold",
+          color: "#333",
+          flex: 1,
+        }}
+      >
         {label}
       </label>
       <div
         onClick={() => onChange(!checked)}
         style={{
-          position: 'relative',
-          width: '44px',
-          height: '24px',
-          backgroundColor: checked ? '#007bff' : '#ccc',
-          borderRadius: '12px',
-          cursor: 'pointer',
-          transition: 'background-color 0.2s ease',
-          border: 'none'
+          position: "relative",
+          width: "44px",
+          height: "24px",
+          backgroundColor: checked ? "#007bff" : "#ccc",
+          borderRadius: "12px",
+          cursor: "pointer",
+          transition: "background-color 0.2s ease",
+          border: "none",
         }}
       >
         <div
           style={{
-            position: 'absolute',
-            top: '2px',
-            left: checked ? '22px' : '2px',
-            width: '20px',
-            height: '20px',
-            backgroundColor: 'white',
-            borderRadius: '50%',
-            transition: 'left 0.2s ease',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+            position: "absolute",
+            top: "2px",
+            left: checked ? "22px" : "2px",
+            width: "20px",
+            height: "20px",
+            backgroundColor: "white",
+            borderRadius: "50%",
+            transition: "left 0.2s ease",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
           }}
         />
       </div>
     </div>
-    <div style={{
-      fontSize: '11px',
-      color: '#666',
-      lineHeight: '1.4'
-    }}>
+    <div
+      style={{
+        fontSize: "11px",
+        color: "#666",
+        lineHeight: "1.4",
+      }}
+    >
       {description}
     </div>
   </div>
@@ -65,13 +76,24 @@ const Toggle = ({ checked, onChange, label, description }: {
 interface MentionsPropertiesProps {
   element: MentionsElement;
   onChange: (elementId: string, property: string, value: unknown) => void;
-  activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' };
-  setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }) => void;
+  activeTab: {
+    [key: string]: "fonctionnalites" | "personnalisation" | "positionnement";
+  };
+  setActiveTab: (tabs: {
+    [key: string]: "fonctionnalites" | "personnalisation" | "positionnement";
+  }) => void;
 }
 
-export function MentionsProperties({ element, onChange, activeTab, setActiveTab }: MentionsPropertiesProps) {
-  const mentionsCurrentTab = activeTab[element.id] || 'fonctionnalites';
-  const setMentionsCurrentTab = (tab: 'fonctionnalites' | 'personnalisation' | 'positionnement') => {
+export function MentionsProperties({
+  element,
+  onChange,
+  activeTab,
+  setActiveTab,
+}: MentionsPropertiesProps) {
+  const mentionsCurrentTab = activeTab[element.id] || "fonctionnalites";
+  const setMentionsCurrentTab = (
+    tab: "fonctionnalites" | "personnalisation" | "positionnement",
+  ) => {
     setActiveTab({ ...activeTab, [element.id]: tab });
   };
 
@@ -79,335 +101,370 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
   const generateMentionsContent = (props?: any) => {
     const config = props || element;
     const mentionParts: string[] = [];
-    
+
     // Récupérer les données d'entreprise depuis window
     const pluginCompany = (window as any).pdfBuilderData?.company || {};
-    
+
     // Ajouter email si requis et disponible
     if (config.showEmail !== false && config.email && config.email.trim()) {
       mentionParts.push(config.email);
     } else if (config.showEmail !== false && pluginCompany.email) {
       mentionParts.push(pluginCompany.email);
     }
-    
+
     // Ajouter téléphone si requis et disponible
     if (config.showPhone !== false && config.phone && config.phone.trim()) {
       mentionParts.push(config.phone);
     } else if (config.showPhone !== false && pluginCompany.phone) {
       mentionParts.push(pluginCompany.phone);
     }
-    
+
     // Ajouter SIRET si requis et disponible
     if (config.showSiret !== false && config.siret && config.siret.trim()) {
       mentionParts.push(`SIRET: ${config.siret}`);
     } else if (config.showSiret !== false && pluginCompany.siret) {
       mentionParts.push(`SIRET: ${pluginCompany.siret}`);
     }
-    
+
     // Ajouter TVA si requis et disponible
     if (config.showVat !== false && config.tva && config.tva.trim()) {
       mentionParts.push(`TVA: ${config.tva}`);
     } else if (config.showVat !== false && pluginCompany.tva) {
       mentionParts.push(`TVA: ${pluginCompany.tva}`);
     }
-    
+
     // Assembler avec le séparateur
-    const separator = config.separator || ' • ';
+    const separator = config.separator || " • ";
     return mentionParts.join(separator);
   };
 
   // Helper pour toggler et régénérer le contenu
-  const handlePropertyChangeWithContentUpdate = (property: string, value: any) => {
+  const handlePropertyChangeWithContentUpdate = (
+    property: string,
+    value: any,
+  ) => {
     onChange(element.id, property, value);
-    
+
     // Si c'est une propriété qui affecte le contenu, régénérer et sauvegarder
     // SAUF si le type courant est 'custom' (contenu personnalisé)
-    if (['showEmail', 'showPhone', 'showSiret', 'showVat', 'separator'].includes(property) && currentMentionType !== 'custom') {
+    if (
+      ["showEmail", "showPhone", "showSiret", "showVat", "separator"].includes(
+        property,
+      ) &&
+      currentMentionType !== "custom"
+    ) {
       const newConfig = { ...element, [property]: value };
       const generatedContent = generateMentionsContent(newConfig);
       if (generatedContent && generatedContent.trim()) {
-        onChange(element.id, 'text', generatedContent);
+        onChange(element.id, "text", generatedContent);
       }
     }
   };
 
   const mentionsThemes = [
     {
-      id: 'legal',
-      name: 'Légal',
+      id: "legal",
+      name: "Légal",
       preview: (
-        <div style={{
-          width: '100%',
-          height: '35px',
-          border: '1px solid #6b7280',
-          borderRadius: '4px',
-          backgroundColor: '#ffffff',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '1px'
-        }}>
-          <div style={{
-            width: '90%',
-            height: '2px',
-            backgroundColor: '#6b7280'
-          }}></div>
-          <div style={{
-            width: '75%',
-            height: '1px',
-            backgroundColor: '#9ca3af'
-          }}></div>
-          <div style={{
-            width: '60%',
-            height: '1px',
-            backgroundColor: '#d1d5db'
-          }}></div>
+        <div
+          style={{
+            width: "100%",
+            height: "35px",
+            border: "1px solid #6b7280",
+            borderRadius: "4px",
+            backgroundColor: "#ffffff",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "1px",
+          }}
+        >
+          <div
+            style={{
+              width: "90%",
+              height: "2px",
+              backgroundColor: "#6b7280",
+            }}
+          ></div>
+          <div
+            style={{
+              width: "75%",
+              height: "1px",
+              backgroundColor: "#9ca3af",
+            }}
+          ></div>
+          <div
+            style={{
+              width: "60%",
+              height: "1px",
+              backgroundColor: "#d1d5db",
+            }}
+          ></div>
         </div>
       ),
       styles: {
-        backgroundColor: '#ffffff',
-        borderColor: '#6b7280',
-        textColor: '#374151',
-        headerTextColor: '#111827'
-      }
+        backgroundColor: "#ffffff",
+        borderColor: "#6b7280",
+        textColor: "#374151",
+        headerTextColor: "#111827",
+      },
     },
     {
-      id: 'subtle',
-      name: 'Discret',
+      id: "subtle",
+      name: "Discret",
       preview: (
-        <div style={{
-          width: '100%',
-          height: '35px',
-          border: '1px solid #e5e7eb',
-          borderRadius: '4px',
-          backgroundColor: '#f9fafb',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '1px'
-        }}>
-          <div style={{
-            width: '90%',
-            height: '1px',
-            backgroundColor: '#9ca3af'
-          }}></div>
-          <div style={{
-            width: '75%',
-            height: '1px',
-            backgroundColor: '#d1d5db'
-          }}></div>
-          <div style={{
-            width: '60%',
-            height: '1px',
-            backgroundColor: '#e5e7eb'
-          }}></div>
+        <div
+          style={{
+            width: "100%",
+            height: "35px",
+            border: "1px solid #e5e7eb",
+            borderRadius: "4px",
+            backgroundColor: "#f9fafb",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "1px",
+          }}
+        >
+          <div
+            style={{
+              width: "90%",
+              height: "1px",
+              backgroundColor: "#9ca3af",
+            }}
+          ></div>
+          <div
+            style={{
+              width: "75%",
+              height: "1px",
+              backgroundColor: "#d1d5db",
+            }}
+          ></div>
+          <div
+            style={{
+              width: "60%",
+              height: "1px",
+              backgroundColor: "#e5e7eb",
+            }}
+          ></div>
         </div>
       ),
       styles: {
-        backgroundColor: '#f9fafb',
-        borderColor: '#e5e7eb',
-        textColor: '#6b7280',
-        headerTextColor: '#374151'
-      }
+        backgroundColor: "#f9fafb",
+        borderColor: "#e5e7eb",
+        textColor: "#6b7280",
+        headerTextColor: "#374151",
+      },
     },
     {
-      id: 'minimal',
-      name: 'Minimal',
+      id: "minimal",
+      name: "Minimal",
       preview: (
-        <div style={{
-          width: '100%',
-          height: '35px',
-          border: 'none',
-          borderRadius: '4px',
-          backgroundColor: 'transparent',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '1px'
-        }}>
-          <div style={{
-            width: '90%',
-            height: '1px',
-            backgroundColor: '#d1d5db'
-          }}></div>
-          <div style={{
-            width: '75%',
-            height: '1px',
-            backgroundColor: '#e5e7eb'
-          }}></div>
-          <div style={{
-            width: '60%',
-            height: '1px',
-            backgroundColor: '#f3f4f6'
-          }}></div>
+        <div
+          style={{
+            width: "100%",
+            height: "35px",
+            border: "none",
+            borderRadius: "4px",
+            backgroundColor: "transparent",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "1px",
+          }}
+        >
+          <div
+            style={{
+              width: "90%",
+              height: "1px",
+              backgroundColor: "#d1d5db",
+            }}
+          ></div>
+          <div
+            style={{
+              width: "75%",
+              height: "1px",
+              backgroundColor: "#e5e7eb",
+            }}
+          ></div>
+          <div
+            style={{
+              width: "60%",
+              height: "1px",
+              backgroundColor: "#f3f4f6",
+            }}
+          ></div>
         </div>
       ),
       styles: {
-        backgroundColor: 'transparent',
-        borderColor: 'transparent',
-        textColor: '#6b7280',
-        headerTextColor: '#374151'
-      }
-    }
+        backgroundColor: "transparent",
+        borderColor: "transparent",
+        textColor: "#6b7280",
+        headerTextColor: "#374151",
+      },
+    },
   ];
 
   const predefinedMentions = [
     {
-      key: 'cgv',
-      label: 'Conditions Générales de Vente',
-      text: 'Conditions Générales de Vente applicables. Consultez notre site web pour plus de détails.'
+      key: "cgv",
+      label: "Conditions Générales de Vente",
+      text: "Conditions Générales de Vente applicables. Consultez notre site web pour plus de détails.",
     },
     {
-      key: 'legal',
-      label: 'Mentions légales',
-      text: 'Document établi sous la responsabilité de l\'entreprise. Toutes les informations sont confidentielles.'
+      key: "legal",
+      label: "Mentions légales",
+      text: "Document établi sous la responsabilité de l'entreprise. Toutes les informations sont confidentielles.",
     },
     {
-      key: 'payment',
-      label: 'Conditions de paiement',
-      text: 'Paiement dû dans les délais convenus. Tout retard peut entraîner des pénalités.'
+      key: "payment",
+      label: "Conditions de paiement",
+      text: "Paiement dû dans les délais convenus. Tout retard peut entraîner des pénalités.",
     },
     {
-      key: 'warranty',
-      label: 'Garantie',
-      text: 'Garantie légale de conformité et garantie contre les vices cachés selon les articles L217-4 et suivants du Code de la consommation.'
+      key: "warranty",
+      label: "Garantie",
+      text: "Garantie légale de conformité et garantie contre les vices cachés selon les articles L217-4 et suivants du Code de la consommation.",
     },
     {
-      key: 'returns',
-      label: 'Droit de rétractation',
-      text: 'Droit de rétractation de 14 jours selon l\'article L221-18 du Code de la consommation.'
+      key: "returns",
+      label: "Droit de rétractation",
+      text: "Droit de rétractation de 14 jours selon l'article L221-18 du Code de la consommation.",
     },
     {
-      key: 'tva',
-      label: 'TVA et mentions fiscales',
-      text: 'TVA non applicable, art. 293 B du CGI. Mention : auto-entrepreneur soumise à l\'impôt sur le revenu.'
+      key: "tva",
+      label: "TVA et mentions fiscales",
+      text: "TVA non applicable, art. 293 B du CGI. Mention : auto-entrepreneur soumise à l'impôt sur le revenu.",
     },
     {
-      key: 'penalties',
-      label: 'Pénalités de retard',
-      text: 'Tout retard de paiement donnera lieu au paiement d\'une pénalité égale à 3 fois le taux d\'intérêt légal en vigueur.'
+      key: "penalties",
+      label: "Pénalités de retard",
+      text: "Tout retard de paiement donnera lieu au paiement d'une pénalité égale à 3 fois le taux d'intérêt légal en vigueur.",
     },
     {
-      key: 'property',
-      label: 'Réserve de propriété',
-      text: 'Les biens vendus restent la propriété du vendeur jusqu\'au paiement intégral du prix.'
+      key: "property",
+      label: "Réserve de propriété",
+      text: "Les biens vendus restent la propriété du vendeur jusqu'au paiement intégral du prix.",
     },
     {
-      key: 'jurisdiction',
-      label: 'Juridiction compétente',
-      text: 'Tout litige sera soumis à la compétence exclusive des tribunaux de commerce français.'
+      key: "jurisdiction",
+      label: "Juridiction compétente",
+      text: "Tout litige sera soumis à la compétence exclusive des tribunaux de commerce français.",
     },
     {
-      key: 'rgpd',
-      label: 'RGPD - Protection des données',
-      text: 'Vos données personnelles sont traitées conformément au RGPD. Consultez notre politique de confidentialité.'
+      key: "rgpd",
+      label: "RGPD - Protection des données",
+      text: "Vos données personnelles sont traitées conformément au RGPD. Consultez notre politique de confidentialité.",
     },
     {
-      key: 'discount',
-      label: 'Escompte',
-      text: 'Escompte pour paiement anticipé : 2% du montant HT si paiement sous 8 jours.'
+      key: "discount",
+      label: "Escompte",
+      text: "Escompte pour paiement anticipé : 2% du montant HT si paiement sous 8 jours.",
     },
     {
-      key: 'clause',
-      label: 'Clause de réserve',
-      text: 'Sous réserve d\'acceptation de votre commande et de disponibilité des produits.'
+      key: "clause",
+      label: "Clause de réserve",
+      text: "Sous réserve d'acceptation de votre commande et de disponibilité des produits.",
     },
     {
-      key: 'intellectual',
-      label: 'Propriété intellectuelle',
-      text: 'Tous droits de propriété intellectuelle réservés. Reproduction interdite sans autorisation.'
+      key: "intellectual",
+      label: "Propriété intellectuelle",
+      text: "Tous droits de propriété intellectuelle réservés. Reproduction interdite sans autorisation.",
     },
     {
-      key: 'force',
-      label: 'Force majeure',
-      text: 'Aucun des parties ne pourra être tenu responsable en cas de force majeure.'
+      key: "force",
+      label: "Force majeure",
+      text: "Aucun des parties ne pourra être tenu responsable en cas de force majeure.",
     },
     {
-      key: 'liability',
-      label: 'Limitation de responsabilité',
-      text: 'Notre responsabilité est limitée à la valeur de la commande en cas de faute prouvée.'
+      key: "liability",
+      label: "Limitation de responsabilité",
+      text: "Notre responsabilité est limitée à la valeur de la commande en cas de faute prouvée.",
     },
     {
-      key: 'tva_info',
-      label: 'Informations TVA',
-      text: 'TVA non applicable - article 293 B du CGI. Régime micro-entreprise.'
+      key: "tva_info",
+      label: "Informations TVA",
+      text: "TVA non applicable - article 293 B du CGI. Régime micro-entreprise.",
     },
     {
-      key: 'rcs_info',
-      label: 'Informations RCS',
-      text: 'RCS Paris 123 456 789 - SIRET 123 456 789 00012 - APE 1234Z'
+      key: "rcs_info",
+      label: "Informations RCS",
+      text: "RCS Paris 123 456 789 - SIRET 123 456 789 00012 - APE 1234Z",
     },
     {
-      key: 'siret_info',
-      label: 'Informations SIRET',
-      text: 'SIRET 123 456 789 00012 - NAF 1234Z - TVA FR 12 345 678 901'
+      key: "siret_info",
+      label: "Informations SIRET",
+      text: "SIRET 123 456 789 00012 - NAF 1234Z - TVA FR 12 345 678 901",
     },
     {
-      key: 'legal_status',
-      label: 'Statut juridique',
-      text: 'Société à responsabilité limitée au capital de 10 000€ - RCS Paris 123 456 789'
+      key: "legal_status",
+      label: "Statut juridique",
+      text: "Société à responsabilité limitée au capital de 10 000€ - RCS Paris 123 456 789",
     },
     {
-      key: 'insurance',
-      label: 'Assurance responsabilité',
-      text: 'Couvert par assurance responsabilité civile professionnelle - Police N° 123456789'
+      key: "insurance",
+      label: "Assurance responsabilité",
+      text: "Couvert par assurance responsabilité civile professionnelle - Police N° 123456789",
     },
     {
-      key: 'mediation',
-      label: 'Médiation consommateur',
-      text: 'En cas de litige, le consommateur peut saisir gratuitement le médiateur compétent.'
+      key: "mediation",
+      label: "Médiation consommateur",
+      text: "En cas de litige, le consommateur peut saisir gratuitement le médiateur compétent.",
     },
     {
-      key: 'iban',
-      label: 'Coordonnées bancaires',
-      text: 'IBAN FR76 1234 5678 9012 3456 7890 123 - BIC BNPAFRPP'
+      key: "iban",
+      label: "Coordonnées bancaires",
+      text: "IBAN FR76 1234 5678 9012 3456 7890 123 - BIC BNPAFRPP",
     },
     {
-      key: 'delivery',
-      label: 'Conditions de livraison',
-      text: 'Livraison sous 3-5 jours ouvrés. Frais de port offerts à partir de 50€ HT.'
+      key: "delivery",
+      label: "Conditions de livraison",
+      text: "Livraison sous 3-5 jours ouvrés. Frais de port offerts à partir de 50€ HT.",
     },
     {
-      key: 'packaging',
-      label: 'Emballage et environnement',
-      text: 'Emballages recyclables. Respectueux de l\'environnement.'
+      key: "packaging",
+      label: "Emballage et environnement",
+      text: "Emballages recyclables. Respectueux de l'environnement.",
     },
     {
-      key: 'medley',
-      label: 'Médley (Combinaison)',
-      text: ''
+      key: "medley",
+      label: "Médley (Combinaison)",
+      text: "",
     },
     {
-      key: 'custom',
-      label: 'Personnalisé',
-      text: ''
-    }
+      key: "custom",
+      label: "Personnalisé",
+      text: "",
+    },
   ];
 
   // Détecter automatiquement le type de mention basé sur le texte actuel
   const detectMentionType = () => {
-    const currentText = element.text || '';
-    const currentMentionType = element.mentionType || 'custom';
+    const currentText = element.text || "";
+    const currentMentionType = element.mentionType || "custom";
 
     // Si un type est déjà défini et que ce n'est pas custom, le garder
-    if (currentMentionType && currentMentionType !== 'custom') {
+    if (currentMentionType && currentMentionType !== "custom") {
       return currentMentionType;
     }
 
     // Pour le medley, vérifier s'il y a des mentions sélectionnées
     if (element.selectedMentions && element.selectedMentions.length > 0) {
-      return 'medley';
+      return "medley";
     }
 
     // Sinon, essayer de détecter automatiquement
-    const matchingMention = predefinedMentions.find(mention =>
-      mention.key !== 'custom' && mention.key !== 'medley' && mention.text === currentText
+    const matchingMention = predefinedMentions.find(
+      (mention) =>
+        mention.key !== "custom" &&
+        mention.key !== "medley" &&
+        mention.text === currentText,
     );
 
-    return matchingMention ? matchingMention.key : 'custom';
+    return matchingMention ? matchingMention.key : "custom";
   };
 
   const currentMentionType = detectMentionType();
@@ -415,65 +472,76 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
   return (
     <>
       {/* Système d'onglets pour Mentions */}
-      <div style={{ display: 'flex', marginBottom: '12px', borderBottom: '2px solid #ddd', gap: '2px', flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: "flex",
+          marginBottom: "12px",
+          borderBottom: "2px solid #ddd",
+          gap: "2px",
+          flexWrap: "wrap",
+        }}
+      >
         <button
-          onClick={() => setMentionsCurrentTab('fonctionnalites')}
+          onClick={() => setMentionsCurrentTab("fonctionnalites")}
           style={{
-            flex: '1 1 30%',
-            padding: '8px 6px',
-            backgroundColor: mentionsCurrentTab === 'fonctionnalites' ? '#007bff' : '#f0f0f0',
-            color: mentionsCurrentTab === 'fonctionnalites' ? '#fff' : '#333',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '11px',
-            fontWeight: 'bold',
-            borderRadius: '3px 3px 0 0',
-            minWidth: '0',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            flex: "1 1 30%",
+            padding: "8px 6px",
+            backgroundColor:
+              mentionsCurrentTab === "fonctionnalites" ? "#007bff" : "#f0f0f0",
+            color: mentionsCurrentTab === "fonctionnalites" ? "#fff" : "#333",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "11px",
+            fontWeight: "bold",
+            borderRadius: "3px 3px 0 0",
+            minWidth: "0",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
           title="Fonctionnalités"
         >
           Fonctionnalités
         </button>
         <button
-          onClick={() => setMentionsCurrentTab('personnalisation')}
+          onClick={() => setMentionsCurrentTab("personnalisation")}
           style={{
-            flex: '1 1 30%',
-            padding: '8px 6px',
-            backgroundColor: mentionsCurrentTab === 'personnalisation' ? '#007bff' : '#f0f0f0',
-            color: mentionsCurrentTab === 'personnalisation' ? '#fff' : '#333',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '11px',
-            fontWeight: 'bold',
-            borderRadius: '3px 3px 0 0',
-            minWidth: '0',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            flex: "1 1 30%",
+            padding: "8px 6px",
+            backgroundColor:
+              mentionsCurrentTab === "personnalisation" ? "#007bff" : "#f0f0f0",
+            color: mentionsCurrentTab === "personnalisation" ? "#fff" : "#333",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "11px",
+            fontWeight: "bold",
+            borderRadius: "3px 3px 0 0",
+            minWidth: "0",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
           title="Personnalisation"
         >
           Personnalisation
         </button>
         <button
-          onClick={() => setMentionsCurrentTab('positionnement')}
+          onClick={() => setMentionsCurrentTab("positionnement")}
           style={{
-            flex: '1 1 30%',
-            padding: '8px 6px',
-            backgroundColor: mentionsCurrentTab === 'positionnement' ? '#007bff' : '#f0f0f0',
-            color: mentionsCurrentTab === 'positionnement' ? '#fff' : '#333',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '11px',
-            fontWeight: 'bold',
-            borderRadius: '3px 3px 0 0',
-            minWidth: '0',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            flex: "1 1 30%",
+            padding: "8px 6px",
+            backgroundColor:
+              mentionsCurrentTab === "positionnement" ? "#007bff" : "#f0f0f0",
+            color: mentionsCurrentTab === "positionnement" ? "#fff" : "#333",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "11px",
+            fontWeight: "bold",
+            borderRadius: "3px 3px 0 0",
+            minWidth: "0",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
           title="Positionnement"
         >
@@ -482,30 +550,44 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
       </div>
 
       {/* Onglet Fonctionnalités */}
-      {mentionsCurrentTab === 'fonctionnalites' && (
+      {mentionsCurrentTab === "fonctionnalites" && (
         <>
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "6px",
+              }}
+            >
               Type de mentions
             </label>
             <select
               value={currentMentionType}
               onChange={(e) => {
-                const selectedMention = predefinedMentions.find(m => m.key === e.target.value);
-                onChange(element.id, 'mentionType', e.target.value);
+                const selectedMention = predefinedMentions.find(
+                  (m) => m.key === e.target.value,
+                );
+                onChange(element.id, "mentionType", e.target.value);
 
                 // Ne mettre à jour le texte que si ce n'est pas "custom" et qu'il y a du texte prédéfini
-                if (selectedMention && selectedMention.key !== 'custom' && selectedMention.key !== 'medley' && selectedMention.text) {
-                  onChange(element.id, 'text', selectedMention.text);
+                if (
+                  selectedMention &&
+                  selectedMention.key !== "custom" &&
+                  selectedMention.key !== "medley" &&
+                  selectedMention.text
+                ) {
+                  onChange(element.id, "text", selectedMention.text);
                 }
                 // Pour "custom" et "medley", on garde le texte actuel
               }}
               style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
+                width: "100%",
+                padding: "6px",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                fontSize: "12px",
               }}
             >
               {predefinedMentions.map((mention) => (
@@ -517,72 +599,154 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
           </div>
 
           {/* Section Propriétés de mentions - Affichage des informations d'entreprise */}
-          <div style={{ marginBottom: '12px', padding: '12px', border: '1px solid #e0e0e0', borderRadius: '4px', backgroundColor: '#f9f9f9' }}>
-            <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '8px', color: '#555' }}>
+          <div
+            style={{
+              marginBottom: "12px",
+              padding: "12px",
+              border: "1px solid #e0e0e0",
+              borderRadius: "4px",
+              backgroundColor: "#f9f9f9",
+            }}
+          >
+            <label
+              style={{
+                display: "block",
+                fontSize: "11px",
+                fontWeight: "bold",
+                marginBottom: "8px",
+                color: "#555",
+              }}
+            >
               Informations d'entreprise à afficher
             </label>
-            
-            <div style={{ marginBottom: '6px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', fontSize: '11px', cursor: 'pointer' }}>
+
+            <div style={{ marginBottom: "6px" }}>
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  fontSize: "11px",
+                  cursor: "pointer",
+                }}
+              >
                 <input
                   type="checkbox"
                   checked={element.showEmail !== false}
-                  onChange={(e) => handlePropertyChangeWithContentUpdate('showEmail', e.target.checked)}
-                  style={{ marginRight: '6px' }}
+                  onChange={(e) =>
+                    handlePropertyChangeWithContentUpdate(
+                      "showEmail",
+                      e.target.checked,
+                    )
+                  }
+                  style={{ marginRight: "6px" }}
                 />
                 Email
               </label>
             </div>
 
-            <div style={{ marginBottom: '6px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', fontSize: '11px', cursor: 'pointer' }}>
+            <div style={{ marginBottom: "6px" }}>
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  fontSize: "11px",
+                  cursor: "pointer",
+                }}
+              >
                 <input
                   type="checkbox"
                   checked={element.showPhone !== false}
-                  onChange={(e) => handlePropertyChangeWithContentUpdate('showPhone', e.target.checked)}
-                  style={{ marginRight: '6px' }}
+                  onChange={(e) =>
+                    handlePropertyChangeWithContentUpdate(
+                      "showPhone",
+                      e.target.checked,
+                    )
+                  }
+                  style={{ marginRight: "6px" }}
                 />
                 Téléphone
               </label>
             </div>
 
-            <div style={{ marginBottom: '6px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', fontSize: '11px', cursor: 'pointer' }}>
+            <div style={{ marginBottom: "6px" }}>
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  fontSize: "11px",
+                  cursor: "pointer",
+                }}
+              >
                 <input
                   type="checkbox"
                   checked={element.showSiret !== false}
-                  onChange={(e) => handlePropertyChangeWithContentUpdate('showSiret', e.target.checked)}
-                  style={{ marginRight: '6px' }}
+                  onChange={(e) =>
+                    handlePropertyChangeWithContentUpdate(
+                      "showSiret",
+                      e.target.checked,
+                    )
+                  }
+                  style={{ marginRight: "6px" }}
                 />
                 SIRET
               </label>
             </div>
 
-            <div style={{ marginBottom: '6px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', fontSize: '11px', cursor: 'pointer' }}>
+            <div style={{ marginBottom: "6px" }}>
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  fontSize: "11px",
+                  cursor: "pointer",
+                }}
+              >
                 <input
                   type="checkbox"
                   checked={element.showVat !== false}
-                  onChange={(e) => handlePropertyChangeWithContentUpdate('showVat', e.target.checked)}
-                  style={{ marginRight: '6px' }}
+                  onChange={(e) =>
+                    handlePropertyChangeWithContentUpdate(
+                      "showVat",
+                      e.target.checked,
+                    )
+                  }
+                  style={{ marginRight: "6px" }}
                 />
                 TVA
               </label>
             </div>
 
-            <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid #ddd' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+            <div
+              style={{
+                marginTop: "8px",
+                paddingTop: "8px",
+                borderTop: "1px solid #ddd",
+              }}
+            >
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "11px",
+                  fontWeight: "bold",
+                  marginBottom: "4px",
+                }}
+              >
                 Séparateur
               </label>
               <select
-                value={element.separator || ' • '}
-                onChange={(e) => handlePropertyChangeWithContentUpdate('separator', e.target.value)}
+                value={element.separator || " • "}
+                onChange={(e) =>
+                  handlePropertyChangeWithContentUpdate(
+                    "separator",
+                    e.target.value,
+                  )
+                }
                 style={{
-                  width: '100%',
-                  padding: '4px 6px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '11px'
+                  width: "100%",
+                  padding: "4px 6px",
+                  border: "1px solid #ccc",
+                  borderRadius: "3px",
+                  fontSize: "11px",
                 }}
               >
                 <option value=" • ">Point (•)</option>
@@ -596,182 +760,281 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
           </div>
 
           {/* Section Médley - Sélection des mentions à combiner */}
-          {currentMentionType === 'medley' && (
-            <div style={{ marginBottom: '12px', padding: '12px', border: '1px solid #e0e0e0', borderRadius: '4px', backgroundColor: '#f9f9f9' }}>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+          {currentMentionType === "medley" && (
+            <div
+              style={{
+                marginBottom: "12px",
+                padding: "12px",
+                border: "1px solid #e0e0e0",
+                borderRadius: "4px",
+                backgroundColor: "#f9f9f9",
+              }}
+            >
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                  marginBottom: "8px",
+                }}
+              >
                 Sélectionnez les mentions à combiner :
               </label>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                gap: '6px',
-                maxHeight: '200px',
-                overflowY: 'auto'
-              }}>
-                {predefinedMentions.filter(m => m.key !== 'medley' && m.key !== 'custom').map((mention) => {
-                  const selectedMentions = element.selectedMentions || [];
-                  const isSelected = selectedMentions.includes(mention.key);
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                  gap: "6px",
+                  maxHeight: "200px",
+                  overflowY: "auto",
+                }}
+              >
+                {predefinedMentions
+                  .filter((m) => m.key !== "medley" && m.key !== "custom")
+                  .map((mention) => {
+                    const selectedMentions = element.selectedMentions || [];
+                    const isSelected = selectedMentions.includes(mention.key);
 
-                  return (
-                    <label key={mention.key} style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      fontSize: '11px',
-                      cursor: 'pointer',
-                      padding: '4px',
-                      borderRadius: '3px',
-                      backgroundColor: isSelected ? '#e3f2fd' : 'transparent'
-                    }}>
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={(e) => {
-                          const currentSelected = element.selectedMentions || [];
-                          let newSelected;
-
-                          if (e.target.checked) {
-                            newSelected = [...currentSelected, mention.key];
-                          } else {
-                            newSelected = currentSelected.filter((key: string) => key !== mention.key);
-                          }
-
-                          onChange(element.id, 'selectedMentions', newSelected);
-
-                          // Générer le texte combiné avec le séparateur configuré
-                          const separatorMap = {
-                            'double_newline': '\n\n',
-                            'single_newline': '\n',
-                            'dash': ' - ',
-                            'bullet': ' • ',
-                            'pipe': ' | '
-                          };
-                          const separator = separatorMap[(element.medleySeparator || 'double_newline') as keyof typeof separatorMap] || '\n\n';
-
-                          const combinedText = newSelected
-                            .map((key: string) => predefinedMentions.find(m => m.key === key)?.text)
-                            .filter(Boolean)
-                            .join(separator);
-
-                          onChange(element.id, 'text', combinedText);
-
-                          // Ajuster automatiquement la hauteur et la largeur selon le contenu
-                          const lines = combinedText.split('\n');
-                          const fontSize = typeof element.fontSize === 'string' ? parseFloat(element.fontSize) : (element.fontSize || 10);
-                          const lineHeight = fontSize * 1.3; // Harmoniser avec pdf-canvas-core.js
-                          const padding = 10; // Réduire pour cohérence
-                          const iconSpace = 20; // Espace pour l'icône
-                          const minHeight = 60; // Hauteur minimale basée sur la valeur par défaut
-                          const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + iconSpace + padding);
-                          const maxHeight = 500;
-                          const newHeight = Math.min(calculatedHeight, maxHeight);
-
-                          // Calculer la largeur basée sur la ligne la plus longue
-                          const canvas = document.createElement('canvas');
-                          const ctx = canvas.getContext('2d');
-                          if (ctx) {
-                            ctx.font = `${element.fontWeight || 'normal'} ${fontSize}px ${element.fontFamily || 'Arial'}`;
-                            const maxLineWidth = Math.max(...lines.map((line: string) => ctx.measureText(line).width));
-                            const margin = 20; // Même marge qu dans pdf-canvas-core.js (width - 20)
-                            const minWidth = 500; // Largeur minimale basée sur la valeur par défaut
-                            const calculatedWidth = Math.max(minWidth, maxLineWidth + margin);
-                            const maxWidth = 800; // Largeur maximale
-                            const newWidth = Math.min(calculatedWidth, maxWidth);
-
-                            if (element.width !== newWidth) {
-                              onChange(element.id, 'width', newWidth);
-                            }
-                          }
-
-                          if (element.height !== newHeight) {
-                            onChange(element.id, 'height', newHeight);
-                          }
+                    return (
+                      <label
+                        key={mention.key}
+                        style={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          fontSize: "11px",
+                          cursor: "pointer",
+                          padding: "4px",
+                          borderRadius: "3px",
+                          backgroundColor: isSelected
+                            ? "#e3f2fd"
+                            : "transparent",
                         }}
-                        style={{ marginRight: '6px', marginTop: '1px' }}
-                      />
-                      <div>
-                        <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>{mention.label}</div>
-                        <div style={{ fontSize: '10px', color: '#666', lineHeight: '1.3' }}>
-                          {mention.text.length > 60 ? mention.text.substring(0, 60) + '...' : mention.text}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={(e) => {
+                            const currentSelected =
+                              element.selectedMentions || [];
+                            let newSelected;
+
+                            if (e.target.checked) {
+                              newSelected = [...currentSelected, mention.key];
+                            } else {
+                              newSelected = currentSelected.filter(
+                                (key: string) => key !== mention.key,
+                              );
+                            }
+
+                            onChange(
+                              element.id,
+                              "selectedMentions",
+                              newSelected,
+                            );
+
+                            // Générer le texte combiné avec le séparateur configuré
+                            const separatorMap = {
+                              double_newline: "\n\n",
+                              single_newline: "\n",
+                              dash: " - ",
+                              bullet: " • ",
+                              pipe: " | ",
+                            };
+                            const separator =
+                              separatorMap[
+                                (element.medleySeparator ||
+                                  "double_newline") as keyof typeof separatorMap
+                              ] || "\n\n";
+
+                            const combinedText = newSelected
+                              .map(
+                                (key: string) =>
+                                  predefinedMentions.find((m) => m.key === key)
+                                    ?.text,
+                              )
+                              .filter(Boolean)
+                              .join(separator);
+
+                            onChange(element.id, "text", combinedText);
+
+                            // Ajuster automatiquement la hauteur et la largeur selon le contenu
+                            const lines = combinedText.split("\n");
+                            const fontSize =
+                              typeof element.fontSize === "string"
+                                ? parseFloat(element.fontSize)
+                                : element.fontSize || 10;
+                            const lineHeight = fontSize * 1.3; // Harmoniser avec pdf-canvas-core.js
+                            const padding = 10; // Réduire pour cohérence
+                            const iconSpace = 20; // Espace pour l'icône
+                            const minHeight = 60; // Hauteur minimale basée sur la valeur par défaut
+                            const calculatedHeight = Math.max(
+                              minHeight,
+                              lines.length * lineHeight + iconSpace + padding,
+                            );
+                            const maxHeight = 500;
+                            const newHeight = Math.min(
+                              calculatedHeight,
+                              maxHeight,
+                            );
+
+                            // Calculer la largeur basée sur la ligne la plus longue
+                            const canvas = document.createElement("canvas");
+                            const ctx = canvas.getContext("2d");
+                            if (ctx) {
+                              ctx.font = `${element.fontWeight || "normal"} ${fontSize}px ${element.fontFamily || "Arial"}`;
+                              const maxLineWidth = Math.max(
+                                ...lines.map(
+                                  (line: string) => ctx.measureText(line).width,
+                                ),
+                              );
+                              const margin = 20; // Même marge qu dans pdf-canvas-core.js (width - 20)
+                              const minWidth = 500; // Largeur minimale basée sur la valeur par défaut
+                              const calculatedWidth = Math.max(
+                                minWidth,
+                                maxLineWidth + margin,
+                              );
+                              const maxWidth = 800; // Largeur maximale
+                              const newWidth = Math.min(
+                                calculatedWidth,
+                                maxWidth,
+                              );
+
+                              if (element.width !== newWidth) {
+                                onChange(element.id, "width", newWidth);
+                              }
+                            }
+
+                            if (element.height !== newHeight) {
+                              onChange(element.id, "height", newHeight);
+                            }
+                          }}
+                          style={{ marginRight: "6px", marginTop: "1px" }}
+                        />
+                        <div>
+                          <div
+                            style={{ fontWeight: "bold", marginBottom: "2px" }}
+                          >
+                            {mention.label}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "10px",
+                              color: "#666",
+                              lineHeight: "1.3",
+                            }}
+                          >
+                            {mention.text.length > 60
+                              ? mention.text.substring(0, 60) + "..."
+                              : mention.text}
+                          </div>
                         </div>
-                      </div>
-                    </label>
-                  );
-                })}
+                      </label>
+                    );
+                  })}
               </div>
-              <div style={{ marginTop: '8px', fontSize: '10px', color: '#666' }}>
-                {(element.selectedMentions?.length ?? 0)} mention(s) sélectionnée(s)
+              <div
+                style={{ marginTop: "8px", fontSize: "10px", color: "#666" }}
+              >
+                {element.selectedMentions?.length ?? 0} mention(s)
+                sélectionnée(s)
                 {(element.selectedMentions?.length ?? 0) > 0 && (
-                  <span style={{ color: '#007bff', marginLeft: '8px' }}>
+                  <span style={{ color: "#007bff", marginLeft: "8px" }}>
                     • Dimensions ajustables manuellement (avec clipping)
                   </span>
                 )}
               </div>
               {(element.selectedMentions?.length ?? 0) > 0 && (
-                <div style={{ marginTop: '8px' }}>
-                  <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                <div style={{ marginTop: "8px" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "11px",
+                      fontWeight: "bold",
+                      marginBottom: "4px",
+                    }}
+                  >
                     Séparateur entre mentions :
                   </label>
                   <select
-                    value={element.medleySeparator || 'double_newline'}
+                    value={element.medleySeparator || "double_newline"}
                     onChange={(e) => {
-                      onChange(element.id, 'medleySeparator', e.target.value);
+                      onChange(element.id, "medleySeparator", e.target.value);
 
                       // Régénérer le texte avec le nouveau séparateur
                       const selectedMentions = element.selectedMentions || [];
                       const separatorMap = {
-                        'double_newline': '\n\n',
-                        'single_newline': '\n',
-                        'dash': ' - ',
-                        'bullet': ' • ',
-                        'pipe': ' | '
+                        double_newline: "\n\n",
+                        single_newline: "\n",
+                        dash: " - ",
+                        bullet: " • ",
+                        pipe: " | ",
                       };
 
-                      const separator = separatorMap[e.target.value as keyof typeof separatorMap] || '\n\n';
+                      const separator =
+                        separatorMap[
+                          e.target.value as keyof typeof separatorMap
+                        ] || "\n\n";
                       const combinedText = selectedMentions
-                        .map((key: string) => predefinedMentions.find(m => m.key === key)?.text)
+                        .map(
+                          (key: string) =>
+                            predefinedMentions.find((m) => m.key === key)?.text,
+                        )
                         .filter(Boolean)
                         .join(separator);
 
-                      onChange(element.id, 'text', combinedText);
+                      onChange(element.id, "text", combinedText);
 
                       // Ajuster la hauteur et la largeur selon le nouveau nombre de lignes
-                      const lines = combinedText.split('\n');
-                      const fontSize = typeof element.fontSize === 'string' ? parseFloat(element.fontSize) : (element.fontSize || 10);
+                      const lines = combinedText.split("\n");
+                      const fontSize =
+                        typeof element.fontSize === "string"
+                          ? parseFloat(element.fontSize)
+                          : element.fontSize || 10;
                       const lineHeight = fontSize * 1.3; // Harmoniser avec pdf-canvas-core.js
                       const padding = 10; // Réduire pour cohérence
                       const iconSpace = 20; // Espace pour l'icône
                       const minHeight = 60; // Hauteur minimale basée sur la valeur par défaut
-                      const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + iconSpace + padding);
+                      const calculatedHeight = Math.max(
+                        minHeight,
+                        lines.length * lineHeight + iconSpace + padding,
+                      );
                       const maxHeight = 500;
                       const newHeight = Math.min(calculatedHeight, maxHeight);
 
                       // Calculer la largeur basée sur la ligne la plus longue
-                      const canvas = document.createElement('canvas');
-                      const ctx = canvas.getContext('2d');
+                      const canvas = document.createElement("canvas");
+                      const ctx = canvas.getContext("2d");
                       if (ctx) {
-                        ctx.font = `${element.fontWeight || 'normal'} ${fontSize}px ${element.fontFamily || 'Arial'}`;
-                        const maxLineWidth = Math.max(...lines.map((line: string) => ctx.measureText(line).width));
+                        ctx.font = `${element.fontWeight || "normal"} ${fontSize}px ${element.fontFamily || "Arial"}`;
+                        const maxLineWidth = Math.max(
+                          ...lines.map(
+                            (line: string) => ctx.measureText(line).width,
+                          ),
+                        );
                         const margin = 20; // Même marge qu dans pdf-canvas-core.js (width - 20)
                         const minWidth = 200;
-                        const calculatedWidth = Math.max(minWidth, maxLineWidth + margin);
+                        const calculatedWidth = Math.max(
+                          minWidth,
+                          maxLineWidth + margin,
+                        );
                         const maxWidth = 800;
                         const newWidth = Math.min(calculatedWidth, maxWidth);
 
                         if (element.width !== newWidth) {
-                          onChange(element.id, 'width', newWidth);
+                          onChange(element.id, "width", newWidth);
                         }
                       }
 
                       if (element.height !== newHeight) {
-                        onChange(element.id, 'height', newHeight);
+                        onChange(element.id, "height", newHeight);
                       }
                     }}
                     style={{
-                      width: '100%',
-                      padding: '4px',
-                      border: '1px solid #ccc',
-                      borderRadius: '3px',
-                      fontSize: '11px'
+                      width: "100%",
+                      padding: "4px",
+                      border: "1px solid #ccc",
+                      borderRadius: "3px",
+                      fontSize: "11px",
                     }}
                   >
                     <option value="double_newline">Double saut de ligne</option>
@@ -785,52 +1048,79 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             </div>
           )}
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "6px",
+              }}
+            >
               Texte des mentions
             </label>
             <textarea
-              value={element.text || ''}
-              onChange={(e) => onChange(element.id, 'text', e.target.value)}
+              value={element.text || ""}
+              onChange={(e) => onChange(element.id, "text", e.target.value)}
               placeholder="Entrez le texte des mentions légales..."
               rows={6}
               style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px',
-                resize: 'vertical'
+                width: "100%",
+                padding: "6px",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                fontSize: "12px",
+                resize: "vertical",
               }}
             />
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "6px",
+              }}
+            >
               Afficher un séparateur
             </label>
             <input
               type="checkbox"
               checked={element.showSeparator !== false}
-              onChange={(e) => onChange(element.id, 'showSeparator', e.target.checked)}
-              style={{ marginRight: '8px' }}
+              onChange={(e) =>
+                onChange(element.id, "showSeparator", e.target.checked)
+              }
+              style={{ marginRight: "8px" }}
             />
-            <span style={{ fontSize: '11px', color: '#666' }}>Ligne de séparation avant les mentions</span>
+            <span style={{ fontSize: "11px", color: "#666" }}>
+              Ligne de séparation avant les mentions
+            </span>
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "6px",
+              }}
+            >
               Style du séparateur
             </label>
             <select
-              value={element.separatorStyle || 'solid'}
-              onChange={(e) => onChange(element.id, 'separatorStyle', e.target.value)}
+              value={element.separatorStyle || "solid"}
+              onChange={(e) =>
+                onChange(element.id, "separatorStyle", e.target.value)
+              }
               style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
+                width: "100%",
+                padding: "6px",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                fontSize: "12px",
               }}
             >
               <option value="solid">Ligne continue</option>
@@ -840,26 +1130,42 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             </select>
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "6px",
+              }}
+            >
               Couleur du séparateur
             </label>
             <input
               type="color"
-              value={element.separatorColor || '#e5e7eb'}
-              onChange={(e) => onChange(element.id, 'separatorColor', e.target.value)}
+              value={element.separatorColor || "#e5e7eb"}
+              onChange={(e) =>
+                onChange(element.id, "separatorColor", e.target.value)
+              }
               style={{
-                width: '100%',
-                padding: '4px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                cursor: 'pointer'
+                width: "100%",
+                padding: "4px",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                cursor: "pointer",
               }}
             />
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "6px",
+              }}
+            >
               Épaisseur du séparateur (px)
             </label>
             <input
@@ -867,35 +1173,45 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
               min="1"
               max="10"
               value={element.separatorWidth || 1}
-              onChange={(e) => onChange(element.id, 'separatorWidth', parseInt(e.target.value) || 1)}
+              onChange={(e) =>
+                onChange(
+                  element.id,
+                  "separatorWidth",
+                  parseInt(e.target.value) || 1,
+                )
+              }
               style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
+                width: "100%",
+                padding: "6px",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                fontSize: "12px",
               }}
             />
           </div>
 
           {/* Section Affichage du fond */}
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{
-              fontSize: '12px',
-              fontWeight: 'bold',
-              color: '#333',
-              marginBottom: '8px',
-              padding: '4px 8px',
-              backgroundColor: '#f8f9fa',
-              borderRadius: '3px',
-              border: '1px solid #e9ecef'
-            }}>
+          <div style={{ marginBottom: "16px" }}>
+            <div
+              style={{
+                fontSize: "12px",
+                fontWeight: "bold",
+                color: "#333",
+                marginBottom: "8px",
+                padding: "4px 8px",
+                backgroundColor: "#f8f9fa",
+                borderRadius: "3px",
+                border: "1px solid #e9ecef",
+              }}
+            >
               Affichage du fond
             </div>
-            <div style={{ paddingLeft: '8px' }}>
+            <div style={{ paddingLeft: "8px" }}>
               <Toggle
                 checked={element.showBackground !== false}
-                onChange={(checked) => onChange(element.id, 'showBackground', checked)}
+                onChange={(checked) =>
+                  onChange(element.id, "showBackground", checked)
+                }
                 label="Afficher le fond"
                 description="Affiche un fond coloré derrière les mentions"
               />
@@ -905,38 +1221,57 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
       )}
 
       {/* Onglet Personnalisation */}
-      {mentionsCurrentTab === 'personnalisation' && (
+      {mentionsCurrentTab === "personnalisation" && (
         <>
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "8px",
+              }}
+            >
               Thème visuel
             </label>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-              gap: '8px',
-              maxHeight: '200px',
-              overflowY: 'auto',
-              padding: '4px',
-              border: '1px solid #e0e0e0',
-              borderRadius: '4px',
-              backgroundColor: '#fafafa'
-            }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+                gap: "8px",
+                maxHeight: "200px",
+                overflowY: "auto",
+                padding: "4px",
+                border: "1px solid #e0e0e0",
+                borderRadius: "4px",
+                backgroundColor: "#fafafa",
+              }}
+            >
               {mentionsThemes.map((theme) => (
                 <div
                   key={theme.id}
-                  onClick={() => onChange(element.id, 'theme', theme.id)}
+                  onClick={() => onChange(element.id, "theme", theme.id)}
                   style={{
-                    cursor: 'pointer',
-                    border: element.theme === theme.id ? '2px solid #007bff' : '2px solid transparent',
-                    borderRadius: '6px',
-                    padding: '6px',
-                    backgroundColor: '#ffffff',
-                    transition: 'all 0.2s ease'
+                    cursor: "pointer",
+                    border:
+                      element.theme === theme.id
+                        ? "2px solid #007bff"
+                        : "2px solid transparent",
+                    borderRadius: "6px",
+                    padding: "6px",
+                    backgroundColor: "#ffffff",
+                    transition: "all 0.2s ease",
                   }}
                   title={theme.name}
                 >
-                  <div style={{ fontSize: '10px', fontWeight: 'bold', marginBottom: '4px', textAlign: 'center' }}>
+                  <div
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: "bold",
+                      marginBottom: "4px",
+                      textAlign: "center",
+                    }}
+                  >
                     {theme.name}
                   </div>
                   {theme.preview}
@@ -945,70 +1280,97 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             </div>
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "6px",
+              }}
+            >
               Taille du texte
             </label>
             <select
-              value={element.fontSize || '10'}
+              value={element.fontSize || "10"}
               onChange={(e) => {
-                onChange(element.id, 'fontSize', e.target.value);
+                onChange(element.id, "fontSize", e.target.value);
 
                 // Si c'est un medley, ajuster la hauteur selon la nouvelle taille de police
-                if (currentMentionType === 'medley' && (element.selectedMentions?.length ?? 0) > 0) {
+                if (
+                  currentMentionType === "medley" &&
+                  (element.selectedMentions?.length ?? 0) > 0
+                ) {
                   const selectedMentions = element.selectedMentions || [];
                   const separatorMap = {
-                    'double_newline': '\n\n',
-                    'single_newline': '\n',
-                    'dash': ' - ',
-                    'bullet': ' • ',
-                    'pipe': ' | '
+                    double_newline: "\n\n",
+                    single_newline: "\n",
+                    dash: " - ",
+                    bullet: " • ",
+                    pipe: " | ",
                   };
-                  const separator = separatorMap[(element.medleySeparator || 'double_newline') as keyof typeof separatorMap] || '\n\n';
+                  const separator =
+                    separatorMap[
+                      (element.medleySeparator ||
+                        "double_newline") as keyof typeof separatorMap
+                    ] || "\n\n";
 
                   const combinedText = selectedMentions
-                    .map((key: string) => predefinedMentions.find(m => m.key === key)?.text)
+                    .map(
+                      (key: string) =>
+                        predefinedMentions.find((m) => m.key === key)?.text,
+                    )
                     .filter(Boolean)
                     .join(separator);
 
-                  const lines = combinedText.split('\n');
+                  const lines = combinedText.split("\n");
                   const fontSize = parseInt(e.target.value) || 10;
                   const lineHeight = fontSize * 1.3; // Harmoniser avec pdf-canvas-core.js
                   const padding = 10; // Réduire le padding pour être cohérent
                   const iconSpace = 20; // Espace pour l'icône comme dans Canvas
                   const minHeight = 60; // Hauteur minimale basée sur la valeur par défaut
-                  const calculatedHeight = Math.max(minHeight, lines.length * lineHeight + iconSpace + padding); // + iconSpace pour l'icône
+                  const calculatedHeight = Math.max(
+                    minHeight,
+                    lines.length * lineHeight + iconSpace + padding,
+                  ); // + iconSpace pour l'icône
                   const maxHeight = 500;
                   const newHeight = Math.min(calculatedHeight, maxHeight);
 
                   // Calculer la largeur basée sur la ligne la plus longue
-                  const canvas = document.createElement('canvas');
-                  const ctx = canvas.getContext('2d');
+                  const canvas = document.createElement("canvas");
+                  const ctx = canvas.getContext("2d");
                   if (ctx) {
-                    ctx.font = `${element.fontWeight || 'normal'} ${fontSize}px ${element.fontFamily || 'Arial'}`;
-                    const maxLineWidth = Math.max(...lines.map((line: string) => ctx.measureText(line).width));
+                    ctx.font = `${element.fontWeight || "normal"} ${fontSize}px ${element.fontFamily || "Arial"}`;
+                    const maxLineWidth = Math.max(
+                      ...lines.map(
+                        (line: string) => ctx.measureText(line).width,
+                      ),
+                    );
                     const margin = 20; // Même marge qu dans pdf-canvas-core.js (width - 20)
                     const minWidth = 200;
-                    const calculatedWidth = Math.max(minWidth, maxLineWidth + margin);
+                    const calculatedWidth = Math.max(
+                      minWidth,
+                      maxLineWidth + margin,
+                    );
                     const maxWidth = 800;
                     const newWidth = Math.min(calculatedWidth, maxWidth);
 
                     if (element.width !== newWidth) {
-                      onChange(element.id, 'width', newWidth);
+                      onChange(element.id, "width", newWidth);
                     }
                   }
 
                   if (element.height !== newHeight) {
-                    onChange(element.id, 'height', newHeight);
+                    onChange(element.id, "height", newHeight);
                   }
                 }
               }}
               style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
+                width: "100%",
+                padding: "6px",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                fontSize: "12px",
               }}
             >
               <option value="8">Très petit (8px)</option>
@@ -1018,19 +1380,28 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             </select>
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "6px",
+              }}
+            >
               Alignement du texte
             </label>
             <select
-              value={element.textAlign || 'left'}
-              onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
+              value={element.textAlign || "left"}
+              onChange={(e) =>
+                onChange(element.id, "textAlign", e.target.value)
+              }
               style={{
-                width: '100%',
-                padding: '6px',
-                border: '1px solid #ccc',
-                borderRadius: '4px',
-                fontSize: '12px'
+                width: "100%",
+                padding: "6px",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                fontSize: "12px",
               }}
             >
               <option value="left">Gauche</option>
@@ -1039,26 +1410,58 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
             </select>
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "6px",
+              }}
+            >
               Style du texte
             </label>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              <label style={{ fontSize: '11px', display: 'flex', alignItems: 'center' }}>
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+              <label
+                style={{
+                  fontSize: "11px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
                 <input
                   type="checkbox"
-                  checked={element.fontWeight === 'bold'}
-                  onChange={(e) => onChange(element.id, 'fontWeight', e.target.checked ? 'bold' : 'normal')}
-                  style={{ marginRight: '4px' }}
+                  checked={element.fontWeight === "bold"}
+                  onChange={(e) =>
+                    onChange(
+                      element.id,
+                      "fontWeight",
+                      e.target.checked ? "bold" : "normal",
+                    )
+                  }
+                  style={{ marginRight: "4px" }}
                 />
                 Gras
               </label>
-              <label style={{ fontSize: '11px', color: '#666', display: 'flex', alignItems: 'center' }}>
+              <label
+                style={{
+                  fontSize: "11px",
+                  color: "#666",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
                 <input
                   type="checkbox"
-                  checked={element.fontStyle === 'italic'}
-                  onChange={(e) => onChange(element.id, 'fontStyle', e.target.checked ? 'italic' : 'normal')}
-                  style={{ marginRight: '4px' }}
+                  checked={element.fontStyle === "italic"}
+                  onChange={(e) =>
+                    onChange(
+                      element.id,
+                      "fontStyle",
+                      e.target.checked ? "italic" : "normal",
+                    )
+                  }
+                  style={{ marginRight: "4px" }}
                 />
                 Italique
               </label>
@@ -1067,12 +1470,20 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
 
           {/* Section Couleur de fond - visible seulement si showBackground est activé */}
           {element.showBackground !== false && (
-            <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e5e7eb' }}>
+            <div
+              style={{
+                marginTop: "16px",
+                paddingTop: "16px",
+                borderTop: "1px solid #e5e7eb",
+              }}
+            >
               <ColorPropertyInput
                 label="Couleur de fond"
                 value={element.backgroundColor}
                 defaultValue="#e5e7eb"
-                onChange={(value) => onChange(element.id, 'backgroundColor', value)}
+                onChange={(value) =>
+                  onChange(element.id, "backgroundColor", value)
+                }
               />
             </div>
           )}
@@ -1080,31 +1491,41 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
       )}
 
       {/* Onglet Positionnement */}
-      {mentionsCurrentTab === 'positionnement' && (
+      {mentionsCurrentTab === "positionnement" && (
         <>
-          <div style={{ marginBottom: '12px' }}>
+          <div style={{ marginBottom: "12px" }}>
             <NumericPropertyInput
               label="Position X"
               value={element.x}
               defaultValue={0}
               unit="px"
-              onChange={(value) => onChange(element.id, 'x', value)}
+              onChange={(value) => onChange(element.id, "x", value)}
             />
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
+          <div style={{ marginBottom: "12px" }}>
             <NumericPropertyInput
               label="Position Y"
               value={element.y}
               defaultValue={0}
               unit="px"
-              onChange={(value) => onChange(element.id, 'y', value)}
+              onChange={(value) => onChange(element.id, "y", value)}
             />
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Largeur {currentMentionType === 'medley' ? '(manuel = clipping activé)' : ''}
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "6px",
+              }}
+            >
+              Largeur{" "}
+              {currentMentionType === "medley"
+                ? "(manuel = clipping activé)"
+                : ""}
             </label>
             <NumericPropertyInput
               label=""
@@ -1112,18 +1533,30 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
               defaultValue={500}
               min={1}
               unit="px"
-              onChange={(value) => onChange(element.id, 'width', value)}
+              onChange={(value) => onChange(element.id, "width", value)}
             />
-            {currentMentionType === 'medley' && (
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
+            {currentMentionType === "medley" && (
+              <div
+                style={{ fontSize: "10px", color: "#666", marginTop: "4px" }}
+              >
                 Redimensionner manuellement active le clipping du texte
               </div>
             )}
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Hauteur {currentMentionType === 'medley' ? '(manuel = clipping activé)' : ''}
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "6px",
+              }}
+            >
+              Hauteur{" "}
+              {currentMentionType === "medley"
+                ? "(manuel = clipping activé)"
+                : ""}
             </label>
             <NumericPropertyInput
               label=""
@@ -1131,23 +1564,25 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
               defaultValue={60}
               min={1}
               unit="px"
-              onChange={(value) => onChange(element.id, 'height', value)}
+              onChange={(value) => onChange(element.id, "height", value)}
             />
-            {currentMentionType === 'medley' && (
-              <div style={{ fontSize: '10px', color: '#666', marginTop: '4px' }}>
+            {currentMentionType === "medley" && (
+              <div
+                style={{ fontSize: "10px", color: "#666", marginTop: "4px" }}
+              >
                 Redimensionner manuellement active le clipping du texte
               </div>
             )}
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
+          <div style={{ marginBottom: "12px" }}>
             <NumericPropertyInput
               label="Padding interne (px)"
               value={element.padding || 12}
               defaultValue={12}
               min={0}
               max={50}
-              onChange={(value) => onChange(element.id, 'padding', value)}
+              onChange={(value) => onChange(element.id, "padding", value)}
             />
           </div>
         </>
@@ -1155,6 +1590,3 @@ export function MentionsProperties({ element, onChange, activeTab, setActiveTab 
     </>
   );
 }
-
-
-

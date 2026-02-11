@@ -156,13 +156,13 @@ export const Header = memo(function Header({
       }
 
       const { html, order_number } = result.data;
-      
+
       // Extraire les styles du head et le contenu du body
       const stylesMatch = html.match(/<head[^>]*>(.*?)<\/head>/is);
       const bodyMatch = html.match(/<body[^>]*>(.*?)<\/body>/is);
-      const originalStyles = stylesMatch ? stylesMatch[1] : '';
+      const originalStyles = stylesMatch ? stylesMatch[1] : "";
       const bodyContent = bodyMatch ? bodyMatch[1] : html;
-      
+
       // Créer une page HTML avec le contenu et les boutons
       const htmlPage = `
 <!DOCTYPE html>
@@ -307,7 +307,7 @@ export const Header = memo(function Header({
         }
         
         function downloadHTML() {
-            const content = \`${html.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;
+            const content = \`${html.replace(/`/g, "\\`").replace(/\$/g, "\\$")}\`;
             const blob = new Blob([content], { type: 'text/html' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
@@ -322,12 +322,11 @@ export const Header = memo(function Header({
 </html>`;
 
       // Ouvrir dans un blob
-      const htmlBlob = new Blob([htmlPage], { type: 'text/html' });
+      const htmlBlob = new Blob([htmlPage], { type: "text/html" });
       const htmlUrl = URL.createObjectURL(htmlBlob);
       window.open(htmlUrl, "_blank");
-      
+
       setTimeout(() => URL.revokeObjectURL(htmlUrl), 2000);
-      
     } catch (error) {
       console.error("[HTML] Erreur:", error);
       alert("Erreur lors de la récupération du HTML");
@@ -473,7 +472,7 @@ export const Header = memo(function Header({
       const mimeType = format === "jpg" ? "image/jpeg" : "image/png";
       const imageDataUrl = canvas.toDataURL(mimeType, 0.95);
       const fileName = `facture-${order_number}.${format}`;
-      
+
       // Créer une page HTML avec l'image et les boutons
       const htmlPage = `
 <!DOCTYPE html>
@@ -638,15 +637,14 @@ export const Header = memo(function Header({
     </script>
 </body>
 </html>`;
-      
+
       // Créer un blob HTML et l'ouvrir
-      const htmlBlob = new Blob([htmlPage], { type: 'text/html' });
+      const htmlBlob = new Blob([htmlPage], { type: "text/html" });
       const htmlUrl = URL.createObjectURL(htmlBlob);
       window.open(htmlUrl, "_blank");
-      
+
       // Pas besoin de révoquer - les data URLs sont stables
       setShowPreviewModal(false);
-      
     } catch (error) {
       console.error(
         `[PREVIEW] Erreur génération ${format.toUpperCase()}:`,
