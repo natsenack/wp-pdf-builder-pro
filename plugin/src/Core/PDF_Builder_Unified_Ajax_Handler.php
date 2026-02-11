@@ -3456,8 +3456,7 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Rendu des informations client
      */
     private function render_customer_info_element($element, $order_data, $base_styles) {
-        $line_height = $element['lineHeight'] ?? '1.6';
-        $html = '<div class="element" style="' . $base_styles . ' line-height: ' . $line_height . ';">';
+        $html = '<div class="element" style="' . $base_styles . '">';
         
         if ($element['showName'] ?? true) {
             $html .= '<strong>' . esc_html($order_data['customer']['full_name']) . '</strong><br>';
@@ -3480,8 +3479,7 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Rendu des informations entreprise
      */
     private function render_company_info_element($element, $order_data, $base_styles) {
-        $line_height = $element['lineHeight'] ?? '1.6';
-        $html = '<div class="element" style="' . $base_styles . ' line-height: ' . $line_height . ';">';
+        $html = '<div class="element" style="' . $base_styles . '">';
         
         if ($element['showCompanyName'] ?? true) {
             $html .= '<strong>' . esc_html(get_bloginfo('name')) . '</strong><br>';
@@ -3625,8 +3623,7 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function render_dynamic_text($element, $order_data, $base_styles) {
         $text = $element['text'] ?? $element['textTemplate'] ?? 'Signature du client';
-        $line_height = $element['lineHeight'] ?? '1.6';
-        return '<div class="element" style="' . $base_styles . ' line-height: ' . $line_height . ';">' . nl2br(esc_html($text)) . '</div>';
+        return '<div class="element" style="' . $base_styles . '">' . nl2br(esc_html($text)) . '</div>';
     }
     
     /**
@@ -3672,11 +3669,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $text = $element['text'] ?? 'Conditions générales de vente disponibles sur demande.';
         }
         
-        $font_size = $element['fontSize'] ?? 9;
-        $text_align = $element['textAlign'] ?? 'center';
-        $line_height = $element['lineHeight'] ?? '1.4';
-        
-        $html = '<div class="element" style="' . $base_styles . ' font-size: ' . $font_size . 'px; text-align: ' . $text_align . '; line-height: ' . $line_height . '; padding: 0; margin: 0;">';
+        $html = '<div class="element" style="' . $base_styles . ' padding: 0; margin: 0;">';
         
         // Ajouter le séparateur horizontal si activé
         if ($element['showSeparator'] ?? true) {
