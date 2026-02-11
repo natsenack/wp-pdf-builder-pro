@@ -230,16 +230,14 @@ export const Header = memo(function Header({
             text-align: center;
         }
         .content-wrapper {
+            display: flex;
+            justify-content: center;
             padding: 20px;
             min-height: 100vh;
             max-width: 50%;
             margin: 60px auto 0;
             transition: transform 0.2s;
             transform-origin: center top;
-        }
-        /* Préserver le canvas avec positionnement absolu */
-        .content-wrapper .pdf-canvas {
-            margin: 0 auto;
         }
         @media print {
             body {
