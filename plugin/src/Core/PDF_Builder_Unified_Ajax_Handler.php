@@ -3687,8 +3687,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html .= '<hr style="' . $hr_style . '" />';
         }
         
-        // Wrapper le texte dans un span pour forcer le line-height
-        $html .= '<span style="display: block;">' . nl2br(esc_html($text)) . '</span>';
+        // Wrapper le texte avec line-height explicite pour éviter les différences entre navigateurs/Dompdf
+        $line_height = $element['lineHeight'] ?? '1.2';
+        $html .= '<div style="line-height: ' . $line_height . ';">' . nl2br(esc_html($text)) . '</div>';
         $html .= '</div>';
         
         return $html;
