@@ -2882,7 +2882,7 @@ export const Header = memo(function Header({
                         ? "Fonctionnalité premium - Activez votre licence"
                         : !previewOrderId.trim()
                           ? "Veuillez entrer un numéro de commande"
-                          : "Générer en JPG avec les données de la commande"
+                          : "Télécharger le PDF avec les données de la commande"
                     }
                     style={{
                       padding: "12px 16px",
@@ -2913,8 +2913,8 @@ export const Header = memo(function Header({
                       gap: "4px",
                     }}
                   >
-                    <span style={{ fontSize: "24px" }}>📸</span>
-                    <span>JPG</span>
+                    <span style={{ fontSize: "24px" }}>💾</span>
+                    <span>Télécharger</span>
                     {!isPremium && (
                       <span style={{ fontSize: "10px", color: "#d97706" }}>
                         Premium
