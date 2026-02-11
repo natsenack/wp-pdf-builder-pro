@@ -863,7 +863,7 @@ export function MentionsProperties({
                               typeof element.fontSize === "string"
                                 ? parseFloat(element.fontSize)
                                 : element.fontSize || 10;
-                            const lineHeight = fontSize * 1.3; // Harmoniser avec pdf-canvas-core.js
+                            const lineHeight = fontSize * 1.2; // Harmoniser avec backend PHP
                             const padding = 10; // Réduire pour cohérence
                             const iconSpace = 20; // Espace pour l'icône
                             const minHeight = 60; // Hauteur minimale basée sur la valeur par défaut
@@ -990,7 +990,7 @@ export function MentionsProperties({
                         typeof element.fontSize === "string"
                           ? parseFloat(element.fontSize)
                           : element.fontSize || 10;
-                      const lineHeight = fontSize * 1.3; // Harmoniser avec pdf-canvas-core.js
+                      const lineHeight = fontSize * 1.2; // Harmoniser avec backend PHP
                       const padding = 10; // Réduire pour cohérence
                       const iconSpace = 20; // Espace pour l'icône
                       const minHeight = 60; // Hauteur minimale basée sur la valeur par défaut
@@ -1325,7 +1325,7 @@ export function MentionsProperties({
 
                   const lines = combinedText.split("\n");
                   const fontSize = parseInt(e.target.value) || 10;
-                  const lineHeight = fontSize * 1.3; // Harmoniser avec pdf-canvas-core.js
+                  const lineHeight = fontSize * 1.2; // Harmoniser avec backend PHP
                   const padding = 10; // Réduire le padding pour être cohérent
                   const iconSpace = 20; // Espace pour l'icône comme dans Canvas
                   const minHeight = 60; // Hauteur minimale basée sur la valeur par défaut

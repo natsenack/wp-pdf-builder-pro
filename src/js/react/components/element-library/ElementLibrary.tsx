@@ -387,7 +387,7 @@ const WOOCOMMERCE_ELEMENTS = [
       textTransform: "none",
       letterSpacing: "normal",
       wordSpacing: "normal",
-      lineHeight: "1.3",
+      lineHeight: "1.2",
       backgroundColor: "transparent",
       rotation: 0,
       shadowColor: "#000000",

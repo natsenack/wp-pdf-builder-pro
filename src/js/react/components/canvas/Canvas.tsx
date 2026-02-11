@@ -2958,7 +2958,13 @@ export const Canvas = function Canvas({
       const wrappedLines = wrapText(text, maxWidth);
 
       // Calculer le nombre maximum de lignes qui peuvent tenir
-      const lineHeight = fontSize + 2;
+      // Utiliser le lineHeight de l'élément s'il est défini, sinon utiliser fontSize * 1.2
+      const lineHeightValue = props.lineHeight
+        ? typeof props.lineHeight === 'number'
+          ? props.lineHeight
+          : parseFloat(props.lineHeight)
+        : 1.2;
+      const lineHeight = fontSize * lineHeightValue;
       const maxLines = Math.floor(
         (element.height - (showSeparator ? 25 : 15)) / lineHeight,
       );
