@@ -3687,7 +3687,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html .= '<hr style="' . $hr_style . '" />';
         }
         
-        $html .= nl2br(esc_html($text));
+        // Wrapper le texte dans un span pour forcer le line-height
+        $html .= '<span style="display: block;">' . nl2br(esc_html($text)) . '</span>';
         $html .= '</div>';
         
         return $html;
