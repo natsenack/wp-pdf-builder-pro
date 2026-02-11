@@ -3361,39 +3361,50 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
         }
         
-        // Ligne de séparation avant les totaux
-        if ($show_borders) {
-            $html .= '<tr><td colspan="4" style="border-top: 2px solid ' . $border_color . '; padding: 0;"></td></tr>';
-        }
-        
         // Style pour les lignes de summary (sous-total, remise, livraison, TVA)
         $summary_style = "text-align: right; padding: 8px; " .
                         "font-size: {$row_font_size}px; font-family: {$row_font_family}; " .
                         "font-weight: {$row_font_weight}; color: {$row_color};";
         
+        // Padding supérieur pour espacer les totaux des produits
+        $first_total_padding = "padding-top: 20px;";
+        
         // Sous-total (avant remises et frais)
         if ($element['showSubtotal'] ?? true) {
-            $html .= '<tr><td colspan="3" style="' . $summary_style . '">Sous-total:</td>';
-            $html .= '<td style="' . $summary_style . '">' . wc_price($order_data['totals']['subtotal_raw']) . '</td></tr>';
+            $html .= '<tr>';
+            $html .= '<td colspan="2" style="' . $first_total_padding . '"></td>'; // Colonnes vides (Produit + Qté)
+            $html .= '<td style="' . $summary_style . ' ' . $first_total_padding . '">Sous-total:</td>';
+            $html .= '<td style="' . $summary_style . ' ' . $first_total_padding . '">' . wc_price($order_data['totals']['subtotal_raw']) . '</td>';
+            $html .= '</tr>';
+            $first_total_padding = ''; // Réinitialiser après la première ligne
         }
         
         // Réductions (si présentes)
         if (($element['showDiscount'] ?? true) && $order_data['totals']['discount_raw'] > 0) {
             $discount_style = str_replace($row_color, '#dc2626', $summary_style);
-            $html .= '<tr><td colspan="3" style="' . $discount_style . '">Remise:</td>';
-            $html .= '<td style="' . $discount_style . '">-' . wc_price($order_data['totals']['discount_raw']) . '</td></tr>';
+            $html .= '<tr>';
+            $html .= '<td colspan="2"></td>';
+            $html .= '<td style="' . $discount_style . '">Remise:</td>';
+            $html .= '<td style="' . $discount_style . '">-' . wc_price($order_data['totals']['discount_raw']) . '</td>';
+            $html .= '</tr>';
         }
         
-        // Livraison
+        // Frais de port (nouveau - si > 0)
         if (($element['showShipping'] ?? true) && $order_data['totals']['shipping_raw'] > 0) {
-            $html .= '<tr><td colspan="3" style="' . $summary_style . '">Livraison:</td>';
-            $html .= '<td style="' . $summary_style . '">' . wc_price($order_data['totals']['shipping_raw']) . '</td></tr>';
+            $html .= '<tr>';
+            $html .= '<td colspan="2"></td>';
+            $html .= '<td style="' . $summary_style . '">Frais de port:</td>';
+            $html .= '<td style="' . $summary_style . '">' . wc_price($order_data['totals']['shipping_raw']) . '</td>';
+            $html .= '</tr>';
         }
         
         // TVA
         if (($element['showTax'] ?? true) && $order_data['totals']['tax_raw'] > 0) {
-            $html .= '<tr><td colspan="3" style="' . $summary_style . '">TVA:</td>';
-            $html .= '<td style="' . $summary_style . '">' . wc_price($order_data['totals']['tax_raw']) . '</td></tr>';
+            $html .= '<tr>';
+            $html .= '<td colspan="2"></td>';
+            $html .= '<td style="' . $summary_style . '">TVA (5.0%):</td>';
+            $html .= '<td style="' . $summary_style . '">' . wc_price($order_data['totals']['tax_raw']) . '</td>';
+            $html .= '</tr>';
         }
         
         // Total final - utilise les styles de total personnalisés du JSON
@@ -3402,9 +3413,12 @@ class PDF_Builder_Unified_Ajax_Handler {
                       "font-weight: {$total_font_weight}; font-style: {$total_font_style}; " .
                       "color: {$total_color};";
         
-        $separator_style = $show_borders ? "border-top: 2px solid {$border_color};" : "border-top: 2px solid #333;";
-        $html .= '<tr style="' . $separator_style . '"><td colspan="3" style="' . $total_style . '">TOTAL:</td>';
-        $html .= '<td style="' . $total_style . '">' . wc_price($order_data['totals']['total_raw']) . '</td></tr>';
+        $separator_style = "border-top: 2px solid #333; padding-top: 8px;";
+        $html .= '<tr>';
+        $html .= '<td colspan="2" style="' . $separator_style . '"></td>';
+        $html .= '<td style="' . $total_style . ' ' . $separator_style . '">TOTAL:</td>';
+        $html .= '<td style="' . $total_style . ' ' . $separator_style . '">' . wc_price($order_data['totals']['total_raw']) . '</td>';
+        $html .= '</tr>';
         
         $html .= '</tbody></table></div>';
         return $html;
