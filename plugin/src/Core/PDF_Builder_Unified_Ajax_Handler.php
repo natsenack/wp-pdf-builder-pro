@@ -3178,6 +3178,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         $html .= '<tbody>';
         $row_index = 0;
+        
+        // Produits
         foreach ($order_data['products'] as $product) {
             $bg = ($element['showAlternatingRows'] ?? true) && ($row_index % 2 === 1) ? $alt_bg : 'transparent';
             $html .= '<tr style="background: ' . $bg . ';">';
@@ -3187,6 +3189,20 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html .= '<td style="' . $border_style . ' padding: 8px; text-align: right; color: ' . $row_color . ';">' . $product['total'] . '</td>';
             $html .= '</tr>';
             $row_index++;
+        }
+        
+        // Frais de service (fees) - ajoutés comme lignes de produits
+        if (isset($order_data['fees']) && !empty($order_data['fees'])) {
+            foreach ($order_data['fees'] as $fee) {
+                $bg = ($element['showAlternatingRows'] ?? true) && ($row_index % 2 === 1) ? $alt_bg : 'transparent';
+                $html .= '<tr style="background: ' . $bg . ';">';
+                $html .= '<td style="' . $border_style . ' padding: 8px; color: ' . $row_color . ';">' . esc_html($fee['name']) . '</td>';
+                $html .= '<td style="' . $border_style . ' padding: 8px; text-align: center; color: ' . $row_color . ';">1</td>';
+                $html .= '<td style="' . $border_style . ' padding: 8px; text-align: right; color: ' . $row_color . ';">' . $fee['total'] . '</td>';
+                $html .= '<td style="' . $border_style . ' padding: 8px; text-align: right; color: ' . $row_color . ';">' . $fee['total'] . '</td>';
+                $html .= '</tr>';
+                $row_index++;
+            }
         }
         
         // Ligne de séparation avant les totaux
@@ -3202,14 +3218,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         if (($element['showDiscount'] ?? true) && $order_data['totals']['discount_raw'] > 0) {
             $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px; color: #dc2626;">Remise:</td>';
             $html .= '<td style="text-align: right; padding: 8px; color: #dc2626;">-' . wc_price($order_data['totals']['discount_raw']) . '</td></tr>';
-        }
-        
-        // Frais de service (fees)
-        if (isset($order_data['fees']) && !empty($order_data['fees'])) {
-            foreach ($order_data['fees'] as $fee) {
-                $html .= '<tr><td colspan="3" style="text-align: right; padding: 8px;">' . esc_html($fee['name']) . ':</td>';
-                $html .= '<td style="text-align: right; padding: 8px;">' . $fee['total'] . '</td></tr>';
-            }
         }
         
         // Livraison
