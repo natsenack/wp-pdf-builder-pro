@@ -3200,9 +3200,17 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Opacité
-        if (isset($element['opacity']) && $element['opacity'] < 100) {
-            $opacity_value = $element['opacity'] / 100;
-            $styles .= " opacity: {$opacity_value};";
+        if (isset($element['opacity'])) {
+            $opacity = $element['opacity'];
+            // Normaliser: si > 1, c'est un pourcentage (0-100), sinon c'est déjà 0-1
+            if ($opacity > 1) {
+                $opacity = $opacity / 100;
+            }
+            // Appliquer seulement si transparence < 100%
+            if ($opacity < 1) {
+                $styles .= " opacity: {$opacity};";
+            }
+            // Si opacity = 1, élément complètement opaque (pas de style nécessaire)
         }
         
         // Rotation
