@@ -14,6 +14,7 @@ Le système essaie automatiquement Browsershot en premier, puis bascule sur wkht
 ## 🎯 Option 1: Browsershot (Recommandé)
 
 ### Avantages
+
 - ✅ Meilleure qualité de rendu (moteur Chrome/Chromium)
 - ✅ Support complet CSS3, animations, fonts web
 - ✅ Screenshots haute résolution
@@ -22,12 +23,14 @@ Le système essaie automatiquement Browsershot en premier, puis bascule sur wkht
 - ✅ Fonctionne partout où Node.js est disponible
 
 ### Pré-requis
+
 - Node.js 14+ installé
 - npm ou yarn
 
 ### Installation
 
 #### Linux (Debian/Ubuntu)
+
 ```bash
 # 1. Installer Node.js si nécessaire
 curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
@@ -78,6 +81,7 @@ sudo apt-get install -y \
 ```
 
 #### Linux (CentOS/RHEL/Fedora)
+
 ```bash
 # 1. Installer Node.js
 curl -fsSL https://rpm.nodesource.com/setup_lts.x | sudo bash -
@@ -108,6 +112,7 @@ sudo yum install -y \
 ```
 
 #### macOS
+
 ```bash
 # 1. Installer Node.js via Homebrew
 brew install node
@@ -117,6 +122,7 @@ npm install -g puppeteer
 ```
 
 #### Windows
+
 ```powershell
 # 1. Installer Node.js depuis nodejs.org
 # Téléchargez et exécutez l'installateur: https://nodejs.org/
@@ -126,6 +132,7 @@ npm install -g puppeteer
 ```
 
 #### Docker
+
 ```dockerfile
 FROM php:8.1-apache
 
@@ -153,6 +160,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ```
 
 ### Vérification
+
 ```bash
 # Tester Puppeteer
 node -e "require('puppeteer').launch().then(b => b.close())"
@@ -189,17 +197,17 @@ choco install wkhtmltopdf
 
 ## 📊 Comparaison des Méthodes
 
-| Critère | Browsershot | wkhtmltoimage |
-|---------|-------------|---------------|
-| **Qualité rendu** | ⭐⭐⭐⭐⭐ (Chrome) | ⭐⭐⭐⭐ (WebKit) |
-| **Support CSS3** | ✅ Complet | ⚠️ Partiel |
-| **Fonts web** | ✅ Excellent | ⚠️ Limité |
-| **Performance** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **Installation** | npm (facile) | apt/yum (varies) |
-| **Dépendances** | Node.js | Bibliothèques système |
-| **Portabilité** | ✅ Multi-plateforme | ⚠️ Dépend de l'OS |
+| Critère                 | Browsershot         | wkhtmltoimage         |
+| ----------------------- | ------------------- | --------------------- |
+| **Qualité rendu**       | ⭐⭐⭐⭐⭐ (Chrome) | ⭐⭐⭐⭐ (WebKit)     |
+| **Support CSS3**        | ✅ Complet          | ⚠️ Partiel            |
+| **Fonts web**           | ✅ Excellent        | ⚠️ Limité             |
+| **Performance**         | ⭐⭐⭐⭐            | ⭐⭐⭐⭐⭐            |
+| **Installation**        | npm (facile)        | apt/yum (varies)      |
+| **Dépendances**         | Node.js             | Bibliothèques système |
+| **Portabilité**         | ✅ Multi-plateforme | ⚠️ Dépend de l'OS     |
 | **Hébergement partagé** | ✅ Si Node.js dispo | ❌ Souvent impossible |
-| **Mémoire** | ~200-300MB | ~50MB |
+| **Mémoire**             | ~200-300MB          | ~50MB                 |
 
 ---
 
@@ -215,12 +223,14 @@ choco install wkhtmltopdf
    - Génération d'image test
 
 ### Via Script (Linux/macOS)
+
 ```bash
 cd /path/to/wp-pdf-builder-pro-V2
 ./check-wkhtmltoimage.sh
 ```
 
 ### Via PowerShell (Windows)
+
 ```powershell
 cd I:\wp-pdf-builder-pro-V2
 .\check-wkhtmltoimage.ps1
@@ -229,6 +239,7 @@ cd I:\wp-pdf-builder-pro-V2
 ### Test Manuel
 
 #### Test Browsershot
+
 ```bash
 cd /path/to/plugin
 php -r "
@@ -240,6 +251,7 @@ echo 'OK: /tmp/test-browsershot.png';
 ```
 
 #### Test wkhtmltoimage
+
 ```bash
 echo '<h1>Test</h1>' > /tmp/test.html
 wkhtmltoimage /tmp/test.html /tmp/test.png
@@ -255,6 +267,7 @@ ls -lh /tmp/test.png
 **Cause possible:** Puppeteer non installé ou Chrome manquant
 
 **Solution:**
+
 ```bash
 # Réinstaller Puppeteer
 npm install -g puppeteer --unsafe-perm=true
@@ -268,6 +281,7 @@ PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=false npm install -g puppeteer
 **Cause:** Version incompatible de Puppeteer/Chrome
 
 **Solution:**
+
 ```bash
 # Installer version spécifique compatible
 npm install -g puppeteer@19.0.0
@@ -278,6 +292,7 @@ npm install -g puppeteer@19.0.0
 **Cause:** Dépendances système manquantes (Linux)
 
 **Solution:**
+
 ```bash
 # Ubuntu/Debian - installer toutes les dépendances
 sudo apt-get install -y \
@@ -295,6 +310,7 @@ sudo apt-get install -y \
 **Solution:** Ajouter l'option no-sandbox (pour les environnements Docker/root)
 
 Modifier temporairement le code:
+
 ```php
 \Spatie\Browsershot\Browsershot::html($html)
     ->setOption('args', ['--no-sandbox', '--disable-setuid-sandbox'])
@@ -306,24 +322,27 @@ Modifier temporairement le code:
 ## 🌐 Compatibilité Hébergement
 
 ### VPS / Serveurs Dédiés
+
 - ✅ Browsershot: OUI (installer Node.js)
 - ✅ wkhtmltoimage: OUI
 
 ### Hébergement Mutualisé (Shared Hosting)
+
 - ⚠️ Browsershot: Dépend si Node.js est disponible
 - ❌ wkhtmltoimage: Rarement possible (pas root)
 
 ### Hébergement WordPress Managé
 
-| Hébergeur | Browsershot | wkhtmltoimage | Notes |
-|-----------|-------------|---------------|-------|
-| **Kinsta** | ✅ | ❌ | Node.js disponible via shell |
-| **WP Engine** | ❌ | ❌ | Environnement restreint |
-| **Cloudways** | ✅ | ✅ | Accès SSH complet |
-| **SiteGround** | ⚠️ | ❌ | Node.js limité |
-| **Bluehost** | ❌ | ❌ | Partagé standard |
+| Hébergeur      | Browsershot | wkhtmltoimage | Notes                        |
+| -------------- | ----------- | ------------- | ---------------------------- |
+| **Kinsta**     | ✅          | ❌            | Node.js disponible via shell |
+| **WP Engine**  | ❌          | ❌            | Environnement restreint      |
+| **Cloudways**  | ✅          | ✅            | Accès SSH complet            |
+| **SiteGround** | ⚠️          | ❌            | Node.js limité               |
+| **Bluehost**   | ❌          | ❌            | Partagé standard             |
 
 ### Docker / Kubernetes
+
 - ✅ Browsershot: OUI (installer dans l'image)
 - ✅ wkhtmltoimage: OUI
 
@@ -423,6 +442,7 @@ Si vous rencontrez des difficultés:
 4. Activez le mode debug WordPress pour voir les erreurs détaillées
 
 **Logs à surveiller:**
+
 ```
 [PDF Builder] Tentative de génération avec Browsershot
 [PDF Builder] ✅ Génération réussie avec Browsershot
@@ -430,6 +450,7 @@ Si vous rencontrez des difficultés:
 ```
 
 Ou en cas de fallback:
+
 ```
 [PDF Builder] ⚠️ Browsershot échoué: ...
 [PDF Builder] Tentative avec wkhtmltoimage...

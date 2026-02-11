@@ -9,7 +9,7 @@ import {
   debugCanvasData,
 } from "../utils/CanvasPersistence";
 import { ClientNonceManager } from "../utils/ClientNonceManager";
-import { configureRealDataElements } from "../utils/RealDataElementsHelper";  // ✅ NEW: Auto-configure RealData elements
+import { configureRealDataElements } from "../utils/RealDataElementsHelper"; // ✅ NEW: Auto-configure RealData elements
 
 export function useTemplate() {
   const { state, dispatch } = useBuilder();
@@ -44,36 +44,34 @@ export function useTemplate() {
   // Charger un template existant
   const loadExistingTemplate = useCallback(
     async (templateId: string) => {
-      
-      
-      
-      
-      
-
       try {
         // ✅ PRIORITÉ: Utiliser les données localisées si disponibles (plus rapide et fiable)
         if (
           window.pdfBuilderData?.existingTemplate &&
           window.pdfBuilderData?.hasExistingData
         ) {
-          
           const templateData = window.pdfBuilderData.existingTemplate;
-          const templateName = templateData?.name?.trim() 
-            ? templateData.name 
+          const templateName = templateData?.name?.trim()
+            ? templateData.name
             : `[Template ${templateId}]`;
 
           // ✅ UTILISER LA COUCHE UNIFIÉE DE DÉSÉRIALISATION
           // Mode édition: utiliser les valeurs fictives
           const { elements, canvas } = deserializeCanvasData(
             templateData.template_data || templateData,
-            { mode: 'editor' }
+            { mode: "editor" },
           );
 
           // ✅ Initialiser les propriétés RealData sur les éléments
           const configuredElements = configureRealDataElements(elements);
 
-          debugLog(`📂 LOAD - ${configuredElements.length} éléments depuis données localisées`);
-          debugCanvasData({ elements: configuredElements, canvas, version: '1.0' }, 'Données chargées');
+          debugLog(
+            `📂 LOAD - ${configuredElements.length} éléments depuis données localisées`,
+          );
+          debugCanvasData(
+            { elements: configuredElements, canvas, version: "1.0" },
+            "Données chargées",
+          );
 
           dispatch({
             type: "LOAD_TEMPLATE",
@@ -95,10 +93,6 @@ export function useTemplate() {
         }
 
         // ✅ FALLBACK: Utiliser AJAX si les données localisées ne sont pas disponibles
-        
-        
-        
-        
 
         // Détecter le navigateur pour des en-têtes spécifiques
         const isChrome =
@@ -115,8 +109,6 @@ export function useTemplate() {
           /Safari/.test(navigator.userAgent) &&
           !/Chrome/.test(navigator.userAgent) &&
           !/Chromium/.test(navigator.userAgent);
-
-        
 
         // Préparer les options fetch avec des en-têtes spécifiques par navigateur
         const fetchOptions: RequestInit = {
@@ -139,24 +131,18 @@ export function useTemplate() {
           // Chrome peut avoir besoin d'un mode plus permissif
           fetchOptions.mode = "cors";
           fetchOptions.cache = "no-cache";
-          
         } else if (isFirefox) {
           // Firefox gère bien le cache par défaut
           fetchOptions.cache = "no-cache";
-          
         } else if (isSafari) {
           // Safari peut avoir des problèmes avec certains modes
           fetchOptions.mode = "cors";
-          
         }
 
         const cacheBreaker = Date.now();
         const url = ClientNonceManager.addToUrl(
-          `${ClientNonceManager.getAjaxUrl()}?action=pdf_builder_get_template&template_id=${templateId}&t=${cacheBreaker}`
+          `${ClientNonceManager.getAjaxUrl()}?action=pdf_builder_get_template&template_id=${templateId}&t=${cacheBreaker}`,
         );
-
-        
-        
 
         const response = await fetch(url, fetchOptions);
 
@@ -164,7 +150,7 @@ export function useTemplate() {
           const errorText = await response.text();
           debugError("[useTemplate] Response error text:", errorText);
           throw new Error(
-            `Erreur HTTP ${response.status}: ${response.statusText}`
+            `Erreur HTTP ${response.status}: ${response.statusText}`,
           );
         }
 
@@ -172,7 +158,7 @@ export function useTemplate() {
 
         if (!result.success) {
           throw new Error(
-            result.data || "Erreur lors du chargement du template"
+            result.data || "Erreur lors du chargement du template",
           );
         }
 
@@ -185,34 +171,38 @@ export function useTemplate() {
           ? result.data.template_name || result.data.name
           : result.name || result.template_name;
 
-        
-        
-
         // Appliquer la même logique de fallback que pour les données localisées
         const templateName =
           ajaxTemplateName && ajaxTemplateName.trim() !== ""
             ? ajaxTemplateName
             : templateData?.name && templateData.name.trim() !== ""
-            ? templateData.name
-            : `[NOM NON RÉCUPÉRÉ - ID: ${templateId}]`;
+              ? templateData.name
+              : `[NOM NON RÉCUPÉRÉ - ID: ${templateId}]`;
 
         // 🔍 Tracer les éléments reçus du serveur
         if (templateData.elements) {
           // 🔍 Vérifier spécifiquement les éléments order_number
           const orderNumberElements = templateData.elements.filter(
-            (el: any) => el.type === "order_number"
+            (el: any) => el.type === "order_number",
           );
         }
 
         // ✅ UTILISER LA COUCHE UNIFIÉE POUR LE FALLBACK AUSSI
         // Mode édition: utiliser les valeurs fictives
-        const { elements, canvas } = deserializeCanvasData(templateData, { mode: 'editor' });
+        const { elements, canvas } = deserializeCanvasData(templateData, {
+          mode: "editor",
+        });
 
         // ✅ Initialiser les propriétés RealData sur les éléments
         const configuredElements = configureRealDataElements(elements);
 
-        debugLog(`📂 LOAD FALLBACK - ${configuredElements.length} éléments depuis AJAX`);
-        debugCanvasData({ elements: configuredElements, canvas, version: '1.0' }, 'Données AJAX');
+        debugLog(
+          `📂 LOAD FALLBACK - ${configuredElements.length} éléments depuis AJAX`,
+        );
+        debugCanvasData(
+          { elements: configuredElements, canvas, version: "1.0" },
+          "Données AJAX",
+        );
 
         dispatch({
           type: "LOAD_TEMPLATE",
@@ -255,11 +245,11 @@ export function useTemplate() {
             isChrome
               ? "Chrome"
               : isFirefox
-              ? "Firefox"
-              : isSafari
-              ? "Safari"
-              : "navigateur inconnu"
-          }`
+                ? "Firefox"
+                : isSafari
+                  ? "Safari"
+                  : "navigateur inconnu"
+          }`,
         );
         debugError("❌ [LOAD TEMPLATE] Détails de l'erreur:", {
           message: error instanceof Error ? error.message : "Unknown error",
@@ -277,7 +267,7 @@ export function useTemplate() {
           error.message.includes("fetch")
         ) {
           debugWarn(
-            "🔄 [LOAD TEMPLATE] Tentative de fallback pour Chrome - Nouvelle tentative avec options différentes"
+            "🔄 [LOAD TEMPLATE] Tentative de fallback pour Chrome - Nouvelle tentative avec options différentes",
           );
 
           try {
@@ -296,7 +286,7 @@ export function useTemplate() {
             };
 
             const fallbackUrl = ClientNonceManager.addToUrl(
-              `${ClientNonceManager.getAjaxUrl()}?action=pdf_builder_get_template&template_id=${templateId}&fallback=1&t=${Date.now()}`
+              `${ClientNonceManager.getAjaxUrl()}?action=pdf_builder_get_template&template_id=${templateId}&fallback=1&t=${Date.now()}`,
             );
 
             const fallbackResponse = await fetch(fallbackUrl, fallbackOptions);
@@ -314,12 +304,12 @@ export function useTemplate() {
         return false;
       }
     },
-    [dispatch]
+    [dispatch],
   );
 
   /**
    * 📊 Charger template en mode APERÇU (preview)
-   * 
+   *
    * Récupère les données réelles WooCommerce pour une commande
    * et charge le template avec ces données injectées
    * (aperçu miroir avec vraies données)
@@ -328,88 +318,105 @@ export function useTemplate() {
     async (templateId: string, orderId: string | number) => {
       try {
         // 1️⃣ D'abord, récupérer les données réelles de la commande
-        debugLog(`📊 [PREVIEW] Récupération des données pour commande ID ${orderId}`);
-        
+        debugLog(
+          `📊 [PREVIEW] Récupération des données pour commande ID ${orderId}`,
+        );
+
         const orderDataUrl = ClientNonceManager.addToUrl(
-          `${ClientNonceManager.getAjaxUrl()}?action=pdf_builder_get_order_data_for_preview&orderId=${orderId}`
+          `${ClientNonceManager.getAjaxUrl()}?action=pdf_builder_get_order_data_for_preview&orderId=${orderId}`,
         );
 
         const orderDataResponse = await fetch(orderDataUrl, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
           },
           body: JSON.stringify({
-            nonce: window.pdfBuilderData?.nonce || '',
+            nonce: window.pdfBuilderData?.nonce || "",
           }),
         });
 
         if (!orderDataResponse.ok) {
-          throw new Error(`Erreur HTTP ${orderDataResponse.status}: Impossible de récupérer les données de la commande`);
+          throw new Error(
+            `Erreur HTTP ${orderDataResponse.status}: Impossible de récupérer les données de la commande`,
+          );
         }
 
         const orderDataResult = await orderDataResponse.json();
         if (!orderDataResult.success) {
-          throw new Error(orderDataResult.data?.message || 'Erreur lors de la récupération des données');
+          throw new Error(
+            orderDataResult.data?.message ||
+              "Erreur lors de la récupération des données",
+          );
         }
 
         const realOrderData = orderDataResult.data;
-        debugLog(`✅ [PREVIEW] ${Object.keys(realOrderData).length} propriétés récupérées pour la commande`);
-        debugLog('[PREVIEW] Données:', realOrderData);
+        debugLog(
+          `✅ [PREVIEW] ${Object.keys(realOrderData).length} propriétés récupérées pour la commande`,
+        );
+        debugLog("[PREVIEW] Données:", realOrderData);
 
         // 2️⃣ Charger le template avec les données réelles en mode preview
         const templateLoaded = await loadExistingTemplate(templateId);
         if (!templateLoaded) {
-          throw new Error('Impossible de charger le template');
+          throw new Error("Impossible de charger le template");
         }
 
         // 3️⃣ Récupérer les éléments du state et les déserialiser en mode preview
         // (C'est fait dans BuilderContext après SET_ELEMENTS)
         const templateData = window.pdfBuilderData?.existingTemplate;
         if (!templateData) {
-          throw new Error('Données du template manquantes');
+          throw new Error("Données du template manquantes");
         }
 
         // 4️⃣ Réinjecter avec les données réelles
         const { elements, canvas } = deserializeCanvasData(
           templateData.template_data || templateData,
           {
-            mode: 'preview',
-            realOrderData: realOrderData
-          }
+            mode: "preview",
+            realOrderData: realOrderData,
+          },
         );
 
         // 🔧 Initialiser les propriétés RealData (même si déjà en mode preview)
         const configuredElements = configureRealDataElements(elements);
 
-        debugLog(`📊 [PREVIEW] ${configuredElements.length} éléments chargés avec données réelles`);
-        debugCanvasData({ elements: configuredElements, canvas, version: '1.0' }, '📊 Aperçu avec données réelles');
+        debugLog(
+          `📊 [PREVIEW] ${configuredElements.length} éléments chargés avec données réelles`,
+        );
+        debugCanvasData(
+          { elements: configuredElements, canvas, version: "1.0" },
+          "📊 Aperçu avec données réelles",
+        );
 
         // 5️⃣ Dispatcher pour mettre à jour le canvas avec les éléments du preview
         dispatch({
-          type: 'SET_ELEMENTS',
-          payload: configuredElements
+          type: "SET_ELEMENTS",
+          payload: configuredElements,
         });
 
         // 6️⃣ Mettre à jour le state de preview
         dispatch({
-          type: 'SET_PREVIEW_MODE',
-          payload: 'command'
+          type: "SET_PREVIEW_MODE",
+          payload: "command",
         });
-        
+
         dispatch({
-          type: 'SET_ORDER_ID',
-          payload: String(orderId)
+          type: "SET_ORDER_ID",
+          payload: String(orderId),
         });
 
         return true;
       } catch (error) {
-        debugError('❌ [PREVIEW] Erreur lors du chargement de l\'aperçu:', error);
+        debugError(
+          "❌ [PREVIEW] Erreur lors du chargement de l'aperçu:",
+          error,
+        );
         return false;
       }
     },
-    [dispatch, loadExistingTemplate]
+    [dispatch, loadExistingTemplate],
   );
 
   // 🎯 DISABLED: Event-based template loading causes race conditions with useEffect
@@ -427,28 +434,30 @@ export function useTemplate() {
   // ✅ Dépendance vide: charger une seule fois au montage du composant
   useEffect(() => {
     const templateId = getTemplateIdFromUrl();
-    
+
     // Détecter le mode preview depuis l'URL
     const urlParams = new URLSearchParams(window.location.search);
-    const isPreviewMode = urlParams.get('preview') === '1';
-    const orderId = urlParams.get('order_id');
+    const isPreviewMode = urlParams.get("preview") === "1";
+    const orderId = urlParams.get("order_id");
 
     if (templateId) {
       // Timeout de sécurité : forcer isLoading à false après 10 secondes si le chargement échoue
       const loadingTimeout = setTimeout(() => {
         debugError(
-          "[useTemplate] Loading timeout reached, forcing isLoading to false"
+          "[useTemplate] Loading timeout reached, forcing isLoading to false",
         );
         dispatch({ type: "SET_TEMPLATE_LOADING", payload: false });
       }, 10000);
 
       // Si mode preview avec order_id, charger l'aperçu avec données réelles
       if (isPreviewMode && orderId) {
-        debugLog(`🔍 [PREVIEW] Détection du mode preview pour commande #${orderId}`);
+        debugLog(
+          `🔍 [PREVIEW] Détection du mode preview pour commande #${orderId}`,
+        );
         loadTemplateForPreview(templateId, orderId)
           .then(() => {
             clearTimeout(loadingTimeout);
-            debugLog('✅ [PREVIEW] Aperçu chargé avec succès');
+            debugLog("✅ [PREVIEW] Aperçu chargé avec succès");
           })
           .catch((error) => {
             clearTimeout(loadingTimeout);
@@ -484,17 +493,14 @@ export function useTemplate() {
       if (!templateId) throw new Error("Aucun template chargé");
       if (!state.template.name?.trim()) return;
 
-
-
       // Sérialiser les données du canvas
-      const jsonData = serializeCanvasData(
-        state.elements,
-        {
-          width: state.template.canvasWidth || canvasSettings.canvasWidth,
-          height: state.template.canvasHeight || canvasSettings.canvasHeight,
-        }
+      const jsonData = serializeCanvasData(state.elements, {
+        width: state.template.canvasWidth || canvasSettings.canvasWidth,
+        height: state.template.canvasHeight || canvasSettings.canvasHeight,
+      });
+      debugLog(
+        `💾 SAVE - ${state.elements.length} éléments, ID: ${templateId}`,
       );
-      debugLog(`💾 SAVE - ${state.elements.length} éléments, ID: ${templateId}`);
 
       // Préparer la requête
       const formData = new FormData();
@@ -502,43 +508,33 @@ export function useTemplate() {
       formData.append("template_id", templateId);
       formData.append("template_name", state.template.name);
       formData.append("template_description", state.template.description || "");
-      
 
-      
       formData.append("template_data", jsonData);
       ClientNonceManager.addToFormData(formData);
-
-
-
-
 
       const response = await fetch(ClientNonceManager.getAjaxUrl(), {
         method: "POST",
         body: formData,
       });
 
-
-
       if (!response.ok) {
         const errorText = await response.text();
-        debugError('[SAVE] HTTP Error:', response.status, errorText);
+        debugError("[SAVE] HTTP Error:", response.status, errorText);
 
         throw new Error(`Erreur HTTP: ${response.status}`);
       }
 
       const result = await response.json();
 
-
-
       if (!result.success) {
-        debugError('[SAVE] Save failed:', result.data);
+        debugError("[SAVE] Save failed:", result.data);
         if (result.data?.code === "nonce_invalid") {
           try {
             let freshNonce = result.data?.nonce;
 
             if (!freshNonce) {
               freshNonce = await ClientNonceManager.refreshNonce(
-                ClientNonceManager.getCurrentNonce() || undefined
+                ClientNonceManager.getCurrentNonce() || undefined,
               );
             } else {
               ClientNonceManager.setNonce(freshNonce);
@@ -553,7 +549,7 @@ export function useTemplate() {
         }
 
         throw new Error(
-          result.data || "Erreur lors de la sauvegarde du template"
+          result.data || "Erreur lors de la sauvegarde du template",
         );
       }
 
@@ -570,7 +566,8 @@ export function useTemplate() {
       if (window.pdfBuilderData && window.pdfBuilderData.existingTemplate) {
         window.pdfBuilderData.existingTemplate.template_data = jsonData;
         window.pdfBuilderData.existingTemplate.name = state.template.name;
-        window.pdfBuilderData.existingTemplate.description = state.template.description || "";
+        window.pdfBuilderData.existingTemplate.description =
+          state.template.description || "";
       }
 
       return true;
@@ -596,7 +593,7 @@ export function useTemplate() {
 
   // ✅ NEW: Exposer loadTemplateForPreview au niveau global pour que le header puisse l'appeler
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       (window as any).pdfBuilderLoadTemplateForPreview = loadTemplateForPreview;
     }
   }, [loadTemplateForPreview]);
@@ -609,14 +606,14 @@ export function useTemplate() {
     (modified: boolean) => {
       dispatch({ type: "SET_TEMPLATE_MODIFIED", payload: modified });
     },
-    [dispatch]
+    [dispatch],
   );
 
   const updateTemplateSettings = useCallback(
     (settings: Partial<TemplateState>) => {
       dispatch({ type: "UPDATE_TEMPLATE_SETTINGS", payload: settings });
     },
-    [dispatch]
+    [dispatch],
   );
 
   return useMemo(
@@ -641,7 +638,7 @@ export function useTemplate() {
       newTemplate,
       setTemplateModified,
       updateTemplateSettings,
-      loadTemplateForPreview,  // ✅ NEW: Charger template avec données réelles
+      loadTemplateForPreview, // ✅ NEW: Charger template avec données réelles
     }),
     [
       state.template.id,
@@ -665,10 +662,8 @@ export function useTemplate() {
       newTemplate,
       setTemplateModified,
       updateTemplateSettings,
-      loadTemplateForPreview,  // ✅ NEW: Ajouter aux dépendances
+      loadTemplateForPreview, // ✅ NEW: Ajouter aux dépendances
       getTemplateIdFromUrl,
-    ]
+    ],
   );
 }
-
-

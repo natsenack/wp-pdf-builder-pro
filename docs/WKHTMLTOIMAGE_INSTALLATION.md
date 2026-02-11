@@ -1,6 +1,7 @@
 # Installation de wkhtmltoimage pour PDF Builder Pro
 
 ## Prérequis
+
 La fonctionnalité **premium** de génération d'images (PNG/JPG) nécessite l'installation de `wkhtmltoimage` sur votre serveur.
 
 `wkhtmltoimage` est inclus dans le package **wkhtmltopdf** qui contient à la fois wkhtmltopdf et wkhtmltoimage.
@@ -112,6 +113,7 @@ echo "Version: " . $version;
 ```
 
 Ou testez directement dans PDF Builder Pro :
+
 1. Allez dans **PDF Builder → Paramètres → Système**
 2. Vérifiez la section "Commandes système disponibles"
 3. `wkhtmltoimage` doit apparaître comme ✅ Disponible
@@ -212,6 +214,7 @@ PDF Builder Pro gère automatiquement Xvfb si nécessaire.
 ⚠️ La plupart des hébergements mutualisés **ne permettent pas** l'installation de binaires système.
 
 **Alternatives :**
+
 - Passer à un VPS ou serveur dédié
 - Utiliser une solution cloud (AWS Lambda, Google Cloud Functions)
 - Demander à l'hébergeur s'il peut installer wkhtmltoimage
@@ -252,6 +255,7 @@ Une fois installé, testez dans PDF Builder Pro :
 4. Cliquez sur **PNG** ou **JPG**
 
 Si l'installation est correcte :
+
 - ✅ L'image se télécharge automatiquement
 - ✅ Le format correspond au choix (PNG transparent ou JPG compressé)
 - ✅ Les dimensions respectent le template

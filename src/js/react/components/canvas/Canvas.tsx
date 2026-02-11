@@ -8,7 +8,10 @@ import {
   MouseEvent,
 } from "react";
 import { useBuilder } from "../../contexts/builder/BuilderContext";
-import { useCanvasSettings, DEFAULT_SETTINGS } from "../../contexts/CanvasSettingsContext";
+import {
+  useCanvasSettings,
+  DEFAULT_SETTINGS,
+} from "../../contexts/CanvasSettingsContext";
 import { useCanvasSetting } from "../../hooks/useCanvasSettings";
 import { useCanvasDrop } from "../../hooks/useCanvasDrop";
 import { useCanvasInteraction } from "../../hooks/useCanvasInteraction";
@@ -55,7 +58,7 @@ const roundedRect = (
   y: number,
   width: number,
   height: number,
-  radius: number
+  radius: number,
 ) => {
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
@@ -73,14 +76,14 @@ const roundedRect = (
 const cleanupImageCache = (
   imageCache: MutableRefObject<
     Map<string, { image: HTMLImageElement; size: number; lastUsed: number }>
-  >
+  >,
 ) => {
   const cache = imageCache.current;
   if (cache.size <= 100) return; // Max 100 images
 
   // Trier par date d'utilisation et supprimer les plus anciennes
   const entries = Array.from(cache.entries()).sort(
-    ([, a], [, b]) => a.lastUsed - b.lastUsed
+    ([, a], [, b]) => a.lastUsed - b.lastUsed,
   );
   const toRemove = entries.slice(0, Math.ceil(cache.size * 0.2)); // Supprimer 20%
 
@@ -96,9 +99,9 @@ const normalizeColor = (color: string): string => color;
 
 // Fonction pour normaliser les poids de police
 const normalizeFontWeight = (weight: string | number): string => {
-  if (typeof weight === 'number') return weight.toString();
-  if (weight === 'bold') return '700';
-  if (weight === 'normal') return '400';
+  if (typeof weight === "number") return weight.toString();
+  if (weight === "bold") return "700";
+  if (weight === "normal") return "400";
   return weight;
 };
 
@@ -117,7 +120,10 @@ const DEFAULT_COLORS = {
 } as const;
 
 // Fonction helper pour configurer les polices
-const createFontConfig = (props: any, baseSize: number = DEFAULT_FONT.size) => ({
+const createFontConfig = (
+  props: any,
+  baseSize: number = DEFAULT_FONT.size,
+) => ({
   family: props.fontFamily || DEFAULT_FONT.family,
   size: props.fontSize || baseSize,
   weight: props.fontWeight || DEFAULT_FONT.weight,
@@ -125,7 +131,10 @@ const createFontConfig = (props: any, baseSize: number = DEFAULT_FONT.size) => (
 });
 
 // Fonction helper pour configurer les couleurs avec normalisation
-const createColorConfig = (props: any, defaults: typeof DEFAULT_COLORS = DEFAULT_COLORS) => ({
+const createColorConfig = (
+  props: any,
+  defaults: typeof DEFAULT_COLORS = DEFAULT_COLORS,
+) => ({
   background: normalizeColor(props.backgroundColor || defaults.background),
   border: normalizeColor(props.borderColor || defaults.border),
   text: normalizeColor(props.textColor || defaults.text),
@@ -140,16 +149,27 @@ const getPadding = (props: any) => ({
 });
 
 // Fonction helper pour calculer la position X selon l'alignement
-const calculateTextX = (element: Element, textAlign: string, padding: ReturnType<typeof getPadding>) => {
+const calculateTextX = (
+  element: Element,
+  textAlign: string,
+  padding: ReturnType<typeof getPadding>,
+) => {
   switch (textAlign) {
-    case "center": return element.width / 2;
-    case "right": return element.width - padding.right;
-    default: return padding.left;
+    case "center":
+      return element.width / 2;
+    case "right":
+      return element.width - padding.right;
+    default:
+      return padding.left;
   }
 };
 
 // Fonction helper pour appliquer les bordures avec style
-const applyBorder = (ctx: CanvasRenderingContext2D, element: Element, borderProps: any) => {
+const applyBorder = (
+  ctx: CanvasRenderingContext2D,
+  element: Element,
+  borderProps: any,
+) => {
   if (!borderProps || borderProps.width <= 0) return;
 
   ctx.strokeStyle = borderProps.color || "#000000";
@@ -157,9 +177,14 @@ const applyBorder = (ctx: CanvasRenderingContext2D, element: Element, borderProp
 
   // Appliquer le style de ligne
   switch (borderProps.style) {
-    case "dashed": ctx.setLineDash([5, 5]); break;
-    case "dotted": ctx.setLineDash([2, 2]); break;
-    default: ctx.setLineDash([]);
+    case "dashed":
+      ctx.setLineDash([5, 5]);
+      break;
+    case "dotted":
+      ctx.setLineDash([2, 2]);
+      break;
+    default:
+      ctx.setLineDash([]);
   }
 
   ctx.strokeRect(0, 0, element.width, element.height);
@@ -172,12 +197,12 @@ const setupRenderContext = (
   fontConfig: ReturnType<typeof createFontConfig>,
   colorConfig: ReturnType<typeof createColorConfig>,
   textAlign: string = "left",
-  verticalAlign: string = "top"
+  verticalAlign: string = "top",
 ) => {
   ctx.fillStyle = colorConfig.text;
   ctx.font = `${fontConfig.style} ${fontConfig.weight} ${fontConfig.size}px ${fontConfig.family}`;
   ctx.textAlign = textAlign as CanvasTextAlign;
-  
+
   // Définir le textBaseline selon l'alignement vertical
   switch (verticalAlign) {
     case "middle":
@@ -193,19 +218,29 @@ const setupRenderContext = (
 
 // Fonction helper pour configurer les couleurs des shapes
 const createShapeColors = (props: any) => ({
-  background: normalizeColor(props.backgroundColor || props.fillColor || "#ffffff"),
+  background: normalizeColor(
+    props.backgroundColor || props.fillColor || "#ffffff",
+  ),
   border: normalizeColor(props.borderColor || props.strokeColor || "#000000"),
 });
 
 // Fonction helper pour appliquer les couleurs et styles de shape
-const applyShapeStyle = (ctx: CanvasRenderingContext2D, colors: ReturnType<typeof createShapeColors>, borderWidth: number = 1) => {
+const applyShapeStyle = (
+  ctx: CanvasRenderingContext2D,
+  colors: ReturnType<typeof createShapeColors>,
+  borderWidth: number = 1,
+) => {
   ctx.fillStyle = colors.background;
   ctx.strokeStyle = colors.border;
   ctx.lineWidth = borderWidth;
 };
 
 // Fonction helper pour calculer la position X selon l'alignement du texte
-const calculateTextAlignX = (element: Element, align: string = "left", padding: number = 0) => {
+const calculateTextAlignX = (
+  element: Element,
+  align: string = "left",
+  padding: number = 0,
+) => {
   switch (align) {
     case "center":
       return element.width / 2;
@@ -217,7 +252,12 @@ const calculateTextAlignX = (element: Element, align: string = "left", padding: 
 };
 
 // Fonction helper pour calculer la position Y selon l'alignement vertical
-const calculateTextY = (element: Element, verticalAlign: string = "top", fontSize: number = 12, padding: number = 0) => {
+const calculateTextY = (
+  element: Element,
+  verticalAlign: string = "top",
+  fontSize: number = 12,
+  padding: number = 0,
+) => {
   switch (verticalAlign) {
     case "middle":
       return element.height / 2;
@@ -229,9 +269,13 @@ const calculateTextY = (element: Element, verticalAlign: string = "top", fontSiz
 };
 
 // Fonction helper pour calculer Y avec padding
-const calculateTextYWithPadding = (element: Element, verticalAlign: string = "top", paddingConfig: ReturnType<typeof getPadding>) => {
+const calculateTextYWithPadding = (
+  element: Element,
+  verticalAlign: string = "top",
+  paddingConfig: ReturnType<typeof getPadding>,
+) => {
   const centerY = element.height / 2;
-  
+
   switch (verticalAlign) {
     case "middle":
       return centerY;
@@ -278,13 +322,24 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
   const fontConfig = createFontConfig(props, 16);
   const colorConfig = createColorConfig(props);
 
-  setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign, props.verticalAlign);
+  setupRenderContext(
+    ctx,
+    fontConfig,
+    colorConfig,
+    props.textAlign,
+    props.verticalAlign,
+  );
 
   // ✅ NEW: Ajouter du padding
   const padding = props.padding || 12;
 
   const x = calculateTextAlignX(element, props.textAlign, padding);
-  const y = calculateTextY(element, props.verticalAlign, fontConfig.size, padding);
+  const y = calculateTextY(
+    element,
+    props.verticalAlign,
+    fontConfig.size,
+    padding,
+  );
 
   ctx.fillText(props.text || "Text", x, y);
 };
@@ -308,7 +363,7 @@ const drawImage = (
   element: Element,
   imageCache: MutableRefObject<
     Map<string, { image: HTMLImageElement; size: number; lastUsed: number }>
-  >
+  >,
 ) => {
   const props = element as ImageElement;
   const imageUrl = props.src || "";
@@ -338,8 +393,14 @@ const drawImage = (
 };
 
 // Fonction helper pour dessiner un placeholder d'image
-const drawImagePlaceholder = (ctx: CanvasRenderingContext2D, element: Element) => {
-  const colors = createColorConfig({}, { background: "#f0f0f0", border: "#cccccc", text: "#999999" });
+const drawImagePlaceholder = (
+  ctx: CanvasRenderingContext2D,
+  element: Element,
+) => {
+  const colors = createColorConfig(
+    {},
+    { background: "#f0f0f0", border: "#cccccc", text: "#999999" },
+  );
 
   ctx.fillStyle = colors.background;
   ctx.fillRect(0, 0, element.width, element.height);
@@ -357,7 +418,9 @@ const drawImagePlaceholder = (ctx: CanvasRenderingContext2D, element: Element) =
 // Fonction helper pour charger et mettre en cache une image
 const loadAndCacheImage = (
   imageUrl: string,
-  imageCache: MutableRefObject<Map<string, { image: HTMLImageElement; size: number; lastUsed: number }>>
+  imageCache: MutableRefObject<
+    Map<string, { image: HTMLImageElement; size: number; lastUsed: number }>
+  >,
 ) => {
   const img = document.createElement("img");
   img.crossOrigin = "anonymous";
@@ -383,14 +446,23 @@ const drawImageWithObjectFit = (
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement,
   element: Element,
-  objectFit: string
+  objectFit: string,
 ) => {
-  let drawX = 0, drawY = 0, drawWidth = element.width, drawHeight = element.height;
-  let sourceX = 0, sourceY = 0, sourceWidth = img.naturalWidth, sourceHeight = img.naturalHeight;
+  let drawX = 0,
+    drawY = 0,
+    drawWidth = element.width,
+    drawHeight = element.height;
+  let sourceX = 0,
+    sourceY = 0,
+    sourceWidth = img.naturalWidth,
+    sourceHeight = img.naturalHeight;
 
   switch (objectFit) {
     case "contain":
-      const containRatio = Math.min(element.width / img.naturalWidth, element.height / img.naturalHeight);
+      const containRatio = Math.min(
+        element.width / img.naturalWidth,
+        element.height / img.naturalHeight,
+      );
       drawWidth = img.naturalWidth * containRatio;
       drawHeight = img.naturalHeight * containRatio;
       drawX = (element.width - drawWidth) / 2;
@@ -398,7 +470,10 @@ const drawImageWithObjectFit = (
       break;
 
     case "cover":
-      const coverRatio = Math.max(element.width / img.naturalWidth, element.height / img.naturalHeight);
+      const coverRatio = Math.max(
+        element.width / img.naturalWidth,
+        element.height / img.naturalHeight,
+      );
       sourceWidth = element.width / coverRatio;
       sourceHeight = element.height / coverRatio;
       sourceX = (img.naturalWidth - sourceWidth) / 2;
@@ -406,8 +481,14 @@ const drawImageWithObjectFit = (
       break;
 
     case "scale-down":
-      if (img.naturalWidth > element.width || img.naturalHeight > element.height) {
-        const scaleDownRatio = Math.min(element.width / img.naturalWidth, element.height / img.naturalHeight);
+      if (
+        img.naturalWidth > element.width ||
+        img.naturalHeight > element.height
+      ) {
+        const scaleDownRatio = Math.min(
+          element.width / img.naturalWidth,
+          element.height / img.naturalHeight,
+        );
         drawWidth = img.naturalWidth * scaleDownRatio;
         drawHeight = img.naturalHeight * scaleDownRatio;
         drawX = (element.width - drawWidth) / 2;
@@ -417,7 +498,17 @@ const drawImageWithObjectFit = (
     // "fill" utilise les dimensions par défaut
   }
 
-  ctx.drawImage(img, sourceX, sourceY, sourceWidth, sourceHeight, drawX, drawY, drawWidth, drawHeight);
+  ctx.drawImage(
+    img,
+    sourceX,
+    sourceY,
+    sourceWidth,
+    sourceHeight,
+    drawX,
+    drawY,
+    drawWidth,
+    drawHeight,
+  );
 };
 
 // Fonctions de rendu WooCommerce avec données fictives ou réelles selon le mode
@@ -425,8 +516,10 @@ const drawProductTable = (
   ctx: CanvasRenderingContext2D,
   element: Element,
   state: BuilderState,
-  imageCache?: MutableRefObject<Map<string, { image: HTMLImageElement; size: number; lastUsed: number }>>,
-  setImageLoadCount?: (fn: (prev: number) => number) => void
+  imageCache?: MutableRefObject<
+    Map<string, { image: HTMLImageElement; size: number; lastUsed: number }>
+  >,
+  setImageLoadCount?: (fn: (prev: number) => number) => void,
 ) => {
   const props = element as ProductTableElement;
 
@@ -459,7 +552,7 @@ const drawProductTable = (
   const showGlobalDiscount = props.showGlobalDiscount !== false;
   const textColor = normalizeColor(props.textColor || "#000000");
   const borderRadius = props.borderRadius || 0;
-  
+
   // ✅ NEW: Utiliser element.columns pour les colonnes dynamiques
   const showImage = props.columns?.image !== false;
   const showName = props.columns?.name !== false;
@@ -482,10 +575,10 @@ const drawProductTable = (
     // Get real order items from WooCommerce
     const orderItems = wooCommerceManager.getOrderItems();
     const orderFees = wooCommerceManager.getOrderFees();
-    
+
     // Combine products and fees into one array
     products = [
-      ...orderItems.map(item => ({
+      ...orderItems.map((item) => ({
         sku: item.sku,
         name: item.name,
         description: item.description,
@@ -494,22 +587,22 @@ const drawProductTable = (
         discount: item.discount,
         total: item.total,
       })),
-      ...orderFees.map(fee => ({
-        sku: 'FEE',
+      ...orderFees.map((fee) => ({
+        sku: "FEE",
         name: fee.name,
-        description: '',
+        description: "",
         qty: 1,
         price: fee.total,
         discount: 0,
         total: fee.total,
-      }))
+      })),
     ];
   } else {
     // Use props.products in editor mode
-    products = (props.products || []).map(p => ({
-      sku: p.sku || 'N/A',
+    products = (props.products || []).map((p) => ({
+      sku: p.sku || "N/A",
       name: p.name,
-      description: p.description || '',
+      description: p.description || "",
       qty: p.quantity,
       price: p.price,
       discount: 0, // Les remises sont dans totals.discount
@@ -561,15 +654,15 @@ const drawProductTable = (
         name: "Frais de service",
         description: "Frais supplémentaires pour emballage premium",
         qty: 1,
-        price: 15.00,
+        price: 15.0,
         discount: 0,
-        total: 15.00,
+        total: 15.0,
       },
     ];
   }
 
   // Fees are now included in products array for preview mode
-  const fees = state.previewMode === "command" ? [] : (props.fees || []);
+  const fees = state.previewMode === "command" ? [] : props.fees || [];
 
   const currency = "€";
 
@@ -599,19 +692,24 @@ const drawProductTable = (
     // ✅ CALCUL CORRECT DES TOTALS - Pas de hardcoding
     // 1) Calculer le sous-total à partir des produits
     subtotal = products.reduce((sum, p) => sum + (p.total || 0), 0);
-    
+
     // 2) Ajouter les frais supplémentaires si présents
     totalFees = fees.reduce((sum, f) => sum + (f.total || 0), 0);
-    
+
     // 3) Lire les valeurs depuis les propriétés de l'élément OU utiliser les valeurs de totals comme fallback
-    shippingCost = props.shippingCost as any || (props.totals?.shippingCost as any) || 10.0; // Valeur fictive: 10€
-    taxRate = props.taxRate as any || (props.totals?.taxRate as any) || 5; // Valeur fictive: 5%
-    globalDiscount = props.globalDiscount as any || (props.totals?.discount as any) || 20.0; // Valeur fictive: 20€
-    
+    shippingCost =
+      (props.shippingCost as any) ||
+      (props.totals?.shippingCost as any) ||
+      10.0; // Valeur fictive: 10€
+    taxRate = (props.taxRate as any) || (props.totals?.taxRate as any) || 5; // Valeur fictive: 5%
+    globalDiscount =
+      (props.globalDiscount as any) || (props.totals?.discount as any) || 20.0; // Valeur fictive: 20€
+
     // Calculate tax from rate
-    taxAmount = showTax && taxRate > 0 ? (subtotal + shippingCost) * taxRate / 100 : 0;
+    taxAmount =
+      showTax && taxRate > 0 ? ((subtotal + shippingCost) * taxRate) / 100 : 0;
   }
-  
+
   // 4) APPLIQUER LES FLAGS ACTIFS - Mettre à zéro les éléments désactivés
   if (!showShipping) {
     shippingCost = 0;
@@ -622,9 +720,10 @@ const drawProductTable = (
   if (!showGlobalDiscount) {
     globalDiscount = 0; // Si remise non affichée, ne pas l'appliquer
   }
-  
+
   // 5) Calculer le TOTAL FINAL: subtotal + frais de port + TVA + frais supplémentaires - remise
-  const finalTotal = subtotal + shippingCost + taxAmount + totalFees - globalDiscount;
+  const finalTotal =
+    subtotal + shippingCost + taxAmount + totalFees - globalDiscount;
 
   // Configuration des colonnes
   interface TableColumn {
@@ -654,11 +753,12 @@ const drawProductTable = (
     {
       key: "name",
       label: "Produit",
-      width: showSku && showDescription
-        ? 0.35
-        : showSku || showDescription
-        ? 0.45
-        : 0.55,
+      width:
+        showSku && showDescription
+          ? 0.35
+          : showSku || showDescription
+            ? 0.45
+            : 0.55,
       align: "left",
       show: showName,
     },
@@ -715,22 +815,29 @@ const drawProductTable = (
 
   // ✅ FIX: Colonne image avec largeur FIXE (en pixels)
   const IMAGE_COLUMN_WIDTH_PX = 70; // Largeur fixe pour images
-  
+
   // Séparer les colonnes image et autres
-  const imageColumnIndex = columns.findIndex(col => col.key === "image");
+  const imageColumnIndex = columns.findIndex((col) => col.key === "image");
   const hasImageColumn = imageColumnIndex !== -1;
   const tableWidthPixels = element.width - 16;
-  const availableWidthPixels = hasImageColumn ? tableWidthPixels - IMAGE_COLUMN_WIDTH_PX : tableWidthPixels;
-  
+  const availableWidthPixels = hasImageColumn
+    ? tableWidthPixels - IMAGE_COLUMN_WIDTH_PX
+    : tableWidthPixels;
+
   // Normaliser seulement les colonnes non-image
   const nonImageColumns = columns.filter((_, i) => i !== imageColumnIndex);
-  const totalWidthNonImage = nonImageColumns.reduce((sum, col) => sum + col.width, 0);
-  
+  const totalWidthNonImage = nonImageColumns.reduce(
+    (sum, col) => sum + col.width,
+    0,
+  );
+
   // Recalculer les largeurs proportionnelles pour les colonnes non-image
   nonImageColumns.forEach((col) => {
-    col.width = (col.width / totalWidthNonImage) * (availableWidthPixels / tableWidthPixels);
+    col.width =
+      (col.width / totalWidthNonImage) *
+      (availableWidthPixels / tableWidthPixels);
   });
-  
+
   // Fixer la largeur de la colonne image
   if (hasImageColumn) {
     columns[imageColumnIndex].width = IMAGE_COLUMN_WIDTH_PX / tableWidthPixels;
@@ -802,8 +909,8 @@ const drawProductTable = (
         col.align === "right"
           ? col.x + col.width * (element.width - 16) - 4
           : col.align === "center"
-          ? col.x + (col.width * (element.width - 16)) / 2
-          : col.x;
+            ? col.x + (col.width * (element.width - 16)) / 2
+            : col.x;
       ctx.fillText(col.label, textX, 10 + offsetY); // Ajusté pour centrer dans la hauteur plus grande
     });
 
@@ -848,13 +955,13 @@ const drawProductTable = (
         col.align === "right"
           ? col.x + col.width * (element.width - 16) - 4
           : col.align === "center"
-          ? col.x + (col.width * (element.width - 16)) / 2
-          : col.x;
+            ? col.x + (col.width * (element.width - 16)) / 2
+            : col.x;
 
       let text = "";
       let isImage = false;
       let imageUrl = "";
-      
+
       switch (col.key) {
         case "image":
           isImage = true;
@@ -885,28 +992,28 @@ const drawProductTable = (
           text = `${product.total.toFixed(2)}${currency}`;
           break;
       }
-      
+
       // ✅ NEW: Rendre l'image ou un placeholder
       if (isImage) {
         const cellWidth = col.width * (element.width - 16);
         const cellHeight = rowHeight - 2;
         const cellX = col.x;
         const cellY = rowY + 1; // ✅ FIX: Positionner la cellule au début de la ligne (pas au-dessus)
-        
+
         // Dessiner le fond de la cellule
         ctx.fillStyle = normalizeColor("#f0f0f0");
         ctx.fillRect(cellX, cellY, cellWidth, cellHeight);
-        
+
         if (imageUrl && imageCache) {
           // Vérifier si l'image est en cache
           let cachedImage = imageCache.current.get(imageUrl);
-          
+
           if (!cachedImage) {
             // Charger l'image dans le cache
             const img = document.createElement("img");
             img.crossOrigin = "anonymous";
             img.src = imageUrl;
-            
+
             img.onload = () => {
               const size = estimateImageMemorySize(img);
               imageCache.current.set(imageUrl, {
@@ -920,11 +1027,13 @@ const drawProductTable = (
                 setImageLoadCount((prev) => prev + 1);
               }
             };
-            
+
             img.onerror = () => {
-              debugWarn(`[Canvas ProductTable] Failed to load image: ${imageUrl}`);
+              debugWarn(
+                `[Canvas ProductTable] Failed to load image: ${imageUrl}`,
+              );
             };
-            
+
             // Afficher un placeholder en attendant
             ctx.fillStyle = normalizeColor("#999999");
             ctx.font = `${fontSize}px ${fontFamily}`;
@@ -934,7 +1043,7 @@ const drawProductTable = (
             // Image en cache, l'afficher
             const img = cachedImage.image;
             cachedImage.lastUsed = Date.now();
-            
+
             // Vérifier que l'image est bien chargée
             if (img.complete && img.naturalHeight !== 0) {
               // Calculer les dimensions de l'image pour respecter le ratio et tenir dans la cellule
@@ -942,12 +1051,12 @@ const drawProductTable = (
               const imgHeight = img.naturalHeight;
               const imgRatio = imgWidth / imgHeight;
               const cellRatio = cellWidth / cellHeight;
-              
+
               let drawWidth = cellWidth;
               let drawHeight = cellHeight;
               let drawX = cellX;
               let drawY = cellY;
-              
+
               // Contenir l'image dans la cellule en respectant le ratio
               if (imgRatio > cellRatio) {
                 // Image plus large
@@ -958,7 +1067,7 @@ const drawProductTable = (
                 drawWidth = cellHeight * imgRatio;
                 drawX = cellX + (cellWidth - drawWidth) / 2;
               }
-              
+
               // Dessiner l'image
               try {
                 ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
@@ -980,7 +1089,7 @@ const drawProductTable = (
           ctx.textAlign = "center";
           ctx.fillText("📷", cellX + cellWidth / 2, cellY + cellHeight / 2);
         }
-        
+
         // ✅ FIX: Restaurer la couleur de texte après le rendu de l'image
         ctx.fillStyle = textColor;
       } else {
@@ -1024,11 +1133,7 @@ const drawProductTable = (
   const totalsY = currentY;
   ctx.fillText("Sous-total:", element.width - 200, totalsY);
   ctx.textAlign = "right";
-  ctx.fillText(
-    `${subtotal.toFixed(2)}${currency}`,
-    element.width - 8,
-    totalsY
-  );
+  ctx.fillText(`${subtotal.toFixed(2)}${currency}`, element.width - 8, totalsY);
 
   currentY += 18;
 
@@ -1041,7 +1146,7 @@ const drawProductTable = (
     ctx.fillText(
       `-${globalDiscount.toFixed(2)}${currency}`,
       element.width - 8,
-      currentY
+      currentY,
     );
     currentY += 18;
   }
@@ -1055,7 +1160,7 @@ const drawProductTable = (
     ctx.fillText(
       `+${shippingCost.toFixed(2)}${currency}`,
       element.width - 8,
-      currentY
+      currentY,
     );
     currentY += 18;
   }
@@ -1064,13 +1169,13 @@ const drawProductTable = (
   if (taxAmount > 0 && showTax) {
     ctx.textAlign = "left";
     ctx.fillStyle = textColor;
-    const taxLabel = taxRate > 0 ? `TVA (${taxRate.toFixed(1)}%):` : 'TVA:';
+    const taxLabel = taxRate > 0 ? `TVA (${taxRate.toFixed(1)}%):` : "TVA:";
     ctx.fillText(taxLabel, element.width - 200, currentY);
     ctx.textAlign = "right";
     ctx.fillText(
       `+${taxAmount.toFixed(2)}${currency}`,
       element.width - 8,
-      currentY
+      currentY,
     );
     currentY += 18;
   }
@@ -1092,7 +1197,7 @@ const drawProductTable = (
   ctx.fillText(
     `${finalTotal.toFixed(2)}${currency}`,
     element.width - 8,
-    currentY
+    currentY,
   );
 };
 
@@ -1100,7 +1205,7 @@ const drawProductTable = (
 const drawCustomerInfo = (
   ctx: CanvasRenderingContext2D,
   element: Element,
-  state: BuilderState
+  state: BuilderState,
 ) => {
   const props = element as CustomerInfoElement;
   const fontSize = props.fontSize || 12;
@@ -1169,7 +1274,7 @@ const drawCustomerInfo = (
 
   // Construire les lignes de texte selon le layout
   const lines: string[] = [];
-  
+
   if (layout === "vertical") {
     if (showFullName) {
       lines.push(customerData.name);
@@ -1207,9 +1312,9 @@ const drawCustomerInfo = (
       compactText += (compactText ? " • " : "") + customerData.email;
     if (showPhone)
       compactText += (compactText ? " • " : "") + customerData.phone;
-    
+
     // Wrap text if too long
-    const maxWidth = element.width - (padding * 2);
+    const maxWidth = element.width - padding * 2;
     const words = compactText.split(" ");
     let line = "";
     for (let i = 0; i < words.length; i++) {
@@ -1229,7 +1334,7 @@ const drawCustomerInfo = (
   const headerHeight = showHeaders ? 25 : 0;
   const contentHeight = lines.length * 18; // 18px par ligne
   const totalContentHeight = headerHeight + contentHeight;
-  
+
   // Calculer l'offset Y selon l'alignement vertical
   let startY: number;
   switch (verticalAlign) {
@@ -1313,8 +1418,8 @@ const getCompanyData = (props: CompanyInfoElementProperties) => {
   // Remplacer par les données dynamiques du plugin si disponibles
   const pluginCompany = (window as any).pdfBuilderData?.company;
   if (pluginCompany) {
-    Object.keys(baseData).forEach(key => {
-      if (pluginCompany[key] && pluginCompany[key] !== 'Non indiqué') {
+    Object.keys(baseData).forEach((key) => {
+      if (pluginCompany[key] && pluginCompany[key] !== "Non indiqué") {
         (baseData as any)[key] = pluginCompany[key];
       }
     });
@@ -1324,7 +1429,9 @@ const getCompanyData = (props: CompanyInfoElementProperties) => {
 };
 
 // Fonction pour générer le texte formaté des informations d'entreprise
-const generateCompanyInfoText = (props: CompanyInfoElementProperties): string => {
+const generateCompanyInfoText = (
+  props: CompanyInfoElementProperties,
+): string => {
   const companyData = getCompanyData(props);
 
   // Configuration d'affichage
@@ -1356,12 +1463,12 @@ const generateCompanyInfoText = (props: CompanyInfoElementProperties): string =>
 
   // Ajouter les autres informations
   const infoFields = [
-    [companyData.siret, displayConfig.siret, 'SIRET'],
-    [companyData.tva, displayConfig.vat, 'TVA'],
-    [companyData.rcs, displayConfig.rcs, 'RCS'],
-    [companyData.capital, displayConfig.capital, 'Capital'],
-    [companyData.email, displayConfig.email, 'Email'],
-    [companyData.phone, displayConfig.phone, 'Téléphone'],
+    [companyData.siret, displayConfig.siret, "SIRET"],
+    [companyData.tva, displayConfig.vat, "TVA"],
+    [companyData.rcs, displayConfig.rcs, "RCS"],
+    [companyData.capital, displayConfig.capital, "Capital"],
+    [companyData.email, displayConfig.email, "Email"],
+    [companyData.phone, displayConfig.phone, "Téléphone"],
   ];
 
   infoFields.forEach(([value, show, label]) => {
@@ -1370,12 +1477,12 @@ const generateCompanyInfoText = (props: CompanyInfoElementProperties): string =>
     }
   });
 
-  return lines.join('\n');
+  return lines.join("\n");
 };
 
 // Fonction helper pour vérifier si une valeur doit être affichée
 const shouldDisplayValue = (value: string, showFlag: boolean) =>
-  showFlag && value && value !== 'Non indiqué';
+  showFlag && value && value !== "Non indiqué";
 
 // Fonction helper pour dessiner une ligne de texte company_info
 const drawCompanyLine = (
@@ -1383,7 +1490,7 @@ const drawCompanyLine = (
   text: string,
   x: number,
   y: number,
-  fontSize: number
+  fontSize: number,
 ) => {
   ctx.fillText(text, x, y);
   return y + Math.max(fontSize * 1.2, fontSize + 4); // Espacement minimum de 1.2x la taille de police ou taille de police + 4px
@@ -1392,7 +1499,7 @@ const drawCompanyLine = (
 const drawCompanyInfo = (
   ctx: CanvasRenderingContext2D,
   element: Element,
-  state: BuilderState
+  state: BuilderState,
 ) => {
   const props = element as CompanyInfoElement;
 
@@ -1427,7 +1534,10 @@ const drawCompanyInfo = (
   };
 
   // Thème et couleurs
-  const theme = COMPANY_THEMES[(props.theme || "corporate") as keyof typeof COMPANY_THEMES] || COMPANY_THEMES.corporate;
+  const theme =
+    COMPANY_THEMES[
+      (props.theme || "corporate") as keyof typeof COMPANY_THEMES
+    ] || COMPANY_THEMES.corporate;
   const colors = {
     background: normalizeColor(props.backgroundColor || theme.backgroundColor),
     border: normalizeColor(props.borderColor || theme.borderColor),
@@ -1461,8 +1571,18 @@ const drawCompanyInfo = (
   // Fonction helper pour dessiner avec la police appropriée
   const drawWithFont = (text: string, useHeaderFont: boolean = false) => {
     const config = useHeaderFont
-      ? { size: fontConfig.headerSize, weight: fontConfig.headerWeight, style: fontConfig.headerStyle, family: fontConfig.headerFamily }
-      : { size: fontConfig.bodySize, weight: fontConfig.bodyWeight, style: fontConfig.bodyStyle, family: fontConfig.bodyFamily };
+      ? {
+          size: fontConfig.headerSize,
+          weight: fontConfig.headerWeight,
+          style: fontConfig.headerStyle,
+          family: fontConfig.headerFamily,
+        }
+      : {
+          size: fontConfig.bodySize,
+          weight: fontConfig.bodyWeight,
+          style: fontConfig.bodyStyle,
+          family: fontConfig.bodyFamily,
+        };
 
     ctx.font = `${config.style} ${config.weight} ${config.size}px ${config.family}`;
     if (useHeaderFont) ctx.fillStyle = colors.headerText;
@@ -1506,7 +1626,7 @@ const drawCompanyInfo = (
 const drawOrderNumber = (
   ctx: CanvasRenderingContext2D,
   element: Element,
-  state: BuilderState
+  state: BuilderState,
 ) => {
   const props = element as OrderNumberElement;
 
@@ -1624,13 +1744,18 @@ const drawOrderNumber = (
       ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
       ctx.textAlign = contentAlign as CanvasTextAlign;
       // Appliquer textBaseline selon verticalAlign
-      ctx.textBaseline = props.verticalAlign === "middle" ? "middle" : props.verticalAlign === "bottom" ? "bottom" : "top";
+      ctx.textBaseline =
+        props.verticalAlign === "middle"
+          ? "middle"
+          : props.verticalAlign === "bottom"
+            ? "bottom"
+            : "top";
       const labelX =
         contentAlign === "left"
           ? 10 + contentOffsetX
           : contentAlign === "center"
-          ? element.width / 2
-          : element.width - 10;
+            ? element.width / 2
+            : element.width - 10;
       ctx.fillText(labelText, labelX, y);
       y += 18;
       ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
@@ -1639,20 +1764,25 @@ const drawOrderNumber = (
         contentAlign === "left"
           ? 10 + contentOffsetX
           : contentAlign === "center"
-          ? element.width / 2
-          : element.width - 10;
+            ? element.width / 2
+            : element.width - 10;
       ctx.fillText(orderNumber, numberX, y);
     } else if (labelPosition === "below") {
       // Numéro au-dessus, libellé en-dessous - utiliser l'alignement général du contenu
       ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
       ctx.textAlign = contentAlign as CanvasTextAlign;
-      ctx.textBaseline = props.verticalAlign === "middle" ? "middle" : props.verticalAlign === "bottom" ? "bottom" : "top";
+      ctx.textBaseline =
+        props.verticalAlign === "middle"
+          ? "middle"
+          : props.verticalAlign === "bottom"
+            ? "bottom"
+            : "top";
       const numberX =
         contentAlign === "left"
           ? 10 + contentOffsetX
           : contentAlign === "center"
-          ? element.width / 2
-          : element.width - 10;
+            ? element.width / 2
+            : element.width - 10;
       ctx.fillText(orderNumber, numberX, y);
       y += 18;
       ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
@@ -1661,14 +1791,19 @@ const drawOrderNumber = (
         contentAlign === "left"
           ? 10 + contentOffsetX
           : contentAlign === "center"
-          ? element.width / 2
-          : element.width - 10;
+            ? element.width / 2
+            : element.width - 10;
       ctx.fillText(labelText, labelX, y);
     } else if (labelPosition === "left") {
       // Libellé à gauche, numéro à droite - avec espacement optimal et alignement général
       ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
       ctx.textAlign = "left" as CanvasTextAlign;
-      ctx.textBaseline = props.verticalAlign === "middle" ? "middle" : props.verticalAlign === "bottom" ? "bottom" : "top";
+      ctx.textBaseline =
+        props.verticalAlign === "middle"
+          ? "middle"
+          : props.verticalAlign === "bottom"
+            ? "bottom"
+            : "top";
       const labelX = 10 + contentOffsetX;
       ctx.fillText(labelText, labelX, y);
 
@@ -1683,7 +1818,12 @@ const drawOrderNumber = (
       // Numéro à gauche, libellé à droite - avec espacement optimal et alignement général
       ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
       ctx.textAlign = "left" as CanvasTextAlign;
-      ctx.textBaseline = props.verticalAlign === "middle" ? "middle" : props.verticalAlign === "bottom" ? "bottom" : "top";
+      ctx.textBaseline =
+        props.verticalAlign === "middle"
+          ? "middle"
+          : props.verticalAlign === "bottom"
+            ? "bottom"
+            : "top";
       const numberX = 10 + contentOffsetX;
       ctx.fillText(orderNumber, numberX, y);
 
@@ -1699,7 +1839,12 @@ const drawOrderNumber = (
     // Pas de libellé, juste le numéro avec alignement général du contenu
     ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
     ctx.textAlign = contentAlign as CanvasTextAlign;
-    ctx.textBaseline = props.verticalAlign === "middle" ? "middle" : props.verticalAlign === "bottom" ? "bottom" : "top";
+    ctx.textBaseline =
+      props.verticalAlign === "middle"
+        ? "middle"
+        : props.verticalAlign === "bottom"
+          ? "bottom"
+          : "top";
     // Pour le cas sans libellé, utiliser directement calculateContentX sans contentOffsetX
     // car contentOffsetX est calculé pour centrer le contenu total, mais ici on n'a que le numéro
     if (contentAlign === "left") {
@@ -1733,7 +1878,7 @@ const drawOrderNumber = (
 const drawWoocommerceOrderDate = (
   ctx: CanvasRenderingContext2D,
   element: Element,
-  state: BuilderState
+  state: BuilderState,
 ) => {
   const props = element as WoocommerceOrderDateElement;
   const fontConfig = createFontConfig(props, 12);
@@ -1750,21 +1895,36 @@ const drawWoocommerceOrderDate = (
   applyBorder(ctx, element, props.border);
 
   // Récupérer et formater la date
-  const orderDate = state.previewMode === "command"
-    ? wooCommerceManager.getOrderDate()
-    : wooCommerceManager.getOrderDate() || "27/10/2024";
+  const orderDate =
+    state.previewMode === "command"
+      ? wooCommerceManager.getOrderDate()
+      : wooCommerceManager.getOrderDate() || "27/10/2024";
 
-  const displayDate = formatOrderDate(orderDate, props.dateFormat, props.showTime);
+  const displayDate = formatOrderDate(
+    orderDate,
+    props.dateFormat,
+    props.showTime,
+  );
 
   // Configurer le contexte et afficher
-  setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign, props.verticalAlign);
+  setupRenderContext(
+    ctx,
+    fontConfig,
+    colorConfig,
+    props.textAlign,
+    props.verticalAlign,
+  );
   const x = calculateTextX(element, props.textAlign, padding);
   const y = calculateTextYWithPadding(element, props.verticalAlign, padding);
   ctx.fillText(displayDate, x, y);
 };
 
 // Fonction helper pour formater les dates de commande
-const formatOrderDate = (dateString: string, format: string = "d/m/Y", showTime: boolean = false): string => {
+const formatOrderDate = (
+  dateString: string,
+  format: string = "d/m/Y",
+  showTime: boolean = false,
+): string => {
   try {
     const dateObj = new Date(dateString);
     if (isNaN(dateObj.getTime())) return dateString;
@@ -1775,11 +1935,20 @@ const formatOrderDate = (dateString: string, format: string = "d/m/Y", showTime:
 
     let formattedDate: string;
     switch (format) {
-      case "m/d/Y": formattedDate = `${month}/${day}/${year}`; break;
-      case "Y-m-d": formattedDate = `${year}-${month}-${day}`; break;
-      case "d-m-Y": formattedDate = `${day}-${month}-${year}`; break;
-      case "d.m.Y": formattedDate = `${day}.${month}.${year}`; break;
-      default: formattedDate = `${day}/${month}/${year}`;
+      case "m/d/Y":
+        formattedDate = `${month}/${day}/${year}`;
+        break;
+      case "Y-m-d":
+        formattedDate = `${year}-${month}-${day}`;
+        break;
+      case "d-m-Y":
+        formattedDate = `${day}-${month}-${year}`;
+        break;
+      case "d.m.Y":
+        formattedDate = `${day}.${month}.${year}`;
+        break;
+      default:
+        formattedDate = `${day}/${month}/${year}`;
     }
 
     if (showTime) {
@@ -1797,7 +1966,7 @@ const formatOrderDate = (dateString: string, format: string = "d/m/Y", showTime:
 const drawWoocommerceInvoiceNumber = (
   ctx: CanvasRenderingContext2D,
   element: Element,
-  state: BuilderState
+  state: BuilderState,
 ) => {
   const props = element as WoocommerceInvoiceNumberElement;
   const fontConfig = createFontConfig(props, 12);
@@ -1814,11 +1983,18 @@ const drawWoocommerceInvoiceNumber = (
   applyBorder(ctx, element, props.border);
 
   // Récupérer et formater le numéro de facture
-  const invoiceNumber = wooCommerceManager.getInvoiceNumber?.() || "INV-2024-00001";
+  const invoiceNumber =
+    wooCommerceManager.getInvoiceNumber?.() || "INV-2024-00001";
   const displayText = `${props.prefix || ""}${invoiceNumber}${props.suffix || ""}`;
 
   // Configurer le contexte et afficher
-  setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign, props.verticalAlign);
+  setupRenderContext(
+    ctx,
+    fontConfig,
+    colorConfig,
+    props.textAlign,
+    props.verticalAlign,
+  );
   const x = calculateTextX(element, props.textAlign, padding);
   const y = calculateTextYWithPadding(element, props.verticalAlign, padding);
   ctx.fillText(displayText, x, y);
@@ -1827,7 +2003,7 @@ const drawWoocommerceInvoiceNumber = (
 const drawDocumentType = (
   ctx: CanvasRenderingContext2D,
   element: Element,
-  state: BuilderState
+  state: BuilderState,
 ) => {
   const props = element as DocumentTypeElement;
   const fontConfig = createFontConfig(props, 18);
@@ -1842,7 +2018,13 @@ const drawDocumentType = (
   }
 
   // Configurer le contexte
-  setupRenderContext(ctx, fontConfig, colorConfig, props.textAlign, props.verticalAlign);
+  setupRenderContext(
+    ctx,
+    fontConfig,
+    colorConfig,
+    props.textAlign,
+    props.verticalAlign,
+  );
 
   // Déterminer le type de document
   const documentType = props.documentType || "FACTURE";
@@ -1857,14 +2039,17 @@ const drawDocumentType = (
     CONTRAT: "CONTRAT",
   } as const;
 
-  const displayText = DOCUMENT_TYPE_LABELS[documentType as keyof typeof DOCUMENT_TYPE_LABELS] || documentType;
+  const displayText =
+    DOCUMENT_TYPE_LABELS[documentType as keyof typeof DOCUMENT_TYPE_LABELS] ||
+    documentType;
 
   // Calculer la position X selon l'alignement horizontal
-  const x = props.textAlign === "center"
-    ? element.width / 2
-    : props.textAlign === "right"
-    ? element.width - 10
-    : 10;
+  const x =
+    props.textAlign === "center"
+      ? element.width / 2
+      : props.textAlign === "right"
+        ? element.width - 10
+        : 10;
 
   // Calculer la position Y selon l'alignement vertical
   const y = calculateTextY(element, props.verticalAlign, fontConfig.size, 5);
@@ -1911,7 +2096,7 @@ export const Canvas = function Canvas({
   });
 
   debugLog(
-    `[Canvas] Component initialized - Dimensions: ${width}x${height}, Settings loaded: ${!!canvasSettings}`
+    `[Canvas] Component initialized - Dimensions: ${width}x${height}, Settings loaded: ${!!canvasSettings}`,
   );
 
   // Force re-render when canvas settings change (commenté pour éviter les boucles)
@@ -1941,7 +2126,7 @@ export const Canvas = function Canvas({
 
   // ✅ LAZY LOADING: État pour tracker les éléments visibles
   const [visibleElements, setVisibleElements] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
   const [viewportBounds, setViewportBounds] = useState({
     x: 0,
@@ -1954,7 +2139,7 @@ export const Canvas = function Canvas({
   const isElementVisible = useCallback(
     (
       element: Element,
-      viewport: { x: number; y: number; width: number; height: number }
+      viewport: { x: number; y: number; width: number; height: number },
     ): boolean => {
       // Calculer les bounds de l'élément (simplifié - on pourrait améliorer avec rotation, etc.)
       const elementBounds = {
@@ -1973,7 +2158,7 @@ export const Canvas = function Canvas({
         elementBounds.y > viewportBounds.y + viewportBounds.height + margin
       );
     },
-    [viewportBounds]
+    [viewportBounds],
   ); // ✅ LAZY LOADING: Filtrer les éléments visibles
   const visibleElementsList = useMemo(() => {
     if (!lazyLoadingEnabled) {
@@ -2038,7 +2223,7 @@ export const Canvas = function Canvas({
       const overhead = 1024; // Overhead approximatif par image
       return pixelData + overhead;
     },
-    []
+    [],
   );
 
   // Fonction pour calculer l'usage mémoire total du cache
@@ -2065,8 +2250,8 @@ export const Canvas = function Canvas({
       if (browserMemoryUsage > browserLimit * 0.8) {
         debugWarn(
           `[Canvas Memory] Browser memory usage high: ${browserMemoryUsage.toFixed(
-            1
-          )}MB / ${browserLimit.toFixed(1)}MB`
+            1,
+          )}MB / ${browserLimit.toFixed(1)}MB`,
         );
         return true;
       }
@@ -2083,15 +2268,15 @@ export const Canvas = function Canvas({
 
     debugLog(
       `[Canvas Memory] Starting cache cleanup - Current usage: ${currentMemoryUsage.toFixed(
-        2
-      )}MB, Limit: ${memoryLimit}MB, Items: ${cache.size}`
+        2,
+      )}MB, Limit: ${memoryLimit}MB, Items: ${cache.size}`,
     );
 
     // Nettoyer si limite dépassée ou trop d'éléments
     if (isMemoryLimitExceeded() || cache.size > MAX_CACHE_ITEMS) {
       // Trier par date d'utilisation (LRU - Least Recently Used)
       const entries = Array.from(cache.entries()).sort(
-        ([, a], [, b]) => a.lastUsed - b.lastUsed
+        ([, a], [, b]) => a.lastUsed - b.lastUsed,
       );
 
       // Calculer combien supprimer pour revenir sous 70% de la limite
@@ -2112,18 +2297,18 @@ export const Canvas = function Canvas({
         debugLog(
           `[Canvas Memory] Removed image from cache: ${url
             .split("/")
-            .pop()}, Freed: ${(data.size / (1024 * 1024)).toFixed(2)}MB`
+            .pop()}, Freed: ${(data.size / (1024 * 1024)).toFixed(2)}MB`,
         );
       }
 
       debugLog(
         `[Canvas Memory] Cache cleanup completed - Removed ${removed} items, Freed ${memoryFreed.toFixed(
-          2
-        )}MB, New usage: ${(currentMemoryUsage - memoryFreed).toFixed(2)}MB`
+          2,
+        )}MB, New usage: ${(currentMemoryUsage - memoryFreed).toFixed(2)}MB`,
       );
     } else {
       debugLog(
-        `[Canvas Memory] Cache cleanup not needed - Usage within limits`
+        `[Canvas Memory] Cache cleanup not needed - Usage within limits`,
       );
     }
   }, [calculateCacheMemoryUsage, memoryLimitJs, isMemoryLimitExceeded]);
@@ -2181,7 +2366,7 @@ export const Canvas = function Canvas({
         // Nettoyage d'urgence si mémoire critique
         if (browserMemoryUsage > browserLimit * 0.9) {
           debugWarn(
-            `[Canvas Memory] Critical memory usage! Forcing cache cleanup...`
+            `[Canvas Memory] Critical memory usage! Forcing cache cleanup...`,
           );
           cleanupImageCache();
         }
@@ -2235,7 +2420,7 @@ export const Canvas = function Canvas({
       ctx: CanvasRenderingContext2D,
       element: Element,
       alignment: string,
-      text: string
+      text: string,
     ) => {
       const logoWidth = Math.min(element.width - 20, 120);
       const logoHeight = Math.min(element.height - 20, 60);
@@ -2262,7 +2447,7 @@ export const Canvas = function Canvas({
       ctx.textAlign = "center";
       ctx.fillText(text, x + logoWidth / 2, y + logoHeight / 2 + 4);
     },
-    []
+    [],
   );
 
   const drawCompanyLogo = useCallback(
@@ -2276,7 +2461,7 @@ export const Canvas = function Canvas({
           ctx,
           element,
           "center",
-          "Configurez le logo entreprise"
+          "Configurez le logo entreprise",
         );
         return;
       }
@@ -2496,7 +2681,7 @@ export const Canvas = function Canvas({
               ctx,
               element,
               alignment,
-              "Erreur de chargement"
+              "Erreur de chargement",
             );
           }
         } else {
@@ -2508,13 +2693,13 @@ export const Canvas = function Canvas({
         drawLogoPlaceholder(ctx, element, alignment, "Company_logo");
       }
     },
-    [drawLogoPlaceholder, cleanupImageCache, estimateImageMemorySize]
+    [drawLogoPlaceholder, cleanupImageCache, estimateImageMemorySize],
   ); // ✅ BUGFIX-008: REMOVED setImageLoadCounter
 
   // ✅ BUGFIX-007: Memoize drawDynamicText to prevent recreation on every render
   const drawDynamicText = useCallback(
     (ctx: CanvasRenderingContext2D, element: Element) => {
-  const props = element as DynamicTextElement;
+      const props = element as DynamicTextElement;
       const text = props.text || props.content || "Texte personnalisable";
       const fontSize = props.fontSize || 14;
       const fontFamily = props.fontFamily || "Arial";
@@ -2547,8 +2732,14 @@ export const Canvas = function Canvas({
         .replace(/\{\{company_email\}\}/g, "contact@masociete.com")
         .replace(/\{\{company_phone\}\}/g, "+33 1 23 45 67 89")
         .replace(/\{\{company_address\}\}/g, "123 Rue de la Paix, 75001 Paris")
-        .replace(/\{\{current_date\}\}/g, new Date().toLocaleDateString("fr-FR"))
-        .replace(/\{\{current_time\}\}/g, new Date().toLocaleTimeString("fr-FR"));
+        .replace(
+          /\{\{current_date\}\}/g,
+          new Date().toLocaleDateString("fr-FR"),
+        )
+        .replace(
+          /\{\{current_time\}\}/g,
+          new Date().toLocaleTimeString("fr-FR"),
+        );
 
       if (autoWrap) {
         // Fonction pour diviser le texte en lignes selon la largeur disponible
@@ -2601,7 +2792,7 @@ export const Canvas = function Canvas({
         });
       }
     },
-    []
+    [],
   ); // No deps - pure function
 
   // ✅ BUGFIX-007: Memoize drawMentions to prevent recreation on every render
@@ -2666,10 +2857,10 @@ export const Canvas = function Canvas({
 
       // Utiliser les couleurs personnalisées si définies, sinon utiliser le thème
       const bgColor = normalizeColor(
-        props.backgroundColor || currentTheme.backgroundColor
+        props.backgroundColor || currentTheme.backgroundColor,
       );
       const txtColor = normalizeColor(
-        props.textColor || currentTheme.textColor
+        props.textColor || currentTheme.textColor,
       );
 
       // Appliquer le fond seulement si showBackground est activé
@@ -2701,8 +2892,8 @@ export const Canvas = function Canvas({
             separatorStyle === "dashed"
               ? [5, 5]
               : separatorStyle === "dotted"
-              ? [2, 2]
-              : []
+                ? [2, 2]
+                : [],
           );
           ctx.beginPath();
           ctx.moveTo(10, y - 5);
@@ -2767,7 +2958,7 @@ export const Canvas = function Canvas({
       // Calculer le nombre maximum de lignes qui peuvent tenir
       const lineHeight = fontSize + 2;
       const maxLines = Math.floor(
-        (element.height - (showSeparator ? 25 : 15)) / lineHeight
+        (element.height - (showSeparator ? 25 : 15)) / lineHeight,
       );
 
       // Rendre seulement les lignes qui tiennent
@@ -2776,13 +2967,13 @@ export const Canvas = function Canvas({
           textAlign === "center"
             ? element.width / 2
             : textAlign === "right"
-            ? element.width - 10
-            : 10;
+              ? element.width - 10
+              : 10;
         const lineY = (showSeparator ? 25 : 15) + index * lineHeight;
         ctx.fillText(line, x, lineY);
       });
     },
-    []
+    [],
   ); // No deps - pure function
 
   // ✅ BUGFIX-001/004: Memoize drawElement but pass state as parameter to avoid dependency cycle
@@ -2790,12 +2981,12 @@ export const Canvas = function Canvas({
     (
       ctx: CanvasRenderingContext2D,
       element: Element,
-      currentState: BuilderState
+      currentState: BuilderState,
     ) => {
       // Vérifier si l'élément est visible
       if (element.visible === false) {
         debugLog(
-          `[Canvas] Skipping invisible element: ${element.type} (${element.id})`
+          `[Canvas] Skipping invisible element: ${element.type} (${element.id})`,
         );
         return;
       }
@@ -2805,7 +2996,7 @@ export const Canvas = function Canvas({
           element.id
         }) - Position: (${element.x}, ${element.y}), Size: ${element.width}x${
           element.height
-        }, Rotation: ${element.rotation || 0}°`
+        }, Rotation: ${element.rotation || 0}°`,
       );
 
       ctx.save();
@@ -2843,7 +3034,13 @@ export const Canvas = function Canvas({
           break;
         case "product_table":
           debugLog(`[Canvas] Rendering product table element: ${element.id}`);
-          drawProductTable(ctx, element, currentState, imageCache, setImageLoadCount);
+          drawProductTable(
+            ctx,
+            element,
+            currentState,
+            imageCache,
+            setImageLoadCount,
+          );
           break;
         case "customer_info":
           debugLog(`[Canvas] Rendering customer info element: ${element.id}`);
@@ -2862,11 +3059,15 @@ export const Canvas = function Canvas({
           drawOrderNumber(ctx, element, currentState);
           break;
         case "woocommerce_order_date":
-          debugLog(`[Canvas] Rendering woocommerce order date element: ${element.id}`);
+          debugLog(
+            `[Canvas] Rendering woocommerce order date element: ${element.id}`,
+          );
           drawWoocommerceOrderDate(ctx, element, currentState);
           break;
         case "woocommerce_invoice_number":
-          debugLog(`[Canvas] Rendering woocommerce invoice number element: ${element.id}`);
+          debugLog(
+            `[Canvas] Rendering woocommerce invoice number element: ${element.id}`,
+          );
           drawWoocommerceInvoiceNumber(ctx, element, currentState);
           break;
         case "document_type":
@@ -2887,7 +3088,7 @@ export const Canvas = function Canvas({
           break;
         default:
           debugWarn(
-            `[Canvas] Unknown element type: ${element.type} for element ${element.id}`
+            `[Canvas] Unknown element type: ${element.type} for element ${element.id}`,
           );
           // Élément générique - dessiner un rectangle simple
           ctx.strokeStyle = normalizeColor("#000000");
@@ -2896,7 +3097,7 @@ export const Canvas = function Canvas({
       }
       ctx.restore();
     },
-    [drawCompanyLogo, drawDynamicText, drawMentions, canvasSettings]
+    [drawCompanyLogo, drawDynamicText, drawMentions, canvasSettings],
   ); // ✅ BUGFIX-007: Include memoized draw functions
 
   // Fonction pour dessiner la sélection
@@ -2904,10 +3105,10 @@ export const Canvas = function Canvas({
     (
       ctx: CanvasRenderingContext2D,
       selectedIds: string[],
-      elements: Element[]
+      elements: Element[],
     ) => {
       const selectedElements = elements.filter((el) =>
-        selectedIds.includes(el.id)
+        selectedIds.includes(el.id),
       );
       if (selectedElements.length === 0) {
         debugLog("[Canvas] Selection cleared - no elements selected");
@@ -2916,7 +3117,7 @@ export const Canvas = function Canvas({
 
       debugLog(
         `[Canvas] Drawing selection for ${selectedElements.length} element(s):`,
-        selectedIds
+        selectedIds,
       );
 
       // Calculer les bounds de sélection
@@ -2949,25 +3150,25 @@ export const Canvas = function Canvas({
           minX - handleSize / 2,
           minY - handleSize / 2,
           handleSize,
-          handleSize
+          handleSize,
         );
         ctx.fillRect(
           maxX - handleSize / 2,
           minY - handleSize / 2,
           handleSize,
-          handleSize
+          handleSize,
         );
         ctx.fillRect(
           minX - handleSize / 2,
           maxY - handleSize / 2,
           handleSize,
-          handleSize
+          handleSize,
         );
         ctx.fillRect(
           maxX - handleSize / 2,
           maxY - handleSize / 2,
           handleSize,
-          handleSize
+          handleSize,
         );
 
         // Centres des côtés
@@ -2977,25 +3178,25 @@ export const Canvas = function Canvas({
           midX - handleSize / 2,
           minY - handleSize / 2,
           handleSize,
-          handleSize
+          handleSize,
         );
         ctx.fillRect(
           midX - handleSize / 2,
           maxY - handleSize / 2,
           handleSize,
-          handleSize
+          handleSize,
         );
         ctx.fillRect(
           minX - handleSize / 2,
           midY - handleSize / 2,
           handleSize,
-          handleSize
+          handleSize,
         );
         ctx.fillRect(
           maxX - handleSize / 2,
           midY - handleSize / 2,
           handleSize,
-          handleSize
+          handleSize,
         );
       }
 
@@ -3038,7 +3239,7 @@ export const Canvas = function Canvas({
           rotationHandleY,
           rotationHandleSize / 2,
           0,
-          2 * Math.PI
+          2 * Math.PI,
         );
         ctx.fill();
 
@@ -3048,7 +3249,10 @@ export const Canvas = function Canvas({
         ctx.lineTo(rotationHandleX, rotationHandleY);
         ctx.stroke();
       } else {
-        console.log('[CANVAS] NOT drawing rotation handles because selectionRotationEnabled is:', canvasSettings?.selectionRotationEnabled);
+        console.log(
+          "[CANVAS] NOT drawing rotation handles because selectionRotationEnabled is:",
+          canvasSettings?.selectionRotationEnabled,
+        );
       }
 
       // Afficher les dimensions pour chaque élément sélectionné
@@ -3078,7 +3282,7 @@ export const Canvas = function Canvas({
             x + width - textWidth - padding * 2,
             y - 20,
             textWidth + padding * 2,
-            18
+            18,
           );
 
           // Texte
@@ -3088,7 +3292,7 @@ export const Canvas = function Canvas({
         }
       });
     },
-    [canvasSettings]
+    [canvasSettings],
   );
 
   // Fonctions pour gérer le menu contextuel
@@ -3100,7 +3304,7 @@ export const Canvas = function Canvas({
         elementId,
       });
     },
-    []
+    [],
   );
 
   const hideContextMenu = useCallback(() => {
@@ -3112,7 +3316,7 @@ export const Canvas = function Canvas({
       debugLog(
         `[Canvas] Context menu action: ${action} on element ${
           elementId || "none"
-        }`
+        }`,
       );
       if (!elementId) return;
 
@@ -3121,7 +3325,7 @@ export const Canvas = function Canvas({
           debugLog(`[Canvas] Bringing element ${elementId} to front`);
           // Déplacer l'élément à la fin du tableau (devant tous les autres)
           const elementIndex = state.elements.findIndex(
-            (el) => el.id === elementId
+            (el) => el.id === elementId,
           );
           if (elementIndex !== -1) {
             const element = state.elements[elementIndex];
@@ -3138,7 +3342,7 @@ export const Canvas = function Canvas({
           debugLog(`[Canvas] Sending element ${elementId} to back`);
           // Déplacer l'élément au début du tableau (derrière tous les autres)
           const elementIndex = state.elements.findIndex(
-            (el) => el.id === elementId
+            (el) => el.id === elementId,
           );
           if (elementIndex !== -1) {
             const element = state.elements[elementIndex];
@@ -3155,7 +3359,7 @@ export const Canvas = function Canvas({
           debugLog(`[Canvas] Bringing element ${elementId} forward`);
           // Déplacer l'élément d'une position vers l'avant
           const elementIndex = state.elements.findIndex(
-            (el) => el.id === elementId
+            (el) => el.id === elementId,
           );
           if (elementIndex !== -1 && elementIndex < state.elements.length - 1) {
             const newElements = [...state.elements];
@@ -3171,7 +3375,7 @@ export const Canvas = function Canvas({
           debugLog(`[Canvas] Sending element ${elementId} backward`);
           // Déplacer l'élément d'une position vers l'arrière
           const elementIndex = state.elements.findIndex(
-            (el) => el.id === elementId
+            (el) => el.id === elementId,
           );
           if (elementIndex > 0) {
             const newElements = [...state.elements];
@@ -3239,7 +3443,7 @@ export const Canvas = function Canvas({
               company_logo: { width: 150, height: 80 },
               order_number: { width: 200, height: 40 },
               document_type: { width: 150, height: 30 },
-              "dynamic_text": { width: 200, height: 60 },
+              dynamic_text: { width: 200, height: 60 },
               mentions: { width: 400, height: 80 },
             };
 
@@ -3317,7 +3521,7 @@ export const Canvas = function Canvas({
         }
       }
     },
-    [state.elements, dispatch]
+    [state.elements, dispatch],
   );
 
   const getContextMenuItems = useCallback(
@@ -3516,7 +3720,7 @@ export const Canvas = function Canvas({
 
       return items;
     },
-    [state.elements, handleContextMenuAction, dispatch]
+    [state.elements, handleContextMenuAction, dispatch],
   );
 
   // Fonction pour dessiner la grille
@@ -3526,7 +3730,7 @@ export const Canvas = function Canvas({
       w: number,
       h: number,
       size: number,
-      color: string
+      color: string,
     ) => {
       ctx.strokeStyle = color;
       ctx.lineWidth = 1;
@@ -3545,7 +3749,7 @@ export const Canvas = function Canvas({
         ctx.stroke();
       }
     },
-    []
+    [],
   ); // No deps - pure function
 
   // Fonction pour dessiner les guides
@@ -3553,7 +3757,7 @@ export const Canvas = function Canvas({
     (
       ctx: CanvasRenderingContext2D,
       canvasWidth: number,
-      canvasHeight: number
+      canvasHeight: number,
     ) => {
       ctx.save();
       ctx.strokeStyle = normalizeColor("#007acc");
@@ -3574,7 +3778,7 @@ export const Canvas = function Canvas({
 
       ctx.restore();
     },
-    []
+    [],
   );
 
   // Gestionnaire de clic droit pour le canvas
@@ -3582,26 +3786,26 @@ export const Canvas = function Canvas({
     (event: MouseEvent<HTMLCanvasElement>) => {
       event.preventDefault();
       debugLog(
-        `👆 Canvas: Context menu triggered at (${event.clientX}, ${event.clientY})`
+        `👆 Canvas: Context menu triggered at (${event.clientX}, ${event.clientY})`,
       );
       debugLog(
-        `[Canvas] Context menu triggered at (${event.clientX}, ${event.clientY})`
+        `[Canvas] Context menu triggered at (${event.clientX}, ${event.clientY})`,
       );
       handleContextMenu(event, (x, y, elementId) => {
         debugLog(
           `📋 Canvas: Context menu callback - Element: ${
             elementId || "canvas"
-          }, Position: (${x}, ${y})`
+          }, Position: (${x}, ${y})`,
         );
         debugLog(
           `[Canvas] Context menu callback - Element: ${
             elementId || "canvas"
-          }, Position: (${x}, ${y})`
+          }, Position: (${x}, ${y})`,
         );
         showContextMenu(x, y, elementId);
       });
     },
-    [handleContextMenu, showContextMenu]
+    [handleContextMenu, showContextMenu],
   );
 
   // Fonction de rendu du canvas
@@ -3610,17 +3814,17 @@ export const Canvas = function Canvas({
     renderCountRef.current += 1;
 
     debugLog(
-      `🎨 Canvas: Render #${renderCountRef.current} started - Elements: ${state.elements.length}, Zoom: ${state.canvas.zoom}%, Selection: ${state.selection.selectedElements.length} items`
+      `🎨 Canvas: Render #${renderCountRef.current} started - Elements: ${state.elements.length}, Zoom: ${state.canvas.zoom}%, Selection: ${state.selection.selectedElements.length} items`,
     );
 
     debugLog(
       `[Canvas] Render #${renderCountRef.current} started - Elements: ${
         state.elements.length
       }, Zoom: ${state.canvas.zoom}%, Pan: (${state.canvas.pan.x.toFixed(
-        1
+        1,
       )}, ${state.canvas.pan.y.toFixed(1)}), Selection: ${
         state.selection.selectedElements.length
-      } items`
+      } items`,
     );
 
     const canvas = canvasRef.current;
@@ -3640,10 +3844,10 @@ export const Canvas = function Canvas({
     // Clear canvas with background color from settings (matching PDF background)
     const canvasBgColor = normalizeColor("#ffffff");
     debugLog(
-      `🖌️ Canvas: Clearing canvas with background color: ${canvasBgColor}`
+      `🖌️ Canvas: Clearing canvas with background color: ${canvasBgColor}`,
     );
     debugLog(
-      `[Canvas] Clearing canvas with background color: ${canvasBgColor}`
+      `[Canvas] Clearing canvas with background color: ${canvasBgColor}`,
     );
     ctx.fillStyle = canvasBgColor;
     ctx.fillRect(0, 0, width, height);
@@ -3679,7 +3883,7 @@ export const Canvas = function Canvas({
         width,
         height,
         canvasSettings?.gridSize || 20,
-        canvasSettings?.gridColor || "#e0e0e0"
+        canvasSettings?.gridColor || "#e0e0e0",
       );
     }
 
@@ -3690,17 +3894,17 @@ export const Canvas = function Canvas({
 
     // Dessiner les éléments
     debugLog(
-      `📝 Canvas: Rendering ${visibleElementsList.length} visible elements (lazy loading: ${lazyLoadingEnabled})`
+      `📝 Canvas: Rendering ${visibleElementsList.length} visible elements (lazy loading: ${lazyLoadingEnabled})`,
     );
     debugLog(
-      `[Canvas] Rendering ${visibleElementsList.length} visible elements (lazy loading: ${lazyLoadingEnabled})`
+      `[Canvas] Rendering ${visibleElementsList.length} visible elements (lazy loading: ${lazyLoadingEnabled})`,
     );
     visibleElementsList.forEach((element) => {
       debugLog(
-        `🎯 Canvas: Drawing element: ${element.type} (${element.id}) at (${element.x}, ${element.y}) ${element.width}x${element.height}`
+        `🎯 Canvas: Drawing element: ${element.type} (${element.id}) at (${element.x}, ${element.y}) ${element.width}x${element.height}`,
       );
       debugLog(
-        `[Canvas] Drawing element: ${element.type} (${element.id}) at (${element.x}, ${element.y}) ${element.width}x${element.height}`
+        `[Canvas] Drawing element: ${element.type} (${element.id}) at (${element.x}, ${element.y}) ${element.width}x${element.height}`,
       );
       drawElement(ctx, element, state); // ✅ BUGFIX-001/004: Pass state as parameter
     });
@@ -3721,7 +3925,7 @@ export const Canvas = function Canvas({
           selectionState.selectionRect.x,
           selectionState.selectionRect.y,
           selectionState.selectionRect.width,
-          selectionState.selectionRect.height
+          selectionState.selectionRect.height,
         );
 
         // Remplir avec une couleur semi-transparente
@@ -3730,7 +3934,7 @@ export const Canvas = function Canvas({
           selectionState.selectionRect.x,
           selectionState.selectionRect.y,
           selectionState.selectionRect.width,
-          selectionState.selectionRect.height
+          selectionState.selectionRect.height,
         );
         ctx.restore();
       } else if (
@@ -3745,12 +3949,12 @@ export const Canvas = function Canvas({
         ctx.beginPath();
         ctx.moveTo(
           selectionState.selectionPoints[0].x,
-          selectionState.selectionPoints[0].y
+          selectionState.selectionPoints[0].y,
         );
         for (let i = 1; i < selectionState.selectionPoints.length; i++) {
           ctx.lineTo(
             selectionState.selectionPoints[i].x,
-            selectionState.selectionPoints[i].y
+            selectionState.selectionPoints[i].y,
           );
         }
         ctx.closePath();
@@ -3773,19 +3977,19 @@ export const Canvas = function Canvas({
     // Log rendu terminé avec métriques de performance
     const renderTime = Date.now() - startTime;
     debugLog(
-      `✅ Canvas: Render #${renderCountRef.current} completed in ${renderTime}ms - ${state.elements.length} elements rendered`
+      `✅ Canvas: Render #${renderCountRef.current} completed in ${renderTime}ms - ${state.elements.length} elements rendered`,
     );
     debugLog(
-      `[Canvas] Render #${renderCountRef.current} completed in ${renderTime}ms - ${state.elements.length} elements rendered`
+      `[Canvas] Render #${renderCountRef.current} completed in ${renderTime}ms - ${state.elements.length} elements rendered`,
     );
 
     // Log avertissement si le rendu prend trop de temps
     if (renderTime > 100) {
       debugWarn(
-        `⚠️ Canvas: Slow render detected: ${renderTime}ms for ${state.elements.length} elements`
+        `⚠️ Canvas: Slow render detected: ${renderTime}ms for ${state.elements.length} elements`,
       );
       debugWarn(
-        `[Canvas] Slow render detected: ${renderTime}ms for ${state.elements.length} elements`
+        `[Canvas] Slow render detected: ${renderTime}ms for ${state.elements.length} elements`,
       );
     }
   }, [
@@ -3804,10 +4008,10 @@ export const Canvas = function Canvas({
   // Redessiner quand l'état change - CORRECTION: Supprimer renderCanvas des dépendances pour éviter les boucles
   useEffect(() => {
     debugLog(
-      `🔄 Canvas: State change detected - triggering render. Elements: ${state.elements.length}, Selection: ${state.selection.selectedElements.length}, Zoom: ${state.canvas.zoom}%`
+      `🔄 Canvas: State change detected - triggering render. Elements: ${state.elements.length}, Selection: ${state.selection.selectedElements.length}, Zoom: ${state.canvas.zoom}%`,
     );
     debugLog(
-      `[Canvas] State change detected - triggering render. Elements: ${state.elements.length}, Selection: ${state.selection.selectedElements.length}, Zoom: ${state.canvas.zoom}%`
+      `[Canvas] State change detected - triggering render. Elements: ${state.elements.length}, Selection: ${state.selection.selectedElements.length}, Zoom: ${state.canvas.zoom}%`,
     );
     renderCanvas();
   }, [
@@ -3824,7 +4028,7 @@ export const Canvas = function Canvas({
   useEffect(() => {
     if (state.elements.length > 0 && !initialImageCheckDoneRef.current) {
       debugLog(
-        `[Canvas] Initial elements loaded (${state.elements.length} elements) - scheduling image loading checks`
+        `[Canvas] Initial elements loaded (${state.elements.length} elements) - scheduling image loading checks`,
       );
       initialImageCheckDoneRef.current = true;
 
@@ -3882,12 +4086,13 @@ export const Canvas = function Canvas({
   // Calculate border style based on canvas settings and license
   const isPremium = window.pdfBuilderData?.license?.isPremium || false;
 
-  const borderStyle = isDragOver 
-    ? "2px solid #007acc" 
-    : (isPremium && canvasSettings?.borderWidth && canvasSettings?.borderWidth > 0 
-        ? `${canvasSettings.borderWidth}px solid ${canvasSettings?.borderColor || DEFAULT_SETTINGS.borderColor}` 
-        : "none"
-    );
+  const borderStyle = isDragOver
+    ? "2px solid #007acc"
+    : isPremium &&
+        canvasSettings?.borderWidth &&
+        canvasSettings?.borderWidth > 0
+      ? `${canvasSettings.borderWidth}px solid ${canvasSettings?.borderColor || DEFAULT_SETTINGS.borderColor}`
+      : "none";
 
   // Calculate canvas display size based on zoom
   const zoomScale = state.canvas.zoom / 100;
@@ -3895,7 +4100,7 @@ export const Canvas = function Canvas({
   const displayHeight = height * zoomScale;
 
   debugLog(
-    `[Canvas] Rendering canvas element - Display size: ${displayWidth}x${displayHeight}, Border: ${borderStyle}, Drag over: ${isDragOver}`
+    `[Canvas] Rendering canvas element - Display size: ${displayWidth}x${displayHeight}, Border: ${borderStyle}, Drag over: ${isDragOver}`,
   );
 
   // ✅ Exposer une fonction pour capturer l'image du canvas
@@ -3904,9 +4109,9 @@ export const Canvas = function Canvas({
       if (canvasRef.current) {
         try {
           // Retourner l'image PNG du canvas en base64
-          return canvasRef.current.toDataURL('image/png');
+          return canvasRef.current.toDataURL("image/png");
         } catch (error) {
-          console.error('Erreur lors de la capture du canvas:', error);
+          console.error("Erreur lors de la capture du canvas:", error);
           return null;
         }
       }
@@ -3935,15 +4140,16 @@ export const Canvas = function Canvas({
           justifyContent: "center",
           border: borderStyle,
           borderRadius: "4px",
-          backgroundColor: !isPremium 
+          backgroundColor: !isPremium
             ? DEFAULT_SETTINGS.containerBackgroundColor // Fond par défaut en mode gratuit
-            : (canvasSettings?.containerBackgroundColor || DEFAULT_SETTINGS.containerBackgroundColor),
+            : canvasSettings?.containerBackgroundColor ||
+              DEFAULT_SETTINGS.containerBackgroundColor,
           transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-          boxShadow: isDragOver 
-            ? "0 0 0 2px rgba(0, 122, 204, 0.2)" 
-            : (canvasSettings?.shadowEnabled 
-                ? "2px 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2)" 
-                : "none"),
+          boxShadow: isDragOver
+            ? "0 0 0 2px rgba(0, 122, 204, 0.2)"
+            : canvasSettings?.shadowEnabled
+              ? "2px 8px 16px rgba(0, 0, 0, 0.3), 0 4px 8px rgba(0, 0, 0, 0.2)"
+              : "none",
           pointerEvents: "auto",
         }}
       >
@@ -3981,5 +4187,3 @@ export const Canvas = function Canvas({
     </>
   );
 };
-
-

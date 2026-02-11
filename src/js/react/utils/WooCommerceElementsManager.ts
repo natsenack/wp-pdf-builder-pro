@@ -1,8 +1,8 @@
 import {
   WooCommerceOrder,
   WooCommerceOrderItem,
-  WooCommerceCustomer
-} from './woocommerce-types';
+  WooCommerceCustomer,
+} from "./woocommerce-types";
 
 // Interface pour les données de preview injectées par PHP
 interface PreviewOrderData {
@@ -145,7 +145,7 @@ export class WooCommerceElementsManager {
       return previewData.order.order_number;
     }
 
-    if (!this.orderData) return 'CMD-XXXX-XXXX';
+    if (!this.orderData) return "CMD-XXXX-XXXX";
     return this.orderData.order_number || `CMD-${this.orderData.id}`;
   }
 
@@ -163,24 +163,32 @@ export class WooCommerceElementsManager {
     if (previewData?.customer && previewData?.billing) {
       const { customer, billing } = previewData;
       return {
-        name: customer.full_name || `${customer.first_name} ${customer.last_name}`.trim() || 'Client Inconnu',
-        address: billing.full_address || [
-          billing.address_1,
-          billing.address_2,
-          `${billing.postcode} ${billing.city}`,
-          billing.country
-        ].filter(Boolean).join(', ') || 'Adresse non disponible',
-        email: customer.email || 'email@inconnu.com',
-        phone: customer.phone || '+33 0 00 00 00 00'
+        name:
+          customer.full_name ||
+          `${customer.first_name} ${customer.last_name}`.trim() ||
+          "Client Inconnu",
+        address:
+          billing.full_address ||
+          [
+            billing.address_1,
+            billing.address_2,
+            `${billing.postcode} ${billing.city}`,
+            billing.country,
+          ]
+            .filter(Boolean)
+            .join(", ") ||
+          "Adresse non disponible",
+        email: customer.email || "email@inconnu.com",
+        phone: customer.phone || "+33 0 00 00 00 00",
       };
     }
 
     if (!this.customerData && !this.orderData) {
       return {
-        name: 'Client Inconnu',
-        address: 'Adresse non disponible',
-        email: 'email@inconnu.com',
-        phone: '+33 0 00 00 00 00'
+        name: "Client Inconnu",
+        address: "Adresse non disponible",
+        email: "email@inconnu.com",
+        phone: "+33 0 00 00 00 00",
       };
     }
 
@@ -188,10 +196,10 @@ export class WooCommerceElementsManager {
 
     if (!billing) {
       return {
-        name: 'Client Inconnu',
-        address: 'Adresse non disponible',
-        email: 'email@inconnu.com',
-        phone: '+33 0 00 00 00 00'
+        name: "Client Inconnu",
+        address: "Adresse non disponible",
+        email: "email@inconnu.com",
+        phone: "+33 0 00 00 00 00",
       };
     }
 
@@ -200,14 +208,16 @@ export class WooCommerceElementsManager {
       billing.address_1,
       billing.address_2,
       `${billing.postcode} ${billing.city}`,
-      billing.country
-    ].filter(Boolean).join(', ');
+      billing.country,
+    ]
+      .filter(Boolean)
+      .join(", ");
 
     return {
-      name: fullName || 'Client Inconnu',
-      address: address || 'Adresse non disponible',
-      email: billing.email || 'email@inconnu.com',
-      phone: billing.phone || '+33 0 00 00 00 00'
+      name: fullName || "Client Inconnu",
+      address: address || "Adresse non disponible",
+      email: billing.email || "email@inconnu.com",
+      phone: billing.phone || "+33 0 00 00 00 00",
     };
   }
 
@@ -226,18 +236,18 @@ export class WooCommerceElementsManager {
     // Check for preview data first
     const previewData = window.pdfBuilderData?.previewOrderData;
     if (previewData?.products && Array.isArray(previewData.products)) {
-      return previewData.products.map(product => {
+      return previewData.products.map((product) => {
         const subtotal = Number(product.subtotal_raw) || 0;
         const total = Number(product.total_raw) || 0;
-        
+
         return {
           sku: product.sku || `SKU-${product.id}`,
           name: product.name,
-          description: '', // Description not available in preview data
+          description: "", // Description not available in preview data
           qty: Number(product.quantity) || 0,
           price: Number(product.price_raw) || 0,
           discount: Math.max(0, subtotal - total),
-          total: total
+          total: total,
         };
       });
     }
@@ -246,14 +256,14 @@ export class WooCommerceElementsManager {
       return [];
     }
 
-    return this.orderData.line_items.map(item => ({
+    return this.orderData.line_items.map((item) => ({
       sku: item.sku || `SKU-${item.product_id}`,
       name: item.name,
       description: this.getProductDescription(item),
       qty: item.quantity,
       price: parseFloat(item.subtotal) / item.quantity,
       discount: this.calculateItemDiscount(item),
-      total: parseFloat(item.total)
+      total: parseFloat(item.total),
     }));
   }
 
@@ -267,9 +277,9 @@ export class WooCommerceElementsManager {
     // Check for preview data first
     const previewData = window.pdfBuilderData?.previewOrderData;
     if (previewData?.fees && Array.isArray(previewData.fees)) {
-      return previewData.fees.map(fee => ({
+      return previewData.fees.map((fee) => ({
         name: fee.name,
-        total: Number(fee.total_raw) || 0
+        total: Number(fee.total_raw) || 0,
       }));
     }
 
@@ -297,7 +307,7 @@ export class WooCommerceElementsManager {
         shipping: Number(totals.shipping_raw) || 0,
         tax: Number(totals.tax_raw) || 0,
         total: Number(totals.total_raw) || 0,
-        currency: order.currency || 'EUR'
+        currency: order.currency || "EUR",
       };
     }
 
@@ -308,7 +318,7 @@ export class WooCommerceElementsManager {
         shipping: 0,
         tax: 0,
         total: 0,
-        currency: 'EUR'
+        currency: "EUR",
       };
     }
 
@@ -324,7 +334,7 @@ export class WooCommerceElementsManager {
       shipping,
       tax,
       total,
-      currency: this.orderData.currency
+      currency: this.orderData.currency,
     };
   }
 
@@ -338,8 +348,8 @@ export class WooCommerceElementsManager {
       return previewData.order.date_formatted;
     }
 
-    if (!this.orderData) return new Date().toLocaleDateString('fr-FR');
-    return new Date(this.orderData.date_created).toLocaleDateString('fr-FR');
+    if (!this.orderData) return new Date().toLocaleDateString("fr-FR");
+    return new Date(this.orderData.date_created).toLocaleDateString("fr-FR");
   }
 
   /**
@@ -353,7 +363,7 @@ export class WooCommerceElementsManager {
       return `INV-${previewData.order.order_number}`;
     }
 
-    if (!this.orderData) return 'INV-2024-00001';
+    if (!this.orderData) return "INV-2024-00001";
     return `INV-${this.orderData.order_number || this.orderData.id}`;
   }
 
@@ -369,8 +379,10 @@ export class WooCommerceElementsManager {
 
   private getProductDescription(item: WooCommerceOrderItem): string {
     // Recherche dans les meta_data pour une description
-    const descriptionMeta = item.meta_data.find(meta => meta.key === '_description');
-    return descriptionMeta?.value || 'Description non disponible';
+    const descriptionMeta = item.meta_data.find(
+      (meta) => meta.key === "_description",
+    );
+    return descriptionMeta?.value || "Description non disponible";
   }
 
   private calculateItemDiscount(item: WooCommerceOrderItem): number {
@@ -383,150 +395,155 @@ export class WooCommerceElementsManager {
 
   private async mockFetchOrderData(orderId: string): Promise<WooCommerceOrder> {
     // Simulation d'un délai réseau
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Données fictives réalistes
     return {
       id: parseInt(orderId),
-      order_number: `CMD-2024-${orderId.padStart(4, '0')}`,
-      status: 'completed',
-      currency: 'EUR',
+      order_number: `CMD-2024-${orderId.padStart(4, "0")}`,
+      status: "completed",
+      currency: "EUR",
       date_created: new Date().toISOString(),
       date_modified: new Date().toISOString(),
-      total: '279.96',
-      subtotal: '259.96',
-      total_tax: '20.00',
-      shipping_total: '8.50',
-      discount_total: '15.00',
+      total: "279.96",
+      subtotal: "259.96",
+      total_tax: "20.00",
+      shipping_total: "8.50",
+      discount_total: "15.00",
       customer_id: 123,
       billing: {
-        first_name: 'Marie',
-        last_name: 'Dupont',
-        company: '',
-        address_1: '15 rue des Lilas',
-        address_2: '',
-        city: 'Paris',
-        state: '',
-        postcode: '75001',
-        country: 'FR',
-        email: 'marie.dupont@email.com',
-        phone: '+33 6 12 34 56 78'
+        first_name: "Marie",
+        last_name: "Dupont",
+        company: "",
+        address_1: "15 rue des Lilas",
+        address_2: "",
+        city: "Paris",
+        state: "",
+        postcode: "75001",
+        country: "FR",
+        email: "marie.dupont@email.com",
+        phone: "+33 6 12 34 56 78",
       },
       shipping: {
-        first_name: 'Marie',
-        last_name: 'Dupont',
-        company: '',
-        address_1: '15 rue des Lilas',
-        address_2: '',
-        city: 'Paris',
-        state: '',
-        postcode: '75001',
-        country: 'FR'
+        first_name: "Marie",
+        last_name: "Dupont",
+        company: "",
+        address_1: "15 rue des Lilas",
+        address_2: "",
+        city: "Paris",
+        state: "",
+        postcode: "75001",
+        country: "FR",
       },
       line_items: [
         {
           id: 1,
-          name: 'T-shirt Premium Bio',
+          name: "T-shirt Premium Bio",
           product_id: 123,
           variation_id: 0,
           quantity: 2,
-          tax_class: '',
-          subtotal: '59.98',
-          subtotal_tax: '11.996',
-          total: '59.98',
-          total_tax: '11.996',
-          taxes: [{ id: 1, total: '11.996', subtotal: '11.996' }],
+          tax_class: "",
+          subtotal: "59.98",
+          subtotal_tax: "11.996",
+          total: "59.98",
+          total_tax: "11.996",
+          taxes: [{ id: 1, total: "11.996", subtotal: "11.996" }],
           meta_data: [],
-          sku: 'TSHIRT-001',
-          price: 29.99
+          sku: "TSHIRT-001",
+          price: 29.99,
         },
         {
           id: 2,
-          name: 'Jean Slim Fit Noir',
+          name: "Jean Slim Fit Noir",
           product_id: 456,
           variation_id: 0,
           quantity: 1,
-          tax_class: '',
-          subtotal: '89.99',
-          subtotal_tax: '17.998',
-          total: '79.99',
-          total_tax: '15.998',
-          taxes: [{ id: 1, total: '15.998', subtotal: '17.998' }],
+          tax_class: "",
+          subtotal: "89.99",
+          subtotal_tax: "17.998",
+          total: "79.99",
+          total_tax: "15.998",
+          taxes: [{ id: 1, total: "15.998", subtotal: "17.998" }],
           meta_data: [],
-          sku: 'JEAN-045',
-          price: 89.99
-        }
+          sku: "JEAN-045",
+          price: 89.99,
+        },
       ],
-      shipping_lines: [{
-        id: 1,
-        method_title: 'Livraison Standard',
-        method_id: 'flat_rate',
-        total: '8.50',
-        total_tax: '0.00',
-        taxes: []
-      }],
-      tax_lines: [{
-        id: 1,
-        rate_code: 'FR-TVA-20',
-        rate_id: 1,
-        label: 'TVA (20%)',
-        compound: false,
-        tax_total: '20.00',
-        shipping_tax_total: '0.00',
-        rate_percent: 20
-      }],
-      coupon_lines: [{
-        id: 1,
-        code: 'ETE2024',
-        discount: '15.00',
-        discount_tax: '0.00'
-      }]
+      shipping_lines: [
+        {
+          id: 1,
+          method_title: "Livraison Standard",
+          method_id: "flat_rate",
+          total: "8.50",
+          total_tax: "0.00",
+          taxes: [],
+        },
+      ],
+      tax_lines: [
+        {
+          id: 1,
+          rate_code: "FR-TVA-20",
+          rate_id: 1,
+          label: "TVA (20%)",
+          compound: false,
+          tax_total: "20.00",
+          shipping_tax_total: "0.00",
+          rate_percent: 20,
+        },
+      ],
+      coupon_lines: [
+        {
+          id: 1,
+          code: "ETE2024",
+          discount: "15.00",
+          discount_tax: "0.00",
+        },
+      ],
     };
   }
 
-  private async mockFetchCustomerData(customerId: number): Promise<WooCommerceCustomer> {
+  private async mockFetchCustomerData(
+    customerId: number,
+  ): Promise<WooCommerceCustomer> {
     // Simulation d'un délai réseau
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     return {
       id: customerId,
       date_created: new Date().toISOString(),
       date_modified: new Date().toISOString(),
-      email: 'marie.dupont@email.com',
-      first_name: 'Marie',
-      last_name: 'Dupont',
-      role: 'customer',
-      username: 'marie_dupont',
+      email: "marie.dupont@email.com",
+      first_name: "Marie",
+      last_name: "Dupont",
+      role: "customer",
+      username: "marie_dupont",
       billing: {
-        first_name: 'Marie',
-        last_name: 'Dupont',
-        company: '',
-        address_1: '15 rue des Lilas',
-        address_2: '',
-        city: 'Paris',
-        state: '',
-        postcode: '75001',
-        country: 'FR',
-        email: 'marie.dupont@email.com',
-        phone: '+33 6 12 34 56 78'
+        first_name: "Marie",
+        last_name: "Dupont",
+        company: "",
+        address_1: "15 rue des Lilas",
+        address_2: "",
+        city: "Paris",
+        state: "",
+        postcode: "75001",
+        country: "FR",
+        email: "marie.dupont@email.com",
+        phone: "+33 6 12 34 56 78",
       },
       shipping: {
-        first_name: 'Marie',
-        last_name: 'Dupont',
-        company: '',
-        address_1: '15 rue des Lilas',
-        address_2: '',
-        city: 'Paris',
-        state: '',
-        postcode: '75001',
-        country: 'FR'
-      }
+        first_name: "Marie",
+        last_name: "Dupont",
+        company: "",
+        address_1: "15 rue des Lilas",
+        address_2: "",
+        city: "Paris",
+        state: "",
+        postcode: "75001",
+        country: "FR",
+      },
     };
   }
 }
 
 // Instance singleton
 export const wooCommerceManager = new WooCommerceElementsManager();
-
-
-

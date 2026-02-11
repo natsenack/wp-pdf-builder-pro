@@ -6,7 +6,10 @@ import { Header } from "./header/Header";
 import { ElementLibrary } from "./element-library/ElementLibrary";
 import { useTemplate } from "../hooks/useTemplate";
 import { useBuilder } from "../contexts/builder/BuilderContext";
-import { useCanvasSettings, DEFAULT_SETTINGS } from "../contexts/CanvasSettingsContext";
+import {
+  useCanvasSettings,
+  DEFAULT_SETTINGS,
+} from "../contexts/CanvasSettingsContext";
 import {
   DEFAULT_CANVAS_WIDTH,
   DEFAULT_CANVAS_HEIGHT,
@@ -50,7 +53,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   width = DEFAULT_CANVAS_WIDTH,
   height = DEFAULT_CANVAS_HEIGHT,
   className,
-}: PDFBuilderContentProps) {  
+}: PDFBuilderContentProps) {
   debugLog("🏗️ PDFBuilderContent: Component initialized with props:", {
     width,
     height,
@@ -58,7 +61,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
   });
 
   const { state } = useBuilder();
-  const isPreviewMode = state.previewMode === 'command';
+  const isPreviewMode = state.previewMode === "command";
 
   const [isHeaderFixed, setIsHeaderFixed] = useState(false);
   const [isPropertiesPanelOpen, setIsPropertiesPanelOpen] = useState(false);
@@ -128,22 +131,21 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
 
   debugLog("🎨 PDFBuilderContent: Canvas settings:", canvasSettings);
 
-
   // Vérifier les erreurs de chargement des paramètres du canvas
   useEffect(() => {
     if (canvasSettings.error) {
       debugError(
         "❌ PDFBuilderContent: Canvas settings error:",
-        canvasSettings.error
+        canvasSettings.error,
       );
 
       // Afficher une notification d'erreur
       if (typeof window !== "undefined" && window.showErrorNotification) {
         debugLog(
-          "🔔 PDFBuilderContent: Showing canvas settings error notification"
+          "🔔 PDFBuilderContent: Showing canvas settings error notification",
         );
         window.showErrorNotification(
-          `Erreur lors du chargement des paramètres: ${canvasSettings.error}`
+          `Erreur lors du chargement des paramètres: ${canvasSettings.error}`,
         );
       }
     }
@@ -168,7 +170,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
         "📜 PDFBuilderContent: Scroll detected, scrollTop:",
         scrollTop,
         "isHeaderFixed:",
-        newIsHeaderFixed
+        newIsHeaderFixed,
       );
       setIsHeaderFixed(newIsHeaderFixed);
     };
@@ -206,7 +208,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
       if (typeof window !== "undefined" && window.showErrorNotification) {
         debugLog("🔔 PDFBuilderContent: Showing error notification");
         window.showErrorNotification(
-          "Erreur lors de la sauvegarde du template"
+          "Erreur lors de la sauvegarde du template",
         );
       }
 
@@ -260,7 +262,14 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
         )}
 
         {/* Contenu principal */}
-        <div style={{ display: "flex", flex: 1, gap: "0", padding: isPreviewMode ? "0" : "12px" }}>
+        <div
+          style={{
+            display: "flex",
+            flex: 1,
+            gap: "0",
+            padding: isPreviewMode ? "0" : "12px",
+          }}
+        >
           {/* Sidebar des éléments WooCommerce - masqué en mode preview */}
           {!isPreviewMode && <ElementLibrary />}
 
@@ -281,7 +290,8 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                 alignItems: "center",
                 backgroundColor: !isPremium
                   ? DEFAULT_SETTINGS.containerBackgroundColor // Fond par défaut en mode gratuit
-                  : (canvasSettings.containerBackgroundColor || DEFAULT_SETTINGS.containerBackgroundColor),
+                  : canvasSettings.containerBackgroundColor ||
+                    DEFAULT_SETTINGS.containerBackgroundColor,
                 border: "1px solid #e0e0e0",
                 borderRadius: "4px",
                 overflow: "auto",
@@ -349,22 +359,26 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                 <button
                   onClick={() => {
                     // Récupérer les paramètres URL
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const templateId = urlParams.get('template_id');
-                    const orderId = urlParams.get('order_id');
-                    
+                    const urlParams = new URLSearchParams(
+                      window.location.search,
+                    );
+                    const templateId = urlParams.get("template_id");
+                    const orderId = urlParams.get("order_id");
+
                     if (!templateId || !orderId) {
                       if (window.showErrorNotification) {
-                        window.showErrorNotification('Paramètres manquants pour générer le PDF');
+                        window.showErrorNotification(
+                          "Paramètres manquants pour générer le PDF",
+                        );
                       }
                       return;
                     }
 
                     // Construire l'URL de génération PDF
                     const pdfUrl = `${window.location.origin}/wp-admin/admin-ajax.php?action=pdf_builder_generate_pdf&template_id=${templateId}&order_id=${orderId}`;
-                    
+
                     // Ouvrir dans un nouvel onglet
-                    window.open(pdfUrl, '_blank');
+                    window.open(pdfUrl, "_blank");
                   }}
                   style={{
                     position: "absolute",
@@ -388,23 +402,25 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = "#005a87";
                     e.currentTarget.style.transform = "translateY(-1px)";
-                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 115, 170, 0.4)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 12px rgba(0, 115, 170, 0.4)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = "#0073aa";
                     e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "0 2px 8px rgba(0, 115, 170, 0.3)";
+                    e.currentTarget.style.boxShadow =
+                      "0 2px 8px rgba(0, 115, 170, 0.3)";
                   }}
                   title="Télécharger le PDF"
                 >
-                  <svg 
-                    width="16" 
-                    height="16" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
                     strokeLinejoin="round"
                   >
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -456,7 +472,7 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                 <>
                   {debugLog(
                     "🎨 PDFBuilderContent: Rendering Canvas component",
-                    { canvasWidth, canvasHeight }
+                    { canvasWidth, canvasHeight },
                   )}
                   <Canvas
                     width={canvasWidth || width}
@@ -472,12 +488,12 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
                 onClick={() => {
                   debugLog(
                     "🔘 PDFBuilderContent: Properties panel toggle clicked, current state:",
-                    isPropertiesPanelOpen
+                    isPropertiesPanelOpen,
                   );
                   setIsPropertiesPanelOpen(!isPropertiesPanelOpen);
                   debugLog(
                     "🔄 PDFBuilderContent: Properties panel state changed to:",
-                    !isPropertiesPanelOpen
+                    !isPropertiesPanelOpen,
                   );
                 }}
                 style={{
@@ -534,5 +550,3 @@ export const PDFBuilderContent = memo(function PDFBuilderContent({
     </>
   );
 });
-
-

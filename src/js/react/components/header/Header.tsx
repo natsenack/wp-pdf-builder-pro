@@ -126,7 +126,9 @@ export const Header = memo(function Header({
 
     const templateId = state.template?.id;
     if (!templateId) {
-      alert("Erreur: Template ID manquant. Veuillez d'abord enregistrer le template.");
+      alert(
+        "Erreur: Template ID manquant. Veuillez d'abord enregistrer le template.",
+      );
       return;
     }
 
@@ -138,10 +140,13 @@ export const Header = memo(function Header({
       formData.append("order_id", previewOrderId.trim());
       formData.append("nonce", (window as any).pdfBuilderNonce || "");
 
-      const response = await fetch((window as any).pdfBuilderData?.ajaxUrl || "/wp-admin/admin-ajax.php", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        (window as any).pdfBuilderData?.ajaxUrl || "/wp-admin/admin-ajax.php",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
 
       if (!response.ok) {
         throw new Error("Erreur lors de la génération du PDF");
@@ -151,11 +156,13 @@ export const Header = memo(function Header({
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       window.open(url, "_blank");
-      
+
       setShowPreviewModal(false);
     } catch (error) {
       console.error("[PREVIEW] Erreur génération PDF:", error);
-      alert("Erreur lors de la génération du PDF. Vérifiez la console pour plus de détails.");
+      alert(
+        "Erreur lors de la génération du PDF. Vérifiez la console pour plus de détails.",
+      );
     } finally {
       setIsGeneratingPreview(false);
     }
@@ -164,7 +171,9 @@ export const Header = memo(function Header({
   // PNG/JPG - Génération d'image (premium uniquement)
   const generateImage = async (format: "png" | "jpg") => {
     if (!isPremium) {
-      alert(`La génération en format ${format.toUpperCase()} est une fonctionnalité premium.\n\nActivez votre licence premium pour débloquer cette option.`);
+      alert(
+        `La génération en format ${format.toUpperCase()} est une fonctionnalité premium.\n\nActivez votre licence premium pour débloquer cette option.`,
+      );
       return;
     }
 
@@ -175,7 +184,9 @@ export const Header = memo(function Header({
 
     const templateId = state.template?.id;
     if (!templateId) {
-      alert("Erreur: Template ID manquant. Veuillez d'abord enregistrer le template.");
+      alert(
+        "Erreur: Template ID manquant. Veuillez d'abord enregistrer le template.",
+      );
       return;
     }
 
@@ -188,10 +199,13 @@ export const Header = memo(function Header({
       formData.append("format", format);
       formData.append("nonce", (window as any).pdfBuilderNonce || "");
 
-      const response = await fetch((window as any).pdfBuilderData?.ajaxUrl || "/wp-admin/admin-ajax.php", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        (window as any).pdfBuilderData?.ajaxUrl || "/wp-admin/admin-ajax.php",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
 
       if (!response.ok) {
         throw new Error(`Erreur lors de la génération ${format.toUpperCase()}`);
@@ -207,11 +221,16 @@ export const Header = memo(function Header({
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      
+
       setShowPreviewModal(false);
     } catch (error) {
-      console.error(`[PREVIEW] Erreur génération ${format.toUpperCase()}:`, error);
-      alert(`Erreur lors de la génération ${format.toUpperCase()}. Vérifiez la console pour plus de détails.`);
+      console.error(
+        `[PREVIEW] Erreur génération ${format.toUpperCase()}:`,
+        error,
+      );
+      alert(
+        `Erreur lors de la génération ${format.toUpperCase()}. Vérifiez la console pour plus de détails.`,
+      );
     } finally {
       setIsGeneratingPreview(false);
     }
@@ -2740,7 +2759,8 @@ export const Header = memo(function Header({
                   disabled={isGeneratingPreview}
                 />
                 <div className="setting-hint">
-                  Entrez l'ID d'une commande existante pour générer l'aperçu avec les vraies données
+                  Entrez l'ID d'une commande existante pour générer l'aperçu
+                  avec les vraies données
                 </div>
               </div>
 
@@ -2764,8 +2784,12 @@ export const Header = memo(function Header({
                       color: "white",
                       fontSize: "14px",
                       fontWeight: "600",
-                      cursor: isGeneratingPreview || !previewOrderId.trim() ? "not-allowed" : "pointer",
-                      opacity: isGeneratingPreview || !previewOrderId.trim() ? 0.5 : 1,
+                      cursor:
+                        isGeneratingPreview || !previewOrderId.trim()
+                          ? "not-allowed"
+                          : "pointer",
+                      opacity:
+                        isGeneratingPreview || !previewOrderId.trim() ? 0.5 : 1,
                       transition: "all 0.2s",
                       display: "flex",
                       flexDirection: "column",
@@ -2780,16 +2804,25 @@ export const Header = memo(function Header({
                   <button
                     onClick={() => generateImage("png")}
                     disabled={isGeneratingPreview || (!isPremium && true)}
-                    title={isPremium ? "Générer en PNG" : "Fonctionnalité premium - Activez votre licence"}
+                    title={
+                      isPremium
+                        ? "Générer en PNG"
+                        : "Fonctionnalité premium - Activez votre licence"
+                    }
                     style={{
                       padding: "12px 16px",
-                      border: isPremium ? "2px solid #059669" : "2px solid #d1d5db",
+                      border: isPremium
+                        ? "2px solid #059669"
+                        : "2px solid #d1d5db",
                       borderRadius: "6px",
                       backgroundColor: isPremium ? "#10b981" : "#f9fafb",
                       color: isPremium ? "white" : "#6b7280",
                       fontSize: "14px",
                       fontWeight: "600",
-                      cursor: isGeneratingPreview || !isPremium ? "not-allowed" : "pointer",
+                      cursor:
+                        isGeneratingPreview || !isPremium
+                          ? "not-allowed"
+                          : "pointer",
                       opacity: isGeneratingPreview || !isPremium ? 0.5 : 1,
                       transition: "all 0.2s",
                       display: "flex",
@@ -2801,23 +2834,34 @@ export const Header = memo(function Header({
                     <span style={{ fontSize: "24px" }}>🖼️</span>
                     <span>PNG</span>
                     {!isPremium && (
-                      <span style={{ fontSize: "10px", color: "#d97706" }}>Premium</span>
+                      <span style={{ fontSize: "10px", color: "#d97706" }}>
+                        Premium
+                      </span>
                     )}
                   </button>
 
                   <button
                     onClick={() => generateImage("jpg")}
                     disabled={isGeneratingPreview || (!isPremium && true)}
-                    title={isPremium ? "Générer en JPG" : "Fonctionnalité premium - Activez votre licence"}
+                    title={
+                      isPremium
+                        ? "Générer en JPG"
+                        : "Fonctionnalité premium - Activez votre licence"
+                    }
                     style={{
                       padding: "12px 16px",
-                      border: isPremium ? "2px solid #059669" : "2px solid #d1d5db",
+                      border: isPremium
+                        ? "2px solid #059669"
+                        : "2px solid #d1d5db",
                       borderRadius: "6px",
                       backgroundColor: isPremium ? "#10b981" : "#f9fafb",
                       color: isPremium ? "white" : "#6b7280",
                       fontSize: "14px",
                       fontWeight: "600",
-                      cursor: isGeneratingPreview || !isPremium ? "not-allowed" : "pointer",
+                      cursor:
+                        isGeneratingPreview || !isPremium
+                          ? "not-allowed"
+                          : "pointer",
                       opacity: isGeneratingPreview || !isPremium ? 0.5 : 1,
                       transition: "all 0.2s",
                       display: "flex",
@@ -2829,7 +2873,9 @@ export const Header = memo(function Header({
                     <span style={{ fontSize: "24px" }}>🖼️</span>
                     <span>JPG</span>
                     {!isPremium && (
-                      <span style={{ fontSize: "10px", color: "#d97706" }}>Premium</span>
+                      <span style={{ fontSize: "10px", color: "#d97706" }}>
+                        Premium
+                      </span>
                     )}
                   </button>
                 </div>
