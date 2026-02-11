@@ -410,15 +410,13 @@ export const Header = memo(function Header({
       // Nettoyer le conteneur
       document.body.removeChild(container);
 
-      // Étape 4: Convertir en blob et créer une page HTML avec boutons
-      canvas.toBlob(
-        (blob) => {
-          if (blob) {
-            const imageUrl = URL.createObjectURL(blob);
-            const fileName = `facture-${order_number}.${format}`;
-            
-            // Créer une page HTML avec l'image et les boutons
-            const htmlPage = `
+      // Étape 4: Convertir en data URL (stable, pas besoin de révoquer)
+      const mimeType = format === "jpg" ? "image/jpeg" : "image/png";
+      const imageDataUrl = canvas.toDataURL(mimeType, 0.95);
+      const fileName = `facture-${order_number}.${format}`;
+      
+      // Créer une page HTML avec l'image et les boutons
+      const htmlPage = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -514,13 +512,13 @@ export const Header = memo(function Header({
     </div>
     
     <div class="image-container">
-        <img src="${imageUrl}" alt="Facture ${order_number}" />
+        <img src="${imageDataUrl}" alt="Facture ${order_number}" />
     </div>
     
     <script>
         function downloadImage() {
             const link = document.createElement('a');
-            link.href = '${imageUrl}';
+            link.href = '${imageDataUrl}';
             link.download = '${fileName}';
             document.body.appendChild(link);
             link.click();
@@ -529,26 +527,15 @@ export const Header = memo(function Header({
     </script>
 </body>
 </html>`;
-            
-            // Créer un blob HTML et l'ouvrir
-            const htmlBlob = new Blob([htmlPage], { type: 'text/html' });
-            const htmlUrl = URL.createObjectURL(htmlBlob);
-            window.open(htmlUrl, "_blank");
-            
-            // Nettoyer après un délai
-            setTimeout(() => {
-              URL.revokeObjectURL(imageUrl);
-              URL.revokeObjectURL(htmlUrl);
-            }, 2000);
-            
-            setShowPreviewModal(false);
-          } else {
-            throw new Error("Échec de la création du blob");
-          }
-        },
-        format === "jpg" ? "image/jpeg" : "image/png",
-        0.95,
-      );
+      
+      // Créer un blob HTML et l'ouvrir
+      const htmlBlob = new Blob([htmlPage], { type: 'text/html' });
+      const htmlUrl = URL.createObjectURL(htmlBlob);
+      window.open(htmlUrl, "_blank");
+      
+      // Pas besoin de révoquer - les data URLs sont stables
+      setShowPreviewModal(false);
+      
     } catch (error) {
       console.error(
         `[PREVIEW] Erreur génération ${format.toUpperCase()}:`,
