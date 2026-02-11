@@ -177,61 +177,33 @@ export const Header = memo(function Header({
       return;
     }
 
-    if (!previewOrderId || previewOrderId.trim() === "") {
-      alert("Veuillez entrer un numéro de commande");
-      return;
-    }
-
-    const templateId = state.template?.id;
-    if (!templateId) {
-      alert(
-        "Erreur: Template ID manquant. Veuillez d'abord enregistrer le template.",
-      );
-      return;
-    }
-
     setIsGeneratingPreview(true);
     try {
-      const formData = new FormData();
-      formData.append("action", "pdf_builder_generate_image");
-      formData.append("template_id", templateId.toString());
-      formData.append("order_id", previewOrderId.trim());
-      formData.append("format", format);
-      formData.append("nonce", (window as any).pdfBuilderNonce || "");
+      // Capturer le canvas côté client (pas de numéro de commande nécessaire)
+      const captureFunction = (window as any).pdfBuilderCaptureCanvasPreview;
+      if (!captureFunction) {
+        throw new Error("Fonction de capture non disponible. Veuillez rafraîchir la page.");
+      }
 
-      const response = await fetch(
-        (window as any).pdfBuilderData?.ajaxUrl || "/wp-admin/admin-ajax.php",
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
+      const dataURL = captureFunction();
+      if (!dataURL) {
+        throw new Error("Impossible de capturer le canvas");
+      }
 
-      if (!response.ok) {
-        // Essayer de lire le JSON d'erreur
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-          const errorData = await response.json();
-          throw new Error(
-            errorData.data?.message ||
-              errorData.message ||
-              `Erreur ${response.status}`,
-          );
-        } else {
-          const errorText = await response.text();
-          console.error("[PREVIEW] Erreur serveur:", errorText);
-          throw new Error(
-            `Erreur serveur ${response.status}: ${errorText.substring(0, 200)}`,
-          );
-        }
+      // Convertir dataURL en blob
+      const response = await fetch(dataURL);
+      let blob = await response.blob();
+
+      // Si JPG demandé, convertir depuis PNG
+      if (format === "jpg") {
+        blob = await convertToJPEG(dataURL);
       }
 
       // Télécharger l'image
-      const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `facture-${previewOrderId.trim()}.${format}`;
+      link.download = `template-${templateName || "export"}.${format}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -244,19 +216,51 @@ export const Header = memo(function Header({
         error,
       );
 
-      // Afficher un message d'erreur clair à l'utilisateur
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       alert(
-        `Erreur lors de la génération ${format.toUpperCase()}\n\n${errorMessage}\n\n` +
-          `Vérifiez que Puppeteer ou wkhtmltoimage est installé sur le serveur.`,
-      );
-      alert(
-        `Erreur lors de la génération ${format.toUpperCase()}. Vérifiez la console pour plus de détails.`,
+        `Erreur lors de la génération ${format.toUpperCase()}\n\n${errorMessage}`,
       );
     } finally {
       setIsGeneratingPreview(false);
     }
+  };
+
+  // Convertir PNG en JPEG côté client
+  const convertToJPEG = (dataURL: string): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Impossible de créer le contexte canvas"));
+          return;
+        }
+
+        // Fond blanc pour JPG (JPG ne supporte pas la transparence)
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error("Échec de la conversion en JPEG"));
+            }
+          },
+          "image/jpeg",
+          0.95, // Qualité 95%
+        );
+      };
+      img.onerror = () => reject(new Error("Échec du chargement de l'image"));
+      img.src = dataURL;
+    });
   };
 
   // Debug logging
@@ -2765,14 +2769,14 @@ export const Header = memo(function Header({
             <div className="canvas-modal-body">
               <div className="setting-group">
                 <label className="setting-label">
-                  Numéro de commande WooCommerce
+                  Numéro de commande WooCommerce <span style={{ fontSize: "12px", color: "#666" }}>(requis pour PDF uniquement)</span>
                 </label>
                 <input
                   type="text"
                   value={previewOrderId}
                   onChange={(e) => setPreviewOrderId(e.target.value)}
                   onKeyPress={(e) => {
-                    if (e.key === "Enter" && !isGeneratingPreview) {
+                    if (e.key === "Enter" && !isGeneratingPreview && previewOrderId.trim()) {
                       generatePDF();
                     }
                   }}
@@ -2782,8 +2786,8 @@ export const Header = memo(function Header({
                   disabled={isGeneratingPreview}
                 />
                 <div className="setting-hint">
-                  Entrez l'ID d'une commande existante pour générer l'aperçu
-                  avec les vraies données
+                  <strong>PDF :</strong> Nécessite un numéro de commande pour charger les vraies données.<br />
+                  <strong>PNG/JPG :</strong> Capture directe du canvas (aucune commande requise).
                 </div>
               </div>
 
@@ -2826,10 +2830,10 @@ export const Header = memo(function Header({
 
                   <button
                     onClick={() => generateImage("png")}
-                    disabled={isGeneratingPreview || (!isPremium && true)}
+                    disabled={isGeneratingPreview || !isPremium}
                     title={
                       isPremium
-                        ? "Générer en PNG"
+                        ? "Capturer en PNG (snapshot du canvas)"
                         : "Fonctionnalité premium - Activez votre licence"
                     }
                     style={{
@@ -2854,7 +2858,7 @@ export const Header = memo(function Header({
                       gap: "4px",
                     }}
                   >
-                    <span style={{ fontSize: "24px" }}>🖼️</span>
+                    <span style={{ fontSize: "24px" }}>📸</span>
                     <span>PNG</span>
                     {!isPremium && (
                       <span style={{ fontSize: "10px", color: "#d97706" }}>
@@ -2865,10 +2869,10 @@ export const Header = memo(function Header({
 
                   <button
                     onClick={() => generateImage("jpg")}
-                    disabled={isGeneratingPreview || (!isPremium && true)}
+                    disabled={isGeneratingPreview || !isPremium}
                     title={
                       isPremium
-                        ? "Générer en JPG"
+                        ? "Capturer en JPG (snapshot du canvas)"
                         : "Fonctionnalité premium - Activez votre licence"
                     }
                     style={{
@@ -2893,7 +2897,7 @@ export const Header = memo(function Header({
                       gap: "4px",
                     }}
                   >
-                    <span style={{ fontSize: "24px" }}>🖼️</span>
+                    <span style={{ fontSize: "24px" }}>📸</span>
                     <span>JPG</span>
                     {!isPremium && (
                       <span style={{ fontSize: "10px", color: "#d97706" }}>
