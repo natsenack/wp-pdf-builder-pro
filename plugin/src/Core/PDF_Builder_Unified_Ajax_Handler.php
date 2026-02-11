@@ -3679,11 +3679,15 @@ class PDF_Builder_Unified_Ajax_Handler {
         error_log('[PDF Builder] Mentions base_styles APRÈS nettoyage: ' . substr($base_styles_clean, 0, 200));
         
         // Récupérer le line-height EXACT du JSON (string ou number)
-        $line_height = isset($element['lineHeight']) ? $element['lineHeight'] : '1.2';
+        $line_height_ratio = isset($element['lineHeight']) ? $element['lineHeight'] : '1.2';
         
-        error_log('[PDF Builder] Mentions lineHeight FINAL appliqué: ' . $line_height);
+        // Calculer le lineHeight en pixels pour Dompdf (plus précis que le ratio)
+        $font_size = isset($element['fontSize']) ? (is_numeric($element['fontSize']) ? $element['fontSize'] : 10) : 10;
+        $line_height_px = ($font_size * floatval($line_height_ratio)) . 'px';
         
-        $html = '<div class="element" style="' . $base_styles_clean . ' line-height: ' . $line_height . ';">';
+        error_log('[PDF Builder] Mentions lineHeight ratio: ' . $line_height_ratio . ', fontSize: ' . $font_size . 'px, lineHeight calculé: ' . $line_height_px);
+        
+        $html = '<div class="element" style="' . $base_styles_clean . ' line-height: ' . $line_height_px . ';">';
         
         // Ajouter le séparateur horizontal si activé
         if ($element['showSeparator'] ?? true) {
@@ -3702,8 +3706,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Utiliser white-space: pre-line pour préserver les sauts de ligne sans <br>
-        // Appliquer explicitement le lineHeight sur le div interne pour Dompdf
-        $html .= '<div style="white-space: pre-line; line-height: ' . $line_height . ';">' . esc_html($text) . '</div>';
+        // Appliquer explicitement le lineHeight en pixels sur le div interne pour Dompdf
+        $html .= '<div style="white-space: pre-line; line-height: ' . $line_height_px . ';">' . esc_html($text) . '</div>';
         $html .= '</div>';
         
         return $html;
