@@ -3671,12 +3671,17 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // DEBUG: Log le lineHeight lu du JSON
         error_log('[PDF Builder] Mentions lineHeight from JSON: ' . ($element['lineHeight'] ?? 'NOT SET'));
+        error_log('[PDF Builder] Mentions base_styles AVANT nettoyage: ' . substr($base_styles, 0, 200));
         
         // Supprimer le line-height du base_styles car on va le gérer spécifiquement
         $base_styles_clean = preg_replace('/line-height:\s*[^;]+;/', '', $base_styles);
         
+        error_log('[PDF Builder] Mentions base_styles APRÈS nettoyage: ' . substr($base_styles_clean, 0, 200));
+        
         // Récupérer le line-height EXACT du JSON (string ou number)
         $line_height = isset($element['lineHeight']) ? $element['lineHeight'] : '1.2';
+        
+        error_log('[PDF Builder] Mentions lineHeight FINAL appliqué: ' . $line_height);
         
         $html = '<div class="element" style="' . $base_styles_clean . ' line-height: ' . $line_height . ';">';
         
@@ -3697,7 +3702,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Utiliser white-space: pre-line pour préserver les sauts de ligne sans <br>
-        $html .= '<div style="white-space: pre-line;">' . esc_html($text) . '</div>';
+        // Appliquer explicitement le lineHeight sur le div interne pour Dompdf
+        $html .= '<div style="white-space: pre-line; line-height: ' . $line_height . ';">' . esc_html($text) . '</div>';
         $html .= '</div>';
         
         return $html;
