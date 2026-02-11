@@ -117,8 +117,8 @@ export const Header = memo(function Header({
     setPreviewOrderId("");
   };
 
-  // Ouvrir le HTML brut pour debug
-  const openDebugHTML = () => {
+  // Ouvrir le HTML avec boutons Télécharger et Imprimer
+  const openDebugHTML = async () => {
     if (!previewOrderId || previewOrderId.trim() === "") {
       alert("Veuillez entrer un numéro de commande");
       return;
@@ -130,8 +130,149 @@ export const Header = memo(function Header({
       return;
     }
 
-    const url = `${window.location.origin}/wp-admin/admin-ajax.php?action=pdf_builder_debug_html&template_id=${templateId}&order_id=${previewOrderId.trim()}`;
-    window.open(url, "_blank");
+    try {
+      // Récupérer le HTML via endpoint
+      const formData = new FormData();
+      formData.append("action", "pdf_builder_get_preview_html");
+      formData.append("template_id", templateId.toString());
+      formData.append("order_id", previewOrderId.trim());
+      formData.append("nonce", (window as any).pdfBuilderNonce || "");
+
+      const response = await fetch(
+        (window as any).pdfBuilderData?.ajaxUrl || "/wp-admin/admin-ajax.php",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`Erreur serveur ${response.status}`);
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.data?.message || "Erreur inconnue");
+      }
+
+      const { html, order_number } = result.data;
+      
+      // Créer une page HTML avec le contenu et les boutons
+      const htmlPage = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Facture ${order_number} - HTML</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        .toolbar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 12px;
+            z-index: 1000;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .btn-download {
+            background: #2271b1;
+            color: white;
+        }
+        .btn-download:hover {
+            background: #135e96;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(34,113,177,0.3);
+        }
+        .btn-print {
+            background: #10b981;
+            color: white;
+        }
+        .btn-print:hover {
+            background: #059669;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+        }
+        .content-wrapper {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .toolbar {
+                display: none !important;
+            }
+            .content-wrapper {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button class="btn btn-download" onclick="downloadHTML()">
+            <span>📥</span>
+            <span>Télécharger HTML</span>
+        </button>
+        <button class="btn btn-print" onclick="window.print()">
+            <span>🖨️</span>
+            <span>Imprimer</span>
+        </button>
+    </div>
+    
+    <div class="content-wrapper">
+        ${html.replace(/<!DOCTYPE html>.*?<body[^>]*>/is, '').replace(/<\/body>.*?<\/html>/is, '')}
+    </div>
+    
+    <script>
+        function downloadHTML() {
+            const content = \`${html.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;
+            const blob = new Blob([content], { type: 'text/html' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'facture-${order_number}.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+    </script>
+</body>
+</html>`;
+
+      // Ouvrir dans un blob
+      const htmlBlob = new Blob([htmlPage], { type: 'text/html' });
+      const htmlUrl = URL.createObjectURL(htmlBlob);
+      window.open(htmlUrl, "_blank");
+      
+      setTimeout(() => URL.revokeObjectURL(htmlUrl), 2000);
+      
+    } catch (error) {
+      console.error("[HTML] Erreur:", error);
+      alert("Erreur lors de la récupération du HTML");
+    }
   };
 
   // Générer un PDF via AJAX
@@ -269,14 +410,137 @@ export const Header = memo(function Header({
       // Nettoyer le conteneur
       document.body.removeChild(container);
 
-      // Étape 4: Convertir en blob et ouvrir dans nouvel onglet
+      // Étape 4: Convertir en blob et créer une page HTML avec boutons
       canvas.toBlob(
         (blob) => {
           if (blob) {
-            const url = URL.createObjectURL(blob);
-            window.open(url, "_blank");
-            // Nettoyer après un délai pour laisser le temps au navigateur d'ouvrir
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            const imageUrl = URL.createObjectURL(blob);
+            const fileName = `facture-${order_number}.${format}`;
+            
+            // Créer une page HTML avec l'image et les boutons
+            const htmlPage = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Facture ${order_number}</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .toolbar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 12px;
+            z-index: 1000;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .btn-download {
+            background: #2271b1;
+            color: white;
+        }
+        .btn-download:hover {
+            background: #135e96;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(34,113,177,0.3);
+        }
+        .btn-print {
+            background: #10b981;
+            color: white;
+        }
+        .btn-print:hover {
+            background: #059669;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+        }
+        .image-container {
+            margin-top: 60px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .toolbar {
+                display: none !important;
+            }
+            .image-container {
+                margin: 0;
+                padding: 0;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button class="btn btn-download" onclick="downloadImage()">
+            <span>📥</span>
+            <span>Télécharger</span>
+        </button>
+        <button class="btn btn-print" onclick="window.print()">
+            <span>🖨️</span>
+            <span>Imprimer</span>
+        </button>
+    </div>
+    
+    <div class="image-container">
+        <img src="${imageUrl}" alt="Facture ${order_number}" />
+    </div>
+    
+    <script>
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.href = '${imageUrl}';
+            link.download = '${fileName}';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>`;
+            
+            // Créer un blob HTML et l'ouvrir
+            const htmlBlob = new Blob([htmlPage], { type: 'text/html' });
+            const htmlUrl = URL.createObjectURL(htmlBlob);
+            window.open(htmlUrl, "_blank");
+            
+            // Nettoyer après un délai
+            setTimeout(() => {
+              URL.revokeObjectURL(imageUrl);
+              URL.revokeObjectURL(htmlUrl);
+            }, 2000);
+            
             setShowPreviewModal(false);
           } else {
             throw new Error("Échec de la création du blob");
