@@ -3626,9 +3626,49 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Rendu des mentions légales
      */
     private function render_mentions($element, $base_styles) {
-        $text = $element['text'] ?? 'Conditions générales de vente disponibles sur demande.';
+        $mention_type = $element['mentionType'] ?? 'custom';
+        $text = '';
+        
+        // Si type "dynamic", générer automatiquement depuis les données WordPress
+        if ($mention_type === 'dynamic') {
+            $parts = [];
+            $separator = $element['separator'] ?? ' • ';
+            
+            if ($element['showEmail'] ?? true) {
+                $email = get_option('admin_email', '');
+                if ($email) $parts[] = 'Email: ' . $email;
+            }
+            
+            if ($element['showPhone'] ?? true) {
+                $phone = get_option('woocommerce_store_phone', '');
+                if ($phone) $parts[] = 'Tél: ' . $phone;
+            }
+            
+            if ($element['showSiret'] ?? true) {
+                $siret = get_option('woocommerce_store_siret', '');
+                if ($siret) $parts[] = 'SIRET: ' . $siret;
+            }
+            
+            if ($element['showVat'] ?? true) {
+                $vat = get_option('woocommerce_store_vat', '');
+                if ($vat) $parts[] = 'TVA: ' . $vat;
+            }
+            
+            $text = implode($separator, $parts);
+            
+            // Si aucune donnée dynamique, utiliser le texte par défaut
+            if (empty($text)) {
+                $text = 'Conditions générales de vente disponibles sur demande.';
+            }
+        } else {
+            // Type "custom" ou autre : utiliser le texte personnalisé
+            $text = $element['text'] ?? 'Conditions générales de vente disponibles sur demande.';
+        }
+        
         $font_size = $element['fontSize'] ?? 9;
-        return '<div class="element" style="' . $base_styles . ' font-size: ' . $font_size . 'px; text-align: center;">' . nl2br(esc_html($text)) . '</div>';
+        $text_align = $element['textAlign'] ?? 'center';
+        
+        return '<div class="element" style="' . $base_styles . ' font-size: ' . $font_size . 'px; text-align: ' . $text_align . ';">' . nl2br(esc_html($text)) . '</div>';
     }
 
 
