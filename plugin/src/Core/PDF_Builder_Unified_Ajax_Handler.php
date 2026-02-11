@@ -3669,7 +3669,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $text = $element['text'] ?? 'Conditions générales de vente disponibles sur demande.';
         }
         
-        $html = '<div class="element" style="' . $base_styles . ' padding: 0; margin: 0;">';
+        $html = '<div class="element" style="' . $base_styles . '">';
         
         // Ajouter le séparateur horizontal si activé
         if ($element['showSeparator'] ?? true) {
@@ -3678,7 +3678,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $separator_width = isset($element['separatorWidth']) && $element['separatorWidth'] > 0 ? $element['separatorWidth'] : 1;
             
             $hr_style = sprintf(
-                'border: none; border-top: %dpx %s %s; margin: 0 0 5px 0; padding: 0;',
+                'border: none; border-top: %dpx %s %s; margin: 0; padding: 0;',
                 $separator_width,
                 $separator_style,
                 $separator_color
