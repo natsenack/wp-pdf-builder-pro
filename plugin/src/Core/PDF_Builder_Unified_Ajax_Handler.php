@@ -3472,7 +3472,63 @@ class PDF_Builder_Unified_Ajax_Handler {
         if (!$src) return '';
         
         $object_fit = $element['objectFit'] ?? 'contain';
-        return '<div class="element" style="' . $base_styles . '"><img src="' . esc_url($src) . '" style="width: 100%; height: 100%; object-fit: ' . $object_fit . ';" /></div>';
+        
+        // Convertir l'image en base64 pour compatibilité Dompdf
+        $image_data = $this->get_image_as_base64($src);
+        if ($image_data) {
+            $src = $image_data;
+        }
+        
+        return '<div class="element" style="' . $base_styles . '"><img src="' . $src . '" style="width: 100%; height: 100%; object-fit: ' . $object_fit . ';" /></div>';
+    }
+    
+    /**
+     * Convertit une image en base64 data URI
+     */
+    private function get_image_as_base64($url) {
+        // Si c'est déjà en base64, retourner tel quel
+        if (strpos($url, 'data:image') === 0) {
+            return $url;
+        }
+        
+        // Convertir les URLs WordPress relatives en absolues
+        if (strpos($url, '/wp-content/') === 0) {
+            $url = site_url($url);
+        }
+        
+        try {
+            // Télécharger l'image
+            $response = wp_remote_get($url, [
+                'timeout' => 10,
+                'sslverify' => false // Important pour les sites en développement
+            ]);
+            
+            if (is_wp_error($response)) {
+                error_log('[PDF Builder] Erreur téléchargement image: ' . $response->get_error_message());
+                return false;
+            }
+            
+            $body = wp_remote_retrieve_body($response);
+            $content_type = wp_remote_retrieve_header($response, 'content-type');
+            
+            if (empty($body)) {
+                return false;
+            }
+            
+            // Détecter le type MIME si non fourni
+            if (empty($content_type)) {
+                $finfo = new \finfo(FILEINFO_MIME_TYPE);
+                $content_type = $finfo->buffer($body);
+            }
+            
+            // Convertir en base64
+            $base64 = base64_encode($body);
+            return "data:{$content_type};base64,{$base64}";
+            
+        } catch (Exception $e) {
+            error_log('[PDF Builder] Exception lors conversion image: ' . $e->getMessage());
+            return false;
+        }
     }
     
     /**
