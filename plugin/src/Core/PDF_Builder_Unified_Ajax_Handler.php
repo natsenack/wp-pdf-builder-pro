@@ -2479,7 +2479,7 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     public function handle_generate_pdf() {
         error_log("[PDF Builder] ========== GÉNÉRATION PDF DÉMARRÉE ==========");
-        error_log("[PDF Builder] GET params: " . json_encode($_GET));
+        error_log("[PDF Builder] POST params: " . json_encode($_POST));
         
         // Vérifier les permissions - doit être connecté et avoir les droits de gestion WooCommerce
         if (!is_user_logged_in() || !current_user_can('edit_shop_orders')) {
@@ -2487,8 +2487,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             wp_die('Permission refusée', '', ['response' => 403]);
         }
 
-        $template_id = sanitize_text_field($_GET['template_id'] ?? '');
-        $order_id = intval($_GET['order_id'] ?? 0);
+        $template_id = sanitize_text_field($_POST['template_id'] ?? '');
+        $order_id = intval($_POST['order_id'] ?? 0);
         
         error_log("[PDF Builder] Template ID: '{$template_id}', Order ID: {$order_id}");
 
