@@ -117,6 +117,23 @@ export const Header = memo(function Header({
     setPreviewOrderId("");
   };
 
+  // Ouvrir le HTML brut pour debug
+  const openDebugHTML = () => {
+    if (!previewOrderId || previewOrderId.trim() === "") {
+      alert("Veuillez entrer un numéro de commande");
+      return;
+    }
+
+    const templateId = state.template?.id;
+    if (!templateId) {
+      alert("Erreur: Template ID manquant.");
+      return;
+    }
+
+    const url = `${window.location.origin}/wp-admin/admin-ajax.php?action=pdf_builder_debug_html&template_id=${templateId}&order_id=${previewOrderId.trim()}`;
+    window.open(url, "_blank");
+  };
+
   // Générer un PDF via AJAX
   const generatePDF = async () => {
     if (!previewOrderId || previewOrderId.trim() === "") {
@@ -2859,7 +2876,7 @@ export const Header = memo(function Header({
                 <div
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "1fr 1fr 1fr",
+                    gridTemplateColumns: "1fr 1fr 1fr 1fr",
                     gap: "12px",
                   }}
                 >
@@ -2993,6 +3010,35 @@ export const Header = memo(function Header({
                         Premium
                       </span>
                     )}
+                  </button>
+
+                  <button
+                    onClick={openDebugHTML}
+                    disabled={isGeneratingPreview || !previewOrderId.trim()}
+                    title="Ouvrir le HTML brut pour inspection (debug)"
+                    style={{
+                      padding: "12px 16px",
+                      border: "2px solid #6b7280",
+                      borderRadius: "6px",
+                      backgroundColor: "#f3f4f6",
+                      color: "#374151",
+                      fontSize: "14px",
+                      fontWeight: "600",
+                      cursor:
+                        isGeneratingPreview || !previewOrderId.trim()
+                          ? "not-allowed"
+                          : "pointer",
+                      opacity:
+                        isGeneratingPreview || !previewOrderId.trim() ? 0.5 : 1,
+                      transition: "all 0.2s",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <span style={{ fontSize: "24px" }}>🔍</span>
+                    <span>HTML</span>
                   </button>
                 </div>
               </div>
