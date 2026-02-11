@@ -2649,49 +2649,83 @@ class PDF_Builder_Unified_Ajax_Handler {
                 wp_die('Erreur lors de la création du fichier temporaire', '', ['response' => 500]);
             }
             
-            // Vérifier que wkhtmltoimage est disponible
-            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Secure_Shell_Manager.php';
+            $conversion_success = false;
+            $conversion_method = '';
             
-            if (!\PDF_Builder\Managers\PDF_Builder_Secure_Shell_Manager::isCommandAvailable('wkhtmltoimage')) {
-                // Nettoyer le fichier temporaire
-                @unlink($temp_html);
+            // Méthode 1: Essayer Browsershot (recommandé)
+            if (class_exists('\Spatie\Browsershot\Browsershot')) {
+                try {
+                    error_log("[PDF Builder] Tentative de génération avec Browsershot");
+                    
+                    \Spatie\Browsershot\Browsershot::html($html)
+                        ->windowSize($width, $height)
+                        ->setOption('newHeadless', true)
+                        ->format($format === 'jpg' ? 'jpeg' : 'png')
+                        ->save($temp_image);
+                    
+                    if (file_exists($temp_image) && filesize($temp_image) > 0) {
+                        $conversion_success = true;
+                        $conversion_method = 'Browsershot (Puppeteer/Chrome)';
+                        error_log("[PDF Builder] ✅ Génération réussie avec Browsershot");
+                    }
+                } catch (\Exception $e) {
+                    error_log("[PDF Builder] ⚠️ Browsershot échoué: " . $e->getMessage());
+                    error_log("[PDF Builder] Tentative avec wkhtmltoimage...");
+                }
+            }
+            
+            // Méthode 2: Fallback sur wkhtmltoimage
+            if (!$conversion_success) {
+                require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Secure_Shell_Manager.php';
                 
-                error_log("[PDF Builder] wkhtmltoimage non installé");
-                wp_die(
-                    "wkhtmltoimage n'est pas installé sur le serveur.\n\n" .
-                    "Pour activer la génération d'images, installez wkhtmltoimage :\n" .
-                    "- Debian/Ubuntu: apt-get install wkhtmltopdf\n" .
-                    "- CentOS/RHEL: yum install wkhtmltopdf\n" .
-                    "- macOS: brew install wkhtmltopdf\n" .
-                    "- Windows: Téléchargez depuis wkhtmltopdf.org",
-                    '',
+                if (!\PDF_Builder\Managers\PDF_Builder_Secure_Shell_Manager::isCommandAvailable('wkhtmltoimage')) {
+                    // Nettoyer le fichier temporaire
+                    @unlink($temp_html);
+                    
+                    error_log("[PDF Builder] ❌ Aucune méthode de conversion disponible");
+                    wp_die(
+                        "Aucune méthode de conversion d'image n'est disponible.\n\n" .
+                        "Installez l'une de ces solutions :\n\n" .
+                        "Option 1 (Recommandé) - Puppeteer/Chrome:\n" .
+                        "  npm install -g puppeteer\n\n" .
+                        "Option 2 - wkhtmltoimage:\n" .
+                        "  - Debian/Ubuntu: apt-get install wkhtmltopdf\n" .
+                        "  - CentOS/RHEL: yum install wkhtmltopdf\n" .
+                        "  - macOS: brew install wkhtmltopdf\n" .
+                        "  - Windows: Téléchargez depuis wkhtmltopdf.org",
+                        '',
                     ['response' => 501]
                 );
-            }
-            
-            // Convertir HTML → Image avec wkhtmltoimage
-            error_log("[PDF Builder] Conversion HTML → {$format}");
-            $quality = ($format === 'jpg') ? 90 : null;
-            
-            $success = \PDF_Builder\Managers\PDF_Builder_Secure_Shell_Manager::executeWkhtmltoimage(
-                $temp_html,
-                $temp_image,
-                $format,
-                $width,
-                $height,
-                $quality
-            );
-            
-            if (!$success) {
-                // Nettoyer les fichiers temporaires
-                @unlink($temp_html);
-                @unlink($temp_image);
+                }
                 
-                error_log("[PDF Builder] Échec conversion wkhtmltoimage");
-                wp_die('Erreur lors de la conversion HTML vers image', '', ['response' => 500]);
+                // Tentative de conversion avec wkhtmltoimage
+                error_log("[PDF Builder] Conversion HTML → {$format} avec wkhtmltoimage");
+                $quality = ($format === 'jpg') ? 90 : null;
+                
+                $success = \PDF_Builder\Managers\PDF_Builder_Secure_Shell_Manager::executeWkhtmltoimage(
+                    $temp_html,
+                    $temp_image,
+                    $format,
+                    $width,
+                    $height,
+                    $quality
+                );
+                
+                if (!$success) {
+                    // Nettoyer les fichiers temporaires
+                    @unlink($temp_html);
+                    @unlink($temp_image);
+                    
+                    error_log("[PDF Builder] ❌ Échec conversion wkhtmltoimage");
+                    wp_die('Erreur lors de la conversion HTML vers image', '', ['response' => 500]);
+                }
+                
+                $conversion_success = true;
+                $conversion_method = 'wkhtmltoimage';
+                error_log("[PDF Builder] ✅ Génération réussie avec wkhtmltoimage");
             }
             
-            error_log("[PDF Builder] Conversion réussie, envoi de l'image");
+            error_log("[PDF Builder] Méthode utilisée: {$conversion_method}");
             
             // Lire le contenu de l'image
             $image_content = file_get_contents($temp_image);
