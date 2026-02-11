@@ -157,6 +157,12 @@ export const Header = memo(function Header({
 
       const { html, order_number } = result.data;
       
+      // Extraire les styles du head et le contenu du body
+      const stylesMatch = html.match(/<head[^>]*>(.*?)<\/head>/is);
+      const bodyMatch = html.match(/<body[^>]*>(.*?)<\/body>/is);
+      const originalStyles = stylesMatch ? stylesMatch[1] : '';
+      const bodyContent = bodyMatch ? bodyMatch[1] : html;
+      
       // Créer une page HTML avec le contenu et les boutons
       const htmlPage = `
 <!DOCTYPE html>
@@ -164,6 +170,7 @@ export const Header = memo(function Header({
 <head>
     <meta charset="UTF-8">
     <title>Facture ${order_number} - HTML</title>
+    ${originalStyles}
     <style>
         body {
             margin: 0;
@@ -230,12 +237,11 @@ export const Header = memo(function Header({
             text-align: center;
         }
         .content-wrapper {
-            display: flex;
-            justify-content: center;
             padding: 20px;
             min-height: 100vh;
-            max-width: 50%;
-            margin: 60px auto 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
             transition: transform 0.2s;
             transform-origin: center top;
         }
@@ -273,7 +279,7 @@ export const Header = memo(function Header({
     </div>
     
     <div class="content-wrapper" id="contentWrapper">
-        ${html.replace(/<!DOCTYPE html>.*?<body[^>]*>/is, '').replace(/<\/body>.*?<\/html>/is, '')}
+        ${bodyContent}
     </div>
     
     <script>
