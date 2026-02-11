@@ -3690,9 +3690,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html .= '<hr style="' . $hr_style . '" />';
         }
         
-        // Wrapper le texte avec line-height explicite pour éviter les différences entre navigateurs/Dompdf
+        // Utiliser white-space: pre-line au lieu de nl2br() pour un rendu cohérent PDF/HTML
         $line_height = $element['lineHeight'] ?? '1.2';
-        $html .= '<span style="display: inline-block; line-height: ' . $line_height . ';">' . nl2br(esc_html($text)) . '</span>';
+        $html .= '<div style="line-height: ' . $line_height . '; white-space: pre-line;">' . esc_html($text) . '</div>';
         $html .= '</div>';
         
         return $html;
