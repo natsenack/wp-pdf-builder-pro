@@ -177,39 +177,97 @@ export const Header = memo(function Header({
       return;
     }
 
+    if (!previewOrderId || previewOrderId.trim() === "") {
+      alert("Veuillez entrer un numéro de commande");
+      return;
+    }
+
+    const templateId = state.template?.id;
+    if (!templateId) {
+      alert(
+        "Erreur: Template ID manquant. Veuillez d'abord enregistrer le template.",
+      );
+      return;
+    }
+
     setIsGeneratingPreview(true);
     try {
-      // Capturer le canvas côté client (pas de numéro de commande nécessaire)
-      const captureFunction = (window as any).pdfBuilderCaptureCanvasPreview;
-      if (!captureFunction) {
-        throw new Error("Fonction de capture non disponible. Veuillez rafraîchir la page.");
+      // Étape 1: Obtenir le HTML avec les données de commande
+      const formData = new FormData();
+      formData.append("action", "pdf_builder_get_preview_html");
+      formData.append("template_id", templateId.toString());
+      formData.append("order_id", previewOrderId.trim());
+      formData.append("nonce", (window as any).pdfBuilderNonce || "");
+
+      const response = await fetch(
+        (window as any).pdfBuilderData?.ajaxUrl || "/wp-admin/admin-ajax.php",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      if (!response.ok) {
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const errorData = await response.json();
+          throw new Error(
+            errorData.data?.message ||
+              errorData.message ||
+              `Erreur ${response.status}`,
+          );
+        } else {
+          throw new Error(`Erreur serveur ${response.status}`);
+        }
       }
 
-      const dataURL = captureFunction();
-      if (!dataURL) {
-        throw new Error("Impossible de capturer le canvas");
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.data?.message || "Erreur inconnue");
       }
 
-      // Convertir dataURL en blob
-      const response = await fetch(dataURL);
-      let blob = await response.blob();
+      const { html, width, height, order_number } = result.data;
 
-      // Si JPG demandé, convertir depuis PNG
-      if (format === "jpg") {
-        blob = await convertToJPEG(dataURL);
-      }
+      // Étape 2: Créer un conteneur temporaire pour le HTML
+      const container = document.createElement("div");
+      container.style.position = "absolute";
+      container.style.left = "-9999px";
+      container.style.top = "0";
+      container.style.width = `${width}px`;
+      container.style.height = `${height}px`;
+      container.innerHTML = html;
+      document.body.appendChild(container);
 
-      // Télécharger l'image
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `template-${templateName || "export"}.${format}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      // Étape 3: Capturer avec html2canvas
+      const html2canvas = (await import("html2canvas")).default;
+      const canvas = await html2canvas(container, {
+        width: width,
+        height: height,
+        scale: 2, // Haute qualité
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#ffffff",
+      });
 
-      setShowPreviewModal(false);
+      // Nettoyer le conteneur
+      document.body.removeChild(container);
+
+      // Étape 4: Convertir en blob et ouvrir dans nouvel onglet
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const url = URL.createObjectURL(blob);
+            window.open(url, "_blank");
+            // Nettoyer après un délai pour laisser le temps au navigateur d'ouvrir
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            setShowPreviewModal(false);
+          } else {
+            throw new Error("Échec de la création du blob");
+          }
+        },
+        format === "jpg" ? "image/jpeg" : "image/png",
+        0.95,
+      );
     } catch (error) {
       console.error(
         `[PREVIEW] Erreur génération ${format.toUpperCase()}:`,
@@ -2769,7 +2827,7 @@ export const Header = memo(function Header({
             <div className="canvas-modal-body">
               <div className="setting-group">
                 <label className="setting-label">
-                  Numéro de commande WooCommerce <span style={{ fontSize: "12px", color: "#666" }}>(requis pour PDF uniquement)</span>
+                  Numéro de commande WooCommerce <span style={{ fontSize: "12px", color: "#e11d48" }}>*</span>
                 </label>
                 <input
                   type="text"
@@ -2786,8 +2844,7 @@ export const Header = memo(function Header({
                   disabled={isGeneratingPreview}
                 />
                 <div className="setting-hint">
-                  <strong>PDF :</strong> Nécessite un numéro de commande pour charger les vraies données.<br />
-                  <strong>PNG/JPG :</strong> Capture directe du canvas (aucune commande requise).
+                  Le numéro de commande est requis pour générer le document avec les vraies données (client, produits, totaux, etc.)
                 </div>
               </div>
 
@@ -2830,11 +2887,13 @@ export const Header = memo(function Header({
 
                   <button
                     onClick={() => generateImage("png")}
-                    disabled={isGeneratingPreview || !isPremium}
+                    disabled={isGeneratingPreview || !isPremium || !previewOrderId.trim()}
                     title={
-                      isPremium
-                        ? "Capturer en PNG (snapshot du canvas)"
-                        : "Fonctionnalité premium - Activez votre licence"
+                      !isPremium
+                        ? "Fonctionnalité premium - Activez votre licence"
+                        : !previewOrderId.trim()
+                          ? "Veuillez entrer un numéro de commande"
+                          : "Générer en PNG avec les données de la commande"
                     }
                     style={{
                       padding: "12px 16px",
@@ -2847,10 +2906,10 @@ export const Header = memo(function Header({
                       fontSize: "14px",
                       fontWeight: "600",
                       cursor:
-                        isGeneratingPreview || !isPremium
+                        isGeneratingPreview || !isPremium || !previewOrderId.trim()
                           ? "not-allowed"
                           : "pointer",
-                      opacity: isGeneratingPreview || !isPremium ? 0.5 : 1,
+                      opacity: isGeneratingPreview || !isPremium || !previewOrderId.trim() ? 0.5 : 1,
                       transition: "all 0.2s",
                       display: "flex",
                       flexDirection: "column",
@@ -2869,11 +2928,13 @@ export const Header = memo(function Header({
 
                   <button
                     onClick={() => generateImage("jpg")}
-                    disabled={isGeneratingPreview || !isPremium}
+                    disabled={isGeneratingPreview || !isPremium || !previewOrderId.trim()}
                     title={
-                      isPremium
-                        ? "Capturer en JPG (snapshot du canvas)"
-                        : "Fonctionnalité premium - Activez votre licence"
+                      !isPremium
+                        ? "Fonctionnalité premium - Activez votre licence"
+                        : !previewOrderId.trim()
+                          ? "Veuillez entrer un numéro de commande"
+                          : "Générer en JPG avec les données de la commande"
                     }
                     style={{
                       padding: "12px 16px",
@@ -2886,10 +2947,10 @@ export const Header = memo(function Header({
                       fontSize: "14px",
                       fontWeight: "600",
                       cursor:
-                        isGeneratingPreview || !isPremium
+                        isGeneratingPreview || !isPremium || !previewOrderId.trim()
                           ? "not-allowed"
                           : "pointer",
-                      opacity: isGeneratingPreview || !isPremium ? 0.5 : 1,
+                      opacity: isGeneratingPreview || !isPremium || !previewOrderId.trim() ? 0.5 : 1,
                       transition: "all 0.2s",
                       display: "flex",
                       flexDirection: "column",

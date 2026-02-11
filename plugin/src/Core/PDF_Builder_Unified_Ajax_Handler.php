@@ -98,6 +98,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_generate_pdf");
         add_action('wp_ajax_pdf_builder_generate_image', [$this, 'handle_generate_image']);
         error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_generate_image");
+        add_action('wp_ajax_pdf_builder_get_preview_html', [$this, 'handle_get_preview_html']);
+        error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_get_preview_html");
     }
 
     /**
@@ -2742,6 +2744,76 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'message' => 'Erreur lors de la génération de l\'image',
                 'details' => $e->getMessage(),
                 'code' => 'EXCEPTION'
+            ], 500);
+        }
+    }
+
+    /**
+     * Handler pour obtenir le HTML de prévisualisation avec données de commande
+     */
+    public function handle_get_preview_html() {
+        error_log("[PDF Builder] ========== GET PREVIEW HTML DÉMARRÉ ==========");
+        
+        // Vérifier les permissions
+        if (!is_user_logged_in() || !current_user_can('edit_shop_orders')) {
+            wp_send_json_error(['message' => 'Permission refusée'], 403);
+            return;
+        }
+
+        // Vérifier le statut premium pour PNG/JPG
+        if (class_exists('\PDF_Builder\Managers\PDF_Builder_License_Manager')) {
+            $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+            if (!$license_manager->isPremium()) {
+                wp_send_json_error(['message' => 'Cette fonctionnalité nécessite une licence premium'], 403);
+                return;
+            }
+        }
+
+        $template_id = sanitize_text_field($_POST['template_id'] ?? '');
+        $order_id = intval($_POST['order_id'] ?? 0);
+        
+        if (!$template_id || !$order_id) {
+            wp_send_json_error(['message' => 'Paramètres manquants'], 400);
+            return;
+        }
+
+        try {
+            if (!function_exists('wc_get_order')) {
+                wp_send_json_error(['message' => 'WooCommerce n\'est pas actif'], 500);
+                return;
+            }
+
+            $order = wc_get_order($order_id);
+            if (!$order) {
+                wp_send_json_error(['message' => 'Commande introuvable'], 404);
+                return;
+            }
+
+            $template = $this->get_template($template_id);
+            if (!$template) {
+                wp_send_json_error(['message' => 'Modèle introuvable'], 404);
+                return;
+            }
+
+            // Générer le HTML avec les vraies données
+            $html = $this->generate_template_html($template, $order);
+            
+            // Extraire les dimensions du template
+            $template_data = json_decode($template['template_data'], true);
+            $width = $template_data['canvasWidth'] ?? 595;
+            $height = $template_data['canvasHeight'] ?? 842;
+
+            wp_send_json_success([
+                'html' => $html,
+                'width' => $width,
+                'height' => $height,
+                'order_number' => $order->get_order_number()
+            ]);
+        } catch (Exception $e) {
+            error_log('[PDF Builder] Erreur get_preview_html: ' . $e->getMessage());
+            wp_send_json_error([
+                'message' => 'Erreur lors de la génération du HTML',
+                'details' => $e->getMessage()
             ], 500);
         }
     }
