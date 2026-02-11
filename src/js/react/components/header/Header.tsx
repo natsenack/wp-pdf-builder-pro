@@ -108,6 +108,9 @@ export const Header = memo(function Header({
   const [previewOrderId, setPreviewOrderId] = useState("");
   const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
 
+  // Vérifier le statut premium depuis pdfBuilderData
+  const isPremium = (window as any).pdfBuilderData?.license?.isPremium || false;
+
   // Ouvrir la modale d'aperçu
   const handlePreview = () => {
     setShowPreviewModal(true);
@@ -158,9 +161,60 @@ export const Header = memo(function Header({
     }
   };
 
-  // PNG/JPG - Fonctionnalité premium
-  const generateImage = (format: "png" | "jpg") => {
-    alert(`La génération en format ${format.toUpperCase()} est une fonctionnalité premium.\n\nContactez le support pour activer cette option.`);
+  // PNG/JPG - Génération d'image (premium uniquement)
+  const generateImage = async (format: "png" | "jpg") => {
+    if (!isPremium) {
+      alert(`La génération en format ${format.toUpperCase()} est une fonctionnalité premium.\n\nActivez votre licence premium pour débloquer cette option.`);
+      return;
+    }
+
+    if (!previewOrderId || previewOrderId.trim() === "") {
+      alert("Veuillez entrer un numéro de commande");
+      return;
+    }
+
+    const templateId = state.template?.id;
+    if (!templateId) {
+      alert("Erreur: Template ID manquant. Veuillez d'abord enregistrer le template.");
+      return;
+    }
+
+    setIsGeneratingPreview(true);
+    try {
+      const formData = new FormData();
+      formData.append("action", "pdf_builder_generate_image");
+      formData.append("template_id", templateId.toString());
+      formData.append("order_id", previewOrderId.trim());
+      formData.append("format", format);
+      formData.append("nonce", (window as any).pdfBuilderNonce || "");
+
+      const response = await fetch((window as any).pdfBuilderData?.ajaxUrl || "/wp-admin/admin-ajax.php", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erreur lors de la génération ${format.toUpperCase()}`);
+      }
+
+      // Télécharger l'image
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `facture-${previewOrderId.trim()}.${format}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      setShowPreviewModal(false);
+    } catch (error) {
+      console.error(`[PREVIEW] Erreur génération ${format.toUpperCase()}:`, error);
+      alert(`Erreur lors de la génération ${format.toUpperCase()}. Vérifiez la console pour plus de détails.`);
+    } finally {
+      setIsGeneratingPreview(false);
+    }
   };
 
   // Debug logging
@@ -2725,17 +2779,18 @@ export const Header = memo(function Header({
 
                   <button
                     onClick={() => generateImage("png")}
-                    disabled={isGeneratingPreview}
+                    disabled={isGeneratingPreview || (!isPremium && true)}
+                    title={isPremium ? "Générer en PNG" : "Fonctionnalité premium - Activez votre licence"}
                     style={{
                       padding: "12px 16px",
-                      border: "2px solid #d1d5db",
+                      border: isPremium ? "2px solid #059669" : "2px solid #d1d5db",
                       borderRadius: "6px",
-                      backgroundColor: "#f9fafb",
-                      color: "#6b7280",
+                      backgroundColor: isPremium ? "#10b981" : "#f9fafb",
+                      color: isPremium ? "white" : "#6b7280",
                       fontSize: "14px",
                       fontWeight: "600",
-                      cursor: isGeneratingPreview ? "not-allowed" : "pointer",
-                      opacity: isGeneratingPreview ? 0.5 : 1,
+                      cursor: isGeneratingPreview || !isPremium ? "not-allowed" : "pointer",
+                      opacity: isGeneratingPreview || !isPremium ? 0.5 : 1,
                       transition: "all 0.2s",
                       display: "flex",
                       flexDirection: "column",
@@ -2745,22 +2800,25 @@ export const Header = memo(function Header({
                   >
                     <span style={{ fontSize: "24px" }}>🖼️</span>
                     <span>PNG</span>
-                    <span style={{ fontSize: "10px", color: "#d97706" }}>Premium</span>
+                    {!isPremium && (
+                      <span style={{ fontSize: "10px", color: "#d97706" }}>Premium</span>
+                    )}
                   </button>
 
                   <button
                     onClick={() => generateImage("jpg")}
-                    disabled={isGeneratingPreview}
+                    disabled={isGeneratingPreview || (!isPremium && true)}
+                    title={isPremium ? "Générer en JPG" : "Fonctionnalité premium - Activez votre licence"}
                     style={{
                       padding: "12px 16px",
-                      border: "2px solid #d1d5db",
+                      border: isPremium ? "2px solid #059669" : "2px solid #d1d5db",
                       borderRadius: "6px",
-                      backgroundColor: "#f9fafb",
-                      color: "#6b7280",
+                      backgroundColor: isPremium ? "#10b981" : "#f9fafb",
+                      color: isPremium ? "white" : "#6b7280",
                       fontSize: "14px",
                       fontWeight: "600",
-                      cursor: isGeneratingPreview ? "not-allowed" : "pointer",
-                      opacity: isGeneratingPreview ? 0.5 : 1,
+                      cursor: isGeneratingPreview || !isPremium ? "not-allowed" : "pointer",
+                      opacity: isGeneratingPreview || !isPremium ? 0.5 : 1,
                       transition: "all 0.2s",
                       display: "flex",
                       flexDirection: "column",
@@ -2770,7 +2828,9 @@ export const Header = memo(function Header({
                   >
                     <span style={{ fontSize: "24px" }}>🖼️</span>
                     <span>JPG</span>
-                    <span style={{ fontSize: "10px", color: "#d97706" }}>Premium</span>
+                    {!isPremium && (
+                      <span style={{ fontSize: "10px", color: "#d97706" }}>Premium</span>
+                    )}
                   </button>
                 </div>
               </div>
@@ -2787,7 +2847,7 @@ export const Header = memo(function Header({
                     fontSize: "14px",
                   }}
                 >
-                  ⏳ Génération du PDF en cours...
+                  ⏳ Génération en cours...
                 </div>
               )}
             </div>
