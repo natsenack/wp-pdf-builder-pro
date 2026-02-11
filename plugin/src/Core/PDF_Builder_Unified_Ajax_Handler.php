@@ -2636,106 +2636,86 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             error_log("[PDF Builder] Dimensions image: {$width}x{$height}px, format: {$format}");
             
-            // Créer un fichier HTML temporaire
+            // Créer des fichiers temporaires
             $temp_dir = sys_get_temp_dir();
-            $temp_html = $temp_dir . '/pdf-builder-' . uniqid() . '.html';
             $temp_image = $temp_dir . '/pdf-builder-' . uniqid() . '.' . $format;
             
-            error_log("[PDF Builder] Fichiers temporaires: HTML={$temp_html}, Image={$temp_image}");
-            
-            // Écrire le HTML dans le fichier
-            if (file_put_contents($temp_html, $html) === false) {
-                error_log("[PDF Builder] Erreur écriture fichier HTML temporaire");
-                wp_die('Erreur lors de la création du fichier temporaire', '', ['response' => 500]);
-            }
+            error_log("[PDF Builder] Fichier image : {$temp_image}");
             
             $conversion_success = false;
             $conversion_method = '';
             
-            // Méthode 1: Essayer Browsershot (recommandé)
-            if (class_exists('\Spatie\Browsershot\Browsershot')) {
+            // Méthode Imagick: HTML → PDF → Image
+            if (extension_loaded('imagick')) {
                 try {
-                    error_log("[PDF Builder] Tentative de génération avec Browsershot");
+                    error_log("[PDF Builder] Tentative de génération avec Imagick (HTML → PDF → Image)");
                     
-                    \Spatie\Browsershot\Browsershot::html($html)
-                        ->windowSize($width, $height)
-                        ->setOption('newHeadless', true)
-                        ->format($format === 'jpg' ? 'jpeg' : 'png')
-                        ->save($temp_image);
+                    // Étape 1: Générer le PDF avec dompdf
+                    require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+                    
+                    $dompdf_options = new \Dompdf\Options();
+                    $dompdf_options->set('isHtml5ParserEnabled', true);
+                    $dompdf_options->set('isRemoteEnabled', true);
+                    $dompdf_options->set('defaultFont', 'DejaVu Sans');
+                    
+                    $dompdf = new \Dompdf\Dompdf($dompdf_options);
+                    $dompdf->setPaper([0, 0, $width * 0.75, $height * 0.75], 'portrait');
+                    $dompdf->loadHtml($html);
+                    $dompdf->render();
+                    
+                    // Sauvegarder le PDF temporaire
+                    $temp_pdf = $temp_dir . '/pdf-builder-' . uniqid() . '.pdf';
+                    file_put_contents($temp_pdf, $dompdf->output());
+                    
+                    error_log("[PDF Builder] PDF généré: " . filesize($temp_pdf) . " octets");
+                    
+                    // Étape 2: Convertir PDF → Image avec Imagick
+                    $imagick = new \Imagick();
+                    $imagick->setResolution(150, 150); // DPI pour meilleure qualité
+                    $imagick->readImage($temp_pdf . '[0]'); // Lire première page
+                    $imagick->setImageFormat($format === 'jpg' ? 'jpeg' : 'png');
+                    
+                    // Qualité pour JPG
+                    if ($format === 'jpg') {
+                        $imagick->setImageCompressionQuality(90);
+                    }
+                    
+                    // Redimensionner si nécessaire pour correspondre aux dimensions demandées
+                    $imagick->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1, true);
+                    
+                    // Sauvegarder l'image
+                    $imagick->writeImage($temp_image);
+                    $imagick->clear();
+                    $imagick->destroy();
+                    
+                    // Nettoyer le PDF temporaire
+                    @unlink($temp_pdf);
                     
                     if (file_exists($temp_image) && filesize($temp_image) > 0) {
                         $conversion_success = true;
-                        $conversion_method = 'Browsershot (Puppeteer/Chrome)';
-                        error_log("[PDF Builder] ✅ Génération réussie avec Browsershot");
+                        $conversion_method = 'Imagick (dompdf + ImageMagick)';
+                        error_log("[PDF Builder] ✅ Génération réussie avec Imagick: " . filesize($temp_image) . " octets");
                     }
                 } catch (\Exception $e) {
-                    $error_msg = $e->getMessage();
-                    error_log("[PDF Builder] ⚠️ Browsershot échoué: " . $error_msg);
+                    error_log("[PDF Builder] ⚠️ Imagick échoué: " . $e->getMessage());
                     error_log("[PDF Builder] Stack trace: " . $e->getTraceAsString());
-                    error_log("[PDF Builder] Tentative avec wkhtmltoimage...");
-                    
-                    // Si Puppeteer n'est pas installé
-                    if (strpos($error_msg, 'node_modules/puppeteer') !== false || 
-                        strpos($error_msg, 'puppeteer') !== false ||
-                        strpos($error_msg, 'chrome') !== false) {
-                        error_log("[PDF Builder] Puppeteer semble ne pas être installé");
-                    }
                 }
+            } else {
+                error_log("[PDF Builder] Extension Imagick non disponible");
             }
             
-            // Méthode 2: Fallback sur wkhtmltoimage
+            // Méthode de fallback: Erreur si rien ne fonctionne
             if (!$conversion_success) {
-                require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Secure_Shell_Manager.php';
+                error_log("[PDF Builder] ❌ Aucune méthode de conversion disponible");
                 
-                if (!\PDF_Builder\Managers\PDF_Builder_Secure_Shell_Manager::isCommandAvailable('wkhtmltoimage')) {
-                    // Nettoyer le fichier temporaire
-                    @unlink($temp_html);
-                    
-                    error_log("[PDF Builder] ❌ Aucune méthode de conversion disponible");
-                    
-                    wp_send_json_error([
-                        'message' => "Aucune méthode de conversion d'image n'est disponible.",
-                        'details' => "Pour activer cette fonctionnalité, installez l'une de ces solutions :\n\n" .
-                                    "Option 1 (Recommandé) - Puppeteer/Chrome:\n" .
-                                    "  npm install -g puppeteer\n\n" .
-                                    "Option 2 - wkhtmltoimage:\n" .
-                                    "  - Windows: Téléchargez depuis wkhtmltopdf.org\n" .
-                                    "  - Linux: apt-get install wkhtmltopdf\n" .
-                                    "  - macOS: brew install wkhtmltopdf",
-                        'code' => 'NO_CONVERSION_TOOL'
-                    ], 501);
-                }
-                
-                // Tentative de conversion avec wkhtmltoimage
-                error_log("[PDF Builder] Conversion HTML → {$format} avec wkhtmltoimage");
-                $quality = ($format === 'jpg') ? 90 : null;
-                
-                $success = \PDF_Builder\Managers\PDF_Builder_Secure_Shell_Manager::executeWkhtmltoimage(
-                    $temp_html,
-                    $temp_image,
-                    $format,
-                    $width,
-                    $height,
-                    $quality
-                );
-                
-                if (!$success) {
-                    // Nettoyer les fichiers temporaires
-                    @unlink($temp_html);
-                    @unlink($temp_image);
-                    
-                    error_log("[PDF Builder] ❌ Échec conversion wkhtmltoimage");
-                    
-                    wp_send_json_error([
-                        'message' => 'Erreur lors de la conversion HTML vers image',
-                        'details' => 'wkhtmltoimage a échoué. Vérifiez les logs PHP pour plus de détails.',
-                        'code' => 'CONVERSION_FAILED'
-                    ], 500);
-                }
-                
-                $conversion_success = true;
-                $conversion_method = 'wkhtmltoimage';
-                error_log("[PDF Builder] ✅ Génération réussie avec wkhtmltoimage");
+                wp_send_json_error([
+                    'message' => "Extension Imagick non disponible",
+                    'details' => "Pour activer la génération d'images PNG/JPG, installez l'extension PHP Imagick:\n\n" .
+                                "Windows: Téléchargez la DLL depuis https://windows.php.net/downloads/pecl/releases/imagick/\n" .
+                                "Linux: apt-get install php-imagick ou yum install php-imagick\n" .
+                                "Redémarrez ensuite votre serveur web.",
+                    'code' => 'NO_IMAGICK'
+                ], 501);
             }
             
             error_log("[PDF Builder] Méthode utilisée: {$conversion_method}");
@@ -2743,8 +2723,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Lire le contenu de l'image
             $image_content = file_get_contents($temp_image);
             
-            // Nettoyer les fichiers temporaires
-            @unlink($temp_html);
+            // Nettoyer le fichier temporaire
             @unlink($temp_image);
             
             // Envoyer l'image au navigateur
