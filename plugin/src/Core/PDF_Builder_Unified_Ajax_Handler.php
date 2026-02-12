@@ -3642,6 +3642,12 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         error_log('[PDF Builder] Dynamic_Text lineHeight ratio: ' . $line_height_ratio . ', fontSize: ' . $font_size . 'px, lineHeight calculé: ' . $line_height_px);
         
+        // FORCER line-height: 1 pour Dompdf (aucun espacement supplémentaire)
+        // Dompdf ajoute trop d'espacement avec des valeurs en pixels
+        $dompdf_line_height = '1';
+        
+        error_log('[PDF Builder] Dynamic_Text FORÇAGE line-height pour Dompdf: ' . $dompdf_line_height . ' (au lieu de ' . $line_height_px . ')');
+        
         // Extraire les propriétés de positionnement (pour le conteneur) et de texte (pour le contenu)
         preg_match('/left:\s*[^;]+;/', $base_styles_clean, $left_match);
         preg_match('/top:\s*[^;]+;/', $base_styles_clean, $top_match);
@@ -3678,8 +3684,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Le div intérieur contient le texte avec TOUTES les propriétés de texte
         // white-space: pre-line pour préserver les sauts de ligne (pas nl2br)
+        // line-height: 1 pour forcer aucun espacement supplémentaire dans Dompdf
         $inner_style = 'white-space: pre-line; ' . 
-                      'line-height: ' . $line_height_px . '; ' . 
+                      'line-height: ' . $dompdf_line_height . '; ' . 
                       $text_styles . ' ' .
                       'margin: 0; padding: 0; display: block; box-sizing: border-box;';
         
