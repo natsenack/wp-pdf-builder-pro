@@ -3515,16 +3515,24 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Construire les lignes selon le layout (sans l'en-tête qui sera affiché séparément)
         $lines = [];
         
+        // DEBUG: Log pour détecter les doublons
+        error_log('[PDF Builder] render_customer_info_element - showFullName: ' . ($showFullName ? 'true' : 'false'));
+        error_log('[PDF Builder] render_customer_info_element - full_name value: ' . ($order_data['customer']['full_name'] ?? 'NULL'));
+        error_log('[PDF Builder] render_customer_info_element - layout: ' . $layout);
+        
         if ($layout === 'vertical') {
             // Mode vertical : une info par ligne
             if ($showFullName) {
                 $lines[] = esc_html($order_data['customer']['full_name']);
+                error_log('[PDF Builder] Added full_name to lines');
             }
             if ($element['showAddress'] ?? true) {
                 $lines[] = esc_html($order_data['billing']['full_address']);
+                error_log('[PDF Builder] Added address to lines');
             }
             if ($element['showEmail'] ?? true) {
                 $lines[] = esc_html($order_data['customer']['email']);
+                error_log('[PDF Builder] Added email to lines');
             }
             if (($element['showPhone'] ?? true) && !empty($order_data['customer']['phone'])) {
                 $lines[] = esc_html($order_data['customer']['phone']);
@@ -3594,6 +3602,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         if ($showHeaders) {
             $html .= '<div class="customer-info-header">Informations Client</div>';
         }
+        // DEBUG: Log des lignes finales
+        error_log('[PDF Builder] Final lines count: ' . count($lines));
+        error_log('[PDF Builder] Final lines content: ' . print_r($lines, true));
         $html .= implode("\n", $lines);
         $html .= '</div>';
         $html .= '</div>';
