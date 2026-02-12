@@ -1337,20 +1337,29 @@ const drawCustomerInfo = (
     if (showPhone)
       compactText += (compactText ? " • " : "") + customerData.phone;
 
-    // Mesurer et tronquer si nécessaire
+    // Word wrap si le texte dépasse
     const maxWidth = element.width - paddingHorizontal * 2;
     ctx.font = `${bodyFontStyle} ${bodyFontWeight} ${bodyFontSize}px ${bodyFontFamily}`;
-    const textMetrics = ctx.measureText(compactText);
     
-    if (textMetrics.width > maxWidth) {
-      // Tronquer avec "..."
-      let truncated = compactText;
-      while (ctx.measureText(truncated + "...").width > maxWidth && truncated.length > 0) {
-        truncated = truncated.slice(0, -1);
+    const words = compactText.split(" ");
+    let currentLine = "";
+    
+    for (let i = 0; i < words.length; i++) {
+      const testLine = currentLine + (currentLine ? " " : "") + words[i];
+      const metrics = ctx.measureText(testLine);
+      
+      if (metrics.width > maxWidth && currentLine) {
+        // La ligne dépasse, pousser la ligne actuelle et commencer une nouvelle
+        lines.push(currentLine);
+        currentLine = words[i];
+      } else {
+        currentLine = testLine;
       }
-      lines.push(truncated + "...");
-    } else {
-      lines.push(compactText);
+    }
+    
+    // Ajouter la dernière ligne
+    if (currentLine) {
+      lines.push(currentLine);
     }
   }
 
@@ -1711,7 +1720,7 @@ const drawCompanyInfo = (
     }
     if (legalLine) lines.push({ text: legalLine, isHeader: false });
   } else if (layout === "compact") {
-    // Mode compact : tout sur une ligne avec séparateurs, tronquer si trop long
+    // Mode compact : tout avec séparateurs, word wrap si trop long
     let compactText = "";
     if (shouldDisplayValue(companyData.name, displayConfig.companyName)) {
       compactText += companyData.name;
@@ -1730,20 +1739,29 @@ const drawCompanyInfo = (
     }
     
     if (compactText) {
-      // Mesurer et tronquer si nécessaire
+      // Word wrap si le texte dépasse
       const maxWidth = element.width - paddingHorizontal * 2;
       ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
-      const textMetrics = ctx.measureText(compactText);
       
-      if (textMetrics.width > maxWidth) {
-        // Tronquer avec "..."
-        let truncated = compactText;
-        while (ctx.measureText(truncated + "...").width > maxWidth && truncated.length > 0) {
-          truncated = truncated.slice(0, -1);
+      const words = compactText.split(" ");
+      let currentLine = "";
+      
+      for (let i = 0; i < words.length; i++) {
+        const testLine = currentLine + (currentLine ? " " : "") + words[i];
+        const metrics = ctx.measureText(testLine);
+        
+        if (metrics.width > maxWidth && currentLine) {
+          // La ligne dépasse, pousser la ligne actuelle et commencer une nouvelle
+          lines.push({ text: currentLine, isHeader: false });
+          currentLine = words[i];
+        } else {
+          currentLine = testLine;
         }
-        lines.push({ text: truncated + "...", isHeader: false });
-      } else {
-        lines.push({ text: compactText, isHeader: false });
+      }
+      
+      // Ajouter la dernière ligne
+      if (currentLine) {
+        lines.push({ text: currentLine, isHeader: false });
       }
     }
   }
