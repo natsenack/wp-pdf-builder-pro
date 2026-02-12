@@ -1327,39 +1327,56 @@ const drawCustomerInfo = (
     if (line2) lines.push(line2);
     if (line3) lines.push(line3);
   } else if (layout === "compact") {
-    let compactText = "";
-    if (showFullName) compactText += customerData.name;
-    if (showAddress)
-      compactText +=
-        (compactText ? " • " : "") + customerData.address.split(",")[0];
-    if (showEmail)
-      compactText += (compactText ? " • " : "") + customerData.email;
-    if (showPhone)
-      compactText += (compactText ? " • " : "") + customerData.phone;
-
-    // Word wrap si le texte dépasse
-    const maxWidth = element.width - paddingHorizontal * 2;
-    ctx.font = `${bodyFontStyle} ${bodyFontWeight} ${bodyFontSize}px ${bodyFontFamily}`;
+    // Mode compact : nom en en-tête + tout le reste avec séparateurs, word wrap si trop long
     
-    const words = compactText.split(" ");
-    let currentLine = "";
-    
-    for (let i = 0; i < words.length; i++) {
-      const testLine = currentLine + (currentLine ? " " : "") + words[i];
-      const metrics = ctx.measureText(testLine);
-      
-      if (metrics.width > maxWidth && currentLine) {
-        // La ligne dépasse, pousser la ligne actuelle et commencer une nouvelle
-        lines.push(currentLine);
-        currentLine = words[i];
-      } else {
-        currentLine = testLine;
-      }
+    // Nom du client (si activé)
+    if (showFullName) {
+      lines.push(customerData.name);
     }
     
-    // Ajouter la dernière ligne
-    if (currentLine) {
-      lines.push(currentLine);
+    // Reste des infos en mode compact
+    let compactText = "";
+    if (showAddress) {
+      compactText += customerData.address.split(",")[0];
+    }
+    if (showEmail) {
+      compactText += (compactText ? " • " : "") + customerData.email;
+    }
+    if (showPhone) {
+      compactText += (compactText ? " • " : "") + customerData.phone;
+    }
+    if (showPaymentMethod) {
+      compactText += (compactText ? " • " : "") + "Paiement: Carte bancaire";
+    }
+    if (showTransactionId) {
+      compactText += (compactText ? " • " : "") + "ID: TXN123456789";
+    }
+
+    if (compactText) {
+      // Word wrap si le texte dépasse
+      const maxWidth = element.width - paddingHorizontal * 2;
+      ctx.font = `${bodyFontStyle} ${bodyFontWeight} ${bodyFontSize}px ${bodyFontFamily}`;
+      
+      const words = compactText.split(" ");
+      let currentLine = "";
+      
+      for (let i = 0; i < words.length; i++) {
+        const testLine = currentLine + (currentLine ? " " : "") + words[i];
+        const metrics = ctx.measureText(testLine);
+        
+        if (metrics.width > maxWidth && currentLine) {
+          // La ligne dépasse, pousser la ligne actuelle et commencer une nouvelle
+          lines.push(currentLine);
+          currentLine = words[i];
+        } else {
+          currentLine = testLine;
+        }
+      }
+      
+      // Ajouter la dernière ligne
+      if (currentLine) {
+        lines.push(currentLine);
+      }
     }
   }
 
@@ -1720,9 +1737,15 @@ const drawCompanyInfo = (
     }
     if (legalLine) lines.push({ text: legalLine, isHeader: false });
   } else if (layout === "compact") {
-    // Mode compact : tout avec séparateurs (sans le nom), word wrap si trop long
+    // Mode compact : nom en en-tête + tout le reste avec séparateurs, word wrap si trop long
+    
+    // Nom de l'entreprise en en-tête (avec sa police configurable)
+    if (shouldDisplayValue(companyData.name, displayConfig.companyName)) {
+      lines.push({ text: companyData.name, isHeader: true });
+    }
+    
+    // Reste des infos en mode compact
     let compactText = "";
-    // Ne pas inclure le nom de l'entreprise en mode compact
     if (shouldDisplayValue(companyData.address, displayConfig.address)) {
       compactText += companyData.address.split(",")[0];
     }
