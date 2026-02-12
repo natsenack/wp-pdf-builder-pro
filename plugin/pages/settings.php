@@ -230,9 +230,37 @@ jQuery(document).ready(function($) {
         var formData = new FormData();
         formData.append('action', 'pdf_builder_save_settings');
         formData.append('tab', currentTab);
-        // Utiliser le nonce depuis pdf_builder_ajax.nonce (localisé via wp_localize_script dans settings-loader.php)
-        // et l'envoyer en tant que _wpnonce pour correspondre au handler
-        var nonce = (typeof pdf_builder_ajax !== 'undefined' && pdf_builder_ajax.nonce) ? pdf_builder_ajax.nonce : '';
+        
+        // Chercher le nonce depuis plusieurs sources
+        var nonce = '';
+        console.log('PDF Builder Settings: Looking for nonce...');
+        console.log('  - pdf_builder_ajax:', typeof pdf_builder_ajax !== 'undefined' ? pdf_builder_ajax : 'NOT FOUND');
+        console.log('  - window.pdf_builder_ajax:', typeof window.pdf_builder_ajax !== 'undefined' ? window.pdf_builder_ajax : 'NOT FOUND');
+        console.log('  - pdfBuilderAjax:', typeof pdfBuilderAjax !== 'undefined' ? pdfBuilderAjax : 'NOT FOUND');
+        console.log('  - window.pdfBuilderNonce:', typeof window.pdfBuilderNonce !== 'undefined' ? window.pdfBuilderNonce : 'NOT FOUND');
+        
+        // Source 1: pdf_builder_ajax.nonce (depuis settings-loader.php)
+        if (typeof pdf_builder_ajax !== 'undefined' && pdf_builder_ajax && pdf_builder_ajax.nonce) {
+            nonce = pdf_builder_ajax.nonce;
+            console.log('PDF Builder Settings: Using nonce from pdf_builder_ajax');
+        }
+        // Source 2: window.pdf_builder_ajax.nonce
+        else if (typeof window.pdf_builder_ajax !== 'undefined' && window.pdf_builder_ajax && window.pdf_builder_ajax.nonce) {
+            nonce = window.pdf_builder_ajax.nonce;
+            console.log('PDF Builder Settings: Using nonce from window.pdf_builder_ajax');
+        }
+        // Source 3: pdfBuilderAjax.nonce (fallback camelCase)
+        else if (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAjax && pdfBuilderAjax.nonce) {
+            nonce = pdfBuilderAjax.nonce;
+            console.log('PDF Builder Settings: Using nonce from pdfBuilderAjax');
+        }
+        // Source 4: window.pdfBuilderNonce (legacy)
+        else if (typeof window.pdfBuilderNonce !== 'undefined' && window.pdfBuilderNonce) {
+            nonce = window.pdfBuilderNonce;
+            console.log('PDF Builder Settings: Using nonce from window.pdfBuilderNonce');
+        }
+        
+        console.log('PDF Builder Settings: Final nonce value:', nonce ? 'SET' : 'NOT SET');
         formData.append('_wpnonce', nonce);
 
         // Collecter les champs du formulaire actif
