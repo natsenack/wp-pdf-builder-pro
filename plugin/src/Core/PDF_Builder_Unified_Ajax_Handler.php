@@ -3040,6 +3040,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             position: absolute;
             overflow: hidden;
             word-wrap: break-word;
+            box-sizing: border-box;
         }
         table {
             border-collapse: collapse;
