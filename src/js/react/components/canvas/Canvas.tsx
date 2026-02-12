@@ -1780,13 +1780,13 @@ const drawCompanyInfo = (
   const getIconForType = (type: 'phone' | 'email' | 'address' | 'siret' | 'rcs' | 'tva' | 'capital'): string => {
     // Emoji pour Canvas (HTML/PNG/JPG) - Affichage beau et lisible
     const emojiIcons: Record<string, string> = {
-      phone: '📞',      // Téléphone
-      email: '✉️',      // Enveloppe
-      address: '📍',    // Maison
-      siret: '🏢',      // Bâtiment
-      rcs: '📋',        // Presse-papiers
-      tva: '💼',        // Mallette
-      capital: '💰',    // Sac d'argent
+      phone: '\u{1F4DE}',      // 📞 Téléphone
+      email: '\u{2709}\u{FE0F}',      // ✉️ Enveloppe
+      address: '\u{1F4CD}',    // 📍 Maison
+      siret: '\u{1F3E2}',      // 🏢 Bâtiment
+      rcs: '\u{1F4CB}',        // 📋 Presse-papiers
+      tva: '\u{1F4BC}',        // 💼 Mallette
+      capital: '\u{1F4B0}',    // 💰 Sac d'argent
     };
     
     return emojiIcons[type] || '';
