@@ -3654,8 +3654,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         // ✅ NEW: Formater le téléphone
         $phone = $formatPhoneNumber($phone);
         
-        $fullAddress = trim($address . ($address && $postcode ? ', ' : '') . $postcode . ($postcode && $city ? ' ' : '') . $city);
-        
         // Construire les lignes selon le layout
         $lines = [];
         
@@ -3664,8 +3662,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             if ($element['showCompanyName'] ?? true) {
                 $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
             }
-            if (($element['showAddress'] ?? true) && $fullAddress) {
-                $lines[] = esc_html($fullAddress);
+            // Afficher adresse puis ville séparément (comme React) pour éviter duplication
+            if (($element['showAddress'] ?? true) && $address) {
+                $lines[] = esc_html($address);
+                // Afficher la ville sur une ligne séparée si elle existe
+                if ($city) {
+                    $lines[] = esc_html($city);
+                }
             }
             if (($element['showSiret'] ?? true) && $siret) {
                 $lines[] = esc_html($siret);
@@ -3691,10 +3694,13 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
             }
             
-            // Ligne 1: Adresse + Ville
+            // Ligne 1: Adresse + Ville (si elle existe)
             $line1 = '';
-            if (($element['showAddress'] ?? true) && $fullAddress) {
-                $line1 .= esc_html($fullAddress);
+            if (($element['showAddress'] ?? true) && $address) {
+                $line1 .= esc_html($address);
+                if ($city) {
+                    $line1 .= ', ' . esc_html($city);
+                }
             }
             if ($line1) $lines[] = $line1;
             
@@ -3730,8 +3736,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
             
             $compactLine = '';
-            if (($element['showAddress'] ?? true) && $fullAddress) {
-                $compactLine .= esc_html($fullAddress);
+            if (($element['showAddress'] ?? true) && $address) {
+                $compactLine .= esc_html($address);
             }
             if (($element['showEmail'] ?? true) && $email) {
                 $compactLine .= ($compactLine ? ' • ' : '') . esc_html($email);
@@ -3792,7 +3798,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         $html .= 'strong { color: ' . $headerTextColor . '; font-family: ' . $headerFontFamily . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . $headerFontWeight . '; font-style: ' . $headerFontStyle . '; line-height: 1.2; }';
         $html .= '</style>';
         $html .= '<div style="' . $inner_styles . '">';
-        $html .= implode("\n", $lines);
+        // Décoder les entités HTML pour que € et autres symboles s'affichent correctement
+        $content = implode("\n", $lines);
+        $content = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $html .= $content;
         $html .= '</div>';
         $html .= '</div>';
         return $html;
