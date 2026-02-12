@@ -3654,10 +3654,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         // ✅ NEW: Formater le téléphone
         $phone = $formatPhoneNumber($phone);
         
-        // Helper pour échapper le HTML en préservant les caractères UTF-8 comme €
+        // Helper pour sécuriser le HTML en préservant les caractères UTF-8 comme €
+        // On remplace UNIQUEMENT < et > pour éviter les balises HTML, mais on garde tous les caractères UTF-8
         $escapeHtml = function($text) {
-            // htmlspecialchars préserve les caractères UTF-8 contrairement à esc_html
-            return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
+            return str_replace(['<', '>'], ['&lt;', '&gt;'], $text);
         };
         
         // Construire les lignes selon le layout
