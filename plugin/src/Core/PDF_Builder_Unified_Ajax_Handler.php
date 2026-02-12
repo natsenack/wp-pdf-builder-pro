@@ -2528,8 +2528,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             error_log("[PDF Builder] Template '{$template_id}' trouvé: " . (isset($template['name']) ? $template['name'] : 'sans nom'));
 
             // Générer l'HTML avec les vraies données
-            error_log("[PDF Builder] Début génération HTML");
-            $html = $this->generate_template_html($template, $order);
+            error_log("[PDF Builder] Début génération HTML pour PDF");
+            $html = $this->generate_template_html($template, $order, 'pdf');
             error_log("[PDF Builder] HTML généré - Longueur: " . strlen($html) . " caractères");
 
             // Convertir en PDF avec dompdf
@@ -2947,7 +2947,7 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Génère l'HTML du template avec les vraies données de commande
      */
-    private function generate_template_html($template, $order) {
+    private function generate_template_html($template, $order, $format = 'html') {
         // Récupérer l'état premium
         $is_premium = false;
         if (class_exists('\PDF_Builder\Managers\PDF_Builder_License_Manager')) {
@@ -3055,7 +3055,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         // Générer chaque élément
         foreach ($elements as $element) {
-            $html .= $this->render_element($element, $all_data, $is_premium, 'html');
+            $html .= $this->render_element($element, $all_data, $is_premium, $format);
         }
 
         $html .= '
