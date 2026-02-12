@@ -98,19 +98,22 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
         tabletClass="properties-panel-tablet"
         desktopClass="properties-panel-desktop"
       >
-        <div style={{
-          padding: isMobile ? '8px' : '12px',
-          backgroundColor: '#f9f9f9',
-          border: '1px solid #ddd',
-          borderRadius: '4px',
-          minHeight: isMobile ? '150px' : '200px',
-          maxHeight: isMobile ? 'calc(50vh - 16px)' : 'calc(100vh - 32px)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center'
-        }}>
+        <div 
+          onWheel={(e) => e.stopPropagation()}
+          style={{
+            padding: isMobile ? '8px' : '12px',
+            backgroundColor: '#f9f9f9',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            minHeight: isMobile ? '150px' : '200px',
+            maxHeight: isMobile ? 'calc(50vh - 16px)' : 'calc(100vh - 32px)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textAlign: 'center'
+          }}
+        >
           <div style={{
             fontSize: isMobile ? '24px' : '32px',
             marginBottom: '8px',
@@ -139,14 +142,18 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
   }
 
   return (
-    <div className={`pdf-builder-properties ${className || ''}`} style={{
-      padding: '12px',
-      backgroundColor: '#f9f9f9',
-      border: '1px solid #ddd',
-      borderRadius: '4px',
-      maxHeight: 'calc(100vh - 32px)',
-      overflowY: 'auto'
-    }}>
+    <div 
+      className={`pdf-builder-properties ${className || ''}`} 
+      onWheel={(e) => e.stopPropagation()}
+      style={{
+        padding: '12px',
+        backgroundColor: '#f9f9f9',
+        border: '1px solid #ddd',
+        borderRadius: '4px',
+        maxHeight: 'calc(100vh - 32px)',
+        overflowY: 'auto'
+      }}
+    >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
         <h4 style={{ margin: '0', fontSize: '14px', fontWeight: 'bold' }}>
           Propriétés ({selectedElements.length})
@@ -170,15 +177,19 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
       </div>
 
       {selectedElements.map(element => (
-        <div key={element.id} style={{
-          marginBottom: '16px',
-          padding: '12px',
-          backgroundColor: '#ffffff',
-          border: '1px solid #e0e0e0',
-          borderRadius: '4px',
-          maxHeight: 'calc(100vh - 120px)',
-          overflowY: 'auto'
-        }}>
+        <div 
+          key={element.id} 
+          onWheel={(e) => e.stopPropagation()}
+          style={{
+            marginBottom: '16px',
+            padding: '12px',
+            backgroundColor: '#ffffff',
+            border: '1px solid #e0e0e0',
+            borderRadius: '4px',
+            maxHeight: 'calc(100vh - 120px)',
+            overflowY: 'auto'
+          }}
+        >
           <h5 style={{ margin: '0 0 8px 0', fontSize: '13px', fontWeight: 'bold' }}>
             {element.type} - {element.id.slice(0, 8)}
           </h5>
