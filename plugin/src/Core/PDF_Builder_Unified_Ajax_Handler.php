@@ -3512,13 +3512,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         $bodyFontWeight = isset($element['bodyFontWeight']) ? $element['bodyFontWeight'] : 'normal';
         $bodyFontStyle = isset($element['bodyFontStyle']) ? $element['bodyFontStyle'] : 'normal';
         
-        // Construire les lignes selon le layout
+        // Construire les lignes selon le layout (sans l'en-tête qui sera affiché séparément)
         $lines = [];
-        
-        // Ajouter l'en-tête si activé (utilise les propriétés headerFont*)
-        if ($showHeaders) {
-            $lines[] = '<div class="customer-info-header">Informations Client</div>';
-        }
         
         if ($layout === 'vertical') {
             // Mode vertical : une info par ligne
@@ -3597,6 +3592,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         $html .= 'strong { color: ' . $headerTextColor . '; font-family: ' . $headerFontFamily . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . $headerFontWeight . '; font-style: ' . $headerFontStyle . '; line-height: 1.2; }';
         $html .= '</style>';
         $html .= '<div style="' . $inner_styles . '">';
+        // Afficher l'en-tête SÉPARÉMENT, avant les lignes de contenu (comme dans React)
+        if ($showHeaders) {
+            $html .= '<div class="customer-info-header">Informations Client</div>';
+        }
         $html .= implode("\n", $lines);
         $html .= '</div>';
         $html .= '</div>';
