@@ -1759,7 +1759,7 @@ export function CompanyInfoProperties({
             >
               Espacement des lignes{" "}
               <span style={{ color: "#666", fontSize: "10px" }}>
-                ({(element.lineHeight || 1.0).toFixed(1)})
+                ({parseFloat(element.lineHeight || 1.0).toFixed(1)})
               </span>
             </label>
             <input
@@ -1767,7 +1767,7 @@ export function CompanyInfoProperties({
               min="0.8"
               max="3"
               step="0.1"
-              value={element.lineHeight || 1.0}
+              value={parseFloat(element.lineHeight) || 1.0}
               onChange={(e) =>
                 onChange(element.id, "lineHeight", parseFloat(e.target.value))
               }
@@ -1793,7 +1793,7 @@ export function CompanyInfoProperties({
             >
               Espacement des lettres{" "}
               <span style={{ color: "#666", fontSize: "10px" }}>
-                ({(element.letterSpacing || 0).toFixed(2)}px)
+                ({parseFloat(element.letterSpacing || 0).toFixed(2)}px)
               </span>
             </label>
             <input
@@ -1801,7 +1801,7 @@ export function CompanyInfoProperties({
               min="-2"
               max="5"
               step="0.1"
-              value={element.letterSpacing || 0}
+              value={parseFloat(element.letterSpacing) || 0}
               onChange={(e) =>
                 onChange(
                   element.id,

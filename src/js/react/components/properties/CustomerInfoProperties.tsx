@@ -1148,14 +1148,14 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Espacement des lignes <span style={{ color: '#666', fontSize: '10px' }}>({(element.lineHeight || 1.0).toFixed(1)})</span>
+              Espacement des lignes <span style={{ color: '#666', fontSize: '10px' }}>({parseFloat(element.lineHeight || 1.0).toFixed(1)})</span>
             </label>
             <input
               type="range"
               min="0.8"
               max="3"
               step="0.1"
-              value={element.lineHeight || 1.0}
+              value={parseFloat(element.lineHeight) || 1.0}
               onChange={(e) => onChange(element.id, 'lineHeight', parseFloat(e.target.value))}
               style={{
                 width: '100%',
@@ -1170,14 +1170,14 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
 
           <div style={{ marginBottom: '12px' }}>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Espacement des lettres <span style={{ color: '#666', fontSize: '10px' }}>({(element.letterSpacing || 0).toFixed(2)}px)</span>
+              Espacement des lettres <span style={{ color: '#666', fontSize: '10px' }}>({parseFloat(element.letterSpacing || 0).toFixed(2)}px)</span>
             </label>
             <input
               type="range"
               min="-2"
               max="5"
               step="0.1"
-              value={element.letterSpacing || 0}
+              value={parseFloat(element.letterSpacing) || 0}
               onChange={(e) => onChange(element.id, 'letterSpacing', parseFloat(e.target.value))}
               style={{
                 width: '100%',
