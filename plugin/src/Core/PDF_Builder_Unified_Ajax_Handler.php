@@ -3532,7 +3532,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Appliquer l'alignement horizontal et vertical
-        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . ';';
+        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: 1.1; white-space: pre-line;';
         
         // Pour l'alignement vertical, on utilise flexbox
         if ($verticalAlign === 'middle') {
@@ -3543,7 +3543,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         $html = '<div class="element" style="' . $base_styles . '">';
         $html .= '<div style="' . $inner_styles . '">';
-        $html .= implode('<br>', $lines);
+        $html .= implode("\n", $lines);
         $html .= '</div>';
         $html .= '</div>';
         return $html;
@@ -3720,7 +3720,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Appliquer l'alignement horizontal et vertical
-        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . ';';
+        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: 1.1; white-space: pre-line;';
         
         // Pour l'alignement vertical, on utilise flexbox
         if ($verticalAlign === 'middle') {
@@ -3731,7 +3731,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         $html = '<div class="element" style="' . $base_styles . '">';
         $html .= '<div style="' . $inner_styles . '">';
-        $html .= implode('<br>', $lines);
+        $html .= implode("\n", $lines);
         $html .= '</div>';
         $html .= '</div>';
         return $html;
