@@ -1709,15 +1709,15 @@ const drawCompanyInfo = (
   // Récupérer les données de l'entreprise depuis l'élément canvas (pas depuis les options WordPress)
   const getCompanyData = () => {
     const baseData = {
-      name: props.companyName || "",
-      address: props.companyAddress || "",
-      city: props.companyCity || "",
-      siret: props.companySiret || "",
-      tva: props.companyTva || "",
-      rcs: props.companyRcs || "",
-      capital: props.companyCapital || "",
-      email: props.companyEmail || "",
-      phone: props.companyPhone || "",
+      name: props.companyName || "Company Name",
+      address: props.companyAddress || "123 Main Street",
+      city: props.companyCity || "City, State ZIP",
+      siret: props.companySiret || "12345678901234",
+      tva: props.companyTva || "FR12345678901",
+      rcs: props.companyRcs || "RCS 123457890",
+      capital: props.companyCapital || "€100,000",
+      email: props.companyEmail || "info@company.com",
+      phone: props.companyPhone || "+33123456789",
     };
 
     // Remplacer par les données dynamiques du plugin si disponibles
@@ -1968,8 +1968,11 @@ const drawCompanyInfo = (
   const lineHeight = props.lineHeight || 1.1;
   const letterSpacing = props.letterSpacing || 0;
 
+  console.log('[Canvas drawCompanyInfo] About to render lines. x=', x, 'y=', y, 'fontConfig=', fontConfig);
+
   // Dessiner toutes les lignes
-  lines.forEach(lineData => {
+  lines.forEach((lineData, i) => {
+    console.log('[Canvas drawCompanyInfo forEach] Line', i, ':', lineData);
     const config = lineData.isHeader
       ? {
           size: fontConfig.headerSize,
