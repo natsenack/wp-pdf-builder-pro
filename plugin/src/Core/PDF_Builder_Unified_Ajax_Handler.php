@@ -3687,7 +3687,40 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         error_log('[PDF Builder] Mentions lineHeight ratio: ' . $line_height_ratio . ', fontSize: ' . $font_size . 'px, lineHeight calculé: ' . $line_height_px);
         
-        $html = '<div class="element" style="' . $base_styles_clean . ' line-height: ' . $line_height_px . ';">';
+        // Extraire les propriétés de positionnement (pour le conteneur) et de texte (pour le contenu)
+        // On garde UNIQUEMENT position, left, top, width, height sur le conteneur
+        preg_match('/left:\s*[^;]+;/', $base_styles_clean, $left_match);
+        preg_match('/top:\s*[^;]+;/', $base_styles_clean, $top_match);
+        preg_match('/width:\s*[^;]+;/', $base_styles_clean, $width_match);
+        preg_match('/height:\s*[^;]+;/', $base_styles_clean, $height_match);
+        
+        $position_styles = 'position: absolute; ' . 
+                          ($left_match[0] ?? '') . ' ' . 
+                          ($top_match[0] ?? '') . ' ' . 
+                          ($width_match[0] ?? '') . ' ' . 
+                          ($height_match[0] ?? '');
+        
+        // Extraire les propriétés de texte pour les appliquer sur le div intérieur
+        preg_match('/font-size:\s*[^;]+;/', $base_styles_clean, $font_size_match);
+        preg_match('/font-family:\s*[^;]+;/', $base_styles_clean, $font_family_match);
+        preg_match('/font-weight:\s*[^;]+;/', $base_styles_clean, $font_weight_match);
+        preg_match('/font-style:\s*[^;]+;/', $base_styles_clean, $font_style_match);
+        preg_match('/text-align:\s*[^;]+;/', $base_styles_clean, $text_align_match);
+        preg_match('/color:\s*[^;]+;/', $base_styles_clean, $color_match);
+        preg_match('/text-decoration:\s*[^;]+;/', $base_styles_clean, $text_decoration_match);
+        preg_match('/text-transform:\s*[^;]+;/', $base_styles_clean, $text_transform_match);
+        
+        $text_styles = ($font_size_match[0] ?? '') . ' ' . 
+                      ($font_family_match[0] ?? '') . ' ' . 
+                      ($font_weight_match[0] ?? '') . ' ' . 
+                      ($font_style_match[0] ?? '') . ' ' . 
+                      ($text_align_match[0] ?? '') . ' ' . 
+                      ($color_match[0] ?? '') . ' ' . 
+                      ($text_decoration_match[0] ?? '') . ' ' . 
+                      ($text_transform_match[0] ?? '');
+        
+        // Le div extérieur est UNIQUEMENT un conteneur positionné
+        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
         
         // Ajouter le séparateur horizontal si activé
         if ($element['showSeparator'] ?? true) {
@@ -3696,18 +3729,24 @@ class PDF_Builder_Unified_Ajax_Handler {
             $separator_width = isset($element['separatorWidth']) && $element['separatorWidth'] > 0 ? $element['separatorWidth'] : 1;
             
             $hr_style = sprintf(
-                'border: none; border-top: %dpx %s %s; margin: 0; padding: 0; line-height: 0;',
+                'border: none; border-top: %dpx %s %s; margin: 0 0 0 0; padding: 0; line-height: 0; height: %dpx; display: block;',
                 $separator_width,
                 $separator_style,
-                $separator_color
+                $separator_color,
+                $separator_width
             );
             
             $html .= '<hr style="' . $hr_style . '" />';
         }
         
-        // Utiliser white-space: pre-line pour préserver les sauts de ligne sans <br>
-        // Appliquer explicitement le lineHeight en pixels sur le div interne pour Dompdf
-        $html .= '<div style="white-space: pre-line; line-height: ' . $line_height_px . ';">' . esc_html($text) . '</div>';
+        // Le div intérieur contient le texte avec TOUTES les propriétés de texte
+        // white-space: pre-line pour préserver les sauts de ligne
+        $inner_style = 'white-space: pre-line; ' . 
+                      'line-height: ' . $line_height_px . '; ' . 
+                      $text_styles . ' ' .
+                      'margin: 0; padding: 0; display: block; box-sizing: border-box;';
+        
+        $html .= '<div style="' . $inner_style . '">' . esc_html($text) . '</div>';
         $html .= '</div>';
         
         return $html;
