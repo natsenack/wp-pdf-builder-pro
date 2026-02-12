@@ -1213,8 +1213,14 @@ const drawCustomerInfo = (
   const fontWeight = props.fontWeight || "normal";
   const fontStyle = props.fontStyle || "normal";
   // ✅ NEW: Padding horizontal et vertical séparés (backward compatibility avec padding unique)
-  const paddingHorizontal = props.paddingHorizontal !== undefined ? props.paddingHorizontal : (props.padding || 12);
-  const paddingVertical = props.paddingVertical !== undefined ? props.paddingVertical : (props.padding || 12);
+  const paddingHorizontal =
+    props.paddingHorizontal !== undefined
+      ? props.paddingHorizontal
+      : props.padding || 12;
+  const paddingVertical =
+    props.paddingVertical !== undefined
+      ? props.paddingVertical
+      : props.padding || 12;
   // Propriétés de police pour l'en-tête
   const headerFontSize = props.headerFontSize || fontSize + 2;
   const headerFontFamily = props.headerFontFamily || fontFamily;
@@ -1226,7 +1232,6 @@ const drawCustomerInfo = (
   const bodyFontWeight = props.bodyFontWeight || fontWeight;
   const bodyFontStyle = props.bodyFontStyle || fontStyle;
   const layout = props.layout || "vertical";
-  console.log('[Canvas] drawCustomerInfo - layout:', layout, 'element:', props);
   const showHeaders = props.showHeaders !== false;
   const showBorders = props.showBorders !== false;
   const showFullName = props.showFullName !== false;
@@ -1341,10 +1346,16 @@ const drawCustomerInfo = (
   let startY: number;
   switch (verticalAlign) {
     case "middle":
-      startY = Math.max(paddingVertical, (element.height - totalContentHeight) / 2);
+      startY = Math.max(
+        paddingVertical,
+        (element.height - totalContentHeight) / 2,
+      );
       break;
     case "bottom":
-      startY = Math.max(paddingVertical, element.height - totalContentHeight - paddingVertical);
+      startY = Math.max(
+        paddingVertical,
+        element.height - totalContentHeight - paddingVertical,
+      );
       break;
     default: // top
       startY = paddingVertical;
@@ -1522,8 +1533,14 @@ const drawCompanyInfo = (
   };
 
   // ✅ NEW: Padding horizontal et vertical séparés (backward compatibility)
-  const paddingHorizontal = props.paddingHorizontal !== undefined ? props.paddingHorizontal : (props.padding || 12);
-  const paddingVertical = props.paddingVertical !== undefined ? props.paddingVertical : (props.padding || 12);
+  const paddingHorizontal =
+    props.paddingHorizontal !== undefined
+      ? props.paddingHorizontal
+      : props.padding || 12;
+  const paddingVertical =
+    props.paddingVertical !== undefined
+      ? props.paddingVertical
+      : props.padding || 12;
 
   // Configuration d'affichage
   const displayConfig = {
@@ -2966,7 +2983,7 @@ export const Canvas = function Canvas({
       // Calculer le nombre maximum de lignes qui peuvent tenir
       // Utiliser le lineHeight de l'élément s'il est défini, sinon utiliser fontSize * 1.2
       const lineHeightValue = props.lineHeight
-        ? typeof props.lineHeight === 'number'
+        ? typeof props.lineHeight === "number"
           ? props.lineHeight
           : parseFloat(props.lineHeight)
         : 1.2;
