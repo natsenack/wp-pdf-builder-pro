@@ -1379,6 +1379,7 @@ const drawCustomerInfo = (
   // Appliquer l'alignement horizontal
   const textAlign = props.textAlign || "left";
   ctx.textAlign = textAlign as CanvasTextAlign;
+  ctx.textBaseline = "top";
 
   // Construire le contenu et calculer la hauteur totale
   let customerData: {
@@ -1915,6 +1916,7 @@ const drawCompanyInfo = (
   // Appliquer l'alignement horizontal
   const textAlign = props.textAlign || "left";
   ctx.textAlign = textAlign as CanvasTextAlign;
+  ctx.textBaseline = "top";
 
   // Position de départ avec padding dynamique
   const getTextX = () => {
