@@ -1817,24 +1817,6 @@ const drawCompanyInfo = (
     return matches ? matches.join(".") : phone;
   };
 
-  // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji pour HTML/PNG/JPG)
-  const getIconForType = (
-    type: "phone" | "email" | "address" | "siret" | "rcs" | "tva" | "capital",
-  ): string => {
-    // Emoji pour Canvas (HTML/PNG/JPG) - Affichage beau et lisible
-    const emojiIcons: Record<string, string> = {
-      phone: String.fromCodePoint(0x1f4de), // 📞 Téléphone
-      email: String.fromCodePoint(0x1f4e9), // 📩 Enveloppe avec flèche
-      address: String.fromCodePoint(0x1f4cd), // 📍 Épingle
-      siret: String.fromCodePoint(0x1f3e2), // 🏢 Bâtiment
-      rcs: String.fromCodePoint(0x1f4cb), // 📋 Presse-papiers
-      tva: String.fromCodePoint(0x1f4bc), // 💼 Mallette
-      capital: String.fromCodePoint(0x1f4b0), // 💰 Sac d'argent
-    };
-
-    return emojiIcons[type] || "";
-  };
-
   // Récupérer les données de l'entreprise depuis l'élément canvas (pas depuis les options WordPress)
   const getCompanyData = () => {
     const baseData = {
@@ -1959,24 +1941,6 @@ const drawCompanyInfo = (
   // Construire les lignes selon le layout
   const lines: Array<{ text: string; isHeader: boolean }> = [];
 
-  // ✅ HELPER: Ajouter l'icône au texte si showIcons est activé
-  const buildLineText = (
-    text: string,
-    iconType?:
-      | "phone"
-      | "email"
-      | "address"
-      | "siret"
-      | "rcs"
-      | "tva"
-      | "capital",
-  ): string => {
-    if (!props.showIcons || !iconType) return text;
-    const icon = getIconForType(iconType);
-    const position = props.iconsPosition || "left";
-    return position === "left" ? `${icon} ${text}` : `${text} ${icon}`;
-  };
-
   if (layout === "vertical") {
     // Mode vertical : une info par ligne
     if (shouldDisplayValue(companyData.name, displayConfig.companyName)) {
@@ -1984,7 +1948,7 @@ const drawCompanyInfo = (
     }
     if (shouldDisplayValue(companyData.address, displayConfig.address)) {
       lines.push({
-        text: buildLineText(companyData.address, "address"),
+        text: companyData.address,
         isHeader: false,
       });
       if (shouldDisplayValue(companyData.city, displayConfig.address)) {
@@ -1992,34 +1956,15 @@ const drawCompanyInfo = (
       }
     }
     [
-      [companyData.siret, displayConfig.siret, "siret" as const],
-      [companyData.tva, displayConfig.vat, "tva" as const],
-      [companyData.rcs, displayConfig.rcs, "rcs" as const],
-      [companyData.capital, displayConfig.capital, "capital" as const],
-      [companyData.email, displayConfig.email, "email" as const],
-      [
-        formatPhoneNumber(companyData.phone),
-        displayConfig.phone,
-        "phone" as const,
-      ],
-    ].forEach(([value, show, iconType]) => {
+      [companyData.siret, displayConfig.siret],
+      [companyData.tva, displayConfig.vat],
+      [companyData.rcs, displayConfig.rcs],
+      [companyData.capital, displayConfig.capital],
+      [companyData.email, displayConfig.email],
+      [formatPhoneNumber(companyData.phone), displayConfig.phone],
+    ].forEach(([value, show]) => {
       if (shouldDisplayValue(value as string, show as boolean)) {
-        // S'assurer que iconType correspond à la type attendu
-        const validIconTypes: Array<
-          "address" | "phone" | "email" | "siret" | "rcs" | "tva" | "capital"
-        > = ["address", "phone", "email", "siret", "rcs", "tva", "capital"];
-        const icon = validIconTypes.includes(iconType as any)
-          ? (iconType as
-              | "address"
-              | "phone"
-              | "email"
-              | "siret"
-              | "rcs"
-              | "tva"
-              | "capital")
-          : "email";
-        const lineText = buildLineText(value as string, icon);
-        lines.push({ text: lineText, isHeader: false });
+        lines.push({ text: value as string, isHeader: false });
       }
     });
   } else if (layout === "horizontal") {
@@ -2038,26 +1983,26 @@ const drawCompanyInfo = (
     }
     if (addressLine)
       lines.push({
-        text: buildLineText(addressLine, "address"),
+        text: addressLine,
         isHeader: false,
       });
 
     // Ligne 2: Contact (Email + Phone)
     let contactLine = "";
     if (shouldDisplayValue(companyData.email, displayConfig.email)) {
-      contactLine += buildLineText(companyData.email, "email");
+      contactLine += companyData.email;
     }
     if (shouldDisplayValue(companyData.phone, displayConfig.phone)) {
       contactLine +=
         (contactLine ? " | " : "") +
-        buildLineText(formatPhoneNumber(companyData.phone), "phone");
+        formatPhoneNumber(companyData.phone);
     }
     if (contactLine) lines.push({ text: contactLine, isHeader: false });
 
     // Ligne 3: Infos légales (SIRET + RCS + TVA + Capital)
     let legalLine = "";
     if (shouldDisplayValue(companyData.siret, displayConfig.siret)) {
-      legalLine += buildLineText(companyData.siret, "siret");
+      legalLine += companyData.siret;
     }
     if (shouldDisplayValue(companyData.rcs, displayConfig.rcs)) {
       legalLine += (legalLine ? " | " : "") + companyData.rcs;
@@ -2068,7 +2013,7 @@ const drawCompanyInfo = (
     if (shouldDisplayValue(companyData.capital, displayConfig.capital)) {
       legalLine +=
         (legalLine ? " | " : "") +
-        buildLineText(companyData.capital, "capital");
+        companyData.capital;
     }
     if (legalLine) lines.push({ text: legalLine, isHeader: false });
   } else if (layout === "compact") {
