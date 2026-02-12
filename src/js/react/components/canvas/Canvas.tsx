@@ -1369,7 +1369,7 @@ const drawCustomerInfo = (
   // Bordures
   if (showBorders) {
     ctx.strokeStyle = normalizeColor(props.borderColor || "#e5e7eb");
-    ctx.lineWidth = 1;
+    ctx.lineWidth = props.borderWidth || 1;
     ctx.strokeRect(0, 0, element.width, element.height);
   }
 

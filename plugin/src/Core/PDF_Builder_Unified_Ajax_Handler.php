@@ -3210,11 +3210,14 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
         }
         
-        // Bordures
+        // Bordures - Respecter showBorders (ou non défini pour rétrocompatibilité)
         if (isset($element['borderWidth']) && $element['borderWidth'] > 0) {
-            $border_color = $element['borderColor'] ?? '#000000';
-            $border_style = $element['borderStyle'] ?? 'solid';
-            $styles .= " border: {$element['borderWidth']}px {$border_style} {$border_color};";
+            // Si showBorders est défini, on le respecte, sinon on affiche les bordures pour rétrocompatibilité
+            if (!isset($element['showBorders']) || $element['showBorders'] === true) {
+                $border_color = $element['borderColor'] ?? '#000000';
+                $border_style = $element['borderStyle'] ?? 'solid';
+                $styles .= " border: {$element['borderWidth']}px {$border_style} {$border_color};";
+            }
         }
         if (isset($element['borderRadius']) && $element['borderRadius'] > 0) {
             $styles .= " border-radius: {$element['borderRadius']}px;";
@@ -3573,17 +3576,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $inner_styles .= ' display: flex; flex-direction: column; justify-content: flex-end; height: 100%;';
         }
         
-        // Appliquer le fond et les bordures sur la div extérieure
-        $elementStyles = $base_styles;
-        if ($showBackground) {
-            $elementStyles .= ' background-color: ' . esc_attr($backgroundColor) . ';';
-        }
-        if ($showBorders) {
-            $borderWidth = isset($element['borderWidth']) ? intval($element['borderWidth']) : 1;
-            $elementStyles .= ' border: ' . $borderWidth . 'px solid ' . esc_attr($borderColor) . ';';
-        }
-        
-        $html = '<div class="element" style="' . $elementStyles . '">';
+        $html = '<div class="element" style="' . $base_styles . '">';
         // ✅ Nom du client (strong) utilise toujours line-height 1.2, pas le line-height personnalisé
         $html .= '<style>strong { line-height: 1.2; }</style>';
         $html .= '<div style="' . $inner_styles . '">';
@@ -3815,18 +3808,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             $inner_styles .= ' display: flex; flex-direction: column; justify-content: flex-end; height: 100%;';
         }
         
-        // Appliquer le background et les bordures si nécessaire
-        $elementStyles = $base_styles;
-        if (isset($element['showBackground']) && $element['showBackground']) {
-            $elementStyles .= ' background-color: ' . $backgroundColor . ';';
-        }
-        if (isset($element['showBorders']) && $element['showBorders']) {
-            $borderWidth = isset($element['borderWidth']) ? intval($element['borderWidth']) : 1;
-            $elementStyles .= ' border: ' . $borderWidth . 'px solid ' . $borderColor . ';';
-        }
-        
         // Générer le HTML avec styles de police pour le header (strong)
-        $html = '<div class="element" style="' . $elementStyles . '">';
+        $html = '<div class="element" style="' . $base_styles . '">';
         $html .= '<style>';
         // ✅ Header (strong) utilise toujours line-height 1.2, pas le line-height personnalisé
         $html .= 'strong { color: ' . $headerTextColor . '; font-family: ' . $headerFontFamily . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . $headerFontWeight . '; font-style: ' . $headerFontStyle . '; line-height: 1.2; }';
