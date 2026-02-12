@@ -2087,7 +2087,6 @@ export const Header = memo(function Header({
               const gap = Math.round(fontSize * (lineHeightValue - 1));
               companyContent = `<div style="display: flex; flex-direction: column; gap: ${gap}px;">${parts.join("")}</div>`;
             }
-            }
 
             content = companyContent || "<div>Entreprise non configurée</div>";
 
@@ -2160,6 +2159,7 @@ export const Header = memo(function Header({
             }
 
             styles += ` overflow: auto;`;
+            }
             break;
 
           case "customer_info":
