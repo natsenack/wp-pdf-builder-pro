@@ -1639,9 +1639,109 @@ const drawCompanyInfo = (
   // Récupération des données d'entreprise
   const companyData = getCompanyData(props);
 
-  // Fonction helper pour dessiner avec la police appropriée
-  const drawWithFont = (text: string, useHeaderFont: boolean = false) => {
-    const config = useHeaderFont
+  // Récupérer le layout
+  const layout = props.layout || "vertical";
+  console.log('[Canvas drawCompanyInfo] Layout:', layout, 'Building lines...');
+
+  // Construire les lignes selon le layout
+  const lines: Array<{text: string, isHeader: boolean}> = [];
+
+  if (layout === "vertical") {
+    // Mode vertical : une info par ligne
+    if (shouldDisplayValue(companyData.name, displayConfig.companyName)) {
+      lines.push({ text: companyData.name, isHeader: true });
+    }
+    if (shouldDisplayValue(companyData.address, displayConfig.address)) {
+      lines.push({ text: companyData.address, isHeader: false });
+      if (shouldDisplayValue(companyData.city, displayConfig.address)) {
+        lines.push({ text: companyData.city, isHeader: false });
+      }
+    }
+    [
+      [companyData.siret, displayConfig.siret],
+      [companyData.tva, displayConfig.vat],
+      [companyData.rcs, displayConfig.rcs],
+      [companyData.capital, displayConfig.capital],
+      [companyData.email, displayConfig.email],
+      [companyData.phone, displayConfig.phone],
+    ].forEach(([value, show]) => {
+      if (shouldDisplayValue(value as string, show as boolean)) {
+        lines.push({ text: value as string, isHeader: false });
+      }
+    });
+  } else if (layout === "horizontal") {
+    // Mode horizontal : plusieurs infos par ligne
+    if (shouldDisplayValue(companyData.name, displayConfig.companyName)) {
+      lines.push({ text: companyData.name, isHeader: true });
+    }
+    
+    // Ligne 1: Adresse complète
+    let addressLine = "";
+    if (shouldDisplayValue(companyData.address, displayConfig.address)) {
+      addressLine += companyData.address;
+      if (shouldDisplayValue(companyData.city, displayConfig.address)) {
+        addressLine += ", " + companyData.city;
+      }
+    }
+    if (addressLine) lines.push({ text: addressLine, isHeader: false });
+    
+    // Ligne 2: Contact (Email + Phone)
+    let contactLine = "";
+    if (shouldDisplayValue(companyData.email, displayConfig.email)) {
+      contactLine += companyData.email;
+    }
+    if (shouldDisplayValue(companyData.phone, displayConfig.phone)) {
+      contactLine += (contactLine ? " | " : "") + companyData.phone;
+    }
+    if (contactLine) lines.push({ text: contactLine, isHeader: false });
+    
+    // Ligne 3: Infos légales (SIRET + RCS + TVA)
+    let legalLine = "";
+    if (shouldDisplayValue(companyData.siret, displayConfig.siret)) {
+      legalLine += companyData.siret;
+    }
+    if (shouldDisplayValue(companyData.rcs, displayConfig.rcs)) {
+      legalLine += (legalLine ? " | " : "") + companyData.rcs;
+    }
+    if (shouldDisplayValue(companyData.tva, displayConfig.vat)) {
+      legalLine += (legalLine ? " | " : "") + companyData.tva;
+    }
+    if (shouldDisplayValue(companyData.capital, displayConfig.capital)) {
+      legalLine += (legalLine ? " | " : "") + companyData.capital;
+    }
+    if (legalLine) lines.push({ text: legalLine, isHeader: false });
+  } else if (layout === "compact") {
+    // Mode compact : tout sur une/deux lignes avec séparateurs
+    let compactText = "";
+    if (shouldDisplayValue(companyData.name, displayConfig.companyName)) {
+      compactText += companyData.name;
+    }
+    if (shouldDisplayValue(companyData.address, displayConfig.address)) {
+      compactText += (compactText ? " • " : "") + companyData.address.split(",")[0];
+    }
+    if (shouldDisplayValue(companyData.email, displayConfig.email)) {
+      compactText += (compactText ? " • " : "") + companyData.email;
+    }
+    if (shouldDisplayValue(companyData.phone, displayConfig.phone)) {
+      compactText += (compactText ? " • " : "") + companyData.phone;
+    }
+    if (shouldDisplayValue(companyData.siret, displayConfig.siret)) {
+      compactText += (compactText ? " • " : "") + companyData.siret.split(" ")[0] + "...";
+    }
+    
+    if (compactText) {
+      lines.push({ text: compactText, isHeader: false });
+    }
+  }
+
+  console.log('[Canvas drawCompanyInfo] Lines constructed:', lines.length, 'lines:', lines.map(l => l.text));
+
+  // Appliquer la police du corps par défaut
+  ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
+
+  // Dessiner toutes les lignes
+  lines.forEach(lineData => {
+    const config = lineData.isHeader
       ? {
           size: fontConfig.headerSize,
           weight: fontConfig.headerWeight,
@@ -1656,41 +1756,9 @@ const drawCompanyInfo = (
         };
 
     ctx.font = `${config.style} ${config.weight} ${config.size}px ${config.family}`;
-    if (useHeaderFont) ctx.fillStyle = colors.headerText;
-    y = drawCompanyLine(ctx, text, x, y, config.size);
-    if (useHeaderFont) ctx.fillStyle = colors.text;
-  };
-
-  // Appliquer la police du corps par défaut
-  ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
-
-  // Afficher les éléments selon la configuration
-  if (shouldDisplayValue(companyData.name, displayConfig.companyName)) {
-    drawWithFont(companyData.name, true);
-  }
-
-  if (shouldDisplayValue(companyData.address, displayConfig.address)) {
-    // Appliquer la police du body pour l'adresse
-    ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
-    y = drawCompanyLine(ctx, companyData.address, x, y, fontConfig.bodySize);
-    if (shouldDisplayValue(companyData.city, displayConfig.address)) {
-      y = drawCompanyLine(ctx, companyData.city, x, y, fontConfig.bodySize);
-    }
-  }
-
-  // Appliquer les informations avec la police du body
-  [
-    [companyData.siret, displayConfig.siret],
-    [companyData.tva, displayConfig.vat],
-    [companyData.rcs, displayConfig.rcs],
-    [companyData.capital, displayConfig.capital],
-    [companyData.email, displayConfig.email],
-    [companyData.phone, displayConfig.phone],
-  ].forEach(([value, show]) => {
-    if (shouldDisplayValue(value as string, show as boolean)) {
-      ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
-      y = drawCompanyLine(ctx, value as string, x, y, fontConfig.bodySize);
-    }
+    if (lineData.isHeader) ctx.fillStyle = colors.headerText;
+    y = drawCompanyLine(ctx, lineData.text, x, y, config.size);
+    if (lineData.isHeader) ctx.fillStyle = colors.text;
   });
 };
 
