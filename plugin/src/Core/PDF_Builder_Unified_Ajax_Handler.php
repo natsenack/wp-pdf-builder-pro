@@ -3570,10 +3570,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         $postcode = $getString($element['companyPostcode'] ?? get_option('woocommerce_store_postcode', ''));
         $email = $getString($element['companyEmail'] ?? get_option('admin_email', ''));
         $phone = $getString($element['companyPhone'] ?? get_option('woocommerce_store_phone', ''));
-        $siret = $getString($element['companySiret'] ?? '');
-        $rcs = $getString($element['companyRcs'] ?? '');
-        $tva = $getString($element['companyTva'] ?? '');
-        $capital = $getString($element['companyCapital'] ?? '');
+        $siret = $getString($element['companySiret'] ?? get_option('pdf_builder_company_siret', ''));
+        $rcs = $getString($element['companyRcs'] ?? get_option('pdf_builder_company_rcs', ''));
+        $tva = $getString($element['companyTva'] ?? get_option('pdf_builder_company_vat', ''));
+        $capital = $getString($element['companyCapital'] ?? get_option('pdf_builder_company_capital', ''));
         
         $fullAddress = trim($address . ($address && $postcode ? ', ' : '') . $postcode . ($postcode && $city ? ' ' : '') . $city);
         
