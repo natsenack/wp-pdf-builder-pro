@@ -3518,7 +3518,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         if ($layout === 'vertical') {
             // Mode vertical : une info par ligne
             if ($showFullName) {
-                $lines[] = '<strong>' . esc_html($order_data['customer']['full_name']) . '</strong>';
+                $lines[] = esc_html($order_data['customer']['full_name']);
             }
             if ($element['showAddress'] ?? true) {
                 $lines[] = esc_html($order_data['billing']['full_address']);
@@ -3536,7 +3536,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $line3 = '';
             
             if ($showFullName) {
-                $line1 .= '<strong>' . esc_html($order_data['customer']['full_name']) . '</strong>';
+                $line1 .= esc_html($order_data['customer']['full_name']);
             }
             if ($element['showEmail'] ?? true) {
                 $line1 .= ($line1 ? ' | ' : '') . esc_html($order_data['customer']['email']);
@@ -3554,7 +3554,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         } elseif ($layout === 'compact') {
             // Mode compact : nom en premier, puis reste avec séparateurs
             if ($showFullName) {
-                $lines[] = '<strong>' . esc_html($order_data['customer']['full_name']) . '</strong>';
+                $lines[] = esc_html($order_data['customer']['full_name']);
             }
             
             $compactLine = '';
@@ -3588,8 +3588,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         $html .= '<style>';
         // Style pour l'en-tête "Informations Client" (utilise headerFont*)
         $html .= '.customer-info-header { color: ' . $headerTextColor . '; font-family: ' . $headerFontFamily . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . $headerFontWeight . '; font-style: ' . $headerFontStyle . '; line-height: 1.2; margin-bottom: 8px; }';
-        // Style pour le nom du client (strong) utilise aussi headerFont* avec line-height 1.2
-        $html .= 'strong { color: ' . $headerTextColor . '; font-family: ' . $headerFontFamily . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . $headerFontWeight . '; font-style: ' . $headerFontStyle . '; line-height: 1.2; }';
         $html .= '</style>';
         $html .= '<div style="' . $inner_styles . '">';
         // Afficher l'en-tête SÉPARÉMENT, avant les lignes de contenu (comme dans React)
