@@ -173,6 +173,11 @@ const WOOCOMMERCE_ELEMENTS = [
       shadowBlur: 0,
       showBackground: true,
       visible: true,
+      // ✅ NEW: Propriétés d'icônes
+      showIcons: false,
+      iconsPosition: "left",
+      iconsSize: 16,
+      iconsColor: "#374151",
     },
   },
   {

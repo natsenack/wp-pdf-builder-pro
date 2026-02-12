@@ -331,6 +331,67 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               />
             </div>
           </div>
+
+          {/* Section Icônes */}
+          <div style={{ marginBottom: '16px' }}>
+            <div
+              style={{
+                fontSize: '12px',
+                fontWeight: 'bold',
+                color: '#333',
+                marginBottom: '8px',
+                padding: '4px 8px',
+                backgroundColor: '#f8f9fa',
+                borderRadius: '3px',
+                border: '1px solid #e9ecef',
+              }}
+            >
+              Icônes
+            </div>
+            <div style={{ paddingLeft: '8px' }}>
+              <Toggle
+                checked={element.showIcons === true}
+                onChange={(checked) =>
+                  onChange(element.id, 'showIcons', checked)
+                }
+                label="Afficher les icônes"
+                description="Affiche des icônes devant chaque type d'information"
+              />
+
+              {element.showIcons && (
+                <>
+                  <div style={{ marginTop: '8px', marginBottom: '8px' }}>
+                    <label
+                      style={{
+                        display: 'block',
+                        fontSize: '11px',
+                        fontWeight: 'bold',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      Position des icônes
+                    </label>
+                    <select
+                      value={(element.iconsPosition as string) || 'left'}
+                      onChange={(e) =>
+                        onChange(element.id, 'iconsPosition', e.target.value)
+                      }
+                      style={{
+                        width: '100%',
+                        padding: '4px 8px',
+                        border: '1px solid #ccc',
+                        borderRadius: '3px',
+                        fontSize: '12px',
+                      }}
+                    >
+                      <option value="left">À gauche</option>
+                      <option value="right">À droite</option>
+                    </select>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
         </>
       )}
 

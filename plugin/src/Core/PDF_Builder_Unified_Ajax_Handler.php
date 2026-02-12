@@ -3555,6 +3555,39 @@ class PDF_Builder_Unified_Ajax_Handler {
         $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'left';
         $verticalAlign = isset($element['verticalAlign']) ? $element['verticalAlign'] : 'top';
         
+        // ✅ NEW: Propriétés d'icônes
+        $showIcons = isset($element['showIcons']) ? (bool)$element['showIcons'] : false;
+        $iconsPosition = isset($element['iconsPosition']) ? $element['iconsPosition'] : 'left';
+        
+        // ✅ HELPER: Formater le numéro de téléphone (ajouter un point tous les 2 chiffres)
+        $formatPhoneNumber = function($phone) {
+            if (empty($phone)) return $phone;
+            $cleaned = preg_replace('/\D/', '', $phone);
+            $chunks = str_split($cleaned, 2);
+            return implode('.', $chunks);
+        };
+        
+        // ✅ HELPER: Récupérer l'icône pour un type d'info
+        $getIconForType = function($type) {
+            $icons = [
+                'phone' => '📞',
+                'email' => '✉️',
+                'address' => '📍',
+                'siret' => '🏢',
+                'rcs' => '📋',
+                'tva' => '💼',
+                'capital' => '💰',
+            ];
+            return isset($icons[$type]) ? $icons[$type] : '';
+        };
+        
+        // ✅ HELPER: Ajouter l'icône au texte si showIcons est activé
+        $buildLineText = function($text, $iconType = null) use ($showIcons, $iconsPosition, $getIconForType) {
+            if (!$showIcons || empty($iconType)) return $text;
+            $icon = $getIconForType($iconType);
+            return $iconsPosition === 'left' ? $icon . ' ' . $text : $text . ' ' . $icon;
+        };
+        
         // Récupérer les données de l'entreprise depuis l'élément canvas (pas depuis les options WordPress)
         // Helper pour s'assurer qu'on a une string et pas un array
         $getString = function($value) {
@@ -3575,6 +3608,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         $tva = $getString($element['companyTva'] ?? get_option('pdf_builder_company_vat', ''));
         $capital = $getString($element['companyCapital'] ?? get_option('pdf_builder_company_capital', ''));
         
+        // ✅ NEW: Formater le téléphone
+        $phone = $formatPhoneNumber($phone);
+        
         $fullAddress = trim($address . ($address && $postcode ? ', ' : '') . $postcode . ($postcode && $city ? ' ' : '') . $city);
         
         // Construire les lignes selon le layout
@@ -3586,25 +3622,25 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
             }
             if (($element['showAddress'] ?? true) && $fullAddress) {
-                $lines[] = esc_html($fullAddress);
+                $lines[] = esc_html($buildLineText($fullAddress, 'address'));
             }
             if (($element['showEmail'] ?? true) && $email) {
-                $lines[] = esc_html($email);
+                $lines[] = esc_html($buildLineText($email, 'email'));
             }
             if (($element['showPhone'] ?? true) && $phone) {
-                $lines[] = esc_html($phone);
+                $lines[] = esc_html($buildLineText($phone, 'phone'));
             }
             if (($element['showSiret'] ?? true) && $siret) {
-                $lines[] = esc_html($siret);
+                $lines[] = esc_html($buildLineText($siret, 'siret'));
             }
             if (($element['showRcs'] ?? true) && $rcs) {
-                $lines[] = esc_html($rcs);
+                $lines[] = esc_html($buildLineText($rcs, 'rcs'));
             }
             if (($element['showVat'] ?? true) && $tva) {
-                $lines[] = esc_html($tva);
+                $lines[] = esc_html($buildLineText($tva, 'tva'));
             }
             if (($element['showCapital'] ?? true) && $capital) {
-                $lines[] = esc_html($capital);
+                $lines[] = esc_html($buildLineText($capital, 'capital'));
             }
         } elseif ($layout === 'horizontal') {
             // Mode horizontal : plusieurs infos par ligne, groupées logiquement
@@ -3615,33 +3651,33 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Ligne 1: Adresse + Ville
             $line1 = '';
             if (($element['showAddress'] ?? true) && $fullAddress) {
-                $line1 .= esc_html($fullAddress);
+                $line1 .= esc_html($buildLineText($fullAddress, 'address'));
             }
             if ($line1) $lines[] = $line1;
             
             // Ligne 2: Email + Phone
             $line2 = '';
             if (($element['showEmail'] ?? true) && $email) {
-                $line2 .= esc_html($email);
+                $line2 .= esc_html($buildLineText($email, 'email'));
             }
             if (($element['showPhone'] ?? true) && $phone) {
-                $line2 .= ($line2 ? ' | ' : '') . esc_html($phone);
+                $line2 .= ($line2 ? ' | ' : '') . esc_html($buildLineText($phone, 'phone'));
             }
             if ($line2) $lines[] = $line2;
             
             // Ligne 3: Infos légales (SIRET | RCS | TVA | Capital)
             $line3 = '';
             if (($element['showSiret'] ?? true) && $siret) {
-                $line3 .= esc_html($siret);
+                $line3 .= esc_html($buildLineText($siret, 'siret'));
             }
             if (($element['showRcs'] ?? true) && $rcs) {
-                $line3 .= ($line3 ? ' | ' : '') . esc_html($rcs);
+                $line3 .= ($line3 ? ' | ' : '') . esc_html($buildLineText($rcs, 'rcs'));
             }
             if (($element['showVat'] ?? true) && $tva) {
-                $line3 .= ($line3 ? ' | ' : '') . esc_html($tva);
+                $line3 .= ($line3 ? ' | ' : '') . esc_html($buildLineText($tva, 'tva'));
             }
             if (($element['showCapital'] ?? true) && $capital) {
-                $line3 .= ($line3 ? ' | ' : '') . esc_html($capital);
+                $line3 .= ($line3 ? ' | ' : '') . esc_html($buildLineText($capital, 'capital'));
             }
             if ($line3) $lines[] = $line3;
         } elseif ($layout === 'compact') {
@@ -3652,25 +3688,25 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             $compactLine = '';
             if (($element['showAddress'] ?? true) && $fullAddress) {
-                $compactLine .= esc_html($fullAddress);  // Adresse complète
+                $compactLine .= esc_html($buildLineText($fullAddress, 'address'));  // Adresse complète
             }
             if (($element['showEmail'] ?? true) && $email) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($email);
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($buildLineText($email, 'email'));
             }
             if (($element['showPhone'] ?? true) && $phone) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($phone);
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($buildLineText($phone, 'phone'));
             }
             if (($element['showSiret'] ?? true) && $siret) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($siret);
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($buildLineText($siret, 'siret'));
             }
             if (($element['showRcs'] ?? true) && $rcs) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($rcs);
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($buildLineText($rcs, 'rcs'));
             }
             if (($element['showVat'] ?? true) && $tva) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($tva);
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($buildLineText($tva, 'tva'));
             }
             if (($element['showCapital'] ?? true) && $capital) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($capital);
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($buildLineText($capital, 'capital'));
             }
             
             if ($compactLine) $lines[] = $compactLine;

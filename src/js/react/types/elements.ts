@@ -642,6 +642,11 @@ export interface CustomerInfoElementProperties extends BaseElementProperties {
   // Propriétés de style
   headerTextColor?: string;
   verticalAlign?: "top" | "middle" | "bottom";
+  // Propriétés d'icônes
+  showIcons?: boolean;
+  iconsPosition?: "left" | "right";
+  iconsSize?: number;
+  iconsColor?: string;
 }
 
 export interface CompanyInfoElementProperties extends BaseElementProperties {
@@ -685,6 +690,11 @@ export interface CompanyInfoElementProperties extends BaseElementProperties {
   companyCapital?: string;
   companyEmail?: string;
   companyPhone?: string;
+  // Propriétés d'icônes
+  showIcons?: boolean;
+  iconsPosition?: "left" | "right";
+  iconsSize?: number;
+  iconsColor?: string;
 }
 
 export interface ImageElement extends BaseElement {

@@ -1576,6 +1576,55 @@ const drawCompanyInfo = (
   const props = element as CompanyInfoElement;
   console.log('[Canvas drawCompanyInfo] Called with element.id:', element.id, 'layout:', props.layout, 'textAlign:', props.textAlign);
 
+  // ✅ HELPER: Formater le numéro de téléphone (ajouter un point tous les 2 chiffres)
+  const formatPhoneNumber = (phone: string): string => {
+    if (!phone) return phone;
+    const cleaned = phone.replace(/\D/g, '');
+    const matches = cleaned.match(/\d{2}/g);
+    return matches ? matches.join('.') : phone;
+  };
+
+  // ✅ HELPER: Récupérer l'icône pour un type d'info
+  const getIconForType = (type: 'phone' | 'email' | 'address' | 'siret' | 'rcs' | 'tva' | 'capital'): string => {
+    const icons: Record<string, string> = {
+      phone: '📞',
+      email: '✉️',
+      address: '📍',
+      siret: '🏢',
+      rcs: '📋',
+      tva: '💼',
+      capital: '💰',
+    };
+    return icons[type] || '';
+  };
+
+  // Récupérer les données de l'entreprise depuis l'élément canvas (pas depuis les options WordPress)
+  const getCompanyData = () => {
+    const baseData = {
+      name: props.companyName || "",
+      address: props.companyAddress || "",
+      city: props.companyCity || "",
+      siret: props.companySiret || "",
+      tva: props.companyTva || "",
+      rcs: props.companyRcs || "",
+      capital: props.companyCapital || "",
+      email: props.companyEmail || "",
+      phone: props.companyPhone || "",
+    };
+
+    // Remplacer par les données dynamiques du plugin si disponibles
+    const pluginCompany = (window as any).pdfBuilderData?.company;
+    if (pluginCompany) {
+      Object.keys(baseData).forEach((key) => {
+        if (pluginCompany[key] && pluginCompany[key] !== "Non indiqué") {
+          (baseData as any)[key] = pluginCompany[key];
+        }
+      });
+    }
+
+    return baseData;
+  };
+
   // Configuration des polices
   const fontSize = props.fontSize || 12;
   const fontConfig = {
@@ -1672,27 +1721,36 @@ const drawCompanyInfo = (
   // Construire les lignes selon le layout
   const lines: Array<{text: string, isHeader: boolean}> = [];
 
+  // ✅ HELPER: Ajouter l'icône au texte si showIcons est activé
+  const buildLineText = (text: string, iconType?: 'phone' | 'email' | 'address' | 'siret' | 'rcs' | 'tva' | 'capital'): string => {
+    if (!props.showIcons || !iconType) return text;
+    const icon = getIconForType(iconType);
+    const position = props.iconsPosition || 'left';
+    return position === 'left' ? `${icon} ${text}` : `${text} ${icon}`;
+  };
+
   if (layout === "vertical") {
     // Mode vertical : une info par ligne
     if (shouldDisplayValue(companyData.name, displayConfig.companyName)) {
       lines.push({ text: companyData.name, isHeader: true });
     }
     if (shouldDisplayValue(companyData.address, displayConfig.address)) {
-      lines.push({ text: companyData.address, isHeader: false });
+      lines.push({ text: buildLineText(companyData.address, 'address'), isHeader: false });
       if (shouldDisplayValue(companyData.city, displayConfig.address)) {
         lines.push({ text: companyData.city, isHeader: false });
       }
     }
     [
-      [companyData.siret, displayConfig.siret],
-      [companyData.tva, displayConfig.vat],
-      [companyData.rcs, displayConfig.rcs],
-      [companyData.capital, displayConfig.capital],
-      [companyData.email, displayConfig.email],
-      [companyData.phone, displayConfig.phone],
-    ].forEach(([value, show]) => {
+      [companyData.siret, displayConfig.siret, 'siret' as const],
+      [companyData.tva, displayConfig.vat, 'tva' as const],
+      [companyData.rcs, displayConfig.rcs, 'rcs' as const],
+      [companyData.capital, displayConfig.capital, 'capital' as const],
+      [companyData.email, displayConfig.email, 'email' as const],
+      [formatPhoneNumber(companyData.phone), displayConfig.phone, 'phone' as const],
+    ].forEach(([value, show, iconType]) => {
       if (shouldDisplayValue(value as string, show as boolean)) {
-        lines.push({ text: value as string, isHeader: false });
+        const lineText = buildLineText(value as string, iconType);
+        lines.push({ text: lineText, isHeader: false });
       }
     });
   } else if (layout === "horizontal") {
@@ -1709,7 +1767,7 @@ const drawCompanyInfo = (
         addressLine += ", " + companyData.city;
       }
     }
-    if (addressLine) lines.push({ text: addressLine, isHeader: false });
+    if (addressLine) lines.push({ text: buildLineText(addressLine, 'address'), isHeader: false });
     
     // Ligne 2: Contact (Email + Phone)
     let contactLine = "";
@@ -1717,9 +1775,9 @@ const drawCompanyInfo = (
       contactLine += companyData.email;
     }
     if (shouldDisplayValue(companyData.phone, displayConfig.phone)) {
-      contactLine += (contactLine ? " | " : "") + companyData.phone;
+      contactLine += (contactLine ? " | " : "") + formatPhoneNumber(companyData.phone);
     }
-    if (contactLine) lines.push({ text: contactLine, isHeader: false });
+    if (contactLine) lines.push({ text: buildLineText(contactLine, 'email'), isHeader: false });
     
     // Ligne 3: Infos légales (SIRET + RCS + TVA)
     let legalLine = "";
@@ -1735,7 +1793,7 @@ const drawCompanyInfo = (
     if (shouldDisplayValue(companyData.capital, displayConfig.capital)) {
       legalLine += (legalLine ? " | " : "") + companyData.capital;
     }
-    if (legalLine) lines.push({ text: legalLine, isHeader: false });
+    if (legalLine) lines.push({ text: buildLineText(legalLine, 'siret'), isHeader: false });
   } else if (layout === "compact") {
     // Mode compact : nom en en-tête + tout le reste avec séparateurs, word wrap si trop long
     
@@ -1753,7 +1811,7 @@ const drawCompanyInfo = (
       compactText += (compactText ? " • " : "") + companyData.email;
     }
     if (shouldDisplayValue(companyData.phone, displayConfig.phone)) {
-      compactText += (compactText ? " • " : "") + companyData.phone;
+      compactText += (compactText ? " • " : "") + formatPhoneNumber(companyData.phone);
     }
     if (shouldDisplayValue(companyData.siret, displayConfig.siret)) {
       compactText += (compactText ? " • " : "") + companyData.siret;
