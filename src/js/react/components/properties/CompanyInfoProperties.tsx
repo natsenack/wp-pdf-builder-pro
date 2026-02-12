@@ -98,6 +98,19 @@ export function CompanyInfoProperties({
     setActiveTab({ ...activeTab, [element.id]: tab });
   };
 
+  // Helper pour normaliser le padding en nombre (gère les objets padding complexes)
+  const normalizePadding = (
+    value: number | { top?: number; right?: number; bottom?: number; left?: number } | undefined,
+    defaultValue: number = 12
+  ): number => {
+    if (typeof value === 'number') return value;
+    if (typeof value === 'object' && value !== null) {
+      // Si c'est un objet, on prend la moyenne ou la première valeur disponible
+      return value.top ?? value.left ?? value.right ?? value.bottom ?? defaultValue;
+    }
+    return defaultValue;
+  };
+
   // Fonction pour générer le contenu des infos entreprise depuis les propriétés
   const generateCompanyContent = (props?: any) => {
     const config = props || element;
@@ -1637,20 +1650,20 @@ export function CompanyInfoProperties({
               }}
             >
               Padding horizontal:{" "}
-              {element.paddingHorizontal !== undefined
-                ? element.paddingHorizontal
-                : element.padding || 12}
+              {normalizePadding(
+                element.paddingHorizontal,
+                normalizePadding(element.padding, 12)
+              )}
               px
             </label>
             <input
               type="range"
               min={0}
               max={50}
-              value={
-                element.paddingHorizontal !== undefined
-                  ? element.paddingHorizontal
-                  : element.padding || 12
-              }
+              value={normalizePadding(
+                element.paddingHorizontal,
+                normalizePadding(element.padding, 12)
+              )}
               onChange={(e) =>
                 onChange(
                   element.id,
@@ -1679,20 +1692,20 @@ export function CompanyInfoProperties({
               }}
             >
               Padding vertical:{" "}
-              {element.paddingVertical !== undefined
-                ? element.paddingVertical
-                : element.padding || 12}
+              {normalizePadding(
+                element.paddingVertical,
+                normalizePadding(element.padding, 12)
+              )}
               px
             </label>
             <input
               type="range"
               min={0}
               max={50}
-              value={
-                element.paddingVertical !== undefined
-                  ? element.paddingVertical
-                  : element.padding || 12
-              }
+              value={normalizePadding(
+                element.paddingVertical,
+                normalizePadding(element.padding, 12)
+              )}
               onChange={(e) =>
                 onChange(
                   element.id,
@@ -1722,7 +1735,7 @@ export function CompanyInfoProperties({
             >
               Espacement des lignes des informations{" "}
               <span style={{ color: "#666", fontSize: "10px" }}>
-                ({parseFloat(element.lineHeight || 1.0).toFixed(1)})
+                ({(parseFloat(String(element.lineHeight || 1.0))).toFixed(1)})
               </span>
             </label>
             <input
@@ -1730,7 +1743,7 @@ export function CompanyInfoProperties({
               min="0.8"
               max="3"
               step="0.1"
-              value={parseFloat(element.lineHeight) || 1.0}
+              value={parseFloat(String(element.lineHeight || 1.0))}
               onChange={(e) =>
                 onChange(element.id, "lineHeight", parseFloat(e.target.value))
               }
@@ -1756,7 +1769,7 @@ export function CompanyInfoProperties({
             >
               Espacement des lettres{" "}
               <span style={{ color: "#666", fontSize: "10px" }}>
-                ({parseFloat(element.letterSpacing || 0).toFixed(2)}px)
+                ({(parseFloat(String(element.letterSpacing || 0))).toFixed(2)}px)
               </span>
             </label>
             <input
@@ -1764,7 +1777,7 @@ export function CompanyInfoProperties({
               min="-2"
               max="5"
               step="0.1"
-              value={parseFloat(element.letterSpacing) || 0}
+              value={parseFloat(String(element.letterSpacing || 0))}
               onChange={(e) =>
                 onChange(
                   element.id,
