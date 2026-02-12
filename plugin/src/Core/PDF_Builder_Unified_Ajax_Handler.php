@@ -3706,30 +3706,30 @@ class PDF_Builder_Unified_Ajax_Handler {
         $lines = [];
         
         if ($layout === 'vertical') {
-            // Mode vertical : une info par ligne
+            // Mode vertical : une info par ligne (ordre identique au React)
             if ($element['showCompanyName'] ?? true) {
                 $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
             }
             if (($element['showAddress'] ?? true) && $fullAddress) {
                 $lines[] = esc_html($buildLineText($fullAddress, 'address'));
             }
+            if (($element['showSiret'] ?? true) && $siret) {
+                $lines[] = esc_html($buildLineText($siret, 'siret'));
+            }
+            if (($element['showVat'] ?? true) && $tva) {
+                $lines[] = esc_html($buildLineText($tva, 'tva'));
+            }
+            if (($element['showRcs'] ?? true) && $rcs) {
+                $lines[] = esc_html($buildLineText($rcs, 'rcs'));
+            }
+            if (($element['showCapital'] ?? true) && $capital) {
+                $lines[] = esc_html($buildLineText($capital, 'capital'));
+            }
             if (($element['showEmail'] ?? true) && $email) {
                 $lines[] = esc_html($buildLineText($email, 'email'));
             }
             if (($element['showPhone'] ?? true) && $phone) {
                 $lines[] = esc_html($buildLineText($phone, 'phone'));
-            }
-            if (($element['showSiret'] ?? true) && $siret) {
-                $lines[] = esc_html($buildLineText($siret, 'siret'));
-            }
-            if (($element['showRcs'] ?? true) && $rcs) {
-                $lines[] = esc_html($buildLineText($rcs, 'rcs'));
-            }
-            if (($element['showVat'] ?? true) && $tva) {
-                $lines[] = esc_html($buildLineText($tva, 'tva'));
-            }
-            if (($element['showCapital'] ?? true) && $capital) {
-                $lines[] = esc_html($buildLineText($capital, 'capital'));
             }
         } elseif ($layout === 'horizontal') {
             // Mode horizontal : plusieurs infos par ligne, groupées logiquement
@@ -3770,7 +3770,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
             if ($line3) $lines[] = $line3;
         } elseif ($layout === 'compact') {
-            // Mode compact : nom en en-tête + reste avec séparateurs (• bullet points)
+            // Mode compact : nom en en-tête + reste avec séparateurs (ordre identique au React)
             if ($element['showCompanyName'] ?? true) {
                 $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
             }
@@ -3793,16 +3793,13 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $compactLine .= ($compactLine ? ' • ' : '') . esc_html($compactFirstIcon === null ? $addIcon($siret, 'siret', true) : $siret);
                 if ($compactFirstIcon === null) $compactFirstIcon = 'siret';
             }
-            if (($element['showRcs'] ?? true) && $rcs) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($compactFirstIcon === null ? $addIcon($rcs, 'rcs', true) : $rcs);
-                if ($compactFirstIcon === null) $compactFirstIcon = 'rcs';
-            }
             if (($element['showVat'] ?? true) && $tva) {
                 $compactLine .= ($compactLine ? ' • ' : '') . esc_html($compactFirstIcon === null ? $addIcon($tva, 'tva', true) : $tva);
                 if ($compactFirstIcon === null) $compactFirstIcon = 'tva';
             }
-            if (($element['showCapital'] ?? true) && $capital) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($compactFirstIcon === null ? $addIcon($capital, 'capital', true) : $capital);
+            if (($element['showRcs'] ?? true) && $rcs) {
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($compactFirstIcon === null ? $addIcon($rcs, 'rcs', true) : $rcs);
+                if ($compactFirstIcon === null) $compactFirstIcon = 'rcs';
             }
             
             if ($compactLine) $lines[] = $compactLine;
