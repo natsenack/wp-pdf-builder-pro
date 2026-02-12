@@ -1259,7 +1259,10 @@ const drawCustomerInfo = (
 
   ctx.fillStyle = normalizeColor(props.textColor || "#000000");
   ctx.font = `${headerFontStyle} ${headerFontWeight} ${headerFontSize}px ${headerFontFamily}`;
-  ctx.textAlign = "left";
+  
+  // Appliquer l'alignement horizontal
+  const textAlign = props.textAlign || "left";
+  ctx.textAlign = textAlign as CanvasTextAlign;
 
   // Construire le contenu et calculer la hauteur totale
   let customerData: {
@@ -1364,10 +1367,24 @@ const drawCustomerInfo = (
 
   let y = startY;
 
+  // Calculer la position X selon l'alignement
+  const getTextX = () => {
+    switch (textAlign) {
+      case "center":
+        return element.width / 2;
+      case "right":
+        return element.width - paddingHorizontal;
+      default: // left
+        return paddingHorizontal;
+    }
+  };
+
+  const textX = getTextX();
+
   // En-tête
   if (showHeaders) {
     ctx.fillStyle = normalizeColor(props.headerTextColor || "#111827");
-    ctx.fillText("Informations Client", paddingHorizontal, y);
+    ctx.fillText("Informations Client", textX, y);
     y += 25;
     ctx.fillStyle = normalizeColor(props.textColor || "#000000");
   }
@@ -1376,7 +1393,7 @@ const drawCustomerInfo = (
 
   // Dessiner les lignes
   lines.forEach((lineText) => {
-    ctx.fillText(lineText, paddingHorizontal, y);
+    ctx.fillText(lineText, textX, y);
     y += 18;
   });
 };
@@ -1584,10 +1601,24 @@ const drawCompanyInfo = (
 
   // Configuration du contexte
   ctx.fillStyle = colors.text;
-  ctx.textAlign = "left";
+  
+  // Appliquer l'alignement horizontal
+  const textAlign = props.textAlign || "left";
+  ctx.textAlign = textAlign as CanvasTextAlign;
 
   // Position de départ avec padding dynamique
-  let x = paddingHorizontal;
+  const getTextX = () => {
+    switch (textAlign) {
+      case "center":
+        return element.width / 2;
+      case "right":
+        return element.width - paddingHorizontal;
+      default: // left
+        return paddingHorizontal;
+    }
+  };
+  
+  let x = getTextX();
   let y = paddingVertical + 10;
 
   // Récupération des données d'entreprise
