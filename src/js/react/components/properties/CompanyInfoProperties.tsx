@@ -1019,10 +1019,26 @@ export function CompanyInfoProperties({
                       onClick={() => {
                         // Appliquer le thème et toutes ses couleurs
                         onChange(element.id, "theme", theme.id);
-                        onChange(element.id, "backgroundColor", theme.styles.backgroundColor);
-                        onChange(element.id, "borderColor", theme.styles.borderColor);
-                        onChange(element.id, "textColor", theme.styles.textColor);
-                        onChange(element.id, "headerTextColor", theme.styles.headerTextColor);
+                        onChange(
+                          element.id,
+                          "backgroundColor",
+                          theme.styles.backgroundColor,
+                        );
+                        onChange(
+                          element.id,
+                          "borderColor",
+                          theme.styles.borderColor,
+                        );
+                        onChange(
+                          element.id,
+                          "textColor",
+                          theme.styles.textColor,
+                        );
+                        onChange(
+                          element.id,
+                          "headerTextColor",
+                          theme.styles.headerTextColor,
+                        );
                       }}
                       style={{
                         cursor: "pointer",
@@ -1764,7 +1780,7 @@ export function CompanyInfoProperties({
                 marginBottom: "6px",
               }}
             >
-              Espacement des lignes{" "}
+              Espacement des lignes des informations{" "}
               <span style={{ color: "#666", fontSize: "10px" }}>
                 ({parseFloat(element.lineHeight || 1.0).toFixed(1)})
               </span>

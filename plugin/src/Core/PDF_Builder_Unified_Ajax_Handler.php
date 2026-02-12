@@ -3549,6 +3549,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         $html = '<div class="element" style="' . $base_styles . '">';
+        // ✅ Nom du client (strong) utilise toujours line-height 1.2, pas le line-height personnalisé
+        $html .= '<style>strong { line-height: 1.2; }</style>';
         $html .= '<div style="' . $inner_styles . '">';
         $html .= implode("\n", $lines);
         $html .= '</div>';
@@ -3842,7 +3844,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Générer le HTML avec styles de police pour le header (strong)
         $html = '<div class="element" style="' . $elementStyles . '">';
         $html .= '<style>';
-        $html .= 'strong { color: ' . $headerTextColor . '; font-family: ' . $headerFontFamily . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . $headerFontWeight . '; font-style: ' . $headerFontStyle . '; }';
+        // ✅ Header (strong) utilise toujours line-height 1.2, pas le line-height personnalisé
+        $html .= 'strong { color: ' . $headerTextColor . '; font-family: ' . $headerFontFamily . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . $headerFontWeight . '; font-style: ' . $headerFontStyle . '; line-height: 1.2; }';
         $html .= '</style>';
         $html .= '<div style="' . $inner_styles . '">';
         $html .= implode("\n", $lines);

@@ -408,7 +408,9 @@ export interface CompanyInfoElement extends BaseElement {
   backgroundColor?: string;
   showBackground?: boolean;
   border?: { width?: number; style?: string; color?: string };
-  padding?: number | { top?: number; right?: number; bottom?: number; left?: number };
+  padding?:
+    | number
+    | { top?: number; right?: number; bottom?: number; left?: number };
   borderColor?: string;
   borderWidth?: number;
   showIcons?: boolean;
@@ -622,7 +624,9 @@ export interface CircleElement extends BaseElement {
 export interface TextElement extends BaseElement {
   type: "text";
   text?: string;
-  padding?: number | { top?: number; right?: number; bottom?: number; left?: number };
+  padding?:
+    | number
+    | { top?: number; right?: number; bottom?: number; left?: number };
   fontSize?: number;
   textColor?: string;
   color?: string; // Alias pour textColor pour compatibilité
@@ -771,9 +775,11 @@ export interface ImageElement extends BaseElement {
 export interface OrderNumberElementProperties extends BaseElementProperties {
   // Propriétés d'affichage
   showHeaders?: boolean;
-  showBorders?: boolean;  backgroundColor?: string;
+  showBorders?: boolean;
+  backgroundColor?: string;
   borderColor?: string;
-  borderWidth?: number;  showLabel?: boolean;
+  borderWidth?: number;
+  showLabel?: boolean;
   showDate?: boolean;
   // Propriétés de mise en page
   contentAlign?: "left" | "center" | "right";
@@ -967,7 +973,16 @@ export interface CompanyLogoElement extends BaseElement {
   src?: string;
   alt?: string;
   fit?: "contain" | "cover" | "fill" | "none" | "scale-down";
-  position?: "center" | "top" | "bottom" | "left" | "right" | "top-left" | "top-right" | "bottom-left" | "bottom-right";
+  position?:
+    | "center"
+    | "top"
+    | "bottom"
+    | "left"
+    | "right"
+    | "top-left"
+    | "top-right"
+    | "bottom-left"
+    | "bottom-right";
   opacity?: number;
   alignment?: "left" | "center" | "right";
   maintainAspectRatio?: boolean;

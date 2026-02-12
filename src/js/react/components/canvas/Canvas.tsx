@@ -152,7 +152,9 @@ const createColorConfig = (
 ) => {
   const defaultValues = defaults || DEFAULT_COLORS;
   return {
-    background: normalizeColor(props.backgroundColor || defaultValues.background),
+    background: normalizeColor(
+      props.backgroundColor || defaultValues.background,
+    ),
     border: normalizeColor(props.borderColor || defaultValues.border),
     text: normalizeColor(props.textColor || defaultValues.text),
   };
@@ -256,14 +258,22 @@ const applyShapeStyle = (
 // Fonction helper pour calculer la position X selon l'alignement du texte
 // Fonction helper pour normaliser padding (number ou object) en nombre
 const normalizePaddingToNumber = (
-  padding: number | { top?: number; right?: number; bottom?: number; left?: number } | undefined,
+  padding:
+    | number
+    | { top?: number; right?: number; bottom?: number; left?: number }
+    | undefined,
   defaultValue: number = 12,
 ): number => {
   if (padding === undefined || padding === null) return defaultValue;
   if (typeof padding === "number") return padding;
   if (typeof padding === "object") {
     // Si c'est un objet, retourner la valeur moyenne ou la première disponible
-    const values = [padding.top, padding.right, padding.bottom, padding.left].filter(v => v !== undefined) as number[];
+    const values = [
+      padding.top,
+      padding.right,
+      padding.bottom,
+      padding.left,
+    ].filter((v) => v !== undefined) as number[];
     return values.length > 0 ? Math.min(...values) : defaultValue;
   }
   return defaultValue;
@@ -378,12 +388,12 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
   const lineHeight = parseFloat(props.lineHeight as any) || 1.2;
   const letterSpacing = parseFloat(props.letterSpacing as any) || 0;
   const text = props.text || "Text";
-  
+
   // Gérer les lignes séparées par \n
-  const lines = text.split('\n');
+  const lines = text.split("\n");
   let currentY = y;
   const originalTextAlign = ctx.textAlign;
-  
+
   lines.forEach((line: string, index: number) => {
     // Appliquer le letter-spacing
     if (letterSpacing !== 0) {
@@ -391,7 +401,7 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
       const chars = Array.from(line);
       ctx.textAlign = "left";
       let charX = x;
-      
+
       // Si l'alignement original était "center" ou "right", calculer l'offset
       if (originalTextAlign !== "left") {
         // Calculer la largeur totale avec letterSpacing
@@ -400,7 +410,7 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
           totalWidth += ctx.measureText(chars[i]).width;
           if (i < chars.length - 1) totalWidth += letterSpacing;
         }
-        
+
         // Ajuster selon l'alignement original
         if (originalTextAlign === "center") {
           charX = x - totalWidth / 2;
@@ -408,20 +418,20 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
           charX = x - totalWidth;
         }
       }
-      
+
       // Dessiner caractère par caractère (maintenant correctement avec emoji)
       for (let i = 0; i < chars.length; i++) {
         const char = chars[i];
         ctx.fillText(char, charX, currentY);
         charX += ctx.measureText(char).width + letterSpacing;
       }
-      
+
       // Restaurer l'alignement original
       ctx.textAlign = originalTextAlign;
     } else {
       ctx.fillText(line, x, currentY);
     }
-    
+
     // Espacement entre les lignes
     if (index < lines.length - 1) {
       currentY += fontConfig.size * lineHeight;
@@ -637,7 +647,7 @@ const drawProductTable = (
   const showGlobalDiscount = props.showGlobalDiscount !== false;
   const textColor = normalizeColor(props.textColor || "#000000");
   const borderRadius = props.borderRadius || 0;
-  
+
   // ✅ NEW: Colonne visibilité basées sur showImage et autres propriétés
   const showImage = props.showImage !== false;
   const showName = true; // Toujours afficher le nom du produit
@@ -764,7 +774,10 @@ const drawProductTable = (
     // Get real order totals from WooCommerce
     const orderTotals = wooCommerceManager.getOrderTotals();
     // Calculate subtotal from products (includes fees already)
-    subtotal = products.reduce((sum: number, p: any) => sum + (Number(p.total) || 0), 0);
+    subtotal = products.reduce(
+      (sum: number, p: any) => sum + (Number(p.total) || 0),
+      0,
+    );
     shippingCost = Number(orderTotals.shipping) || 0;
     taxAmount = Number(orderTotals.tax) || 0;
     globalDiscount = Number(orderTotals.discount) || 0;
@@ -777,7 +790,10 @@ const drawProductTable = (
   } else {
     // ✅ CALCUL CORRECT DES TOTALS - Pas de hardcoding
     // 1) Calculer le sous-total à partir des produits
-    subtotal = products.reduce((sum: number, p: any) => sum + (p.total || 0), 0);
+    subtotal = products.reduce(
+      (sum: number, p: any) => sum + (p.total || 0),
+      0,
+    );
 
     // 2) Ajouter les frais supplémentaires si présents
     totalFees = fees.reduce((sum: number, f: any) => sum + (f.total || 0), 0);
@@ -1300,7 +1316,9 @@ const drawCustomerInfo = (
   const fontStyle = props.fontStyle || "normal";
   // ✅ NEW: Padding horizontal et vertical séparés (backward compatibility avec padding unique)
   const paddingHorizontal = normalizePaddingToNumber(
-    props.paddingHorizontal !== undefined ? props.paddingHorizontal : props.padding,
+    props.paddingHorizontal !== undefined
+      ? props.paddingHorizontal
+      : props.padding,
     12,
   );
   const paddingVertical = normalizePaddingToNumber(
@@ -1318,7 +1336,16 @@ const drawCustomerInfo = (
   const bodyFontWeight = props.bodyFontWeight || fontWeight;
   const bodyFontStyle = props.bodyFontStyle || fontStyle;
   const layout = props.layout || "vertical";
-  console.log('[Canvas drawCustomerInfo] Rendering with layout:', layout, 'textAlign:', props.textAlign, 'verticalAlign:', props.verticalAlign, 'element.id:', element.id);
+  console.log(
+    "[Canvas drawCustomerInfo] Rendering with layout:",
+    layout,
+    "textAlign:",
+    props.textAlign,
+    "verticalAlign:",
+    props.verticalAlign,
+    "element.id:",
+    element.id,
+  );
   const showHeaders = props.showHeaders !== false;
   const showBorders = props.showBorders !== false;
   const showFullName = props.showFullName !== false;
@@ -1348,7 +1375,7 @@ const drawCustomerInfo = (
 
   ctx.fillStyle = normalizeColor(props.textColor || "#000000");
   ctx.font = `${headerFontStyle} ${headerFontWeight} ${headerFontSize}px ${headerFontFamily}`;
-  
+
   // Appliquer l'alignement horizontal
   const textAlign = props.textAlign || "left";
   ctx.textAlign = textAlign as CanvasTextAlign;
@@ -1399,34 +1426,34 @@ const drawCustomerInfo = (
     let line1 = "";
     let line2 = "";
     let line3 = "";
-    
+
     // Ligne 1: Nom + Email
     if (showFullName) line1 += customerData.name;
     if (showEmail) line1 += (line1 ? " | " : "") + customerData.email;
-    
+
     // Ligne 2: Adresse + Téléphone
     if (showAddress) line2 += customerData.address;
     if (showPhone) line2 += (line2 ? " | " : "") + customerData.phone;
-    
+
     // Ligne 3: Paiement + Transaction ID
     if (showPaymentMethod) line3 += "Paiement: Carte bancaire";
     if (showTransactionId) line3 += (line3 ? " | " : "") + "ID: TXN123456789";
-    
+
     if (line1) lines.push(line1);
     if (line2) lines.push(line2);
     if (line3) lines.push(line3);
   } else if (layout === "compact") {
     // Mode compact : nom en en-tête + tout le reste avec séparateurs, word wrap si trop long
-    
+
     // Nom du client (si activé)
     if (showFullName) {
       lines.push(customerData.name);
     }
-    
+
     // Reste des infos en mode compact
     let compactText = "";
     if (showAddress) {
-      compactText += customerData.address;  // Adresse complète
+      compactText += customerData.address; // Adresse complète
     }
     if (showEmail) {
       compactText += (compactText ? " • " : "") + customerData.email;
@@ -1445,14 +1472,14 @@ const drawCustomerInfo = (
       // Word wrap si le texte dépasse
       const maxWidth = element.width - paddingHorizontal * 2;
       ctx.font = `${bodyFontStyle} ${bodyFontWeight} ${bodyFontSize}px ${bodyFontFamily}`;
-      
+
       const words = compactText.split(" ");
       let currentLine = "";
-      
+
       for (let i = 0; i < words.length; i++) {
         const testLine = currentLine + (currentLine ? " " : "") + words[i];
         const metrics = ctx.measureText(testLine);
-        
+
         if (metrics.width > maxWidth && currentLine) {
           // La ligne dépasse, pousser la ligne actuelle et commencer une nouvelle
           lines.push(currentLine);
@@ -1461,7 +1488,7 @@ const drawCustomerInfo = (
           currentLine = testLine;
         }
       }
-      
+
       // Ajouter la dernière ligne
       if (currentLine) {
         lines.push(currentLine);
@@ -1469,7 +1496,14 @@ const drawCustomerInfo = (
     }
   }
 
-  console.log('[Canvas drawCustomerInfo] Lines constructed:', lines.length, 'lines:', lines, 'for layout:', layout);
+  console.log(
+    "[Canvas drawCustomerInfo] Lines constructed:",
+    lines.length,
+    "lines:",
+    lines,
+    "for layout:",
+    layout,
+  );
 
   // Calculer la hauteur du contenu
   const headerHeight = showHeaders ? 25 : 0;
@@ -1529,7 +1563,7 @@ const drawCustomerInfo = (
       const originalTextAlign = ctx.textAlign;
       ctx.textAlign = "left";
       let charX = textX;
-      
+
       // Si l'alignement original était "center" ou "right", calculer l'offset
       if (originalTextAlign !== "left") {
         // Calculer la largeur totale avec letterSpacing
@@ -1538,7 +1572,7 @@ const drawCustomerInfo = (
           totalWidth += ctx.measureText(chars[i]).width;
           if (i < chars.length - 1) totalWidth += letterSpacing;
         }
-        
+
         // Ajuster selon l'alignement original
         if (originalTextAlign === "center") {
           charX = textX - totalWidth / 2;
@@ -1546,19 +1580,19 @@ const drawCustomerInfo = (
           charX = textX - totalWidth;
         }
       }
-      
+
       // Dessiner caractère par caractère
       for (let i = 0; i < chars.length; i++) {
         const char = chars[i];
         ctx.fillText(char, charX, y);
         charX += ctx.measureText(char).width + letterSpacing;
       }
-      
+
       ctx.textAlign = originalTextAlign;
     } else {
       ctx.fillText(lineText, textX, y);
     }
-    
+
     // Appliquer le lineHeight au lieu de la valeur fixe de 18
     y += bodyFontSize * lineHeight;
   });
@@ -1721,12 +1755,12 @@ const drawCompanyLine = (
   if (letterSpacing !== 0) {
     // Utiliser Array.from() pour gérer correctement les emoji et les caractères multi-byte
     const chars = Array.from(text);
-    
+
     // Sauvegarder l'alignement original et passer en "left" pour la précision
     const originalTextAlign = ctx.textAlign;
     ctx.textAlign = "left";
     let charX = x;
-    
+
     // Si l'alignement original était "center" ou "right", on doit calculer l'offset
     if (originalTextAlign !== "left") {
       // Calculer la largeur totale du texte avec letterSpacing
@@ -1735,7 +1769,7 @@ const drawCompanyLine = (
         totalWidth += ctx.measureText(chars[i]).width;
         if (i < chars.length - 1) totalWidth += letterSpacing;
       }
-      
+
       // Ajuster la position selon l'alignement
       if (originalTextAlign === "center") {
         charX = x - totalWidth / 2;
@@ -1743,20 +1777,20 @@ const drawCompanyLine = (
         charX = x - totalWidth;
       }
     }
-    
+
     // Dessiner caractère par caractère (maintenant correctement avec emoji)
     for (let i = 0; i < chars.length; i++) {
       const char = chars[i];
       ctx.fillText(char, charX, y);
       charX += ctx.measureText(char).width + letterSpacing;
     }
-    
+
     ctx.textAlign = originalTextAlign;
   } else {
     // Sans letter-spacing, dessiner le texte en une seule fois
     ctx.fillText(text, x, y);
   }
-  
+
   return y + fontSize * lineHeight;
 };
 
@@ -1766,30 +1800,39 @@ const drawCompanyInfo = (
   state: BuilderState,
 ) => {
   const props = element as CompanyInfoElement;
-  console.log('[Canvas drawCompanyInfo] Called with element.id:', element.id, 'layout:', props.layout, 'textAlign:', props.textAlign);
+  console.log(
+    "[Canvas drawCompanyInfo] Called with element.id:",
+    element.id,
+    "layout:",
+    props.layout,
+    "textAlign:",
+    props.textAlign,
+  );
 
   // ✅ HELPER: Formater le numéro de téléphone (ajouter un point tous les 2 chiffres)
   const formatPhoneNumber = (phone: string): string => {
     if (!phone) return phone;
-    const cleaned = phone.replace(/\D/g, '');
+    const cleaned = phone.replace(/\D/g, "");
     const matches = cleaned.match(/\d{2}/g);
-    return matches ? matches.join('.') : phone;
+    return matches ? matches.join(".") : phone;
   };
 
   // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji pour HTML/PNG/JPG)
-  const getIconForType = (type: 'phone' | 'email' | 'address' | 'siret' | 'rcs' | 'tva' | 'capital'): string => {
+  const getIconForType = (
+    type: "phone" | "email" | "address" | "siret" | "rcs" | "tva" | "capital",
+  ): string => {
     // Emoji pour Canvas (HTML/PNG/JPG) - Affichage beau et lisible
     const emojiIcons: Record<string, string> = {
-      phone: String.fromCodePoint(0x1F4DE),      // 📞 Téléphone
-      email: String.fromCodePoint(0x1F4E9),      // 📩 Enveloppe avec flèche
-      address: String.fromCodePoint(0x1F4CD),    // 📍 Épingle
-      siret: String.fromCodePoint(0x1F3E2),      // 🏢 Bâtiment
-      rcs: String.fromCodePoint(0x1F4CB),        // 📋 Presse-papiers
-      tva: String.fromCodePoint(0x1F4BC),        // 💼 Mallette
-      capital: String.fromCodePoint(0x1F4B0),    // 💰 Sac d'argent
+      phone: String.fromCodePoint(0x1f4de), // 📞 Téléphone
+      email: String.fromCodePoint(0x1f4e9), // 📩 Enveloppe avec flèche
+      address: String.fromCodePoint(0x1f4cd), // 📍 Épingle
+      siret: String.fromCodePoint(0x1f3e2), // 🏢 Bâtiment
+      rcs: String.fromCodePoint(0x1f4cb), // 📋 Presse-papiers
+      tva: String.fromCodePoint(0x1f4bc), // 💼 Mallette
+      capital: String.fromCodePoint(0x1f4b0), // 💰 Sac d'argent
     };
-    
-    return emojiIcons[type] || '';
+
+    return emojiIcons[type] || "";
   };
 
   // Récupérer les données de l'entreprise depuis l'élément canvas (pas depuis les options WordPress)
@@ -1836,7 +1879,9 @@ const drawCompanyInfo = (
   };
   // ✅ NEW: Padding horizontal et vertical séparés (backward compatibility)
   const paddingHorizontal = normalizePaddingToNumber(
-    props.paddingHorizontal !== undefined ? props.paddingHorizontal : props.padding,
+    props.paddingHorizontal !== undefined
+      ? props.paddingHorizontal
+      : props.padding,
     12,
   );
   const paddingVertical = normalizePaddingToNumber(
@@ -1884,7 +1929,7 @@ const drawCompanyInfo = (
 
   // Configuration du contexte
   ctx.fillStyle = colors.text;
-  
+
   // Appliquer l'alignement horizontal
   const textAlign = props.textAlign || "left";
   ctx.textAlign = textAlign as CanvasTextAlign;
@@ -1900,7 +1945,7 @@ const drawCompanyInfo = (
         return paddingHorizontal;
     }
   };
-  
+
   let x = getTextX();
   let y = paddingVertical + 10;
 
@@ -1909,17 +1954,27 @@ const drawCompanyInfo = (
 
   // Récupérer le layout
   const layout = props.layout || "vertical";
-  console.log('[Canvas drawCompanyInfo] Layout:', layout, 'Building lines...');
+  console.log("[Canvas drawCompanyInfo] Layout:", layout, "Building lines...");
 
   // Construire les lignes selon le layout
-  const lines: Array<{text: string, isHeader: boolean}> = [];
+  const lines: Array<{ text: string; isHeader: boolean }> = [];
 
   // ✅ HELPER: Ajouter l'icône au texte si showIcons est activé
-  const buildLineText = (text: string, iconType?: 'phone' | 'email' | 'address' | 'siret' | 'rcs' | 'tva' | 'capital'): string => {
+  const buildLineText = (
+    text: string,
+    iconType?:
+      | "phone"
+      | "email"
+      | "address"
+      | "siret"
+      | "rcs"
+      | "tva"
+      | "capital",
+  ): string => {
     if (!props.showIcons || !iconType) return text;
     const icon = getIconForType(iconType);
-    const position = props.iconsPosition || 'left';
-    return position === 'left' ? `${icon} ${text}` : `${text} ${icon}`;
+    const position = props.iconsPosition || "left";
+    return position === "left" ? `${icon} ${text}` : `${text} ${icon}`;
   };
 
   if (layout === "vertical") {
@@ -1928,23 +1983,41 @@ const drawCompanyInfo = (
       lines.push({ text: companyData.name, isHeader: true });
     }
     if (shouldDisplayValue(companyData.address, displayConfig.address)) {
-      lines.push({ text: buildLineText(companyData.address, 'address'), isHeader: false });
+      lines.push({
+        text: buildLineText(companyData.address, "address"),
+        isHeader: false,
+      });
       if (shouldDisplayValue(companyData.city, displayConfig.address)) {
         lines.push({ text: companyData.city, isHeader: false });
       }
     }
     [
-      [companyData.siret, displayConfig.siret, 'siret' as const],
-      [companyData.tva, displayConfig.vat, 'tva' as const],
-      [companyData.rcs, displayConfig.rcs, 'rcs' as const],
-      [companyData.capital, displayConfig.capital, 'capital' as const],
-      [companyData.email, displayConfig.email, 'email' as const],
-      [formatPhoneNumber(companyData.phone), displayConfig.phone, 'phone' as const],
+      [companyData.siret, displayConfig.siret, "siret" as const],
+      [companyData.tva, displayConfig.vat, "tva" as const],
+      [companyData.rcs, displayConfig.rcs, "rcs" as const],
+      [companyData.capital, displayConfig.capital, "capital" as const],
+      [companyData.email, displayConfig.email, "email" as const],
+      [
+        formatPhoneNumber(companyData.phone),
+        displayConfig.phone,
+        "phone" as const,
+      ],
     ].forEach(([value, show, iconType]) => {
       if (shouldDisplayValue(value as string, show as boolean)) {
         // S'assurer que iconType correspond à la type attendu
-        const validIconTypes: Array<"address" | "phone" | "email" | "siret" | "rcs" | "tva" | "capital"> = ['address', 'phone', 'email', 'siret', 'rcs', 'tva', 'capital'];
-        const icon = validIconTypes.includes(iconType as any) ? (iconType as "address" | "phone" | "email" | "siret" | "rcs" | "tva" | "capital") : 'email';
+        const validIconTypes: Array<
+          "address" | "phone" | "email" | "siret" | "rcs" | "tva" | "capital"
+        > = ["address", "phone", "email", "siret", "rcs", "tva", "capital"];
+        const icon = validIconTypes.includes(iconType as any)
+          ? (iconType as
+              | "address"
+              | "phone"
+              | "email"
+              | "siret"
+              | "rcs"
+              | "tva"
+              | "capital")
+          : "email";
         const lineText = buildLineText(value as string, icon);
         lines.push({ text: lineText, isHeader: false });
       }
@@ -1954,7 +2027,7 @@ const drawCompanyInfo = (
     if (shouldDisplayValue(companyData.name, displayConfig.companyName)) {
       lines.push({ text: companyData.name, isHeader: true });
     }
-    
+
     // Ligne 1: Adresse complète
     let addressLine = "";
     if (shouldDisplayValue(companyData.address, displayConfig.address)) {
@@ -1963,22 +2036,28 @@ const drawCompanyInfo = (
         addressLine += ", " + companyData.city;
       }
     }
-    if (addressLine) lines.push({ text: buildLineText(addressLine, 'address'), isHeader: false });
-    
+    if (addressLine)
+      lines.push({
+        text: buildLineText(addressLine, "address"),
+        isHeader: false,
+      });
+
     // Ligne 2: Contact (Email + Phone)
     let contactLine = "";
     if (shouldDisplayValue(companyData.email, displayConfig.email)) {
-      contactLine += buildLineText(companyData.email, 'email');
+      contactLine += buildLineText(companyData.email, "email");
     }
     if (shouldDisplayValue(companyData.phone, displayConfig.phone)) {
-      contactLine += (contactLine ? " | " : "") + buildLineText(formatPhoneNumber(companyData.phone), 'phone');
+      contactLine +=
+        (contactLine ? " | " : "") +
+        buildLineText(formatPhoneNumber(companyData.phone), "phone");
     }
     if (contactLine) lines.push({ text: contactLine, isHeader: false });
-    
+
     // Ligne 3: Infos légales (SIRET + RCS + TVA + Capital)
     let legalLine = "";
     if (shouldDisplayValue(companyData.siret, displayConfig.siret)) {
-      legalLine += buildLineText(companyData.siret, 'siret');
+      legalLine += buildLineText(companyData.siret, "siret");
     }
     if (shouldDisplayValue(companyData.rcs, displayConfig.rcs)) {
       legalLine += (legalLine ? " | " : "") + companyData.rcs;
@@ -1987,27 +2066,30 @@ const drawCompanyInfo = (
       legalLine += (legalLine ? " | " : "") + companyData.tva;
     }
     if (shouldDisplayValue(companyData.capital, displayConfig.capital)) {
-      legalLine += (legalLine ? " | " : "") + buildLineText(companyData.capital, 'capital');
+      legalLine +=
+        (legalLine ? " | " : "") +
+        buildLineText(companyData.capital, "capital");
     }
     if (legalLine) lines.push({ text: legalLine, isHeader: false });
   } else if (layout === "compact") {
     // Mode compact : nom en en-tête + tout le reste avec séparateurs, word wrap si trop long
-    
+
     // Nom de l'entreprise en en-tête (avec sa police configurable)
     if (shouldDisplayValue(companyData.name, displayConfig.companyName)) {
       lines.push({ text: companyData.name, isHeader: true });
     }
-    
+
     // Reste des infos en mode compact
     let compactText = "";
     if (shouldDisplayValue(companyData.address, displayConfig.address)) {
-      compactText += companyData.address;  // Adresse complète
+      compactText += companyData.address; // Adresse complète
     }
     if (shouldDisplayValue(companyData.email, displayConfig.email)) {
       compactText += (compactText ? " • " : "") + companyData.email;
     }
     if (shouldDisplayValue(companyData.phone, displayConfig.phone)) {
-      compactText += (compactText ? " • " : "") + formatPhoneNumber(companyData.phone);
+      compactText +=
+        (compactText ? " • " : "") + formatPhoneNumber(companyData.phone);
     }
     if (shouldDisplayValue(companyData.siret, displayConfig.siret)) {
       compactText += (compactText ? " • " : "") + companyData.siret;
@@ -2018,19 +2100,19 @@ const drawCompanyInfo = (
     if (shouldDisplayValue(companyData.rcs, displayConfig.rcs)) {
       compactText += (compactText ? " • " : "") + companyData.rcs;
     }
-    
+
     if (compactText) {
       // Word wrap si le texte dépasse
       const maxWidth = element.width - paddingHorizontal * 2;
       ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
-      
+
       const words = compactText.split(" ");
       let currentLine = "";
-      
+
       for (let i = 0; i < words.length; i++) {
         const testLine = currentLine + (currentLine ? " " : "") + words[i];
         const metrics = ctx.measureText(testLine);
-        
+
         if (metrics.width > maxWidth && currentLine) {
           // La ligne dépasse, pousser la ligne actuelle et commencer une nouvelle
           lines.push({ text: currentLine, isHeader: false });
@@ -2039,7 +2121,7 @@ const drawCompanyInfo = (
           currentLine = testLine;
         }
       }
-      
+
       // Ajouter la dernière ligne
       if (currentLine) {
         lines.push({ text: currentLine, isHeader: false });
@@ -2047,7 +2129,12 @@ const drawCompanyInfo = (
     }
   }
 
-  console.log('[Canvas drawCompanyInfo] Lines constructed:', lines.length, 'lines:', lines.map(l => l.text));
+  console.log(
+    "[Canvas drawCompanyInfo] Lines constructed:",
+    lines.length,
+    "lines:",
+    lines.map((l) => l.text),
+  );
 
   // Appliquer la police du corps par défaut
   ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
@@ -2057,7 +2144,7 @@ const drawCompanyInfo = (
   const letterSpacing = parseFloat(props.letterSpacing as any) || 0;
 
   // Dessiner toutes les lignes
-  lines.forEach(lineData => {
+  lines.forEach((lineData) => {
     const config = lineData.isHeader
       ? {
           size: fontConfig.headerSize,
@@ -2074,7 +2161,17 @@ const drawCompanyInfo = (
 
     ctx.font = `${config.style} ${config.weight} ${config.size}px ${config.family}`;
     if (lineData.isHeader) ctx.fillStyle = colors.headerText;
-    y = drawCompanyLine(ctx, lineData.text, x, y, config.size, lineHeight, letterSpacing);
+    // ✅ Header utilise toujours lineHeight 1.2, les infos utilisent le lineHeight personnalisé
+    const currentLineHeight = lineData.isHeader ? 1.2 : lineHeight;
+    y = drawCompanyLine(
+      ctx,
+      lineData.text,
+      x,
+      y,
+      config.size,
+      currentLineHeight,
+      letterSpacing,
+    );
     if (lineData.isHeader) ctx.fillStyle = colors.text;
   });
 };

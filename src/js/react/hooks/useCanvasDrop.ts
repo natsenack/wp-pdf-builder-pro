@@ -46,7 +46,7 @@ export const useCanvasDrop = ({
       clientX: number,
       clientY: number,
       elementWidth: number = 100,
-      elementHeight: number = 50
+      elementHeight: number = 50,
     ) => {
       const wrapper = canvasRef.current;
       if (!wrapper) {
@@ -88,15 +88,15 @@ export const useCanvasDrop = ({
       // S'assurer que l'élément reste dans les limites du canvas
       const clampedX = Math.max(
         0,
-        Math.min(centeredX, canvasWidth - elementWidth)
+        Math.min(centeredX, canvasWidth - elementWidth),
       );
       const clampedY = Math.max(
         0,
-        Math.min(centeredY, canvasHeight - elementHeight)
+        Math.min(centeredY, canvasHeight - elementHeight),
       );
 
       debugLog(
-        `[CanvasDrop] Position calculation: client(${clientX}, ${clientY}) -> canvas(${canvasX}, ${canvasY}) -> transformed(${transformedX}, ${transformedY}) -> final(${clampedX}, ${clampedY})`
+        `[CanvasDrop] Position calculation: client(${clientX}, ${clientY}) -> canvas(${canvasX}, ${canvasY}) -> transformed(${transformedX}, ${transformedY}) -> final(${clampedX}, ${clampedY})`,
       );
 
       return {
@@ -108,7 +108,7 @@ export const useCanvasDrop = ({
         transformedY,
       };
     },
-    [canvasRef, canvasWidth, canvasHeight, state.canvas]
+    [canvasRef, canvasWidth, canvasHeight, state.canvas],
   );
 
   // ✅ Génération d'ID unique pour les éléments
@@ -146,23 +146,23 @@ export const useCanvasDrop = ({
       };
 
       // ✅ ENRICHISSEMENT: Ajouter les données réelles de l'entreprise pour company_info
-      if (dragData.type === 'company_info') {
+      if (dragData.type === "company_info") {
         const pdfBuilderData = (window as any).pdfBuilderData;
         if (pdfBuilderData && pdfBuilderData.company) {
           const company = pdfBuilderData.company;
-          
+
           // Mapper les données de l'entreprise directement dans l'élément
-          (element as any).companyName = company.name || '';
-          (element as any).companyAddress = company.address || '';
-          (element as any).companyCity = company.city || '';
-          (element as any).companyPhone = company.phone || '';
-          (element as any).companyEmail = company.email || '';
-          (element as any).companySiret = company.siret || '';
-          (element as any).companyTva = company.tva || '';
-          (element as any).companyRcs = company.rcs || '';
-          (element as any).companyCapital = company.capital || '';
-          
-          debugLog('[CanvasDrop] Company data enriched into element:', {
+          (element as any).companyName = company.name || "";
+          (element as any).companyAddress = company.address || "";
+          (element as any).companyCity = company.city || "";
+          (element as any).companyPhone = company.phone || "";
+          (element as any).companyEmail = company.email || "";
+          (element as any).companySiret = company.siret || "";
+          (element as any).companyTva = company.tva || "";
+          (element as any).companyRcs = company.rcs || "";
+          (element as any).companyCapital = company.capital || "";
+
+          debugLog("[CanvasDrop] Company data enriched into element:", {
             companyName: company.name,
             companyPhone: company.phone,
             companySiret: company.siret,
@@ -172,46 +172,39 @@ export const useCanvasDrop = ({
 
       return element;
     },
-    [generateElementId]
+    [generateElementId],
   );
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
-      
-
       if (!dragEnabled) {
         debugLog("[CanvasDrop] Drop ignored - drag disabled");
-        
+
         return;
       }
 
       e.preventDefault();
       e.stopPropagation();
-      
 
       setIsDragOver(false);
 
       debugLog("[CanvasDrop] Processing drop event");
-      
 
       try {
         // Parsing des données de drag
         const rawData = e.dataTransfer.getData("application/json");
-        
 
         if (!rawData) {
-          
           debugWarn("[CanvasDrop] No drag data received");
           throw new Error("No drag data received");
         }
 
         const dragData = JSON.parse(rawData);
-        
+
         debugLog(`[CanvasDrop] Parsed drag data:`, dragData);
 
         // Validation des données
         if (!validateDragData(dragData)) {
-          
           throw new Error("Invalid drag data structure");
         }
 
@@ -219,23 +212,22 @@ export const useCanvasDrop = ({
         const elementWidth = (dragData.defaultProps.width as number) || 100;
         const elementHeight = (dragData.defaultProps.height as number) || 50;
 
-        
         debugLog(
-          `[CanvasDrop] Element dimensions: ${elementWidth}x${elementHeight}`
+          `[CanvasDrop] Element dimensions: ${elementWidth}x${elementHeight}`,
         );
 
         const position = calculateDropPosition(
           e.clientX,
           e.clientY,
           elementWidth,
-          elementHeight
+          elementHeight,
         );
-        
+
         debugLog(`[CanvasDrop] Calculated drop position:`, position);
 
         // Création de l'élément
         const newElement = createElementFromDragData(dragData, position);
-        
+
         debugLog(`[CanvasDrop] Created element:`, {
           id: newElement.id,
           type: newElement.type,
@@ -247,16 +239,16 @@ export const useCanvasDrop = ({
         const existingElement = elements.find((el) => el.id === newElement.id);
         if (existingElement) {
           newElement.id = generateElementId(dragData.type);
-          
+
           debugWarn(
-            `[CanvasDrop] ID conflict resolved, new ID: ${newElement.id}`
+            `[CanvasDrop] ID conflict resolved, new ID: ${newElement.id}`,
           );
         }
 
         // Ajout au state
-        
+
         dispatch({ type: "ADD_ELEMENT", payload: newElement });
-        
+
         debugLog(`[CanvasDrop] Element added to canvas successfully`);
       } catch (error) {
         debugError(`[CanvasDrop] Drop failed:`, error);
@@ -270,15 +262,12 @@ export const useCanvasDrop = ({
       dispatch,
       generateElementId,
       dragEnabled,
-    ]
+    ],
   );
 
   const handleDragOver = useCallback(
     (e: React.DragEvent) => {
-      
-
       if (!dragEnabled) {
-        
         return;
       }
 
@@ -287,15 +276,12 @@ export const useCanvasDrop = ({
       e.stopPropagation();
       e.dataTransfer.dropEffect = "copy";
 
-      
-
       if (!isDragOver) {
-        
         debugLog("[CanvasDrop] Drag over started - element hovering canvas");
         setIsDragOver(true);
       }
     },
-    [isDragOver, dragEnabled]
+    [isDragOver, dragEnabled],
   );
 
   const handleDragLeave = useCallback(
@@ -307,28 +293,23 @@ export const useCanvasDrop = ({
       // Vérifier que le curseur sort vraiment du wrapper
       const target = e.currentTarget as HTMLElement;
       if (!target.contains(e.relatedTarget as HTMLElement)) {
-        
         debugLog("[CanvasDrop] Drag leave detected - element left canvas");
         setIsDragOver(false);
       }
     },
-    [dragEnabled]
+    [dragEnabled],
   );
 
   const handleDragEnter = useCallback(
     (e: React.DragEvent) => {
-      
-
       if (!dragEnabled) {
-        
         return;
       }
 
       e.preventDefault();
       e.stopPropagation();
-      
     },
-    [dragEnabled]
+    [dragEnabled],
   );
 
   return {
@@ -339,5 +320,3 @@ export const useCanvasDrop = ({
     isDragOver,
   };
 };
-
-

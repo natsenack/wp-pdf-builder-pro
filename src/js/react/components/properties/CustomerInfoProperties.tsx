@@ -1,10 +1,14 @@
-import { useState, ReactNode } from 'react';
-import { CustomerInfoElement } from '../../types/elements';
-import { NumericPropertyInput } from '../ui/NumericPropertyInput';
-import { ColorPropertyInput } from '../ui/ColorPropertyInput';
+import { useState, ReactNode } from "react";
+import { CustomerInfoElement } from "../../types/elements";
+import { NumericPropertyInput } from "../ui/NumericPropertyInput";
+import { ColorPropertyInput } from "../ui/ColorPropertyInput";
 
 // Composant Accordion personnalisé
-const Accordion = ({ title, children, defaultOpen = false }: {
+const Accordion = ({
+  title,
+  children,
+  defaultOpen = false,
+}: {
   title: string;
   children: ReactNode;
   defaultOpen?: boolean;
@@ -12,34 +16,50 @@ const Accordion = ({ title, children, defaultOpen = false }: {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div style={{ marginBottom: '16px', border: '1px solid #e9ecef', borderRadius: '4px', overflow: 'hidden' }}>
+    <div
+      style={{
+        marginBottom: "16px",
+        border: "1px solid #e9ecef",
+        borderRadius: "4px",
+        overflow: "hidden",
+      }}
+    >
       <div
         onClick={() => setIsOpen(!isOpen)}
         style={{
-          padding: '12px',
-          backgroundColor: '#f8f9fa',
-          cursor: 'pointer',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          borderBottom: isOpen ? '1px solid #e9ecef' : 'none'
+          padding: "12px",
+          backgroundColor: "#f8f9fa",
+          cursor: "pointer",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          borderBottom: isOpen ? "1px solid #e9ecef" : "none",
         }}
       >
-        <h4 style={{ margin: '0', fontSize: '13px', fontWeight: 'bold', color: '#495057' }}>
+        <h4
+          style={{
+            margin: "0",
+            fontSize: "13px",
+            fontWeight: "bold",
+            color: "#495057",
+          }}
+        >
           {title}
         </h4>
-        <span style={{
-          fontSize: '12px',
-          color: '#6c757d',
-          transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-          transition: 'transform 0.2s ease'
-        }}>
+        <span
+          style={{
+            fontSize: "12px",
+            color: "#6c757d",
+            transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+            transition: "transform 0.2s ease",
+          }}
+        >
           ▼
         </span>
       </div>
 
       {isOpen && (
-        <div style={{ padding: '12px', backgroundColor: '#ffffff' }}>
+        <div style={{ padding: "12px", backgroundColor: "#ffffff" }}>
           {children}
         </div>
       )}
@@ -48,60 +68,71 @@ const Accordion = ({ title, children, defaultOpen = false }: {
 };
 
 // Composant Toggle personnalisé
-const Toggle = ({ checked, onChange, label, description }: {
+const Toggle = ({
+  checked,
+  onChange,
+  label,
+  description,
+}: {
   checked: boolean;
   onChange: (checked: boolean) => void;
   label: string;
   description: string;
 }) => (
-  <div style={{ marginBottom: '12px' }}>
-    <div style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '6px'
-    }}>
-      <label style={{
-        fontSize: '12px',
-        fontWeight: 'bold',
-        color: '#333',
-        flex: 1
-      }}>
+  <div style={{ marginBottom: "12px" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "6px",
+      }}
+    >
+      <label
+        style={{
+          fontSize: "12px",
+          fontWeight: "bold",
+          color: "#333",
+          flex: 1,
+        }}
+      >
         {label}
       </label>
       <div
         onClick={() => onChange(!checked)}
         style={{
-          position: 'relative',
-          width: '44px',
-          height: '24px',
-          backgroundColor: checked ? '#007bff' : '#ccc',
-          borderRadius: '12px',
-          cursor: 'pointer',
-          transition: 'background-color 0.2s ease',
-          border: 'none'
+          position: "relative",
+          width: "44px",
+          height: "24px",
+          backgroundColor: checked ? "#007bff" : "#ccc",
+          borderRadius: "12px",
+          cursor: "pointer",
+          transition: "background-color 0.2s ease",
+          border: "none",
         }}
       >
         <div
           style={{
-            position: 'absolute',
-            top: '2px',
-            left: checked ? '22px' : '2px',
-            width: '20px',
-            height: '20px',
-            backgroundColor: 'white',
-            borderRadius: '50%',
-            transition: 'left 0.2s ease',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+            position: "absolute",
+            top: "2px",
+            left: checked ? "22px" : "2px",
+            width: "20px",
+            height: "20px",
+            backgroundColor: "white",
+            borderRadius: "50%",
+            transition: "left 0.2s ease",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
           }}
         />
       </div>
     </div>
-    <div style={{
-      fontSize: '11px',
-      color: '#666',
-      lineHeight: '1.4'
-    }}>
+    <div
+      style={{
+        fontSize: "11px",
+        color: "#666",
+        lineHeight: "1.4",
+      }}
+    >
       {description}
     </div>
   </div>
@@ -110,80 +141,107 @@ const Toggle = ({ checked, onChange, label, description }: {
 interface CustomerInfoPropertiesProps {
   element: CustomerInfoElement;
   onChange: (elementId: string, property: string, value: unknown) => void;
-  activeTab: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' };
-  setActiveTab: (tabs: { [key: string]: 'fonctionnalites' | 'personnalisation' | 'positionnement' }) => void;
+  activeTab: {
+    [key: string]: "fonctionnalites" | "personnalisation" | "positionnement";
+  };
+  setActiveTab: (tabs: {
+    [key: string]: "fonctionnalites" | "personnalisation" | "positionnement";
+  }) => void;
 }
 
-export function CustomerInfoProperties({ element, onChange, activeTab, setActiveTab }: CustomerInfoPropertiesProps) {
-  console.log('[CustomerInfoProperties] Render with element:', { id: element.id, layout: element.layout, textAlign: element.textAlign, verticalAlign: element.verticalAlign });
+export function CustomerInfoProperties({
+  element,
+  onChange,
+  activeTab,
+  setActiveTab,
+}: CustomerInfoPropertiesProps) {
+  console.log("[CustomerInfoProperties] Render with element:", {
+    id: element.id,
+    layout: element.layout,
+    textAlign: element.textAlign,
+    verticalAlign: element.verticalAlign,
+  });
 
-  const customerCurrentTab = activeTab[element.id] || 'fonctionnalites';
-  const setCustomerCurrentTab = (tab: 'fonctionnalites' | 'personnalisation' | 'positionnement') => {
+  const customerCurrentTab = activeTab[element.id] || "fonctionnalites";
+  const setCustomerCurrentTab = (
+    tab: "fonctionnalites" | "personnalisation" | "positionnement",
+  ) => {
     setActiveTab({ ...activeTab, [element.id]: tab });
   };
 
   return (
     <>
       {/* Système d'onglets pour Customer Info */}
-      <div style={{ display: 'flex', marginBottom: '12px', borderBottom: '2px solid #ddd', gap: '2px', flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: "flex",
+          marginBottom: "12px",
+          borderBottom: "2px solid #ddd",
+          gap: "2px",
+          flexWrap: "wrap",
+        }}
+      >
         <button
-          onClick={() => setCustomerCurrentTab('fonctionnalites')}
+          onClick={() => setCustomerCurrentTab("fonctionnalites")}
           style={{
-            flex: '1 1 30%',
-            padding: '8px 6px',
-            backgroundColor: customerCurrentTab === 'fonctionnalites' ? '#007bff' : '#f0f0f0',
-            color: customerCurrentTab === 'fonctionnalites' ? '#fff' : '#333',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '11px',
-            fontWeight: 'bold',
-            borderRadius: '3px 3px 0 0',
-            minWidth: '0',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            flex: "1 1 30%",
+            padding: "8px 6px",
+            backgroundColor:
+              customerCurrentTab === "fonctionnalites" ? "#007bff" : "#f0f0f0",
+            color: customerCurrentTab === "fonctionnalites" ? "#fff" : "#333",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "11px",
+            fontWeight: "bold",
+            borderRadius: "3px 3px 0 0",
+            minWidth: "0",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
           title="Fonctionnalités"
         >
           Fonctionnalités
         </button>
         <button
-          onClick={() => setCustomerCurrentTab('personnalisation')}
+          onClick={() => setCustomerCurrentTab("personnalisation")}
           style={{
-            flex: '1 1 30%',
-            padding: '8px 6px',
-            backgroundColor: customerCurrentTab === 'personnalisation' ? '#007bff' : '#f0f0f0',
-            color: customerCurrentTab === 'personnalisation' ? '#fff' : '#333',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '11px',
-            fontWeight: 'bold',
-            borderRadius: '3px 3px 0 0',
-            minWidth: '0',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            flex: "1 1 30%",
+            padding: "8px 6px",
+            backgroundColor:
+              customerCurrentTab === "personnalisation" ? "#007bff" : "#f0f0f0",
+            color: customerCurrentTab === "personnalisation" ? "#fff" : "#333",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "11px",
+            fontWeight: "bold",
+            borderRadius: "3px 3px 0 0",
+            minWidth: "0",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
           title="Personnalisation"
         >
           Personnalisation
         </button>
         <button
-          onClick={() => setCustomerCurrentTab('positionnement')}
+          onClick={() => setCustomerCurrentTab("positionnement")}
           style={{
-            flex: '1 1 30%',
-            padding: '8px 6px',
-            backgroundColor: customerCurrentTab === 'positionnement' ? '#007bff' : '#f0f0f0',
-            color: customerCurrentTab === 'positionnement' ? '#fff' : '#333',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '11px',
-            fontWeight: 'bold',
-            borderRadius: '3px 3px 0 0',
-            minWidth: '0',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            flex: "1 1 30%",
+            padding: "8px 6px",
+            backgroundColor:
+              customerCurrentTab === "positionnement" ? "#007bff" : "#f0f0f0",
+            color: customerCurrentTab === "positionnement" ? "#fff" : "#333",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "11px",
+            fontWeight: "bold",
+            borderRadius: "3px 3px 0 0",
+            minWidth: "0",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
           title="Positionnement"
         >
@@ -192,40 +250,48 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
       </div>
 
       {/* Onglet Fonctionnalités */}
-      {customerCurrentTab === 'fonctionnalites' && (
+      {customerCurrentTab === "fonctionnalites" && (
         <>
           {/* Section Structure de l'information */}
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{
-              fontSize: '12px',
-              fontWeight: 'bold',
-              color: '#333',
-              marginBottom: '8px',
-              padding: '4px 8px',
-              backgroundColor: '#f8f9fa',
-              borderRadius: '3px',
-              border: '1px solid #e9ecef'
-            }}>
+          <div style={{ marginBottom: "16px" }}>
+            <div
+              style={{
+                fontSize: "12px",
+                fontWeight: "bold",
+                color: "#333",
+                marginBottom: "8px",
+                padding: "4px 8px",
+                backgroundColor: "#f8f9fa",
+                borderRadius: "3px",
+                border: "1px solid #e9ecef",
+              }}
+            >
               Structure des informations
             </div>
-            <div style={{ paddingLeft: '8px' }}>
+            <div style={{ paddingLeft: "8px" }}>
               <Toggle
                 checked={element.showHeaders !== false}
-                onChange={(checked) => onChange(element.id, 'showHeaders', checked)}
+                onChange={(checked) =>
+                  onChange(element.id, "showHeaders", checked)
+                }
                 label="Afficher les en-têtes"
                 description="Affiche les titres des sections"
               />
 
               <Toggle
                 checked={element.showBackground !== false}
-                onChange={(checked) => onChange(element.id, 'showBackground', checked)}
+                onChange={(checked) =>
+                  onChange(element.id, "showBackground", checked)
+                }
                 label="Afficher le fond"
                 description="Affiche un fond coloré derrière les informations"
               />
 
               <Toggle
                 checked={element.showBorders !== false}
-                onChange={(checked) => onChange(element.id, 'showBorders', checked)}
+                onChange={(checked) =>
+                  onChange(element.id, "showBorders", checked)
+                }
                 label="Afficher les bordures"
                 description="Affiche les bordures autour des sections"
               />
@@ -233,30 +299,36 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
           </div>
 
           {/* Section Informations personnelles */}
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{
-              fontSize: '12px',
-              fontWeight: 'bold',
-              color: '#333',
-              marginBottom: '8px',
-              padding: '4px 8px',
-              backgroundColor: '#f8f9fa',
-              borderRadius: '3px',
-              border: '1px solid #e9ecef'
-            }}>
+          <div style={{ marginBottom: "16px" }}>
+            <div
+              style={{
+                fontSize: "12px",
+                fontWeight: "bold",
+                color: "#333",
+                marginBottom: "8px",
+                padding: "4px 8px",
+                backgroundColor: "#f8f9fa",
+                borderRadius: "3px",
+                border: "1px solid #e9ecef",
+              }}
+            >
               Informations personnelles
             </div>
-            <div style={{ paddingLeft: '8px' }}>
+            <div style={{ paddingLeft: "8px" }}>
               <Toggle
                 checked={element.showName !== false}
-                onChange={(checked) => onChange(element.id, 'showName', checked)}
+                onChange={(checked) =>
+                  onChange(element.id, "showName", checked)
+                }
                 label="Afficher le nom"
                 description="Nom du client"
               />
 
               <Toggle
                 checked={element.showFullName !== false}
-                onChange={(checked) => onChange(element.id, 'showFullName', checked)}
+                onChange={(checked) =>
+                  onChange(element.id, "showFullName", checked)
+                }
                 label="Afficher le nom complet"
                 description="Prénom et nom du client"
               />
@@ -264,37 +336,45 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
           </div>
 
           {/* Section Coordonnées */}
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{
-              fontSize: '12px',
-              fontWeight: 'bold',
-              color: '#333',
-              marginBottom: '8px',
-              padding: '4px 8px',
-              backgroundColor: '#f8f9fa',
-              borderRadius: '3px',
-              border: '1px solid #e9ecef'
-            }}>
+          <div style={{ marginBottom: "16px" }}>
+            <div
+              style={{
+                fontSize: "12px",
+                fontWeight: "bold",
+                color: "#333",
+                marginBottom: "8px",
+                padding: "4px 8px",
+                backgroundColor: "#f8f9fa",
+                borderRadius: "3px",
+                border: "1px solid #e9ecef",
+              }}
+            >
               Coordonnées
             </div>
-            <div style={{ paddingLeft: '8px' }}>
+            <div style={{ paddingLeft: "8px" }}>
               <Toggle
                 checked={element.showAddress !== false}
-                onChange={(checked) => onChange(element.id, 'showAddress', checked)}
+                onChange={(checked) =>
+                  onChange(element.id, "showAddress", checked)
+                }
                 label="Afficher l'adresse"
                 description="Adresse complète du client"
               />
 
               <Toggle
                 checked={element.showEmail !== false}
-                onChange={(checked) => onChange(element.id, 'showEmail', checked)}
+                onChange={(checked) =>
+                  onChange(element.id, "showEmail", checked)
+                }
                 label="Afficher l'email"
                 description="Adresse email du client"
               />
 
               <Toggle
                 checked={element.showPhone !== false}
-                onChange={(checked) => onChange(element.id, 'showPhone', checked)}
+                onChange={(checked) =>
+                  onChange(element.id, "showPhone", checked)
+                }
                 label="Afficher le téléphone"
                 description="Numéro de téléphone du client"
               />
@@ -302,30 +382,36 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
           </div>
 
           {/* Section Informations de paiement */}
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{
-              fontSize: '12px',
-              fontWeight: 'bold',
-              color: '#333',
-              marginBottom: '8px',
-              padding: '4px 8px',
-              backgroundColor: '#f8f9fa',
-              borderRadius: '3px',
-              border: '1px solid #e9ecef'
-            }}>
+          <div style={{ marginBottom: "16px" }}>
+            <div
+              style={{
+                fontSize: "12px",
+                fontWeight: "bold",
+                color: "#333",
+                marginBottom: "8px",
+                padding: "4px 8px",
+                backgroundColor: "#f8f9fa",
+                borderRadius: "3px",
+                border: "1px solid #e9ecef",
+              }}
+            >
               Informations de paiement
             </div>
-            <div style={{ paddingLeft: '8px' }}>
+            <div style={{ paddingLeft: "8px" }}>
               <Toggle
                 checked={element.showPaymentMethod !== false}
-                onChange={(checked) => onChange(element.id, 'showPaymentMethod', checked)}
+                onChange={(checked) =>
+                  onChange(element.id, "showPaymentMethod", checked)
+                }
                 label="Afficher le moyen de paiement"
                 description="Méthode de paiement utilisée"
               />
 
               <Toggle
                 checked={element.showTransactionId !== false}
-                onChange={(checked) => onChange(element.id, 'showTransactionId', checked)}
+                onChange={(checked) =>
+                  onChange(element.id, "showTransactionId", checked)
+                }
                 label="Afficher l'ID de transaction"
                 description="Identifiant unique de la transaction"
               />
@@ -333,26 +419,26 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
           </div>
 
           {/* Section Icônes */}
-          <div style={{ marginBottom: '16px' }}>
+          <div style={{ marginBottom: "16px" }}>
             <div
               style={{
-                fontSize: '12px',
-                fontWeight: 'bold',
-                color: '#333',
-                marginBottom: '8px',
-                padding: '4px 8px',
-                backgroundColor: '#f8f9fa',
-                borderRadius: '3px',
-                border: '1px solid #e9ecef',
+                fontSize: "12px",
+                fontWeight: "bold",
+                color: "#333",
+                marginBottom: "8px",
+                padding: "4px 8px",
+                backgroundColor: "#f8f9fa",
+                borderRadius: "3px",
+                border: "1px solid #e9ecef",
               }}
             >
               Icônes
             </div>
-            <div style={{ paddingLeft: '8px' }}>
+            <div style={{ paddingLeft: "8px" }}>
               <Toggle
                 checked={element.showIcons === true}
                 onChange={(checked) =>
-                  onChange(element.id, 'showIcons', checked)
+                  onChange(element.id, "showIcons", checked)
                 }
                 label="Afficher les icônes"
                 description="Affiche des icônes devant chaque type d'information"
@@ -360,28 +446,28 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
 
               {element.showIcons && (
                 <>
-                  <div style={{ marginTop: '8px', marginBottom: '8px' }}>
+                  <div style={{ marginTop: "8px", marginBottom: "8px" }}>
                     <label
                       style={{
-                        display: 'block',
-                        fontSize: '11px',
-                        fontWeight: 'bold',
-                        marginBottom: '4px',
+                        display: "block",
+                        fontSize: "11px",
+                        fontWeight: "bold",
+                        marginBottom: "4px",
                       }}
                     >
                       Position des icônes
                     </label>
                     <select
-                      value={(element.iconsPosition as string) || 'left'}
+                      value={(element.iconsPosition as string) || "left"}
                       onChange={(e) =>
-                        onChange(element.id, 'iconsPosition', e.target.value)
+                        onChange(element.id, "iconsPosition", e.target.value)
                       }
                       style={{
-                        width: '100%',
-                        padding: '4px 8px',
-                        border: '1px solid #ccc',
-                        borderRadius: '3px',
-                        fontSize: '12px',
+                        width: "100%",
+                        padding: "4px 8px",
+                        border: "1px solid #ccc",
+                        borderRadius: "3px",
+                        fontSize: "12px",
                       }}
                     >
                       <option value="left">À gauche</option>
@@ -396,26 +482,36 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
       )}
 
       {/* Onglet Personnalisation */}
-      {customerCurrentTab === 'personnalisation' && (
+      {customerCurrentTab === "personnalisation" && (
         <>
           {/* Accordéon Disposition */}
           <Accordion title="Disposition" defaultOpen={true}>
-            <div style={{ marginBottom: '12px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+            <div style={{ marginBottom: "12px" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "11px",
+                  fontWeight: "bold",
+                  marginBottom: "4px",
+                }}
+              >
                 Type de disposition
               </label>
               <select
-                value={element.layout || 'vertical'}
+                value={element.layout || "vertical"}
                 onChange={(e) => {
-                  console.log('[CustomerInfo] Layout changed to:', e.target.value);
-                  onChange(element.id, 'layout', e.target.value);
+                  console.log(
+                    "[CustomerInfo] Layout changed to:",
+                    e.target.value,
+                  );
+                  onChange(element.id, "layout", e.target.value);
                 }}
                 style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
+                  width: "100%",
+                  padding: "4px 8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "3px",
+                  fontSize: "12px",
                 }}
               >
                 <option value="vertical">Verticale</option>
@@ -427,309 +523,363 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
 
           {/* Accordéon Thèmes prédéfinis */}
           <Accordion title="Thèmes prédéfinis" defaultOpen={false}>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-              gap: '8px',
-              maxHeight: '200px',
-              overflowY: 'auto',
-              padding: '4px',
-              border: '1px solid #e0e0e0',
-              borderRadius: '4px',
-              backgroundColor: '#fafafa'
-            }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+                gap: "8px",
+                maxHeight: "200px",
+                overflowY: "auto",
+                padding: "4px",
+                border: "1px solid #e0e0e0",
+                borderRadius: "4px",
+                backgroundColor: "#fafafa",
+              }}
+            >
               {[
                 {
-                  id: 'clean',
-                  name: 'Propre',
+                  id: "clean",
+                  name: "Propre",
                   preview: (
-                    <div style={{
-                      width: '100%',
-                      height: '35px',
-                      border: '1px solid #f3f4f6',
-                      borderRadius: '4px',
-                      backgroundColor: '#ffffff',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: '1px'
-                    }}>
-                      <div style={{
-                        width: '90%',
-                        height: '2px',
-                        backgroundColor: '#f9fafb'
-                      }}></div>
-                      <div style={{
-                        width: '75%',
-                        height: '2px',
-                        backgroundColor: '#ffffff'
-                      }}></div>
-                      <div style={{
-                        width: '60%',
-                        height: '2px',
-                        backgroundColor: '#f9fafb'
-                      }}></div>
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "35px",
+                        border: "1px solid #f3f4f6",
+                        borderRadius: "4px",
+                        backgroundColor: "#ffffff",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: "1px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "90%",
+                          height: "2px",
+                          backgroundColor: "#f9fafb",
+                        }}
+                      ></div>
+                      <div
+                        style={{
+                          width: "75%",
+                          height: "2px",
+                          backgroundColor: "#ffffff",
+                        }}
+                      ></div>
+                      <div
+                        style={{
+                          width: "60%",
+                          height: "2px",
+                          backgroundColor: "#f9fafb",
+                        }}
+                      ></div>
                     </div>
                   ),
                   styles: {
-                    backgroundColor: '#ffffff',
-                    borderColor: '#f3f4f6',
-                    textColor: '#374151',
-                    headerTextColor: '#111827'
-                  }
+                    backgroundColor: "#ffffff",
+                    borderColor: "#f3f4f6",
+                    textColor: "#374151",
+                    headerTextColor: "#111827",
+                  },
                 },
                 {
-                  id: 'subtle',
-                  name: 'Discret',
+                  id: "subtle",
+                  name: "Discret",
                   preview: (
-                    <div style={{
-                      width: '100%',
-                      height: '35px',
-                      border: '1px solid #f1f5f9',
-                      borderRadius: '6px',
-                      backgroundColor: '#fafbfc',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: '2px'
-                    }}>
-                      <div style={{
-                        width: '90%',
-                        height: '3px',
-                        backgroundColor: '#e2e8f0',
-                        borderRadius: '1px'
-                      }}></div>
-                      <div style={{
-                        width: '75%',
-                        height: '3px',
-                        backgroundColor: '#fafbfc',
-                        borderRadius: '1px'
-                      }}></div>
-                      <div style={{
-                        width: '60%',
-                        height: '3px',
-                        backgroundColor: '#e2e8f0',
-                        borderRadius: '1px'
-                      }}></div>
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "35px",
+                        border: "1px solid #f1f5f9",
+                        borderRadius: "6px",
+                        backgroundColor: "#fafbfc",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: "2px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "90%",
+                          height: "3px",
+                          backgroundColor: "#e2e8f0",
+                          borderRadius: "1px",
+                        }}
+                      ></div>
+                      <div
+                        style={{
+                          width: "75%",
+                          height: "3px",
+                          backgroundColor: "#fafbfc",
+                          borderRadius: "1px",
+                        }}
+                      ></div>
+                      <div
+                        style={{
+                          width: "60%",
+                          height: "3px",
+                          backgroundColor: "#e2e8f0",
+                          borderRadius: "1px",
+                        }}
+                      ></div>
                     </div>
                   ),
                   styles: {
-                    backgroundColor: '#fafbfc',
-                    borderColor: '#f1f5f9',
-                    textColor: '#475569',
-                    headerTextColor: '#334155'
-                  }
+                    backgroundColor: "#fafbfc",
+                    borderColor: "#f1f5f9",
+                    textColor: "#475569",
+                    headerTextColor: "#334155",
+                  },
                 },
                 {
-                  id: 'elegant',
-                  name: 'Élégant',
+                  id: "elegant",
+                  name: "Élégant",
                   preview: (
-                    <div style={{
-                      width: '100%',
-                      height: '35px',
-                      border: '2px solid #f3e8ff',
-                      borderRadius: '8px',
-                      backgroundColor: '#fefefe',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: '2px'
-                    }}>
-                      <div style={{
-                        width: '90%',
-                        height: '3px',
-                        backgroundColor: '#f3e8ff',
-                        borderRadius: '2px'
-                      }}></div>
-                      <div style={{
-                        width: '75%',
-                        height: '3px',
-                        backgroundColor: '#fefefe',
-                        borderRadius: '2px'
-                      }}></div>
-                      <div style={{
-                        width: '60%',
-                        height: '3px',
-                        backgroundColor: '#f3e8ff',
-                        borderRadius: '2px'
-                      }}></div>
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "35px",
+                        border: "2px solid #f3e8ff",
+                        borderRadius: "8px",
+                        backgroundColor: "#fefefe",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: "2px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "90%",
+                          height: "3px",
+                          backgroundColor: "#f3e8ff",
+                          borderRadius: "2px",
+                        }}
+                      ></div>
+                      <div
+                        style={{
+                          width: "75%",
+                          height: "3px",
+                          backgroundColor: "#fefefe",
+                          borderRadius: "2px",
+                        }}
+                      ></div>
+                      <div
+                        style={{
+                          width: "60%",
+                          height: "3px",
+                          backgroundColor: "#f3e8ff",
+                          borderRadius: "2px",
+                        }}
+                      ></div>
                     </div>
                   ),
                   styles: {
-                    backgroundColor: '#fefefe',
-                    borderColor: '#f3e8ff',
-                    textColor: '#6b21a8',
-                    headerTextColor: '#581c87'
-                  }
+                    backgroundColor: "#fefefe",
+                    borderColor: "#f3e8ff",
+                    textColor: "#6b21a8",
+                    headerTextColor: "#581c87",
+                  },
                 },
                 {
-                  id: 'corporate',
-                  name: 'Corporate',
+                  id: "corporate",
+                  name: "Corporate",
                   preview: (
-                    <div style={{
-                      width: '100%',
-                      height: '35px',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '0px',
-                      backgroundColor: '#ffffff',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: '2px'
-                    }}>
-                      <div style={{
-                        width: '90%',
-                        height: '3px',
-                        backgroundColor: '#f3f4f6'
-                      }}></div>
-                      <div style={{
-                        width: '75%',
-                        height: '3px',
-                        backgroundColor: '#ffffff'
-                      }}></div>
-                      <div style={{
-                        width: '60%',
-                        height: '3px',
-                        backgroundColor: '#f3f4f6'
-                      }}></div>
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "35px",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "0px",
+                        backgroundColor: "#ffffff",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: "2px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "90%",
+                          height: "3px",
+                          backgroundColor: "#f3f4f6",
+                        }}
+                      ></div>
+                      <div
+                        style={{
+                          width: "75%",
+                          height: "3px",
+                          backgroundColor: "#ffffff",
+                        }}
+                      ></div>
+                      <div
+                        style={{
+                          width: "60%",
+                          height: "3px",
+                          backgroundColor: "#f3f4f6",
+                        }}
+                      ></div>
                     </div>
                   ),
                   styles: {
-                    backgroundColor: '#ffffff',
-                    borderColor: '#e5e7eb',
-                    textColor: '#374151',
-                    headerTextColor: '#111827'
-                  }
+                    backgroundColor: "#ffffff",
+                    borderColor: "#e5e7eb",
+                    textColor: "#374151",
+                    headerTextColor: "#111827",
+                  },
                 },
                 {
-                  id: 'warm',
-                  name: 'Chaleureux',
+                  id: "warm",
+                  name: "Chaleureux",
                   preview: (
-                    <div style={{
-                      width: '100%',
-                      height: '35px',
-                      border: '1px solid #fed7aa',
-                      borderRadius: '6px',
-                      backgroundColor: '#fff8f0',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: '2px'
-                    }}>
-                      <div style={{
-                        width: '90%',
-                        height: '3px',
-                        backgroundColor: '#fed7aa',
-                        borderRadius: '1px'
-                      }}></div>
-                      <div style={{
-                        width: '75%',
-                        height: '3px',
-                        backgroundColor: '#fff8f0',
-                        borderRadius: '1px'
-                      }}></div>
-                      <div style={{
-                        width: '60%',
-                        height: '3px',
-                        backgroundColor: '#fed7aa',
-                        borderRadius: '1px'
-                      }}></div>
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "35px",
+                        border: "1px solid #fed7aa",
+                        borderRadius: "6px",
+                        backgroundColor: "#fff8f0",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: "2px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "90%",
+                          height: "3px",
+                          backgroundColor: "#fed7aa",
+                          borderRadius: "1px",
+                        }}
+                      ></div>
+                      <div
+                        style={{
+                          width: "75%",
+                          height: "3px",
+                          backgroundColor: "#fff8f0",
+                          borderRadius: "1px",
+                        }}
+                      ></div>
+                      <div
+                        style={{
+                          width: "60%",
+                          height: "3px",
+                          backgroundColor: "#fed7aa",
+                          borderRadius: "1px",
+                        }}
+                      ></div>
                     </div>
                   ),
                   styles: {
-                    backgroundColor: '#fff8f0',
-                    borderColor: '#fed7aa',
-                    textColor: '#9a3412',
-                    headerTextColor: '#78350f'
-                  }
+                    backgroundColor: "#fff8f0",
+                    borderColor: "#fed7aa",
+                    textColor: "#9a3412",
+                    headerTextColor: "#78350f",
+                  },
                 },
                 {
-                  id: 'minimal',
-                  name: 'Minimal',
+                  id: "minimal",
+                  name: "Minimal",
                   preview: (
-                    <div style={{
-                      width: '100%',
-                      height: '35px',
-                      border: 'none',
-                      borderRadius: '0px',
-                      backgroundColor: 'transparent',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      gap: '1px'
-                    }}>
-                      <div style={{
-                        width: '90%',
-                        height: '1px',
-                        backgroundColor: '#e5e7eb'
-                      }}></div>
-                      <div style={{
-                        width: '75%',
-                        height: '1px',
-                        backgroundColor: 'transparent'
-                      }}></div>
-                      <div style={{
-                        width: '60%',
-                        height: '1px',
-                        backgroundColor: '#e5e7eb'
-                      }}></div>
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "35px",
+                        border: "none",
+                        borderRadius: "0px",
+                        backgroundColor: "transparent",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: "1px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "90%",
+                          height: "1px",
+                          backgroundColor: "#e5e7eb",
+                        }}
+                      ></div>
+                      <div
+                        style={{
+                          width: "75%",
+                          height: "1px",
+                          backgroundColor: "transparent",
+                        }}
+                      ></div>
+                      <div
+                        style={{
+                          width: "60%",
+                          height: "1px",
+                          backgroundColor: "#e5e7eb",
+                        }}
+                      ></div>
                     </div>
                   ),
                   styles: {
-                    backgroundColor: 'transparent',
-                    borderColor: 'transparent',
-                    textColor: '#6b7280',
-                    headerTextColor: '#374151'
-                  }
-                }
-              ].map(theme => (
+                    backgroundColor: "transparent",
+                    borderColor: "transparent",
+                    textColor: "#6b7280",
+                    headerTextColor: "#374151",
+                  },
+                },
+              ].map((theme) => (
                 <button
                   key={theme.id}
                   onClick={() => {
                     // Appliquer toutes les propriétés du thème
-                    Object.entries(theme.styles).forEach(([property, value]) => {
-                      onChange(element.id, property, value);
-                    });
+                    Object.entries(theme.styles).forEach(
+                      ([property, value]) => {
+                        onChange(element.id, property, value);
+                      },
+                    );
                   }}
                   style={{
-                    padding: '6px',
-                    border: '2px solid transparent',
-                    borderRadius: '6px',
-                    backgroundColor: '#ffffff',
-                    cursor: 'pointer',
-                    textAlign: 'center',
-                    transition: 'all 0.2s ease',
-                    minHeight: '70px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '4px'
+                    padding: "6px",
+                    border: "2px solid transparent",
+                    borderRadius: "6px",
+                    backgroundColor: "#ffffff",
+                    cursor: "pointer",
+                    textAlign: "center",
+                    transition: "all 0.2s ease",
+                    minHeight: "70px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: "4px",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = '#007bff';
-                    e.currentTarget.style.backgroundColor = '#f8f9fa';
-                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.borderColor = "#007bff";
+                    e.currentTarget.style.backgroundColor = "#f8f9fa";
+                    e.currentTarget.style.transform = "translateY(-1px)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'transparent';
-                    e.currentTarget.style.backgroundColor = '#ffffff';
-                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.borderColor = "transparent";
+                    e.currentTarget.style.backgroundColor = "#ffffff";
+                    e.currentTarget.style.transform = "translateY(0)";
                   }}
                   title={`Appliquer le thème ${theme.name}`}
                 >
-                  <div style={{
-                    fontSize: '10px',
-                    fontWeight: 'bold',
-                    color: '#333',
-                    textAlign: 'center',
-                    lineHeight: '1.2'
-                  }}>
+                  <div
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: "bold",
+                      color: "#333",
+                      textAlign: "center",
+                      lineHeight: "1.2",
+                    }}
+                  >
                     {theme.name}
                   </div>
                   {theme.preview}
@@ -738,12 +888,18 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
             </div>
           </Accordion>
 
-          <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+          <hr
+            style={{
+              margin: "16px 0",
+              border: "none",
+              borderTop: "1px solid #ddd",
+            }}
+          />
 
           {/* Accordéon Police de l'en-tête */}
           {element.showHeaders !== false && (
             <Accordion title="Police de l'en-tête" defaultOpen={false}>
-              <div style={{ marginBottom: '8px' }}>
+              <div style={{ marginBottom: "8px" }}>
                 <NumericPropertyInput
                   label="Taille de police"
                   value={element.headerFontSize}
@@ -751,23 +907,36 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
                   min={8}
                   max={32}
                   unit="px"
-                  onChange={(value) => onChange(element.id, 'headerFontSize', value)}
+                  onChange={(value) =>
+                    onChange(element.id, "headerFontSize", value)
+                  }
                 />
               </div>
 
-              <div style={{ marginBottom: '8px' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+              <div style={{ marginBottom: "8px" }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "11px",
+                    fontWeight: "bold",
+                    marginBottom: "4px",
+                  }}
+                >
                   Famille de police
                 </label>
                 <select
-                  value={element.headerFontFamily || element.fontFamily || 'Arial'}
-                  onChange={(e) => onChange(element.id, 'headerFontFamily', e.target.value)}
+                  value={
+                    element.headerFontFamily || element.fontFamily || "Arial"
+                  }
+                  onChange={(e) =>
+                    onChange(element.id, "headerFontFamily", e.target.value)
+                  }
                   style={{
-                    width: '100%',
-                    padding: '4px 8px',
-                    border: '1px solid #ccc',
-                    borderRadius: '3px',
-                    fontSize: '12px'
+                    width: "100%",
+                    padding: "4px 8px",
+                    border: "1px solid #ccc",
+                    borderRadius: "3px",
+                    fontSize: "12px",
                   }}
                 >
                   <option value="Arial">Arial</option>
@@ -783,19 +952,30 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
                 </select>
               </div>
 
-              <div style={{ marginBottom: '8px' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+              <div style={{ marginBottom: "8px" }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "11px",
+                    fontWeight: "bold",
+                    marginBottom: "4px",
+                  }}
+                >
                   Épaisseur de police
                 </label>
                 <select
-                  value={element.headerFontWeight || element.fontWeight || 'normal'}
-                  onChange={(e) => onChange(element.id, 'headerFontWeight', e.target.value)}
+                  value={
+                    element.headerFontWeight || element.fontWeight || "normal"
+                  }
+                  onChange={(e) =>
+                    onChange(element.id, "headerFontWeight", e.target.value)
+                  }
                   style={{
-                    width: '100%',
-                    padding: '4px 8px',
-                    border: '1px solid #ccc',
-                    borderRadius: '3px',
-                    fontSize: '12px'
+                    width: "100%",
+                    padding: "4px 8px",
+                    border: "1px solid #ccc",
+                    borderRadius: "3px",
+                    fontSize: "12px",
                   }}
                 >
                   <option value="normal">Normal (400)</option>
@@ -805,19 +985,30 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
                 </select>
               </div>
 
-              <div style={{ marginBottom: '8px' }}>
-                <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+              <div style={{ marginBottom: "8px" }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "11px",
+                    fontWeight: "bold",
+                    marginBottom: "4px",
+                  }}
+                >
                   Style de police
                 </label>
                 <select
-                  value={element.headerFontStyle || element.fontStyle || 'normal'}
-                  onChange={(e) => onChange(element.id, 'headerFontStyle', e.target.value)}
+                  value={
+                    element.headerFontStyle || element.fontStyle || "normal"
+                  }
+                  onChange={(e) =>
+                    onChange(element.id, "headerFontStyle", e.target.value)
+                  }
                   style={{
-                    width: '100%',
-                    padding: '4px 8px',
-                    border: '1px solid #ccc',
-                    borderRadius: '3px',
-                    fontSize: '12px'
+                    width: "100%",
+                    padding: "4px 8px",
+                    border: "1px solid #ccc",
+                    borderRadius: "3px",
+                    fontSize: "12px",
                   }}
                 >
                   <option value="normal">Normal</option>
@@ -826,12 +1017,18 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
                 </select>
               </div>
 
-              <div style={{ marginBottom: '0' }}>
+              <div style={{ marginBottom: "0" }}>
                 <ColorPropertyInput
                   label="Couleur de police"
-                  value={(element.headerTextColor as string) || element.textColor || '#111827'}
+                  value={
+                    (element.headerTextColor as string) ||
+                    element.textColor ||
+                    "#111827"
+                  }
                   defaultValue="#111827"
-                  onChange={(value) => onChange(element.id, 'headerTextColor', value)}
+                  onChange={(value) =>
+                    onChange(element.id, "headerTextColor", value)
+                  }
                 />
               </div>
             </Accordion>
@@ -839,7 +1036,7 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
 
           {/* Accordéon Police du corps du texte */}
           <Accordion title="Police du corps du texte" defaultOpen={false}>
-            <div style={{ marginBottom: '8px' }}>
+            <div style={{ marginBottom: "8px" }}>
               <NumericPropertyInput
                 label="Taille de police"
                 value={element.bodyFontSize}
@@ -847,23 +1044,34 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
                 min={8}
                 max={24}
                 unit="px"
-                onChange={(value) => onChange(element.id, 'bodyFontSize', value)}
+                onChange={(value) =>
+                  onChange(element.id, "bodyFontSize", value)
+                }
               />
             </div>
 
-            <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+            <div style={{ marginBottom: "8px" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "11px",
+                  fontWeight: "bold",
+                  marginBottom: "4px",
+                }}
+              >
                 Famille de police
               </label>
               <select
-                value={element.bodyFontFamily || element.fontFamily || 'Arial'}
-                onChange={(e) => onChange(element.id, 'bodyFontFamily', e.target.value)}
+                value={element.bodyFontFamily || element.fontFamily || "Arial"}
+                onChange={(e) =>
+                  onChange(element.id, "bodyFontFamily", e.target.value)
+                }
                 style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
+                  width: "100%",
+                  padding: "4px 8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "3px",
+                  fontSize: "12px",
                 }}
               >
                 <option value="Arial">Arial</option>
@@ -879,19 +1087,28 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               </select>
             </div>
 
-            <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+            <div style={{ marginBottom: "8px" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "11px",
+                  fontWeight: "bold",
+                  marginBottom: "4px",
+                }}
+              >
                 Épaisseur de police
               </label>
               <select
-                value={element.bodyFontWeight || element.fontWeight || 'normal'}
-                onChange={(e) => onChange(element.id, 'bodyFontWeight', e.target.value)}
+                value={element.bodyFontWeight || element.fontWeight || "normal"}
+                onChange={(e) =>
+                  onChange(element.id, "bodyFontWeight", e.target.value)
+                }
                 style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
+                  width: "100%",
+                  padding: "4px 8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "3px",
+                  fontSize: "12px",
                 }}
               >
                 <option value="normal">Normal (400)</option>
@@ -901,19 +1118,28 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               </select>
             </div>
 
-            <div style={{ marginBottom: '8px' }}>
-              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+            <div style={{ marginBottom: "8px" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "11px",
+                  fontWeight: "bold",
+                  marginBottom: "4px",
+                }}
+              >
                 Style de police
               </label>
               <select
-                value={element.bodyFontStyle || element.fontStyle || 'normal'}
-                onChange={(e) => onChange(element.id, 'bodyFontStyle', e.target.value)}
+                value={element.bodyFontStyle || element.fontStyle || "normal"}
+                onChange={(e) =>
+                  onChange(element.id, "bodyFontStyle", e.target.value)
+                }
                 style={{
-                  width: '100%',
-                  padding: '4px 8px',
-                  border: '1px solid #ccc',
-                  borderRadius: '3px',
-                  fontSize: '12px'
+                  width: "100%",
+                  padding: "4px 8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "3px",
+                  fontSize: "12px",
                 }}
               >
                 <option value="normal">Normal</option>
@@ -922,53 +1148,65 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               </select>
             </div>
 
-            <div style={{ marginBottom: '0' }}>
+            <div style={{ marginBottom: "0" }}>
               <ColorPropertyInput
                 label="Couleur de police"
-                value={element.textColor || '#374151'}
+                value={element.textColor || "#374151"}
                 defaultValue="#374151"
-                onChange={(value) => onChange(element.id, 'textColor', value)}
+                onChange={(value) => onChange(element.id, "textColor", value)}
               />
             </div>
           </Accordion>
 
           {/* Accordéon Couleurs */}
           <Accordion title="Couleurs" defaultOpen={false}>
-            <div style={{ marginBottom: '8px' }}>
+            <div style={{ marginBottom: "8px" }}>
               <ColorPropertyInput
                 label="Couleur du texte d'en-tête"
-                value={(element.headerTextColor as string) || element.textColor || '#111827'}
+                value={
+                  (element.headerTextColor as string) ||
+                  element.textColor ||
+                  "#111827"
+                }
                 defaultValue="#111827"
-                onChange={(value) => onChange(element.id, 'headerTextColor', value)}
+                onChange={(value) =>
+                  onChange(element.id, "headerTextColor", value)
+                }
               />
             </div>
 
-            <div style={{ marginBottom: '8px' }}>
+            <div style={{ marginBottom: "8px" }}>
               <ColorPropertyInput
                 label="Couleur du texte du corps"
-                value={element.textColor || '#374151'}
+                value={element.textColor || "#374151"}
                 defaultValue="#374151"
-                onChange={(value) => onChange(element.id, 'textColor', value)}
+                onChange={(value) => onChange(element.id, "textColor", value)}
               />
             </div>
 
             {element.showBackground !== false && (
-              <div style={{ marginBottom: '8px' }}>
+              <div style={{ marginBottom: "8px" }}>
                 <ColorPropertyInput
                   label="Couleur de fond"
-                  value={element.backgroundColor === 'transparent' ? '#ffffff' : (element.backgroundColor || '#ffffff')}
+                  value={
+                    element.backgroundColor === "transparent"
+                      ? "#ffffff"
+                      : element.backgroundColor || "#ffffff"
+                  }
                   defaultValue="#ffffff"
-                  onChange={(value) => onChange(element.id, 'backgroundColor', value)}
+                  onChange={(value) =>
+                    onChange(element.id, "backgroundColor", value)
+                  }
                 />
               </div>
             )}
 
-            <div style={{ marginBottom: '0' }}>
+            <div style={{ marginBottom: "0" }}>
               <ColorPropertyInput
                 label="Couleur des bordures"
-                value={element.borderColor || '#e5e7eb'}
+                value={element.borderColor || "#e5e7eb"}
                 defaultValue="#e5e7eb"
-                onChange={(value) => onChange(element.id, 'borderColor', value)}
+                onChange={(value) => onChange(element.id, "borderColor", value)}
               />
             </div>
           </Accordion>
@@ -976,10 +1214,17 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
       )}
 
       {/* Onglet Positionnement */}
-      {customerCurrentTab === 'positionnement' && (
+      {customerCurrentTab === "positionnement" && (
         <>
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "4px",
+              }}
+            >
               Position X: {element.x}px
             </label>
             <input
@@ -987,20 +1232,29 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               min={0}
               max={1000}
               value={element.x}
-              onChange={(e) => onChange(element.id, 'x', parseInt(e.target.value))}
+              onChange={(e) =>
+                onChange(element.id, "x", parseInt(e.target.value))
+              }
               style={{
-                width: '100%',
-                height: '6px',
-                borderRadius: '3px',
-                background: '#ddd',
-                outline: 'none',
-                cursor: 'pointer'
+                width: "100%",
+                height: "6px",
+                borderRadius: "3px",
+                background: "#ddd",
+                outline: "none",
+                cursor: "pointer",
               }}
             />
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "4px",
+              }}
+            >
               Position Y: {element.y}px
             </label>
             <input
@@ -1008,20 +1262,29 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               min={0}
               max={1000}
               value={element.y}
-              onChange={(e) => onChange(element.id, 'y', parseInt(e.target.value))}
+              onChange={(e) =>
+                onChange(element.id, "y", parseInt(e.target.value))
+              }
               style={{
-                width: '100%',
-                height: '6px',
-                borderRadius: '3px',
-                background: '#ddd',
-                outline: 'none',
-                cursor: 'pointer'
+                width: "100%",
+                height: "6px",
+                borderRadius: "3px",
+                background: "#ddd",
+                outline: "none",
+                cursor: "pointer",
               }}
             />
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "4px",
+              }}
+            >
               Largeur: {element.width}px
             </label>
             <input
@@ -1029,20 +1292,29 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               min={10}
               max={1000}
               value={element.width}
-              onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value))}
+              onChange={(e) =>
+                onChange(element.id, "width", parseInt(e.target.value))
+              }
               style={{
-                width: '100%',
-                height: '6px',
-                borderRadius: '3px',
-                background: '#ddd',
-                outline: 'none',
-                cursor: 'pointer'
+                width: "100%",
+                height: "6px",
+                borderRadius: "3px",
+                background: "#ddd",
+                outline: "none",
+                cursor: "pointer",
               }}
             />
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "4px",
+              }}
+            >
               Hauteur: {element.height}px
             </label>
             <input
@@ -1050,73 +1322,126 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               min={10}
               max={1000}
               value={element.height}
-              onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value))}
+              onChange={(e) =>
+                onChange(element.id, "height", parseInt(e.target.value))
+              }
               style={{
-                width: '100%',
-                height: '6px',
-                borderRadius: '3px',
-                background: '#ddd',
-                outline: 'none',
-                cursor: 'pointer'
+                width: "100%",
+                height: "6px",
+                borderRadius: "3px",
+                background: "#ddd",
+                outline: "none",
+                cursor: "pointer",
               }}
             />
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Padding horizontal: {element.paddingHorizontal !== undefined ? element.paddingHorizontal : (element.padding || 12)}px
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "4px",
+              }}
+            >
+              Padding horizontal:{" "}
+              {element.paddingHorizontal !== undefined
+                ? element.paddingHorizontal
+                : element.padding || 12}
+              px
             </label>
             <input
               type="range"
               min={0}
               max={50}
-              value={element.paddingHorizontal !== undefined ? element.paddingHorizontal : (element.padding || 12)}
-              onChange={(e) => onChange(element.id, 'paddingHorizontal', parseInt(e.target.value))}
+              value={
+                element.paddingHorizontal !== undefined
+                  ? element.paddingHorizontal
+                  : element.padding || 12
+              }
+              onChange={(e) =>
+                onChange(
+                  element.id,
+                  "paddingHorizontal",
+                  parseInt(e.target.value),
+                )
+              }
               style={{
-                width: '100%',
-                height: '6px',
-                borderRadius: '3px',
-                background: '#ddd',
-                outline: 'none',
-                cursor: 'pointer'
+                width: "100%",
+                height: "6px",
+                borderRadius: "3px",
+                background: "#ddd",
+                outline: "none",
+                cursor: "pointer",
               }}
             />
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
-              Padding vertical: {element.paddingVertical !== undefined ? element.paddingVertical : (element.padding || 12)}px
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "4px",
+              }}
+            >
+              Padding vertical:{" "}
+              {element.paddingVertical !== undefined
+                ? element.paddingVertical
+                : element.padding || 12}
+              px
             </label>
             <input
               type="range"
               min={0}
               max={50}
-              value={element.paddingVertical !== undefined ? element.paddingVertical : (element.padding || 12)}
-              onChange={(e) => onChange(element.id, 'paddingVertical', parseInt(e.target.value))}
+              value={
+                element.paddingVertical !== undefined
+                  ? element.paddingVertical
+                  : element.padding || 12
+              }
+              onChange={(e) =>
+                onChange(
+                  element.id,
+                  "paddingVertical",
+                  parseInt(e.target.value),
+                )
+              }
               style={{
-                width: '100%',
-                height: '6px',
-                borderRadius: '3px',
-                background: '#ddd',
-                outline: 'none',
-                cursor: 'pointer'
+                width: "100%",
+                height: "6px",
+                borderRadius: "3px",
+                background: "#ddd",
+                outline: "none",
+                cursor: "pointer",
               }}
             />
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "4px",
+              }}
+            >
               Alignement horizontal
             </label>
             <select
-              value={element.textAlign || 'left'}
-              onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
+              value={element.textAlign || "left"}
+              onChange={(e) =>
+                onChange(element.id, "textAlign", e.target.value)
+              }
               style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
+                width: "100%",
+                padding: "4px 8px",
+                border: "1px solid #ccc",
+                borderRadius: "3px",
+                fontSize: "12px",
               }}
             >
               <option value="left">Gauche</option>
@@ -1125,19 +1450,28 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
             </select>
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "4px",
+              }}
+            >
               Alignement vertical
             </label>
             <select
-              value={element.verticalAlign || 'top'}
-              onChange={(e) => onChange(element.id, 'verticalAlign', e.target.value)}
+              value={element.verticalAlign || "top"}
+              onChange={(e) =>
+                onChange(element.id, "verticalAlign", e.target.value)
+              }
               style={{
-                width: '100%',
-                padding: '4px 8px',
-                border: '1px solid #ccc',
-                borderRadius: '3px',
-                fontSize: '12px'
+                width: "100%",
+                padding: "4px 8px",
+                border: "1px solid #ccc",
+                borderRadius: "3px",
+                fontSize: "12px",
               }}
             >
               <option value="top">Haut</option>
@@ -1146,9 +1480,19 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
             </select>
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Espacement des lignes <span style={{ color: '#666', fontSize: '10px' }}>({parseFloat(element.lineHeight || 1.0).toFixed(1)})</span>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "6px",
+              }}
+            >
+              Espacement des lignes{" "}
+              <span style={{ color: "#666", fontSize: "10px" }}>
+                ({parseFloat(element.lineHeight || 1.0).toFixed(1)})
+              </span>
             </label>
             <input
               type="range"
@@ -1156,21 +1500,33 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               max="3"
               step="0.1"
               value={parseFloat(element.lineHeight) || 1.0}
-              onChange={(e) => onChange(element.id, 'lineHeight', parseFloat(e.target.value))}
+              onChange={(e) =>
+                onChange(element.id, "lineHeight", parseFloat(e.target.value))
+              }
               style={{
-                width: '100%',
-                height: '6px',
-                borderRadius: '3px',
-                background: '#ddd',
-                outline: 'none',
-                cursor: 'pointer'
+                width: "100%",
+                height: "6px",
+                borderRadius: "3px",
+                background: "#ddd",
+                outline: "none",
+                cursor: "pointer",
               }}
             />
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
-              Espacement des lettres <span style={{ color: '#666', fontSize: '10px' }}>({parseFloat(element.letterSpacing || 0).toFixed(2)}px)</span>
+          <div style={{ marginBottom: "12px" }}>
+            <label
+              style={{
+                display: "block",
+                fontSize: "12px",
+                fontWeight: "bold",
+                marginBottom: "6px",
+              }}
+            >
+              Espacement des lettres{" "}
+              <span style={{ color: "#666", fontSize: "10px" }}>
+                ({parseFloat(element.letterSpacing || 0).toFixed(2)}px)
+              </span>
             </label>
             <input
               type="range"
@@ -1178,14 +1534,20 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               max="5"
               step="0.1"
               value={parseFloat(element.letterSpacing) || 0}
-              onChange={(e) => onChange(element.id, 'letterSpacing', parseFloat(e.target.value))}
+              onChange={(e) =>
+                onChange(
+                  element.id,
+                  "letterSpacing",
+                  parseFloat(e.target.value),
+                )
+              }
               style={{
-                width: '100%',
-                height: '6px',
-                borderRadius: '3px',
-                background: '#ddd',
-                outline: 'none',
-                cursor: 'pointer'
+                width: "100%",
+                height: "6px",
+                borderRadius: "3px",
+                background: "#ddd",
+                outline: "none",
+                cursor: "pointer",
               }}
             />
           </div>
@@ -1194,6 +1556,3 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
     </>
   );
 }
-
-
-
