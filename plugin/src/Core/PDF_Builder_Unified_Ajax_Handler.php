@@ -3643,38 +3643,43 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'capital' => '💰',    // Sac d'argent
                 ];
             } else {
-                // Pour PDF: symboles Unicode simples (mieux supportés par dompdf)
+                // Pour PDF: symboles Unicode simples (compatibles dompdf)
                 $icons = [
-                    'phone' => '☎',      // Téléphone (Unicode)
-                    'email' => '✉',      // Enveloppe (Unicode)
-                    'address' => '⌂',    // Maison (Unicode)
-                    'siret' => '◆',      // Diamant (Unicode)
-                    'rcs' => '▪',        // Carré (Unicode)
-                    'tva' => '●',        // Cercle (Unicode)
-                    'capital' => '▲',    // Triangle (Unicode)
+                    'phone' => '☎',      // Téléphone (U+260E)
+                    'email' => '✉',      // Enveloppe (U+2709)
+                    'address' => '⌂',    // Maison (U+2302)
+                    'siret' => '◆',      // Diamant (U+25C6)
+                    'rcs' => '▪',        // Carré (U+25AA)
+                    'tva' => '●',        // Cercle (U+25CF)
+                    'capital' => '▲',    // Triangle (U+25B2)
                 ];
             }
             return isset($icons[$type]) ? $icons[$type] : '';
         };
         
         // ✅ HELPER: Ajouter l'icône au texte si showIcons est activé (compatible avec concaténation)
-        $buildLineText = function($text, $iconType = null) use ($showIcons, $iconsPosition, $getIconForType) {
-            if (!$showIcons || empty($iconType) || empty($text)) return $text;
+        // Retourne le HTML avec le texte échappé mais l'icône non-échappée pour préserver les symboles UTF-8
+        $buildLineText = function($text, $iconType = null) use ($showIcons, $iconsPosition, $getIconForType, $format) {
+            if (empty($text)) return '';
+            $escapedText = esc_html($text);
+            if (!$showIcons || empty($iconType)) return $escapedText;
             $icon = $getIconForType($iconType);
-            return $iconsPosition === 'left' ? $icon . ' ' . $text : $text . ' ' . $icon;
+            return $iconsPosition === 'left' ? $icon . ' ' . $escapedText : $escapedText . ' ' . $icon;
         };
         
         // ✅ HELPER: Ajouter l'icône uniquement (pour les lignes concaténées)
-        $addIcon = function($text, $iconType, $isFirst = false) use ($showIcons, $iconsPosition, $getIconForType) {
-            if (!$showIcons || empty($iconType)) return $text;
+        $addIcon = function($text, $iconType, $isFirst = false) use ($showIcons, $iconsPosition, $getIconForType, $format) {
+            if (empty($text)) return '';
+            $escapedText = esc_html($text);
+            if (!$showIcons || empty($iconType)) return $escapedText;
             $icon = $getIconForType($iconType);
             // Pour les lignes concaténées, on ajoute l'icône seulement au premier élément de chaque type
             if ($isFirst && $iconsPosition === 'left') {
-                return $icon . ' ' . $text;
+                return $icon . ' ' . $escapedText;
             } elseif ($isFirst && $iconsPosition === 'right') {
-                return $text . ' ' . $icon;
+                return $escapedText . ' ' . $icon;
             }
-            return $text;
+            return $escapedText;
         };
         
         // Récupérer les données de l'entreprise depuis l'élément canvas (pas depuis les options WordPress)
@@ -3711,25 +3716,25 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
             }
             if (($element['showAddress'] ?? true) && $fullAddress) {
-                $lines[] = esc_html($buildLineText($fullAddress, 'address'));
+                $lines[] = $buildLineText($fullAddress, 'address');
             }
             if (($element['showSiret'] ?? true) && $siret) {
-                $lines[] = esc_html($buildLineText($siret, 'siret'));
+                $lines[] = $buildLineText($siret, 'siret');
             }
             if (($element['showVat'] ?? true) && $tva) {
-                $lines[] = esc_html($buildLineText($tva, 'tva'));
+                $lines[] = $buildLineText($tva, 'tva');
             }
             if (($element['showRcs'] ?? true) && $rcs) {
-                $lines[] = esc_html($buildLineText($rcs, 'rcs'));
+                $lines[] = $buildLineText($rcs, 'rcs');
             }
             if (($element['showCapital'] ?? true) && $capital) {
-                $lines[] = esc_html($buildLineText($capital, 'capital'));
+                $lines[] = $buildLineText($capital, 'capital');
             }
             if (($element['showEmail'] ?? true) && $email) {
-                $lines[] = esc_html($buildLineText($email, 'email'));
+                $lines[] = $buildLineText($email, 'email');
             }
             if (($element['showPhone'] ?? true) && $phone) {
-                $lines[] = esc_html($buildLineText($phone, 'phone'));
+                $lines[] = $buildLineText($phone, 'phone');
             }
         } elseif ($layout === 'horizontal') {
             // Mode horizontal : plusieurs infos par ligne, groupées logiquement
@@ -3740,24 +3745,24 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Ligne 1: Adresse + Ville
             $line1 = '';
             if (($element['showAddress'] ?? true) && $fullAddress) {
-                $line1 .= esc_html($buildLineText($fullAddress, 'address'));
+                $line1 .= $buildLineText($fullAddress, 'address');
             }
             if ($line1) $lines[] = $line1;
             
             // Ligne 2: Email + Phone
             $line2 = '';
             if (($element['showEmail'] ?? true) && $email) {
-                $line2 .= esc_html($buildLineText($email, 'email'));
+                $line2 .= $buildLineText($email, 'email');
             }
             if (($element['showPhone'] ?? true) && $phone) {
-                $line2 .= ($line2 ? ' | ' : '') . esc_html($buildLineText($phone, 'phone'));
+                $line2 .= ($line2 ? ' | ' : '') . $buildLineText($phone, 'phone');
             }
             if ($line2) $lines[] = $line2;
             
             // Ligne 3: Infos légales (SIRET | RCS | TVA | Capital)
             $line3 = '';
             if (($element['showSiret'] ?? true) && $siret) {
-                $line3 .= esc_html($buildLineText($siret, 'siret'));
+                $line3 .= $buildLineText($siret, 'siret');
             }
             if (($element['showRcs'] ?? true) && $rcs) {
                 $line3 .= ($line3 ? ' | ' : '') . esc_html($rcs);
@@ -3766,7 +3771,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $line3 .= ($line3 ? ' | ' : '') . esc_html($tva);
             }
             if (($element['showCapital'] ?? true) && $capital) {
-                $line3 .= ($line3 ? ' | ' : '') . esc_html($buildLineText($capital, 'capital'));
+                $line3 .= ($line3 ? ' | ' : '') . $buildLineText($capital, 'capital');
             }
             if ($line3) $lines[] = $line3;
         } elseif ($layout === 'compact') {
@@ -3779,26 +3784,26 @@ class PDF_Builder_Unified_Ajax_Handler {
             $compactFirstIcon = null;
             if (($element['showAddress'] ?? true) && $fullAddress) {
                 $compactFirstIcon = 'address';
-                $compactLine .= esc_html($addIcon($fullAddress, 'address', true));  // Adresse complète
+                $compactLine .= $addIcon($fullAddress, 'address', true);  // Adresse complète
             }
             if (($element['showEmail'] ?? true) && $email) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($compactFirstIcon === null ? $addIcon($email, 'email', true) : $email);
+                $compactLine .= ($compactLine ? ' • ' : '') . ($compactFirstIcon === null ? $addIcon($email, 'email', true) : esc_html($email));
                 if ($compactFirstIcon === null) $compactFirstIcon = 'email';
             }
             if (($element['showPhone'] ?? true) && $phone) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($compactFirstIcon === null ? $addIcon($phone, 'phone', true) : $phone);
+                $compactLine .= ($compactLine ? ' • ' : '') . ($compactFirstIcon === null ? $addIcon($phone, 'phone', true) : esc_html($phone));
                 if ($compactFirstIcon === null) $compactFirstIcon = 'phone';
             }
             if (($element['showSiret'] ?? true) && $siret) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($compactFirstIcon === null ? $addIcon($siret, 'siret', true) : $siret);
+                $compactLine .= ($compactLine ? ' • ' : '') . ($compactFirstIcon === null ? $addIcon($siret, 'siret', true) : esc_html($siret));
                 if ($compactFirstIcon === null) $compactFirstIcon = 'siret';
             }
             if (($element['showVat'] ?? true) && $tva) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($compactFirstIcon === null ? $addIcon($tva, 'tva', true) : $tva);
+                $compactLine .= ($compactLine ? ' • ' : '') . ($compactFirstIcon === null ? $addIcon($tva, 'tva', true) : esc_html($tva));
                 if ($compactFirstIcon === null) $compactFirstIcon = 'tva';
             }
             if (($element['showRcs'] ?? true) && $rcs) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($compactFirstIcon === null ? $addIcon($rcs, 'rcs', true) : $rcs);
+                $compactLine .= ($compactLine ? ' • ' : '') . ($compactFirstIcon === null ? $addIcon($rcs, 'rcs', true) : esc_html($rcs));
                 if ($compactFirstIcon === null) $compactFirstIcon = 'rcs';
             }
             
