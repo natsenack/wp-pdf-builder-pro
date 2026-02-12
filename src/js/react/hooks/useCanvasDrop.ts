@@ -4,7 +4,7 @@ import { Element } from "../types/elements";
 import { debugLog, debugError, debugWarn } from "../utils/debug";
 
 interface UseCanvasDropProps {
-  canvasRef: React.RefObject<HTMLCanvasElement>;
+  canvasRef: React.RefObject<HTMLElement>;
   canvasWidth: number;
   canvasHeight: number;
   elements: Element[];

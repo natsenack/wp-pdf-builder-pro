@@ -87,6 +87,10 @@ export interface BaseElement {
 
   /** Identifiant de la propriété réelle à récupérer depuis WooCommerce */
   realDataKey?: string;
+
+  // ✅ NEW: Propriétés optionnelles pour les images et logos
+  borderRadius?: number;
+  objectFit?: string;
 }
 
 export interface BaseElementProperties {
@@ -111,6 +115,7 @@ export interface OrderNumberElement extends BaseElement {
   showDate?: boolean;
   // Propriétés de mise en page
   contentAlign?: "left" | "center" | "right";
+  verticalAlign?: "top" | "middle" | "bottom";
   labelPosition?: "above" | "left" | "right" | "below";
   labelText?: string;
   // Propriétés de police générales
@@ -156,6 +161,7 @@ export interface OrderNumberElement extends BaseElement {
 
 export interface WoocommerceOrderDateElement extends BaseElement {
   type: "woocommerce_order_date";
+  verticalAlign?: "top" | "middle" | "bottom";
   dateFormat?: string;
   showTime?: boolean;
   fontFamily?: string;
@@ -182,6 +188,7 @@ export interface WoocommerceInvoiceNumberElement extends BaseElement {
   fontWeight?: string;
   fontStyle?: string;
   textAlign?: string;
+  verticalAlign?: "top" | "middle" | "bottom";
   padding?: { top?: number; right?: number; bottom?: number; left?: number };
   border?: { width?: number; style?: string; color?: string };
   backgroundColor?: string;
@@ -219,6 +226,8 @@ export interface ProductTableElement extends BaseElement {
   showSku?: boolean;
   showDescription?: boolean;
   showQuantity?: boolean;
+  showPrice?: boolean;
+  showTotal?: boolean;
   showImage?: boolean; // ✅ NEW: Afficher les images des produits
   showShipping?: boolean;
   showTax?: boolean;
@@ -264,6 +273,8 @@ export interface ProductTableElement extends BaseElement {
   textColor?: string;
   backgroundColor?: string;
   borderColor?: string;
+  borderWidth?: number;
+  borderRadius?: number;
   currency?: string;
   // Propriétés de données
   shippingCost?: number;
@@ -271,6 +282,8 @@ export interface ProductTableElement extends BaseElement {
   globalDiscount?: number;
   orderFees?: number;
   verticalAlign?: "top" | "middle" | "bottom";
+  // Propriétés de colonnes
+  columns?: Array<{ id: string; label: string; [key: string]: any }>;
 
   // ✅ NEW: Données produits, frais et totaux
   /** Produits affichés dans le tableau (fictifs en édition, réels en aperçu) */
@@ -375,6 +388,15 @@ export interface CompanyInfoElement extends BaseElement {
   website?: string;
   taxId?: string;
   registrationNumber?: string;
+  companyName?: string;
+  companyAddress?: string;
+  companyCity?: string;
+  companySiret?: string;
+  companyTva?: string;
+  companyRcs?: string;
+  companyCapital?: string;
+  companyEmail?: string;
+  companyPhone?: string;
   // Propriétés de style
   fontFamily?: string;
   fontSize?: number;
@@ -386,7 +408,32 @@ export interface CompanyInfoElement extends BaseElement {
   backgroundColor?: string;
   showBackground?: boolean;
   border?: { width?: number; style?: string; color?: string };
-  padding?: { top?: number; right?: number; bottom?: number; left?: number };
+  padding?: number | { top?: number; right?: number; bottom?: number; left?: number };
+  borderColor?: string;
+  borderWidth?: number;
+  showIcons?: boolean;
+  iconsPosition?: "left" | "right";
+  iconsSize?: number;
+  iconsColor?: string;
+  headerFontSize?: number;
+  headerFontFamily?: string;
+  headerFontWeight?: string;
+  headerFontStyle?: string;
+  bodyFontSize?: number;
+  bodyFontFamily?: string;
+  bodyFontWeight?: string;
+  bodyFontStyle?: string;
+  headerTextColor?: string;
+  showCompanyName?: boolean;
+  showAddress?: boolean;
+  showEmail?: boolean;
+  showPhone?: boolean;
+  showSiret?: boolean;
+  showVat?: boolean;
+  showRcs?: boolean;
+  showCapital?: boolean;
+  lineHeight?: number;
+  letterSpacing?: number;
 }
 
 export interface ElementProperties {
@@ -575,6 +622,7 @@ export interface CircleElement extends BaseElement {
 export interface TextElement extends BaseElement {
   type: "text";
   text?: string;
+  padding?: number | { top?: number; right?: number; bottom?: number; left?: number };
   fontSize?: number;
   textColor?: string;
   color?: string; // Alias pour textColor pour compatibilité
@@ -723,8 +771,9 @@ export interface ImageElement extends BaseElement {
 export interface OrderNumberElementProperties extends BaseElementProperties {
   // Propriétés d'affichage
   showHeaders?: boolean;
-  showBorders?: boolean;
-  showLabel?: boolean;
+  showBorders?: boolean;  backgroundColor?: string;
+  borderColor?: string;
+  borderWidth?: number;  showLabel?: boolean;
   showDate?: boolean;
   // Propriétés de mise en page
   contentAlign?: "left" | "center" | "right";
@@ -811,6 +860,15 @@ export interface CompanyInfoElement extends BaseElement {
   padding?: number; // Backward compatibility
   paddingHorizontal?: number;
   paddingVertical?: number;
+  // Propriétés de border
+  borderColor?: string;
+  borderWidth?: number;
+  backgroundColor?: string;
+  // Propriétés d'icônes
+  showIcons?: boolean;
+  iconsPosition?: "left" | "right";
+  iconsSize?: number;
+  iconsColor?: string;
   // Propriétés d'espacement
   lineHeight?: number;
   letterSpacing?: number;
@@ -876,6 +934,9 @@ export interface CustomerInfoElement extends BaseElement {
   // Propriétés de style
   headerTextColor?: string;
   verticalAlign?: "top" | "middle" | "bottom";
+  borderColor?: string;
+  borderWidth?: number;
+  backgroundColor?: string;
   // Propriétés d'espacement
   lineHeight?: number;
   letterSpacing?: number;
@@ -886,7 +947,41 @@ export interface DocumentTypeElement extends BaseElement {
   type: "document_type";
   documentType?: string;
   verticalAlign?: "top" | "middle" | "bottom";
+  fontSize?: number;
+  fontFamily?: string;
+  fontWeight?: string;
+  fontStyle?: string;
+  textColor?: string;
+  backgroundColor?: string;
+  showBackground?: boolean;
+  textAlign?: "left" | "center" | "right";
+  padding?: number;
+  borderColor?: string;
+  borderWidth?: number;
 }
+
+// Interface spécifique pour CompanyLogoElement
+export interface CompanyLogoElement extends BaseElement {
+  type: "company_logo";
+  logoUrl?: string;
+  src?: string;
+  alt?: string;
+  fit?: "contain" | "cover" | "fill" | "none" | "scale-down";
+  position?: "center" | "top" | "bottom" | "left" | "right" | "top-left" | "top-right" | "bottom-left" | "bottom-right";
+  opacity?: number;
+  alignment?: "left" | "center" | "right";
+  maintainAspectRatio?: boolean;
+  borderRadius?: number;
+  objectFit?: string;
+}
+
+// Aliases pour les types Properties manquants
+export type ShapeElementProperties = BaseElementProperties;
+export type TextElementProperties = BaseElementProperties;
+export type LineElementProperties = BaseElementProperties;
+export type ProductTableElementProperties = BaseElementProperties;
+export type ImageElementProperties = BaseElementProperties;
+export type MentionsElementProperties = BaseElementProperties;
 
 // Type union pour tous les éléments supportés
 export type Element =
@@ -902,4 +997,6 @@ export type Element =
   | CircleElement
   | TextElement
   | LineElement
+  | ImageElement
+  | CompanyLogoElement
   | DocumentTypeElement;

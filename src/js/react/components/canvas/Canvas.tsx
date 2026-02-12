@@ -29,6 +29,20 @@ import {
   MentionsElementProperties,
   DocumentTypeElementProperties,
   DynamicTextElement,
+  DocumentTypeElement,
+  RectangleElement,
+  CircleElement,
+  TextElement,
+  LineElement,
+  ImageElement,
+  ProductTableElement,
+  CustomerInfoElement,
+  CompanyInfoElement,
+  OrderNumberElement,
+  WoocommerceOrderDateElement,
+  WoocommerceInvoiceNumberElement,
+  CompanyLogoElement,
+  MentionsElement,
   BuilderState,
 } from "../../types/elements";
 import { wooCommerceManager } from "../../utils/WooCommerceElementsManager";
@@ -133,12 +147,15 @@ const createFontConfig = (
 // Fonction helper pour configurer les couleurs avec normalisation
 const createColorConfig = (
   props: any,
-  defaults: typeof DEFAULT_COLORS = DEFAULT_COLORS,
-) => ({
-  background: normalizeColor(props.backgroundColor || defaults.background),
-  border: normalizeColor(props.borderColor || defaults.border),
-  text: normalizeColor(props.textColor || defaults.text),
-});
+  defaults?: { background?: string; border?: string; text?: string },
+) => {
+  const defaultValues = defaults || DEFAULT_COLORS;
+  return {
+    background: normalizeColor(props.backgroundColor || defaultValues.background),
+    border: normalizeColor(props.borderColor || defaultValues.border),
+    text: normalizeColor(props.textColor || defaultValues.text),
+  };
+};
 
 // Fonction helper pour configurer le padding
 const getPadding = (props: any) => ({
@@ -151,7 +168,7 @@ const getPadding = (props: any) => ({
 // Fonction helper pour calculer la position X selon l'alignement
 const calculateTextX = (
   element: Element,
-  textAlign: string,
+  textAlign: string | undefined,
   padding: ReturnType<typeof getPadding>,
 ) => {
   switch (textAlign) {
@@ -236,6 +253,21 @@ const applyShapeStyle = (
 };
 
 // Fonction helper pour calculer la position X selon l'alignement du texte
+// Fonction helper pour normaliser padding (number ou object) en nombre
+const normalizePaddingToNumber = (
+  padding: number | { top?: number; right?: number; bottom?: number; left?: number } | undefined,
+  defaultValue: number = 12,
+): number => {
+  if (padding === undefined || padding === null) return defaultValue;
+  if (typeof padding === "number") return padding;
+  if (typeof padding === "object") {
+    // Si c'est un objet, retourner la valeur moyenne ou la première disponible
+    const values = [padding.top, padding.right, padding.bottom, padding.left].filter(v => v !== undefined) as number[];
+    return values.length > 0 ? Math.min(...values) : defaultValue;
+  }
+  return defaultValue;
+};
+
 const calculateTextAlignX = (
   element: Element,
   align: string = "left",
@@ -331,7 +363,7 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
   );
 
   // ✅ NEW: Ajouter du padding
-  const padding = props.padding || 12;
+  const padding = normalizePaddingToNumber(props.padding, 12);
 
   const x = calculateTextAlignX(element, props.textAlign, padding);
   const y = calculateTextY(
@@ -351,7 +383,7 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
   let currentY = y;
   const originalTextAlign = ctx.textAlign;
   
-  lines.forEach((line, index) => {
+  lines.forEach((line: string, index: number) => {
     // Appliquer le letter-spacing
     if (letterSpacing !== 0) {
       // Utiliser Array.from() pour gérer correctement les emoji et caractères multi-byte
@@ -604,13 +636,13 @@ const drawProductTable = (
   const showGlobalDiscount = props.showGlobalDiscount !== false;
   const textColor = normalizeColor(props.textColor || "#000000");
   const borderRadius = props.borderRadius || 0;
-
-  // ✅ NEW: Utiliser element.columns pour les colonnes dynamiques
-  const showImage = props.columns?.image !== false;
-  const showName = props.columns?.name !== false;
-  const showQuantity = props.columns?.quantity !== false;
-  const showPrice = props.columns?.price !== false;
-  const showTotal = props.columns?.total !== false;
+  
+  // ✅ NEW: Colonne visibilité basées sur showImage et autres propriétés
+  const showImage = props.showImage !== false;
+  const showName = true; // Toujours afficher le nom du produit
+  const showQuantity = props.showQuantity !== false;
+  const showPrice = props.showPrice !== false;
+  const showTotal = props.showTotal !== false;
 
   // ✅ NEW: Use real WooCommerce data in preview mode
   let products: Array<{
@@ -621,6 +653,7 @@ const drawProductTable = (
     price: number;
     discount: number;
     total: number;
+    image?: string;
   }>;
 
   if (state.previewMode === "command") {
@@ -651,7 +684,7 @@ const drawProductTable = (
     ];
   } else {
     // Use props.products in editor mode
-    products = (props.products || []).map((p) => ({
+    products = (props.products || []).map((p: any) => ({
       sku: p.sku || "N/A",
       name: p.name,
       description: p.description || "",
@@ -730,7 +763,7 @@ const drawProductTable = (
     // Get real order totals from WooCommerce
     const orderTotals = wooCommerceManager.getOrderTotals();
     // Calculate subtotal from products (includes fees already)
-    subtotal = products.reduce((sum, p) => sum + (Number(p.total) || 0), 0);
+    subtotal = products.reduce((sum: number, p: any) => sum + (Number(p.total) || 0), 0);
     shippingCost = Number(orderTotals.shipping) || 0;
     taxAmount = Number(orderTotals.tax) || 0;
     globalDiscount = Number(orderTotals.discount) || 0;
@@ -743,10 +776,10 @@ const drawProductTable = (
   } else {
     // ✅ CALCUL CORRECT DES TOTALS - Pas de hardcoding
     // 1) Calculer le sous-total à partir des produits
-    subtotal = products.reduce((sum, p) => sum + (p.total || 0), 0);
+    subtotal = products.reduce((sum: number, p: any) => sum + (p.total || 0), 0);
 
     // 2) Ajouter les frais supplémentaires si présents
-    totalFees = fees.reduce((sum, f) => sum + (f.total || 0), 0);
+    totalFees = fees.reduce((sum: number, f: any) => sum + (f.total || 0), 0);
 
     // 3) Lire les valeurs depuis les propriétés de l'élément OU utiliser les valeurs de totals comme fallback
     shippingCost =
@@ -1265,14 +1298,14 @@ const drawCustomerInfo = (
   const fontWeight = props.fontWeight || "normal";
   const fontStyle = props.fontStyle || "normal";
   // ✅ NEW: Padding horizontal et vertical séparés (backward compatibility avec padding unique)
-  const paddingHorizontal =
-    props.paddingHorizontal !== undefined
-      ? props.paddingHorizontal
-      : props.padding || 12;
-  const paddingVertical =
-    props.paddingVertical !== undefined
-      ? props.paddingVertical
-      : props.padding || 12;
+  const paddingHorizontal = normalizePaddingToNumber(
+    props.paddingHorizontal !== undefined ? props.paddingHorizontal : props.padding,
+    12,
+  );
+  const paddingVertical = normalizePaddingToNumber(
+    props.paddingVertical !== undefined ? props.paddingVertical : props.padding,
+    12,
+  );
   // Propriétés de police pour l'en-tête
   const headerFontSize = props.headerFontSize || fontSize + 2;
   const headerFontFamily = props.headerFontFamily || fontFamily;
@@ -1595,7 +1628,34 @@ const getCompanyData = (props: CompanyInfoElementProperties) => {
 const generateCompanyInfoText = (
   props: CompanyInfoElementProperties,
 ): string => {
-  const companyData = getCompanyData(props);
+  // Créer une fonction getCompanyData locale pour cette fonction
+  const getCompanyDataLocal = () => {
+    const baseData = {
+      name: props.companyName || "Company Name",
+      address: props.companyAddress || "123 Main Street",
+      city: props.companyCity || "",
+      siret: props.companySiret || "12345678901234",
+      tva: props.companyTva || "FR12345678901",
+      rcs: props.companyRcs || "RCS 123457890",
+      capital: props.companyCapital || "€100,000",
+      email: props.companyEmail || "info@company.com",
+      phone: props.companyPhone || "+33123456789",
+    };
+
+    // Remplacer par les données dynamiques du plugin si disponibles
+    const pluginCompany = (window as any).pdfBuilderData?.company;
+    if (pluginCompany) {
+      Object.keys(baseData).forEach((key) => {
+        if (pluginCompany[key] && pluginCompany[key] !== "Non indiqué") {
+          (baseData as any)[key] = pluginCompany[key];
+        }
+      });
+    }
+
+    return baseData;
+  };
+
+  const companyData = getCompanyDataLocal();
 
   // Configuration d'affichage
   const displayConfig = {
@@ -1716,7 +1776,7 @@ const drawCompanyInfo = (
   };
 
   // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji si premium, Unicode sinon pour HTML/PNG/JPG)
-  const isPremium = window.pdfBuilderData?.license?.isPremium || false;
+  const isPremium = (window.pdfBuilderData as any)?.license?.isPremium || false;
   
   const getIconForType = (type: 'phone' | 'email' | 'address' | 'siret' | 'rcs' | 'tva' | 'capital'): string => {
     // Emoji pour mode premium (HTML/PNG/JPG), Unicode sinon
@@ -1749,7 +1809,7 @@ const drawCompanyInfo = (
     const baseData = {
       name: props.companyName || "Company Name",
       address: props.companyAddress || "123 Main Street",
-      city: props.companyCity || "City, State ZIP",
+      city: props.companyCity || "",
       siret: props.companySiret || "12345678901234",
       tva: props.companyTva || "FR12345678901",
       rcs: props.companyRcs || "RCS 123457890",
@@ -1786,16 +1846,15 @@ const drawCompanyInfo = (
     bodyWeight: normalizeFontWeight(props.bodyFontWeight || "normal"),
     bodyStyle: props.bodyFontStyle || "normal",
   };
-
   // ✅ NEW: Padding horizontal et vertical séparés (backward compatibility)
-  const paddingHorizontal =
-    props.paddingHorizontal !== undefined
-      ? props.paddingHorizontal
-      : props.padding || 12;
-  const paddingVertical =
-    props.paddingVertical !== undefined
-      ? props.paddingVertical
-      : props.padding || 12;
+  const paddingHorizontal = normalizePaddingToNumber(
+    props.paddingHorizontal !== undefined ? props.paddingHorizontal : props.padding,
+    12,
+  );
+  const paddingVertical = normalizePaddingToNumber(
+    props.paddingVertical !== undefined ? props.paddingVertical : props.padding,
+    12,
+  );
 
   // Configuration d'affichage
   const displayConfig = {
@@ -1858,7 +1917,7 @@ const drawCompanyInfo = (
   let y = paddingVertical + 10;
 
   // Récupération des données d'entreprise
-  const companyData = getCompanyData(props);
+  const companyData = getCompanyData();
 
   // Récupérer le layout
   const layout = props.layout || "vertical";
@@ -1895,7 +1954,10 @@ const drawCompanyInfo = (
       [formatPhoneNumber(companyData.phone), displayConfig.phone, 'phone' as const],
     ].forEach(([value, show, iconType]) => {
       if (shouldDisplayValue(value as string, show as boolean)) {
-        const lineText = buildLineText(value as string, iconType);
+        // S'assurer que iconType correspond à la type attendu
+        const validIconTypes: Array<"address" | "phone" | "email" | "siret" | "rcs" | "tva" | "capital"> = ['address', 'phone', 'email', 'siret', 'rcs', 'tva', 'capital'];
+        const icon = validIconTypes.includes(iconType as any) ? (iconType as "address" | "phone" | "email" | "siret" | "rcs" | "tva" | "capital") : 'email';
+        const lineText = buildLineText(value as string, icon);
         lines.push({ text: lineText, isHeader: false });
       }
     });
@@ -3890,15 +3952,15 @@ export const Canvas = function Canvas({
             const canvas = document.createElement("canvas");
             const ctx = canvas.getContext("2d");
             if (ctx) {
-              const props = element as TextElementProperties;
-              const fontSize = props.fontSize || 14;
-              const fontFamily = props.fontFamily || "Arial";
-              const fontWeight = props.fontWeight || "normal";
-              const fontStyle = props.fontStyle || "normal";
+              const textElement = element as TextElement;
+              const fontSize = textElement.fontSize || 14;
+              const fontFamily = textElement.fontFamily || "Arial";
+              const fontWeight = textElement.fontWeight || "normal";
+              const fontStyle = textElement.fontStyle || "normal";
 
               ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
 
-              const text = props.text || "Texte";
+              const text = textElement.text || "Texte";
               const lines = text.split("\n");
               const lineHeight = fontSize + 4;
               const contentHeight = lines.length * lineHeight + 20; // Marges
@@ -4498,7 +4560,7 @@ export const Canvas = function Canvas({
   }, []);
 
   // Calculate border style based on canvas settings and license
-  const isPremium = window.pdfBuilderData?.license?.isPremium || false;
+  const isPremium = (window.pdfBuilderData as any)?.license?.isPremium || false;
 
   const borderStyle = isDragOver
     ? "2px solid #007acc"

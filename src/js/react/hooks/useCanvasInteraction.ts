@@ -16,7 +16,7 @@ interface ElementUpdates {
 }
 
 interface UseCanvasInteractionProps {
-  canvasRef: React.RefObject<HTMLCanvasElement>;
+  canvasRef: React.RefObject<HTMLElement>;
   canvasWidth?: number;
   canvasHeight?: number;
 }
