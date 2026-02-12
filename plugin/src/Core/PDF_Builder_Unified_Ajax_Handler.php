@@ -3172,9 +3172,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         if (isset($element['textTransform'])) {
             $styles .= " text-transform: {$element['textTransform']};";
         }
-        if (isset($element['letterSpacing']) && $element['letterSpacing'] !== 'normal') {
-            $styles .= " letter-spacing: {$element['letterSpacing']};";
-        }
+        // DÉSACTIVÉ: letter-spacing cause des problèmes de rendu en PDF Dompdf
+        // if (isset($element['letterSpacing']) && $element['letterSpacing'] !== 'normal') {
+        //     $styles .= " letter-spacing: {$element['letterSpacing']};";
+        // }
         if (isset($element['wordSpacing']) && $element['wordSpacing'] !== 'normal') {
             $styles .= " word-spacing: {$element['wordSpacing']};";
         }
