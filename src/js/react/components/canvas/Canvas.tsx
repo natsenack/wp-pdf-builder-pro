@@ -341,7 +341,32 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
     padding,
   );
 
-  ctx.fillText(props.text || "Text", x, y);
+  // ✅ NEW: Support pour lineHeight et letterSpacing
+  const lineHeight = props.lineHeight || 1.2;
+  const letterSpacing = props.letterSpacing || 0;
+  const text = props.text || "Text";
+  
+  // Gérer les lignes séparées par \n
+  const lines = text.split('\n');
+  let currentY = y;
+  lines.forEach((line, index) => {
+    // Appliquer le letter-spacing
+    if (letterSpacing !== 0) {
+      let charX = x;
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        ctx.fillText(char, charX, currentY);
+        charX += ctx.measureText(char).width + letterSpacing;
+      }
+    } else {
+      ctx.fillText(line, x, currentY);
+    }
+    
+    // Espacement entre les lignes
+    if (index < lines.length - 1) {
+      currentY += fontConfig.size * lineHeight;
+    }
+  });
 };
 
 const drawLine = (ctx: CanvasRenderingContext2D, element: Element) => {
@@ -1241,6 +1266,9 @@ const drawCustomerInfo = (
   const showPhone = props.showPhone !== false;
   const showPaymentMethod = props.showPaymentMethod !== false;
   const showTransactionId = props.showTransactionId !== false;
+  // ✅ NEW: Récupérer lineHeight et letterSpacing
+  const lineHeight = props.lineHeight || 1.5;
+  const letterSpacing = props.letterSpacing || 0;
   // Alignement vertical
   const verticalAlign = props.verticalAlign || "top";
 
@@ -1563,9 +1591,21 @@ const drawCompanyLine = (
   x: number,
   y: number,
   fontSize: number,
+  lineHeight: number = 1.2,
+  letterSpacing: number = 0,
 ) => {
-  ctx.fillText(text, x, y);
-  return y + Math.max(fontSize * 1.2, fontSize + 4); // Espacement minimum de 1.2x la taille de police ou taille de police + 4px
+  // Appliquer le letter-spacing en dessinant caractère par caractère
+  if (letterSpacing !== 0) {
+    let charX = x;
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      ctx.fillText(char, charX, y);
+      charX += ctx.measureText(char).width + letterSpacing;
+    }
+  } else {
+    ctx.fillText(text, x, y);
+  }
+  return y + fontSize * lineHeight;
 };
 
 const drawCompanyInfo = (
@@ -1871,6 +1911,10 @@ const drawCompanyInfo = (
   // Appliquer la police du corps par défaut
   ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
 
+  // Récupérer lineHeight et letterSpacing du JSON
+  const lineHeight = props.lineHeight || 1.1;
+  const letterSpacing = props.letterSpacing || 0;
+
   // Dessiner toutes les lignes
   lines.forEach(lineData => {
     const config = lineData.isHeader
@@ -1889,7 +1933,7 @@ const drawCompanyInfo = (
 
     ctx.font = `${config.style} ${config.weight} ${config.size}px ${config.family}`;
     if (lineData.isHeader) ctx.fillStyle = colors.headerText;
-    y = drawCompanyLine(ctx, lineData.text, x, y, config.size);
+    y = drawCompanyLine(ctx, lineData.text, x, y, config.size, lineHeight, letterSpacing);
     if (lineData.isHeader) ctx.fillStyle = colors.text;
   });
 };
