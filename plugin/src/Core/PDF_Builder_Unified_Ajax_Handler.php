@@ -3651,13 +3651,32 @@ class PDF_Builder_Unified_Ajax_Handler {
         $tva = $getString($element['companyTva'] ?? get_option('pdf_builder_company_vat', ''));
         $capital = $getString($element['companyCapital'] ?? get_option('pdf_builder_company_capital', ''));
         
+        // Ajouter le symbole € au capital s'il n'est pas déjà présent
+        if (!empty($capital) && strpos($capital, '€') === false) {
+            $capital .= ' €';
+        }
+        
         // ✅ NEW: Formater le téléphone
         $phone = $formatPhoneNumber($phone);
         
+        // Helper pour créer une image SVG du symbole € (pour éviter les problèmes d'encodage dans PDF)
+        $getEuroSymbol = function() {
+            // SVG simple du symbole € avec fond transparent
+            $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">
+                <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="currentColor">€</text>
+            </svg>';
+            // Encoder en base64 pour utilisation dans data URI
+            $base64 = base64_encode($svg);
+            return '<img src="data:image/svg+xml;base64,' . $base64 . '" style="display:inline; width:10px; height:10px; vertical-align:baseline; margin-left:2px;" alt="€" />';
+        };
+        
         // Helper pour sécuriser le HTML en préservant les caractères UTF-8 comme €
         // On remplace UNIQUEMENT < et > pour éviter les balises HTML, mais on garde tous les caractères UTF-8
-        $escapeHtml = function($text) {
-            return str_replace(['<', '>'], ['&lt;', '&gt;'], $text);
+        $escapeHtml = function($text) use ($getEuroSymbol) {
+            $escaped = str_replace(['<', '>'], ['&lt;', '&gt;'], $text);
+            // Remplacer le symbole € par l'image SVG pour garantir l'affichage dans les PDF
+            $escaped = str_replace('€', $getEuroSymbol(), $escaped);
+            return $escaped;
         };
         
         // Construire les lignes selon le layout
