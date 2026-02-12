@@ -342,8 +342,8 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
   );
 
   // ✅ NEW: Support pour lineHeight et letterSpacing
-  const lineHeight = props.lineHeight || 1.2;
-  const letterSpacing = props.letterSpacing || 0;
+  const lineHeight = parseFloat(props.lineHeight as any) || 1.2;
+  const letterSpacing = parseFloat(props.letterSpacing as any) || 0;
   const text = props.text || "Text";
   
   // Gérer les lignes séparées par \n
@@ -1292,8 +1292,8 @@ const drawCustomerInfo = (
   const showPaymentMethod = props.showPaymentMethod !== false;
   const showTransactionId = props.showTransactionId !== false;
   // ✅ NEW: Récupérer lineHeight et letterSpacing
-  const lineHeight = props.lineHeight || 1.5;
-  const letterSpacing = props.letterSpacing || 0;
+  const lineHeight = parseFloat(props.lineHeight as any) || 1.5;
+  const letterSpacing = parseFloat(props.letterSpacing as any) || 0;
   // Alignement vertical
   const verticalAlign = props.verticalAlign || "top";
 
@@ -1619,9 +1619,6 @@ const drawCompanyLine = (
   lineHeight: number = 1.2,
   letterSpacing: number = 0,
 ) => {
-  // DEBUG LOG
-  console.log('[drawCompanyLine] Rendering:', { text, x, y, fontSize, lineHeight, letterSpacing, textAlign: ctx.textAlign });
-  
   if (letterSpacing !== 0) {
     // Sauvegarder l'alignement original et passer en "left" pour la précision
     const originalTextAlign = ctx.textAlign;
@@ -1965,14 +1962,11 @@ const drawCompanyInfo = (
   ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
 
   // Récupérer lineHeight et letterSpacing du JSON
-  const lineHeight = props.lineHeight || 1.1;
-  const letterSpacing = props.letterSpacing || 0;
-
-  console.log('[Canvas drawCompanyInfo] About to render lines. x=', x, 'y=', y, 'fontConfig=', fontConfig);
+  const lineHeight = parseFloat(props.lineHeight as any) || 1.1;
+  const letterSpacing = parseFloat(props.letterSpacing as any) || 0;
 
   // Dessiner toutes les lignes
-  lines.forEach((lineData, i) => {
-    console.log('[Canvas drawCompanyInfo forEach] Line', i, ':', lineData);
+  lines.forEach(lineData => {
     const config = lineData.isHeader
       ? {
           size: fontConfig.headerSize,
