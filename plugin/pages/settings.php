@@ -230,9 +230,9 @@ jQuery(document).ready(function($) {
         var formData = new FormData();
         formData.append('action', 'pdf_builder_save_settings');
         formData.append('tab', currentTab);
-        // Utiliser le nonce depuis pdfBuilderAjax.nonce (localisé via wp_localize_script)
+        // Utiliser le nonce depuis pdf_builder_ajax.nonce (localisé via wp_localize_script dans settings-loader.php)
         // et l'envoyer en tant que _wpnonce pour correspondre au handler
-        var nonce = (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAjax.nonce) ? pdfBuilderAjax.nonce : '';
+        var nonce = (typeof pdf_builder_ajax !== 'undefined' && pdf_builder_ajax.nonce) ? pdf_builder_ajax.nonce : '';
         formData.append('_wpnonce', nonce);
 
         // Collecter les champs du formulaire actif
