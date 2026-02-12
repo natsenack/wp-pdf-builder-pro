@@ -1129,50 +1129,86 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
       {companyCurrentTab === 'positionnement' && (
         <>
           <div style={{ marginBottom: '12px' }}>
-            <NumericPropertyInput
-              label="Position X"
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Position X: {element.x}px
+            </label>
+            <input
+              type="range"
+              min={0}
+              max={1000}
               value={element.x}
-              defaultValue={0}
-              min={0}
-              max={1000}
-              unit="px"
-              onChange={(value) => onChange(element.id, 'x', value)}
+              onChange={(e) => onChange(element.id, 'x', parseInt(e.target.value))}
+              style={{
+                width: '100%',
+                height: '6px',
+                borderRadius: '3px',
+                background: '#ddd',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <NumericPropertyInput
-              label="Position Y"
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Position Y: {element.y}px
+            </label>
+            <input
+              type="range"
+              min={0}
+              max={1000}
               value={element.y}
-              defaultValue={0}
-              min={0}
-              max={1000}
-              unit="px"
-              onChange={(value) => onChange(element.id, 'y', value)}
+              onChange={(e) => onChange(element.id, 'y', parseInt(e.target.value))}
+              style={{
+                width: '100%',
+                height: '6px',
+                borderRadius: '3px',
+                background: '#ddd',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <NumericPropertyInput
-              label="Largeur"
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Largeur: {element.width}px
+            </label>
+            <input
+              type="range"
+              min={10}
+              max={1000}
               value={element.width}
-              defaultValue={200}
-              min={10}
-              max={1000}
-              unit="px"
-              onChange={(value) => onChange(element.id, 'width', value)}
+              onChange={(e) => onChange(element.id, 'width', parseInt(e.target.value))}
+              style={{
+                width: '100%',
+                height: '6px',
+                borderRadius: '3px',
+                background: '#ddd',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <NumericPropertyInput
-              label="Hauteur"
-              value={element.height}
-              defaultValue={100}
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Hauteur: {element.height}px
+            </label>
+            <input
+              type="range"
               min={10}
               max={1000}
-              unit="px"
-              onChange={(value) => onChange(element.id, 'height', value)}
+              value={element.height}
+              onChange={(e) => onChange(element.id, 'height', parseInt(e.target.value))}
+              style={{
+                width: '100%',
+                height: '6px',
+                borderRadius: '3px',
+                background: '#ddd',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
             />
           </div>
 
