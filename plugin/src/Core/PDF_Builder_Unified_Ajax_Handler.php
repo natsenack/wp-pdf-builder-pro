@@ -3138,8 +3138,10 @@ class PDF_Builder_Unified_Ajax_Handler {
                 break;
             case 'text':
             default:
-                $content = $element['content'] ?? '';
-                $rendered = '<div class="element" style="' . $styles . '">' . nl2br(esc_html($content)) . '</div>';
+                $content = $element['text'] ?? $element['content'] ?? '';
+                // Appliquer white-space: pre-line pour que line-height fonctionne avec Dompdf
+                $textStyle = $styles . '; white-space: pre-line;';
+                $rendered = '<div class="element" style="' . $textStyle . '">' . esc_html($content) . '</div>';
                 break;
         }
         
@@ -3173,13 +3175,15 @@ class PDF_Builder_Unified_Ajax_Handler {
             $styles .= " text-transform: {$element['textTransform']};";
         }
         if (isset($element['letterSpacing']) && $element['letterSpacing'] !== 'normal') {
-            $styles .= " letter-spacing: {$element['letterSpacing']};";
+            $letterSpacingValue = floatval($element['letterSpacing']) . 'px';
+            $styles .= " letter-spacing: {$letterSpacingValue};";
         }
         if (isset($element['wordSpacing']) && $element['wordSpacing'] !== 'normal') {
             $styles .= " word-spacing: {$element['wordSpacing']};";
         }
         if (isset($element['lineHeight'])) {
-            $styles .= " line-height: {$element['lineHeight']};";
+            $lineHeightValue = floatval($element['lineHeight']);
+            $styles .= " line-height: {$lineHeightValue};";
         }
         if (isset($element['textAlign'])) {
             $styles .= " text-align: {$element['textAlign']};";
@@ -3472,6 +3476,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'left';
         $verticalAlign = isset($element['verticalAlign']) ? $element['verticalAlign'] : 'top';
         $lineHeight = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.1;
+        $letterSpacing = isset($element['letterSpacing']) ? floatval($element['letterSpacing']) : 0;
         
         // Construire les lignes selon le layout
         $lines = [];
@@ -3533,7 +3538,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Appliquer l'alignement horizontal et vertical
-        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line;';
+        $letterSpacingStyle = $letterSpacing !== 0 ? ' letter-spacing: ' . $letterSpacing . 'px;' : '';
+        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line;' . $letterSpacingStyle;
         
         // Pour l'alignement vertical, on utilise flexbox
         if ($verticalAlign === 'middle') {
@@ -3563,6 +3569,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'left';
         $verticalAlign = isset($element['verticalAlign']) ? $element['verticalAlign'] : 'top';
         $lineHeight = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.1;
+        $letterSpacing = isset($element['letterSpacing']) ? floatval($element['letterSpacing']) : 0;
         
         // ✅ NEW: Propriétés d'icônes
         $showIcons = isset($element['showIcons']) ? (bool)$element['showIcons'] : false;
@@ -3722,7 +3729,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Appliquer l'alignement horizontal et vertical
-        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line;';
+        $letterSpacingStyle = $letterSpacing !== 0 ? ' letter-spacing: ' . $letterSpacing . 'px;' : '';
+        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line;' . $letterSpacingStyle;
         
         // Pour l'alignement vertical, on utilise flexbox
         if ($verticalAlign === 'middle') {
@@ -3902,6 +3910,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         preg_match('/color:\s*[^;]+;/', $base_styles_clean, $color_match);
         preg_match('/text-decoration:\s*[^;]+;/', $base_styles_clean, $text_decoration_match);
         preg_match('/text-transform:\s*[^;]+;/', $base_styles_clean, $text_transform_match);
+        preg_match('/letter-spacing:\s*[^;]+;/', $base_styles_clean, $letter_spacing_match);
         
         $text_styles = ($font_size_match[0] ?? '') . ' ' . 
                       ($font_family_match[0] ?? '') . ' ' . 
@@ -3910,7 +3919,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                       ($text_align_match[0] ?? '') . ' ' . 
                       ($color_match[0] ?? '') . ' ' . 
                       ($text_decoration_match[0] ?? '') . ' ' . 
-                      ($text_transform_match[0] ?? '');
+                      ($text_transform_match[0] ?? '') . ' ' .
+                      ($letter_spacing_match[0] ?? '');
         
         // Le div extérieur est UNIQUEMENT un conteneur positionné
         $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
@@ -4012,6 +4022,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         preg_match('/color:\s*[^;]+;/', $base_styles_clean, $color_match);
         preg_match('/text-decoration:\s*[^;]+;/', $base_styles_clean, $text_decoration_match);
         preg_match('/text-transform:\s*[^;]+;/', $base_styles_clean, $text_transform_match);
+        preg_match('/letter-spacing:\s*[^;]+;/', $base_styles_clean, $letter_spacing_match);
         
         $text_styles = ($font_size_match[0] ?? '') . ' ' . 
                       ($font_family_match[0] ?? '') . ' ' . 
@@ -4020,7 +4031,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                       ($text_align_match[0] ?? '') . ' ' . 
                       ($color_match[0] ?? '') . ' ' . 
                       ($text_decoration_match[0] ?? '') . ' ' . 
-                      ($text_transform_match[0] ?? '');
+                      ($text_transform_match[0] ?? '') . ' ' .
+                      ($letter_spacing_match[0] ?? '');
         
         // Le div extérieur est UNIQUEMENT un conteneur positionné
         $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';

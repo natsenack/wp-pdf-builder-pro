@@ -591,6 +591,8 @@ export interface TextElement extends BaseElement {
   borderColor?: string;
   borderWidth?: number;
   verticalAlign?: "top" | "middle" | "bottom";
+  lineHeight?: number;
+  letterSpacing?: number;
 }
 
 export interface LineElement extends BaseElement {
@@ -809,6 +811,9 @@ export interface CompanyInfoElement extends BaseElement {
   padding?: number; // Backward compatibility
   paddingHorizontal?: number;
   paddingVertical?: number;
+  // Propriétés d'espacement
+  lineHeight?: number;
+  letterSpacing?: number;
 }
 
 // Interface spécifique pour les éléments CompanyLogo
@@ -871,6 +876,9 @@ export interface CustomerInfoElement extends BaseElement {
   // Propriétés de style
   headerTextColor?: string;
   verticalAlign?: "top" | "middle" | "bottom";
+  // Propriétés d'espacement
+  lineHeight?: number;
+  letterSpacing?: number;
 }
 
 // Interface spécifique pour les éléments DocumentType
