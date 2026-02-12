@@ -74,10 +74,16 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
   const isTablet = useIsTablet();
 
   // Optimisation: mémoriser les éléments sélectionnés
-  const selectedElements = useMemo(() =>
-    state.elements.filter(el => state.selection.selectedElements.includes(el.id)),
-    [state.elements, state.selection.selectedElements]
-  );
+  const selectedElements = useMemo(() => {
+    const selected = state.elements.filter(el => state.selection.selectedElements.includes(el.id));
+    console.log('[PropertiesPanel] selectedElements recalculated:', selected.map(el => ({ 
+      id: el.id, 
+      type: el.type, 
+      layout: (el as any).layout,
+      textAlign: (el as any).textAlign 
+    })));
+    return selected;
+  }, [state.elements, state.selection.selectedElements]);
 
   // Optimisation: mémoriser les handlers
   const handlePropertyChange = useCallback((elementId: string, property: string, value: unknown) => {
