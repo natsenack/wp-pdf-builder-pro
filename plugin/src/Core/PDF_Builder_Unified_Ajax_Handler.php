@@ -3546,6 +3546,9 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Rendu des informations entreprise
      */
     private function render_company_info_element($element, $order_data, $base_styles) {
+        // DEBUG: Log l'élément complet reçu
+        error_log('[PDF Builder company_info] Element received: ' . json_encode($element));
+        
         // Récupérer le padding horizontal et vertical (backward compatibility avec padding unique)
         $paddingHorizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : (isset($element['padding']) ? intval($element['padding']) : 12);
         $paddingVertical = isset($element['paddingVertical']) ? intval($element['paddingVertical']) : (isset($element['padding']) ? intval($element['padding']) : 12);
@@ -3554,6 +3557,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         $layout = isset($element['layout']) ? $element['layout'] : 'vertical';
         $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'left';
         $verticalAlign = isset($element['verticalAlign']) ? $element['verticalAlign'] : 'top';
+        
+        error_log('[PDF Builder company_info] Layout: ' . $layout . ', TextAlign: ' . $textAlign);
         
         // Récupérer les données de l'entreprise depuis l'élément canvas (pas depuis les options WordPress)
         // Helper pour s'assurer qu'on a une string et pas un array
@@ -3574,6 +3579,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         $rcs = $getString($element['companyRcs'] ?? '');
         $tva = $getString($element['companyTva'] ?? '');
         $capital = $getString($element['companyCapital'] ?? '');
+        
+        error_log('[PDF Builder company_info] Data: name=' . $companyName . ', phone=' . $phone . ', siret=' . $siret . ', rcs=' . $rcs . ', tva=' . $tva . ', capital=' . $capital);
         
         $fullAddress = trim($address . ($address && $postcode ? ', ' : '') . $postcode . ($postcode && $city ? ' ' : '') . $city);
         
