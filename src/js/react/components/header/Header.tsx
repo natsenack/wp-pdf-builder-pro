@@ -1638,12 +1638,29 @@ export const Header = memo(function Header({
             break;
 
           case "company_info":
+            // Helper pour convertir une valeur en string (gère les objets)
+            const convertToString = (value: any): string => {
+              if (!value) return "";
+              if (typeof value === "string") return value;
+              if (typeof value === "object") {
+                // Si c'est un objet avec une propriété principale (comme téléphone)
+                if (value.value) return String(value.value);
+                if (value[0]) return String(value[0]);
+                if (value.phone) return String(value.phone);
+                // Pour d'autres objets, essayer de retourner une représentation utile
+                return JSON.stringify(value);
+              }
+              return String(value);
+            };
+
             // Helper pour valider si une valeur doit être affichée
             const isValidValue = (value: string | any): boolean => {
+              const stringValue = convertToString(value);
               return (
-                value &&
-                value.toString().trim() !== "" &&
-                value !== "Non indiqué"
+                stringValue &&
+                stringValue.trim() !== "" &&
+                stringValue !== "Non indiqué" &&
+                stringValue !== "{}"
               );
             };
 
@@ -1652,16 +1669,16 @@ export const Header = memo(function Header({
               const pluginCompany =
                 (window as any).pdfBuilderData?.company || {};
               return {
-                name: element.companyName || pluginCompany.name || "",
-                address: element.companyAddress || pluginCompany.address || "",
-                city: element.companyCity || pluginCompany.city || "",
-                phone: element.companyPhone || pluginCompany.phone || "",
-                email: element.companyEmail || pluginCompany.email || "",
-                website: element.companyWebsite || pluginCompany.website || "",
-                siret: element.companySiret || pluginCompany.siret || "",
-                tva: element.companyTva || pluginCompany.tva || "",
-                rcs: element.companyRcs || pluginCompany.rcs || "",
-                capital: element.companyCapital || pluginCompany.capital || "",
+                name: convertToString(element.companyName || pluginCompany.name || ""),
+                address: convertToString(element.companyAddress || pluginCompany.address || ""),
+                city: convertToString(element.companyCity || pluginCompany.city || ""),
+                phone: convertToString(element.companyPhone || pluginCompany.phone || ""),
+                email: convertToString(element.companyEmail || pluginCompany.email || ""),
+                website: convertToString(element.companyWebsite || pluginCompany.website || ""),
+                siret: convertToString(element.companySiret || pluginCompany.siret || ""),
+                tva: convertToString(element.companyTva || pluginCompany.tva || ""),
+                rcs: convertToString(element.companyRcs || pluginCompany.rcs || ""),
+                capital: convertToString(element.companyCapital || pluginCompany.capital || ""),
               };
             };
 
@@ -1815,20 +1832,261 @@ export const Header = memo(function Header({
                 );
               }
 
-              // Assembler le HTML avec le séparateur si layout horizontal
-              if (element.layout === "horizontal" && element.separator) {
-                // Layout horizontal : joindre avec le séparateur
-                const separator = element.separator || " • ";
-                companyContent = `<div style="display: flex; gap: 8px; flex-wrap: wrap;">${companyParts.map((p) => `<span>${p}</span>`).join(separator)}</div>`;
-              } else {
-                // Layout vertical (défaut) : chaque élément sur une nouvelle ligne avec espacement
-                const lineHeightValue = element.lineHeight
-                  ? parseFloat(element.lineHeight)
-                  : 1.2;
-                const fontSize = element.fontSize || 12;
-                const gap = Math.round(fontSize * (lineHeightValue - 1));
-                companyContent = `<div style="display: flex; flex-direction: column; gap: ${gap}px;">${companyParts.join("")}</div>`;
+              // Assembler le HTML en fonction du layout
+            const bodyFontSize =
+              element.bodyFontSize || element.fontSize || 12;
+            const bodyFontWeight =
+              element.bodyFontWeight || element.fontWeight || "normal";
+            const bodyColor =
+              element.bodyTextColor || element.textColor || "#666666";
+            
+            const layout = element.layout || "vertical";
+
+            if (layout === "horizontal") {
+              // Mode HORIZONTAL : regrouper les infos par type
+              const parts: string[] = [];
+
+              // Ligne 1: Nom de l'entreprise
+              if (
+                element.showCompanyName !== false &&
+                isValidValue(companyData.name)
+              ) {
+                const headerFontSize =
+                  element.headerFontSize || element.fontSize || 14;
+                const headerFontWeight = element.headerFontWeight || "bold";
+                const headerColor =
+                  element.headerTextColor || element.textColor || "#000000";
+                parts.push(
+                  `<div style="font-size: ${headerFontSize}px; font-weight: ${headerFontWeight}; color: ${headerColor}; width: 100%; ${globalStylesCompany}">${companyData.name}</div>`,
+                );
               }
+
+              // Ligne 2: Adresse + Ville
+              let addressLine = "";
+              if (
+                element.showAddress !== false &&
+                isValidValue(companyData.address)
+              ) {
+                addressLine = companyData.address;
+                if (isValidValue(companyData.city))
+                  addressLine += `, ${companyData.city}`;
+              }
+              if (addressLine) {
+                parts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; width: 100%; ${globalStylesCompany}">${addressLine}</div>`,
+                );
+              }
+
+              // Ligne 3: Email + Téléphone
+              let contactLine = "";
+              if (
+                element.showEmail !== false &&
+                isValidValue(companyData.email)
+              ) {
+                contactLine += companyData.email;
+              }
+              if (
+                element.showPhone !== false &&
+                isValidValue(companyData.phone)
+              ) {
+                contactLine += (contactLine ? " | " : "") + companyData.phone;
+              }
+              if (contactLine) {
+                parts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; width: 100%; ${globalStylesCompany}">${contactLine}</div>`,
+                );
+              }
+
+              // Ligne 4: Infos légales (SIRET | RCS | TVA | Capital)
+              let legalLine = "";
+              if (
+                element.showSiret !== false &&
+                isValidValue(companyData.siret)
+              ) {
+                legalLine += companyData.siret;
+              }
+              if (
+                element.showRcs !== false &&
+                isValidValue(companyData.rcs)
+              ) {
+                legalLine += (legalLine ? " | " : "") + companyData.rcs;
+              }
+              if (element.showVat !== false && isValidValue(companyData.tva)) {
+                legalLine += (legalLine ? " | " : "") + companyData.tva;
+              }
+              if (
+                element.showCapital !== false &&
+                isValidValue(companyData.capital)
+              ) {
+                legalLine +=
+                  (legalLine ? " | " : "") + companyData.capital + " €";
+              }
+              if (legalLine) {
+                parts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; width: 100%; ${globalStylesCompany}">${legalLine}</div>`,
+                );
+              }
+
+              companyContent = `<div style="display: flex; flex-direction: column; gap: 4px;">${parts.join("")}</div>`;
+            } else if (layout === "compact") {
+              // Mode COMPACT : nom en en-tête, puis infos avec séparateurs bullet points
+              const parts: string[] = [];
+
+              if (
+                element.showCompanyName !== false &&
+                isValidValue(companyData.name)
+              ) {
+                const headerFontSize =
+                  element.headerFontSize || element.fontSize || 14;
+                const headerFontWeight = element.headerFontWeight || "bold";
+                const headerColor =
+                  element.headerTextColor || element.textColor || "#000000";
+                parts.push(
+                  `<div style="font-size: ${headerFontSize}px; font-weight: ${headerFontWeight}; color: ${headerColor}; width: 100%; ${globalStylesCompany}">${companyData.name}</div>`,
+                );
+              }
+
+              let compactText = "";
+              if (
+                element.showAddress !== false &&
+                isValidValue(companyData.address)
+              ) {
+                compactText += companyData.address;
+                if (isValidValue(companyData.city))
+                  compactText += `, ${companyData.city}`;
+              }
+              if (
+                element.showEmail !== false &&
+                isValidValue(companyData.email)
+              ) {
+                compactText += (compactText ? " • " : "") + companyData.email;
+              }
+              if (
+                element.showPhone !== false &&
+                isValidValue(companyData.phone)
+              ) {
+                compactText += (compactText ? " • " : "") + companyData.phone;
+              }
+              if (
+                element.showSiret !== false &&
+                isValidValue(companyData.siret)
+              ) {
+                compactText += (compactText ? " • " : "") + companyData.siret;
+              }
+              if (
+                element.showRcs !== false &&
+                isValidValue(companyData.rcs)
+              ) {
+                compactText += (compactText ? " • " : "") + companyData.rcs;
+              }
+              if (element.showVat !== false && isValidValue(companyData.tva)) {
+                compactText += (compactText ? " • " : "") + companyData.tva;
+              }
+              if (
+                element.showCapital !== false &&
+                isValidValue(companyData.capital)
+              ) {
+                compactText +=
+                  (compactText ? " • " : "") + companyData.capital + " €";
+              }
+
+              if (compactText) {
+                parts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; width: 100%; word-wrap: break-word; ${globalStylesCompany}">${compactText}</div>`,
+                );
+              }
+
+              companyContent = `<div style="display: flex; flex-direction: column; gap: 4px;">${parts.join("")}</div>`;
+            } else {
+              // Mode VERTICAL (défaut) : chaque ligne séparée
+              const parts: string[] = [];
+
+              // Nom de l'entreprise
+              if (
+                element.showCompanyName !== false &&
+                isValidValue(companyData.name)
+              ) {
+                const headerFontSize =
+                  element.headerFontSize || element.fontSize || 14;
+                const headerFontWeight = element.headerFontWeight || "bold";
+                const headerColor =
+                  element.headerTextColor || element.textColor || "#000000";
+                parts.push(
+                  `<div style="font-size: ${headerFontSize}px; font-weight: ${headerFontWeight}; color: ${headerColor}; ${globalStylesCompany}">${companyData.name}</div>`,
+                );
+              }
+
+              // Adresse
+              if (
+                element.showAddress !== false &&
+                isValidValue(companyData.address)
+              ) {
+                let addressText = companyData.address;
+                if (isValidValue(companyData.city))
+                  addressText += `, ${companyData.city}`;
+                parts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">${addressText}</div>`,
+                );
+              }
+
+              // Email
+              if (
+                element.showEmail !== false &&
+                isValidValue(companyData.email)
+              ) {
+                parts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">Email: ${companyData.email}</div>`,
+                );
+              }
+
+              // Téléphone
+              if (
+                element.showPhone !== false &&
+                isValidValue(companyData.phone)
+              ) {
+                parts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">Tél: ${companyData.phone}</div>`,
+                );
+              }
+
+              // Infos légales
+              if (
+                element.showSiret !== false &&
+                isValidValue(companyData.siret)
+              ) {
+                parts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">SIRET: ${companyData.siret}</div>`,
+                );
+              }
+              if (
+                element.showRcs !== false &&
+                isValidValue(companyData.rcs)
+              ) {
+                parts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">RCS: ${companyData.rcs}</div>`,
+                );
+              }
+              if (element.showVat !== false && isValidValue(companyData.tva)) {
+                parts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">TVA: ${companyData.tva}</div>`,
+                );
+              }
+              if (
+                element.showCapital !== false &&
+                isValidValue(companyData.capital)
+              ) {
+                parts.push(
+                  `<div style="font-size: ${bodyFontSize}px; font-weight: ${bodyFontWeight}; color: ${bodyColor}; ${globalStylesCompany}">Capital: ${companyData.capital} €</div>`,
+                );
+              }
+
+              const lineHeightValue = element.lineHeight
+                ? parseFloat(element.lineHeight)
+                : 1.2;
+              const fontSize = element.fontSize || 12;
+              const gap = Math.round(fontSize * (lineHeightValue - 1));
+              companyContent = `<div style="display: flex; flex-direction: column; gap: ${gap}px;">${parts.join("")}</div>`;
+            }
             }
 
             content = companyContent || "<div>Entreprise non configurée</div>";
