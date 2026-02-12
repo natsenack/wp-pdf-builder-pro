@@ -2543,8 +2543,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             ]);
             
             error_log("[PDF Builder] Chargement HTML dans dompdf");
-            // S'assurer que le HTML est en UTF-8
-            $dompdf->loadHtml(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
+            $dompdf->loadHtml($html);
             
             // Format papier depuis le template
             $template_data = json_decode($template['template_data'], true);
@@ -3630,7 +3629,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             return implode('.', $chunks);
         };
         
-        // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji pour HTML, symboles Unicode pour PDF)
+        // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji pour HTML, entités HTML pour PDF)
         $getIconForType = function($type) use ($format) {
             // Pour HTML/PNG/JPG: emoji beau
             if ($format === 'html') {
@@ -3644,15 +3643,15 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'capital' => '💰',    // Sac d'argent
                 ];
             } else {
-                // Pour PDF: symboles Unicode simples (compatibles dompdf)
+                // Pour PDF: entités HTML numériques (supportées par dompdf)
                 $icons = [
-                    'phone' => '☎',      // Téléphone (U+260E)
-                    'email' => '✉',      // Enveloppe (U+2709)
-                    'address' => '⌂',    // Maison (U+2302)
-                    'siret' => '◆',      // Diamant (U+25C6)
-                    'rcs' => '▪',        // Carré (U+25AA)
-                    'tva' => '●',        // Cercle (U+25CF)
-                    'capital' => '▲',    // Triangle (U+25B2)
+                    'phone' => '&#9742;',      // ☎ Téléphone (U+260E)
+                    'email' => '&#9993;',      // ✉ Enveloppe (U+2709)
+                    'address' => '&#8962;',    // ⌂ Maison (U+2302)
+                    'siret' => '&#9670;',      // ◆ Diamant (U+25C6)
+                    'rcs' => '&#9642;',        // ▪ Carré (U+25AA)
+                    'tva' => '&#9679;',        // ● Cercle (U+25CF)
+                    'capital' => '&#9650;',    // ▲ Triangle (U+25B2)
                 ];
             }
             return isset($icons[$type]) ? $icons[$type] : '';
