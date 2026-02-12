@@ -286,7 +286,7 @@ jQuery(document).ready(function($) {
         var ajaxData = {
             action: 'pdf_builder_save_settings',
             tab: currentTab,
-            _wpnonce: window.pdfBuilderNonce
+            _wpnonce: (typeof pdf_builder_ajax !== 'undefined' && pdf_builder_ajax.nonce) ? pdf_builder_ajax.nonce : ''
         };
 
         // Collecter les champs du formulaire actif
@@ -320,8 +320,8 @@ jQuery(document).ready(function($) {
             tab: ajaxData.tab,
             _wpnonce: ajaxData._wpnonce ? ajaxData._wpnonce.substring(0, 10) + '...' : 'NOT SET',
             fieldCount: Object.keys(ajaxData).length - 3, // Soustraire action, tab, _wpnonce
-            windowPdfBuilderNonce: window.pdfBuilderNonce ? window.pdfBuilderNonce.substring(0, 10) + '...' : 'NOT SET',
-            nonceMatch: ajaxData._wpnonce === window.pdfBuilderNonce
+            pdfBuilderAjax: typeof pdf_builder_ajax !== 'undefined' ? 'EXISTS' : 'NOT FOUND',
+            pdfBuilderAjaxNonce: (typeof pdf_builder_ajax !== 'undefined' && pdf_builder_ajax.nonce) ? pdf_builder_ajax.nonce.substring(0, 10) + '...' : 'NOT SET'
         });
 
         console.log('PDF Builder Settings: Sending AJAX request to:', ajaxurl);
