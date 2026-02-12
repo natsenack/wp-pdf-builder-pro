@@ -316,12 +316,16 @@ function builderReducer(
       const updateElement = (element: Element): Element => {
         if (element.id !== action.payload.id) return element;
 
+        console.log('[UPDATE_ELEMENT] Before update:', { id: element.id, type: element.type, updates: action.payload.updates });
+
         // Merge updates while preserving all existing properties
         const updated: Element = {
           ...element, // First spread all existing properties (including dynamic ones)
           ...action.payload.updates, // Then apply updates (only specified properties)
           updatedAt: new Date(), // Always update timestamp
         };
+
+        console.log('[UPDATE_ELEMENT] After update:', { id: updated.id, type: updated.type, element: updated });
 
         return updated;
       };

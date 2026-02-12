@@ -81,6 +81,7 @@ export const PropertiesPanel = memo(function PropertiesPanel({ className }: Prop
 
   // Optimisation: mémoriser les handlers
   const handlePropertyChange = useCallback((elementId: string, property: string, value: unknown) => {
+    console.log('[PropertiesPanel] handlePropertyChange called:', { elementId, property, value });
     updateElement(elementId, { [property]: value });
   }, [updateElement]);
 

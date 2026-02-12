@@ -686,7 +686,10 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
                   </label>
                   <select
                     value={(element.layout as string) || 'vertical'}
-                    onChange={(e) => onChange(element.id, 'layout', e.target.value)}
+                    onChange={(e) => {
+                      console.log('[CompanyInfo] Layout changed to:', e.target.value);
+                      onChange(element.id, 'layout', e.target.value);
+                    }}
                     style={{
                       width: '100%',
                       padding: '4px 8px',

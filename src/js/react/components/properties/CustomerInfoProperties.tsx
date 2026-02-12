@@ -115,6 +115,8 @@ interface CustomerInfoPropertiesProps {
 }
 
 export function CustomerInfoProperties({ element, onChange, activeTab, setActiveTab }: CustomerInfoPropertiesProps) {
+  console.log('[CustomerInfoProperties] Render with element:', { id: element.id, layout: element.layout, textAlign: element.textAlign, verticalAlign: element.verticalAlign });
+
   const customerCurrentTab = activeTab[element.id] || 'fonctionnalites';
   const setCustomerCurrentTab = (tab: 'fonctionnalites' | 'personnalisation' | 'positionnement') => {
     setActiveTab({ ...activeTab, [element.id]: tab });
@@ -343,7 +345,10 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               </label>
               <select
                 value={element.layout || 'vertical'}
-                onChange={(e) => onChange(element.id, 'layout', e.target.value)}
+                onChange={(e) => {
+                  console.log('[CustomerInfo] Layout changed to:', e.target.value);
+                  onChange(element.id, 'layout', e.target.value);
+                }}
                 style={{
                   width: '100%',
                   padding: '4px 8px',

@@ -1226,6 +1226,7 @@ const drawCustomerInfo = (
   const bodyFontWeight = props.bodyFontWeight || fontWeight;
   const bodyFontStyle = props.bodyFontStyle || fontStyle;
   const layout = props.layout || "vertical";
+  console.log('[Canvas] drawCustomerInfo - layout:', layout, 'element:', props);
   const showHeaders = props.showHeaders !== false;
   const showBorders = props.showBorders !== false;
   const showFullName = props.showFullName !== false;
