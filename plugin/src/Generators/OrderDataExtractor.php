@@ -254,36 +254,41 @@ class OrderDataExtractor
      */
     private function format_address(array $address): string
     {
-        $parts = [];
+        $lines = [];
         
         // NE PAS inclure le nom (first_name/last_name) car il est affiché séparément dans customer_info
         // Correction : le nom apparaissait en double dans l'aperçu HTML
         
+        // Ligne 1 : Company (si présente, sur sa propre ligne)
         if (!empty($address['company'])) {
-            $parts[] = $address['company'];
+            $lines[] = $address['company'];
         }
         
+        // Ligne 2 : Adresse complète sur une seule ligne (rue, code postal, ville)
+        $address_parts = [];
         if (!empty($address['address_1'])) {
-            $parts[] = $address['address_1'];
+            $address_parts[] = $address['address_1'];
         }
-        
         if (!empty($address['address_2'])) {
-            $parts[] = $address['address_2'];
+            $address_parts[] = $address['address_2'];
         }
-        
         if (!empty($address['postcode']) || !empty($address['city'])) {
-            $parts[] = trim($address['postcode'] . ' ' . $address['city']);
+            $address_parts[] = trim($address['postcode'] . ' ' . $address['city']);
         }
-        
         if (!empty($address['state'])) {
-            $parts[] = $address['state'];
+            $address_parts[] = $address['state'];
         }
         
+        if (!empty($address_parts)) {
+            $lines[] = implode(', ', $address_parts);
+        }
+        
+        // Ligne 3 : Pays sur une ligne séparée
         if (!empty($address['country'])) {
-            $parts[] = WC()->countries->countries[$address['country']] ?? $address['country'];
+            $lines[] = WC()->countries->countries[$address['country']] ?? $address['country'];
         }
         
-        return implode("\n", array_filter($parts));
+        return implode("\n", array_filter($lines));
     }
 
     /**
