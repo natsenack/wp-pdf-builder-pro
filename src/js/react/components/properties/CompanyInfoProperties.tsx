@@ -1177,24 +1177,44 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <NumericPropertyInput
-              label="Padding horizontal (px)"
-              value={element.paddingHorizontal !== undefined ? element.paddingHorizontal : (element.padding || 12)}
-              defaultValue={12}
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Padding horizontal: {element.paddingHorizontal !== undefined ? element.paddingHorizontal : (element.padding || 12)}px
+            </label>
+            <input
+              type="range"
               min={0}
               max={50}
-              onChange={(value) => onChange(element.id, 'paddingHorizontal', value)}
+              value={element.paddingHorizontal !== undefined ? element.paddingHorizontal : (element.padding || 12)}
+              onChange={(e) => onChange(element.id, 'paddingHorizontal', parseInt(e.target.value))}
+              style={{
+                width: '100%',
+                height: '6px',
+                borderRadius: '3px',
+                background: '#ddd',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
             />
           </div>
 
           <div style={{ marginBottom: '12px' }}>
-            <NumericPropertyInput
-              label="Padding vertical (px)"
-              value={element.paddingVertical !== undefined ? element.paddingVertical : (element.padding || 12)}
-              defaultValue={12}
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>
+              Padding vertical: {element.paddingVertical !== undefined ? element.paddingVertical : (element.padding || 12)}px
+            </label>
+            <input
+              type="range"
               min={0}
               max={50}
-              onChange={(value) => onChange(element.id, 'paddingVertical', value)}
+              value={element.paddingVertical !== undefined ? element.paddingVertical : (element.padding || 12)}
+              onChange={(e) => onChange(element.id, 'paddingVertical', parseInt(e.target.value))}
+              style={{
+                width: '100%',
+                height: '6px',
+                borderRadius: '3px',
+                background: '#ddd',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
             />
           </div>
         </>
