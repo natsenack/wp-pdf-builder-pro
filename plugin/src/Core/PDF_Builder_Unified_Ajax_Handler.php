@@ -3500,12 +3500,24 @@ class PDF_Builder_Unified_Ajax_Handler {
         $backgroundColor = isset($element['backgroundColor']) ? $element['backgroundColor'] : '#ffffff';
         $borderColor = isset($element['borderColor']) ? $element['borderColor'] : '#e5e7eb';
         
+        // Récupérer les propriétés de police pour l'en-tête
+        $headerFontFamily = isset($element['headerFontFamily']) ? $element['headerFontFamily'] : (isset($element['fontFamily']) ? $element['fontFamily'] : 'DejaVu Sans');
+        $headerFontSize = isset($element['headerFontSize']) ? intval($element['headerFontSize']) : 14;
+        $headerFontWeight = isset($element['headerFontWeight']) ? $element['headerFontWeight'] : 'bold';
+        $headerFontStyle = isset($element['headerFontStyle']) ? $element['headerFontStyle'] : 'normal';
+        
+        // Récupérer les propriétés de police pour le corps
+        $bodyFontFamily = isset($element['bodyFontFamily']) ? $element['bodyFontFamily'] : (isset($element['fontFamily']) ? $element['fontFamily'] : 'DejaVu Sans');
+        $bodyFontSize = isset($element['bodyFontSize']) ? intval($element['bodyFontSize']) : 12;
+        $bodyFontWeight = isset($element['bodyFontWeight']) ? $element['bodyFontWeight'] : 'normal';
+        $bodyFontStyle = isset($element['bodyFontStyle']) ? $element['bodyFontStyle'] : 'normal';
+        
         // Construire les lignes selon le layout
         $lines = [];
         
-        // Ajouter l'en-tête si activé
+        // Ajouter l'en-tête si activé (utilise les propriétés headerFont*)
         if ($showHeaders) {
-            $lines[] = '<div style="font-weight: bold; color: ' . esc_attr($headerTextColor) . '; line-height: 1.2; margin-bottom: 8px;">Informations Client</div>';
+            $lines[] = '<div class="customer-info-header">Informations Client</div>';
         }
         
         if ($layout === 'vertical') {
@@ -3567,8 +3579,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Appliquer l'alignement horizontal et vertical
         $letterSpacingStyle = $letterSpacing !== 0 ? ' letter-spacing: ' . $letterSpacing . 'px;' : '';
         
-        // Construire les styles du conteneur interne
-        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . esc_attr($textColor) . ';' . $letterSpacingStyle;
+        // Construire les styles du conteneur interne (utilise les propriétés bodyFont*)
+        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . esc_attr($textColor) . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle;
         
         // Pour l'alignement vertical, on utilise flexbox
         if ($verticalAlign === 'middle') {
@@ -3578,8 +3590,12 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         $html = '<div class="element" style="' . $base_styles . '">';
-        // ✅ Nom du client (strong) utilise toujours line-height 1.2, pas le line-height personnalisé
-        $html .= '<style>strong { line-height: 1.2; }</style>';
+        $html .= '<style>';
+        // Style pour l'en-tête "Informations Client" (utilise headerFont*)
+        $html .= '.customer-info-header { color: ' . $headerTextColor . '; font-family: ' . $headerFontFamily . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . $headerFontWeight . '; font-style: ' . $headerFontStyle . '; line-height: 1.2; margin-bottom: 8px; }';
+        // Style pour le nom du client (strong) utilise aussi headerFont* avec line-height 1.2
+        $html .= 'strong { color: ' . $headerTextColor . '; font-family: ' . $headerFontFamily . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . $headerFontWeight . '; font-style: ' . $headerFontStyle . '; line-height: 1.2; }';
+        $html .= '</style>';
         $html .= '<div style="' . $inner_styles . '">';
         $html .= implode("\n", $lines);
         $html .= '</div>';
