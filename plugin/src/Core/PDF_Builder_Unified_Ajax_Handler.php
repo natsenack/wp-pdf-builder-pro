@@ -2948,6 +2948,13 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Génère l'HTML du template avec les vraies données de commande
      */
     private function generate_template_html($template, $order) {
+        // Récupérer l'état premium
+        $is_premium = false;
+        if (class_exists('\PDF_Builder\Managers\PDF_Builder_License_Manager')) {
+            $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+            $is_premium = $license_manager->isPremium();
+        }
+
         // Utiliser l'OrderDataExtractor pour récupérer les données
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Generators/OrderDataExtractor.php';
         $data_extractor = new \PDF_Builder\Generators\OrderDataExtractor($order);
@@ -3048,7 +3055,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         // Générer chaque élément
         foreach ($elements as $element) {
-            $html .= $this->render_element($element, $all_data);
+            $html .= $this->render_element($element, $all_data, $is_premium);
         }
 
         $html .= '
@@ -3065,7 +3072,7 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Génère le HTML d'un élément
      */
-    private function render_element($element, $order_data) {
+    private function render_element($element, $order_data, $is_premium = false) {
         $type = $element['type'] ?? 'text';
         $element_id = $element['id'] ?? 'unknown';
         
@@ -3095,10 +3102,10 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $rendered = $this->render_product_table($element, $order_data, $styles);
                 break;
             case 'customer_info':
-                $rendered = $this->render_customer_info_element($element, $order_data, $styles);
+                $rendered = $this->render_customer_info_element($element, $order_data, $styles, $is_premium);
                 break;
             case 'company_info':
-                $rendered = $this->render_company_info_element($element, $order_data, $styles);
+                $rendered = $this->render_company_info_element($element, $order_data, $styles, $is_premium);
                 break;
             case 'company_logo':
                 $rendered = $this->render_company_logo($element, $styles);
@@ -3455,7 +3462,7 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Rendu des informations client
      */
-    private function render_customer_info_element($element, $order_data, $base_styles) {
+    private function render_customer_info_element($element, $order_data, $base_styles, $is_premium = false) {
         // Récupérer le padding horizontal et vertical (backward compatibility avec padding unique)
         $paddingHorizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : (isset($element['padding']) ? intval($element['padding']) : 12);
         $paddingVertical = isset($element['paddingVertical']) ? intval($element['paddingVertical']) : (isset($element['padding']) ? intval($element['padding']) : 12);
@@ -3545,7 +3552,7 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Rendu des informations entreprise
      */
-    private function render_company_info_element($element, $order_data, $base_styles) {
+    private function render_company_info_element($element, $order_data, $base_styles, $is_premium = false) {
         // Récupérer le padding horizontal et vertical (backward compatibility avec padding unique)
         $paddingHorizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : (isset($element['padding']) ? intval($element['padding']) : 12);
         $paddingVertical = isset($element['paddingVertical']) ? intval($element['paddingVertical']) : (isset($element['padding']) ? intval($element['padding']) : 12);
@@ -3567,9 +3574,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             return implode('.', $chunks);
         };
         
-        // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji pour PDF gratuit/premium)
-        $getIconForType = function($type) {
-            $icons = [
+        // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji si premium, Unicode sinon pour HTML/PNG/JPG)
+        $getIconForType = function($type) use ($is_premium) {
+            // Emoji pour mode premium (HTML/PNG/JPG), Unicode sinon
+            $premiumIcons = [
                 'phone' => '📞',
                 'email' => '✉️',
                 'address' => '📍',
@@ -3578,6 +3586,18 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'tva' => '💼',
                 'capital' => '💰',
             ];
+            
+            $freeIcons = [
+                'phone' => '☎',
+                'email' => '✉',
+                'address' => '⌂',
+                'siret' => '◆',
+                'rcs' => '▪',
+                'tva' => '●',
+                'capital' => '▲',
+            ];
+            
+            $icons = $is_premium ? $premiumIcons : $freeIcons;
             return isset($icons[$type]) ? $icons[$type] : '';
         };
         

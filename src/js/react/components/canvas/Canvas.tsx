@@ -1584,17 +1584,32 @@ const drawCompanyInfo = (
     return matches ? matches.join('.') : phone;
   };
 
-  // ✅ HELPER: Récupérer l'icône pour un type d'info (symboles Unicode supportés en PDF)
+  // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji si premium, Unicode sinon pour HTML/PNG/JPG)
+  const isPremium = window.pdfBuilderData?.license?.isPremium || false;
+  
   const getIconForType = (type: 'phone' | 'email' | 'address' | 'siret' | 'rcs' | 'tva' | 'capital'): string => {
-    const icons: Record<string, string> = {
-      phone: '☎',      // Téléphone
-      email: '✉',      // Enveloppe
-      address: '⌂',    // Maison
-      siret: '◆',      // Diamant
-      rcs: '▪',        // Carré
-      tva: '●',        // Cercle
-      capital: '▲',    // Triangle
+    // Emoji pour mode premium (HTML/PNG/JPG), Unicode sinon
+    const premiumIcons: Record<string, string> = {
+      phone: '📞',      // Téléphone
+      email: '✉️',      // Enveloppe
+      address: '📍',    // Maison
+      siret: '🏢',      // Bâtiment
+      rcs: '📋',        // Presse-papiers
+      tva: '💼',        // Mallette
+      capital: '💰',    // Sac d'argent
     };
+    
+    const freeIcons: Record<string, string> = {
+      phone: '☎',      // Téléphone (Unicode)
+      email: '✉',      // Enveloppe (Unicode)
+      address: '⌂',    // Maison (Unicode)
+      siret: '◆',      // Diamant (Unicode)
+      rcs: '▪',        // Carré (Unicode)
+      tva: '●',        // Cercle (Unicode)
+      capital: '▲',    // Triangle (Unicode)
+    };
+    
+    const icons = isPremium ? premiumIcons : freeIcons;
     return icons[type] || '';
   };
 
