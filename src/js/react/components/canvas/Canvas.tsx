@@ -354,6 +354,8 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
   lines.forEach((line, index) => {
     // Appliquer le letter-spacing
     if (letterSpacing !== 0) {
+      // Utiliser Array.from() pour gérer correctement les emoji et caractères multi-byte
+      const chars = Array.from(line);
       ctx.textAlign = "left";
       let charX = x;
       
@@ -361,9 +363,9 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
       if (originalTextAlign !== "left") {
         // Calculer la largeur totale avec letterSpacing
         let totalWidth = 0;
-        for (let i = 0; i < line.length; i++) {
-          totalWidth += ctx.measureText(line[i]).width;
-          if (i < line.length - 1) totalWidth += letterSpacing;
+        for (let i = 0; i < chars.length; i++) {
+          totalWidth += ctx.measureText(chars[i]).width;
+          if (i < chars.length - 1) totalWidth += letterSpacing;
         }
         
         // Ajuster selon l'alignement original
@@ -374,9 +376,9 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
         }
       }
       
-      // Dessiner caractère par caractère
-      for (let i = 0; i < line.length; i++) {
-        const char = line[i];
+      // Dessiner caractère par caractère (maintenant correctement avec emoji)
+      for (let i = 0; i < chars.length; i++) {
+        const char = chars[i];
         ctx.fillText(char, charX, currentY);
         charX += ctx.measureText(char).width + letterSpacing;
       }
@@ -1485,10 +1487,46 @@ const drawCustomerInfo = (
 
   ctx.font = `${bodyFontStyle} ${bodyFontWeight} ${bodyFontSize}px ${bodyFontFamily}`;
 
-  // Dessiner les lignes
+  // Dessiner les lignes avec support du letter-spacing et lineHeight
   lines.forEach((lineText) => {
-    ctx.fillText(lineText, textX, y);
-    y += 18;
+    if (letterSpacing !== 0) {
+      // Utiliser Array.from() pour gérer correctement les emoji
+      const chars = Array.from(lineText);
+      const originalTextAlign = ctx.textAlign;
+      ctx.textAlign = "left";
+      let charX = textX;
+      
+      // Si l'alignement original était "center" ou "right", calculer l'offset
+      if (originalTextAlign !== "left") {
+        // Calculer la largeur totale avec letterSpacing
+        let totalWidth = 0;
+        for (let i = 0; i < chars.length; i++) {
+          totalWidth += ctx.measureText(chars[i]).width;
+          if (i < chars.length - 1) totalWidth += letterSpacing;
+        }
+        
+        // Ajuster selon l'alignement original
+        if (originalTextAlign === "center") {
+          charX = textX - totalWidth / 2;
+        } else if (originalTextAlign === "right") {
+          charX = textX - totalWidth;
+        }
+      }
+      
+      // Dessiner caractère par caractère
+      for (let i = 0; i < chars.length; i++) {
+        const char = chars[i];
+        ctx.fillText(char, charX, y);
+        charX += ctx.measureText(char).width + letterSpacing;
+      }
+      
+      ctx.textAlign = originalTextAlign;
+    } else {
+      ctx.fillText(lineText, textX, y);
+    }
+    
+    // Appliquer le lineHeight au lieu de la valeur fixe de 18
+    y += bodyFontSize * lineHeight;
   });
 };
 
@@ -1620,6 +1658,9 @@ const drawCompanyLine = (
   letterSpacing: number = 0,
 ) => {
   if (letterSpacing !== 0) {
+    // Utiliser Array.from() pour gérer correctement les emoji et les caractères multi-byte
+    const chars = Array.from(text);
+    
     // Sauvegarder l'alignement original et passer en "left" pour la précision
     const originalTextAlign = ctx.textAlign;
     ctx.textAlign = "left";
@@ -1629,9 +1670,9 @@ const drawCompanyLine = (
     if (originalTextAlign !== "left") {
       // Calculer la largeur totale du texte avec letterSpacing
       let totalWidth = 0;
-      for (let i = 0; i < text.length; i++) {
-        totalWidth += ctx.measureText(text[i]).width;
-        if (i < text.length - 1) totalWidth += letterSpacing;
+      for (let i = 0; i < chars.length; i++) {
+        totalWidth += ctx.measureText(chars[i]).width;
+        if (i < chars.length - 1) totalWidth += letterSpacing;
       }
       
       // Ajuster la position selon l'alignement
@@ -1642,9 +1683,9 @@ const drawCompanyLine = (
       }
     }
     
-    // Dessiner caractère par caractère
-    for (let i = 0; i < text.length; i++) {
-      const char = text[i];
+    // Dessiner caractère par caractère (maintenant correctement avec emoji)
+    for (let i = 0; i < chars.length; i++) {
+      const char = chars[i];
       ctx.fillText(char, charX, y);
       charX += ctx.measureText(char).width + letterSpacing;
     }
