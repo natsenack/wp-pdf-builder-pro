@@ -18,6 +18,7 @@ import { useCanvasInteraction } from "../../hooks/useCanvasInteraction";
 import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
 import {
   Element,
+  BaseElement,
   ShapeElementProperties,
   TextElementProperties,
   LineElementProperties,
@@ -2857,7 +2858,7 @@ export const Canvas = function Canvas({
     handleDragEnter,
     isDragOver,
   } = useCanvasDrop({
-    canvasRef: canvasWrapperRef,
+    canvasRef: canvasWrapperRef as React.RefObject<HTMLElement>,
     canvasWidth: width,
     canvasHeight: height,
     elements: state.elements || [],
@@ -2872,7 +2873,7 @@ export const Canvas = function Canvas({
     handleContextMenu,
     selectionState,
   } = useCanvasInteraction({
-    canvasRef,
+    canvasRef: canvasRef as React.RefObject<HTMLElement>,
     canvasWidth: width,
     canvasHeight: height,
   });
@@ -3267,7 +3268,7 @@ export const Canvas = function Canvas({
   const drawMentions = useCallback(
     (ctx: CanvasRenderingContext2D, element: Element) => {
       const props = element as MentionsElement;
-      const fontSizeRaw = props.fontSize || 10;
+      const fontSizeRaw = (props.fontSize || 10) as number | string;
 
       // ✅ BUGFIX-021: Robust font size parsing for various formats
       let fontSize: number;
@@ -3563,13 +3564,15 @@ export const Canvas = function Canvas({
           drawImage(ctx, element, imageCache);
           break;
         default:
+          // Élément de type inconnu - dessiner un rectangle simple
+          const unknownElement = element as BaseElement;
           debugWarn(
-            `[Canvas] Unknown element type: ${element.type} for element ${element.id}`,
+            `[Canvas] Unknown element type: ${unknownElement.type} for element ${unknownElement.id}`,
           );
           // Élément générique - dessiner un rectangle simple
           ctx.strokeStyle = normalizeColor("#000000");
           ctx.lineWidth = 1;
-          ctx.strokeRect(0, 0, element.width, element.height);
+          ctx.strokeRect(0, 0, unknownElement.width, unknownElement.height);
       }
       ctx.restore();
     },
