@@ -795,6 +795,10 @@ export interface CompanyInfoElement extends BaseElement {
   companyCapital?: string;
   companyEmail?: string;
   companyPhone?: string;
+  // Propriétés de padding
+  padding?: number; // Backward compatibility
+  paddingHorizontal?: number;
+  paddingVertical?: number;
 }
 
 // Interface spécifique pour les éléments CompanyLogo
@@ -851,7 +855,9 @@ export interface CustomerInfoElement extends BaseElement {
   showBorders?: boolean;
   showFullName?: boolean;
   // ✅ NEW: Padding interne
-  padding?: number;
+  padding?: number; // Backward compatibility
+  paddingHorizontal?: number;
+  paddingVertical?: number;
   // Propriétés de style
   headerTextColor?: string;
   verticalAlign?: "top" | "middle" | "bottom";

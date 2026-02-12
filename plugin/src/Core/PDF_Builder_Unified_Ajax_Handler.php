@@ -3456,11 +3456,12 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Rendu des informations client
      */
     private function render_customer_info_element($element, $order_data, $base_styles) {
-        // Récupérer le padding (par défaut 12px)
-        $padding = isset($element['padding']) ? intval($element['padding']) : 12;
+        // Récupérer le padding horizontal et vertical (backward compatibility avec padding unique)
+        $paddingHorizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : (isset($element['padding']) ? intval($element['padding']) : 12);
+        $paddingVertical = isset($element['paddingVertical']) ? intval($element['paddingVertical']) : (isset($element['padding']) ? intval($element['padding']) : 12);
         
         // Ajouter le padding au style de base
-        $inner_styles = 'padding: ' . $padding . 'px;';
+        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px;';
         
         $html = '<div class="element" style="' . $base_styles . '">';
         $html .= '<div style="' . $inner_styles . '">';
@@ -3487,11 +3488,12 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Rendu des informations entreprise
      */
     private function render_company_info_element($element, $order_data, $base_styles) {
-        // Récupérer le padding (par défaut 12px)
-        $padding = isset($element['padding']) ? intval($element['padding']) : 12;
+        // Récupérer le padding horizontal et vertical (backward compatibility avec padding unique)
+        $paddingHorizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : (isset($element['padding']) ? intval($element['padding']) : 12);
+        $paddingVertical = isset($element['paddingVertical']) ? intval($element['paddingVertical']) : (isset($element['padding']) ? intval($element['padding']) : 12);
         
         // Ajouter le padding au style de base
-        $inner_styles = 'padding: ' . $padding . 'px;';
+        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px;';
         
         $html = '<div class="element" style="' . $base_styles . '">';
         $html .= '<div style="' . $inner_styles . '">';

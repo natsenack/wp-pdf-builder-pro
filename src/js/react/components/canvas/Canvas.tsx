@@ -1212,8 +1212,9 @@ const drawCustomerInfo = (
   const fontFamily = props.fontFamily || "Arial";
   const fontWeight = props.fontWeight || "normal";
   const fontStyle = props.fontStyle || "normal";
-  // ✅ NEW: Ajouter du padding
-  const padding = props.padding || 12;
+  // ✅ NEW: Padding horizontal et vertical séparés (backward compatibility avec padding unique)
+  const paddingHorizontal = props.paddingHorizontal !== undefined ? props.paddingHorizontal : (props.padding || 12);
+  const paddingVertical = props.paddingVertical !== undefined ? props.paddingVertical : (props.padding || 12);
   // Propriétés de police pour l'en-tête
   const headerFontSize = props.headerFontSize || fontSize + 2;
   const headerFontFamily = props.headerFontFamily || fontFamily;
@@ -1314,7 +1315,7 @@ const drawCustomerInfo = (
       compactText += (compactText ? " • " : "") + customerData.phone;
 
     // Wrap text if too long
-    const maxWidth = element.width - padding * 2;
+    const maxWidth = element.width - paddingHorizontal * 2;
     const words = compactText.split(" ");
     let line = "";
     for (let i = 0; i < words.length; i++) {
@@ -1339,13 +1340,13 @@ const drawCustomerInfo = (
   let startY: number;
   switch (verticalAlign) {
     case "middle":
-      startY = Math.max(padding, (element.height - totalContentHeight) / 2);
+      startY = Math.max(paddingVertical, (element.height - totalContentHeight) / 2);
       break;
     case "bottom":
-      startY = Math.max(padding, element.height - totalContentHeight - padding);
+      startY = Math.max(paddingVertical, element.height - totalContentHeight - paddingVertical);
       break;
     default: // top
-      startY = padding;
+      startY = paddingVertical;
   }
 
   let y = startY;
@@ -1353,7 +1354,7 @@ const drawCustomerInfo = (
   // En-tête
   if (showHeaders) {
     ctx.fillStyle = normalizeColor(props.headerTextColor || "#111827");
-    ctx.fillText("Informations Client", padding, y);
+    ctx.fillText("Informations Client", paddingHorizontal, y);
     y += 25;
     ctx.fillStyle = normalizeColor(props.textColor || "#000000");
   }
@@ -1362,7 +1363,7 @@ const drawCustomerInfo = (
 
   // Dessiner les lignes
   lines.forEach((lineText) => {
-    ctx.fillText(lineText, padding, y);
+    ctx.fillText(lineText, paddingHorizontal, y);
     y += 18;
   });
 };
@@ -1519,8 +1520,9 @@ const drawCompanyInfo = (
     bodyStyle: props.bodyFontStyle || "normal",
   };
 
-  // ✅ NEW: Ajouter du padding
-  const padding = props.padding || 12;
+  // ✅ NEW: Padding horizontal et vertical séparés (backward compatibility)
+  const paddingHorizontal = props.paddingHorizontal !== undefined ? props.paddingHorizontal : (props.padding || 12);
+  const paddingVertical = props.paddingVertical !== undefined ? props.paddingVertical : (props.padding || 12);
 
   // Configuration d'affichage
   const displayConfig = {
@@ -1565,8 +1567,8 @@ const drawCompanyInfo = (
   ctx.textAlign = "left";
 
   // Position de départ avec padding dynamique
-  let x = padding;
-  let y = padding + 10;
+  let x = paddingHorizontal;
+  let y = paddingVertical + 10;
 
   // Récupération des données d'entreprise
   const companyData = getCompanyData(props);

@@ -1178,12 +1178,23 @@ export function CompanyInfoProperties({ element, onChange, activeTab, setActiveT
 
           <div style={{ marginBottom: '12px' }}>
             <NumericPropertyInput
-              label="Padding interne (px)"
-              value={element.padding || 12}
+              label="Padding horizontal (px)"
+              value={element.paddingHorizontal !== undefined ? element.paddingHorizontal : (element.padding || 12)}
               defaultValue={12}
               min={0}
               max={50}
-              onChange={(value) => onChange(element.id, 'padding', value)}
+              onChange={(value) => onChange(element.id, 'paddingHorizontal', value)}
+            />
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <NumericPropertyInput
+              label="Padding vertical (px)"
+              value={element.paddingVertical !== undefined ? element.paddingVertical : (element.padding || 12)}
+              defaultValue={12}
+              min={0}
+              max={50}
+              onChange={(value) => onChange(element.id, 'paddingVertical', value)}
             />
           </div>
         </>
