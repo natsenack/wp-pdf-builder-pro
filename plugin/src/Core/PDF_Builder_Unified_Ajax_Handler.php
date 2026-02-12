@@ -3623,7 +3623,62 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function render_dynamic_text($element, $order_data, $base_styles) {
         $text = $element['text'] ?? $element['textTemplate'] ?? 'Signature du client';
-        return '<div class="element" style="' . $base_styles . '">' . nl2br(esc_html($text)) . '</div>';
+        
+        // Supprimer le line-height du base_styles car on va le gérer spécifiquement
+        $base_styles_clean = preg_replace('/line-height:\s*[^;]+;/', '', $base_styles);
+        
+        // Récupérer le line-height EXACT du JSON (string ou number)
+        $line_height_ratio = isset($element['lineHeight']) ? $element['lineHeight'] : '1.3';
+        
+        // Calculer le lineHeight en pixels pour Dompdf (plus précis que le ratio)
+        $font_size = isset($element['fontSize']) ? (is_numeric($element['fontSize']) ? $element['fontSize'] : 14) : 14;
+        $line_height_px = ($font_size * floatval($line_height_ratio)) . 'px';
+        
+        // Extraire les propriétés de positionnement (pour le conteneur) et de texte (pour le contenu)
+        preg_match('/left:\s*[^;]+;/', $base_styles_clean, $left_match);
+        preg_match('/top:\s*[^;]+;/', $base_styles_clean, $top_match);
+        preg_match('/width:\s*[^;]+;/', $base_styles_clean, $width_match);
+        preg_match('/height:\s*[^;]+;/', $base_styles_clean, $height_match);
+        
+        $position_styles = 'position: absolute; ' . 
+                          ($left_match[0] ?? '') . ' ' . 
+                          ($top_match[0] ?? '') . ' ' . 
+                          ($width_match[0] ?? '') . ' ' . 
+                          ($height_match[0] ?? '');
+        
+        // Extraire les propriétés de texte pour les appliquer sur le div intérieur
+        preg_match('/font-size:\s*[^;]+;/', $base_styles_clean, $font_size_match);
+        preg_match('/font-family:\s*[^;]+;/', $base_styles_clean, $font_family_match);
+        preg_match('/font-weight:\s*[^;]+;/', $base_styles_clean, $font_weight_match);
+        preg_match('/font-style:\s*[^;]+;/', $base_styles_clean, $font_style_match);
+        preg_match('/text-align:\s*[^;]+;/', $base_styles_clean, $text_align_match);
+        preg_match('/color:\s*[^;]+;/', $base_styles_clean, $color_match);
+        preg_match('/text-decoration:\s*[^;]+;/', $base_styles_clean, $text_decoration_match);
+        preg_match('/text-transform:\s*[^;]+;/', $base_styles_clean, $text_transform_match);
+        
+        $text_styles = ($font_size_match[0] ?? '') . ' ' . 
+                      ($font_family_match[0] ?? '') . ' ' . 
+                      ($font_weight_match[0] ?? '') . ' ' . 
+                      ($font_style_match[0] ?? '') . ' ' . 
+                      ($text_align_match[0] ?? '') . ' ' . 
+                      ($color_match[0] ?? '') . ' ' . 
+                      ($text_decoration_match[0] ?? '') . ' ' . 
+                      ($text_transform_match[0] ?? '');
+        
+        // Le div extérieur est UNIQUEMENT un conteneur positionné
+        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
+        
+        // Le div intérieur contient le texte avec TOUTES les propriétés de texte
+        // white-space: pre-line pour préserver les sauts de ligne (pas nl2br)
+        $inner_style = 'white-space: pre-line; ' . 
+                      'line-height: ' . $line_height_px . '; ' . 
+                      $text_styles . ' ' .
+                      'margin: 0; padding: 0; display: block; box-sizing: border-box;';
+        
+        $html .= '<div style="' . $inner_style . '">' . esc_html($text) . '</div>';
+        $html .= '</div>';
+        
+        return $html;
     }
     
     /**
