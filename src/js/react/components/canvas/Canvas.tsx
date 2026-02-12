@@ -349,15 +349,40 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
   // Gérer les lignes séparées par \n
   const lines = text.split('\n');
   let currentY = y;
+  const originalTextAlign = ctx.textAlign;
+  
   lines.forEach((line, index) => {
     // Appliquer le letter-spacing
     if (letterSpacing !== 0) {
+      ctx.textAlign = "left";
       let charX = x;
+      
+      // Si l'alignement original était "center" ou "right", calculer l'offset
+      if (originalTextAlign !== "left") {
+        // Calculer la largeur totale avec letterSpacing
+        let totalWidth = 0;
+        for (let i = 0; i < line.length; i++) {
+          totalWidth += ctx.measureText(line[i]).width;
+          if (i < line.length - 1) totalWidth += letterSpacing;
+        }
+        
+        // Ajuster selon l'alignement original
+        if (originalTextAlign === "center") {
+          charX = x - totalWidth / 2;
+        } else if (originalTextAlign === "right") {
+          charX = x - totalWidth;
+        }
+      }
+      
+      // Dessiner caractère par caractère
       for (let i = 0; i < line.length; i++) {
         const char = line[i];
         ctx.fillText(char, charX, currentY);
         charX += ctx.measureText(char).width + letterSpacing;
       }
+      
+      // Restaurer l'alignement original
+      ctx.textAlign = originalTextAlign;
     } else {
       ctx.fillText(line, x, currentY);
     }
@@ -1594,17 +1619,45 @@ const drawCompanyLine = (
   lineHeight: number = 1.2,
   letterSpacing: number = 0,
 ) => {
-  // Appliquer le letter-spacing en dessinant caractère par caractère
+  // Sauvegarder l'alignement original et passer en "left" pour la précision
+  const originalTextAlign = ctx.textAlign;
+  
   if (letterSpacing !== 0) {
+    // Pour le letter-spacing, on doit dessiner caractère par caractère en "left"
+    ctx.textAlign = "left";
     let charX = x;
+    
+    // Si l'alignement original était "center" ou "right", on doit calculer l'offset
+    if (originalTextAlign !== "left") {
+      // Calculer la largeur totale du texte avec letterSpacing
+      let totalWidth = 0;
+      for (let i = 0; i < text.length; i++) {
+        totalWidth += ctx.measureText(text[i]).width;
+        if (i < text.length - 1) totalWidth += letterSpacing;
+      }
+      
+      // Ajuster la position selon l'alignement
+      if (originalTextAlign === "center") {
+        charX = x - totalWidth / 2;
+      } else if (originalTextAlign === "right") {
+        charX = x - totalWidth;
+      }
+    }
+    
+    // Dessiner caractère par caractère
     for (let i = 0; i < text.length; i++) {
       const char = text[i];
       ctx.fillText(char, charX, y);
       charX += ctx.measureText(char).width + letterSpacing;
     }
   } else {
+    // Sans letter-spacing, utiliser le ctx.textAlign actuel
     ctx.fillText(text, x, y);
   }
+  
+  // Restaurer l'alignement original
+  ctx.textAlign = originalTextAlign;
+  
   return y + fontSize * lineHeight;
 };
 
