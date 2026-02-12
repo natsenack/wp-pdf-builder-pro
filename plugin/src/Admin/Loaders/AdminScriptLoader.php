@@ -114,10 +114,6 @@ class AdminScriptLoader
             wp_enqueue_script('wp-dom-ready'); // Provides DOM ready
             wp_enqueue_script('wp-polyfill'); // Provides polyfills
 
-            // ✅ Injecter le nonce GLOBALEMENT pour toutes les pages admin PDF Builder
-            \wp_add_inline_script('jquery', 'window.pdfBuilderNonce = "' . \wp_create_nonce('pdf_builder_ajax') . '";', 'after');
-            error_log('[AdminScriptLoader] Injected pdfBuilderNonce globally for all admin pages');
-
             // Charger les utilitaires PDF Builder en premier (PerformanceMetrics, LocalCache, etc.) - seulement si le fichier existe
             $utils_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-utils.js';
             if (file_exists($utils_js)) {
