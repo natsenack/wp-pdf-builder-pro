@@ -2543,7 +2543,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             ]);
             
             error_log("[PDF Builder] Chargement HTML dans dompdf");
-            $dompdf->loadHtml($html);
+            // S'assurer que le HTML est en UTF-8
+            $dompdf->loadHtml(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
             
             // Format papier depuis le template
             $template_data = json_decode($template['template_data'], true);
