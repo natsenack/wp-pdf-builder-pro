@@ -1968,17 +1968,17 @@ const drawCompanyInfo = (
     // Ligne 2: Contact (Email + Phone)
     let contactLine = "";
     if (shouldDisplayValue(companyData.email, displayConfig.email)) {
-      contactLine += companyData.email;
+      contactLine += buildLineText(companyData.email, 'email');
     }
     if (shouldDisplayValue(companyData.phone, displayConfig.phone)) {
-      contactLine += (contactLine ? " | " : "") + formatPhoneNumber(companyData.phone);
+      contactLine += (contactLine ? " | " : "") + buildLineText(formatPhoneNumber(companyData.phone), 'phone');
     }
-    if (contactLine) lines.push({ text: buildLineText(contactLine, 'email'), isHeader: false });
+    if (contactLine) lines.push({ text: contactLine, isHeader: false });
     
-    // Ligne 3: Infos légales (SIRET + RCS + TVA)
+    // Ligne 3: Infos légales (SIRET + RCS + TVA + Capital)
     let legalLine = "";
     if (shouldDisplayValue(companyData.siret, displayConfig.siret)) {
-      legalLine += companyData.siret;
+      legalLine += buildLineText(companyData.siret, 'siret');
     }
     if (shouldDisplayValue(companyData.rcs, displayConfig.rcs)) {
       legalLine += (legalLine ? " | " : "") + companyData.rcs;
@@ -1987,9 +1987,9 @@ const drawCompanyInfo = (
       legalLine += (legalLine ? " | " : "") + companyData.tva;
     }
     if (shouldDisplayValue(companyData.capital, displayConfig.capital)) {
-      legalLine += (legalLine ? " | " : "") + companyData.capital;
+      legalLine += (legalLine ? " | " : "") + buildLineText(companyData.capital, 'capital');
     }
-    if (legalLine) lines.push({ text: buildLineText(legalLine, 'siret'), isHeader: false });
+    if (legalLine) lines.push({ text: legalLine, isHeader: false });
   } else if (layout === "compact") {
     // Mode compact : nom en en-tête + tout le reste avec séparateurs, word wrap si trop long
     

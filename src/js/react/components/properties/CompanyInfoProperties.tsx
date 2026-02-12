@@ -1016,7 +1016,14 @@ export function CompanyInfoProperties({
                   {companyThemes.map((theme) => (
                     <div
                       key={theme.id}
-                      onClick={() => onChange(element.id, "theme", theme.id)}
+                      onClick={() => {
+                        // Appliquer le thème et toutes ses couleurs
+                        onChange(element.id, "theme", theme.id);
+                        onChange(element.id, "backgroundColor", theme.styles.backgroundColor);
+                        onChange(element.id, "borderColor", theme.styles.borderColor);
+                        onChange(element.id, "textColor", theme.styles.textColor);
+                        onChange(element.id, "headerTextColor", theme.styles.headerTextColor);
+                      }}
                       style={{
                         cursor: "pointer",
                         border:

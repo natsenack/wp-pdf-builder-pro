@@ -3744,34 +3744,27 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             // Ligne 2: Email + Phone
             $line2 = '';
-            $line2FirstIcon = null;
             if (($element['showEmail'] ?? true) && $email) {
-                $line2FirstIcon = 'email';
-                $line2 .= esc_html($addIcon($email, 'email', true));
+                $line2 .= esc_html($buildLineText($email, 'email'));
             }
             if (($element['showPhone'] ?? true) && $phone) {
-                $line2 .= ($line2 ? ' | ' : '') . esc_html($line2FirstIcon === null ? $addIcon($phone, 'phone', true) : $phone);
-                if ($line2FirstIcon === null) $line2FirstIcon = 'phone';
+                $line2 .= ($line2 ? ' | ' : '') . esc_html($buildLineText($phone, 'phone'));
             }
             if ($line2) $lines[] = $line2;
             
             // Ligne 3: Infos légales (SIRET | RCS | TVA | Capital)
             $line3 = '';
-            $line3FirstIcon = null;
             if (($element['showSiret'] ?? true) && $siret) {
-                $line3FirstIcon = 'siret';
-                $line3 .= esc_html($addIcon($siret, 'siret', true));
+                $line3 .= esc_html($buildLineText($siret, 'siret'));
             }
             if (($element['showRcs'] ?? true) && $rcs) {
-                $line3 .= ($line3 ? ' | ' : '') . esc_html($line3FirstIcon === null ? $addIcon($rcs, 'rcs', true) : $rcs);
-                if ($line3FirstIcon === null) $line3FirstIcon = 'rcs';
+                $line3 .= ($line3 ? ' | ' : '') . esc_html($rcs);
             }
             if (($element['showVat'] ?? true) && $tva) {
-                $line3 .= ($line3 ? ' | ' : '') . esc_html($line3FirstIcon === null ? $addIcon($tva, 'tva', true) : $tva);
-                if ($line3FirstIcon === null) $line3FirstIcon = 'tva';
+                $line3 .= ($line3 ? ' | ' : '') . esc_html($tva);
             }
             if (($element['showCapital'] ?? true) && $capital) {
-                $line3 .= ($line3 ? ' | ' : '') . esc_html($line3FirstIcon === null ? $addIcon($capital, 'capital', true) : $capital);
+                $line3 .= ($line3 ? ' | ' : '') . esc_html($buildLineText($capital, 'capital'));
             }
             if ($line3) $lines[] = $line3;
         } elseif ($layout === 'compact') {
