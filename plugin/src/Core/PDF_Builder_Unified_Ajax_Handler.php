@@ -3642,9 +3642,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         error_log('[PDF Builder] Dynamic_Text lineHeight ratio: ' . $line_height_ratio . ', fontSize: ' . $font_size . 'px, lineHeight calculé: ' . $line_height_px);
         
-        // FORCER line-height: 1 pour Dompdf (aucun espacement supplémentaire)
+        // FORCER line-height: 1.1 pour Dompdf (espacement minimal optimisé)
         // Dompdf ajoute trop d'espacement avec des valeurs en pixels
-        $dompdf_line_height = '1';
+        $dompdf_line_height = '1.1';
         
         error_log('[PDF Builder] Dynamic_Text FORÇAGE line-height pour Dompdf: ' . $dompdf_line_height . ' (au lieu de ' . $line_height_px . ')');
         
