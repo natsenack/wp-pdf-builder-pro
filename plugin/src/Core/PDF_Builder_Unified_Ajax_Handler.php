@@ -3481,15 +3481,32 @@ class PDF_Builder_Unified_Ajax_Handler {
         $layout = isset($element['layout']) ? $element['layout'] : 'vertical';
         $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'left';
         $verticalAlign = isset($element['verticalAlign']) ? $element['verticalAlign'] : 'top';
-        $lineHeight = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.1;
+        $lineHeight = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.5;
         $letterSpacing = isset($element['letterSpacing']) ? floatval($element['letterSpacing']) : 0;
+        
+        // Récupérer les options d'affichage
+        $showHeaders = $element['showHeaders'] ?? true;
+        $showBackground = $element['showBackground'] ?? true;
+        $showBorders = $element['showBorders'] ?? true;
+        $showFullName = $element['showFullName'] ?? true;
+        
+        // Récupérer les couleurs
+        $headerTextColor = isset($element['headerTextColor']) ? $element['headerTextColor'] : '#111827';
+        $textColor = isset($element['textColor']) ? $element['textColor'] : '#374151';
+        $backgroundColor = isset($element['backgroundColor']) ? $element['backgroundColor'] : '#ffffff';
+        $borderColor = isset($element['borderColor']) ? $element['borderColor'] : '#e5e7eb';
         
         // Construire les lignes selon le layout
         $lines = [];
         
+        // Ajouter l'en-tête si activé
+        if ($showHeaders) {
+            $lines[] = '<div style="font-weight: bold; color: ' . esc_attr($headerTextColor) . '; line-height: 1.2; margin-bottom: 8px;">Informations Client</div>';
+        }
+        
         if ($layout === 'vertical') {
             // Mode vertical : une info par ligne
-            if ($element['showName'] ?? true) {
+            if ($showFullName) {
                 $lines[] = '<strong>' . esc_html($order_data['customer']['full_name']) . '</strong>';
             }
             if ($element['showAddress'] ?? true) {
@@ -3507,7 +3524,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $line2 = '';
             $line3 = '';
             
-            if ($element['showName'] ?? true) {
+            if ($showFullName) {
                 $line1 .= '<strong>' . esc_html($order_data['customer']['full_name']) . '</strong>';
             }
             if ($element['showEmail'] ?? true) {
@@ -3525,7 +3542,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             if ($line3) $lines[] = $line3;
         } elseif ($layout === 'compact') {
             // Mode compact : nom en premier, puis reste avec séparateurs
-            if ($element['showName'] ?? true) {
+            if ($showFullName) {
                 $lines[] = '<strong>' . esc_html($order_data['customer']['full_name']) . '</strong>';
             }
             
@@ -3545,7 +3562,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Appliquer l'alignement horizontal et vertical
         $letterSpacingStyle = $letterSpacing !== 0 ? ' letter-spacing: ' . $letterSpacing . 'px;' : '';
-        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line;' . $letterSpacingStyle;
+        
+        // Construire les styles du conteneur interne
+        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . esc_attr($textColor) . ';' . $letterSpacingStyle;
         
         // Pour l'alignement vertical, on utilise flexbox
         if ($verticalAlign === 'middle') {
@@ -3554,7 +3573,17 @@ class PDF_Builder_Unified_Ajax_Handler {
             $inner_styles .= ' display: flex; flex-direction: column; justify-content: flex-end; height: 100%;';
         }
         
-        $html = '<div class="element" style="' . $base_styles . '">';
+        // Appliquer le fond et les bordures sur la div extérieure
+        $elementStyles = $base_styles;
+        if ($showBackground) {
+            $elementStyles .= ' background-color: ' . esc_attr($backgroundColor) . ';';
+        }
+        if ($showBorders) {
+            $borderWidth = isset($element['borderWidth']) ? intval($element['borderWidth']) : 1;
+            $elementStyles .= ' border: ' . $borderWidth . 'px solid ' . esc_attr($borderColor) . ';';
+        }
+        
+        $html = '<div class="element" style="' . $elementStyles . '">';
         // ✅ Nom du client (strong) utilise toujours line-height 1.2, pas le line-height personnalisé
         $html .= '<style>strong { line-height: 1.2; }</style>';
         $html .= '<div style="' . $inner_styles . '">';

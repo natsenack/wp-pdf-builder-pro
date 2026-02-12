@@ -316,15 +316,6 @@ export function CustomerInfoProperties({
             </div>
             <div style={{ paddingLeft: "8px" }}>
               <Toggle
-                checked={element.showName !== false}
-                onChange={(checked) =>
-                  onChange(element.id, "showName", checked)
-                }
-                label="Afficher le nom"
-                description="Nom du client"
-              />
-
-              <Toggle
                 checked={element.showFullName !== false}
                 onChange={(checked) =>
                   onChange(element.id, "showFullName", checked)
