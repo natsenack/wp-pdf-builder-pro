@@ -145,6 +145,31 @@ export const useCanvasDrop = ({
         updatedAt: new Date(),
       };
 
+      // ✅ ENRICHISSEMENT: Ajouter les données réelles de l'entreprise pour company_info
+      if (dragData.type === 'company_info') {
+        const pdfBuilderData = (window as any).pdfBuilderData;
+        if (pdfBuilderData && pdfBuilderData.company) {
+          const company = pdfBuilderData.company;
+          
+          // Mapper les données de l'entreprise directement dans l'élément
+          (element as any).companyName = company.name || '';
+          (element as any).companyAddress = company.address || '';
+          (element as any).companyCity = company.city || '';
+          (element as any).companyPhone = company.phone || '';
+          (element as any).companyEmail = company.email || '';
+          (element as any).companySiret = company.siret || '';
+          (element as any).companyTva = company.tva || '';
+          (element as any).companyRcs = company.rcs || '';
+          (element as any).companyCapital = company.capital || '';
+          
+          debugLog('[CanvasDrop] Company data enriched into element:', {
+            companyName: company.name,
+            companyPhone: company.phone,
+            companySiret: company.siret,
+          });
+        }
+      }
+
       return element;
     },
     [generateElementId]
