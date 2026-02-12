@@ -3575,6 +3575,50 @@ class PDF_Builder_Unified_Ajax_Handler {
         $showIcons = isset($element['showIcons']) ? (bool)$element['showIcons'] : false;
         $iconsPosition = isset($element['iconsPosition']) ? $element['iconsPosition'] : 'left';
         
+        // ✅ NEW: Thèmes prédéfinis
+        $companyThemes = [
+            'corporate' => [
+                'backgroundColor' => '#ffffff',
+                'borderColor' => '#1f2937',
+                'textColor' => '#374151',
+                'headerTextColor' => '#111827',
+            ],
+            'modern' => [
+                'backgroundColor' => '#ffffff',
+                'borderColor' => '#3b82f6',
+                'textColor' => '#1e40af',
+                'headerTextColor' => '#1e3a8a',
+            ],
+            'elegant' => [
+                'backgroundColor' => '#ffffff',
+                'borderColor' => '#8b5cf6',
+                'textColor' => '#6d28d9',
+                'headerTextColor' => '#581c87',
+            ],
+            'minimal' => [
+                'backgroundColor' => '#ffffff',
+                'borderColor' => '#e5e7eb',
+                'textColor' => '#374151',
+                'headerTextColor' => '#111827',
+            ],
+            'professional' => [
+                'backgroundColor' => '#ffffff',
+                'borderColor' => '#059669',
+                'textColor' => '#047857',
+                'headerTextColor' => '#064e3b',
+            ],
+        ];
+        
+        // Récupérer le thème
+        $themeName = isset($element['theme']) ? $element['theme'] : 'corporate';
+        $theme = isset($companyThemes[$themeName]) ? $companyThemes[$themeName] : $companyThemes['corporate'];
+        
+        // Appliquer les couleurs du thème (en priorité sur les couleurs personnalisées)
+        $backgroundColor = isset($element['backgroundColor']) && !empty($element['backgroundColor']) ? $element['backgroundColor'] : $theme['backgroundColor'];
+        $borderColor = isset($element['borderColor']) && !empty($element['borderColor']) ? $element['borderColor'] : $theme['borderColor'];
+        $textColor = isset($element['textColor']) && !empty($element['textColor']) ? $element['textColor'] : $theme['textColor'];
+        $headerTextColor = isset($element['headerTextColor']) && !empty($element['headerTextColor']) ? $element['headerTextColor'] : $theme['headerTextColor'];
+        
         // ✅ HELPER: Formater le numéro de téléphone (ajouter un point tous les 2 chiffres)
         $formatPhoneNumber = function($phone) {
             if (empty($phone)) return $phone;
@@ -3611,11 +3655,24 @@ class PDF_Builder_Unified_Ajax_Handler {
             return isset($icons[$type]) ? $icons[$type] : '';
         };
         
-        // ✅ HELPER: Ajouter l'icône au texte si showIcons est activé
+        // ✅ HELPER: Ajouter l'icône au texte si showIcons est activé (compatible avec concaténation)
         $buildLineText = function($text, $iconType = null) use ($showIcons, $iconsPosition, $getIconForType) {
-            if (!$showIcons || empty($iconType)) return $text;
+            if (!$showIcons || empty($iconType) || empty($text)) return $text;
             $icon = $getIconForType($iconType);
             return $iconsPosition === 'left' ? $icon . ' ' . $text : $text . ' ' . $icon;
+        };
+        
+        // ✅ HELPER: Ajouter l'icône uniquement (pour les lignes concaténées)
+        $addIcon = function($text, $iconType, $isFirst = false) use ($showIcons, $iconsPosition, $getIconForType) {
+            if (!$showIcons || empty($iconType)) return $text;
+            $icon = $getIconForType($iconType);
+            // Pour les lignes concaténées, on ajoute l'icône seulement au premier élément de chaque type
+            if ($isFirst && $iconsPosition === 'left') {
+                return $icon . ' ' . $text;
+            } elseif ($isFirst && $iconsPosition === 'right') {
+                return $text . ' ' . $icon;
+            }
+            return $text;
         };
         
         // Récupérer les données de l'entreprise depuis l'élément canvas (pas depuis les options WordPress)
@@ -3687,27 +3744,34 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             // Ligne 2: Email + Phone
             $line2 = '';
+            $line2FirstIcon = null;
             if (($element['showEmail'] ?? true) && $email) {
-                $line2 .= esc_html($buildLineText($email, 'email'));
+                $line2FirstIcon = 'email';
+                $line2 .= esc_html($addIcon($email, 'email', true));
             }
             if (($element['showPhone'] ?? true) && $phone) {
-                $line2 .= ($line2 ? ' | ' : '') . esc_html($buildLineText($phone, 'phone'));
+                $line2 .= ($line2 ? ' | ' : '') . esc_html($line2FirstIcon === null ? $addIcon($phone, 'phone', true) : $phone);
+                if ($line2FirstIcon === null) $line2FirstIcon = 'phone';
             }
             if ($line2) $lines[] = $line2;
             
             // Ligne 3: Infos légales (SIRET | RCS | TVA | Capital)
             $line3 = '';
+            $line3FirstIcon = null;
             if (($element['showSiret'] ?? true) && $siret) {
-                $line3 .= esc_html($buildLineText($siret, 'siret'));
+                $line3FirstIcon = 'siret';
+                $line3 .= esc_html($addIcon($siret, 'siret', true));
             }
             if (($element['showRcs'] ?? true) && $rcs) {
-                $line3 .= ($line3 ? ' | ' : '') . esc_html($buildLineText($rcs, 'rcs'));
+                $line3 .= ($line3 ? ' | ' : '') . esc_html($line3FirstIcon === null ? $addIcon($rcs, 'rcs', true) : $rcs);
+                if ($line3FirstIcon === null) $line3FirstIcon = 'rcs';
             }
             if (($element['showVat'] ?? true) && $tva) {
-                $line3 .= ($line3 ? ' | ' : '') . esc_html($buildLineText($tva, 'tva'));
+                $line3 .= ($line3 ? ' | ' : '') . esc_html($line3FirstIcon === null ? $addIcon($tva, 'tva', true) : $tva);
+                if ($line3FirstIcon === null) $line3FirstIcon = 'tva';
             }
             if (($element['showCapital'] ?? true) && $capital) {
-                $line3 .= ($line3 ? ' | ' : '') . esc_html($buildLineText($capital, 'capital'));
+                $line3 .= ($line3 ? ' | ' : '') . esc_html($line3FirstIcon === null ? $addIcon($capital, 'capital', true) : $capital);
             }
             if ($line3) $lines[] = $line3;
         } elseif ($layout === 'compact') {
@@ -3717,26 +3781,33 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
             
             $compactLine = '';
+            $compactFirstIcon = null;
             if (($element['showAddress'] ?? true) && $fullAddress) {
-                $compactLine .= esc_html($buildLineText($fullAddress, 'address'));  // Adresse complète
+                $compactFirstIcon = 'address';
+                $compactLine .= esc_html($addIcon($fullAddress, 'address', true));  // Adresse complète
             }
             if (($element['showEmail'] ?? true) && $email) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($buildLineText($email, 'email'));
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($compactFirstIcon === null ? $addIcon($email, 'email', true) : $email);
+                if ($compactFirstIcon === null) $compactFirstIcon = 'email';
             }
             if (($element['showPhone'] ?? true) && $phone) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($buildLineText($phone, 'phone'));
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($compactFirstIcon === null ? $addIcon($phone, 'phone', true) : $phone);
+                if ($compactFirstIcon === null) $compactFirstIcon = 'phone';
             }
             if (($element['showSiret'] ?? true) && $siret) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($buildLineText($siret, 'siret'));
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($compactFirstIcon === null ? $addIcon($siret, 'siret', true) : $siret);
+                if ($compactFirstIcon === null) $compactFirstIcon = 'siret';
             }
             if (($element['showRcs'] ?? true) && $rcs) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($buildLineText($rcs, 'rcs'));
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($compactFirstIcon === null ? $addIcon($rcs, 'rcs', true) : $rcs);
+                if ($compactFirstIcon === null) $compactFirstIcon = 'rcs';
             }
             if (($element['showVat'] ?? true) && $tva) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($buildLineText($tva, 'tva'));
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($compactFirstIcon === null ? $addIcon($tva, 'tva', true) : $tva);
+                if ($compactFirstIcon === null) $compactFirstIcon = 'tva';
             }
             if (($element['showCapital'] ?? true) && $capital) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($buildLineText($capital, 'capital'));
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($compactFirstIcon === null ? $addIcon($capital, 'capital', true) : $capital);
             }
             
             if ($compactLine) $lines[] = $compactLine;
@@ -3744,7 +3815,19 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Appliquer l'alignement horizontal et vertical
         $letterSpacingStyle = $letterSpacing !== 0 ? ' letter-spacing: ' . $letterSpacing . 'px;' : '';
-        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line;' . $letterSpacingStyle;
+        
+        // ✅ NEW: Ajouter couleurs du thème et polices
+        $headerFontFamily = isset($element['headerFontFamily']) ? $element['headerFontFamily'] : (isset($element['fontFamily']) ? $element['fontFamily'] : 'DejaVu Sans');
+        $headerFontSize = isset($element['headerFontSize']) ? intval($element['headerFontSize']) : 14;
+        $headerFontWeight = isset($element['headerFontWeight']) ? $element['headerFontWeight'] : 'bold';
+        $headerFontStyle = isset($element['headerFontStyle']) ? $element['headerFontStyle'] : 'normal';
+        
+        $bodyFontFamily = isset($element['bodyFontFamily']) ? $element['bodyFontFamily'] : (isset($element['fontFamily']) ? $element['fontFamily'] : 'DejaVu Sans');
+        $bodyFontSize = isset($element['bodyFontSize']) ? intval($element['bodyFontSize']) : 12;
+        $bodyFontWeight = isset($element['bodyFontWeight']) ? $element['bodyFontWeight'] : 'normal';
+        $bodyFontStyle = isset($element['bodyFontStyle']) ? $element['bodyFontStyle'] : 'normal';
+        
+        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . $textColor . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle;
         
         // Pour l'alignement vertical, on utilise flexbox
         if ($verticalAlign === 'middle') {
@@ -3753,7 +3836,21 @@ class PDF_Builder_Unified_Ajax_Handler {
             $inner_styles .= ' display: flex; flex-direction: column; justify-content: flex-end; height: 100%;';
         }
         
-        $html = '<div class="element" style="' . $base_styles . '">';
+        // Appliquer le background et les bordures si nécessaire
+        $elementStyles = $base_styles;
+        if (isset($element['showBackground']) && $element['showBackground']) {
+            $elementStyles .= ' background-color: ' . $backgroundColor . ';';
+        }
+        if (isset($element['showBorders']) && $element['showBorders']) {
+            $borderWidth = isset($element['borderWidth']) ? intval($element['borderWidth']) : 1;
+            $elementStyles .= ' border: ' . $borderWidth . 'px solid ' . $borderColor . ';';
+        }
+        
+        // Générer le HTML avec styles de police pour le header (strong)
+        $html = '<div class="element" style="' . $elementStyles . '">';
+        $html .= '<style>';
+        $html .= 'strong { color: ' . $headerTextColor . '; font-family: ' . $headerFontFamily . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . $headerFontWeight . '; font-style: ' . $headerFontStyle . '; }';
+        $html .= '</style>';
         $html .= '<div style="' . $inner_styles . '">';
         $html .= implode("\n", $lines);
         $html .= '</div>';
