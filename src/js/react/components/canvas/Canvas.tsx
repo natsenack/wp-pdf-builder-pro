@@ -1619,11 +1619,12 @@ const drawCompanyLine = (
   lineHeight: number = 1.2,
   letterSpacing: number = 0,
 ) => {
-  // Sauvegarder l'alignement original et passer en "left" pour la précision
-  const originalTextAlign = ctx.textAlign;
+  // DEBUG LOG
+  console.log('[drawCompanyLine] Rendering:', { text, x, y, fontSize, lineHeight, letterSpacing, textAlign: ctx.textAlign });
   
   if (letterSpacing !== 0) {
-    // Pour le letter-spacing, on doit dessiner caractère par caractère en "left"
+    // Sauvegarder l'alignement original et passer en "left" pour la précision
+    const originalTextAlign = ctx.textAlign;
     ctx.textAlign = "left";
     let charX = x;
     
@@ -1650,13 +1651,12 @@ const drawCompanyLine = (
       ctx.fillText(char, charX, y);
       charX += ctx.measureText(char).width + letterSpacing;
     }
+    
+    ctx.textAlign = originalTextAlign;
   } else {
-    // Sans letter-spacing, utiliser le ctx.textAlign actuel
+    // Sans letter-spacing, dessiner le texte en une seule fois
     ctx.fillText(text, x, y);
   }
-  
-  // Restaurer l'alignement original
-  ctx.textAlign = originalTextAlign;
   
   return y + fontSize * lineHeight;
 };
