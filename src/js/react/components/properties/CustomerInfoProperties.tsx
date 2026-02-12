@@ -1132,14 +1132,35 @@ export function CustomerInfoProperties({
               </div>
             )}
 
-            <div style={{ marginBottom: "0" }}>
-              <ColorPropertyInput
-                label="Couleur des bordures"
-                value={element.borderColor || "#e5e7eb"}
-                defaultValue="#e5e7eb"
-                onChange={(value) => onChange(element.id, "borderColor", value)}
-              />
-            </div>
+            {element.showBorders !== false && (
+              <div style={{ marginBottom: "8px" }}>
+                <ColorPropertyInput
+                  label="Couleur des bordures"
+                  value={element.borderColor || "#e5e7eb"}
+                  defaultValue="#e5e7eb"
+                  onChange={(value) =>
+                    onChange(element.id, "borderColor", value)
+                  }
+                />
+              </div>
+            )}
+
+            {element.showBorders !== false && (
+              <div style={{ marginBottom: "0" }}>
+                <NumericPropertyInput
+                  label="Épaisseur de la bordure"
+                  value={element.borderWidth}
+                  defaultValue={1}
+                  min={0.5}
+                  max={10}
+                  step={0.5}
+                  unit="px"
+                  onChange={(value) =>
+                    onChange(element.id, "borderWidth", value)
+                  }
+                />
+              </div>
+            )}
           </Accordion>
         </>
       )}
