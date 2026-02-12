@@ -3462,7 +3462,7 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Rendu des informations client
      */
-    private function render_customer_info_element($element, $order_data, $base_styles, $is_premium = false) {
+    private function render_customer_info_element($element, $order_data, $base_styles) {
         // Récupérer le padding horizontal et vertical (backward compatibility avec padding unique)
         $paddingHorizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : (isset($element['padding']) ? intval($element['padding']) : 12);
         $paddingVertical = isset($element['paddingVertical']) ? intval($element['paddingVertical']) : (isset($element['padding']) ? intval($element['padding']) : 12);
@@ -3552,7 +3552,7 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Rendu des informations entreprise
      */
-    private function render_company_info_element($element, $order_data, $base_styles, $is_premium = false) {
+    private function render_company_info_element($element, $order_data, $base_styles) {
         // Récupérer le padding horizontal et vertical (backward compatibility avec padding unique)
         $paddingHorizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : (isset($element['padding']) ? intval($element['padding']) : 12);
         $paddingVertical = isset($element['paddingVertical']) ? intval($element['paddingVertical']) : (isset($element['padding']) ? intval($element['padding']) : 12);
@@ -3574,30 +3574,17 @@ class PDF_Builder_Unified_Ajax_Handler {
             return implode('.', $chunks);
         };
         
-        // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji si premium, Unicode sinon pour HTML/PNG/JPG)
-        $getIconForType = function($type) use ($is_premium) {
-            // Emoji pour mode premium (HTML/PNG/JPG), Unicode sinon
-            $premiumIcons = [
-                'phone' => '📞',
-                'email' => '✉️',
-                'address' => '📍',
-                'siret' => '🏢',
-                'rcs' => '📋',
-                'tva' => '💼',
-                'capital' => '💰',
+        // ✅ HELPER: Récupérer l'icône pour un type d'info (symboles Unicode supportés en PDF Dompdf)
+        $getIconForType = function($type) {
+            $icons = [
+                'phone' => '☎',      // Téléphone (Unicode)
+                'email' => '✉',      // Enveloppe (Unicode)
+                'address' => '⌂',    // Maison (Unicode)
+                'siret' => '◆',      // Diamant (Unicode)
+                'rcs' => '▪',        // Carré (Unicode)
+                'tva' => '●',        // Cercle (Unicode)
+                'capital' => '▲',    // Triangle (Unicode)
             ];
-            
-            $freeIcons = [
-                'phone' => '☎',
-                'email' => '✉',
-                'address' => '⌂',
-                'siret' => '◆',
-                'rcs' => '▪',
-                'tva' => '●',
-                'capital' => '▲',
-            ];
-            
-            $icons = $is_premium ? $premiumIcons : $freeIcons;
             return isset($icons[$type]) ? $icons[$type] : '';
         };
         
