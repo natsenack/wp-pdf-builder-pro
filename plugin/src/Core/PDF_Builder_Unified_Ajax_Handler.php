@@ -3471,6 +3471,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $layout = isset($element['layout']) ? $element['layout'] : 'vertical';
         $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'left';
         $verticalAlign = isset($element['verticalAlign']) ? $element['verticalAlign'] : 'top';
+        $lineHeight = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.1;
         
         // Construire les lignes selon le layout
         $lines = [];
@@ -3532,7 +3533,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Appliquer l'alignement horizontal et vertical
-        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: 1.1; white-space: pre-line;';
+        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line;';
         
         // Pour l'alignement vertical, on utilise flexbox
         if ($verticalAlign === 'middle') {
@@ -3561,6 +3562,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $layout = isset($element['layout']) ? $element['layout'] : 'vertical';
         $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'left';
         $verticalAlign = isset($element['verticalAlign']) ? $element['verticalAlign'] : 'top';
+        $lineHeight = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.1;
         
         // ✅ NEW: Propriétés d'icônes
         $showIcons = isset($element['showIcons']) ? (bool)$element['showIcons'] : false;
@@ -3720,7 +3722,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Appliquer l'alignement horizontal et vertical
-        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: 1.1; white-space: pre-line;';
+        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line;';
         
         // Pour l'alignement vertical, on utilise flexbox
         if ($verticalAlign === 'middle') {
