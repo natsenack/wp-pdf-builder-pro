@@ -215,6 +215,43 @@ export function deserializeCanvasData(
       normalizedElement.updatedAt = new Date();
     }
 
+    // ✅ ENRICHISSEMENT: Ajouter les données réelles de l'entreprise pour company_info si manquantes
+    if (normalizedElement.type === 'company_info') {
+      const pdfBuilderData = (window as any).pdfBuilderData;
+      if (pdfBuilderData && pdfBuilderData.company) {
+        const company = pdfBuilderData.company;
+        
+        // Enrichir seulement si les propriétés manquent ou sont vides
+        if (!normalizedElement.companyName || normalizedElement.companyName === 'Non indiqué') {
+          normalizedElement.companyName = company.name || '';
+        }
+        if (!normalizedElement.companyAddress || normalizedElement.companyAddress === 'Non indiqué') {
+          normalizedElement.companyAddress = company.address || '';
+        }
+        if (!normalizedElement.companyCity) {
+          normalizedElement.companyCity = company.city || '';
+        }
+        if (!normalizedElement.companyPhone || normalizedElement.companyPhone === 'Non indiqué') {
+          normalizedElement.companyPhone = company.phone || '';
+        }
+        if (!normalizedElement.companyEmail || normalizedElement.companyEmail === 'Non indiqué') {
+          normalizedElement.companyEmail = company.email || '';
+        }
+        if (!normalizedElement.companySiret || normalizedElement.companySiret === 'Non indiqué') {
+          normalizedElement.companySiret = company.siret || '';
+        }
+        if (!normalizedElement.companyTva || normalizedElement.companyTva === 'Non indiqué') {
+          normalizedElement.companyTva = company.tva || '';
+        }
+        if (!normalizedElement.companyRcs || normalizedElement.companyRcs === 'Non indiqué') {
+          normalizedElement.companyRcs = company.rcs || '';
+        }
+        if (!normalizedElement.companyCapital || normalizedElement.companyCapital === 'Non indiqué') {
+          normalizedElement.companyCapital = company.capital || '';
+        }
+      }
+    }
+
     // ✅ NOUVEAU: Appliquer les valeurs via ValueResolver si c'est un RealDataElement
     // En mode édition: récupère les données du canvas (getProductTableFromElement)
     // En mode preview: récupère les données réelles de WooCommerce (buildProductTableData)
