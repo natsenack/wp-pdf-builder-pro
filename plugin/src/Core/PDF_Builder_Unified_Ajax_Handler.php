@@ -3055,7 +3055,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         // Générer chaque élément
         foreach ($elements as $element) {
-            $html .= $this->render_element($element, $all_data, $is_premium);
+            $html .= $this->render_element($element, $all_data, $is_premium, 'html');
         }
 
         $html .= '
@@ -3072,7 +3072,7 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Génère le HTML d'un élément
      */
-    private function render_element($element, $order_data, $is_premium = false) {
+    private function render_element($element, $order_data, $is_premium = false, $format = 'html') {
         $type = $element['type'] ?? 'text';
         $element_id = $element['id'] ?? 'unknown';
         
@@ -3105,7 +3105,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $rendered = $this->render_customer_info_element($element, $order_data, $styles, $is_premium);
                 break;
             case 'company_info':
-                $rendered = $this->render_company_info_element($element, $order_data, $styles, $is_premium);
+                $rendered = $this->render_company_info_element($element, $order_data, $styles, $is_premium, $format);
                 break;
             case 'company_logo':
                 $rendered = $this->render_company_logo($element, $styles);
@@ -3559,7 +3559,7 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Rendu des informations entreprise
      */
-    private function render_company_info_element($element, $order_data, $base_styles) {
+    private function render_company_info_element($element, $order_data, $base_styles, $is_premium = false, $format = 'html') {
         // Récupérer le padding horizontal et vertical (backward compatibility avec padding unique)
         $paddingHorizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : (isset($element['padding']) ? intval($element['padding']) : 12);
         $paddingVertical = isset($element['paddingVertical']) ? intval($element['paddingVertical']) : (isset($element['padding']) ? intval($element['padding']) : 12);
@@ -3583,17 +3583,31 @@ class PDF_Builder_Unified_Ajax_Handler {
             return implode('.', $chunks);
         };
         
-        // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji pour HTML/PNG/JPG)
-        $getIconForType = function($type) {
-            $icons = [
-                'phone' => '📞',      // Téléphone
-                'email' => '✉️',      // Enveloppe
-                'address' => '📍',    // Maison
-                'siret' => '🏢',      // Bâtiment
-                'rcs' => '📋',        // Presse-papiers
-                'tva' => '💼',        // Mallette
-                'capital' => '💰',    // Sac d'argent
-            ];
+        // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji pour HTML, symboles Unicode pour PDF)
+        $getIconForType = function($type) use ($format) {
+            // Pour HTML/PNG/JPG: emoji beau
+            if ($format === 'html') {
+                $icons = [
+                    'phone' => '📞',      // Téléphone
+                    'email' => '✉️',      // Enveloppe
+                    'address' => '📍',    // Maison
+                    'siret' => '🏢',      // Bâtiment
+                    'rcs' => '📋',        // Presse-papiers
+                    'tva' => '💼',        // Mallette
+                    'capital' => '💰',    // Sac d'argent
+                ];
+            } else {
+                // Pour PDF: symboles Unicode simples (mieux supportés par dompdf)
+                $icons = [
+                    'phone' => '☎',      // Téléphone (Unicode)
+                    'email' => '✉',      // Enveloppe (Unicode)
+                    'address' => '⌂',    // Maison (Unicode)
+                    'siret' => '◆',      // Diamant (Unicode)
+                    'rcs' => '▪',        // Carré (Unicode)
+                    'tva' => '●',        // Cercle (Unicode)
+                    'capital' => '▲',    // Triangle (Unicode)
+                ];
+            }
             return isset($icons[$type]) ? $icons[$type] : '';
         };
         
