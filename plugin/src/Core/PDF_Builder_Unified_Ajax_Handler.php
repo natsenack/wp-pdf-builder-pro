@@ -2539,8 +2539,14 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'isHtml5ParserEnabled' => true,
                 'isRemoteEnabled' => true,
                 'defaultFont' => 'DejaVu Sans',
-                'fontHeightRatio' => 1.1
+                'fontHeightRatio' => 1.1,
+                'isUnicode' => true,
+                'enable_font_subsetting' => false,
+                'defaultPaperSize' => 'A4'
             ]);
+            
+            // S'assurer que le HTML est en UTF-8 propre
+            $html = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
             
             error_log("[PDF Builder] Chargement HTML dans dompdf");
             $dompdf->loadHtml($html);
@@ -3017,7 +3023,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         body {
             background: #ffffff;
-            font-family: "DejaVu Sans", Arial, Helvetica, sans-serif;
+            font-family: "DejaVu Sans", "Arial Unicode MS", sans-serif;
             margin: 0;
             padding: 0;
         }
@@ -3629,7 +3635,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             return implode('.', $chunks);
         };
         
-        // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji pour HTML, entités HTML pour PDF)
+        // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji pour HTML, symboles Unicode pour PDF)
         $getIconForType = function($type) use ($format) {
             // Pour HTML/PNG/JPG: emoji beau
             if ($format === 'html') {
@@ -3643,26 +3649,28 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'capital' => '💰',    // Sac d'argent
                 ];
             } else {
-                // Pour PDF: entités HTML numériques (supportées par dompdf)
+                // Pour PDF: symboles Unicode simples (compatibles dompdf)
                 $icons = [
-                    'phone' => '&#9742;',      // ☎ Téléphone (U+260E)
-                    'email' => '&#9993;',      // ✉ Enveloppe (U+2709)
-                    'address' => '&#8962;',    // ⌂ Maison (U+2302)
-                    'siret' => '&#9670;',      // ◆ Diamant (U+25C6)
-                    'rcs' => '&#9642;',        // ▪ Carré (U+25AA)
-                    'tva' => '&#9679;',        // ● Cercle (U+25CF)
-                    'capital' => '&#9650;',    // ▲ Triangle (U+25B2)
+                    'phone' => '☎',      // Téléphone (U+260E)
+                    'email' => '✉',      // Enveloppe (U+2709)
+                    'address' => '⌂',    // Maison (U+2302)
+                    'siret' => '◆',      // Diamant (U+25C6)
+                    'rcs' => '▪',        // Carré (U+25AA)
+                    'tva' => '●',        // Cercle (U+25CF)
+                    'capital' => '▲',    // Triangle (U+25B2)
                 ];
             }
             return isset($icons[$type]) ? $icons[$type] : '';
         };
         
         // ✅ HELPER: Ajouter l'icône au texte si showIcons est activé (compatible avec concaténation)
-        // Retourne le HTML avec le texte échappé mais l'icône non-échappée pour préserver les symboles UTF-8
+        // L'icône n'est JAMAIS échappée, seul le texte utilisateur l'est
         $buildLineText = function($text, $iconType = null) use ($showIcons, $iconsPosition, $getIconForType, $format) {
             if (empty($text)) return '';
+            // Le texte est toujours échappé pour la sécurité
             $escapedText = esc_html($text);
             if (!$showIcons || empty($iconType)) return $escapedText;
+            // L'icône n'est jamais échappée car c'est un caractère de confiance (vient du code, pas de l'utilisateur)
             $icon = $getIconForType($iconType);
             return $iconsPosition === 'left' ? $icon . ' ' . $escapedText : $escapedText . ' ' . $icon;
         };
