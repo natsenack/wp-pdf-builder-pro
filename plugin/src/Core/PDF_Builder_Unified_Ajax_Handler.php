@@ -3583,16 +3583,16 @@ class PDF_Builder_Unified_Ajax_Handler {
             return implode('.', $chunks);
         };
         
-        // ✅ HELPER: Récupérer l'icône pour un type d'info (symboles Unicode supportés en PDF Dompdf)
+        // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji pour HTML/PNG/JPG)
         $getIconForType = function($type) {
             $icons = [
-                'phone' => '☎',      // Téléphone (Unicode)
-                'email' => '✉',      // Enveloppe (Unicode)
-                'address' => '⌂',    // Maison (Unicode)
-                'siret' => '◆',      // Diamant (Unicode)
-                'rcs' => '▪',        // Carré (Unicode)
-                'tva' => '●',        // Cercle (Unicode)
-                'capital' => '▲',    // Triangle (Unicode)
+                'phone' => '📞',      // Téléphone
+                'email' => '✉️',      // Enveloppe
+                'address' => '📍',    // Maison
+                'siret' => '🏢',      // Bâtiment
+                'rcs' => '📋',        // Presse-papiers
+                'tva' => '💼',        // Mallette
+                'capital' => '💰',    // Sac d'argent
             ];
             return isset($icons[$type]) ? $icons[$type] : '';
         };
