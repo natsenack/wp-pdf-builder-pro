@@ -1584,16 +1584,16 @@ const drawCompanyInfo = (
     return matches ? matches.join('.') : phone;
   };
 
-  // ✅ HELPER: Récupérer l'icône pour un type d'info
+  // ✅ HELPER: Récupérer l'icône pour un type d'info (symboles Unicode supportés en PDF)
   const getIconForType = (type: 'phone' | 'email' | 'address' | 'siret' | 'rcs' | 'tva' | 'capital'): string => {
     const icons: Record<string, string> = {
-      phone: '📞',
-      email: '✉️',
-      address: '📍',
-      siret: '🏢',
-      rcs: '📋',
-      tva: '💼',
-      capital: '💰',
+      phone: '☎',      // Téléphone
+      email: '✉',      // Enveloppe
+      address: '⌂',    // Maison
+      siret: '◆',      // Diamant
+      rcs: '▪',        // Carré
+      tva: '●',        // Cercle
+      capital: '▲',    // Triangle
     };
     return icons[type] || '';
   };

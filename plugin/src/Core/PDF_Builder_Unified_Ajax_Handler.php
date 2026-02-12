@@ -3567,7 +3567,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             return implode('.', $chunks);
         };
         
-        // ✅ HELPER: Récupérer l'icône pour un type d'info
+        // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji pour PDF gratuit/premium)
         $getIconForType = function($type) {
             $icons = [
                 'phone' => '📞',
