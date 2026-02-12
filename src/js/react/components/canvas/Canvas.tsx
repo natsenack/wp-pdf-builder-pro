@@ -1306,13 +1306,26 @@ const drawCustomerInfo = (
       lines.push("ID: TXN123456789");
     }
   } else if (layout === "horizontal") {
+    // Mode horizontal : 2-3 lignes avec plusieurs infos par ligne
     let line1 = "";
     let line2 = "";
+    let line3 = "";
+    
+    // Ligne 1: Nom + Email
     if (showFullName) line1 += customerData.name;
-    if (showEmail) line1 += (line1 ? " - " : "") + customerData.email;
-    if (showPhone) line2 = customerData.phone;
+    if (showEmail) line1 += (line1 ? " | " : "") + customerData.email;
+    
+    // Ligne 2: Adresse + Téléphone
+    if (showAddress) line2 += customerData.address;
+    if (showPhone) line2 += (line2 ? " | " : "") + customerData.phone;
+    
+    // Ligne 3: Paiement + Transaction ID
+    if (showPaymentMethod) line3 += "Paiement: Carte bancaire";
+    if (showTransactionId) line3 += (line3 ? " | " : "") + "ID: TXN123456789";
+    
     if (line1) lines.push(line1);
     if (line2) lines.push(line2);
+    if (line3) lines.push(line3);
   } else if (layout === "compact") {
     let compactText = "";
     if (showFullName) compactText += customerData.name;
@@ -1340,6 +1353,8 @@ const drawCustomerInfo = (
     }
     if (line.trim()) lines.push(line);
   }
+
+  console.log('[Canvas drawCustomerInfo] Lines constructed:', lines.length, 'lines:', lines, 'for layout:', layout);
 
   // Calculer la hauteur du contenu
   const headerHeight = showHeaders ? 25 : 0;
