@@ -3635,7 +3635,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             return implode('.', $chunks);
         };
         
-        // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji pour HTML, symboles Unicode pour PDF)
+        // ✅ HELPER: Récupérer l'icône pour un type d'info (emoji pour HTML, symboles géométriques pour PDF)
         $getIconForType = function($type) use ($format) {
             // Pour HTML/PNG/JPG: emoji beau
             if ($format === 'html') {
@@ -3649,15 +3649,15 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'capital' => '💰',    // Sac d'argent
                 ];
             } else {
-                // Pour PDF: symboles Unicode simples (compatibles dompdf)
+                // Pour PDF: symboles géométriques uniquement (garantis dans DejaVu Sans)
                 $icons = [
-                    'phone' => '☎',      // Téléphone (U+260E)
-                    'email' => '✉',      // Enveloppe (U+2709)
-                    'address' => '⌂',    // Maison (U+2302)
-                    'siret' => '◆',      // Diamant (U+25C6)
-                    'rcs' => '▪',        // Carré (U+25AA)
-                    'tva' => '●',        // Cercle (U+25CF)
-                    'capital' => '▲',    // Triangle (U+25B2)
+                    'phone' => '■',      // Carré plein (U+25A0)
+                    'email' => '●',      // Cercle plein (U+25CF)
+                    'address' => '▲',    // Triangle plein (U+25B2)
+                    'siret' => '◆',      // Diamant plein (U+25C6)
+                    'rcs' => '◼',        // Carré noir moyen (U+25FC)
+                    'tva' => '◉',        // Cercle avec point (U+25C9)
+                    'capital' => '▼',    // Triangle inversé (U+25BC)
                 ];
             }
             return isset($icons[$type]) ? $icons[$type] : '';
