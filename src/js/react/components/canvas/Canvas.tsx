@@ -1720,13 +1720,11 @@ const drawCompanyInfo = (
     }
     if (legalLine) lines.push({ text: legalLine, isHeader: false });
   } else if (layout === "compact") {
-    // Mode compact : tout avec séparateurs, word wrap si trop long
+    // Mode compact : tout avec séparateurs (sans le nom), word wrap si trop long
     let compactText = "";
-    if (shouldDisplayValue(companyData.name, displayConfig.companyName)) {
-      compactText += companyData.name;
-    }
+    // Ne pas inclure le nom de l'entreprise en mode compact
     if (shouldDisplayValue(companyData.address, displayConfig.address)) {
-      compactText += (compactText ? " • " : "") + companyData.address.split(",")[0];
+      compactText += companyData.address.split(",")[0];
     }
     if (shouldDisplayValue(companyData.email, displayConfig.email)) {
       compactText += (compactText ? " • " : "") + companyData.email;
@@ -1735,7 +1733,13 @@ const drawCompanyInfo = (
       compactText += (compactText ? " • " : "") + companyData.phone;
     }
     if (shouldDisplayValue(companyData.siret, displayConfig.siret)) {
-      compactText += (compactText ? " • " : "") + companyData.siret.split(" ")[0] + "...";
+      compactText += (compactText ? " • " : "") + companyData.siret;
+    }
+    if (shouldDisplayValue(companyData.tva, displayConfig.vat)) {
+      compactText += (compactText ? " • " : "") + companyData.tva;
+    }
+    if (shouldDisplayValue(companyData.rcs, displayConfig.rcs)) {
+      compactText += (compactText ? " • " : "") + companyData.rcs;
     }
     
     if (compactText) {
