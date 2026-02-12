@@ -3654,52 +3654,58 @@ class PDF_Builder_Unified_Ajax_Handler {
         // ✅ NEW: Formater le téléphone
         $phone = $formatPhoneNumber($phone);
         
+        // Helper pour échapper le HTML en préservant les caractères UTF-8 comme €
+        $escapeHtml = function($text) {
+            // htmlspecialchars préserve les caractères UTF-8 contrairement à esc_html
+            return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
+        };
+        
         // Construire les lignes selon le layout
         $lines = [];
         
         if ($layout === 'vertical') {
             // Mode vertical : une info par ligne (ordre identique au React)
             if ($element['showCompanyName'] ?? true) {
-                $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
+                $lines[] = '<strong>' . $escapeHtml($companyName) . '</strong>';
             }
             // Afficher adresse puis ville séparément (comme React) pour éviter duplication
             if (($element['showAddress'] ?? true) && $address) {
-                $lines[] = esc_html($address);
+                $lines[] = $escapeHtml($address);
                 // Afficher la ville sur une ligne séparée si elle existe
                 if ($city) {
-                    $lines[] = esc_html($city);
+                    $lines[] = $escapeHtml($city);
                 }
             }
             if (($element['showSiret'] ?? true) && $siret) {
-                $lines[] = esc_html($siret);
+                $lines[] = $escapeHtml($siret);
             }
             if (($element['showVat'] ?? true) && $tva) {
-                $lines[] = esc_html($tva);
+                $lines[] = $escapeHtml($tva);
             }
             if (($element['showRcs'] ?? true) && $rcs) {
-                $lines[] = esc_html($rcs);
+                $lines[] = $escapeHtml($rcs);
             }
             if (($element['showCapital'] ?? true) && $capital) {
-                $lines[] = esc_html($capital);
+                $lines[] = $escapeHtml($capital);
             }
             if (($element['showEmail'] ?? true) && $email) {
-                $lines[] = esc_html($email);
+                $lines[] = $escapeHtml($email);
             }
             if (($element['showPhone'] ?? true) && $phone) {
-                $lines[] = esc_html($phone);
+                $lines[] = $escapeHtml($phone);
             }
         } elseif ($layout === 'horizontal') {
             // Mode horizontal : plusieurs infos par ligne, groupées logiquement
             if ($element['showCompanyName'] ?? true) {
-                $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
+                $lines[] = '<strong>' . $escapeHtml($companyName) . '</strong>';
             }
             
             // Ligne 1: Adresse + Ville (si elle existe)
             $line1 = '';
             if (($element['showAddress'] ?? true) && $address) {
-                $line1 .= esc_html($address);
+                $line1 .= $escapeHtml($address);
                 if ($city) {
-                    $line1 .= ', ' . esc_html($city);
+                    $line1 .= ', ' . $escapeHtml($city);
                 }
             }
             if ($line1) $lines[] = $line1;
@@ -3707,52 +3713,52 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Ligne 2: Email + Phone
             $line2 = '';
             if (($element['showEmail'] ?? true) && $email) {
-                $line2 .= esc_html($email);
+                $line2 .= $escapeHtml($email);
             }
             if (($element['showPhone'] ?? true) && $phone) {
-                $line2 .= ($line2 ? ' | ' : '') . esc_html($phone);
+                $line2 .= ($line2 ? ' | ' : '') . $escapeHtml($phone);
             }
             if ($line2) $lines[] = $line2;
             
             // Ligne 3: Infos légales (SIRET | RCS | TVA | Capital)
             $line3 = '';
             if (($element['showSiret'] ?? true) && $siret) {
-                $line3 .= esc_html($siret);
+                $line3 .= $escapeHtml($siret);
             }
             if (($element['showRcs'] ?? true) && $rcs) {
-                $line3 .= ($line3 ? ' | ' : '') . esc_html($rcs);
+                $line3 .= ($line3 ? ' | ' : '') . $escapeHtml($rcs);
             }
             if (($element['showVat'] ?? true) && $tva) {
-                $line3 .= ($line3 ? ' | ' : '') . esc_html($tva);
+                $line3 .= ($line3 ? ' | ' : '') . $escapeHtml($tva);
             }
             if (($element['showCapital'] ?? true) && $capital) {
-                $line3 .= ($line3 ? ' | ' : '') . esc_html($capital);
+                $line3 .= ($line3 ? ' | ' : '') . $escapeHtml($capital);
             }
             if ($line3) $lines[] = $line3;
         } elseif ($layout === 'compact') {
             // Mode compact : nom en en-tête + reste avec séparateurs (ordre identique au React)
             if ($element['showCompanyName'] ?? true) {
-                $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
+                $lines[] = '<strong>' . $escapeHtml($companyName) . '</strong>';
             }
             
             $compactLine = '';
             if (($element['showAddress'] ?? true) && $address) {
-                $compactLine .= esc_html($address);
+                $compactLine .= $escapeHtml($address);
             }
             if (($element['showEmail'] ?? true) && $email) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($email);
+                $compactLine .= ($compactLine ? ' • ' : '') . $escapeHtml($email);
             }
             if (($element['showPhone'] ?? true) && $phone) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($phone);
+                $compactLine .= ($compactLine ? ' • ' : '') . $escapeHtml($phone);
             }
             if (($element['showSiret'] ?? true) && $siret) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($siret);
+                $compactLine .= ($compactLine ? ' • ' : '') . $escapeHtml($siret);
             }
             if (($element['showVat'] ?? true) && $tva) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($tva);
+                $compactLine .= ($compactLine ? ' • ' : '') . $escapeHtml($tva);
             }
             if (($element['showRcs'] ?? true) && $rcs) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($rcs);
+                $compactLine .= ($compactLine ? ' • ' : '') . $escapeHtml($rcs);
             }
             
             if ($compactLine) $lines[] = $compactLine;
@@ -3798,10 +3804,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         $html .= 'strong { color: ' . $headerTextColor . '; font-family: ' . $headerFontFamily . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . $headerFontWeight . '; font-style: ' . $headerFontStyle . '; line-height: 1.2; }';
         $html .= '</style>';
         $html .= '<div style="' . $inner_styles . '">';
-        // Décoder les entités HTML pour que € et autres symboles s'affichent correctement
-        $content = implode("\n", $lines);
-        $content = html_entity_decode($content, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        $html .= $content;
+        // Plus besoin de html_entity_decode car htmlspecialchars préserve les caractères UTF-8
+        $html .= implode("\n", $lines);
         $html .= '</div>';
         $html .= '</div>';
         return $html;
