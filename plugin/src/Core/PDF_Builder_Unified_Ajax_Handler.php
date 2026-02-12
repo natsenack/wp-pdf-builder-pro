@@ -3555,16 +3555,27 @@ class PDF_Builder_Unified_Ajax_Handler {
         $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'left';
         $verticalAlign = isset($element['verticalAlign']) ? $element['verticalAlign'] : 'top';
         
-        // Récupérer les données de l'entreprise
-        $companyName = get_bloginfo('name');
-        $address = get_option('woocommerce_store_address', '');
-        $city = get_option('woocommerce_store_city', '');
-        $postcode = get_option('woocommerce_store_postcode', '');
-        $email = get_option('admin_email', '');
-        $phone = get_option('woocommerce_store_phone', '');
-        $siret = isset($element['content']) ? $element['content'] : '';
+        // Récupérer les données de l'entreprise depuis l'élément canvas (pas depuis les options WordPress)
+        // Helper pour s'assurer qu'on a une string et pas un array
+        $getString = function($value) {
+            if (is_array($value)) {
+                return isset($value[0]) ? (string)$value[0] : '';
+            }
+            return isset($value) ? (string)$value : '';
+        };
         
-        $fullAddress = trim($address . ($address && ($postcode || $city) ? ', ' : '') . $postcode . ' ' . $city);
+        $companyName = $getString($element['companyName'] ?? get_bloginfo('name'));
+        $address = $getString($element['companyAddress'] ?? get_option('woocommerce_store_address', ''));
+        $city = $getString($element['companyCity'] ?? get_option('woocommerce_store_city', ''));
+        $postcode = $getString($element['companyPostcode'] ?? get_option('woocommerce_store_postcode', ''));
+        $email = $getString($element['companyEmail'] ?? get_option('admin_email', ''));
+        $phone = $getString($element['companyPhone'] ?? get_option('woocommerce_store_phone', ''));
+        $siret = $getString($element['companySiret'] ?? '');
+        $rcs = $getString($element['companyRcs'] ?? '');
+        $tva = $getString($element['companyTva'] ?? '');
+        $capital = $getString($element['companyCapital'] ?? '');
+        
+        $fullAddress = trim($address . ($address && $postcode ? ', ' : '') . $postcode . ($postcode && $city ? ' ' : '') . $city);
         
         // Construire les lignes selon le layout
         $lines = [];
@@ -3586,18 +3597,29 @@ class PDF_Builder_Unified_Ajax_Handler {
             if (($element['showSiret'] ?? true) && $siret) {
                 $lines[] = esc_html($siret);
             }
+            if (($element['showRcs'] ?? true) && $rcs) {
+                $lines[] = esc_html($rcs);
+            }
+            if (($element['showVat'] ?? true) && $tva) {
+                $lines[] = esc_html($tva);
+            }
+            if (($element['showCapital'] ?? true) && $capital) {
+                $lines[] = esc_html($capital);
+            }
         } elseif ($layout === 'horizontal') {
-            // Mode horizontal : plusieurs infos par ligne
+            // Mode horizontal : plusieurs infos par ligne, groupées logiquement
             if ($element['showCompanyName'] ?? true) {
                 $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
             }
             
+            // Ligne 1: Adresse + Ville
             $line1 = '';
             if (($element['showAddress'] ?? true) && $fullAddress) {
                 $line1 .= esc_html($fullAddress);
             }
             if ($line1) $lines[] = $line1;
             
+            // Ligne 2: Email + Phone
             $line2 = '';
             if (($element['showEmail'] ?? true) && $email) {
                 $line2 .= esc_html($email);
@@ -3607,13 +3629,23 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
             if ($line2) $lines[] = $line2;
             
+            // Ligne 3: Infos légales (SIRET | RCS | TVA | Capital)
             $line3 = '';
             if (($element['showSiret'] ?? true) && $siret) {
                 $line3 .= esc_html($siret);
             }
+            if (($element['showRcs'] ?? true) && $rcs) {
+                $line3 .= ($line3 ? ' | ' : '') . esc_html($rcs);
+            }
+            if (($element['showVat'] ?? true) && $tva) {
+                $line3 .= ($line3 ? ' | ' : '') . esc_html($tva);
+            }
+            if (($element['showCapital'] ?? true) && $capital) {
+                $line3 .= ($line3 ? ' | ' : '') . esc_html($capital);
+            }
             if ($line3) $lines[] = $line3;
         } elseif ($layout === 'compact') {
-            // Mode compact : nom en premier, puis reste avec séparateurs
+            // Mode compact : nom en en-tête + reste avec séparateurs (• bullet points)
             if ($element['showCompanyName'] ?? true) {
                 $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
             }
@@ -3630,6 +3662,15 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
             if (($element['showSiret'] ?? true) && $siret) {
                 $compactLine .= ($compactLine ? ' • ' : '') . esc_html($siret);
+            }
+            if (($element['showRcs'] ?? true) && $rcs) {
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($rcs);
+            }
+            if (($element['showVat'] ?? true) && $tva) {
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($tva);
+            }
+            if (($element['showCapital'] ?? true) && $capital) {
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($capital);
             }
             
             if ($compactLine) $lines[] = $compactLine;
