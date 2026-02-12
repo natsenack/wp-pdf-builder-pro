@@ -3633,7 +3633,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             if ($format === 'html') {
                 $icons = [
                     'phone' => '📞',      // Téléphone
-                    'email' => '✉️',      // Enveloppe
+                    'email' => '📩',      // Enveloppe avec flèche
                     'address' => '📍',    // Maison
                     'siret' => '🏢',      // Bâtiment
                     'rcs' => '📋',        // Presse-papiers
