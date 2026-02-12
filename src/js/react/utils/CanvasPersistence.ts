@@ -52,6 +52,18 @@ export function serializeCanvasData(
     // Copy TOUTES les propriétés d'abord
     const serialized: any = { ...el };
     
+    // Log pour vérifier que layout, textAlign, etc. sont bien sérialisés
+    if (el.type === 'customer_info' || el.type === 'company_info') {
+      console.log(`[CanvasPersistence] Serializing ${el.type}:`, {
+        id: el.id,
+        layout: (el as any).layout,
+        textAlign: (el as any).textAlign,
+        verticalAlign: (el as any).verticalAlign,
+        paddingHorizontal: (el as any).paddingHorizontal,
+        paddingVertical: (el as any).paddingVertical
+      });
+    }
+    
     // Valider et fixer les propriétés critiques
     serialized.id = String(el.id || `element-${idx}`);
     serialized.type = String(el.type || 'unknown');

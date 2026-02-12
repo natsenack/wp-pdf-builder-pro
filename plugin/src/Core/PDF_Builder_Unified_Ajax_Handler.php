@@ -3460,25 +3460,84 @@ class PDF_Builder_Unified_Ajax_Handler {
         $paddingHorizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : (isset($element['padding']) ? intval($element['padding']) : 12);
         $paddingVertical = isset($element['paddingVertical']) ? intval($element['paddingVertical']) : (isset($element['padding']) ? intval($element['padding']) : 12);
         
-        // Ajouter le padding au style de base
-        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px;';
+        // Récupérer les propriétés de disposition
+        $layout = isset($element['layout']) ? $element['layout'] : 'vertical';
+        $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'left';
+        $verticalAlign = isset($element['verticalAlign']) ? $element['verticalAlign'] : 'top';
+        
+        // Construire les lignes selon le layout
+        $lines = [];
+        
+        if ($layout === 'vertical') {
+            // Mode vertical : une info par ligne
+            if ($element['showName'] ?? true) {
+                $lines[] = '<strong>' . esc_html($order_data['customer']['full_name']) . '</strong>';
+            }
+            if ($element['showAddress'] ?? true) {
+                $lines[] = esc_html($order_data['billing']['full_address']);
+            }
+            if ($element['showEmail'] ?? true) {
+                $lines[] = esc_html($order_data['customer']['email']);
+            }
+            if (($element['showPhone'] ?? true) && !empty($order_data['customer']['phone'])) {
+                $lines[] = esc_html($order_data['customer']['phone']);
+            }
+        } elseif ($layout === 'horizontal') {
+            // Mode horizontal : plusieurs infos par ligne
+            $line1 = '';
+            $line2 = '';
+            $line3 = '';
+            
+            if ($element['showName'] ?? true) {
+                $line1 .= '<strong>' . esc_html($order_data['customer']['full_name']) . '</strong>';
+            }
+            if ($element['showEmail'] ?? true) {
+                $line1 .= ($line1 ? ' | ' : '') . esc_html($order_data['customer']['email']);
+            }
+            if ($element['showAddress'] ?? true) {
+                $line2 .= esc_html($order_data['billing']['full_address']);
+            }
+            if (($element['showPhone'] ?? true) && !empty($order_data['customer']['phone'])) {
+                $line2 .= ($line2 ? ' | ' : '') . esc_html($order_data['customer']['phone']);
+            }
+            
+            if ($line1) $lines[] = $line1;
+            if ($line2) $lines[] = $line2;
+            if ($line3) $lines[] = $line3;
+        } elseif ($layout === 'compact') {
+            // Mode compact : nom en premier, puis reste avec séparateurs
+            if ($element['showName'] ?? true) {
+                $lines[] = '<strong>' . esc_html($order_data['customer']['full_name']) . '</strong>';
+            }
+            
+            $compactLine = '';
+            if ($element['showAddress'] ?? true) {
+                $address_parts = explode(',', $order_data['billing']['full_address']);
+                $compactLine .= esc_html($address_parts[0]);
+            }
+            if ($element['showEmail'] ?? true) {
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($order_data['customer']['email']);
+            }
+            if (($element['showPhone'] ?? true) && !empty($order_data['customer']['phone'])) {
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($order_data['customer']['phone']);
+            }
+            
+            if ($compactLine) $lines[] = $compactLine;
+        }
+        
+        // Appliquer l'alignement horizontal et vertical
+        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . ';';
+        
+        // Pour l'alignement vertical, on utilise flexbox
+        if ($verticalAlign === 'middle') {
+            $inner_styles .= ' display: flex; flex-direction: column; justify-content: center; height: 100%;';
+        } elseif ($verticalAlign === 'bottom') {
+            $inner_styles .= ' display: flex; flex-direction: column; justify-content: flex-end; height: 100%;';
+        }
         
         $html = '<div class="element" style="' . $base_styles . '">';
         $html .= '<div style="' . $inner_styles . '">';
-        
-        if ($element['showName'] ?? true) {
-            $html .= '<strong>' . esc_html($order_data['customer']['full_name']) . '</strong><br>';
-        }
-        if ($element['showEmail'] ?? true) {
-            $html .= esc_html($order_data['customer']['email']) . '<br>';
-        }
-        if (($element['showPhone'] ?? true) && !empty($order_data['customer']['phone'])) {
-            $html .= esc_html($order_data['customer']['phone']) . '<br>';
-        }
-        if ($element['showAddress'] ?? true) {
-            $html .= esc_html($order_data['billing']['full_address']);
-        }
-        
+        $html .= implode('<br>', $lines);
         $html .= '</div>';
         $html .= '</div>';
         return $html;
@@ -3492,33 +3551,105 @@ class PDF_Builder_Unified_Ajax_Handler {
         $paddingHorizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : (isset($element['padding']) ? intval($element['padding']) : 12);
         $paddingVertical = isset($element['paddingVertical']) ? intval($element['paddingVertical']) : (isset($element['padding']) ? intval($element['padding']) : 12);
         
-        // Ajouter le padding au style de base
-        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px;';
+        // Récupérer les propriétés de disposition
+        $layout = isset($element['layout']) ? $element['layout'] : 'vertical';
+        $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'left';
+        $verticalAlign = isset($element['verticalAlign']) ? $element['verticalAlign'] : 'top';
+        
+        // Récupérer les données de l'entreprise
+        $companyName = get_bloginfo('name');
+        $address = get_option('woocommerce_store_address', '');
+        $city = get_option('woocommerce_store_city', '');
+        $postcode = get_option('woocommerce_store_postcode', '');
+        $email = get_option('admin_email', '');
+        $phone = get_option('woocommerce_store_phone', '');
+        $siret = isset($element['content']) ? $element['content'] : '';
+        
+        $fullAddress = trim($address . ($address && ($postcode || $city) ? ', ' : '') . $postcode . ' ' . $city);
+        
+        // Construire les lignes selon le layout
+        $lines = [];
+        
+        if ($layout === 'vertical') {
+            // Mode vertical : une info par ligne
+            if ($element['showCompanyName'] ?? true) {
+                $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
+            }
+            if (($element['showAddress'] ?? true) && $fullAddress) {
+                $lines[] = esc_html($fullAddress);
+            }
+            if (($element['showEmail'] ?? true) && $email) {
+                $lines[] = esc_html($email);
+            }
+            if (($element['showPhone'] ?? true) && $phone) {
+                $lines[] = esc_html($phone);
+            }
+            if (($element['showSiret'] ?? true) && $siret) {
+                $lines[] = esc_html($siret);
+            }
+        } elseif ($layout === 'horizontal') {
+            // Mode horizontal : plusieurs infos par ligne
+            if ($element['showCompanyName'] ?? true) {
+                $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
+            }
+            
+            $line1 = '';
+            if (($element['showAddress'] ?? true) && $fullAddress) {
+                $line1 .= esc_html($fullAddress);
+            }
+            if ($line1) $lines[] = $line1;
+            
+            $line2 = '';
+            if (($element['showEmail'] ?? true) && $email) {
+                $line2 .= esc_html($email);
+            }
+            if (($element['showPhone'] ?? true) && $phone) {
+                $line2 .= ($line2 ? ' | ' : '') . esc_html($phone);
+            }
+            if ($line2) $lines[] = $line2;
+            
+            $line3 = '';
+            if (($element['showSiret'] ?? true) && $siret) {
+                $line3 .= esc_html($siret);
+            }
+            if ($line3) $lines[] = $line3;
+        } elseif ($layout === 'compact') {
+            // Mode compact : nom en premier, puis reste avec séparateurs
+            if ($element['showCompanyName'] ?? true) {
+                $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
+            }
+            
+            $compactLine = '';
+            if (($element['showAddress'] ?? true) && $fullAddress) {
+                $address_parts = explode(',', $fullAddress);
+                $compactLine .= esc_html($address_parts[0]);
+            }
+            if (($element['showEmail'] ?? true) && $email) {
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($email);
+            }
+            if (($element['showPhone'] ?? true) && $phone) {
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($phone);
+            }
+            if (($element['showSiret'] ?? true) && $siret) {
+                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($siret);
+            }
+            
+            if ($compactLine) $lines[] = $compactLine;
+        }
+        
+        // Appliquer l'alignement horizontal et vertical
+        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . ';';
+        
+        // Pour l'alignement vertical, on utilise flexbox
+        if ($verticalAlign === 'middle') {
+            $inner_styles .= ' display: flex; flex-direction: column; justify-content: center; height: 100%;';
+        } elseif ($verticalAlign === 'bottom') {
+            $inner_styles .= ' display: flex; flex-direction: column; justify-content: flex-end; height: 100%;';
+        }
         
         $html = '<div class="element" style="' . $base_styles . '">';
         $html .= '<div style="' . $inner_styles . '">';
-        
-        if ($element['showCompanyName'] ?? true) {
-            $html .= '<strong>' . esc_html(get_bloginfo('name')) . '</strong><br>';
-        }
-        if ($element['showAddress'] ?? true) {
-            $address = get_option('woocommerce_store_address', '');
-            $city = get_option('woocommerce_store_city', '');
-            $postcode = get_option('woocommerce_store_postcode', '');
-            if ($address) $html .= esc_html($address) . '<br>';
-            if ($postcode || $city) $html .= esc_html($postcode . ' ' . $city) . '<br>';
-        }
-        if (($element['showEmail'] ?? true)) {
-            $html .= esc_html(get_option('admin_email', '')) . '<br>';
-        }
-        if (($element['showPhone'] ?? true)) {
-            $phone = get_option('woocommerce_store_phone', '');
-            if ($phone) $html .= esc_html($phone) . '<br>';
-        }
-        if (($element['showSiret'] ?? true) && isset($element['content'])) {
-            $html .= esc_html($element['content']);
-        }
-        
+        $html .= implode('<br>', $lines);
         $html .= '</div>';
         $html .= '</div>';
         return $html;
