@@ -3624,8 +3624,14 @@ class PDF_Builder_Unified_Ajax_Handler {
     private function render_dynamic_text($element, $order_data, $base_styles) {
         $text = $element['text'] ?? $element['textTemplate'] ?? 'Signature du client';
         
+        // DEBUG: Logs pour dynamic_text
+        error_log('[PDF Builder] Dynamic_Text lineHeight from JSON: ' . ($element['lineHeight'] ?? 'NOT SET'));
+        error_log('[PDF Builder] Dynamic_Text base_styles AVANT: ' . substr($base_styles, 0, 300));
+        
         // Supprimer le line-height du base_styles car on va le gérer spécifiquement
         $base_styles_clean = preg_replace('/line-height:\s*[^;]+;/', '', $base_styles);
+        
+        error_log('[PDF Builder] Dynamic_Text base_styles APRÈS nettoyage: ' . substr($base_styles_clean, 0, 300));
         
         // Récupérer le line-height EXACT du JSON (string ou number)
         $line_height_ratio = isset($element['lineHeight']) ? $element['lineHeight'] : '1.3';
@@ -3633,6 +3639,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Calculer le lineHeight en pixels pour Dompdf (plus précis que le ratio)
         $font_size = isset($element['fontSize']) ? (is_numeric($element['fontSize']) ? $element['fontSize'] : 14) : 14;
         $line_height_px = ($font_size * floatval($line_height_ratio)) . 'px';
+        
+        error_log('[PDF Builder] Dynamic_Text lineHeight ratio: ' . $line_height_ratio . ', fontSize: ' . $font_size . 'px, lineHeight calculé: ' . $line_height_px);
         
         // Extraire les propriétés de positionnement (pour le conteneur) et de texte (pour le contenu)
         preg_match('/left:\s*[^;]+;/', $base_styles_clean, $left_match);
