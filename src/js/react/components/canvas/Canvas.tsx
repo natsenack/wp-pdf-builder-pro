@@ -1519,6 +1519,9 @@ const drawCompanyInfo = (
     bodyStyle: props.bodyFontStyle || "normal",
   };
 
+  // ✅ NEW: Ajouter du padding
+  const padding = props.padding || 12;
+
   // Configuration d'affichage
   const displayConfig = {
     background: props.showBackground !== false,
@@ -1561,9 +1564,9 @@ const drawCompanyInfo = (
   ctx.fillStyle = colors.text;
   ctx.textAlign = "left";
 
-  // Position de départ
-  let x = 10;
-  let y = 20;
+  // Position de départ avec padding dynamique
+  let x = padding;
+  let y = padding + 10;
 
   // Récupération des données d'entreprise
   const companyData = getCompanyData(props);

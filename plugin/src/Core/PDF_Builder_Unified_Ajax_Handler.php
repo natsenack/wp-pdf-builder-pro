@@ -3456,7 +3456,14 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Rendu des informations client
      */
     private function render_customer_info_element($element, $order_data, $base_styles) {
+        // Récupérer le padding (par défaut 12px)
+        $padding = isset($element['padding']) ? intval($element['padding']) : 12;
+        
+        // Ajouter le padding au style de base
+        $inner_styles = 'padding: ' . $padding . 'px;';
+        
         $html = '<div class="element" style="' . $base_styles . '">';
+        $html .= '<div style="' . $inner_styles . '">';
         
         if ($element['showName'] ?? true) {
             $html .= '<strong>' . esc_html($order_data['customer']['full_name']) . '</strong><br>';
@@ -3472,6 +3479,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         $html .= '</div>';
+        $html .= '</div>';
         return $html;
     }
     
@@ -3479,7 +3487,14 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Rendu des informations entreprise
      */
     private function render_company_info_element($element, $order_data, $base_styles) {
+        // Récupérer le padding (par défaut 12px)
+        $padding = isset($element['padding']) ? intval($element['padding']) : 12;
+        
+        // Ajouter le padding au style de base
+        $inner_styles = 'padding: ' . $padding . 'px;';
+        
         $html = '<div class="element" style="' . $base_styles . '">';
+        $html .= '<div style="' . $inner_styles . '">';
         
         if ($element['showCompanyName'] ?? true) {
             $html .= '<strong>' . esc_html(get_bloginfo('name')) . '</strong><br>';
@@ -3502,6 +3517,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html .= esc_html($element['content']);
         }
         
+        $html .= '</div>';
         $html .= '</div>';
         return $html;
     }

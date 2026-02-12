@@ -357,18 +357,6 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
                 <option value="compact">Compacte</option>
               </select>
             </div>
-
-            {/* ✅ NEW: Padding control */}
-            <div style={{ marginBottom: '0' }}>
-              <NumericPropertyInput
-                label="Padding interne (px)"
-                value={element.padding || 12}
-                defaultValue={12}
-                min={0}
-                max={50}
-                onChange={(value) => onChange(element.id, 'padding', value)}
-              />
-            </div>
           </Accordion>
 
           {/* Accordéon Thèmes prédéfinis */}
@@ -969,6 +957,17 @@ export function CustomerInfoProperties({ element, onChange, activeTab, setActive
               max={1000}
               unit="px"
               onChange={(value) => onChange(element.id, 'height', value)}
+            />
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <NumericPropertyInput
+              label="Padding interne (px)"
+              value={element.padding || 12}
+              defaultValue={12}
+              min={0}
+              max={50}
+              onChange={(value) => onChange(element.id, 'padding', value)}
             />
           </div>
 
