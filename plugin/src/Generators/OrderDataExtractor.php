@@ -256,9 +256,8 @@ class OrderDataExtractor
     {
         $parts = [];
         
-        if (!empty($address['first_name']) || !empty($address['last_name'])) {
-            $parts[] = trim($address['first_name'] . ' ' . $address['last_name']);
-        }
+        // NE PAS inclure le nom (first_name/last_name) car il est affiché séparément dans customer_info
+        // Correction : le nom apparaissait en double dans l'aperçu HTML
         
         if (!empty($address['company'])) {
             $parts[] = $address['company'];
