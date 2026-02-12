@@ -1232,6 +1232,7 @@ const drawCustomerInfo = (
   const bodyFontWeight = props.bodyFontWeight || fontWeight;
   const bodyFontStyle = props.bodyFontStyle || fontStyle;
   const layout = props.layout || "vertical";
+  console.log('[Canvas drawCustomerInfo] Rendering with layout:', layout, 'textAlign:', props.textAlign, 'verticalAlign:', props.verticalAlign, 'element.id:', element.id);
   const showHeaders = props.showHeaders !== false;
   const showBorders = props.showBorders !== false;
   const showFullName = props.showFullName !== false;
@@ -1515,6 +1516,7 @@ const drawCompanyInfo = (
   state: BuilderState,
 ) => {
   const props = element as CompanyInfoElement;
+  console.log('[Canvas drawCompanyInfo] Called with element.id:', element.id, 'layout:', props.layout, 'textAlign:', props.textAlign);
 
   // Configuration des polices
   const fontSize = props.fontSize || 12;
