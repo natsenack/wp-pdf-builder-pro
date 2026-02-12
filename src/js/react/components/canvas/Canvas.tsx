@@ -1337,7 +1337,7 @@ const drawCustomerInfo = (
     // Reste des infos en mode compact
     let compactText = "";
     if (showAddress) {
-      compactText += customerData.address.split(",")[0];
+      compactText += customerData.address;  // Adresse complète
     }
     if (showEmail) {
       compactText += (compactText ? " • " : "") + customerData.email;
@@ -1747,7 +1747,7 @@ const drawCompanyInfo = (
     // Reste des infos en mode compact
     let compactText = "";
     if (shouldDisplayValue(companyData.address, displayConfig.address)) {
-      compactText += companyData.address.split(",")[0];
+      compactText += companyData.address;  // Adresse complète
     }
     if (shouldDisplayValue(companyData.email, displayConfig.email)) {
       compactText += (compactText ? " • " : "") + companyData.email;

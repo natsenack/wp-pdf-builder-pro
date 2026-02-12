@@ -3512,8 +3512,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             $compactLine = '';
             if ($element['showAddress'] ?? true) {
-                $address_parts = explode(',', $order_data['billing']['full_address']);
-                $compactLine .= esc_html($address_parts[0]);
+                $compactLine .= esc_html($order_data['billing']['full_address']);  // Adresse complète
             }
             if ($element['showEmail'] ?? true) {
                 $compactLine .= ($compactLine ? ' • ' : '') . esc_html($order_data['customer']['email']);
@@ -3621,8 +3620,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             $compactLine = '';
             if (($element['showAddress'] ?? true) && $fullAddress) {
-                $address_parts = explode(',', $fullAddress);
-                $compactLine .= esc_html($address_parts[0]);
+                $compactLine .= esc_html($fullAddress);  // Adresse complète
             }
             if (($element['showEmail'] ?? true) && $email) {
                 $compactLine .= ($compactLine ? ' • ' : '') . esc_html($email);
