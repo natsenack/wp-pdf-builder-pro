@@ -1337,21 +1337,21 @@ const drawCustomerInfo = (
     if (showPhone)
       compactText += (compactText ? " • " : "") + customerData.phone;
 
-    // Wrap text if too long
+    // Mesurer et tronquer si nécessaire
     const maxWidth = element.width - paddingHorizontal * 2;
-    const words = compactText.split(" ");
-    let line = "";
-    for (let i = 0; i < words.length; i++) {
-      const testLine = line + (line ? " " : "") + words[i];
-      const metrics = ctx.measureText(testLine);
-      if (metrics.width > maxWidth && i > 0) {
-        lines.push(line);
-        line = words[i] + " ";
-      } else {
-        line = testLine;
+    ctx.font = `${bodyFontStyle} ${bodyFontWeight} ${bodyFontSize}px ${bodyFontFamily}`;
+    const textMetrics = ctx.measureText(compactText);
+    
+    if (textMetrics.width > maxWidth) {
+      // Tronquer avec "..."
+      let truncated = compactText;
+      while (ctx.measureText(truncated + "...").width > maxWidth && truncated.length > 0) {
+        truncated = truncated.slice(0, -1);
       }
+      lines.push(truncated + "...");
+    } else {
+      lines.push(compactText);
     }
-    if (line.trim()) lines.push(line);
   }
 
   console.log('[Canvas drawCustomerInfo] Lines constructed:', lines.length, 'lines:', lines, 'for layout:', layout);
@@ -1711,7 +1711,7 @@ const drawCompanyInfo = (
     }
     if (legalLine) lines.push({ text: legalLine, isHeader: false });
   } else if (layout === "compact") {
-    // Mode compact : tout sur une/deux lignes avec séparateurs
+    // Mode compact : tout sur une ligne avec séparateurs, tronquer si trop long
     let compactText = "";
     if (shouldDisplayValue(companyData.name, displayConfig.companyName)) {
       compactText += companyData.name;
@@ -1730,7 +1730,21 @@ const drawCompanyInfo = (
     }
     
     if (compactText) {
-      lines.push({ text: compactText, isHeader: false });
+      // Mesurer et tronquer si nécessaire
+      const maxWidth = element.width - paddingHorizontal * 2;
+      ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
+      const textMetrics = ctx.measureText(compactText);
+      
+      if (textMetrics.width > maxWidth) {
+        // Tronquer avec "..."
+        let truncated = compactText;
+        while (ctx.measureText(truncated + "...").width > maxWidth && truncated.length > 0) {
+          truncated = truncated.slice(0, -1);
+        }
+        lines.push({ text: truncated + "...", isHeader: false });
+      } else {
+        lines.push({ text: compactText, isHeader: false });
+      }
     }
   }
 
