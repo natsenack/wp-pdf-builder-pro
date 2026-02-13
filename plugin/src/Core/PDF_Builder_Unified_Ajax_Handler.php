@@ -3172,14 +3172,30 @@ class PDF_Builder_Unified_Ajax_Handler {
                 break;
             case 'image':
                 if (isset($element['src'])) {
-                    $rendered = '<div class="element" style="' . $styles . '"><img src="' . esc_url($element['src']) . '" style="width: 100%; height: 100%; object-fit: contain;" /></div>';
+                    // ✅ Support de objectFit (cohérent avec React : cover par défaut)
+                    $objectFit = isset($element['fit']) ? $element['fit'] : (isset($element['objectFit']) ? $element['objectFit'] : 'cover');
+                    $rendered = '<div class="element" style="' . $styles . '"><img src="' . esc_url($element['src']) . '" style="width: 100%; height: 100%; object-fit: ' . esc_attr($objectFit) . ';" /></div>';
                 }
                 break;
             case 'text':
             default:
                 $content = $element['text'] ?? $element['content'] ?? '';
-                // Appliquer white-space: pre-line pour que line-height fonctionne avec Dompdf
-                $textStyle = $styles . '; white-space: pre-line;';
+                
+                // ✅ Support du padding horizontal et vertical (backward compatibility)
+                $paddingHorizontal = isset($element['paddingHorizontal']) ? floatval($element['paddingHorizontal']) : (isset($element['padding']) ? floatval($element['padding']) : 12);
+                $paddingVertical = isset($element['paddingVertical']) ? floatval($element['paddingVertical']) : (isset($element['padding']) ? floatval($element['padding']) : 12);
+                $verticalAlign = isset($element['verticalAlign']) ? $element['verticalAlign'] : 'top';
+                
+                // Styles du conteneur interne avec padding et alignement
+                $textStyle = $styles . '; white-space: pre-line; padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px;';
+                
+                // ✅ Alignement vertical via flexbox (cohérent avec React)
+                if ($verticalAlign === 'middle') {
+                    $textStyle .= ' display: flex; flex-direction: column; justify-content: center; height: 100%;';
+                } elseif ($verticalAlign === 'bottom') {
+                    $textStyle .= ' display: flex; flex-direction: column; justify-content: flex-end; height: 100%;';
+                }
+                
                 $rendered = '<div class="element" style="' . $textStyle . '">' . esc_html($content) . '</div>';
                 break;
         }
@@ -3284,6 +3300,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $styles .= " box-shadow: {$offsetX}px {$offsetY}px {$blur}px {$color};";
             }
         }
+        
+        // NOTE: Le padding n'est PAS appliqué ici car il est géré dans le rendu spécifique
+        // de chaque type d'élément (pour éviter les conflits avec box-sizing)
         
         return $styles;
     }
