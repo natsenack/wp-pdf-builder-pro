@@ -401,6 +401,48 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
               onChange={(value) => onChange(element.id, 'padding', value)}
             />
           </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Alignement horizontal
+            </label>
+            <select
+              value={element.horizontalAlign || element.alignment || 'left'}
+              onChange={(e) => onChange(element.id, 'horizontalAlign', e.target.value)}
+              style={{
+                width: '100%',
+                padding: '6px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '12px'
+              }}
+            >
+              <option value="left">Gauche</option>
+              <option value="center">Centre</option>
+              <option value="right">Droite</option>
+            </select>
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+              Alignement vertical
+            </label>
+            <select
+              value={element.verticalAlign || 'center'}
+              onChange={(e) => onChange(element.id, 'verticalAlign', e.target.value)}
+              style={{
+                width: '100%',
+                padding: '6px',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                fontSize: '12px'
+              }}
+            >
+              <option value="top">Haut</option>
+              <option value="center">Centre</option>
+              <option value="bottom">Bas</option>
+            </select>
+          </div>
         </>
       )}
     </>

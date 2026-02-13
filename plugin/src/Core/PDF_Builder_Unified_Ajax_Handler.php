@@ -3852,7 +3852,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Propriétés de style
         $object_fit = $element['objectFit'] ?? 'contain';
-        $alignment = $element['alignment'] ?? 'left';
+        $horizontal_align = $element['horizontalAlign'] ?? $element['alignment'] ?? 'left';
+        $vertical_align = $element['verticalAlign'] ?? 'center';
         $opacity = isset($element['opacity']) ? floatval($element['opacity']) : 1;
         $border_radius = isset($element['borderRadius']) ? intval($element['borderRadius']) : 0;
         $show_border = $element['showBorder'] ?? false;
@@ -3874,6 +3875,37 @@ class PDF_Builder_Unified_Ajax_Handler {
             $outer_div_styles .= ' background-color: ' . esc_attr($background_color) . ';';
         }
         
+        // Ajouter flexbox pour l'alignement vertical
+        $outer_div_styles .= ' display: flex;';
+        
+        // Alignement vertical
+        switch ($vertical_align) {
+            case 'top':
+                $outer_div_styles .= ' align-items: flex-start;';
+                break;
+            case 'bottom':
+                $outer_div_styles .= ' align-items: flex-end;';
+                break;
+            case 'center':
+            default:
+                $outer_div_styles .= ' align-items: center;';
+                break;
+        }
+        
+        // Alignement horizontal
+        switch ($horizontal_align) {
+            case 'center':
+                $outer_div_styles .= ' justify-content: center;';
+                break;
+            case 'right':
+                $outer_div_styles .= ' justify-content: flex-end;';
+                break;
+            case 'left':
+            default:
+                $outer_div_styles .= ' justify-content: flex-start;';
+                break;
+        }
+        
         // Styles de l'image selon object-fit
         $img_styles = '';
         
@@ -3890,7 +3922,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 break;
             
             case 'none':
-                // Taille originale, centrée
+                // Taille originale
                 $img_styles .= ' max-width: ' . $width . 'px;';
                 $img_styles .= ' max-height: ' . $height . 'px;';
                 break;
@@ -3904,15 +3936,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                 break;
         }
         
-        // Alignement horizontal
+        // L'image est un élément block pour que flexbox fonctionne correctement
         $img_styles .= ' display: block;';
-        if ($alignment === 'center') {
-            $img_styles .= ' margin-left: auto; margin-right: auto;';
-        } elseif ($alignment === 'right') {
-            $img_styles .= ' margin-left: auto; margin-right: 0;';
-        } else { // left
-            $img_styles .= ' margin-left: 0; margin-right: 0;';
-        }
         
         // Opacité
         if ($opacity < 1) {

@@ -3130,17 +3130,25 @@ export const Canvas = function Canvas({
                 }
             }
 
-            // Calculer la position selon l'alignement
+            // Calculer la position horizontale selon l'alignement
+            const horizontalAlign = element.horizontalAlign || element.alignment || "left";
             let baseX = 0;
-            if (alignment === "center") {
+            if (horizontalAlign === "center") {
               baseX = (containerWidth - logoWidth) / 2;
-            } else if (alignment === "right") {
+            } else if (horizontalAlign === "right") {
               baseX = containerWidth - logoWidth;
             }
             // Pour "left", baseX reste à 0
 
-            // Centrage vertical toujours
-            const baseY = (containerHeight - logoHeight) / 2;
+            // Calculer la position verticale selon l'alignement
+            const verticalAlign = element.verticalAlign || "center";
+            let baseY = 0;
+            if (verticalAlign === "center") {
+              baseY = (containerHeight - logoHeight) / 2;
+            } else if (verticalAlign === "bottom") {
+              baseY = containerHeight - logoHeight;
+            }
+            // Pour "top", baseY reste à 0
 
             // Position finale de l'image avec les offsets (pour cover/contain)
             const imageX = baseX + offsetX;
