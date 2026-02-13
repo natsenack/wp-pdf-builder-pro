@@ -3634,10 +3634,12 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Style header
         $header_style = "color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; line-height: 1.2; margin-bottom: 8px;";
         
-        // Style pour chaque ligne de contenu - DOMPDF ne supporte pas bien line-height, on utilise margin-bottom
+        // Appliquer line-height directement sur le conteneur (DOMPDF l'héritera mieux que margin-bottom)
         $lineHeightValue = floatval($layout_props['lineHeight']);
-        $marginBottom = ($lineHeightValue - 1) * $body_font['size']; // Convertir line-height en espacement pixel
-        $line_style = "margin: 0 0 {$marginBottom}px 0; padding: 0; line-height: 1.2;";
+        $container_styles .= " line-height: {$lineHeightValue};";
+        
+        // Style pour chaque ligne - margin/padding remis à zéro, line-height du conteneur gérera l'espacement
+        $line_style = "margin: 0; padding: 0;";
         
         // Génération HTML avec div pour chaque ligne
         $html = '<div class="element" style="' . $container_styles . '">';
@@ -3798,10 +3800,12 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Style pour <strong>
         $strong_style = "color: {$colors['header']}; font-weight: bold;";
         
-        // Style pour chaque ligne de contenu - DOMPDF ne supporte pas bien line-height, on utilise margin-bottom
+        // Appliquer line-height directement sur le conteneur (DOMPDF l'héritera mieux que margin-bottom)
         $lineHeightValue = floatval($layout_props['lineHeight']);
-        $marginBottom = ($lineHeightValue - 1) * $body_font['size']; // Convertir line-height en espacement pixel
-        $line_style = "margin: 0 0 {$marginBottom}px 0; padding: 0; line-height: 1.2;";
+        $container_styles .= " line-height: {$lineHeightValue};";
+        
+        // Style pour chaque ligne - margin/padding remis à zéro, line-height du conteneur gérera l'espacement
+        $line_style = "margin: 0; padding: 0;";
         
         // Traiter les lignes pour ajouter les styles aux balises <strong>
         $processedLines = array_map(function($line) use ($strong_style) {
