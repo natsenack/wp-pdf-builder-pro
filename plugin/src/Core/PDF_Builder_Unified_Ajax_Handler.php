@@ -3363,10 +3363,10 @@ class PDF_Builder_Unified_Ajax_Handler {
      * 
      * @param float $fontSize Taille de la police en px
      * @param float $lineHeight Ratio de hauteur de ligne (ex: 1.2, 1.5)
-     * @return float Hauteur de ligne réelle en px
+     * @return int Gap arrondi en px (équivalent React gap)
      */
-    private function calculate_line_height_px($fontSize, $lineHeight) {
-        return $fontSize * floatval($lineHeight);
+    private function calculate_line_gap($fontSize, $lineHeight) {
+        return round($fontSize * (floatval($lineHeight) - 1));
     }
 
     /**
@@ -3655,22 +3655,25 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Style header
         $header_style = "color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; margin-bottom: 8px;";
         
-        // Récupérer le fontSize GLOBAL du conteneur (element.fontSize) pour calculer le spacing
+        // Récupérer le fontSize GLOBAL du conteneur (element.fontSize) pour calculer le gap
         $container_font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
         $lineHeightValue = floatval($layout_props['lineHeight']);
-        $line_height_px = $this->calculate_line_height_px($container_font_size, $lineHeightValue);
+        $gap = $this->calculate_line_gap($container_font_size, $lineHeightValue);
         
         // Styles pour chaque ligne de body (COMME REACT)
-        $line_style_base = "font-size: {$body_font['size']}px; font-family: {$body_font['family']}; font-weight: {$body_font['weight']}; font-style: {$body_font['style']}; color: {$colors['text']}; margin: 0; padding: 0; line-height: {$line_height_px}px;";
+        $line_style_base = "font-size: {$body_font['size']}px; font-family: {$body_font['family']}; font-weight: {$body_font['weight']}; font-style: {$body_font['style']}; color: {$colors['text']}; margin: 0; padding: 0;";
         
-        // Génération HTML - line-height en px pour compatibilité DOMPDF
+        // Génération HTML - margin-bottom comme gap React pour compatibilité DOMPDF
         $html = '<div class="element" style="' . $container_styles . '">';
         if ($show['headers']) {
             $html .= '<div style="' . $header_style . '">Client</div>'; // "Client" comme React, pas "Informations Client"
         }
-        // Chaque ligne avec line-height en px
-        foreach ($lines as $line) {
-            $html .= '<div style="' . $line_style_base . '">' . $line . '</div>';
+        // Chaque ligne avec margin-bottom (sauf dernière) = gap de React
+        $total_lines = count($lines);
+        foreach ($lines as $index => $line) {
+            $is_last = ($index === $total_lines - 1);
+            $line_margin = $is_last ? '' : " margin-bottom: {$gap}px;";
+            $html .= '<div style="' . $line_style_base . $line_margin . '">' . $line . '</div>';
         }
         $html .= '</div>';
         
@@ -3828,17 +3831,20 @@ class PDF_Builder_Unified_Ajax_Handler {
             return preg_replace('/<strong>/', '<strong style="' . $strong_style . '">', $line);
         }, $lines);
         
-        // Calcul du line-height en px - méthode uniforme DOMPDF
+        // Calcul du gap - méthode identique à React
         // Utilise fontSize et lineHeight du JSON pour calcul cohérent
         $container_font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
         $lineHeightValue = floatval($layout_props['lineHeight']);
-        $line_height_px = $this->calculate_line_height_px($container_font_size, $lineHeightValue);
+        $gap = $this->calculate_line_gap($container_font_size, $lineHeightValue);
         
-        // Génération HTML - line-height en px pour compatibilité DOMPDF
+        // Génération HTML - margin-bottom comme gap React pour compatibilité DOMPDF
         $html = '<div class="element" style="' . $container_styles . '">';
-        // Chaque ligne avec line-height en px
-        foreach ($processedLines as $line) {
-            $html .= '<div style="margin: 0; padding: 0; line-height: ' . $line_height_px . 'px;">' . $line . '</div>';
+        // Chaque ligne avec margin-bottom (sauf dernière) = gap de React
+        $total_lines = count($processedLines);
+        foreach ($processedLines as $index => $line) {
+            $is_last = ($index === $total_lines - 1);
+            $line_margin = $is_last ? '' : " margin-bottom: {$gap}px;";
+            $html .= '<div style="margin: 0; padding: 0;' . $line_margin . '">' . $line . '</div>';
         }
         $html .= '</div>'; // Fermer element container
         return $html;
@@ -4372,8 +4378,8 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Rendu de texte dynamique
      * 
-     * SOLUTION DOMPDF COMPATIBLE: Utilise line-height en px directement du JSON
-     * Calcul: line-height-px = fontSize × lineHeight
+     * SOLUTION DOMPDF COMPATIBLE: Utilise margin-bottom (= gap React)
+     * Formule IDENTIQUE à React: gap = fontSize × (lineHeight - 1)
      */
     private function render_dynamic_text($element, $order_data, $base_styles) {
         $text = $element['text'] ?? $element['textTemplate'] ?? 'Signature du client';
@@ -4385,8 +4391,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         $font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
         $line_height_ratio = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.3;
         
-        // Calculer la hauteur réelle de ligne en px
-        $line_height_px = $this->calculate_line_height_px($font_size, $line_height_ratio);
+        // Calculer le gap (= espacement entre lignes, comme React)
+        $gap = $this->calculate_line_gap($font_size, $line_height_ratio);
         
         // Extraire les propriétés de positionnement
         preg_match('/left:\s*[^;]+;/', $base_styles_clean, $left_match);
@@ -4422,10 +4428,13 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Splitter le texte par les sauts de ligne (SOLUTION DOMPDF)
         $lines = preg_split('/\r\n|\n|\r/', $text);
         
-        // Générer HTML avec line-height en px calculé depuis le JSON
+        // Générer HTML avec margin-bottom (= gap React) entre les lignes
         $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
-        foreach ($lines as $line) {
-            $html .= '<div style="margin: 0; padding: 0; font-size: ' . $font_size . 'px; line-height: ' . $line_height_px . 'px; ' . $text_styles . '">' . esc_html($line) . '</div>';
+        $total_lines = count($lines);
+        foreach ($lines as $index => $line) {
+            $is_last = ($index === $total_lines - 1);
+            $line_margin = $is_last ? '' : " margin-bottom: {$gap}px;";
+            $html .= '<div style="margin: 0; padding: 0; font-size: ' . $font_size . 'px;' . $line_margin . ' ' . $text_styles . '">' . esc_html($line) . '</div>';
         }
         $html .= '</div>';
         
