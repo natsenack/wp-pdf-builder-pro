@@ -3829,16 +3829,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         }, $lines);
         
         // Calcul du line-height en px - méthode uniforme DOMPDF
-        // Mode vertical: line-height calculateé basé sur fontSize et lineHeight
-        // Modes horizontal/compact: line-height réduit à 16px (compact)
-        if ($layout_props['layout'] === 'vertical') {
-            $container_font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
-            $lineHeightValue = floatval($layout_props['lineHeight']);
-            $line_height_px = $this->calculate_line_height_px($container_font_size, $lineHeightValue);
-        } else {
-            // horizontal ou compact - line-height compact (plus court)
-            $line_height_px = 16; // Valeur compacte pour horizontal/compact
-        }
+        // Utilise fontSize et lineHeight du JSON pour calcul cohérent
+        $container_font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
+        $lineHeightValue = floatval($layout_props['lineHeight']);
+        $line_height_px = $this->calculate_line_height_px($container_font_size, $lineHeightValue);
         
         // Génération HTML - line-height en px pour compatibilité DOMPDF
         $html = '<div class="element" style="' . $container_styles . '">';
@@ -4375,11 +4369,24 @@ class PDF_Builder_Unified_Ajax_Handler {
      * SOLUTION DOMPDF COMPATIBLE: Utilise margin-bottom entre les lignes
      * Comme customer_info et company_info - splitter le texte par \n
      */
+    /**
+     * Rendu de texte dynamique
+     * 
+     * SOLUTION DOMPDF COMPATIBLE: Utilise line-height en px directement du JSON
+     * Calcul: line-height-px = fontSize × lineHeight
+     */
     private function render_dynamic_text($element, $order_data, $base_styles) {
         $text = $element['text'] ?? $element['textTemplate'] ?? 'Signature du client';
         
         // Supprimer le line-height du base_styles (éviter les doublons)
         $base_styles_clean = preg_replace('/line-height:\s*[^;]+;/', '', $base_styles);
+        
+        // Récupérer fontSize et lineHeight DIRECTEMENT DU JSON (comme customer_info)
+        $font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
+        $line_height_ratio = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.3;
+        
+        // Calculer la hauteur réelle de ligne en px
+        $line_height_px = $this->calculate_line_height_px($font_size, $line_height_ratio);
         
         // Extraire les propriétés de positionnement
         preg_match('/left:\s*[^;]+;/', $base_styles_clean, $left_match);
@@ -4393,11 +4400,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                           ($width_match[0] ?? '') . ' ' . 
                           ($height_match[0] ?? '');
         
-        // Extraire font-size pour le calcul de spacing
-        preg_match('/font-size:\s*(\d+(?:\.\d+)?)/i', $base_styles_clean, $font_size_match);
-        $font_size = isset($font_size_match[1]) ? floatval($font_size_match[1]) : 12;
-        
-        // Extraire les propriétés de texte
+        // Extraire les propriétés de texte depuis base_styles
         preg_match('/font-family:\s*[^;]+;/', $base_styles_clean, $font_family_match);
         preg_match('/font-weight:\s*[^;]+;/', $base_styles_clean, $font_weight_match);
         preg_match('/font-style:\s*[^;]+;/', $base_styles_clean, $font_style_match);
@@ -4416,14 +4419,10 @@ class PDF_Builder_Unified_Ajax_Handler {
                       ($text_transform_match[0] ?? '') . ' ' .
                       ($letter_spacing_match[0] ?? '');
         
-        // Récupérer le line-height et calculer le spacing
-        $line_height_ratio = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.3;
-        $line_height_px = $this->calculate_line_height_px($font_size, $line_height_ratio);
-        
         // Splitter le texte par les sauts de ligne (SOLUTION DOMPDF)
         $lines = preg_split('/\r\n|\n|\r/', $text);
         
-        // Générer HTML avec line-height en px entre les lignes (comme customer_info)
+        // Générer HTML avec line-height en px calculé depuis le JSON
         $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
         foreach ($lines as $line) {
             $html .= '<div style="margin: 0; padding: 0; font-size: ' . $font_size . 'px; line-height: ' . $line_height_px . 'px; ' . $text_styles . '">' . esc_html($line) . '</div>';
