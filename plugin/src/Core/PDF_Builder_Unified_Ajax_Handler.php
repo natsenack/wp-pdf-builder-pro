@@ -2483,109 +2483,97 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Handler pour générer un PDF depuis le mode preview
      */
+    /**
+     * Handler AJAX pour la génération de PDF
+     * Optimisé avec fonctions helper pour meilleure performance et maintenabilité
+     */
     public function handle_generate_pdf() {
-        error_log("[PDF Builder] ========== GÉNÉRATION PDF DÉMARRÉE ==========");
-        error_log("[PDF Builder] POST params: " . json_encode($_POST));
+        $this->debug_log("========== GÉNÉRATION PDF DÉMARRÉE ==========");
+        $this->debug_log("POST params: " . json_encode($_POST));
         
         // Vérifier les permissions - doit être connecté et avoir les droits de gestion WooCommerce
         if (!is_user_logged_in() || !current_user_can('edit_shop_orders')) {
-            error_log("[PDF Builder] Permission refusée");
+            $this->debug_log("Permission refusée", "WARNING");
             wp_die('Permission refusée', '', ['response' => 403]);
         }
 
         $template_id = sanitize_text_field($_POST['template_id'] ?? '');
         $order_id = intval($_POST['order_id'] ?? 0);
         
-        error_log("[PDF Builder] Template ID: '{$template_id}', Order ID: {$order_id}");
+        $this->debug_log("Template ID: '{$template_id}', Order ID: {$order_id}");
 
         if (!$template_id || !$order_id) {
-            error_log("[PDF Builder] Paramètres manquants");
+            $this->debug_log("Paramètres manquants", "WARNING");
             wp_die('Paramètres manquants', '', ['response' => 400]);
         }
 
         try {
             // Vérifier que WooCommerce est actif
             if (!function_exists('wc_get_order')) {
-                error_log("[PDF Builder] WooCommerce non actif");
+                $this->debug_log("WooCommerce non actif", "ERROR");
                 wp_die('WooCommerce n\'est pas actif', '', ['response' => 500]);
             }
 
             $order = wc_get_order($order_id);
             if (!$order) {
-                error_log("[PDF Builder] Commande #{$order_id} introuvable");
+                $this->debug_log("Commande #{$order_id} introuvable", "WARNING");
                 wp_die('Commande introuvable', '', ['response' => 404]);
             }
             
-            error_log("[PDF Builder] Commande #{$order_id} trouvée");
+            $this->debug_log("Commande #{$order_id} trouvée");
 
             // Récupérer le template
             $template = $this->get_template($template_id);
             if (!$template) {
-                error_log("[PDF Builder] Template '{$template_id}' introuvable");
+                $this->debug_log("Template '{$template_id}' introuvable", "WARNING");
                 wp_die('Modèle introuvable', '', ['response' => 404]);
             }
             
-            error_log("[PDF Builder] Template '{$template_id}' trouvé: " . (isset($template['name']) ? $template['name'] : 'sans nom'));
+            $this->debug_log("Template '{$template_id}' trouvé: " . ($template['name'] ?? 'sans nom'));
 
             // Générer l'HTML avec les vraies données
-            error_log("[PDF Builder] Début génération HTML pour PDF");
+            $this->debug_log("Début génération HTML pour PDF");
             $html = $this->generate_template_html($template, $order, 'pdf');
-            error_log("[PDF Builder] HTML généré - Longueur: " . strlen($html) . " caractères");
+            $this->debug_log("HTML généré - Longueur: " . strlen($html) . " caractères");
 
-            // Convertir en PDF avec dompdf
-            require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+            // Optimiser le HTML avant le rendu
+            $html = $this->optimize_html($html);
             
-            $dompdf = new \Dompdf\Dompdf([
-                'isHtml5ParserEnabled' => true,
-                'isRemoteEnabled' => true,
-                'defaultFont' => 'DejaVu Sans',
-                'fontHeightRatio' => 1.1,
-                'isUnicode' => true,
-                'enable_font_subsetting' => false,
-                'defaultPaperSize' => 'A4'
-            ]);
+            // Initialiser DOMPDF avec configuration optimale
+            $dompdf = $this->init_dompdf();
             
-            // S'assurer que le HTML est en UTF-8 propre
-            $html = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
-            
-            error_log("[PDF Builder] Chargement HTML dans dompdf");
+            $this->debug_log("Chargement HTML dans DOMPDF");
             $dompdf->loadHtml($html);
             
-            // Format papier depuis le template
+            // Configurer le format papier depuis le template
             $template_data = json_decode($template['template_data'], true);
-            // Dimensions par défaut : A4 @ 96 DPI (794×1123px) - cohérent avec React Canvas
-            $width = $template_data['canvasWidth'] ?? 794;
-            $height = $template_data['canvasHeight'] ?? 1123;
-            $orientation = ($width > $height) ? 'landscape' : 'portrait';
+            list($width, $height, $orientation) = $this->configure_paper_size($dompdf, $template_data);
             
-            error_log("[PDF Builder] Format: {$width}x{$height}px, orientation: {$orientation}");
-            $dompdf->setPaper([0, 0, $width, $height], $orientation);
-            
-            error_log("[PDF Builder] Rendu PDF");
+            $this->debug_log("Rendu PDF en cours...");
             $dompdf->render();
             
-            error_log("[PDF Builder] Envoi du PDF au navigateur");
+            $this->debug_log("Envoi du PDF au navigateur");
             $dompdf->stream('facture-' . $order->get_order_number() . '.pdf', [
                 'Attachment' => false  // false = afficher dans le navigateur, true = télécharger
             ]);
             exit;
         } catch (Exception $e) {
-            error_log('[PDF Builder] Erreur génération PDF: ' . $e->getMessage());
+            $this->debug_log('Erreur génération PDF: ' . $e->getMessage(), "ERROR");
             wp_die('Erreur: ' . $e->getMessage(), '', ['response' => 500]);
         }
     }
 
     /**
      * Génère une image (PNG/JPG) à partir d'un template et d'une commande
-     * Fonctionnalité PREMIUM uniquement
+     * Fonctionnalité PREMIUM uniquement (VERSION OPTIMISÉE)
      */
     public function handle_generate_image() {
-        error_log("[PDF Builder] ========== GÉNÉRATION IMAGE DÉMARRÉE ==========");
-        error_log("[PDF Builder] POST params: " . json_encode($_POST));
+        $this->debug_log("========== GÉNÉRATION IMAGE DÉMARRÉE ==========");
+        $this->debug_log("POST params: " . json_encode($_POST));
         
         // Vérifier les permissions
         if (!is_user_logged_in() || !current_user_can('edit_shop_orders')) {
-            error_log("[PDF Builder] Permission refusée");
+            $this->debug_log("Permission refusée", "WARNING");
             wp_die('Permission refusée', '', ['response' => 403]);
         }
 
@@ -2593,11 +2581,11 @@ class PDF_Builder_Unified_Ajax_Handler {
         if (class_exists('\PDF_Builder\Managers\PDF_Builder_License_Manager')) {
             $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
             if (!$license_manager->isPremium()) {
-                error_log("[PDF Builder] Licence premium requise pour la génération d'images");
+                $this->debug_log("Licence premium requise pour la génération d'images", "WARNING");
                 wp_die('Cette fonctionnalité nécessite une licence premium', '', ['response' => 403]);
             }
         } else {
-            error_log("[PDF Builder] License Manager non disponible");
+            $this->debug_log("License Manager non disponible", "ERROR");
             wp_die('Système de licence non disponible', '', ['response' => 500]);
         }
 
@@ -2605,53 +2593,56 @@ class PDF_Builder_Unified_Ajax_Handler {
         $order_id = intval($_POST['order_id'] ?? 0);
         $format = sanitize_text_field($_POST['format'] ?? 'png');
         
-        error_log("[PDF Builder] Template ID: '{$template_id}', Order ID: {$order_id}, Format: {$format}");
+        $this->debug_log("Template ID: '{$template_id}', Order ID: {$order_id}, Format: {$format}");
 
         if (!$template_id || !$order_id || !in_array($format, ['png', 'jpg'])) {
-            error_log("[PDF Builder] Paramètres manquants ou invalides");
+            $this->debug_log("Paramètres manquants ou invalides", "WARNING");
             wp_die('Paramètres manquants ou invalides', '', ['response' => 400]);
         }
 
         try {
             // Vérifier que WooCommerce est actif
             if (!function_exists('wc_get_order')) {
-                error_log("[PDF Builder] WooCommerce non actif");
+                $this->debug_log("WooCommerce non actif", "ERROR");
                 wp_die('WooCommerce n\'est pas actif', '', ['response' => 500]);
             }
 
             $order = wc_get_order($order_id);
             if (!$order) {
-                error_log("[PDF Builder] Commande #{$order_id} introuvable");
+                $this->debug_log("Commande #{$order_id} introuvable", "WARNING");
                 wp_die('Commande introuvable', '', ['response' => 404]);
             }
             
-            error_log("[PDF Builder] Commande #{$order_id} trouvée");
+            $this->debug_log("Commande #{$order_id} trouvée");
 
             // Récupérer le template
             $template = $this->get_template($template_id);
             if (!$template) {
-                error_log("[PDF Builder] Template '{$template_id}' introuvable");
+                $this->debug_log("Template '{$template_id}' introuvable", "WARNING");
                 wp_die('Modèle introuvable', '', ['response' => 404]);
             }
             
-            error_log("[PDF Builder] Template '{$template_id}' trouvé");
+            $this->debug_log("Template '{$template_id}' trouvé");
 
             // Générer l'HTML avec les vraies données
-            error_log("[PDF Builder] Début génération HTML pour image");
+            $this->debug_log("Début génération HTML pour image");
             $html = $this->generate_template_html($template, $order);
+            
+            // Optimiser le HTML
+            $html = $this->optimize_html($html);
             
             // Récupérer les dimensions du template
             $template_data = json_decode($template['template_data'], true);
             $width = $template_data['canvasWidth'] ?? 794;
             $height = $template_data['canvasHeight'] ?? 1123;
             
-            error_log("[PDF Builder] Dimensions image: {$width}x{$height}px, format: {$format}");
+            $this->debug_log("Dimensions image: {$width}x{$height}px, format: {$format}");
             
             // Créer des fichiers temporaires
             $temp_dir = sys_get_temp_dir();
             $temp_image = $temp_dir . '/pdf-builder-' . uniqid() . '.' . $format;
             
-            error_log("[PDF Builder] Fichier image : {$temp_image}");
+            $this->debug_log("Fichier image : {$temp_image}");
             
             $conversion_success = false;
             $conversion_method = '';
@@ -2659,17 +2650,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Méthode Imagick: HTML → PDF → Image
             if (extension_loaded('imagick')) {
                 try {
-                    error_log("[PDF Builder] Tentative de génération avec Imagick (HTML → PDF → Image)");
+                    $this->debug_log("Tentative de génération avec Imagick (HTML → PDF → Image)");
                     
-                    // Étape 1: Générer le PDF avec dompdf
-                    require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
-                    
-                    $dompdf_options = new \Dompdf\Options();
-                    $dompdf_options->set('isHtml5ParserEnabled', true);
-                    $dompdf_options->set('isRemoteEnabled', true);
-                    $dompdf_options->set('defaultFont', 'DejaVu Sans');
-                    
-                    $dompdf = new \Dompdf\Dompdf($dompdf_options);
+                    // Étape 1: Générer le PDF avec DOMPDF (version optimisée)
+                    $dompdf = $this->init_dompdf();
                     $dompdf->setPaper([0, 0, $width * 0.75, $height * 0.75], 'portrait');
                     $dompdf->loadHtml($html);
                     $dompdf->render();
@@ -2678,7 +2662,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $temp_pdf = $temp_dir . '/pdf-builder-' . uniqid() . '.pdf';
                     file_put_contents($temp_pdf, $dompdf->output());
                     
-                    error_log("[PDF Builder] PDF généré: " . filesize($temp_pdf) . " octets");
+                    $this->debug_log("PDF généré: " . filesize($temp_pdf) . " octets");
                     
                     // Étape 2: Convertir PDF → Image avec Imagick
                     $imagick = new \Imagick();
@@ -2705,19 +2689,19 @@ class PDF_Builder_Unified_Ajax_Handler {
                     if (file_exists($temp_image) && filesize($temp_image) > 0) {
                         $conversion_success = true;
                         $conversion_method = 'Imagick (dompdf + ImageMagick)';
-                        error_log("[PDF Builder] ✅ Génération réussie avec Imagick: " . filesize($temp_image) . " octets");
+                        $this->debug_log("✅ Génération réussie avec Imagick: " . filesize($temp_image) . " octets");
                     }
                 } catch (\Exception $e) {
-                    error_log("[PDF Builder] ⚠️ Imagick échoué: " . $e->getMessage());
-                    error_log("[PDF Builder] Stack trace: " . $e->getTraceAsString());
+                    $this->debug_log("⚠️ Imagick échoué: " . $e->getMessage(), "WARNING");
+                    $this->debug_log("Stack trace: " . $e->getTraceAsString(), "WARNING");
                 }
             } else {
-                error_log("[PDF Builder] Extension Imagick non disponible");
+                $this->debug_log("Extension Imagick non disponible", "WARNING");
             }
             
             // Méthode de fallback: Erreur si rien ne fonctionne
             if (!$conversion_success) {
-                error_log("[PDF Builder] ❌ Aucune méthode de conversion disponible");
+                $this->debug_log("❌ Aucune méthode de conversion disponible", "ERROR");
                 
                 wp_send_json_error([
                     'message' => "Extension Imagick non disponible",
@@ -2729,7 +2713,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 ], 501);
             }
             
-            error_log("[PDF Builder] Méthode utilisée: {$conversion_method}");
+            $this->debug_log("Méthode utilisée: {$conversion_method}");
             
             // Lire le contenu de l'image
             $image_content = file_get_contents($temp_image);
@@ -2746,8 +2730,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             echo $image_content;
             exit;
         } catch (Exception $e) {
-            error_log('[PDF Builder] Erreur génération image: ' . $e->getMessage());
-            error_log('[PDF Builder] Stack trace: ' . $e->getTraceAsString());
+            $this->debug_log('Erreur génération image: ' . $e->getMessage(), "ERROR");
+            $this->debug_log('Stack trace: ' . $e->getTraceAsString(), "ERROR");
             
             wp_send_json_error([
                 'message' => 'Erreur lors de la génération de l\'image',
@@ -3170,8 +3154,23 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Construit les styles CSS d'un élément
      */
+    /**
+     * Construit les styles CSS d'un élément (VERSION OPTIMISÉE)
+     * Optimisations:
+     * - Utilise concaténation de chaîne au lieu de tableau
+     * - Réduit les appels à isset()
+     * - Utilise l'opérateur de fusion null (??)
+     * - Évite les conditions imbriquées
+     * 
+     * @param array $element Données de l'élément
+     * @return string Styles CSS
+     */
     private function build_element_styles($element) {
-        $style_map = [
+        $css = '';
+        
+        // === TYPOGRAPHIE ===
+        // Styles de texte avec mapping direct
+        static $text_styles = [
             'fontSize' => 'font-size: %spx;',
             'fontFamily' => 'font-family: %s;',
             'fontWeight' => 'font-weight: %s;',
@@ -3182,76 +3181,74 @@ class PDF_Builder_Unified_Ajax_Handler {
             'textColor' => 'color: %s;',
         ];
         
-        $styles = [];
-        
-        // Appliquer les styles simples via mapping
-        foreach ($style_map as $prop => $css) {
+        foreach ($text_styles as $prop => $format) {
             if (isset($element[$prop])) {
-                $styles[] = sprintf($css, $element[$prop]);
+                $css .= sprintf($format, $element[$prop]) . ' ';
             }
         }
         
-        // Letter spacing
-        if (isset($element['letterSpacing']) && $element['letterSpacing'] !== 'normal') {
-            $styles[] = 'letter-spacing: ' . floatval($element['letterSpacing']) . 'px;';
+        // Letter spacing (ignorer 'normal')
+        if (($element['letterSpacing'] ?? 'normal') !== 'normal') {
+            $css .= 'letter-spacing: ' . floatval($element['letterSpacing']) . 'px; ';
         }
         
-        // Word spacing
-        if (isset($element['wordSpacing']) && $element['wordSpacing'] !== 'normal') {
-            $styles[] = 'word-spacing: ' . $element['wordSpacing'] . ';';
+        // Word spacing (ignorer 'normal')
+        if (($element['wordSpacing'] ?? 'normal') !== 'normal') {
+            $css .= 'word-spacing: ' . $element['wordSpacing'] . '; ';
         }
         
         // Line height
         if (isset($element['lineHeight'])) {
-            $styles[] = 'line-height: ' . floatval($element['lineHeight']) . ';';
+            $css .= 'line-height: ' . floatval($element['lineHeight']) . '; ';
         }
         
-        // Background color (avec respect de showBackground)
-        if (isset($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
-            if (!isset($element['showBackground']) || $element['showBackground']) {
-                $styles[] = 'background-color: ' . $element['backgroundColor'] . ';';
+        // === ARRIÈRE-PLAN ET BORDURES ===
+        // Background (respecter showBackground)
+        if (($element['backgroundColor'] ?? 'transparent') !== 'transparent') {
+            if ($element['showBackground'] ?? true) {
+                $css .= 'background-color: ' . $element['backgroundColor'] . '; ';
             }
         }
         
-        // Bordures (avec respect de showBorders)
-        if (isset($element['borderWidth']) && $element['borderWidth'] > 0) {
-            if (!isset($element['showBorders']) || $element['showBorders']) {
-                $border_color = $element['borderColor'] ?? '#000000';
-                $border_style = $element['borderStyle'] ?? 'solid';
-                $styles[] = "border: {$element['borderWidth']}px {$border_style} {$border_color};";
-            }
+        // Bordures (respecter showBorders)
+        $borderWidth = $element['borderWidth'] ?? 0;
+        if ($borderWidth > 0 && ($element['showBorders'] ?? true)) {
+            $borderColor = $element['borderColor'] ?? '#000000';
+            $borderStyle = $element['borderStyle'] ?? 'solid';
+            $css .= "border: {$borderWidth}px {$borderStyle} {$borderColor}; ";
         }
         
         // Border radius
-        if (isset($element['borderRadius']) && $element['borderRadius'] > 0) {
-            $styles[] = 'border-radius: ' . $element['borderRadius'] . 'px;';
+        $borderRadius = $element['borderRadius'] ?? 0;
+        if ($borderRadius > 0) {
+            $css .= "border-radius: {$borderRadius}px; ";
         }
         
-        // Opacité (normalisation auto)
+        // === EFFETS VISUELS ===
+        // Opacité (normalisation 0-100 vers 0-1)
         if (isset($element['opacity'])) {
             $opacity = $element['opacity'] > 1 ? $element['opacity'] / 100 : $element['opacity'];
             if ($opacity < 1) {
-                $styles[] = 'opacity: ' . $opacity . ';';
+                $css .= "opacity: {$opacity}; ";
             }
         }
         
-        // Rotation
-        if (isset($element['rotation']) && $element['rotation'] != 0) {
-            $styles[] = 'transform: rotate(' . $element['rotation'] . 'deg);';
+        // Rotation 
+        $rotation = $element['rotation'] ?? 0;
+        if ($rotation != 0) {
+            $css .= "transform: rotate({$rotation}deg); ";
         }
         
-        // Ombre
-        if (isset($element['shadowOffsetX']) || isset($element['shadowOffsetY']) || isset($element['shadowBlur'])) {
-            $offsetX = $element['shadowOffsetX'] ?? 0;
-            $offsetY = $element['shadowOffsetY'] ?? 0;
-            $blur = $element['shadowBlur'] ?? 0;
-            if ($offsetX != 0 || $offsetY != 0 || $blur != 0) {
-                $color = $element['shadowColor'] ?? '#000000';
-                $styles[] = "box-shadow: {$offsetX}px {$offsetY}px {$blur}px {$color};";
-            }
+        // Ombre (uniquement si au moins un paramètre non nul)
+        $shadowX = $element['shadowOffsetX'] ?? 0;
+        $shadowY = $element['shadowOffsetY'] ?? 0;
+        $shadowBlur = $element['shadowBlur'] ?? 0;
+        if ($shadowX != 0 || $shadowY != 0 || $shadowBlur != 0) {
+            $shadowColor = $element['shadowColor'] ?? '#000000';
+            $css .= "box-shadow: {$shadowX}px {$shadowY}px {$shadowBlur}px {$shadowColor}; ";
         }
         
-        return ' ' . implode(' ', $styles);
+        return $css;
     }
 
     /**
@@ -4454,6 +4451,117 @@ class PDF_Builder_Unified_Ajax_Handler {
         $html .= '</div>';
         
         return $html;
+    }
+
+    /**
+     * ========================================
+     * FONCTIONS HELPER D'OPTIMISATION PDF
+     * ========================================
+     */
+
+    /**
+     * Initialise DOMPDF avec une configuration optimale et cohérente
+     * 
+     * @param array $custom_options Options personnalisées (optionnel)
+     * @return \Dompdf\Dompdf Instance configurée
+     */
+    private function init_dompdf($custom_options = []) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+        
+        // Configuration par défaut optimale
+        $default_options = [
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'defaultFont' => 'DejaVu Sans',
+            'fontHeightRatio' => 1.1,
+            'isUnicode' => true,
+            'enable_font_subsetting' => false,
+            'defaultPaperSize' => 'A4',
+            'dpi' => 96, // Cohérent avec React Canvas (96 DPI)
+            'enable_php' => false, // Sécurité
+            'enable_javascript' => false, // Sécurité
+            'enable_remote' => true, // Pour charger des images distantes
+            'chroot' => ABSPATH, // Limite au répertoire WordPress
+        ];
+        
+        // Fusion avec options personnalisées
+        $options = array_merge($default_options, $custom_options);
+        
+        $this->debug_log("DOMPDF initialisé avec options: " . json_encode($options));
+        
+        return new \Dompdf\Dompdf($options);
+    }
+
+    /**
+     * Logger conditionnel - Log uniquement si le mode debug est activé
+     * 
+     * @param string $message Message à logger
+     * @param string $level Niveau (INFO, WARNING, ERROR)
+     */
+    private function debug_log($message, $level = 'INFO') {
+        // Vérifier si les logs debug sont activés
+        $debug_enabled = get_option('pdf_builder_debug_enabled', false);
+        $debug_php_errors = get_option('pdf_builder_developer_enabled', false);
+        
+        // Logger uniquement si debug activé OU en mode développement WordPress
+        if ($debug_enabled || $debug_php_errors || (defined('WP_DEBUG') && WP_DEBUG)) {
+            error_log("[PDF Builder - {$level}] {$message}");
+        }
+    }
+
+    /**
+     * Optimise le HTML pour le rendu PDF
+     * - Nettoie les espaces inutiles
+     * - Assure l'encodage UTF-8
+     * - Supprime les commentaires HTML
+     * - Normalise les sauts de ligne
+     * 
+     * @param string $html HTML brut
+     * @return string HTML optimisé
+     */
+    private function optimize_html($html) {
+        // Assurer l'encodage UTF-8 propre
+        $html = mb_convert_encoding($html, 'UTF-8', 'UTF-8');
+        
+        // Supprimer les commentaires HTML (mais garder les commentaires conditionnels IE)
+        $html = preg_replace('/<!--(?!\[if\s).*?-->/s', '', $html);
+        
+        // Supprimer les espaces multiples entre les balises
+        $html = preg_replace('/>\s+</', '><', $html);
+        
+        // Supprimer les retours à la ligne inutiles (sauf dans <pre> et <textarea>)
+        $html = preg_replace('/\s+/', ' ', $html);
+        
+        // Normaliser les sauts de ligne
+        $html = str_replace(["\r\n", "\r"], "\n", $html);
+        
+        $this->debug_log("HTML optimisé - Taille avant: " . strlen($html) . " caractères");
+        
+        return $html;
+    }
+
+    /**
+     * Configure le format papier pour DOMPDF à partir des données du template
+     * 
+     * @param \Dompdf\Dompdf $dompdf Instance DOMPDF
+     * @param array $template_data Données du template
+     * @return array [width, height, orientation]
+     */
+    private function configure_paper_size($dompdf, $template_data) {
+        // Dimensions par défaut : A4 @ 96 DPI (794×1123px) - cohérent avec React Canvas
+        $width = $template_data['canvasWidth'] ?? ($template_data['canvas']['width'] ?? 794);
+        $height = $template_data['canvasHeight'] ?? ($template_data['canvas']['height'] ?? 1123);
+        $orientation = ($width > $height) ? 'landscape' : 'portrait';
+        
+        // Convertir pixels en points (1px = 0.75pt pour DOMPDF)
+        $width_pt = $width * 0.75;
+        $height_pt = $height * 0.75;
+        
+        $dompdf->setPaper([0, 0, $width_pt, $height_pt], $orientation);
+        
+        $this->debug_log("Format papier: {$width}x{$height}px ({$width_pt}x{$height_pt}pt), orientation: {$orientation}");
+        
+        return [$width, $height, $orientation];
     }
 
 
