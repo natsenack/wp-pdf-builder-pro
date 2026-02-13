@@ -1378,7 +1378,7 @@ export const Header = memo(function Header({
               lineStyle = element.style;
             }
 
-            // Créer une vraie ligne avec div + background-color (au lieu de border)
+            // Créer une vraie ligne avec background + height (au lieu de border)
             // Support pour les styles de ligne : solid, dashed, dotted
             let lineStyleCSS = "solid";
             if (lineStyle === "dashed") {
@@ -1386,20 +1386,21 @@ export const Header = memo(function Header({
             } else if (lineStyle === "dotted") {
               lineStyleCSS = "dotted";
             }
-            let dashPattern = "";
-            if (lineStyleCSS === "dashed") {
-              // Utiliser border-bottom pour dashed (meilleur que background-image)
-              dashPattern = ` border-bottom: ${lineWidth}px dashed ${lineColor};`;
-            } else if (lineStyleCSS === "dotted") {
-              dashPattern = ` border-bottom: ${lineWidth}px dotted ${lineColor};`;
-            } else {
-              // Solid : utiliser background-color + height
-              dashPattern = ` background-color: ${lineColor}; height: ${lineWidth}px;`;
-            }
-            content = `<div style="width: 100%; margin: 0; padding: 0;${dashPattern}"></div>`;
 
-            // Centrer la ligne verticalement avec flexbox (comme dans Canvas: y = height/2)
-            styles += ` display: flex; align-items: center; justify-content: center;`;
+            // Pas de contenu pour la ligne
+            content = "";
+
+            // Appliquer les styles de ligne DIRECTEMENT sur le conteneur
+            if (lineStyleCSS === "dashed") {
+              // Dashed : utiliser border-bottom
+              styles += ` background: transparent; border-bottom: ${lineWidth}px dashed ${lineColor};`;
+            } else if (lineStyleCSS === "dotted") {
+              // Dotted : utiliser border-bottom
+              styles += ` background: transparent; border-bottom: ${lineWidth}px dotted ${lineColor};`;
+            } else {
+              // Solid : utiliser background-color + height fixe
+              styles += ` background-color: ${lineColor}; border: none; height: ${lineWidth}px;`;
+            }
 
             // Padding/margin
             if (element.padding) {

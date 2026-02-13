@@ -4023,24 +4023,21 @@ class PDF_Builder_Unified_Ajax_Handler {
         $width = $element['strokeWidth'] ?? 1;
         $style = $element['borderStyle'] ?? $element['style'] ?? 'solid';
         
-        // Créer une vraie ligne avec div + background-color (au lieu de border)
-        $dash_pattern = '';
+        // Créer une vraie ligne avec background-color + height (au lieu de border)
+        $line_content = '';
         
         if ($style === 'dashed') {
-            // Utiliser border-bottom pour dashed
-            $dash_pattern = ' border-bottom: ' . $width . 'px dashed ' . $color . ';';
+            // Dashed : utiliser border-bottom
+            $line_styles = $base_styles . ' background: transparent; border-bottom: ' . $width . 'px dashed ' . $color . ';';
         } elseif ($style === 'dotted') {
-            // Utiliser border-bottom pour dotted
-            $dash_pattern = ' border-bottom: ' . $width . 'px dotted ' . $color . ';';
+            // Dotted : utiliser border-bottom
+            $line_styles = $base_styles . ' background: transparent; border-bottom: ' . $width . 'px dotted ' . $color . ';';
         } else {
-            // Solid : utiliser background-color + height
-            $dash_pattern = ' background-color: ' . $color . '; height: ' . $width . 'px;';
+            // Solid : utiliser background-color + height fixe
+            $line_styles = $base_styles . ' background-color: ' . $color . '; border: none; height: ' . $width . 'px;';
         }
         
-        $line_content = '<div style="width: 100%; margin: 0; padding: 0;' . $dash_pattern . '"></div>';
-        
-        // Centrer la ligne verticalement avec flexbox (comme dans Canvas: y = height/2)
-        return '<div class="element" style="' . $base_styles . ' display: flex; align-items: center; justify-content: center;">' . $line_content . '</div>';
+        return '<div class="element" style="' . $line_styles . '"></div>';
     }
     
     /**
