@@ -3093,6 +3093,10 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         // Générer chaque élément
         foreach ($elements as $element) {
+            // DEBUG: Logger les coordonnées exactes de chaque élément
+            if (isset($element['type']) && ($element['type'] === 'company_logo' || $element['type'] === 'customer_info')) {
+                error_log("[PDF Builder DEBUG] Élément {$element['type']} - x={$element['x']}, y={$element['y']}, width={$element['width']}, height={$element['height']}");
+            }
             $html .= $this->render_element($element, $all_data, $is_premium, $format);
         }
 
@@ -3626,8 +3630,11 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Appliquer l'alignement horizontal et vertical
         $letterSpacingStyle = $letterSpacing !== 0 ? ' letter-spacing: ' . $letterSpacing . 'px;' : '';
         
-        // Construire les styles du conteneur interne (utilise les propriétés bodyFont*)
+        // ✅ Construire les styles du conteneur interne (padding DOIT être appliqué comme dans React)
+        // React dessine le texte à partir de (paddingHorizontal, paddingVertical) après translate
         $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . esc_attr($textColor) . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle;
+        // ✅ CRITICAL: width et height 100% pour que le padding soit calculé DANS le conteneur parent
+        $inner_styles .= ' width: 100%; height: 100%; box-sizing: border-box;';
         
         // Pour l'alignement vertical, on utilise flexbox
         if ($verticalAlign === 'middle') {
@@ -3868,6 +3875,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         $bodyFontStyle = isset($element['bodyFontStyle']) ? $element['bodyFontStyle'] : 'normal';
         
         $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . $textColor . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle;
+        // ✅ CRITICAL: width et height 100% pour que le padding soit calculé DANS le conteneur parent
+        $inner_styles .= ' width: 100%; height: 100%; box-sizing: border-box;';
         
         // Pour l'alignement vertical, on utilise flexbox
         if ($verticalAlign === 'middle') {
