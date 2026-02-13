@@ -3847,8 +3847,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         if (!$src) return '';
         
         // Extraire les dimensions du conteneur
-        $width = $element['width'] ?? 100;
-        $height = $element['height'] ?? 100;
+        $container_width = $element['width'] ?? 100;
+        $container_height = $element['height'] ?? 100;
         
         // Propriétés de style
         $object_fit = $element['objectFit'] ?? 'contain';
@@ -3868,97 +3868,143 @@ class PDF_Builder_Unified_Ajax_Handler {
             $src = $image_data;
         }
         
-        // Styles du conteneur externe - pas de bordure ici
+        // Obtenir les dimensions naturelles de l'image (approximation si pas disponibles)
+        // Pour une vraie cohérence, il faudrait lire les dimensions réelles
+        // Ici on suppose un ratio 1:1 par défaut (peut être amélioré)
+        $image_natural_width = 512; // Valeur par défaut
+        $image_natural_height = 512;
+        
+        // Calculer les dimensions de l'image rendue selon objectFit (comme React)
+        $container_aspect = $container_width / $container_height;
+        $image_aspect = $image_natural_width / $image_natural_height;
+        
+        $logo_width = 0;
+        $logo_height = 0;
+        
+        switch ($object_fit) {
+            case 'contain':
+                if ($container_aspect > $image_aspect) {
+                    $logo_height = $container_height;
+                    $logo_width = $logo_height * $image_aspect;
+                } else {
+                    $logo_width = $container_width;
+                    $logo_height = $logo_width / $image_aspect;
+                }
+                break;
+            
+            case 'cover':
+                if ($container_aspect > $image_aspect) {
+                    $logo_width = $container_width;
+                    $logo_height = $logo_width / $image_aspect;
+                } else {
+                    $logo_height = $container_height;
+                    $logo_width = $logo_height * $image_aspect;
+                }
+                break;
+            
+            case 'fill':
+                $logo_width = $container_width;
+                $logo_height = $container_height;
+                break;
+            
+            case 'none':
+                $logo_width = min($image_natural_width, $container_width);
+                $logo_height = min($image_natural_height, $container_height);
+                break;
+            
+            case 'scale-down':
+                // Taille originale ou contain, selon le plus petit
+                if ($image_natural_width <= $container_width && $image_natural_height <= $container_height) {
+                    $logo_width = $image_natural_width;
+                    $logo_height = $image_natural_height;
+                } else {
+                    // Utiliser contain
+                    if ($container_aspect > $image_aspect) {
+                        $logo_height = $container_height;
+                        $logo_width = $logo_height * $image_aspect;
+                    } else {
+                        $logo_width = $container_width;
+                        $logo_height = $logo_width / $image_aspect;
+                    }
+                }
+                break;
+            
+            default:
+                // Par défaut contain
+                if ($container_aspect > $image_aspect) {
+                    $logo_height = $container_height;
+                    $logo_width = $logo_height * $image_aspect;
+                } else {
+                    $logo_width = $container_width;
+                    $logo_height = $logo_width / $image_aspect;
+                }
+        }
+        
+        // Calculer la position selon l'alignement (comme React)
+        $base_x = 0;
+        switch ($horizontal_align) {
+            case 'center':
+                $base_x = ($container_width - $logo_width) / 2;
+                break;
+            case 'right':
+                $base_x = $container_width - $logo_width;
+                break;
+            case 'left':
+            default:
+                $base_x = 0;
+                break;
+        }
+        
+        $base_y = 0;
+        switch ($vertical_align) {
+            case 'center':
+                $base_y = ($container_height - $logo_height) / 2;
+                break;
+            case 'bottom':
+                $base_y = $container_height - $logo_height;
+                break;
+            case 'top':
+            default:
+                $base_y = 0;
+                break;
+        }
+        
+        // Styles du conteneur externe
         $outer_div_styles = $base_styles;
         if ($background_color !== 'transparent') {
             $outer_div_styles .= ' background-color: ' . esc_attr($background_color) . ';';
         }
+        $outer_div_styles .= ' position: relative;'; // Pour le positionnement absolu interne
+        $outer_div_styles .= ' overflow: hidden;'; // Pour respecter les limites
         
-        // Pas de bordure sur le conteneur principal
-        // La bordure sera sur un wrapper autour de l'image
+        // Wrapper positionné avec les marges calculées
+        $wrapper_styles = 'position: absolute;';
+        $wrapper_styles .= ' left: ' . round($base_x, 2) . 'px;';
+        $wrapper_styles .= ' top: ' . round($base_y, 2) . 'px;';
+        $wrapper_styles .= ' width: ' . round($logo_width, 2) . 'px;';
+        $wrapper_styles .= ' height: ' . round($logo_height, 2) . 'px;';
         
-        // Utiliser display: table-cell pour l'alignement (compatible Dompdf)
-        $outer_div_styles .= ' display: table-cell;';
-        
-        // Alignement vertical avec vertical-align
-        switch ($vertical_align) {
-            case 'top':
-                $outer_div_styles .= ' vertical-align: top;';
-                break;
-            case 'bottom':
-                $outer_div_styles .= ' vertical-align: bottom;';
-                break;
-            case 'center':
-            default:
-                $outer_div_styles .= ' vertical-align: middle;';
-                break;
-        }
-        
-        // Alignement horizontal avec text-align
-        switch ($horizontal_align) {
-            case 'center':
-                $outer_div_styles .= ' text-align: center;';
-                break;
-            case 'right':
-                $outer_div_styles .= ' text-align: right;';
-                break;
-            case 'left':
-            default:
-                $outer_div_styles .= ' text-align: left;';
-                break;
-        }
-        
-        // Styles de l'image selon object-fit
-        $img_styles = '';
-        
-        // Pour Dompdf, on utilise une approche simplifiée
-        switch ($object_fit) {
-            case 'cover':
-                // L'image couvre tout le conteneur
-                $img_styles .= ' width: 100%; height: 100%;';
-                $img_styles .= ' display: block;';
-                break;
-            
-            case 'fill':
-                // L'image remplit complètement le conteneur (déformation possible)
-                $img_styles .= ' width: 100%; height: 100%;';
-                $img_styles .= ' display: block;';
-                break;
-            
-            case 'none':
-                // Taille originale
-                $img_styles .= ' max-width: ' . $width . 'px;';
-                $img_styles .= ' max-height: ' . $height . 'px;';
-                $img_styles .= ' display: inline-block;';
-                break;
-            
-            case 'contain':
-            case 'scale-down':
-            default:
-                // L'image garde ses proportions et tient dans le conteneur
-                $img_styles .= ' max-width: 100%; max-height: 100%;';
-                $img_styles .= ' height: auto;';
-                $img_styles .= ' display: inline-block;';
-                break;
-        }
+        // Styles de l'image
+        $img_styles = 'display: block;';
+        $img_styles .= ' width: 100%;';
+        $img_styles .= ' height: 100%;';
         
         // Opacité
         if ($opacity < 1) {
             $img_styles .= ' opacity: ' . esc_attr($opacity) . ';';
         }
         
-        // Créer un wrapper pour la bordure si nécessaire
-        $img_wrapper_open = '';
-        $img_wrapper_close = '';
+        // BorderRadius sur l'image si pas de bordure
+        if ($border_radius > 0 && !$show_border) {
+            $img_styles .= ' border-radius: ' . esc_attr($border_radius) . 'px;';
+        }
         
+        // Bordure et padding
         if ($show_border && $border_width > 0) {
-            // Styles du wrapper qui aura la bordure et le padding
-            $wrapper_styles = 'display: inline-block;';
             $wrapper_styles .= ' border: ' . esc_attr($border_width) . 'px solid ' . esc_attr($border_color) . ';';
             
             if ($border_radius > 0) {
                 $wrapper_styles .= ' border-radius: ' . esc_attr($border_radius) . 'px;';
-                $wrapper_styles .= ' overflow: hidden;'; // Pour que l'image respecte le border-radius
             }
             
             if ($border_padding > 0) {
@@ -3966,14 +4012,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
             
             $wrapper_styles .= ' box-sizing: border-box;';
-            
-            $img_wrapper_open = '<span style="' . $wrapper_styles . '">';
-            $img_wrapper_close = '</span>';
         }
         
-        // Rendu simplifié : conteneur + wrapper + image
+        // Rendu : conteneur + wrapper positionné + image
         return '<div class="element" style="' . $outer_div_styles . '">
-                ' . $img_wrapper_open . '<img src="' . esc_attr($src) . '" style="' . $img_styles . '" />' . $img_wrapper_close . '
+                <div style="' . $wrapper_styles . '">
+                    <img src="' . esc_attr($src) . '" style="' . $img_styles . '" />
+                </div>
         </div>';
     }
     
