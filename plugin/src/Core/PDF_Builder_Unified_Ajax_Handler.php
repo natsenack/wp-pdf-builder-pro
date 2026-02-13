@@ -4021,7 +4021,8 @@ class PDF_Builder_Unified_Ajax_Handler {
     private function render_line($element, $base_styles) {
         $color = $element['strokeColor'] ?? '#000000';
         $width = $element['strokeWidth'] ?? 1;
-        return '<div class="element" style="' . $base_styles . ' border-top: ' . $width . 'px solid ' . $color . ';"></div>';
+        // Centrer la ligne verticalement avec flexbox (comme dans Canvas: y = height/2)
+        return '<div class="element" style="' . $base_styles . ' display: flex; align-items: center; border-top: ' . $width . 'px solid ' . $color . ';"></div>';
     }
     
     /**

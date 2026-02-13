@@ -1379,6 +1379,8 @@ export const Header = memo(function Header({
               lineStyle = element.style;
             }
 
+            // Centrer la ligne verticalement avec flexbox (comme dans Canvas: y = height/2)
+            styles += ` display: flex; align-items: center;`;
             styles += ` border-top: ${lineWidth}px ${lineStyle} ${lineColor};`;
 
             // Padding/margin
