@@ -3032,40 +3032,40 @@ class PDF_Builder_Unified_Ajax_Handler {
             margin: 0;
             size: ' . $width . 'px ' . $height . 'px;
         }
-        /* Reset CSS agressif pour éliminer tout décalage */
-        html, body {
-            margin: 0 !important;
-            padding: 0 !important;
-            border: 0 !important;
-            box-sizing: border-box !important;
-            line-height: 1 !important;
-            font-size: 16px !important;
-            -webkit-text-size-adjust: 100% !important;
+        html {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            box-sizing: border-box;
+            line-height: 1;
         }
         * {
-            margin: 0 !important;
-            padding: 0 !important;
-            box-sizing: border-box !important;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         body {
-            background: #ffffff !important;
-            font-family: "DejaVu Sans", "Arial Unicode MS", sans-serif !important;
-            overflow: hidden !important;
-            position: relative !important;
+            background: #ffffff;
+            font-family: "DejaVu Sans", "Arial Unicode MS", sans-serif;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            overflow: hidden;
+            line-height: 1;
         }
         .pdf-canvas {
-            position: relative !important;
-            display: block !important;
-            width: ' . $width . 'px !important;
-            height: ' . $height . 'px !important;
-            background: #ffffff !important;
-            overflow: hidden !important;
-            /* Force exact positioning at origin */
-            top: 0 !important;
-            left: 0 !important;
-            /* Force hardware acceleration and precise positioning */
-            transform: translate3d(0, 0, 0) !important;
-            -webkit-transform: translate3d(0, 0, 0) !important;
+            position: relative;
+            display: block;
+            width: ' . $width . 'px;
+            height: ' . $height . 'px;
+            background: #ffffff;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            overflow: hidden;
+            /* Empêcher tout décalage de positionnement */
+            top: 0;
+            left: 0;
         }
         .element {
             position: absolute;
@@ -3269,9 +3269,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Si opacity = 1, élément complètement opaque (pas de style nécessaire)
         }
         
-        // Rotation (avec transform-origin au centre pour éviter les décalages)
+        // Rotation
         if (isset($element['rotation']) && $element['rotation'] != 0) {
-            $styles .= " transform: rotate({$element['rotation']}deg); transform-origin: center center;";
+            $styles .= " transform: rotate({$element['rotation']}deg);";
         }
         
         // Ombre
