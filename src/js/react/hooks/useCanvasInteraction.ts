@@ -56,6 +56,9 @@ export const useCanvasInteraction = ({
   const selectionStartRef = useRef({ x: 0, y: 0 }); // Point de départ de la sélection
   const selectionPointsRef = useRef<{ x: number; y: number }[]>([]); // Points pour le lasso
   const selectionRectRef = useRef({ x: 0, y: 0, width: 0, height: 0 }); // Rectangle de sélection
+  // ✅ CORRECTION: Mémoriser zoom/pan pour éviter les changements pendant la sélection
+  const selectionZoomRef = useRef<number>(100); // Zoom mémorisé au démarrage
+  const selectionPanRef = useRef({ x: 0, y: 0 }); // Pan mémorisé au démarrage
 
   // Refs pour les event listeners globaux pendant la sélection
   const globalMouseMoveRef = useRef<((event: MouseEvent) => void) | null>(null);
@@ -104,6 +107,7 @@ export const useCanvasInteraction = ({
   );
 
   // Fonctions pour gérer les événements globaux pendant la sélection
+  // ✅ CORRECTION: Utiliser lastKnownStateRef pour éviter les listeners orphelins
   const startGlobalSelectionListeners = useCallback(() => {
     if (globalMouseMoveRef.current || globalMouseUpRef.current) return; // Déjà actifs
 
@@ -112,13 +116,20 @@ export const useCanvasInteraction = ({
       if (!canvas) return;
 
       const rect = canvas.getBoundingClientRect();
-      const zoomScale = state.canvas.zoom / 100;
+      if (!validateCanvasRect(rect)) return;
+
+      // ✅ Utiliser lastKnownStateRef au lieu de state (évite state stale)
+      const currentState = lastKnownStateRef.current;
+      // ✅ CORRECTION: Utiliser les valeurs mémorisées au démarrage de la sélection
+      const zoomScale = selectionZoomRef.current / 100;
+      const panX = selectionPanRef.current.x;
+      const panY = selectionPanRef.current.y;
 
       // Calcul des coordonnées même si la souris est hors du canvas
       const canvasRelativeX = event.clientX - rect.left;
       const canvasRelativeY = event.clientY - rect.top;
-      const x = (canvasRelativeX - state.canvas.pan.x) / zoomScale;
-      const y = (canvasRelativeY - state.canvas.pan.y) / zoomScale;
+      const x = (canvasRelativeX - panX) / zoomScale;
+      const y = (canvasRelativeY - panY) / zoomScale;
 
       // Mettre à jour la sélection
       if (selectionMode === "lasso") {
@@ -138,6 +149,8 @@ export const useCanvasInteraction = ({
       stopGlobalSelectionListeners();
       // Terminer la sélection directement ici
       if (isSelectingRef.current) {
+        // ✅ Utiliser lastKnownStateRef au lieu de state
+        const currentState = lastKnownStateRef.current;
         let selectedElementIds: string[] = [];
 
         if (
@@ -145,11 +158,11 @@ export const useCanvasInteraction = ({
           selectionPointsRef.current.length > 2
         ) {
           // Utiliser la même logique que isElementInLasso
-          selectedElementIds = state.elements
+          selectedElementIds = currentState.elements
             .filter((element) => {
               const centerX = element.x + element.width / 2;
               const centerY = element.y + element.height / 2;
-              // Logique de isPointInPolygon dupliquée
+              // Logique de isPointInPolygon
               let inside = false;
               const polygon = selectionPointsRef.current;
               for (
@@ -177,7 +190,7 @@ export const useCanvasInteraction = ({
           selectionRectRef.current.height > 0
         ) {
           // Utiliser la même logique que isElementInRectangle
-          selectedElementIds = state.elements
+          selectedElementIds = currentState.elements
             .filter((element) => {
               const elementRight = element.x + element.width;
               const elementBottom = element.y + element.height;
@@ -216,9 +229,7 @@ export const useCanvasInteraction = ({
     });
   }, [
     canvasRef,
-    state.canvas.zoom,
-    state.canvas.pan,
-    state.elements,
+    // ✅ RÉDUIT dépendances: lastKnownStateRef est maintenant utilisé à la place
     selectionMode,
     dispatch,
   ]);
@@ -887,6 +898,8 @@ export const useCanvasInteraction = ({
               `[CanvasInteraction] Selecting element ${clickedElement.id}`,
             );
             dispatch({ type: "SET_SELECTION", payload: [clickedElement.id] });
+            // ✅ CORRECTION: Mettre en cache l'ID sélectionné dans ref
+            selectedElementsRef.current = [clickedElement.id];
             // ✅ CORRECTION: Préparer le drag immédiatement pour permettre drag après sélection
             isDraggingRef.current = true;
             // Stocker les positions de départ de tous les éléments sélectionnés
@@ -905,9 +918,12 @@ export const useCanvasInteraction = ({
             `[CanvasInteraction] Starting drag for ${state.selection.selectedElements.length} selected elements`,
           );
           isDraggingRef.current = true;
+          // ✅ CORRECTION: Mettre en cache les IDs sélectionnés dans ref pour éviter state stale
+          selectedElementsRef.current = [...state.selection.selectedElements];
+          
           // Stocker les positions de départ de tous les éléments sélectionnés
           const startPositions: Record<string, { x: number; y: number }> = {};
-          state.selection.selectedElements.forEach((id) => {
+          selectedElementsRef.current.forEach((id) => {
             const element = state.elements.find((el) => el.id === id);
             if (element) {
               startPositions[id] = { x: element.x, y: element.y };
@@ -1003,6 +1019,9 @@ export const useCanvasInteraction = ({
         isSelectingRef.current = true;
         selectionStartRef.current = { x, y };
         selectionPointsRef.current = [{ x, y }];
+        // ✅ CORRECTION: Mémoriser le zoom/pan courants pour éviter les changements
+        selectionZoomRef.current = state.canvas.zoom;
+        selectionPanRef.current = { x: state.canvas.pan.x, y: state.canvas.pan.y };
         if (selectionMode === "rectangle") {
           selectionRectRef.current = { x, y, width: 0, height: 0 };
         }
@@ -1128,8 +1147,15 @@ export const useCanvasInteraction = ({
     isRotatingRef.current = false;
     resizeHandleRef.current = null;
     selectedElementRef.current = null;
+    // ✅ CORRECTION: Nettoyer aussi selectedElementsRef pour éviter les refs stale
+    selectedElementsRef.current = [];
+    // Nettoyer les refs de drag/resize
+    dragStartRef.current = {};
+    dragMouseStartRef.current = { x: 0, y: 0 };
+    resizeMouseStartRef.current = { x: 0, y: 0 };
     rotationStartRef.current = {};
     pendingRotationUpdateRef.current = null;
+    pendingDragUpdateRef.current = null;
   }, [performDragUpdate, performRotationUpdate, dispatch]);
 
   // Fonction pour obtenir le curseur de redimensionnement selon la poignée
