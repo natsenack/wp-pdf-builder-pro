@@ -3362,10 +3362,10 @@ class PDF_Builder_Unified_Ajax_Handler {
      * 
      * @param float $fontSize Taille de la police en px
      * @param float $lineHeight Ratio de hauteur de ligne (ex: 1.2, 1.5)
-     * @return int Margin-bottom arrondi en px
+     * @return int Margin-bottom arrondi en px (réduit × 0.5)
      */
     private function calculate_line_spacing($fontSize, $lineHeight) {
-        return round($fontSize * ($lineHeight - 1));
+        return round($fontSize * ($lineHeight - 1) * 0.5);
     }
 
     /**
