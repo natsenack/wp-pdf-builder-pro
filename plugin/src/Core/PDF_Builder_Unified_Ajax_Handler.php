@@ -3719,7 +3719,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         ];
         
         // Construction des lignes
-        $lines = [];\n        $add_line = function($content) use (&$lines) { if ($content) $lines[] = $content; };
+        $lines = [];
+        $add_line = function($content) use (&$lines) { if ($content) $lines[] = $content; };
         
         if ($layout_props['layout'] === 'vertical') {
             if ($show['name']) $add_line('<strong>' . esc_html($company['name']) . '</strong>');
