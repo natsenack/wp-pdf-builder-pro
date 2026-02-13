@@ -3148,22 +3148,20 @@ export const Canvas = function Canvas({
             }
             // Pour "top", baseY reste à 0
 
-            // Debug: log des valeurs d'alignement
-            if ((horizontalAlign === "center" || verticalAlign === "center") && baseX === 0 && baseY === 0) {
-              console.log('🔍 Company Logo Alignment Debug:', {
-                horizontalAlign,
-                verticalAlign,
-                containerWidth,
-                containerHeight,
-                logoWidth,
-                logoHeight,
-                baseX,
-                baseY,
-                elementHorizontalAlign: element.horizontalAlign,
-                elementVerticalAlign: element.verticalAlign,
-                elementAlignment: element.alignment
-              });
-            }
+            // Debug: TOUJOURS logger les valeurs pour company_logo
+            console.log('🔍 Company Logo Alignment:', {
+              id: element.id,
+              horizontalAlign,
+              verticalAlign,
+              containerSize: { width: containerWidth, height: containerHeight },
+              logoSize: { width: logoWidth, height: logoHeight },
+              calculatedPosition: { x: baseX, y: baseY },
+              elementProps: {
+                horizontalAlign: element.horizontalAlign,
+                verticalAlign: element.verticalAlign,
+                alignment: element.alignment
+              }
+            });
 
             // Position finale de l'image (plus besoin d'offsets supplémentaires)
             const imageX = baseX;
