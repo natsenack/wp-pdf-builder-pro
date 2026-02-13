@@ -279,6 +279,16 @@ const normalizePaddingToNumber = (
   return defaultValue;
 };
 
+// Fonction helper pour normaliser l'opacité (cohérent avec PHP)
+// Si opacity > 1, c'est un pourcentage (0-100), sinon c'est déjà 0-1
+const normalizeOpacity = (opacity: number | undefined): number => {
+  if (opacity === undefined || opacity === null) return 1;
+  if (opacity > 1) {
+    return opacity / 100; // Convertir pourcentage en décimal
+  }
+  return opacity;
+};
+
 const calculateTextAlignX = (
   element: Element,
   align: string = "left",
@@ -3027,7 +3037,8 @@ export const Canvas = function Canvas({
           try {
             // Appliquer la rotation si définie
             const rotation = element.rotation || 0;
-            const opacity = element.opacity !== undefined ? element.opacity : 1;
+            // Normaliser l'opacité : si > 1 c'est un pourcentage (0-100)
+            const opacity = normalizeOpacity(element.opacity);
             const borderRadius = element.borderRadius || 0;
             const objectFit = element.objectFit || "contain";
 

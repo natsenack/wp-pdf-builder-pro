@@ -2553,8 +2553,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             // Format papier depuis le template
             $template_data = json_decode($template['template_data'], true);
-            $width = $template_data['canvasWidth'] ?? 595;
-            $height = $template_data['canvasHeight'] ?? 842;
+            // Dimensions par défaut : A4 @ 96 DPI (794×1123px) - cohérent avec React Canvas
+            $width = $template_data['canvasWidth'] ?? 794;
+            $height = $template_data['canvasHeight'] ?? 1123;
             $orientation = ($width > $height) ? 'landscape' : 'portrait';
             
             error_log("[PDF Builder] Format: {$width}x{$height}px, orientation: {$orientation}");
@@ -2808,8 +2809,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             // Extraire les dimensions du template
             $template_data = json_decode($template['template_data'], true);
-            $width = $template_data['canvasWidth'] ?? 595;
-            $height = $template_data['canvasHeight'] ?? 842;
+            // Dimensions par défaut : A4 @ 96 DPI (794×1123px)
+            $width = $template_data['canvasWidth'] ?? 794;
+            $height = $template_data['canvasHeight'] ?? 1123;
 
             wp_send_json_success([
                 'html' => $html,
@@ -2936,9 +2938,11 @@ class PDF_Builder_Unified_Ajax_Handler {
                 ]
             ],
             'canvas' => [
-                'width' => 595,
-                'height' => 842,
-                'dpi' => 72,
+                // A4 @ 96 DPI (standard écran) - 794×1123px
+                // Note: Pour PDF, Dompdf convertit en 72 DPI (×0.75) = 595×842pt
+                'width' => 794,
+                'height' => 1123,
+                'dpi' => 96,  // DPI écran (React Canvas)
                 'orientation' => 'portrait'
             ]
         ];
@@ -2987,18 +2991,19 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Support de deux formats de canvas:
         // 1. Format avec objet canvas: {canvas: {width, height}, elements: []}
         // 2. Format plat: {canvasWidth, canvasHeight, elements: []}
+        // Dimensions par défaut : A4 @ 96 DPI (794×1123px) - cohérent avec React Canvas
         if (isset($template_data['canvas'])) {
             // Format avec objet canvas
             $canvas = $template_data['canvas'];
-            $width = $canvas['width'] ?? 595;
-            $height = $canvas['height'] ?? 842;
-            $dpi = $canvas['dpi'] ?? 72;
+            $width = $canvas['width'] ?? 794;
+            $height = $canvas['height'] ?? 1123;
+            $dpi = $canvas['dpi'] ?? 96;  // 96 DPI = pixels écran (React)
             $orientation = $canvas['orientation'] ?? 'portrait';
         } else {
             // Format plat (par défaut)
-            $width = $template_data['canvasWidth'] ?? 595;
-            $height = $template_data['canvasHeight'] ?? 842;
-            $dpi = $template_data['dpi'] ?? 72;
+            $width = $template_data['canvasWidth'] ?? 794;
+            $height = $template_data['canvasHeight'] ?? 1123;
+            $dpi = $template_data['dpi'] ?? 96;
             $orientation = $template_data['orientation'] ?? 'portrait';
         }
 
@@ -3012,6 +3017,16 @@ class PDF_Builder_Unified_Ajax_Handler {
     <meta charset="UTF-8">
     <title>' . esc_html($template['name'] ?? 'Document') . '</title>
     <style>
+        /* 
+         * IMPORTANT: box-sizing: border-box est utilisé pour tous les éléments.
+         * Cela signifie que border et padding sont INCLUS dans width/height.
+         * 
+         * Exemple: element avec width=100px, padding=10px, border=2px
+         * - Avec border-box: contenu réel = 100 - 2*10 - 2*2 = 76px
+         * - Sans border-box (React Canvas): dimension totale = 100 + 2*10 + 2*2 = 124px
+         * 
+         * Cette différence est compensée dans les calculs de rendu côté serveur.
+         */
         @page {
             margin: 0;
             size: ' . $width . 'px ' . $height . 'px;
@@ -3485,7 +3500,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         $layout = isset($element['layout']) ? $element['layout'] : 'vertical';
         $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'left';
         $verticalAlign = isset($element['verticalAlign']) ? $element['verticalAlign'] : 'top';
-        $lineHeight = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.5;
+        // Line-height par défaut 1.2 (cohérent avec React Canvas)
+        $lineHeight = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.2;
         $letterSpacing = isset($element['letterSpacing']) ? floatval($element['letterSpacing']) : 0;
         
         // Récupérer les options d'affichage
