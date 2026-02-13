@@ -3867,12 +3867,21 @@ class PDF_Builder_Unified_Ajax_Handler {
             $src = $image_data;
         }
         
-        // Styles du conteneur externe - SANS BORDURE pour éviter les doublons
+        // Styles du conteneur externe - la bordure sera sur le conteneur (zone de sélection)
         $outer_div_styles = $base_styles;
-        // Forcer l'absence de bordure sur le conteneur (la bordure sera uniquement sur l'image)
-        $outer_div_styles .= ' border: none !important;';
         if ($background_color !== 'transparent') {
             $outer_div_styles .= ' background-color: ' . esc_attr($background_color) . ';';
+        }
+        
+        // Bordure sur le conteneur (uniquement si showBorder est activé)
+        if ($show_border && $border_width > 0) {
+            $outer_div_styles .= ' border: ' . esc_attr($border_width) . 'px solid ' . esc_attr($border_color) . ';';
+            $outer_div_styles .= ' box-sizing: border-box;';
+        }
+        
+        // Border radius sur le conteneur
+        if ($border_radius > 0) {
+            $outer_div_styles .= ' border-radius: ' . esc_attr($border_radius) . 'px;';
         }
         
         // Ajouter flexbox pour l'alignement vertical
@@ -3944,17 +3953,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $img_styles .= ' opacity: ' . esc_attr($opacity) . ';';
         }
         
-        // Border radius (sur l'image uniquement)
-        if ($border_radius > 0) {
-            $img_styles .= ' border-radius: ' . esc_attr($border_radius) . 'px;';
-        }
-        
-        // Bordure (uniquement si showBorder est activé)
-        if ($show_border && $border_width > 0) {
-            $img_styles .= ' border: ' . esc_attr($border_width) . 'px solid ' . esc_attr($border_color) . ';';
-            // Box-sizing pour que la bordure soit incluse dans les dimensions
-            $img_styles .= ' box-sizing: border-box;';
-        }
+        // Pas de bordure ni border-radius sur l'image (c'est sur le conteneur)
         
         // Rendu simplifié : conteneur + image directement (sans marges internes superflues)
         return '<div class="element" style="' . $outer_div_styles . '">

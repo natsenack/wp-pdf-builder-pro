@@ -3180,28 +3180,34 @@ export const Canvas = function Canvas({
             // mais au moins on aura essayé
             ctx.drawImage(img, imageX, imageY, logoWidth, logoHeight);
 
-            // Dessiner la bordure si showBorder est activé
+            // Restaurer après le clip du borderRadius de l'image
+            ctx.restore();
+
+            // Dessiner la bordure sur le conteneur (zone de sélection) si showBorder est activé
             const showBorder = props.showBorder ?? false;
             const borderColor = props.borderColor || "#e5e7eb";
             const borderWidth = props.borderWidth || 1;
             
             if (showBorder && borderWidth > 0) {
+              ctx.save();
               ctx.strokeStyle = normalizeColor(borderColor);
               ctx.lineWidth = borderWidth;
               
               if (borderRadius > 0) {
-                // Si borderRadius, dessiner un rectangle arrondi
+                // Si borderRadius, dessiner un rectangle arrondi sur le conteneur
                 ctx.beginPath();
-                roundedRect(ctx, imageX, imageY, logoWidth, logoHeight, borderRadius);
+                roundedRect(ctx, 0, 0, containerWidth, containerHeight, borderRadius);
                 ctx.stroke();
               } else {
-                // Rectangle simple
-                ctx.strokeRect(imageX, imageY, logoWidth, logoHeight);
+                // Rectangle simple sur le conteneur
+                ctx.strokeRect(0, 0, containerWidth, containerHeight);
               }
+              ctx.restore();
             }
 
-            // Restaurer le contexte
-            ctx.restore();
+            // Le contexte a déjà été restauré ci-dessus
+            return;
+
           } catch (error) {
             debugError(`❌ [LOGO] Error rendering image ${logoUrl}:`, error);
             // En cas d'erreur, dessiner un placeholder
