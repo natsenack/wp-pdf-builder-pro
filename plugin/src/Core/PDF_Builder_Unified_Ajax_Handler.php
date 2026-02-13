@@ -3133,12 +3133,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         $width = $element['width'] ?? 100;
         $height = $element['height'] ?? 30;
         
-        // HACK TEMPORAIRE: Ajustement pour customer_info qui a un décalage de ~10px vers le bas
-        if ($type === 'customer_info') {
-            $y = $y - 10; // Compensation du décalage observé
-            error_log("[PDF Builder] AJUSTEMENT Y customer_info: {$element['y']} -> {$y}");
-        }
-        
         // DEBUG CRITICAL: Logger TOUTES les positions
         error_log("[PDF Builder POSITION DEBUG] Type: {$type} | ID: {$element_id} | X: {$x} | Y: {$y} | Width: {$width} | Height: {$height}");
         
@@ -3642,38 +3636,39 @@ class PDF_Builder_Unified_Ajax_Handler {
         $letterSpacingStyle = $letterSpacing !== 0 ? ' letter-spacing: ' . $letterSpacing . 'px;' : '';
         
         // CRITICAL FIX pour le décalage vertical:
-        // En React Canvas, fillText() positionne à la BASELINE, le texte commence à y + paddingVertical + fontSize
-        // En HTML, le texte dans un div commence en HAUT avec line-height qui ajoute de l'espace
-        // Solution: line-height: 1 pour éliminer l'espace vertical, puis simuler le leading avec margin-bottom sur chaque ligne
+        // En React Canvas, le header et le contenu sont dessinés à des positions Y absolues DANS le bloc
+        // Header à y=paddingVertical, puis y+=25, contenu à y=37px
+        // En HTML, on doit reproduire cela avec position absolue pour header ET contenu
+        // Sinon le header "pousse" le contenu vers le bas dans le flux normal
         
         // Calculer le leading (espace entre lignes) basé sur lineHeight
         $leading = ($lineHeight - 1) * $bodyFontSize;
         
-        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: 1; white-space: pre-line; color: ' . esc_attr($textColor) . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle;
-        $inner_styles .= ' width: 100%; height: 100%; box-sizing: border-box;';
+        // Container interne avec position relative pour que les enfants puissent être positionnés absolument
+        $inner_styles = 'position: relative; width: 100%; height: 100%; box-sizing: border-box;';
         
-        // Pour l'alignement vertical, on utilise flexbox SIMPLEMENT
-        if ($verticalAlign !== 'top') {
-            if ($verticalAlign === 'middle') {
-                $inner_styles .= ' display: flex; align-items: center; justify-content: center; flex-direction: column;';
-            } elseif ($verticalAlign === 'bottom') {
-                $inner_styles .= ' display: flex; align-items: flex-end; justify-content: flex-end; flex-direction: column;';
-            }
-        }
+        // Style de l'en-tête - POSITION ABSOLUE comme React dessine à une coordonnée Y
+        // En React: ctx.fillText("Informations Client", textX, paddingVertical)
+        $header_style = 'position: absolute; left: ' . $paddingHorizontal . 'px; top: ' . $paddingVertical . 'px; color: ' . esc_attr($headerTextColor) . '; font-family: ' . esc_attr($headerFontFamily) . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . esc_attr($headerFontWeight) . '; font-style: ' . esc_attr($headerFontStyle) . '; line-height: 1; margin: 0; text-align: ' . $textAlign . ';';
         
-        // Style de l'en-tête avec line-height: 1 aussi
-        $header_style = 'color: ' . esc_attr($headerTextColor) . '; font-family: ' . esc_attr($headerFontFamily) . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . esc_attr($headerFontWeight) . '; font-style: ' . esc_attr($headerFontStyle) . '; line-height: 1; margin-bottom: ' . (8 + $leading) . 'px;';
+        // Style du contenu - POSITION ABSOLUE aussi
+        // En React: après header, y += 25, donc contenu commence à paddingVertical + 25
+        $content_top = $showHeaders ? ($paddingVertical + 25) : $paddingVertical;
+        $content_style = 'position: absolute; left: ' . $paddingHorizontal . 'px; top: ' . $content_top . 'px; right: ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . esc_attr($textColor) . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle . ' margin: 0;';
         
         $html = '<div class="element" style="' . $base_styles . '">';
         $html .= '<div style="' . $inner_styles . '">';
-        // Afficher l'en-tête SÉPARÉMENT, avant les lignes de contenu (comme dans React)
+        
+        // Header en position absolue (comme React dessine à une coordonnée Y fixe)
         if ($showHeaders) {
             $html .= '<div style="' . $header_style . '">Informations Client</div>';
         }
-        // DEBUG: Log des lignes finales
-        error_log('[PDF Builder] Final lines count: ' . count($lines));
-        error_log('[PDF Builder] Final lines content: ' . print_r($lines, true));
+        
+        // Contenu en position absolue (comme React dessine à y = paddingVertical + 25)
+        $html .= '<div style="' . $content_style . '">';
         $html .= implode("\n", $lines);
+        $html .= '</div>';
+        
         $html .= '</div>';
         $html .= '</div>';
         return $html;
