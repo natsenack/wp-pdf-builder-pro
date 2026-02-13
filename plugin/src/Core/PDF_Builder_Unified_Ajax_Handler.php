@@ -3360,12 +3360,13 @@ class PDF_Builder_Unified_Ajax_Handler {
      * - fontSize=14px, lineHeight=1.2 → margin-bottom = 14 × 0.2 = 2.8px (arrondi 3px)
      * - fontSize=16px, lineHeight=1.8 → margin-bottom = 16 × 0.8 = 12.8px (arrondi 13px)
      * 
+     * 
      * @param float $fontSize Taille de la police en px
      * @param float $lineHeight Ratio de hauteur de ligne (ex: 1.2, 1.5)
-     * @return int Margin-bottom arrondi en px (réduit × 0.3)
+     * @return float Hauteur de ligne réelle en px
      */
-    private function calculate_line_spacing($fontSize, $lineHeight) {
-        return round($fontSize * ($lineHeight - 1) * 0.3);
+    private function calculate_line_height_px($fontSize, $lineHeight) {
+        return $fontSize * floatval($lineHeight);
     }
 
     /**
@@ -3657,22 +3658,19 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Récupérer le fontSize GLOBAL du conteneur (element.fontSize) pour calculer le spacing
         $container_font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
         $lineHeightValue = floatval($layout_props['lineHeight']);
-        $line_spacing = $this->calculate_line_spacing($container_font_size, $lineHeightValue);
+        $line_height_px = $this->calculate_line_height_px($container_font_size, $lineHeightValue);
         
         // Styles pour chaque ligne de body (COMME REACT)
-        $line_style_base = "font-size: {$body_font['size']}px; font-family: {$body_font['family']}; font-weight: {$body_font['weight']}; font-style: {$body_font['style']}; color: {$colors['text']}; margin: 0; padding: 0;";
+        $line_style_base = "font-size: {$body_font['size']}px; font-family: {$body_font['family']}; font-weight: {$body_font['weight']}; font-style: {$body_font['style']}; color: {$colors['text']}; margin: 0; padding: 0; line-height: {$line_height_px}px;";
         
-        // Génération HTML - margin-bottom pour compatibilité DOMPDF
+        // Génération HTML - line-height en px pour compatibilité DOMPDF
         $html = '<div class="element" style="' . $container_styles . '">';
         if ($show['headers']) {
             $html .= '<div style="' . $header_style . '">Client</div>'; // "Client" comme React, pas "Informations Client"
         }
-        // Chaque ligne dans un div avec margin-bottom (sauf dernière) pour DOMPDF
-        $total_lines = count($lines);
-        foreach ($lines as $index => $line) {
-            $is_last = ($index === $total_lines - 1);
-            $line_style = $line_style_base . ($is_last ? '' : " margin-bottom: {$line_spacing}px;");
-            $html .= '<div style="' . $line_style . '">' . $line . '</div>';
+        // Chaque ligne avec line-height en px
+        foreach ($lines as $line) {
+            $html .= '<div style="' . $line_style_base . '">' . $line . '</div>';
         }
         $html .= '</div>';
         
@@ -3830,26 +3828,23 @@ class PDF_Builder_Unified_Ajax_Handler {
             return preg_replace('/<strong>/', '<strong style="' . $strong_style . '">', $line);
         }, $lines);
         
-        // Calcul du spacing entre lignes - méthode uniforme DOMPDF
-        // Mode vertical: spacing calculateé basé sur fontSize et lineHeight
-        // Modes horizontal/compact: spacing hardcodé à 4px
+        // Calcul du line-height en px - méthode uniforme DOMPDF
+        // Mode vertical: line-height calculateé basé sur fontSize et lineHeight
+        // Modes horizontal/compact: line-height réduit à 16px (compact)
         if ($layout_props['layout'] === 'vertical') {
             $container_font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
             $lineHeightValue = floatval($layout_props['lineHeight']);
-            $line_spacing = $this->calculate_line_spacing($container_font_size, $lineHeightValue);
+            $line_height_px = $this->calculate_line_height_px($container_font_size, $lineHeightValue);
         } else {
-            // horizontal ou compact - spacing réduit
-            $line_spacing = 4; // Hardcodé comme dans React pour format compact
+            // horizontal ou compact - line-height compact (plus court)
+            $line_height_px = 16; // Valeur compacte pour horizontal/compact
         }
         
-        // Génération HTML - margin-bottom pour compatibilité DOMPDF
+        // Génération HTML - line-height en px pour compatibilité DOMPDF
         $html = '<div class="element" style="' . $container_styles . '">';
-        // Chaque ligne avec margin-bottom (sauf dernière) pour espacement
-        $total_lines = count($processedLines);
-        foreach ($processedLines as $index => $line) {
-            $is_last = ($index === $total_lines - 1);
-            $line_margin = $is_last ? '' : " margin-bottom: {$line_spacing}px;";
-            $html .= '<div style="margin: 0; padding: 0;' . $line_margin . '">' . $line . '</div>';
+        // Chaque ligne avec line-height en px
+        foreach ($processedLines as $line) {
+            $html .= '<div style="margin: 0; padding: 0; line-height: ' . $line_height_px . 'px;">' . $line . '</div>';
         }
         $html .= '</div>'; // Fermer element container
         return $html;
@@ -4423,18 +4418,15 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Récupérer le line-height et calculer le spacing
         $line_height_ratio = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.3;
-        $line_spacing = $this->calculate_line_spacing($font_size, $line_height_ratio);
+        $line_height_px = $this->calculate_line_height_px($font_size, $line_height_ratio);
         
         // Splitter le texte par les sauts de ligne (SOLUTION DOMPDF)
         $lines = preg_split('/\r\n|\n|\r/', $text);
         
-        // Générer HTML avec margin-bottom entre les lignes (comme customer_info)
+        // Générer HTML avec line-height en px entre les lignes (comme customer_info)
         $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
-        $total_lines = count($lines);
-        foreach ($lines as $index => $line) {
-            $is_last = ($index === $total_lines - 1);
-            $line_margin = $is_last ? '' : " margin-bottom: {$line_spacing}px;";
-            $html .= '<div style="margin: 0; padding: 0;' . $line_margin . ' font-size: ' . $font_size . 'px; ' . $text_styles . '">' . esc_html($line) . '</div>';
+        foreach ($lines as $line) {
+            $html .= '<div style="margin: 0; padding: 0; font-size: ' . $font_size . 'px; line-height: ' . $line_height_px . 'px; ' . $text_styles . '">' . esc_html($line) . '</div>';
         }
         $html .= '</div>';
         
