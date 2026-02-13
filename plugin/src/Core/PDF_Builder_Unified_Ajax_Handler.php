@@ -3044,7 +3044,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            /* ❌ RETIRÉ: box-sizing: border-box; */
+            /* RAISON: Cohérence avec le modèle de boîte React Canvas (bordures ajoutées, pas incluses) */
         }
         body {
             background: #ffffff;
@@ -3073,7 +3074,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             position: absolute !important;
             overflow: hidden;
             word-wrap: break-word;
-            box-sizing: border-box !important;
+            /* ❌ RETIRÉ: box-sizing: border-box !important; */
+            /* RAISON: React Canvas dessine les bordures AUTOUR (strokeRect), pas DEDANS */
+            /* Avec box-sizing: border-box, les bordures sont incluses dans width/height */
+            /* Cela crée un décalage de borderWidth*2 sur chaque dimension */
         }
         table {
             border-collapse: collapse;
@@ -4018,7 +4022,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $outer_div_styles .= ' background-color: ' . esc_attr($background_color) . ';';
         }
         $outer_div_styles .= ' overflow: hidden;';
-        $outer_div_styles .= ' box-sizing: border-box;';
+        // ❌ RETIRÉ: box-sizing: border-box; → les bordures doivent s'ajouter aux dimensions (comme React)
         
         // Styles de l'image avec positionnement absolu (cohérent avec React)
         $img_styles = 'position: absolute;';
@@ -4202,7 +4206,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                       ($letter_spacing_match[0] ?? '');
         
         // Le div extérieur est UNIQUEMENT un conteneur positionné
-        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
+        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; overflow: hidden;">';
         
         // Le div intérieur contient le texte avec TOUTES les propriétés de texte
         // white-space: pre-line pour préserver les sauts de ligne (pas nl2br)
@@ -4210,7 +4214,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $inner_style = 'white-space: pre-line; ' . 
                       'line-height: ' . $dompdf_line_height . '; ' . 
                       $text_styles . ' ' .
-                      'margin: 0; padding: 0; display: block; box-sizing: border-box;';
+                      'margin: 0; padding: 0; display: block;';
         
         $html .= '<div style="' . $inner_style . '">' . esc_html($text) . '</div>';
         $html .= '</div>';
@@ -4314,7 +4318,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                       ($letter_spacing_match[0] ?? '');
         
         // Le div extérieur est UNIQUEMENT un conteneur positionné
-        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
+        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; overflow: hidden;">';
         
         // Ajouter le séparateur horizontal si activé
         if ($element['showSeparator'] ?? true) {
@@ -4338,7 +4342,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $inner_style = 'white-space: pre-line; ' . 
                       'line-height: ' . $line_height_px . '; ' . 
                       $text_styles . ' ' .
-                      'margin: 0; padding: 0; display: block; box-sizing: border-box;';
+                      'margin: 0; padding: 0; display: block;';
         
         $html .= '<div style="' . $inner_style . '">' . esc_html($text) . '</div>';
         $html .= '</div>';
