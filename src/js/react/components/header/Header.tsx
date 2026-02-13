@@ -1381,16 +1381,16 @@ export const Header = memo(function Header({
             // Créer une vraie ligne avec div interne de hauteur fixe
             let lineInnerStyle = "";
             if (lineStyle === "dashed") {
-              lineInnerStyle = `border-bottom: ${lineWidth}px dashed ${lineColor};`;
+              lineInnerStyle = `border-bottom: ${lineWidth}px dashed ${lineColor}; width: 100%; margin: auto 0;`;
             } else if (lineStyle === "dotted") {
-              lineInnerStyle = `border-bottom: ${lineWidth}px dotted ${lineColor};`;
+              lineInnerStyle = `border-bottom: ${lineWidth}px dotted ${lineColor}; width: 100%; margin: auto 0;`;
             } else {
               // Solid : background-color + height
-              lineInnerStyle = `background-color: ${lineColor}; height: ${lineWidth}px;`;
+              lineInnerStyle = `background-color: ${lineColor}; height: ${lineWidth}px; width: 100%; margin: auto 0;`;
             }
-            content = `<div style="width: 100%; ${lineInnerStyle}"></div>`;
+            content = `<div style="${lineInnerStyle}"></div>`;
 
-            // Centrer la ligne verticalement avec flexbox (comme dans Canvas: y = height/2)
+            // Conteneur flexible pour centrer verticalement (compatible HTML et PDF)
             styles += ` display: flex; align-items: center;`;
 
             // Padding/margin
