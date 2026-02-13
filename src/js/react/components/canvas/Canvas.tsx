@@ -1418,7 +1418,9 @@ const drawCustomerInfo = (
       lines.push(customerData.name);
     }
     if (showAddress) {
-      lines.push(customerData.address);
+      // Split par \n pour supporter les adresses multi-lignes (ex: adresse postale\npays)
+      const addressLines = customerData.address.split('\n');
+      addressLines.forEach(line => lines.push(line));
     }
     if (showEmail) {
       lines.push(customerData.email);
@@ -1442,8 +1444,8 @@ const drawCustomerInfo = (
     if (showFullName) line1 += customerData.name;
     if (showEmail) line1 += (line1 ? " | " : "") + customerData.email;
 
-    // Ligne 2: Adresse + Téléphone
-    if (showAddress) line2 += customerData.address;
+    // Ligne 2: Adresse + Téléphone (remplacer \n par , pour garder compact)
+    if (showAddress) line2 += customerData.address.replace(/\n/g, ', ');
     if (showPhone) line2 += (line2 ? " | " : "") + customerData.phone;
 
     // Ligne 3: Paiement + Transaction ID
@@ -1464,7 +1466,7 @@ const drawCustomerInfo = (
     // Reste des infos en mode compact
     let compactText = "";
     if (showAddress) {
-      compactText += customerData.address; // Adresse complète
+      compactText += customerData.address.replace(/\n/g, ', '); // Remplacer \n par , pour mode compact
     }
     if (showEmail) {
       compactText += (compactText ? " • " : "") + customerData.email;
