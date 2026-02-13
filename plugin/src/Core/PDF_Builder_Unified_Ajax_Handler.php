@@ -2539,23 +2539,17 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Optimiser le HTML avant le rendu
             $html = $this->optimize_html($html);
             
-            // Initialiser DOMPDF avec configuration optimale
-            $dompdf = $this->init_dompdf();
-            
-            $this->debug_log("Chargement HTML dans DOMPDF");
-            $dompdf->loadHtml($html);
-            
             // Configurer le format papier depuis le template
             $template_data = json_decode($template['template_data'], true);
-            list($width, $height, $orientation) = $this->configure_paper_size($dompdf, $template_data);
             
-            $this->debug_log("Rendu PDF en cours...");
-            $dompdf->render();
+            // Initialiser mPDF avec configuration optimale
+            $mpdf = $this->init_mpdf($template_data);
+            
+            $this->debug_log("Chargement HTML dans mPDF");
+            $mpdf->WriteHTML($html);
             
             $this->debug_log("Envoi du PDF au navigateur");
-            $dompdf->stream('facture-' . $order->get_order_number() . '.pdf', [
-                'Attachment' => false  // false = afficher dans le navigateur, true = télécharger
-            ]);
+            $mpdf->Output('facture-' . $order->get_order_number() . '.pdf', 'I'); // I = Inline (navigateur)
             exit;
         } catch (Exception $e) {
             $this->debug_log('Erreur génération PDF: ' . $e->getMessage(), "ERROR");
@@ -2652,15 +2646,13 @@ class PDF_Builder_Unified_Ajax_Handler {
                 try {
                     $this->debug_log("Tentative de génération avec Imagick (HTML → PDF → Image)");
                     
-                    // Étape 1: Générer le PDF avec DOMPDF (version optimisée)
-                    $dompdf = $this->init_dompdf();
-                    $dompdf->setPaper([0, 0, $width * 0.75, $height * 0.75], 'portrait');
-                    $dompdf->loadHtml($html);
-                    $dompdf->render();
+                    // Étape 1: Générer le PDF avec mPDF (version optimisée)
+                    $mpdf = $this->init_mpdf($template_data);
+                    $mpdf->WriteHTML($html);
                     
                     // Sauvegarder le PDF temporaire
                     $temp_pdf = $temp_dir . '/pdf-builder-' . uniqid() . '.pdf';
-                    file_put_contents($temp_pdf, $dompdf->output());
+                    $mpdf->Output($temp_pdf, 'F'); // F = File (sauvegarder sur disque)
                     
                     $this->debug_log("PDF généré: " . filesize($temp_pdf) . " octets");
                     
@@ -4550,6 +4542,49 @@ class PDF_Builder_Unified_Ajax_Handler {
      * 
      * @param array $custom_options Options personnalisées (optionnel)
      * @return \Dompdf\Dompdf Instance configurée
+     */
+    /**
+     * Initialise mPDF avec configuration optimale
+     * mPDF offre un meilleur support CSS que DOMPDF (line-height, etc.)
+     */
+    private function init_mpdf($template_data = []) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+        
+        // Dimensions par défaut : A4 @ 96 DPI (794×1123px) - cohérent avec React Canvas
+        $width = $template_data['canvasWidth'] ?? ($template_data['canvas']['width'] ?? 794);
+        $height = $template_data['canvasHeight'] ?? ($template_data['canvas']['height'] ?? 1123);
+        $orientation = ($width > $height) ? 'L' : 'P'; // L = Landscape, P = Portrait
+        
+        // Convertir pixels en millimètres (96 DPI: 1mm = 3.78px)
+        $width_mm = round($width / 3.78, 2);
+        $height_mm = round($height / 3.78, 2);
+        
+        // Configuration mPDF optimale
+        $config = [
+            'mode' => 'utf-8',
+            'format' => [$width_mm, $height_mm],
+            'orientation' => $orientation,
+            'margin_left' => 0,
+            'margin_right' => 0,
+            'margin_top' => 0,
+            'margin_bottom' => 0,
+            'margin_header' => 0,
+            'margin_footer' => 0,
+            'default_font' => 'dejavusans',
+            'fontDir' => [PDF_BUILDER_PLUGIN_DIR . 'vendor/mpdf/mpdf/ttfonts'],
+            'tempDir' => sys_get_temp_dir(),
+            'dpi' => 96, // Cohérent avec React Canvas
+            'img_dpi' => 96,
+        ];
+        
+        $this->debug_log("mPDF initialisé: {$width}x{$height}px ({$width_mm}x{$height_mm}mm), orientation: {$orientation}");
+        
+        return new \Mpdf\Mpdf($config);
+    }
+    
+    /**
+     * Fonction legacy pour compatibilité
+     * @deprecated Utiliser init_mpdf() à la place
      */
     private function init_dompdf($custom_options = []) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
