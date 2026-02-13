@@ -3068,18 +3068,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             left: 0;
         }
         .element {
-            position: absolute !important;
+            position: absolute;
             overflow: hidden;
             word-wrap: break-word;
             box-sizing: border-box;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-        /* Reset complet pour éviter tout héritage de styles */
-        div, span, p, img, table, tr, td, th {
-            margin: 0 !important;
-            padding: 0 !important;
-            border: 0;
         }
         table {
             border-collapse: collapse;
