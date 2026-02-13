@@ -3630,9 +3630,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             if ($compact_parts) $lines[] = implode(' • ', $compact_parts);
         }
         
-        // Styles du conteneur
+        // Styles du conteneur - nettoyer base_styles pour éviter conflits
+        $base_styles_clean = preg_replace('/padding:\s*[^;]+;/', '', $base_styles); // Retirer padding du base_styles
         $letter_spacing = $layout_props['letterSpacing'] ? " letter-spacing: {$layout_props['letterSpacing']}px;" : '';
-        $container_styles = $base_styles . 
+        $container_styles = $base_styles_clean . 
             "; padding: {$padding['vertical']}px {$padding['horizontal']}px;" .
             " text-align: {$layout_props['textAlign']};" .
             " color: {$colors['text']};" .
@@ -3666,7 +3667,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Génération HTML - margin-bottom comme gap React pour compatibilité DOMPDF
         $html = '<div class="element" style="' . $container_styles . '">';
         if ($show['headers']) {
-            $html .= '<div style="' . $header_style . '">Client</div>'; // "Client" comme React, pas "Informations Client"
+            $html .= '<div style="' . $header_style . '">Informations Client</div>';
         }
         // Chaque ligne avec margin-bottom (sauf dernière) = gap de React
         $total_lines = count($lines);
