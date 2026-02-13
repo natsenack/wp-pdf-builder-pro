@@ -3197,10 +3197,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             $css .= 'word-spacing: ' . $element['wordSpacing'] . '; ';
         }
         
-        // Line height
-        if (isset($element['lineHeight'])) {
-            $css .= 'line-height: ' . floatval($element['lineHeight']) . '; ';
-        }
+        // Line height - DOMPDF a des problèmes avec line-height direct
+        // Donc on ne l'ajoute pas ici, chaque élément spécifique le gère si besoin
+        // Ne pas ajouter: $css .= 'line-height: ' . floatval($element['lineHeight']) . '; ';
         
         // === ARRIÈRE-PLAN ET BORDURES ===
         // Background (respecter showBackground)
@@ -3268,7 +3267,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 return esc_html($order_data['order']['date_formatted']);
             case 'companyInfo':
                 // Info de l'entreprise depuis les settings
-                return '<div style="line-height: 1.6;">' .
+                return '<div>' .
                        '<strong>' . esc_html(get_bloginfo('name')) . '</strong><br>' .
                        esc_html(get_option('woocommerce_store_address', '')) . '<br>' .
                        esc_html(get_option('woocommerce_store_city', '')) .
@@ -4317,19 +4316,13 @@ class PDF_Builder_Unified_Ajax_Handler {
         error_log('[PDF Builder] Dynamic_Text base_styles APRÈS nettoyage: ' . substr($base_styles_clean, 0, 300));
         
         // Récupérer le line-height EXACT du JSON (string ou number)
-        $line_height_ratio = isset($element['lineHeight']) ? $element['lineHeight'] : '1.3';
+        $line_height_ratio = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.3;
         
-        // Calculer le lineHeight en pixels pour Dompdf (plus précis que le ratio)
-        $font_size = isset($element['fontSize']) ? (is_numeric($element['fontSize']) ? $element['fontSize'] : 14) : 14;
-        $line_height_px = ($font_size * floatval($line_height_ratio)) . 'px';
+        // Calculer le marginBottom pour DOMPDF (qui ne supporte pas bien line-height)
+        $font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 14;
+        $margin_bottom = ($line_height_ratio - 1) * $font_size;
         
-        error_log('[PDF Builder] Dynamic_Text lineHeight ratio: ' . $line_height_ratio . ', fontSize: ' . $font_size . 'px, lineHeight calculé: ' . $line_height_px);
-        
-        // FORCER line-height: 1.1 pour Dompdf (espacement minimal optimisé)
-        // Dompdf ajoute trop d'espacement avec des valeurs en pixels
-        $dompdf_line_height = '1.1';
-        
-        error_log('[PDF Builder] Dynamic_Text FORÇAGE line-height pour Dompdf: ' . $dompdf_line_height . ' (au lieu de ' . $line_height_px . ')');
+        error_log('[PDF Builder] Dynamic_Text lineHeight ratio: ' . $line_height_ratio . ', fontSize: ' . $font_size . 'px, marginBottom calculé: ' . $margin_bottom . 'px');
         
         // Extraire les propriétés de positionnement (pour le conteneur) et de texte (pour le contenu)
         preg_match('/left:\s*[^;]+;/', $base_styles_clean, $left_match);
@@ -4367,15 +4360,14 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Le div extérieur est UNIQUEMENT un conteneur positionné
         $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
         
-        // Le div intérieur contient le texte avec TOUTES les propriétés de texte
-        // white-space: pre-line pour préserver les sauts de ligne (pas nl2br)
-        // line-height: 1 pour forcer aucun espacement supplémentaire dans Dompdf
-        $inner_style = 'white-space: pre-line; ' . 
-                      'line-height: ' . $dompdf_line_height . '; ' . 
-                      $text_styles . ' ' .
-                      'margin: 0; padding: 0; display: block; box-sizing: border-box;';
+        // Traiter le texte ligne par ligne pour appliquer le margin-bottom
+        // Cela gère correctement le line-height pour DOMPDF
+        $lines = explode("\n", $text);
+        $inner_style = 'margin: 0 0 ' . $margin_bottom . 'px 0; padding: 0; display: block; box-sizing: border-box;' . $text_styles;
         
-        $html .= '<div style="' . $inner_style . '">' . esc_html($text) . '</div>';
+        foreach ($lines as $line) {
+            $html .= '<div style="' . $inner_style . '">' . esc_html($line) . '</div>';
+        }
         $html .= '</div>';
         
         return $html;
@@ -4434,13 +4426,13 @@ class PDF_Builder_Unified_Ajax_Handler {
         error_log('[PDF Builder] Mentions base_styles APRÈS nettoyage: ' . substr($base_styles_clean, 0, 200));
         
         // Récupérer le line-height EXACT du JSON (string ou number)
-        $line_height_ratio = isset($element['lineHeight']) ? $element['lineHeight'] : '1.2';
+        $line_height_ratio = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.2;
         
-        // Calculer le lineHeight en pixels pour Dompdf (plus précis que le ratio)
-        $font_size = isset($element['fontSize']) ? (is_numeric($element['fontSize']) ? $element['fontSize'] : 10) : 10;
-        $line_height_px = ($font_size * floatval($line_height_ratio)) . 'px';
+        // Calculer le marginBottom pour DOMPDF (qui ne supporte pas bien line-height)
+        $font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 10;
+        $margin_bottom = ($line_height_ratio - 1) * $font_size;
         
-        error_log('[PDF Builder] Mentions lineHeight ratio: ' . $line_height_ratio . ', fontSize: ' . $font_size . 'px, lineHeight calculé: ' . $line_height_px);
+        error_log('[PDF Builder] Mentions lineHeight ratio: ' . $line_height_ratio . ', fontSize: ' . $font_size . 'px, marginBottom calculé: ' . $margin_bottom . 'px');
         
         // Extraire les propriétés de positionnement (pour le conteneur) et de texte (pour le contenu)
         // On garde UNIQUEMENT position, left, top, width, height sur le conteneur
@@ -4497,13 +4489,13 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Le div intérieur contient le texte avec TOUTES les propriétés de texte
-        // white-space: pre-line pour préserver les sauts de ligne
-        $inner_style = 'white-space: pre-line; ' . 
-                      'line-height: ' . $line_height_px . '; ' . 
-                      $text_styles . ' ' .
-                      'margin: 0; padding: 0; display: block; box-sizing: border-box;';
+        // Traiter le texte ligne par ligne pour appliquer le margin-bottom (gère le line-height pour DOMPDF)
+        $lines = explode("\n", $text);
+        $inner_style = 'margin: 0 0 ' . $margin_bottom . 'px 0; padding: 0; display: block; box-sizing: border-box;' . $text_styles;
         
-        $html .= '<div style="' . $inner_style . '">' . esc_html($text) . '</div>';
+        foreach ($lines as $line) {
+            $html .= '<div style="' . $inner_style . '">' . esc_html($line) . '</div>';
+        }
         $html .= '</div>';
         
         return $html;
