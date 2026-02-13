@@ -3632,21 +3632,24 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Style header
-        $header_style = "color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; line-height: 1.2; margin-bottom: 8px;";
+        $header_style = "color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; margin-bottom: 8px;";
         
-        // Récupérer le line-height value pour l'appliquer directement sur les divs enfants
+        // Récupérer le line-height value et calculer l'espacement en pixels (meilleur pour DOMPDF que line-height)
         $lineHeightValue = floatval($layout_props['lineHeight']);
-        
-        // Style pour chaque ligne - appliquer line-height DIRECTEMENT (pas sur le conteneur)
-        $line_style = "margin: 0; padding: 0; line-height: {$lineHeightValue};";
+        $line_spacing = ($lineHeightValue - 1) * $body_font['size'];
         
         // Génération HTML avec div pour chaque ligne
         $html = '<div class="element" style="' . $container_styles . '">';
         if ($show['headers']) {
             $html .= '<div style="' . $header_style . '">Informations Client</div>';
         }
-        // Générer chaque ligne dans un div séparé pour un rendu correct
-        foreach ($lines as $line) {
+        // Générer chaque ligne dans un div séparé avec margin-bottom calculé
+        $line_count = count($lines);
+        for ($i = 0; $i < $line_count; $i++) {
+            $line = $lines[$i];
+            // margin-bottom sur toutes les lignes sauf la dernière
+            $margin_style = ($i < $line_count - 1) ? " margin-bottom: {$line_spacing}px;" : ' margin-bottom: 0;';
+            $line_style = "margin: 0; padding: 0;{$margin_style}";
             $html .= '<div style="' . $line_style . '">' . $line . '</div>';
         }
         $html .= '</div>';
@@ -3799,11 +3802,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Style pour <strong>
         $strong_style = "color: {$colors['header']}; font-weight: bold;";
         
-        // Récupérer le line-height value pour l'appliquer directement sur les divs enfants
+        // Récupérer le line-height value et calculer l'espacement en pixels (meilleur pour DOMPDF que line-height)
         $lineHeightValue = floatval($layout_props['lineHeight']);
-        
-        // Style pour chaque ligne - appliquer line-height DIRECTEMENT (pas sur le conteneur)
-        $line_style = "margin: 0; padding: 0; line-height: {$lineHeightValue};";
+        $line_spacing = ($lineHeightValue - 1) * $body_font['size'];
         
         // Traiter les lignes pour ajouter les styles aux balises <strong>
         $processedLines = array_map(function($line) use ($strong_style) {
@@ -3813,8 +3814,13 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Générer le HTML avec div pour chaque ligne
         $html = '<div class="element" style="' . $container_styles . '">';
-        // Générer chaque ligne dans un div séparé pour un rendu correct
-        foreach ($processedLines as $line) {
+        // Générer chaque ligne avec margin-bottom calculé
+        $line_count = count($processedLines);
+        for ($i = 0; $i < $line_count; $i++) {
+            $line = $processedLines[$i];
+            // margin-bottom sur toutes les lignes sauf la dernière
+            $margin_style = ($i < $line_count - 1) ? " margin-bottom: {$line_spacing}px;" : ' margin-bottom: 0;';
+            $line_style = "margin: 0; padding: 0;{$margin_style}";
             $html .= '<div style="' . $line_style . '">' . $line . '</div>';
         }
         $html .= '</div>';
@@ -4346,19 +4352,20 @@ class PDF_Builder_Unified_Ajax_Handler {
     private function render_dynamic_text($element, $order_data, $base_styles) {
         $text = $element['text'] ?? $element['textTemplate'] ?? 'Signature du client';
         
-        // DEBUG: Logs pour dynamic_text
-        error_log('[PDF Builder] Dynamic_Text lineHeight from JSON: ' . ($element['lineHeight'] ?? 'NOT SET'));
-        error_log('[PDF Builder] Dynamic_Text base_styles AVANT: ' . substr($base_styles, 0, 300));
-        
-        // Supprimer le line-height du base_styles car on va le gérer spécifiquement
+        // Supprimer le line-height du base_styles
         $base_styles_clean = preg_replace('/line-height:\s*[^;]+;/', '', $base_styles);
         
-        error_log('[PDF Builder] Dynamic_Text base_styles APRÈS nettoyage: ' . substr($base_styles_clean, 0, 300));
-        
-        // Récupérer le line-height EXACT du JSON (string ou number)
+        // Récupérer le line-height ratio et font-size pour calculer l'espacement
         $line_height_ratio = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.3;
         
-        error_log('[PDF Builder] Dynamic_Text lineHeight ratio: ' . $line_height_ratio);
+        // Extraire font-size du base_styles
+        $font_size = 14; // défaut
+        if (preg_match('/font-size:\s*(\d+(?:\.\d+)?)px;/', $base_styles_clean, $matches)) {
+            $font_size = floatval($matches[1]);
+        }
+        
+        // Calculer l'espacement entre les lignes (DOMPDF n'aime pas line-height, on utilise margin-bottom)
+        $line_spacing = ($line_height_ratio - 1) * $font_size;
         
         // Extraire les propriétés de positionnement (pour le conteneur) et de texte (pour le contenu)
         preg_match('/left:\s*[^;]+;/', $base_styles_clean, $left_match);
@@ -4393,16 +4400,21 @@ class PDF_Builder_Unified_Ajax_Handler {
                       ($text_transform_match[0] ?? '') . ' ' .
                       ($letter_spacing_match[0] ?? '');
         
-        // Le div extérieur est UNIQUEMENT un conteneur positionné (sans line-height)
+        // Le div extérieur est UNIQUEMENT un conteneur positionné
         $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
         
-        // Traiter le texte ligne par ligne - appliquer line-height DIRECTEMENT sur chaque div enfant (pas sur le parent)
+        // Traiter le texte ligne par ligne avec margin-bottom calculé (meilleure compatibilité DOMPDF)
         $lines = explode("\n", $text);
-        $inner_style = 'margin: 0; padding: 0; display: block; box-sizing: border-box; line-height: ' . $line_height_ratio . ';' . $text_styles;
+        $line_count = count($lines);
         
-        foreach ($lines as $line) {
+        for ($i = 0; $i < $line_count; $i++) {
+            $line = $lines[$i];
+            // Ajouter margin-bottom sur toutes les lignes sauf la dernière
+            $margin_style = ($i < $line_count - 1) ? " margin-bottom: {$line_spacing}px;" : ' margin-bottom: 0;';
+            $inner_style = 'margin: 0; padding: 0; display: block; box-sizing: border-box;' . $margin_style . $text_styles;
             $html .= '<div style="' . $inner_style . '">' . esc_html($line) . '</div>';
         }
+        
         $html .= '</div>';
         
         return $html;
