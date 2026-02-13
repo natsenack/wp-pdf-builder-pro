@@ -1223,7 +1223,11 @@ export const Header = memo(function Header({
             const globalStylesText = buildGlobalStyles(element);
             if (globalStylesText) styles += ` ${globalStylesText}`;
 
-            // Ajouter margin/border uniquement s'ils sont spécifiés
+            // Ajouter padding/margin/border uniquement s'ils sont spécifiés
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            }
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
@@ -1259,7 +1263,11 @@ export const Header = memo(function Header({
             // Appliquer styles globaux (font properties)
             const globalStylesDoc = buildGlobalStyles(element);
             if (globalStylesDoc) styles += ` ${globalStylesDoc}`;
-            // Margin/border uniquement si spécifiés
+            // Padding/margin/border uniquement si spécifiés
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            }
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
@@ -1313,7 +1321,11 @@ export const Header = memo(function Header({
             if (element.contentAlign) {
               styles += ` text-align: ${element.contentAlign};`;
             }
-            // Margin/border
+            // Padding/margin/border
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            }
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
@@ -1340,7 +1352,11 @@ export const Header = memo(function Header({
             } else {
               content = "📦";
             }
-            // Margin/border pour le conteneur
+            // Padding/margin/border pour le conteneur
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            }
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
@@ -1377,7 +1393,11 @@ export const Header = memo(function Header({
             // Conteneur flexible pour centrer verticalement (compatible HTML et PDF)
             styles += ` display: flex; align-items: center;`;
 
-            // Margin
+            // Padding/margin
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            }
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
@@ -1627,7 +1647,11 @@ export const Header = memo(function Header({
               content = tableHTML;
             }
 
-            // Ajouter styles de margin/border si présents
+            // Ajouter styles de padding/margin/border si présents
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            }
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
@@ -2153,6 +2177,14 @@ export const Header = memo(function Header({
                 styles += ` box-shadow: ${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px ${shadowColor};`;
               }
 
+              // Padding depuis JSON (peut être nombre ou objet {top, right, bottom, left})
+              if (element.padding) {
+                const paddingStr = buildSpacing(element.padding);
+                if (paddingStr) styles += ` padding: ${paddingStr};`;
+              } else {
+                styles += ` padding: 8px;`;
+              }
+
               // Margin depuis JSON
               if (element.margin) {
                 const marginStr = buildSpacing(element.margin);
@@ -2248,6 +2280,14 @@ export const Header = memo(function Header({
               element.showBackground !== false
             ) {
               styles += ` background-color: ${element.backgroundColor};`;
+            }
+
+            // Padding depuis JSON (peut être nombre ou objet)
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            } else {
+              styles += ` padding: 8px;`;
             }
 
             // Margin depuis JSON
@@ -2352,6 +2392,12 @@ export const Header = memo(function Header({
             const globalStylesMentions = buildGlobalStyles(element);
             if (globalStylesMentions) styles += ` ${globalStylesMentions}`;
 
+            // Padding depuis JSON
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            }
+
             // Margin depuis JSON
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
@@ -2446,7 +2492,11 @@ export const Header = memo(function Header({
             if (element.contentAlign) {
               styles += ` text-align: ${element.contentAlign};`;
             }
-            // Margin/border
+            // Padding/margin/border
+            if (element.padding) {
+              const paddingStr = buildSpacing(element.padding);
+              if (paddingStr) styles += ` padding: ${paddingStr};`;
+            }
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
