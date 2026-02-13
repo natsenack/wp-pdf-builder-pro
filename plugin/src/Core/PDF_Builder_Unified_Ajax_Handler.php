@@ -2536,20 +2536,28 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html = $this->generate_template_html($template, $order, 'pdf');
             $this->debug_log("HTML généré - Longueur: " . strlen($html) . " caractères");
 
-            // Optimiser le HTML avant le rendu
+            // Optimiser l'HTML avant le rendu
             $html = $this->optimize_html($html);
             
             // Configurer le format papier depuis le template
             $template_data = json_decode($template['template_data'], true);
             
-            // Initialiser mPDF avec configuration optimale
-            $mpdf = $this->init_mpdf($template_data);
+            // Initialiser DOMPDF avec configuration optimale
+            $dompdf = $this->init_dompdf();
             
-            $this->debug_log("Chargement HTML dans mPDF");
-            $mpdf->WriteHTML($html);
+            $this->debug_log("Chargement HTML dans DOMPDF");
+            $dompdf->loadHtml($html);
+            
+            // Configurer le format papier
+            list($width, $height, $orientation) = $this->configure_paper_size($dompdf, $template_data);
+            
+            $this->debug_log("Rendu PDF en cours...");
+            $dompdf->render();
             
             $this->debug_log("Envoi du PDF au navigateur");
-            $mpdf->Output('facture-' . $order->get_order_number() . '.pdf', 'I'); // I = Inline (navigateur)
+            $dompdf->stream('facture-' . $order->get_order_number() . '.pdf', [
+                'Attachment' => false  // false = afficher dans le navigateur, true = télécharger
+            ]);
             exit;
         } catch (Exception $e) {
             $this->debug_log('Erreur génération PDF: ' . $e->getMessage(), "ERROR");
@@ -2646,13 +2654,15 @@ class PDF_Builder_Unified_Ajax_Handler {
                 try {
                     $this->debug_log("Tentative de génération avec Imagick (HTML → PDF → Image)");
                     
-                    // Étape 1: Générer le PDF avec mPDF (version optimisée)
-                    $mpdf = $this->init_mpdf($template_data);
-                    $mpdf->WriteHTML($html);
+                    // Étape 1: Générer le PDF avec DOMPDF (version optimisée)
+                    $dompdf = $this->init_dompdf();
+                    $dompdf->setPaper([0, 0, $width * 0.75, $height * 0.75], 'portrait');
+                    $dompdf->loadHtml($html);
+                    $dompdf->render();
                     
                     // Sauvegarder le PDF temporaire
                     $temp_pdf = $temp_dir . '/pdf-builder-' . uniqid() . '.pdf';
-                    $mpdf->Output($temp_pdf, 'F'); // F = File (sauvegarder sur disque)
+                    file_put_contents($temp_pdf, $dompdf->output());
                     
                     $this->debug_log("PDF généré: " . filesize($temp_pdf) . " octets");
                     
@@ -4537,13 +4547,41 @@ class PDF_Builder_Unified_Ajax_Handler {
 
     /**
      * Initialise DOMPDF avec une configuration optimale et cohérente
-     * 
-     * @param array $custom_options Options personnalisées (optionnel)
-     * @return \Dompdf\Dompdf Instance configurée
-     */
     /**
-     * Initialise mPDF avec configuration optimale
+     * Initialise DOMPDF avec configuration optimale
+     * DOMPDF est le système principal - compatible avec tous les hébergements WordPress
+     */
+    private function init_dompdf($custom_options = []) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
+        
+        // Configuration par défaut optimale
+        $default_options = [
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => true,
+            'defaultFont' => 'DejaVu Sans',
+            'fontHeightRatio' => 1.1,
+            'isUnicode' => true,
+            'enable_font_subsetting' => false,
+            'defaultPaperSize' => 'A4',
+            'dpi' => 96, // Cohérent avec React Canvas (96 DPI)
+            'enable_php' => false, // Sécurité
+            'enable_javascript' => false, // Sécurité
+            'enable_remote' => true, // Pour charger des images distantes
+            'chroot' => ABSPATH, // Limite au répertoire WordPress
+        ];
+        
+        // Fusion avec options personnalisées
+        $options = array_merge($default_options, $custom_options);
+        
+        $this->debug_log("DOMPDF initialisé avec options: " . json_encode($options));
+        
+        return new \Dompdf\Dompdf($options);
+    }
+    
+    /**
+     * Initialise mPDF avec configuration optimale (optionnel/fallback)
      * mPDF offre un meilleur support CSS que DOMPDF (line-height, etc.)
+     * @deprecated Utiliser init_dompdf() à la place (mPDF nécessite dépendance supplémentaire)
      */
     private function init_mpdf($template_data = []) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
@@ -4578,37 +4616,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         $this->debug_log("mPDF initialisé: {$width}x{$height}px ({$width_mm}x{$height_mm}mm), orientation: {$orientation}");
         
         return new \Mpdf\Mpdf($config);
-    }
-    
-    /**
-     * Fonction legacy pour compatibilité
-     * @deprecated Utiliser init_mpdf() à la place
-     */
-    private function init_dompdf($custom_options = []) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
-        
-        // Configuration par défaut optimale
-        $default_options = [
-            'isHtml5ParserEnabled' => true,
-            'isRemoteEnabled' => true,
-            'defaultFont' => 'DejaVu Sans',
-            'fontHeightRatio' => 1.1,
-            'isUnicode' => true,
-            'enable_font_subsetting' => false,
-            'defaultPaperSize' => 'A4',
-            'dpi' => 96, // Cohérent avec React Canvas (96 DPI)
-            'enable_php' => false, // Sécurité
-            'enable_javascript' => false, // Sécurité
-            'enable_remote' => true, // Pour charger des images distantes
-            'chroot' => ABSPATH, // Limite au répertoire WordPress
-        ];
-        
-        // Fusion avec options personnalisées
-        $options = array_merge($default_options, $custom_options);
-        
-        $this->debug_log("DOMPDF initialisé avec options: " . json_encode($options));
-        
-        return new \Dompdf\Dompdf($options);
     }
 
     /**
