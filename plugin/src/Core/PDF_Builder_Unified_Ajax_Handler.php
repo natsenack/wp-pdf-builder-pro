@@ -3634,21 +3634,25 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Style header
         $header_style = "color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; margin-bottom: 8px;";
         
-        // Récupérer le line-height value pour calculer le gap (COMME REACT)
+        // Récupérer le fontSize GLOBAL du conteneur (element.fontSize) pour calculer le gap (COMME REACT)
+        $container_font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
         $lineHeightValue = floatval($layout_props['lineHeight']);
-        $gap = round(($lineHeightValue - 1) * $body_font['size']); // Même calcul que React
+        $gap = round($container_font_size * ($lineHeightValue - 1)); // EXACTEMENT comme React
         
         // Ajouter le gap flexbox au conteneur (COMME REACT)
         $container_styles .= " gap: {$gap}px;";
         
+        // Styles pour chaque ligne de body (COMME REACT)
+        $line_style = "font-size: {$body_font['size']}px; font-family: {$body_font['family']}; font-weight: {$body_font['weight']}; font-style: {$body_font['style']}; color: {$colors['text']}; margin: 0; padding: 0;";
+        
         // Génération HTML avec flexbox gap (COMME REACT - pas de <br>)
         $html = '<div class="element" style="' . $container_styles . '">';
         if ($show['headers']) {
-            $html .= '<div style="' . $header_style . '">Informations Client</div>';
+            $html .= '<div style="' . $header_style . '">Client</div>'; // "Client" comme React, pas "Informations Client"
         }
-        // Chaque ligne dans un div séparé, gap gère l'espacement
+        // Chaque ligne dans un div avec styles complets (COMME REACT)
         foreach ($lines as $line) {
-            $html .= '<div style="margin: 0; padding: 0;">' . $line . '</div>';
+            $html .= '<div style="' . $line_style . '">' . $line . '</div>';
         }
         $html .= '</div>';
         
@@ -3800,26 +3804,36 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Style pour <strong>
         $strong_style = "color: {$colors['header']}; font-weight: bold;";
         
-        // Récupérer le line-height value pour calculer le gap (COMME REACT)
-        $lineHeightValue = floatval($layout_props['lineHeight']);
-        $gap = round(($lineHeightValue - 1) * $body_font['size']); // Même calcul que React
-        
-        // Ajouter le gap flexbox au conteneur (COMME REACT)
-        $container_styles .= " gap: {$gap}px;";
-        
         // Traiter les lignes pour ajouter les styles aux balises <strong>
         $processedLines = array_map(function($line) use ($strong_style) {
             // Remplacer <strong> par <strong style="...">
             return preg_replace('/<strong>/', '<strong style="' . $strong_style . '">', $line);
         }, $lines);
         
-        // Génération HTML avec flexbox gap (COMME REACT - pas de <br>)
+        // Gap calculation - EXACTEMENT COMME REACT
+        // Mode vertical: gap calculé basé sur fontSize et lineHeight
+        // Modes horizontal/compact: gap hardcodé à 4px
+        if ($layout_props['layout'] === 'vertical') {
+            $container_font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
+            $lineHeightValue = floatval($layout_props['lineHeight']);
+            $gap = round($container_font_size * ($lineHeightValue - 1));
+        } else {
+            // horizontal ou compact
+            $gap = 4; // Hardcodé comme dans React
+        }
+        
+        // Créer un wrapper interne avec le gap - EXACTEMENT COMME REACT
+        // React: companyContent = `<div style="display: flex; flex-direction: column; gap: ${gap}px;">${parts.join("")}</div>`
+        $content_wrapper_style = "display: flex; flex-direction: column; gap: {$gap}px;";
+        
+        // Génération HTML - STRUCTURE IDENTIQUE À REACT
         $html = '<div class="element" style="' . $container_styles . '">';
-        // Chaque ligne dans un div séparé, gap gère l'espacement
+        $html .= '<div style="' . $content_wrapper_style . '">';
         foreach ($processedLines as $line) {
             $html .= '<div style="margin: 0; padding: 0;">' . $line . '</div>';
         }
-        $html .= '</div>';
+        $html .= '</div>'; // Fermer content wrapper
+        $html .= '</div>'; // Fermer element container
         return $html;
     }
     
