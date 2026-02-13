@@ -3128,29 +3128,9 @@ export const Canvas = function Canvas({
                 }
             }
 
-            // Calculer la position horizontale selon l'alignement
-            const horizontalAlign = element.horizontalAlign || element.alignment || "left";
-            let baseX = 0;
-            if (horizontalAlign === "center") {
-              baseX = (containerWidth - logoWidth) / 2;
-            } else if (horizontalAlign === "right") {
-              baseX = containerWidth - logoWidth;
-            }
-            // Pour "left", baseX reste à 0
-
-            // Calculer la position verticale selon l'alignement
-            const verticalAlign = element.verticalAlign || "center";
-            let baseY = 0;
-            if (verticalAlign === "center") {
-              baseY = (containerHeight - logoHeight) / 2;
-            } else if (verticalAlign === "bottom") {
-              baseY = containerHeight - logoHeight;
-            }
-            // Pour "top", baseY reste à 0
-
-            // Position finale de l'image
-            const imageX = baseX;
-            const imageY = baseY;
+            // Centrer l'image dans le conteneur
+            const imageX = (containerWidth - logoWidth) / 2;
+            const imageY = (containerHeight - logoHeight) / 2;
 
             // Appliquer l'opacité
             if (opacity < 1) {
@@ -3191,35 +3171,6 @@ export const Canvas = function Canvas({
             // Réinitialiser l'opacité
             if (opacity < 1) {
               ctx.globalAlpha = 1.0;
-            }
-
-            // Dessiner la bordure sur l'image si showBorder est activé
-            const showBorder = props.showBorder ?? false;
-            const borderColor = props.borderColor || "#e5e7eb";
-            const borderWidth = props.borderWidth || 1;
-            const borderPadding = props.borderPadding || 0;
-            
-            if (showBorder && borderWidth > 0) {
-              ctx.save();
-              ctx.strokeStyle = normalizeColor(borderColor);
-              ctx.lineWidth = borderWidth;
-              
-              // Appliquer le padding à la bordure
-              const borderX = imageX - borderPadding;
-              const borderY = imageY - borderPadding;
-              const borderW = logoWidth + (borderPadding * 2);
-              const borderH = logoHeight + (borderPadding * 2);
-              
-              if (borderRadius > 0) {
-                // Si borderRadius, dessiner un rectangle arrondi sur l'image
-                ctx.beginPath();
-                roundedRect(ctx, borderX, borderY, borderW, borderH, borderRadius);
-                ctx.stroke();
-              } else {
-                // Rectangle simple sur l'image
-                ctx.strokeRect(borderX, borderY, borderW, borderH);
-              }
-              ctx.restore();
             }
 
             // Le contexte a déjà été restauré ci-dessus

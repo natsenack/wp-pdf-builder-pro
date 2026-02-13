@@ -3852,14 +3852,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Propriétés de style
         $object_fit = $element['objectFit'] ?? 'contain';
-        $horizontal_align = $element['horizontalAlign'] ?? $element['alignment'] ?? 'left';
-        $vertical_align = $element['verticalAlign'] ?? 'center';
         $opacity = isset($element['opacity']) ? floatval($element['opacity']) : 1;
         $border_radius = isset($element['borderRadius']) ? intval($element['borderRadius']) : 0;
-        $show_border = $element['showBorder'] ?? false;
-        $border_color = $element['borderColor'] ?? '#e5e7eb';
-        $border_width = isset($element['borderWidth']) ? intval($element['borderWidth']) : 1;
-        $border_padding = isset($element['borderPadding']) ? intval($element['borderPadding']) : 0;
         $background_color = $element['backgroundColor'] ?? 'transparent';
         
         // Convertir l'image en base64 pour compatibilité Dompdf
@@ -3868,18 +3862,15 @@ class PDF_Builder_Unified_Ajax_Handler {
             $src = $image_data;
         }
         
-        // IMPORTANT: Retirer les styles de bordure de $base_styles car on les gère manuellement
-        // La bordure doit uniquement être sur l'image, pas sur le conteneur
+        // IMPORTANT: Retirer les styles de bordure de $base_styles
         $base_styles = preg_replace('/\s*border[^;]*;/', '', $base_styles);
         $base_styles = preg_replace('/\s*border-radius[^;]*;/', '', $base_styles);
         
-        // Obtenir les dimensions naturelles de l'image (approximation si pas disponibles)
-        // Pour une vraie cohérence, il faudrait lire les dimensions réelles
-        // Ici on suppose un ratio 1:1 par défaut (peut être amélioré)
-        $image_natural_width = 512; // Valeur par défaut
+        // Obtenir les dimensions naturelles de l'image (approximation)
+        $image_natural_width = 512;
         $image_natural_height = 512;
         
-        // Calculer les dimensions de l'image rendue selon objectFit (comme React)
+        // Calculer les dimensions de l'image rendue selon objectFit
         $container_aspect = $container_width / $container_height;
         $image_aspect = $image_natural_width / $image_natural_height;
         
@@ -3918,12 +3909,10 @@ class PDF_Builder_Unified_Ajax_Handler {
                 break;
             
             case 'scale-down':
-                // Taille originale ou contain, selon le plus petit
                 if ($image_natural_width <= $container_width && $image_natural_height <= $container_height) {
                     $logo_width = $image_natural_width;
                     $logo_height = $image_natural_height;
                 } else {
-                    // Utiliser contain
                     if ($container_aspect > $image_aspect) {
                         $logo_height = $container_height;
                         $logo_width = $logo_height * $image_aspect;
@@ -3935,7 +3924,6 @@ class PDF_Builder_Unified_Ajax_Handler {
                 break;
             
             default:
-                // Par défaut contain
                 if ($container_aspect > $image_aspect) {
                     $logo_height = $container_height;
                     $logo_width = $logo_height * $image_aspect;
@@ -3945,45 +3933,19 @@ class PDF_Builder_Unified_Ajax_Handler {
                 }
         }
         
-        // Calculer la position selon l'alignement (comme React)
-        $base_x = 0;
-        switch ($horizontal_align) {
-            case 'center':
-                $base_x = ($container_width - $logo_width) / 2;
-                break;
-            case 'right':
-                $base_x = $container_width - $logo_width;
-                break;
-            case 'left':
-            default:
-                $base_x = 0;
-                break;
-        }
-        
-        $base_y = 0;
-        switch ($vertical_align) {
-            case 'center':
-                $base_y = ($container_height - $logo_height) / 2;
-                break;
-            case 'bottom':
-                $base_y = $container_height - $logo_height;
-                break;
-            case 'top':
-            default:
-                $base_y = 0;
-                break;
-        }
+        // Centrer l'image dans le conteneur
+        $base_x = ($container_width - $logo_width) / 2;
+        $base_y = ($container_height - $logo_height) / 2;
         
         // Styles du conteneur externe
         $outer_div_styles = $base_styles;
         if ($background_color !== 'transparent') {
             $outer_div_styles .= ' background-color: ' . esc_attr($background_color) . ';';
         }
-        $outer_div_styles .= ' overflow: hidden;'; // Pour respecter les limites
+        $outer_div_styles .= ' overflow: hidden;';
         $outer_div_styles .= ' box-sizing: border-box;';
         
-        // Utiliser padding pour créer les offsets (au lieu de position absolute)
-        // Cela permet un positionnement compatible Dompdf
+        // Utiliser padding pour créer les offsets
         $outer_div_styles .= ' padding-left: ' . round($base_x, 2) . 'px;';
         $outer_div_styles .= ' padding-top: ' . round($base_y, 2) . 'px;';
         $outer_div_styles .= ' padding-right: ' . round($container_width - $logo_width - $base_x, 2) . 'px;';
@@ -4004,27 +3966,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             $img_styles .= ' opacity: ' . esc_attr($opacity) . ';';
         }
         
-        // BorderRadius sur l'image si pas de bordure
-        if ($border_radius > 0 && !$show_border) {
+        // BorderRadius sur l'image
+        if ($border_radius > 0) {
             $img_styles .= ' border-radius: ' . esc_attr($border_radius) . 'px;';
         }
         
-        // Bordure et padding
-        if ($show_border && $border_width > 0) {
-            $wrapper_styles .= ' border: ' . esc_attr($border_width) . 'px solid ' . esc_attr($border_color) . ';';
-            
-            if ($border_radius > 0) {
-                $wrapper_styles .= ' border-radius: ' . esc_attr($border_radius) . 'px;';
-            }
-            
-            if ($border_padding > 0) {
-                $wrapper_styles .= ' padding: ' . esc_attr($border_padding) . 'px;';
-            }
-            
-            $wrapper_styles .= ' box-sizing: border-box;';
-        }
-        
-        // Rendu : conteneur + wrapper positionné + image
+        // Rendu : conteneur + wrapper + image
         return '<div class="element" style="' . $outer_div_styles . '">
                 <div style="' . $wrapper_styles . '">
                     <img src="' . esc_attr($src) . '" style="' . $img_styles . '" />

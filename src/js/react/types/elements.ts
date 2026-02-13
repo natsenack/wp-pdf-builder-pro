@@ -963,15 +963,9 @@ export interface CompanyLogoElement extends BaseElement {
     | "bottom-right";
   opacity?: number;
   alignment?: "left" | "center" | "right";
-  horizontalAlign?: "left" | "center" | "right";
-  verticalAlign?: "top" | "center" | "bottom";
   maintainAspectRatio?: boolean;
   borderRadius?: number;
   objectFit?: string;
-  showBorder?: boolean;
-  borderColor?: string;
-  borderWidth?: number;
-  borderPadding?: number;
   backgroundColor?: string;
 }
 
