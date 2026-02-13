@@ -3866,31 +3866,18 @@ class PDF_Builder_Unified_Ajax_Handler {
             $src = $image_data;
         }
         
-        // Dimensions du conteneur interne (avec marges de 10px comme React)
-        $container_width = $width - 20;
-        $container_height = $height - 20;
-        
-        // Styles du conteneur externe
+        // Styles du conteneur externe - SANS BORDURE pour éviter les doublons
         $outer_div_styles = $base_styles;
+        // Forcer l'absence de bordure sur le conteneur (la bordure sera uniquement sur l'image)
+        $outer_div_styles .= ' border: none !important;';
         if ($background_color !== 'transparent') {
             $outer_div_styles .= ' background-color: ' . esc_attr($background_color) . ';';
         }
-        // Assurer overflow: hidden pour le border-radius si nécessaire
-        if ($border_radius > 0) {
-            $outer_div_styles .= ' overflow: hidden;';
-        }
-        
-        // Styles du conteneur interne
-        $inner_div_styles = 'position: relative;';
-        $inner_div_styles .= ' width: ' . $container_width . 'px;';
-        $inner_div_styles .= ' height: ' . $container_height . 'px;';
-        $inner_div_styles .= ' margin: 10px;';
         
         // Styles de l'image selon object-fit
         $img_styles = '';
         
         // Pour Dompdf, on utilise une approche simplifiée
-        // car il ne supporte pas bien object-fit, transform, etc.
         switch ($object_fit) {
             case 'cover':
                 // L'image couvre tout le conteneur
@@ -3903,9 +3890,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                 break;
             
             case 'none':
-                // Taille originale, centrée (approximation)
-                $img_styles .= ' max-width: ' . $container_width . 'px;';
-                $img_styles .= ' max-height: ' . $container_height . 'px;';
+                // Taille originale, centrée
+                $img_styles .= ' max-width: ' . $width . 'px;';
+                $img_styles .= ' max-height: ' . $height . 'px;';
                 break;
             
             case 'contain':
@@ -3932,22 +3919,21 @@ class PDF_Builder_Unified_Ajax_Handler {
             $img_styles .= ' opacity: ' . esc_attr($opacity) . ';';
         }
         
-        // Border radius (sur l'image)
+        // Border radius (sur l'image uniquement)
         if ($border_radius > 0) {
             $img_styles .= ' border-radius: ' . esc_attr($border_radius) . 'px;';
         }
         
-        // Bordure
+        // Bordure (uniquement si showBorder est activé)
         if ($show_border && $border_width > 0) {
             $img_styles .= ' border: ' . esc_attr($border_width) . 'px solid ' . esc_attr($border_color) . ';';
             // Box-sizing pour que la bordure soit incluse dans les dimensions
             $img_styles .= ' box-sizing: border-box;';
         }
         
+        // Rendu simplifié : conteneur + image directement (sans marges internes superflues)
         return '<div class="element" style="' . $outer_div_styles . '">
-            <div style="' . $inner_div_styles . '">
                 <img src="' . esc_attr($src) . '" style="' . $img_styles . '" />
-            </div>
         </div>';
     }
     
