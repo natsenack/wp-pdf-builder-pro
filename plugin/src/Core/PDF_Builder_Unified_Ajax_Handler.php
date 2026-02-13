@@ -3072,8 +3072,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             overflow: hidden;
             word-wrap: break-word;
             box-sizing: border-box !important;
-            /* DEBUG: Bordure rouge pour visualiser les positions exactes */
-            outline: 1px solid rgba(255, 0, 0, 0.3) !important;
         }
         table {
             border-collapse: collapse;
@@ -3990,11 +3988,11 @@ class PDF_Builder_Unified_Ajax_Handler {
                 }
         }
         
-        // Centrer l'image dans le conteneur
-        $base_x = ($container_width - $logo_width) / 2;
-        $base_y = ($container_height - $logo_height) / 2;
+        // Centrer l'image dans le conteneur avec position absolue (comme React Canvas)
+        $image_x = ($container_width - $logo_width) / 2;
+        $image_y = ($container_height - $logo_height) / 2;
         
-        // Styles du conteneur externe
+        // Styles du conteneur externe (sans padding pour éviter le décalage)
         $outer_div_styles = $base_styles;
         if ($background_color !== 'transparent') {
             $outer_div_styles .= ' background-color: ' . esc_attr($background_color) . ';';
@@ -4002,21 +4000,13 @@ class PDF_Builder_Unified_Ajax_Handler {
         $outer_div_styles .= ' overflow: hidden;';
         $outer_div_styles .= ' box-sizing: border-box;';
         
-        // Utiliser padding pour créer les offsets
-        $outer_div_styles .= ' padding-left: ' . round($base_x, 2) . 'px;';
-        $outer_div_styles .= ' padding-top: ' . round($base_y, 2) . 'px;';
-        $outer_div_styles .= ' padding-right: ' . round($container_width - $logo_width - $base_x, 2) . 'px;';
-        $outer_div_styles .= ' padding-bottom: ' . round($container_height - $logo_height - $base_y, 2) . 'px;';
-        
-        // Wrapper de l'image
-        $wrapper_styles = 'display: block;';
-        $wrapper_styles .= ' width: ' . round($logo_width, 2) . 'px;';
-        $wrapper_styles .= ' height: ' . round($logo_height, 2) . 'px;';
-        
-        // Styles de l'image
-        $img_styles = 'display: block;';
-        $img_styles .= ' width: 100%;';
-        $img_styles .= ' height: 100%;';
+        // Styles de l'image avec positionnement absolu (cohérent avec React)
+        $img_styles = 'position: absolute;';
+        $img_styles .= ' left: ' . round($image_x, 2) . 'px;';
+        $img_styles .= ' top: ' . round($image_y, 2) . 'px;';
+        $img_styles .= ' width: ' . round($logo_width, 2) . 'px;';
+        $img_styles .= ' height: ' . round($logo_height, 2) . 'px;';
+        $img_styles .= ' display: block;';
         
         // Opacité
         if ($opacity < 1) {
@@ -4028,11 +4018,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             $img_styles .= ' border-radius: ' . esc_attr($border_radius) . 'px;';
         }
         
-        // Rendu : conteneur + wrapper + image
+        // Rendu : conteneur + image en position absolue (plus de wrapper ni padding)
         return '<div class="element" style="' . $outer_div_styles . '">
-                <div style="' . $wrapper_styles . '">
-                    <img src="' . esc_attr($src) . '" style="' . $img_styles . '" />
-                </div>
+                <img src="' . esc_attr($src) . '" style="' . $img_styles . '" />
         </div>';
     }
     
