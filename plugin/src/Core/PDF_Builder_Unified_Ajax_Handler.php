@@ -4023,21 +4023,21 @@ class PDF_Builder_Unified_Ajax_Handler {
         $width = $element['strokeWidth'] ?? 1;
         $style = $element['borderStyle'] ?? $element['style'] ?? 'solid';
         
-        // Créer une vraie ligne avec background-color + height (au lieu de border)
-        $line_content = '';
+        // Créer une div interne pour la vraie ligne, sans forcer la hauteur du conteneur
+        $line_styles = $base_styles . ' display: flex; align-items: center;';
         
+        // Styles pour la div interne (la vraie ligne)
+        $inner_style = '';
         if ($style === 'dashed') {
-            // Dashed : utiliser border-bottom
-            $line_styles = $base_styles . ' background: transparent; border-bottom: ' . $width . 'px dashed ' . $color . ';';
+            $inner_style = 'border-bottom: ' . $width . 'px dashed ' . $color . '; width: 100%;';
         } elseif ($style === 'dotted') {
-            // Dotted : utiliser border-bottom
-            $line_styles = $base_styles . ' background: transparent; border-bottom: ' . $width . 'px dotted ' . $color . ';';
+            $inner_style = 'border-bottom: ' . $width . 'px dotted ' . $color . '; width: 100%;';
         } else {
-            // Solid : utiliser background-color + height fixe
-            $line_styles = $base_styles . ' background-color: ' . $color . '; border: none; height: ' . $width . 'px;';
+            // Solid : background-color + height fixe
+            $inner_style = 'background-color: ' . $color . '; height: ' . $width . 'px; width: 100%;';
         }
         
-        return '<div class="element" style="' . $line_styles . '"></div>';
+        return '<div class="element" style="' . $line_styles . '"><div style="' . $inner_style . '"></div></div>';
     }
     
     /**

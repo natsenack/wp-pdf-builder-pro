@@ -1378,29 +1378,20 @@ export const Header = memo(function Header({
               lineStyle = element.style;
             }
 
-            // Créer une vraie ligne avec background + height (au lieu de border)
-            // Support pour les styles de ligne : solid, dashed, dotted
-            let lineStyleCSS = "solid";
+            // Créer une vraie ligne avec div interne de hauteur fixe
+            let lineInnerStyle = "";
             if (lineStyle === "dashed") {
-              lineStyleCSS = "dashed";
+              lineInnerStyle = `border-bottom: ${lineWidth}px dashed ${lineColor};`;
             } else if (lineStyle === "dotted") {
-              lineStyleCSS = "dotted";
-            }
-
-            // Pas de contenu pour la ligne
-            content = "";
-
-            // Appliquer les styles de ligne DIRECTEMENT sur le conteneur
-            if (lineStyleCSS === "dashed") {
-              // Dashed : utiliser border-bottom
-              styles += ` background: transparent; border-bottom: ${lineWidth}px dashed ${lineColor};`;
-            } else if (lineStyleCSS === "dotted") {
-              // Dotted : utiliser border-bottom
-              styles += ` background: transparent; border-bottom: ${lineWidth}px dotted ${lineColor};`;
+              lineInnerStyle = `border-bottom: ${lineWidth}px dotted ${lineColor};`;
             } else {
-              // Solid : utiliser background-color + height fixe
-              styles += ` background-color: ${lineColor}; border: none; height: ${lineWidth}px;`;
+              // Solid : background-color + height
+              lineInnerStyle = `background-color: ${lineColor}; height: ${lineWidth}px;`;
             }
+            content = `<div style="width: 100%; ${lineInnerStyle}"></div>`;
+
+            // Centrer la ligne verticalement avec flexbox (comme dans Canvas: y = height/2)
+            styles += ` display: flex; align-items: center;`;
 
             // Padding/margin
             if (element.padding) {
