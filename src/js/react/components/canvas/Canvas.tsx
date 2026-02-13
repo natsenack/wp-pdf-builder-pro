@@ -3153,15 +3153,18 @@ export const Canvas = function Canvas({
               id: element.id,
               horizontalAlign,
               verticalAlign,
+              objectFit,
               containerSize: { width: containerWidth, height: containerHeight },
               logoSize: { width: logoWidth, height: logoHeight },
+              imageNaturalSize: { width: img.naturalWidth, height: img.naturalHeight },
               calculatedPosition: { x: baseX, y: baseY },
               elementRotation: element.rotation,
               imageRotation: rotation,
               elementProps: {
                 horizontalAlign: element.horizontalAlign,
                 verticalAlign: element.verticalAlign,
-                alignment: element.alignment
+                alignment: element.alignment,
+                objectFit: element.objectFit
               }
             });
 
