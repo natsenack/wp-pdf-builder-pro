@@ -3293,13 +3293,7 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Helper: Extrait les propriétés de padding avec fallback
      */
-    private function extract_padding($element) {
-        $default_padding = $element['padding'] ?? 12;
-        return [
-            'horizontal' => $element['paddingHorizontal'] ?? $default_padding,
-            'vertical' => $element['paddingVertical'] ?? $default_padding
-        ];
-    }
+    // Padding system removed - padding is now handled via global styles only
     
     /**
      * Helper: Extrait les propriétés de police avec fallback
@@ -3529,7 +3523,6 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function render_customer_info_element($element, $order_data, $base_styles, $is_premium = false) {
         // Extraction des propriétés via helpers
-        $padding = $this->extract_padding($element);
         $layout_props = $this->extract_layout_props($element);
         $colors = $this->extract_colors($element);
         $header_font = $this->extract_font_props($element, 'header', ['size' => 14, 'weight' => 'bold']);
@@ -3612,8 +3605,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Styles du conteneur
         $letter_spacing = $layout_props['letterSpacing'] ? " letter-spacing: {$layout_props['letterSpacing']}px;" : '';
         $container_styles = $base_styles . 
-            "; padding: {$padding['vertical']}px {$padding['horizontal']}px;" .
-            " text-align: {$layout_props['textAlign']};" .
+            "; text-align: {$layout_props['textAlign']};" .
             " color: {$colors['text']};" .
             " font-family: {$body_font['family']};" .
             " font-size: {$body_font['size']}px;" .
@@ -3665,7 +3657,6 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function render_company_info_element($element, $order_data, $base_styles, $is_premium = false, $format = 'html') {
         // Extraction des propriétés via helpers
-        $padding = $this->extract_padding($element);
         $layout_props = $this->extract_layout_props($element);
         $layout_props['lineHeight'] = floatval($element['lineHeight'] ?? 1.1); // Override pour company
         
@@ -3785,8 +3776,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Styles
         $letter_spacing = $layout_props['letterSpacing'] ? " letter-spacing: {$layout_props['letterSpacing']}px;" : '';
         $container_styles = $base_styles . 
-            "; padding: {$padding['vertical']}px {$padding['horizontal']}px;" .
-            " text-align: {$layout_props['textAlign']};" .
+            "; text-align: {$layout_props['textAlign']};" .
             " color: {$colors['text']};" .
             " font-family: {$body_font['family']};" .
             " font-size: {$body_font['size']}px;" .
