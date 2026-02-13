@@ -3063,9 +3063,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             padding: 0;
             border: 0;
             overflow: hidden;
-            /* Empêcher tout décalage de positionnement */
-            top: 0;
-            left: 0;
         }
         .element {
             position: absolute;
