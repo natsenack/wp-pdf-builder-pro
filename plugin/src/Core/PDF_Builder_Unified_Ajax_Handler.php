@@ -3062,10 +3062,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             width: ' . $width . 'px;
             height: ' . $height . 'px;
             background: #ffffff;
-            margin: 0;
-            padding: 0;
-            border: 0;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
             overflow: hidden;
+            /* CRITICAL: S'assurer qu'il n'y a AUCUN offset */
+            transform: translate(0, 0);
         }
         .element {
             position: absolute !important;
@@ -3130,6 +3132,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         $y = $element['y'] ?? 0;
         $width = $element['width'] ?? 100;
         $height = $element['height'] ?? 30;
+        
+        // DEBUG CRITICAL: Logger TOUTES les positions
+        error_log("[PDF Builder POSITION DEBUG] Type: {$type} | ID: {$element_id} | X: {$x} | Y: {$y} | Width: {$width} | Height: {$height}");
         
         // Styles de base avec position absolute explicite pour garantir le positionnement
         // (même si défini dans la classe CSS .element, certains CSS peuvent l'écraser)
