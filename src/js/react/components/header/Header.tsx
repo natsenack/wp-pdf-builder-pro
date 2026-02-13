@@ -3890,6 +3890,9 @@ export const Header = memo(function Header({
                     border: "none",
                     borderRadius: "4px",
                     backgroundColor: "#f5f5f5",
+                    margin: 0,
+                    padding: 0,
+                    display: "block",
                   }}
                   title="Aperçu PDF"
                 />
