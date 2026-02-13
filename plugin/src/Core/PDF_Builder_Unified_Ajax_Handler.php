@@ -3089,7 +3089,22 @@ class PDF_Builder_Unified_Ajax_Handler {
     </style>
 </head>
 <body>
-    <div class="pdf-canvas">';
+    <div class="pdf-canvas debug">
+        <!-- DEBUG GRID -->';
+        
+        // Grille verticale tous les 50px
+        for ($i = 50; $i < $width; $i += 50) {
+            $html .= '<div class="debug-grid-line-v" style="left: ' . $i . 'px;"></div>';
+            $html .= '<div class="debug-grid-label" style="left: ' . ($i - 10) . 'px; top: 2px;">' . $i . '</div>';
+        }
+        // Grille horizontale tous les 50px
+        for ($i = 50; $i < $height; $i += 50) {
+            $html .= '<div class="debug-grid-line-h" style="top: ' . $i . 'px;"></div>';
+            $html .= '<div class="debug-grid-label" style="left: 2px; top: ' . ($i - 10) . 'px;">' . $i . '</div>';
+        }
+        
+        $html .= '</div>
+        <!-- END DEBUG GRID -->';
 
         // Générer chaque élément
         foreach ($elements as $element) {
@@ -3127,6 +3142,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         $width = $element['width'] ?? 100;
         $height = $element['height'] ?? 30;
         
+        // Debug: coordonnées de l'élément
+        $debug_coords = "x:{$x} y:{$y} w:{$width} h:{$height}";
+        
         // Styles de base avec position absolute explicite pour garantir le positionnement
         // (même si défini dans la classe CSS .element, certains CSS peuvent l'écraser)
         $styles = "position: absolute; margin: 0; padding: 0; left: {$x}px; top: {$y}px; width: {$width}px; height: {$height}px;";
@@ -3138,41 +3156,41 @@ class PDF_Builder_Unified_Ajax_Handler {
         $rendered = '';
         switch ($type) {
             case 'product_table':
-                $rendered = $this->render_product_table($element, $order_data, $styles);
+                $rendered = $this->render_product_table($element, $order_data, $styles, $debug_coords);
                 break;
             case 'customer_info':
-                $rendered = $this->render_customer_info_element($element, $order_data, $styles, $is_premium);
+                $rendered = $this->render_customer_info_element($element, $order_data, $styles, $is_premium, $debug_coords);
                 break;
             case 'company_info':
-                $rendered = $this->render_company_info_element($element, $order_data, $styles, $is_premium, $format);
+                $rendered = $this->render_company_info_element($element, $order_data, $styles, $is_premium, $format, $debug_coords);
                 break;
             case 'company_logo':
-                $rendered = $this->render_company_logo($element, $styles);
+                $rendered = $this->render_company_logo($element, $styles, $debug_coords);
                 break;
             case 'line':
-                $rendered = $this->render_line($element, $styles);
+                $rendered = $this->render_line($element, $styles, $debug_coords);
                 break;
             case 'document_type':
-                $rendered = $this->render_document_type($element, $styles);
+                $rendered = $this->render_document_type($element, $styles, $debug_coords);
                 break;
             case 'order_number':
-                $rendered = $this->render_order_number($element, $order_data, $styles);
+                $rendered = $this->render_order_number($element, $order_data, $styles, $debug_coords);
                 break;
             case 'woocommerce_order_date':
-                $rendered = $this->render_order_date($element, $order_data, $styles);
+                $rendered = $this->render_order_date($element, $order_data, $styles, $debug_coords);
                 break;
             case 'woocommerce_invoice_number':
-                $rendered = $this->render_invoice_number($element, $order_data, $styles);
+                $rendered = $this->render_invoice_number($element, $order_data, $styles, $debug_coords);
                 break;
             case 'dynamic_text':
-                $rendered = $this->render_dynamic_text($element, $order_data, $styles);
+                $rendered = $this->render_dynamic_text($element, $order_data, $styles, $debug_coords);
                 break;
             case 'mentions':
-                $rendered = $this->render_mentions($element, $styles);
+                $rendered = $this->render_mentions($element, $styles, $debug_coords);
                 break;
             case 'image':
                 if (isset($element['src'])) {
-                    $rendered = '<div class="element" style="' . $styles . '"><img src="' . esc_url($element['src']) . '" style="width: 100%; height: 100%; object-fit: contain;" /></div>';
+                    $rendered = '<div class="element" data-debug-coords="' . esc_attr($debug_coords) . '" style="' . $styles . '"><img src="' . esc_url($element['src']) . '" style="width: 100%; height: 100%; object-fit: contain;" /></div>';
                 }
                 break;
             case 'text':
@@ -3331,8 +3349,8 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Rendu du tableau de produits WooCommerce
      */
-    private function render_product_table($element, $order_data, $base_styles) {
-        $html = '<div class="element" style="' . $base_styles . '">';
+    private function render_product_table($element, $order_data, $base_styles, $debug_coords = '') {
+        $html = '<div class="element" data-debug-coords="' . esc_attr($debug_coords) . '" style="' . $base_styles . '">';
         
         // Récupérer tous les styles depuis le JSON de l'élément
         $show_borders = $element['showBorders'] ?? false;
@@ -3507,7 +3525,7 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Rendu des informations client
      */
-    private function render_customer_info_element($element, $order_data, $base_styles, $is_premium = false) {
+    private function render_customer_info_element($element, $order_data, $base_styles, $is_premium = false, $debug_coords = '') {
         // Récupérer le padding horizontal et vertical (backward compatibility avec padding unique)
         $paddingHorizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : (isset($element['padding']) ? intval($element['padding']) : 12);
         $paddingVertical = isset($element['paddingVertical']) ? intval($element['paddingVertical']) : (isset($element['padding']) ? intval($element['padding']) : 12);
@@ -3619,7 +3637,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Style de l'en-tête (inline pour éviter balise <style> invalide dans un div)
         $header_style = 'color: ' . esc_attr($headerTextColor) . '; font-family: ' . esc_attr($headerFontFamily) . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . esc_attr($headerFontWeight) . '; font-style: ' . esc_attr($headerFontStyle) . '; line-height: 1.2; margin-bottom: 8px;';
         
-        $html = '<div class="element" style="' . $base_styles . '">';
+        $html = '<div class="element" data-debug-coords="' . esc_attr($debug_coords) . '" style="' . $base_styles . '">';
         $html .= '<div style="' . $inner_styles . '">';
         // Afficher l'en-tête SÉPARÉMENT, avant les lignes de contenu (comme dans React)
         if ($showHeaders) {
@@ -3637,7 +3655,7 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Rendu des informations entreprise
      */
-    private function render_company_info_element($element, $order_data, $base_styles, $is_premium = false, $format = 'html') {
+    private function render_company_info_element($element, $order_data, $base_styles, $is_premium = false, $format = 'html', $debug_coords = '') {
         // Récupérer le padding horizontal et vertical (backward compatibility avec padding unique)
         $paddingHorizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : (isset($element['padding']) ? intval($element['padding']) : 12);
         $paddingVertical = isset($element['paddingVertical']) ? intval($element['paddingVertical']) : (isset($element['padding']) ? intval($element['padding']) : 12);
@@ -3866,7 +3884,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         }, $lines);
         
         // Générer le HTML
-        $html = '<div class="element" style="' . $base_styles . '">';
+        $html = '<div class="element" data-debug-coords="' . esc_attr($debug_coords) . '" style="' . $base_styles . '">';
         $html .= '<div style="' . $inner_styles . '">';
         $html .= implode("\n", $processedLines);
         $html .= '</div>';
@@ -3877,7 +3895,7 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Rendu du logo entreprise
      */
-    private function render_company_logo($element, $base_styles) {
+    private function render_company_logo($element, $base_styles, $debug_coords = '') {
         $src = $element['src'] ?? '';
         if (!$src) return '';
         
@@ -4007,7 +4025,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Rendu : conteneur + wrapper + image
-        return '<div class="element" style="' . $outer_div_styles . '">
+        return '<div class="element" data-debug-coords="' . esc_attr($debug_coords) . '" style="' . $outer_div_styles . '">
                 <div style="' . $wrapper_styles . '">
                     <img src="' . esc_attr($src) . '" style="' . $img_styles . '" />
                 </div>
@@ -4066,52 +4084,52 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Rendu d'une ligne de séparation
      */
-    private function render_line($element, $base_styles) {
+    private function render_line($element, $base_styles, $debug_coords = '') {
         $color = $element['strokeColor'] ?? '#000000';
         $width = $element['strokeWidth'] ?? 1;
-        return '<div class="element" style="' . $base_styles . ' border-top: ' . $width . 'px solid ' . $color . ';"></div>';
+        return '<div class="element" data-debug-coords="' . esc_attr($debug_coords) . '" style="' . $base_styles . ' border-top: ' . $width . 'px solid ' . $color . ';"></div>';
     }
     
     /**
      * Rendu du type de document
      */
-    private function render_document_type($element, $base_styles) {
+    private function render_document_type($element, $base_styles, $debug_coords = '') {
         $title = $element['title'] ?? 'FACTURE';
-        return '<div class="element" style="' . $base_styles . ' display: flex; align-items: center; justify-content: center;">' .
+        return '<div class="element" data-debug-coords="' . esc_attr($debug_coords) . '" style="' . $base_styles . ' display: flex; align-items: center; justify-content: center;">' .
                '<strong>' . esc_html($title) . '</strong></div>';
     }
     
     /**
      * Rendu du numéro de commande
      */
-    private function render_order_number($element, $order_data, $base_styles) {
+    private function render_order_number($element, $order_data, $base_styles, $debug_coords = '') {
         $number = $order_data['order']['order_number'];
         $show_label = $element['showLabel'] ?? false;
         $label = $element['labelText'] ?? 'N° ';
         
         $content = $show_label ? $label . $number : 'N° ' . $number;
-        return '<div class="element" style="' . $base_styles . '">' . esc_html($content) . '</div>';
+        return '<div class="element" data-debug-coords="' . esc_attr($debug_coords) . '" style="' . $base_styles . '">' . esc_html($content) . '</div>';
     }
     
     /**
      * Rendu de la date de commande
      */
-    private function render_order_date($element, $order_data, $base_styles) {
-        return '<div class="element" style="' . $base_styles . '">' . esc_html($order_data['order']['date_formatted']) . '</div>';
+    private function render_order_date($element, $order_data, $base_styles, $debug_coords = '') {
+        return '<div class="element" data-debug-coords="' . esc_attr($debug_coords) . '" style="' . $base_styles . '">' . esc_html($order_data['order']['date_formatted']) . '</div>';
     }
     
     /**
      * Rendu du numéro de facture
      */
-    private function render_invoice_number($element, $order_data, $base_styles) {
+    private function render_invoice_number($element, $order_data, $base_styles, $debug_coords = '') {
         $invoice_number = 'INV-' . $order_data['order']['order_number'];
-        return '<div class="element" style="' . $base_styles . '">' . esc_html($invoice_number) . '</div>';
+        return '<div class="element" data-debug-coords="' . esc_attr($debug_coords) . '" style="' . $base_styles . '">' . esc_html($invoice_number) . '</div>';
     }
     
     /**
      * Rendu de texte dynamique
      */
-    private function render_dynamic_text($element, $order_data, $base_styles) {
+    private function render_dynamic_text($element, $order_data, $base_styles, $debug_coords = '') {
         $text = $element['text'] ?? $element['textTemplate'] ?? 'Signature du client';
         
         // DEBUG: Logs pour dynamic_text
@@ -4172,7 +4190,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                       ($letter_spacing_match[0] ?? '');
         
         // Le div extérieur est UNIQUEMENT un conteneur positionné
-        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
+        $html = '<div class="element" data-debug-coords="' . esc_attr($debug_coords) . '" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
         
         // Le div intérieur contient le texte avec TOUTES les propriétés de texte
         // white-space: pre-line pour préserver les sauts de ligne (pas nl2br)
@@ -4191,7 +4209,7 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Rendu des mentions légales
      */
-    private function render_mentions($element, $base_styles) {
+    private function render_mentions($element, $base_styles, $debug_coords = '') {
         $mention_type = $element['mentionType'] ?? 'custom';
         $text = '';
         
@@ -4284,7 +4302,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                       ($letter_spacing_match[0] ?? '');
         
         // Le div extérieur est UNIQUEMENT un conteneur positionné
-        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
+        $html = '<div class="element" data-debug-coords="' . esc_attr($debug_coords) . '" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
         
         // Ajouter le séparateur horizontal si activé
         if ($element['showSeparator'] ?? true) {
