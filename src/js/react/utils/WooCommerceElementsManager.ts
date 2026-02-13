@@ -353,6 +353,20 @@ export class WooCommerceElementsManager {
   }
 
   /**
+   * Obtient la date de commande brute (format ISO) pour reformatage personnalisé
+   */
+  getOrderDateRaw(): string {
+    // Check for preview data first
+    const previewData = window.pdfBuilderData?.previewOrderData;
+    if (previewData?.order?.date) {
+      return previewData.order.date; // Format ISO du serveur
+    }
+
+    if (!this.orderData) return new Date().toISOString();
+    return this.orderData.date_created; // Format ISO
+  }
+
+  /**
    * Obtient le numéro de facture formaté
    */
   getInvoiceNumber(): string {

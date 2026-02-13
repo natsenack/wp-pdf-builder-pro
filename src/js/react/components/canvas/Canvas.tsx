@@ -2414,11 +2414,11 @@ const drawWoocommerceOrderDate = (
   // Appliquer la bordure
   applyBorder(ctx, element, props.border);
 
-  // Récupérer et formater la date
+  // Récupérer et formater la date (utiliser getOrderDateRaw pour avoir la date ISO)
   const orderDate =
     state.previewMode === "command"
-      ? wooCommerceManager.getOrderDate()
-      : wooCommerceManager.getOrderDate() || "27/10/2024";
+      ? wooCommerceManager.getOrderDateRaw()
+      : wooCommerceManager.getOrderDateRaw() || new Date().toISOString();
 
   const displayDate = formatOrderDate(
     orderDate,
