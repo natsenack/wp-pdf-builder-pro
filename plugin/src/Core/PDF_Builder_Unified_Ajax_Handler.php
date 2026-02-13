@@ -3638,8 +3638,12 @@ class PDF_Builder_Unified_Ajax_Handler {
         // ✅ Construire les styles du conteneur interne
         // CRITICAL: PAS de padding ici car React dessine avec offset, pas avec padding CSS
         // CRITICAL: Appliquer le padding via padding CSS (comme React dessine avec offset)
+        // MAIS ATTENTION: box-sizing: border-box inclut les bordures dans les dimensions !
+        // Si borderWidth > 0, le contenu réel est width - 2*borderWidth
         $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . esc_attr($textColor) . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle;
-        $inner_styles .= ' width: 100%; height: 100%; box-sizing: border-box;';
+        // ❌ PROBLEME: box-sizing: border-box AVEC borderWidth fait que la bordure mange dans le contenu
+        // React dessine la bordure AUTOUR, pas DEDANS
+        $inner_styles .= ' width: 100%; height: 100%;';
         
         // Pour l'alignement vertical, on utilise flexbox
         if ($verticalAlign === 'middle') {
@@ -3880,8 +3884,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         $bodyFontStyle = isset($element['bodyFontStyle']) ? $element['bodyFontStyle'] : 'normal';
         
         // CRITICAL: Appliquer le padding via padding CSS (comme React dessine avec offset)
+        // MAIS ATTENTION: box-sizing: border-box inclut les bordures dans les dimensions !
         $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . $textColor . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle;
-        $inner_styles .= ' width: 100%; height: 100%; box-sizing: border-box;';
+        // ❌ PROBLEME: box-sizing: border-box AVEC borderWidth fait que la bordure mange dans le contenu
+        $inner_styles .= ' width: 100%; height: 100%;';
         
         // Pour l'alignement vertical, on utilise flexbox
         if ($verticalAlign === 'middle') {
