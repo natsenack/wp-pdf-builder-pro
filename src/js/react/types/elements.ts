@@ -971,6 +971,7 @@ export interface CompanyLogoElement extends BaseElement {
   showBorder?: boolean;
   borderColor?: string;
   borderWidth?: number;
+  borderPadding?: number;
   backgroundColor?: string;
 }
 

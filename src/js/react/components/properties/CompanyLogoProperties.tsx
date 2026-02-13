@@ -262,6 +262,27 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
                   }}
                 />
               </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                  Espacement bordure (padding)
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="20"
+                  step="1"
+                  value={element.borderPadding || 0}
+                  onChange={(e) => onChange(element.id, 'borderPadding', parseInt(e.target.value))}
+                  style={{
+                    width: '100%',
+                    marginTop: '4px'
+                  }}
+                />
+                <div style={{ fontSize: '11px', color: '#666', textAlign: 'center', marginTop: '2px' }}>
+                  {element.borderPadding || 0} px
+                </div>
+              </div>
             </>
           )}
         </>

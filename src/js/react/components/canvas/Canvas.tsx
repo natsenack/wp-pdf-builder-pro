@@ -3221,24 +3221,31 @@ export const Canvas = function Canvas({
               ctx.globalAlpha = 1.0;
             }
 
-            // Dessiner la bordure sur le conteneur (zone de sélection) si showBorder est activé
+            // Dessiner la bordure sur l'image si showBorder est activé
             const showBorder = props.showBorder ?? false;
             const borderColor = props.borderColor || "#e5e7eb";
             const borderWidth = props.borderWidth || 1;
+            const borderPadding = props.borderPadding || 0;
             
             if (showBorder && borderWidth > 0) {
               ctx.save();
               ctx.strokeStyle = normalizeColor(borderColor);
               ctx.lineWidth = borderWidth;
               
+              // Appliquer le padding à la bordure
+              const borderX = imageX - borderPadding;
+              const borderY = imageY - borderPadding;
+              const borderW = logoWidth + (borderPadding * 2);
+              const borderH = logoHeight + (borderPadding * 2);
+              
               if (borderRadius > 0) {
-                // Si borderRadius, dessiner un rectangle arrondi sur le conteneur
+                // Si borderRadius, dessiner un rectangle arrondi sur l'image
                 ctx.beginPath();
-                roundedRect(ctx, 0, 0, containerWidth, containerHeight, borderRadius);
+                roundedRect(ctx, borderX, borderY, borderW, borderH, borderRadius);
                 ctx.stroke();
               } else {
-                // Rectangle simple sur le conteneur
-                ctx.strokeRect(0, 0, containerWidth, containerHeight);
+                // Rectangle simple sur l'image
+                ctx.strokeRect(borderX, borderY, borderW, borderH);
               }
               ctx.restore();
             }

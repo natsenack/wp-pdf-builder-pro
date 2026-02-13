@@ -3859,6 +3859,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $show_border = $element['showBorder'] ?? false;
         $border_color = $element['borderColor'] ?? '#e5e7eb';
         $border_width = isset($element['borderWidth']) ? intval($element['borderWidth']) : 1;
+        $border_padding = isset($element['borderPadding']) ? intval($element['borderPadding']) : 0;
         $background_color = $element['backgroundColor'] ?? 'transparent';
         
         // Convertir l'image en base64 pour compatibilité Dompdf
@@ -3867,22 +3868,14 @@ class PDF_Builder_Unified_Ajax_Handler {
             $src = $image_data;
         }
         
-        // Styles du conteneur externe - la bordure sera sur le conteneur (zone de sélection)
+        // Styles du conteneur externe - pas de bordure ici
         $outer_div_styles = $base_styles;
         if ($background_color !== 'transparent') {
             $outer_div_styles .= ' background-color: ' . esc_attr($background_color) . ';';
         }
         
-        // Bordure sur le conteneur (uniquement si showBorder est activé)
-        if ($show_border && $border_width > 0) {
-            $outer_div_styles .= ' border: ' . esc_attr($border_width) . 'px solid ' . esc_attr($border_color) . ';';
-            $outer_div_styles .= ' box-sizing: border-box;';
-        }
-        
-        // Border radius sur le conteneur
-        if ($border_radius > 0) {
-            $outer_div_styles .= ' border-radius: ' . esc_attr($border_radius) . 'px;';
-        }
+        // Pas de bordure sur le conteneur principal
+        // La bordure sera sur un wrapper autour de l'image
         
         // Utiliser display: table-cell pour l'alignement (compatible Dompdf)
         $outer_div_styles .= ' display: table-cell;';
@@ -3954,11 +3947,33 @@ class PDF_Builder_Unified_Ajax_Handler {
             $img_styles .= ' opacity: ' . esc_attr($opacity) . ';';
         }
         
-        // Pas de bordure ni border-radius sur l'image (c'est sur le conteneur)
+        // Créer un wrapper pour la bordure si nécessaire
+        $img_wrapper_open = '';
+        $img_wrapper_close = '';
         
-        // Rendu simplifié : conteneur + image directement (sans marges internes superflues)
+        if ($show_border && $border_width > 0) {
+            // Styles du wrapper qui aura la bordure et le padding
+            $wrapper_styles = 'display: inline-block;';
+            $wrapper_styles .= ' border: ' . esc_attr($border_width) . 'px solid ' . esc_attr($border_color) . ';';
+            
+            if ($border_radius > 0) {
+                $wrapper_styles .= ' border-radius: ' . esc_attr($border_radius) . 'px;';
+                $wrapper_styles .= ' overflow: hidden;'; // Pour que l'image respecte le border-radius
+            }
+            
+            if ($border_padding > 0) {
+                $wrapper_styles .= ' padding: ' . esc_attr($border_padding) . 'px;';
+            }
+            
+            $wrapper_styles .= ' box-sizing: border-box;';
+            
+            $img_wrapper_open = '<span style="' . $wrapper_styles . '">';
+            $img_wrapper_close = '</span>';
+        }
+        
+        // Rendu simplifié : conteneur + wrapper + image
         return '<div class="element" style="' . $outer_div_styles . '">
-                <img src="' . esc_attr($src) . '" style="' . $img_styles . '" />
+                ' . $img_wrapper_open . '<img src="' . esc_attr($src) . '" style="' . $img_styles . '" />' . $img_wrapper_close . '
         </div>';
     }
     
