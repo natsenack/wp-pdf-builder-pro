@@ -3575,6 +3575,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Construire les lignes selon le layout (sans l'en-tête qui sera affiché séparément)
         $lines = [];
+        
+        // Récupérer les options d'affichage des informations de paiement
+        $showPaymentMethod = isset($element['showPaymentMethod']) ? $element['showPaymentMethod'] : false;
+        $showTransactionId = isset($element['showTransactionId']) ? $element['showTransactionId'] : false;
 
         if ($layout === 'vertical') {
             // Mode vertical : une info par ligne
@@ -3589,6 +3593,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
             if (($element['showPhone'] ?? true) && !empty($order_data['customer']['phone'])) {
                 $lines[] = esc_html($order_data['customer']['phone']);
+            }
+            if ($showPaymentMethod) {
+                $lines[] = 'Paiement: Carte bancaire';
+            }
+            if ($showTransactionId) {
+                $lines[] = 'ID: TXN123456789';
             }
         } elseif ($layout === 'horizontal') {
             // Mode horizontal : plusieurs infos par ligne
@@ -3607,6 +3617,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
             if (($element['showPhone'] ?? true) && !empty($order_data['customer']['phone'])) {
                 $line2 .= ($line2 ? ' | ' : '') . esc_html($order_data['customer']['phone']);
+            }
+            if ($showPaymentMethod) {
+                $line3 .= 'Paiement: Carte bancaire';
+            }
+            if ($showTransactionId) {
+                $line3 .= ($line3 ? ' | ' : '') . 'ID: TXN123456789';
             }
             
             if ($line1) $lines[] = $line1;
@@ -3628,6 +3644,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             if (($element['showPhone'] ?? true) && !empty($order_data['customer']['phone'])) {
                 $compactLine .= ($compactLine ? ' • ' : '') . esc_html($order_data['customer']['phone']);
             }
+            if ($showPaymentMethod) {
+                $compactLine .= ($compactLine ? ' • ' : '') . 'Paiement: Carte bancaire';
+            }
+            if ($showTransactionId) {
+                $compactLine .= ($compactLine ? ' • ' : '') . 'ID: TXN123456789';
+            }
             
             if ($compactLine) $lines[] = $compactLine;
         }
@@ -3645,16 +3667,25 @@ class PDF_Builder_Unified_Ajax_Handler {
         $leading = ($lineHeight - 1) * $bodyFontSize;
         
         // Container interne avec position relative pour que les enfants puissent être positionnés absolument
-        $inner_styles = 'position: relative; width: 100%; height: 100%; box-sizing: border-box;';
+        $inner_styles = 'position: relative; width: 100%; height: 100%;';
+        
+        // COMPENSATION: Si borderWidth > 0 avec box-sizing: border-box, le contenu interne est décalé de borderWidth pixels
+        // On doit compenser en décalant le contenu de -borderWidth
+        $borderWidth = isset($element['borderWidth']) ? intval($element['borderWidth']) : 0;
+        $borderOffset = $borderWidth; // Avec box-sizing: border-box, la bordure mange dans le contenu
         
         // Style de l'en-tête - POSITION ABSOLUE comme React dessine à une coordonnée Y
-        // En React: ctx.fillText("Informations Client", textX, paddingVertical)
-        $header_style = 'position: absolute; left: ' . $paddingHorizontal . 'px; top: ' . $paddingVertical . 'px; color: ' . esc_attr($headerTextColor) . '; font-family: ' . esc_attr($headerFontFamily) . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . esc_attr($headerFontWeight) . '; font-style: ' . esc_attr($headerFontStyle) . '; line-height: 1; margin: 0; text-align: ' . $textAlign . ';';
+        // En React: ctx.fillText("Informations Client", textX, paddingVertical) avec textBaseline="top"
+        // Compensation du borderWidth pour aligner avec React
+        $header_top = $paddingVertical - $borderOffset;
+        $header_left = $paddingHorizontal - $borderOffset;
+        $header_style = 'position: absolute; left: ' . $header_left . 'px; top: ' . $header_top . 'px; color: ' . esc_attr($headerTextColor) . '; font-family: ' . esc_attr($headerFontFamily) . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . esc_attr($headerFontWeight) . '; font-style: ' . esc_attr($headerFontStyle) . '; line-height: 1; margin: 0; text-align: ' . $textAlign . ';';
         
         // Style du contenu - POSITION ABSOLUE aussi
         // En React: après header, y += 25, donc contenu commence à paddingVertical + 25
-        $content_top = $showHeaders ? ($paddingVertical + 25) : $paddingVertical;
-        $content_style = 'position: absolute; left: ' . $paddingHorizontal . 'px; top: ' . $content_top . 'px; right: ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . esc_attr($textColor) . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle . ' margin: 0;';
+        $content_top = ($showHeaders ? ($paddingVertical + 25) : $paddingVertical) - $borderOffset;
+        $content_left = $paddingHorizontal - $borderOffset;
+        $content_style = 'position: absolute; left: ' . $content_left . 'px; top: ' . $content_top . 'px; right: ' . ($paddingHorizontal - $borderOffset) . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . esc_attr($textColor) . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle . ' margin: 0;';
         
         $html = '<div class="element" style="' . $base_styles . '">';
         $html .= '<div style="' . $inner_styles . '">';
