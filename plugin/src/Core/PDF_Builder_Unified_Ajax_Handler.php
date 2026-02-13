@@ -3044,8 +3044,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         * {
             margin: 0;
             padding: 0;
-            /* ❌ RETIRÉ: box-sizing: border-box; */
-            /* RAISON: Cohérence avec le modèle de boîte React Canvas (bordures ajoutées, pas incluses) */
+            box-sizing: border-box;
         }
         body {
             background: #ffffff;
@@ -3074,10 +3073,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             position: absolute !important;
             overflow: hidden;
             word-wrap: break-word;
-            /* ❌ RETIRÉ: box-sizing: border-box !important; */
-            /* RAISON: React Canvas dessine les bordures AUTOUR (strokeRect), pas DEDANS */
-            /* Avec box-sizing: border-box, les bordures sont incluses dans width/height */
-            /* Cela crée un décalage de borderWidth*2 sur chaque dimension */
+            box-sizing: border-box !important;
         }
         table {
             border-collapse: collapse;
@@ -3641,19 +3637,18 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // ✅ Construire les styles du conteneur interne
         // CRITICAL: PAS de padding ici car React dessine avec offset, pas avec padding CSS
-        // CRITICAL: Appliquer le padding via padding CSS (comme React dessine avec offset)
-        // MAIS ATTENTION: box-sizing: border-box inclut les bordures dans les dimensions !
-        // Si borderWidth > 0, le contenu réel est width - 2*borderWidth
-        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . esc_attr($textColor) . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle;
-        // ❌ PROBLEME: box-sizing: border-box AVEC borderWidth fait que la bordure mange dans le contenu
-        // React dessine la bordure AUTOUR, pas DEDANS
-        $inner_styles .= ' width: 100%; height: 100%;';
+        // CRITICAL: Appliquer le padding via margin sur le contenu interne, PAS sur le outer div
+        // Cela reproduit exactement ce que React Canvas fait
+        $contentMargin = 'margin: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px;';
         
-        // Pour l'alignement vertical, on utilise flexbox
+        $inner_styles = $contentMargin . ' text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . esc_attr($textColor) . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle;
+        // Pas de width/height - laisser le contenu float naturellement
+        
+        // Pour l'alignement vertical, on utilise position relative + transform
         if ($verticalAlign === 'middle') {
-            $inner_styles .= ' display: flex; flex-direction: column; justify-content: center; height: 100%;';
+            $inner_styles .= ' position: relative; top: 50%; transform: translateY(-50%);';
         } elseif ($verticalAlign === 'bottom') {
-            $inner_styles .= ' display: flex; flex-direction: column; justify-content: flex-end; height: 100%;';
+            $inner_styles .= ' position: absolute; bottom: ' . $paddingVertical . 'px; left: ' . $paddingHorizontal . 'px;';
         }
         
         // Style de l'en-tête (inline pour éviter balise <style> invalide dans un div)
@@ -4022,7 +4017,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $outer_div_styles .= ' background-color: ' . esc_attr($background_color) . ';';
         }
         $outer_div_styles .= ' overflow: hidden;';
-        // ❌ RETIRÉ: box-sizing: border-box; → les bordures doivent s'ajouter aux dimensions (comme React)
+        $outer_div_styles .= ' box-sizing: border-box;';
         
         // Styles de l'image avec positionnement absolu (cohérent avec React)
         $img_styles = 'position: absolute;';
@@ -4209,15 +4204,15 @@ class PDF_Builder_Unified_Ajax_Handler {
         $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; overflow: hidden;">';
         
         // Le div intérieur contient le texte avec TOUTES les propriétés de texte
+        // white-space: pre-line pour préserver les sauts de ligne (pas nl2br)box-sizing: border-box; overflow: hidden;">';
+        
+        // Le div intérieur contient le texte avec TOUTES les propriétés de texte
         // white-space: pre-line pour préserver les sauts de ligne (pas nl2br)
         // line-height: 1 pour forcer aucun espacement supplémentaire dans Dompdf
         $inner_style = 'white-space: pre-line; ' . 
                       'line-height: ' . $dompdf_line_height . '; ' . 
                       $text_styles . ' ' .
-                      'margin: 0; padding: 0; display: block;';
-        
-        $html .= '<div style="' . $inner_style . '">' . esc_html($text) . '</div>';
-        $html .= '</div>';
+                      'margin: 0; padding: 0; display: block; box-sizing: border-box
         
         return $html;
     }
@@ -4321,6 +4316,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; overflow: hidden;">';
         
         // Ajouter le séparateur horizontal si activé
+        if ($element['showSeparator'] ?? true) {box-sizing: border-box; overflow: hidden;">';
+        
+        // Ajouter le séparateur horizontal si activé
         if ($element['showSeparator'] ?? true) {
             $separator_style = $element['separatorStyle'] ?? 'solid';
             $separator_color = $element['separatorColor'] ?? '#e5e7eb';
@@ -4342,10 +4340,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $inner_style = 'white-space: pre-line; ' . 
                       'line-height: ' . $line_height_px . '; ' . 
                       $text_styles . ' ' .
-                      'margin: 0; padding: 0; display: block;';
-        
-        $html .= '<div style="' . $inner_style . '">' . esc_html($text) . '</div>';
-        $html .= '</div>';
+                      'margin: 0; padding: 0; display: block; box-sizing: border-box
         
         return $html;
     }
