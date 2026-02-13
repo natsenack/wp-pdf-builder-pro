@@ -3661,7 +3661,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             'corporate' => ['backgroundColor' => '#ffffff', 'borderColor' => '#1f2937', 'textColor' => '#374151', 'headerTextColor' => '#111827'],
             'modern' => ['backgroundColor' => '#ffffff', 'borderColor' => '#3b82f6', 'textColor' => '#1e40af', 'headerTextColor' => '#1e3a8a'],
             'elegant' => ['backgroundColor' => '#ffffff', 'borderColor' => '#8b5cf6', 'textColor' => '#6d28d9', 'headerTextColor' => '#581c87'],
-            'minimal' => ['background Color' => '#ffffff', 'borderColor' => '#e5e7eb', 'textColor' => '#374151', 'headerTextColor' => '#111827'],
+            'minimal' => ['backgroundColor' => '#ffffff', 'borderColor' => '#e5e7eb', 'textColor' => '#374151', 'headerTextColor' => '#111827'],
             'professional' => ['backgroundColor' => '#ffffff', 'borderColor' => '#059669', 'textColor' => '#047857', 'headerTextColor' => '#064e3b'],
         ];
         
@@ -3793,7 +3793,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Style pour <strong>
         $strong_style = "color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; line-height: 1.2;";
-        $strong_style = 'color: ' . esc_attr($headerTextColor) . '; font-family: ' . esc_attr($headerFontFamily) . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . esc_attr($headerFontWeight) . '; font-style: ' . esc_attr($headerFontStyle) . '; line-height: 1.2;';
         
         // Traiter les lignes pour ajouter les styles aux balises <strong>
         $processedLines = array_map(function($line) use ($strong_style) {
@@ -3802,10 +3801,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         }, $lines);
         
         // Générer le HTML
-        $html = '<div class="element" style="' . $base_styles . '">';
-        $html .= '<div style="' . $inner_styles . '">';
+        $html = '<div class="element" style="' . $container_styles . '">';
         $html .= implode("\n", $processedLines);
-        $html .= '</div>';
         $html .= '</div>';
         return $html;
     }

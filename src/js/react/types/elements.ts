@@ -357,7 +357,7 @@ export interface CustomerInfoElement extends BaseElement {
   bodyFontStyle?: string;
   bodyTextColor?: string;
   // Propriétés de mise en page
-  layout?: "vertical" | "horizontal";
+  layout?: "vertical" | "horizontal" | "compact";
   showLabels?: boolean;
   labelPosition?: "before" | "above";
   // Propriétés de style générales
@@ -378,7 +378,7 @@ export interface CompanyInfoElement extends BaseElement {
   type: "company_info";
   template?: string;
   fields?: string[];
-  layout?: "vertical" | "horizontal";
+  layout?: "vertical" | "horizontal" | "compact";
   separator?: string;
   // Informations de l'entreprise
   name?: string;
@@ -687,7 +687,7 @@ export interface CustomerInfoElementProperties extends BaseElementProperties {
   bodyFontWeight?: string;
   bodyFontStyle?: string;
   // Propriétés de mise en page
-  layout?: "vertical" | "horizontal";
+  layout?: "vertical" | "horizontal" | "compact";
   showHeaders?: boolean;
   showBorders?: boolean;
   showFullName?: boolean;
@@ -907,7 +907,7 @@ export interface CustomerInfoElement extends BaseElement {
   bodyFontWeight?: string;
   bodyFontStyle?: string;
   // Propriétés de mise en page
-  layout?: "vertical" | "horizontal";
+  layout?: "vertical" | "horizontal" | "compact";
   showHeaders?: boolean;
   showBorders?: boolean;
   showFullName?: boolean;
