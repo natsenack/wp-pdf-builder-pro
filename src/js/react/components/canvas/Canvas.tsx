@@ -3148,27 +3148,7 @@ export const Canvas = function Canvas({
             }
             // Pour "top", baseY reste à 0
 
-            // Debug: TOUJOURS logger les valeurs pour company_logo
-            console.log('🔍 Company Logo Alignment:', {
-              id: element.id,
-              horizontalAlign,
-              verticalAlign,
-              objectFit,
-              containerSize: { width: containerWidth, height: containerHeight },
-              logoSize: { width: logoWidth, height: logoHeight },
-              imageNaturalSize: { width: img.naturalWidth, height: img.naturalHeight },
-              calculatedPosition: { x: baseX, y: baseY },
-              elementRotation: element.rotation,
-              imageRotation: rotation,
-              elementProps: {
-                horizontalAlign: element.horizontalAlign,
-                verticalAlign: element.verticalAlign,
-                alignment: element.alignment,
-                objectFit: element.objectFit
-              }
-            });
-
-            // Position finale de l'image (plus besoin d'offsets supplémentaires)
+            // Position finale de l'image
             const imageX = baseX;
             const imageY = baseY;
 
@@ -3177,46 +3157,38 @@ export const Canvas = function Canvas({
               ctx.globalAlpha = opacity;
             }
 
-            // Appliquer la rotation
+            // Clip avec borderRadius si nécessaire (AVANT rotation)
+            if (borderRadius > 0) {
+              ctx.save();
+              ctx.beginPath();
+              roundedRect(ctx, imageX, imageY, logoWidth, logoHeight, borderRadius);
+              ctx.clip();
+            }
+
+            // Appliquer la rotation si nécessaire
             if (rotation !== 0) {
-              ctx.save(); // Save pour la rotation
+              ctx.save();
               const centerX = imageX + logoWidth / 2;
               const centerY = imageY + logoHeight / 2;
               ctx.translate(centerX, centerY);
               ctx.rotate((rotation * Math.PI) / 180);
               ctx.translate(-centerX, -centerY);
-              
-              // Si borderRadius > 0, créer un chemin arrondi sur le CONTENEUR
-              if (borderRadius > 0) {
-                ctx.beginPath();
-                roundedRect(ctx, 0, 0, containerWidth, containerHeight, borderRadius);
-                ctx.clip();
-              }
-              
-              ctx.drawImage(img, imageX, imageY, logoWidth, logoHeight);
-              ctx.restore(); // Restore la rotation et le clip
-            } else {
-              // Pas de rotation
-              if (borderRadius > 0) {
-                ctx.save(); // Save pour le clip seulement
-                ctx.beginPath();
-                roundedRect(ctx, 0, 0, containerWidth, containerHeight, borderRadius);
-                ctx.clip();
-                ctx.drawImage(img, imageX, imageY, logoWidth, logoHeight);
-                ctx.restore();
-              } else {
-                // Pas de clip non plus, dessin direct
-                const transform = ctx.getTransform();
-                console.log('🎨 Drawing logo at:', { 
-                  imageX, imageY, logoWidth, logoHeight, rotation,
-                  canvasTransform: { a: transform.a, b: transform.b, c: transform.c, d: transform.d, e: transform.e, f: transform.f },
-                  willDrawAt: { globalX: transform.e + imageX, globalY: transform.f + imageY }
-                });
-                ctx.drawImage(img, imageX, imageY, logoWidth, logoHeight);
-              }
             }
 
-            // Réinitialiser les propriétés modifiées
+            // Dessiner l'image
+            ctx.drawImage(img, imageX, imageY, logoWidth, logoHeight);
+
+            // Restaurer la rotation si elle était appliquée
+            if (rotation !== 0) {
+              ctx.restore();
+            }
+
+            // Restaurer le clip si borderRadius était appliqué
+            if (borderRadius > 0) {
+              ctx.restore();
+            }
+
+            // Réinitialiser l'opacité
             if (opacity < 1) {
               ctx.globalAlpha = 1.0;
             }
