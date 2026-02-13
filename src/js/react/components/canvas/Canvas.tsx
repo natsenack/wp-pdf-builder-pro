@@ -2426,17 +2426,112 @@ const drawWoocommerceOrderDate = (
     props.showTime,
   );
 
-  // Configurer le contexte et afficher
-  setupRenderContext(
-    ctx,
-    fontConfig,
-    colorConfig,
-    props.textAlign,
-    props.verticalAlign,
-  );
-  const x = calculateTextX(element, props.textAlign, padding);
-  const y = calculateTextYWithPadding(element, props.verticalAlign, padding);
-  ctx.fillText(displayDate, x, y);
+  // Gestion du label
+  const showLabel = props.showLabel !== false;
+  const labelText = props.labelText || 'Date de la facture :';
+  const labelPosition = props.labelPosition || 'left';
+  const labelSpacing = props.labelSpacing || 8;
+  
+  // Config police du label
+  const labelFontFamily = props.labelFontFamily || props.fontFamily || 'Arial';
+  const labelFontSize = props.labelFontSize || props.fontSize || 12;
+  const labelFontWeight = props.labelFontWeight || 'normal';
+  const labelFontStyle = props.labelFontStyle || 'normal';
+  const labelColor = props.labelColor || props.color || colorConfig.text;
+
+  if (showLabel) {
+    // Mesurer le label
+    ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
+    const labelMetrics = ctx.measureText(labelText);
+    const labelWidth = labelMetrics.width;
+    const labelHeight = labelFontSize;
+
+    // Mesurer la date
+    ctx.font = `${fontConfig.style} ${fontConfig.weight} ${fontConfig.size}px ${fontConfig.family}`;
+    const dateMetrics = ctx.measureText(displayDate);
+    const dateWidth = dateMetrics.width;
+    const dateHeight = fontConfig.size;
+
+    let labelX = padding.left;
+    let labelY = padding.top;
+    let dateX = padding.left;
+    let dateY = padding.top;
+
+    // Calculer les positions selon labelPosition
+    switch (labelPosition) {
+      case 'top':
+        // Label au-dessus de la date
+        labelX = calculateTextX(element, props.textAlign, padding);
+        labelY = padding.top;
+        dateX = calculateTextX(element, props.textAlign, padding);
+        dateY = padding.top + labelHeight + labelSpacing;
+        break;
+
+      case 'left':
+        // Label à gauche de la date
+        const totalWidth = labelWidth + labelSpacing + dateWidth;
+        if (props.textAlign === 'center') {
+          labelX = (element.width - totalWidth) / 2;
+        } else if (props.textAlign === 'right') {
+          labelX = element.width - padding.right - totalWidth;
+        } else {
+          labelX = padding.left;
+        }
+        labelY = calculateTextYWithPadding(element, props.verticalAlign, padding);
+        dateX = labelX + labelWidth + labelSpacing;
+        dateY = labelY;
+        break;
+
+      case 'right':
+        // Label à droite de la date
+        const totalWidthRight = dateWidth + labelSpacing + labelWidth;
+        if (props.textAlign === 'center') {
+          dateX = (element.width - totalWidthRight) / 2;
+        } else if (props.textAlign === 'right') {
+          dateX = element.width - padding.right - totalWidthRight;
+        } else {
+          dateX = padding.left;
+        }
+        dateY = calculateTextYWithPadding(element, props.verticalAlign, padding);
+        labelX = dateX + dateWidth + labelSpacing;
+        labelY = dateY;
+        break;
+
+      case 'bottom':
+        // Label en-dessous de la date
+        dateX = calculateTextX(element, props.textAlign, padding);
+        dateY = padding.top;
+        labelX = calculateTextX(element, props.textAlign, padding);
+        labelY = padding.top + dateHeight + labelSpacing;
+        break;
+    }
+
+    // Dessiner le label
+    ctx.fillStyle = labelColor;
+    ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
+    ctx.textAlign = (labelPosition === 'left' || labelPosition === 'right') ? 'left' : (props.textAlign as CanvasTextAlign || 'left');
+    ctx.textBaseline = 'top';
+    ctx.fillText(labelText, labelX, labelY);
+
+    // Dessiner la date
+    ctx.fillStyle = colorConfig.text;
+    ctx.font = `${fontConfig.style} ${fontConfig.weight} ${fontConfig.size}px ${fontConfig.family}`;
+    ctx.textAlign = (labelPosition === 'left' || labelPosition === 'right') ? 'left' : (props.textAlign as CanvasTextAlign || 'left');
+    ctx.textBaseline = 'top';
+    ctx.fillText(displayDate, dateX, dateY);
+  } else {
+    // Sans label, affichage normal
+    setupRenderContext(
+      ctx,
+      fontConfig,
+      colorConfig,
+      props.textAlign,
+      props.verticalAlign,
+    );
+    const x = calculateTextX(element, props.textAlign, padding);
+    const y = calculateTextYWithPadding(element, props.verticalAlign, padding);
+    ctx.fillText(displayDate, x, y);
+  }
 };
 
 // Fonction helper pour formater les dates de commande
@@ -2450,8 +2545,27 @@ const formatOrderDate = (
     if (isNaN(dateObj.getTime())) return dateString;
 
     const day = String(dateObj.getDate()).padStart(2, "0");
+    const dayNoZero = String(dateObj.getDate());
     const month = String(dateObj.getMonth() + 1).padStart(2, "0");
     const year = dateObj.getFullYear();
+
+    // Noms des mois en français
+    const monthNames = [
+      "janvier", "février", "mars", "avril", "mai", "juin",
+      "juillet", "août", "septembre", "octobre", "novembre", "décembre"
+    ];
+    const monthNamesShort = [
+      "jan", "fév", "mar", "avr", "mai", "juin",
+      "juil", "août", "sep", "oct", "nov", "déc"
+    ];
+
+    // Noms des jours en français
+    const dayNames = [
+      "dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"
+    ];
+    const dayNamesShort = [
+      "dim", "lun", "mar", "mer", "jeu", "ven", "sam"
+    ];
 
     let formattedDate: string;
     switch (format) {
@@ -2466,6 +2580,18 @@ const formatOrderDate = (
         break;
       case "d.m.Y":
         formattedDate = `${day}.${month}.${year}`;
+        break;
+      case "j F Y":
+        formattedDate = `${dayNoZero} ${monthNames[dateObj.getMonth()]} ${year}`;
+        break;
+      case "l j F Y":
+        formattedDate = `${dayNames[dateObj.getDay()]} ${dayNoZero} ${monthNames[dateObj.getMonth()]} ${year}`;
+        break;
+      case "F j, Y":
+        formattedDate = `${monthNames[dateObj.getMonth()]} ${dayNoZero}, ${year}`;
+        break;
+      case "D, M j, Y":
+        formattedDate = `${dayNamesShort[dateObj.getDay()]}, ${monthNamesShort[dateObj.getMonth()]} ${dayNoZero}, ${year}`;
         break;
       default:
         formattedDate = `${day}/${month}/${year}`;

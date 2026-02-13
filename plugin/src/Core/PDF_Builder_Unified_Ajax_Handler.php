@@ -4020,7 +4020,150 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Rendu de la date de commande
      */
     private function render_order_date($element, $order_data, $base_styles) {
-        return '<div class="element" style="' . $base_styles . '">' . esc_html($order_data['order']['date_formatted']) . '</div>';
+        // Récupérer la date de la commande
+        $date_string = $order_data['order']['date'] ?? '';
+        if (empty($date_string)) {
+            return '<div class="element" style="' . $base_styles . '">Date non disponible</div>';
+        }
+
+        // Créer un objet DateTime
+        try {
+            $date = new \DateTime($date_string);
+        } catch (\Exception $e) {
+            return '<div class="element" style="' . $base_styles . '">' . esc_html($date_string) . '</div>';
+        }
+
+        // Formater la date selon le format spécifié
+        $format = $element['dateFormat'] ?? 'd/m/Y';
+        $show_time = $element['showTime'] ?? false;
+
+        // Convertir le format PHP en format date()
+        $formatted_date = $this->format_date_php($date, $format);
+
+        // Ajouter l'heure si nécessaire
+        if ($show_time) {
+            $formatted_date .= ' ' . $date->format('H:i');
+        }
+
+        // Gestion du label
+        $show_label = $element['showLabel'] ?? true;
+        $label_text = $element['labelText'] ?? 'Date de la facture :';
+        $label_position = $element['labelPosition'] ?? 'left';
+        $label_spacing = $element['labelSpacing'] ?? 8;
+
+        // Propriétés du label
+        $label_font_family = $element['labelFontFamily'] ?? ($element['fontFamily'] ?? 'DejaVu Sans');
+        $label_font_size = $element['labelFontSize'] ?? ($element['fontSize'] ?? 12);
+        $label_font_weight = $element['labelFontWeight'] ?? 'normal';
+        $label_font_style = $element['labelFontStyle'] ?? 'normal';
+        $label_color = $element['labelColor'] ?? ($element['color'] ?? '#000000');
+
+        // Propriétés de la date
+        $date_font_family = $element['fontFamily'] ?? 'DejaVu Sans';
+        $date_font_size = $element['fontSize'] ?? 12;
+        $date_font_weight = $element['fontWeight'] ?? 'normal';
+        $date_font_style = $element['fontStyle'] ?? 'normal';
+        $date_color = $element['color'] ?? '#000000';
+        $text_align = $element['textAlign'] ?? 'left';
+
+        if ($show_label) {
+            // Construire les styles pour le conteneur
+            $container_styles = $base_styles;
+            
+            // Styles pour le label
+            $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color};";
+            
+            // Styles pour la date
+            $date_styles = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color};";
+
+            // Layout selon la position du label
+            $html = '<div class="element" style="' . $container_styles . ' display: flex; align-items: center; justify-content: ' . $text_align . ';">';
+            
+            switch ($label_position) {
+                case 'top':
+                    $html = '<div class="element" style="' . $container_styles . ' display: flex; flex-direction: column; align-items: ' . ($text_align === 'center' ? 'center' : ($text_align === 'right' ? 'flex-end' : 'flex-start')) . ';">';
+                    $html .= '<span style="' . $label_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
+                    $html .= '<span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span>';
+                    break;
+
+                case 'left':
+                    $html .= '<span style="' . $label_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
+                    $html .= '<span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span>';
+                    break;
+
+                case 'right':
+                    $html .= '<span style="' . $date_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($formatted_date) . '</span>';
+                    $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
+                    break;
+
+                case 'bottom':
+                    $html = '<div class="element" style="' . $container_styles . ' display: flex; flex-direction: column; align-items: ' . ($text_align === 'center' ? 'center' : ($text_align === 'right' ? 'flex-end' : 'flex-start')) . ';">';
+                    $html .= '<span style="' . $date_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($formatted_date) . '</span>';
+                    $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
+                    break;
+
+                default:
+                    $html .= '<span style="' . $label_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
+                    $html .= '<span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span>';
+            }
+            
+            $html .= '</div>';
+            return $html;
+        } else {
+            // Sans label, affichage simple
+            return '<div class="element" style="' . $base_styles . '">' . esc_html($formatted_date) . '</div>';
+        }
+    }
+
+    /**
+     * Formate une date selon le format PHP spécifié
+     */
+    private function format_date_php($date, $format) {
+        // Mapping des formats personnalisés vers format() de PHP
+        $months_fr = [
+            1 => 'janvier', 2 => 'février', 3 => 'mars', 4 => 'avril',
+            5 => 'mai', 6 => 'juin', 7 => 'juillet', 8 => 'août',
+            9 => 'septembre', 10 => 'octobre', 11 => 'novembre', 12 => 'décembre'
+        ];
+        
+        $months_short_fr = [
+            1 => 'jan', 2 => 'fév', 3 => 'mar', 4 => 'avr',
+            5 => 'mai', 6 => 'juin', 7 => 'juil', 8 => 'août',
+            9 => 'sep', 10 => 'oct', 11 => 'nov', 12 => 'déc'
+        ];
+        
+        $days_fr = [
+            0 => 'dimanche', 1 => 'lundi', 2 => 'mardi', 3 => 'mercredi',
+            4 => 'jeudi', 5 => 'vendredi', 6 => 'samedi'
+        ];
+        
+        $days_short_fr = [
+            0 => 'dim', 1 => 'lun', 2 => 'mar', 3 => 'mer',
+            4 => 'jeu', 5 => 'ven', 6 => 'sam'
+        ];
+
+        switch ($format) {
+            case 'd/m/Y':
+                return $date->format('d/m/Y');
+            case 'm/d/Y':
+                return $date->format('m/d/Y');
+            case 'Y-m-d':
+                return $date->format('Y-m-d');
+            case 'd-m-Y':
+                return $date->format('d-m-Y');
+            case 'd.m.Y':
+                return $date->format('d.m.Y');
+            case 'j F Y':
+                return $date->format('j') . ' ' . $months_fr[(int)$date->format('n')] . ' ' . $date->format('Y');
+            case 'l j F Y':
+                return $days_fr[(int)$date->format('w')] . ' ' . $date->format('j') . ' ' . $months_fr[(int)$date->format('n')] . ' ' . $date->format('Y');
+            case 'F j, Y':
+                return $months_fr[(int)$date->format('n')] . ' ' . $date->format('j') . ', ' . $date->format('Y');
+            case 'D, M j, Y':
+                return $days_short_fr[(int)$date->format('w')] . ', ' . $months_short_fr[(int)$date->format('n')] . ' ' . $date->format('j') . ', ' . $date->format('Y');
+            default:
+                return $date->format('d/m/Y');
+        }
     }
     
     /**
