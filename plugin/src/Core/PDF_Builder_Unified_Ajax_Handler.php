@@ -4224,6 +4224,14 @@ class PDF_Builder_Unified_Ajax_Handler {
         $label_font_weight = $element['labelFontWeight'] ?? 'normal';
         $vertical_align = $element['verticalAlign'] ?? 'top';
 
+        // Propriétés du numéro
+        $number_font_family = $element['fontFamily'] ?? 'DejaVu Sans';
+        $number_font_size = $element['fontSize'] ?? 12;
+        $number_font_weight = $element['fontWeight'] ?? 'normal';
+        $number_font_style = $element['fontStyle'] ?? 'normal';
+        $number_color = $element['color'] ?? '#000000';
+        $text_align = $element['textAlign'] ?? 'left';
+
         if ($show_label) {
             // Construire les styles pour le conteneur avec alignement vertical
             $container_styles = $base_styles;
@@ -4237,16 +4245,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             } else {
                 $container_styles .= ' align-items: flex-start;';
             }
-        $number_font_family = $element['fontFamily'] ?? 'DejaVu Sans';
-        $number_font_size = $element['fontSize'] ?? 12;
-        $number_font_weight = $element['fontWeight'] ?? 'normal';
-        $number_font_style = $element['fontStyle'] ?? 'normal';
-        $number_color = $element['color'] ?? '#000000';
-        $text_align = $element['textAlign'] ?? 'left';
-
-        if ($show_label) {
-            // Construire les styles pour le conteneur
-            $container_styles = $base_styles;
             
             // Styles pour le label
             $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color};";
