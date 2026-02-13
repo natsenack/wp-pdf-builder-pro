@@ -3063,10 +3063,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             overflow: hidden;
         }
         .element {
-            position: absolute;
+            position: absolute !important;
             overflow: hidden;
             word-wrap: break-word;
-            box-sizing: border-box;
+            box-sizing: border-box !important;
+            /* DEBUG: Bordure rouge pour visualiser les positions exactes */
+            outline: 1px solid rgba(255, 0, 0, 0.3) !important;
         }
         table {
             border-collapse: collapse;
@@ -3124,7 +3126,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Styles de base avec position absolute explicite pour garantir le positionnement
         // (même si défini dans la classe CSS .element, certains CSS peuvent l'écraser)
-        $styles = "position: absolute; margin: 0; padding: 0; left: {$x}px; top: {$y}px; width: {$width}px; height: {$height}px;";
+        // DEBUG: !important pour forcer les positions exactes
+        $styles = "position: absolute !important; margin: 0 !important; left: {$x}px !important; top: {$y}px !important; width: {$width}px !important; height: {$height}px !important;";
         
         // Appliquer les styles de l'élément
         $styles .= $this->build_element_styles($element);
