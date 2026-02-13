@@ -28,9 +28,6 @@
     ]
   },
   "autoload-dev": {
-    "files": [
-      "lib/pdf-builder-stubs.php"
-    ]
   },
   "scripts": {
     "test": "phpunit",

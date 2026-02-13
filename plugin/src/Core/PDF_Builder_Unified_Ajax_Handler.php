@@ -3631,19 +3631,19 @@ class PDF_Builder_Unified_Ajax_Handler {
         $lineHeightValue = floatval($layout_props['lineHeight']);
         $gap = round($container_font_size * ($lineHeightValue - 1)); // EXACTEMENT comme React
         
-        // Ajouter le gap flexbox au conteneur (COMME REACT)
-        $container_styles .= " gap: {$gap}px;";
-        
         // Styles pour chaque ligne de body (COMME REACT)
-        $line_style = "font-size: {$body_font['size']}px; font-family: {$body_font['family']}; font-weight: {$body_font['weight']}; font-style: {$body_font['style']}; color: {$colors['text']}; margin: 0; padding: 0;";
+        $line_style_base = "font-size: {$body_font['size']}px; font-family: {$body_font['family']}; font-weight: {$body_font['weight']}; font-style: {$body_font['style']}; color: {$colors['text']}; margin: 0; padding: 0;";
         
-        // Génération HTML avec flexbox gap (COMME REACT - pas de <br>)
+        // Génération HTML - margin-bottom au lieu de gap pour compatibilité mPDF
         $html = '<div class="element" style="' . $container_styles . '">';
         if ($show['headers']) {
             $html .= '<div style="' . $header_style . '">Client</div>'; // "Client" comme React, pas "Informations Client"
         }
-        // Chaque ligne dans un div avec styles complets (COMME REACT)
-        foreach ($lines as $line) {
+        // Chaque ligne dans un div avec margin-bottom (sauf dernière) pour mPDF
+        $total_lines = count($lines);
+        foreach ($lines as $index => $line) {
+            $is_last = ($index === $total_lines - 1);
+            $line_style = $line_style_base . ($is_last ? '' : " margin-bottom: {$gap}px;");
             $html .= '<div style="' . $line_style . '">' . $line . '</div>';
         }
         $html .= '</div>';
@@ -3814,17 +3814,15 @@ class PDF_Builder_Unified_Ajax_Handler {
             $gap = 4; // Hardcodé comme dans React
         }
         
-        // Créer un wrapper interne avec le gap - EXACTEMENT COMME REACT
-        // React: companyContent = `<div style="display: flex; flex-direction: column; gap: ${gap}px;">${parts.join("")}</div>`
-        $content_wrapper_style = "display: flex; flex-direction: column; gap: {$gap}px;";
-        
-        // Génération HTML - STRUCTURE IDENTIQUE À REACT
+        // Génération HTML - margin-bottom au lieu de gap pour compatibilité mPDF
         $html = '<div class="element" style="' . $container_styles . '">';
-        $html .= '<div style="' . $content_wrapper_style . '">';
-        foreach ($processedLines as $line) {
-            $html .= '<div style="margin: 0; padding: 0;">' . $line . '</div>';
+        // Chaque ligne avec margin-bottom (sauf dernière) au lieu de gap
+        $total_lines = count($processedLines);
+        foreach ($processedLines as $index => $line) {
+            $is_last = ($index === $total_lines - 1);
+            $line_margin = $is_last ? '' : " margin-bottom: {$gap}px;";
+            $html .= '<div style="margin: 0; padding: 0;' . $line_margin . '">' . $line . '</div>';
         }
-        $html .= '</div>'; // Fermer content wrapper
         $html .= '</div>'; // Fermer element container
         return $html;
     }
