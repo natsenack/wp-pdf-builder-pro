@@ -3151,6 +3151,10 @@ export const Canvas = function Canvas({
             const imageX = (containerWidth - logoWidth) / 2;
             const imageY = (containerHeight - logoHeight) / 2;
 
+            // 🔍 DEBUG: Log des coordonnées company_logo
+            console.log(`[React Canvas company_logo] Element ID: ${element.id} | x: ${element.x} | y: ${element.y} | containerW: ${containerWidth} | containerH: ${containerHeight}`);
+            console.log(`[React Canvas company_logo] imageX: ${imageX} | imageY: ${imageY} | logoW: ${logoWidth} | logoH: ${logoHeight}`);
+
             // Appliquer l'opacité
             if (opacity < 1) {
               ctx.globalAlpha = opacity;
