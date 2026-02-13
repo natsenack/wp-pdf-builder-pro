@@ -3739,6 +3739,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             'capital' => $to_string($element['companyCapital'] ?? get_option('pdf_builder_company_capital', ''))
         ];
         
+        // DEBUG: Log des données TVA
+        error_log('[PDF Builder] Company Info - showVat: ' . ($element['showVat'] ?? 'NOT SET'));
+        error_log('[PDF Builder] Company Info - companyTva from element: ' . ($element['companyTva'] ?? 'NOT SET'));
+        error_log('[PDF Builder] Company Info - company tva value: ' . ($company['tva'] ?? 'EMPTY'));
+        error_log('[PDF Builder] Company Info - pdf_builder_company_vat option: ' . get_option('pdf_builder_company_vat', 'EMPTY'));
+        
         // Ajouter € au capital si absent
         if ($company['capital'] && strpos($company['capital'], '€') === false) {
             $company['capital'] .= ' €';
@@ -3766,10 +3772,10 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $add_line(esc_html($company['address']));
                 if ($company['city']) $add_line(esc_html($company['city']));
             }
-            if ($show['siret'] && $company['siret']) $add_line(esc_html($company['siret']));
-            if ($show['vat'] && $company['tva']) $add_line(esc_html($company['tva']));
-            if ($show['rcs'] && $company['rcs']) $add_line(esc_html($company['rcs']));
-            if ($show['capital'] && $company['capital']) $add_line(esc_html($company['capital']));
+            if ($show['siret'] && $company['siret']) $add_line('SIRET: ' . esc_html($company['siret']));
+            if ($show['vat'] && $company['tva']) $add_line('TVA: ' . esc_html($company['tva']));
+            if ($show['rcs'] && $company['rcs']) $add_line('RCS: ' . esc_html($company['rcs']));
+            if ($show['capital'] && $company['capital']) $add_line('Capital: ' . esc_html($company['capital']));
             if ($show['email'] && $company['email']) $add_line(esc_html($company['email']));
             if ($show['phone'] && $company['phone']) $add_line(esc_html($company['phone']));
         } elseif ($layout_props['layout'] === 'horizontal') {
@@ -3789,10 +3795,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             if ($parts) $add_line(implode(' | ', $parts));
             
             $parts = [];
-            if ($show['siret'] && $company['siret']) $parts[] = esc_html($company['siret']);
-            if ($show['rcs'] && $company['rcs']) $parts[] = esc_html($company['rcs']);
-            if ($show['vat'] && $company['tva']) $parts[] = esc_html($company['tva']);
-            if ($show['capital'] && $company['capital']) $parts[] = esc_html($company['capital']);
+            if ($show['siret'] && $company['siret']) $parts[] = 'SIRET: ' . esc_html($company['siret']);
+            if ($show['rcs'] && $company['rcs']) $parts[] = 'RCS: ' . esc_html($company['rcs']);
+            if ($show['vat'] && $company['tva']) $parts[] = 'TVA: ' . esc_html($company['tva']);
+            if ($show['capital'] && $company['capital']) $parts[] = 'Capital: ' . esc_html($company['capital']);
             if ($parts) $add_line(implode(' | ', $parts));
         } else { // compact
             if ($show['name']) $add_line('<strong>' . esc_html($company['name']) . '</strong>');
@@ -3801,9 +3807,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             if ($show['address'] && $company['address']) $parts[] = esc_html($company['address']);
             if ($show['email'] && $company['email']) $parts[] = esc_html($company['email']);
             if ($show['phone'] && $company['phone']) $parts[] = esc_html($company['phone']);
-            if ($show['siret'] && $company['siret']) $parts[] = esc_html($company['siret']);
-            if ($show['vat'] && $company['tva']) $parts[] = esc_html($company['tva']);
-            if ($show['rcs'] && $company['rcs']) $parts[] = esc_html($company['rcs']);
+            if ($show['siret'] && $company['siret']) $parts[] = 'SIRET: ' . esc_html($company['siret']);
+            if ($show['vat'] && $company['tva']) $parts[] = 'TVA: ' . esc_html($company['tva']);
+            if ($show['rcs'] && $company['rcs']) $parts[] = 'RCS: ' . esc_html($company['rcs']);
             if ($parts) $add_line(implode(' • ', $parts));
         }
         
