@@ -3037,6 +3037,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             padding: 0;
             border: 0;
             box-sizing: border-box;
+            /* CRITICAL: Forcer font-size pour éviter les variations de navigateur */
+            font-size: 16px;
+            line-height: 1.2;
         }
         * {
             margin: 0;
@@ -3050,6 +3053,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             padding: 0;
             border: 0;
             overflow: hidden;
+            font-size: 16px;
+            line-height: 1.2;
         }
         .pdf-canvas {
             position: relative;
