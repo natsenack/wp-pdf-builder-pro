@@ -3635,8 +3635,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Style header
         $header_style = "color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; line-height: 1.2; margin-bottom: 8px;";
         
-        // Style pour chaque ligne de contenu
-        $line_style = "margin: 0; padding: 0; line-height: {$layout_props['lineHeight']};";
+        // Style pour chaque ligne de contenu - DOMPDF ne supporte pas bien line-height, on utilise margin-bottom
+        $lineHeightValue = floatval($layout_props['lineHeight']);
+        $marginBottom = ($lineHeightValue - 1) * $body_font['size']; // Convertir line-height en espacement pixel
+        $line_style = "margin: 0 0 {$marginBottom}px 0; padding: 0; line-height: 1.2;";
         
         // Génération HTML avec div pour chaque ligne
         $html = '<div class="element" style="' . $container_styles . '">';
@@ -3795,8 +3797,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Style pour <strong>
-        $strong_style = "color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; line-height: 1.2;";
-        
+        $strong_style = "color: {$colors['hea - DOMPDF ne supporte pas bien line-height, on utilise margin-bottom
+        $lineHeightValue = floatval($layout_props['lineHeight']);
+        $marginBottom = ($lineHeightValue - 1) * $body_font['size']; // Convertir line-height en espacement pixel
+        $line_style = "margin: 0 0 {$marginBottom}px 0; padding: 0; line-height: 1.2
         // Style pour chaque ligne de contenu
         $line_style = "margin: 0; padding: 0; line-height: {$layout_props['lineHeight']};";
         
@@ -4074,10 +4078,21 @@ class PDF_Builder_Unified_Ajax_Handler {
         $date_font_style = $element['fontStyle'] ?? 'normal';
         $date_color = $element['color'] ?? '#000000';
         $text_align = $element['textAlign'] ?? 'left';
+        $vertical_align = $element['verticalAlign'] ?? 'top';
 
         if ($show_label) {
-            // Construire les styles pour le conteneur
+            // Construire les styles pour le conteneur avec alignement vertical
             $container_styles = $base_styles;
+            
+            // Ajouter l'alignement vertical via flexbox
+            $container_styles .= ' display: flex;';
+            if ($vertical_align === 'middle') {
+                $container_styles .= ' align-items: center;';
+            } elseif ($vertical_align === 'bottom') {
+                $container_styles .= ' align-items: flex-end;';
+            } else {
+                $container_styles .= ' align-items: flex-start;';
+            }
             
             // Styles pour le label
             $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color};";
@@ -4119,8 +4134,18 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html .= '</div>';
             return $html;
         } else {
-            // Sans label, affichage simple
-            return '<div class="element" style="' . $base_styles . '">' . esc_html($formatted_date) . '</div>';
+            // Sans label, affichage simple avec alignement vertical
+            $vertical_align = $element['verticalAlign'] ?? 'top';
+            $align_styles = ' display: flex; align-items: ';
+            if ($vertical_align === 'middle') {
+                $align_styles .= 'center;';
+            } elseif ($vertical_align === 'bottom') {
+                $align_styles .= 'flex-end;';
+            } else {
+                $align_styles .= 'flex-start;';
+            }
+            $align_styles .= ' justify-content: ' . $text_align . ';';
+            return '<div class="element" style="' . $base_styles . $align_styles . '">' . esc_html($formatted_date) . '</div>';
         }
     }
 
@@ -4197,10 +4222,21 @@ class PDF_Builder_Unified_Ajax_Handler {
         $label_font_family = $element['labelFontFamily'] ?? ($element['fontFamily'] ?? 'DejaVu Sans');
         $label_font_size = $element['labelFontSize'] ?? ($element['fontSize'] ?? 12);
         $label_font_weight = $element['labelFontWeight'] ?? 'normal';
-        $label_font_style = $element['labelFontStyle'] ?? 'normal';
-        $label_color = $element['labelColor'] ?? ($element['color'] ?? '#000000');
+        $vertical_align = $element['verticalAlign'] ?? 'top';
 
-        // Propriétés du numéro
+        if ($show_label) {
+            // Construire les styles pour le conteneur avec alignement vertical
+            $container_styles = $base_styles;
+            
+            // Ajouter l'alignement vertical via flexbox
+            $container_styles .= ' display: flex;';
+            if ($vertical_align === 'middle') {
+                $container_styles .= ' align-items: center;';
+            } elseif ($vertical_align === 'bottom') {
+                $container_styles .= ' align-items: flex-end;';
+            } else {
+                $container_styles .= ' align-items: flex-start;';
+            }
         $number_font_family = $element['fontFamily'] ?? 'DejaVu Sans';
         $number_font_size = $element['fontSize'] ?? 12;
         $number_font_weight = $element['fontWeight'] ?? 'normal';
@@ -4252,8 +4288,18 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html .= '</div>';
             return $html;
         } else {
-            // Sans label, affichage simple
-            return '<div class="element" style="' . $base_styles . '">' . esc_html($display_number) . '</div>';
+            // Sans label, affichage simple avec alignement vertical
+            $vertical_align = $element['verticalAlign'] ?? 'top';
+            $align_styles = ' display: flex; align-items: ';
+            if ($vertical_align === 'middle') {
+                $align_styles .= 'center;';
+            } elseif ($vertical_align === 'bottom') {
+                $align_styles .= 'flex-end;';
+            } else {
+                $align_styles .= 'flex-start;';
+            }
+            $align_styles .= ' justify-content: ' . $text_align . ';';
+            return '<div class="element" style="' . $base_styles . $align_styles . '">' . esc_html($display_number) . '</div>';
         }
     }
     

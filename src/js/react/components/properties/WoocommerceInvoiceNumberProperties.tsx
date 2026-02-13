@@ -383,9 +383,55 @@ export function WoocommerceInvoiceNumberProperties({
 
       {/* Onglet Positionnement */}
       {currentTab === 'positionnement' && (
-        <Accordion title="Remplissage" defaultOpen={true}>
-          <p style={{ fontSize: '11px', color: '#666', marginBottom: '8px' }}>Position et taille gérées par le canevas</p>
-        </Accordion>
+        <>
+          <Accordion title="Alignement du contenu" defaultOpen={true}>
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Alignement horizontal
+              </label>
+              <select
+                value={element.textAlign || 'left'}
+                onChange={(e) => onChange(element.id, 'textAlign', e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  fontSize: '11px',
+                  border: '1px solid #ddd',
+                  borderRadius: '0'
+                }}
+              >
+                <option value="left">Gauche</option>
+                <option value="center">Centre</option>
+                <option value="right">Droite</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', marginBottom: '4px' }}>
+                Alignement vertical
+              </label>
+              <select
+                value={element.verticalAlign || 'top'}
+                onChange={(e) => onChange(element.id, 'verticalAlign', e.target.value as 'top' | 'middle' | 'bottom')}
+                style={{
+                  width: '100%',
+                  padding: '4px 8px',
+                  fontSize: '11px',
+                  border: '1px solid #ddd',
+                  borderRadius: '0'
+                }}
+              >
+                <option value="top">Haut</option>
+                <option value="middle">Milieu</option>
+                <option value="bottom">Bas</option>
+              </select>
+            </div>
+          </Accordion>
+
+          <Accordion title="Position" defaultOpen={false}>
+            <p style={{ fontSize: '11px', color: '#666', marginBottom: '0' }}>Position et taille gérées par le canevas</p>
+          </Accordion>
+        </>
       )}
     </>
   );
