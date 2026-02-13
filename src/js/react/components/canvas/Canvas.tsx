@@ -3172,9 +3172,6 @@ export const Canvas = function Canvas({
             const imageX = baseX;
             const imageY = baseY;
 
-            // Sauvegarder le contexte
-            ctx.save();
-
             // Appliquer l'opacité
             if (opacity < 1) {
               ctx.globalAlpha = opacity;
@@ -3182,32 +3179,47 @@ export const Canvas = function Canvas({
 
             // Appliquer la rotation
             if (rotation !== 0) {
+              ctx.save(); // Save pour la rotation
               const centerX = imageX + logoWidth / 2;
               const centerY = imageY + logoHeight / 2;
               ctx.translate(centerX, centerY);
               ctx.rotate((rotation * Math.PI) / 180);
               ctx.translate(-centerX, -centerY);
+              
+              // Si borderRadius > 0, créer un chemin arrondi sur le CONTENEUR
+              if (borderRadius > 0) {
+                ctx.beginPath();
+                roundedRect(ctx, 0, 0, containerWidth, containerHeight, borderRadius);
+                ctx.clip();
+              }
+              
+              ctx.drawImage(img, imageX, imageY, logoWidth, logoHeight);
+              ctx.restore(); // Restore la rotation et le clip
+            } else {
+              // Pas de rotation
+              if (borderRadius > 0) {
+                ctx.save(); // Save pour le clip seulement
+                ctx.beginPath();
+                roundedRect(ctx, 0, 0, containerWidth, containerHeight, borderRadius);
+                ctx.clip();
+                ctx.drawImage(img, imageX, imageY, logoWidth, logoHeight);
+                ctx.restore();
+              } else {
+                // Pas de clip non plus, dessin direct
+                const transform = ctx.getTransform();
+                console.log('🎨 Drawing logo at:', { 
+                  imageX, imageY, logoWidth, logoHeight, rotation,
+                  canvasTransform: { a: transform.a, b: transform.b, c: transform.c, d: transform.d, e: transform.e, f: transform.f },
+                  willDrawAt: { globalX: transform.e + imageX, globalY: transform.f + imageY }
+                });
+                ctx.drawImage(img, imageX, imageY, logoWidth, logoHeight);
+              }
             }
 
-            // Si borderRadius > 0, créer un chemin arrondi sur le CONTENEUR
-            if (borderRadius > 0) {
-              ctx.beginPath();
-              roundedRect(ctx, 0, 0, containerWidth, containerHeight, borderRadius);
-              ctx.clip();
+            // Réinitialiser les propriétés modifiées
+            if (opacity < 1) {
+              ctx.globalAlpha = 1.0;
             }
-
-            // Essayer de dessiner l'image - si elle n'est pas chargée, cela ne fera rien
-            // mais au moins on aura essayé
-            const transform = ctx.getTransform();
-            console.log('🎨 Drawing logo at:', { 
-              imageX, imageY, logoWidth, logoHeight, rotation,
-              canvasTransform: { a: transform.a, b: transform.b, c: transform.c, d: transform.d, e: transform.e, f: transform.f },
-              willDrawAt: { globalX: transform.e + imageX, globalY: transform.f + imageY }
-            });
-            ctx.drawImage(img, imageX, imageY, logoWidth, logoHeight);
-
-            // Restaurer après le clip du borderRadius de l'image
-            ctx.restore();
 
             // Dessiner la bordure sur le conteneur (zone de sélection) si showBorder est activé
             const showBorder = props.showBorder ?? false;
