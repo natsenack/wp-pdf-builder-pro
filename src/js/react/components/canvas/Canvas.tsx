@@ -3032,8 +3032,8 @@ export const Canvas = function Canvas({
             const objectFit = element.objectFit || "contain";
 
             // Calculer les dimensions et position selon objectFit
-            const containerWidth = element.width - 20;
-            const containerHeight = element.height - 20;
+            const containerWidth = element.width;
+            const containerHeight = element.height;
 
             // Si l'image n'est pas encore chargée, utiliser des dimensions par défaut ou essayer de deviner
             let imageAspectRatio: number;
@@ -3130,19 +3130,21 @@ export const Canvas = function Canvas({
                 }
             }
 
-            // Calculer la position de base selon l'alignement
-            let x = 10;
+            // Calculer la position selon l'alignement
+            let baseX = 0;
             if (alignment === "center") {
-              x = (element.width - containerWidth) / 2;
+              baseX = (containerWidth - logoWidth) / 2;
             } else if (alignment === "right") {
-              x = element.width - containerWidth - 10;
+              baseX = containerWidth - logoWidth;
             }
+            // Pour "left", baseX reste à 0
 
-            const y = (element.height - containerHeight) / 2;
+            // Centrage vertical toujours
+            const baseY = (containerHeight - logoHeight) / 2;
 
-            // Ajuster pour centrer l'image dans son conteneur selon objectFit
-            const imageX = x + (containerWidth - logoWidth) / 2 + offsetX;
-            const imageY = y + (containerHeight - logoHeight) / 2 + offsetY;
+            // Position finale de l'image avec les offsets (pour cover/contain)
+            const imageX = baseX + offsetX;
+            const imageY = baseY + offsetY;
 
             // Sauvegarder le contexte
             ctx.save();
@@ -3154,8 +3156,8 @@ export const Canvas = function Canvas({
 
             // Appliquer la rotation
             if (rotation !== 0) {
-              const centerX = x + logoWidth / 2;
-              const centerY = y + logoHeight / 2;
+              const centerX = imageX + logoWidth / 2;
+              const centerY = imageY + logoHeight / 2;
               ctx.translate(centerX, centerY);
               ctx.rotate((rotation * Math.PI) / 180);
               ctx.translate(-centerX, -centerY);
@@ -3164,7 +3166,7 @@ export const Canvas = function Canvas({
             // Si borderRadius > 0, créer un chemin arrondi
             if (borderRadius > 0) {
               ctx.beginPath();
-              roundedRect(ctx, x, y, logoWidth, logoHeight, borderRadius);
+              roundedRect(ctx, imageX, imageY, logoWidth, logoHeight, borderRadius);
               ctx.clip();
             }
 
