@@ -203,6 +203,16 @@ export interface WoocommerceInvoiceNumberElement extends BaseElement {
   border?: { width?: number; style?: string; color?: string };
   backgroundColor?: string;
   showBackground?: boolean;
+  // Propriétés du label
+  showLabel?: boolean;
+  labelText?: string;
+  labelPosition?: "top" | "left" | "bottom" | "right";
+  labelFontFamily?: string;
+  labelFontSize?: number;
+  labelFontWeight?: string;
+  labelFontStyle?: string;
+  labelColor?: string;
+  labelSpacing?: number; // Espacement entre le label et le numéro
 }
 
 export interface DynamicTextElement extends BaseElement {

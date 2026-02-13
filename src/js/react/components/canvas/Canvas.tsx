@@ -2633,17 +2633,112 @@ const drawWoocommerceInvoiceNumber = (
     wooCommerceManager.getInvoiceNumber?.() || "INV-2024-00001";
   const displayText = `${props.prefix || ""}${invoiceNumber}${props.suffix || ""}`;
 
-  // Configurer le contexte et afficher
-  setupRenderContext(
-    ctx,
-    fontConfig,
-    colorConfig,
-    props.textAlign,
-    props.verticalAlign,
-  );
-  const x = calculateTextX(element, props.textAlign, padding);
-  const y = calculateTextYWithPadding(element, props.verticalAlign, padding);
-  ctx.fillText(displayText, x, y);
+  // Gestion du label
+  const showLabel = props.showLabel !== false;
+  const labelText = props.labelText || 'Numéro de facture :';
+  const labelPosition = props.labelPosition || 'left';
+  const labelSpacing = props.labelSpacing || 8;
+  
+  // Config police du label
+  const labelFontFamily = props.labelFontFamily || props.fontFamily || 'Arial';
+  const labelFontSize = props.labelFontSize || props.fontSize || 12;
+  const labelFontWeight = props.labelFontWeight || 'normal';
+  const labelFontStyle = props.labelFontStyle || 'normal';
+  const labelColor = props.labelColor || props.color || colorConfig.text;
+
+  if (showLabel) {
+    // Mesurer le label
+    ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
+    const labelMetrics = ctx.measureText(labelText);
+    const labelWidth = labelMetrics.width;
+    const labelHeight = labelFontSize;
+
+    // Mesurer le numéro
+    ctx.font = `${fontConfig.style} ${fontConfig.weight} ${fontConfig.size}px ${fontConfig.family}`;
+    const numberMetrics = ctx.measureText(displayText);
+    const numberWidth = numberMetrics.width;
+    const numberHeight = fontConfig.size;
+
+    let labelX = padding.left;
+    let labelY = padding.top;
+    let numberX = padding.left;
+    let numberY = padding.top;
+
+    // Calculer les positions selon labelPosition
+    switch (labelPosition) {
+      case 'top':
+        // Label au-dessus du numéro
+        labelX = calculateTextX(element, props.textAlign, padding);
+        labelY = padding.top;
+        numberX = calculateTextX(element, props.textAlign, padding);
+        numberY = padding.top + labelHeight + labelSpacing;
+        break;
+
+      case 'left':
+        // Label à gauche du numéro
+        const totalWidth = labelWidth + labelSpacing + numberWidth;
+        if (props.textAlign === 'center') {
+          labelX = (element.width - totalWidth) / 2;
+        } else if (props.textAlign === 'right') {
+          labelX = element.width - padding.right - totalWidth;
+        } else {
+          labelX = padding.left;
+        }
+        labelY = calculateTextYWithPadding(element, props.verticalAlign, padding);
+        numberX = labelX + labelWidth + labelSpacing;
+        numberY = labelY;
+        break;
+
+      case 'right':
+        // Label à droite du numéro
+        const totalWidthRight = numberWidth + labelSpacing + labelWidth;
+        if (props.textAlign === 'center') {
+          numberX = (element.width - totalWidthRight) / 2;
+        } else if (props.textAlign === 'right') {
+          numberX = element.width - padding.right - totalWidthRight;
+        } else {
+          numberX = padding.left;
+        }
+        numberY = calculateTextYWithPadding(element, props.verticalAlign, padding);
+        labelX = numberX + numberWidth + labelSpacing;
+        labelY = numberY;
+        break;
+
+      case 'bottom':
+        // Label en-dessous du numéro
+        numberX = calculateTextX(element, props.textAlign, padding);
+        numberY = padding.top;
+        labelX = calculateTextX(element, props.textAlign, padding);
+        labelY = padding.top + numberHeight + labelSpacing;
+        break;
+    }
+
+    // Dessiner le label
+    ctx.fillStyle = labelColor;
+    ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
+    ctx.textAlign = (labelPosition === 'left' || labelPosition === 'right') ? 'left' : (props.textAlign as CanvasTextAlign || 'left');
+    ctx.textBaseline = 'top';
+    ctx.fillText(labelText, labelX, labelY);
+
+    // Dessiner le numéro
+    ctx.fillStyle = colorConfig.text;
+    ctx.font = `${fontConfig.style} ${fontConfig.weight} ${fontConfig.size}px ${fontConfig.family}`;
+    ctx.textAlign = (labelPosition === 'left' || labelPosition === 'right') ? 'left' : (props.textAlign as CanvasTextAlign || 'left');
+    ctx.textBaseline = 'top';
+    ctx.fillText(displayText, numberX, numberY);
+  } else {
+    // Sans label, affichage normal
+    setupRenderContext(
+      ctx,
+      fontConfig,
+      colorConfig,
+      props.textAlign,
+      props.verticalAlign,
+    );
+    const x = calculateTextX(element, props.textAlign, padding);
+    const y = calculateTextYWithPadding(element, props.verticalAlign, padding);
+    ctx.fillText(displayText, x, y);
+  }
 };
 
 const drawDocumentType = (

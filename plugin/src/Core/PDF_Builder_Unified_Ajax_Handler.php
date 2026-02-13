@@ -4170,8 +4170,82 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Rendu du numéro de facture
      */
     private function render_invoice_number($element, $order_data, $base_styles) {
+        // Récupérer le numéro de facture
         $invoice_number = 'INV-' . $order_data['order']['order_number'];
-        return '<div class="element" style="' . $base_styles . '">' . esc_html($invoice_number) . '</div>';
+        
+        // Ajouter prefix et suffix si définis
+        $prefix = $element['prefix'] ?? '';
+        $suffix = $element['suffix'] ?? '';
+        $display_number = $prefix . $invoice_number . $suffix;
+
+        // Gestion du label
+        $show_label = $element['showLabel'] ?? true;
+        $label_text = $element['labelText'] ?? 'Numéro de facture :';
+        $label_position = $element['labelPosition'] ?? 'left';
+        $label_spacing = $element['labelSpacing'] ?? 8;
+
+        // Propriétés du label
+        $label_font_family = $element['labelFontFamily'] ?? ($element['fontFamily'] ?? 'DejaVu Sans');
+        $label_font_size = $element['labelFontSize'] ?? ($element['fontSize'] ?? 12);
+        $label_font_weight = $element['labelFontWeight'] ?? 'normal';
+        $label_font_style = $element['labelFontStyle'] ?? 'normal';
+        $label_color = $element['labelColor'] ?? ($element['color'] ?? '#000000');
+
+        // Propriétés du numéro
+        $number_font_family = $element['fontFamily'] ?? 'DejaVu Sans';
+        $number_font_size = $element['fontSize'] ?? 12;
+        $number_font_weight = $element['fontWeight'] ?? 'normal';
+        $number_font_style = $element['fontStyle'] ?? 'normal';
+        $number_color = $element['color'] ?? '#000000';
+        $text_align = $element['textAlign'] ?? 'left';
+
+        if ($show_label) {
+            // Construire les styles pour le conteneur
+            $container_styles = $base_styles;
+            
+            // Styles pour le label
+            $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color};";
+            
+            // Styles pour le numéro
+            $number_styles = "font-family: {$number_font_family}; font-size: {$number_font_size}px; font-weight: {$number_font_weight}; font-style: {$number_font_style}; color: {$number_color};";
+
+            // Layout selon la position du label
+            $html = '<div class="element" style="' . $container_styles . ' display: flex; align-items: center; justify-content: ' . $text_align . ';">';
+            
+            switch ($label_position) {
+                case 'top':
+                    $html = '<div class="element" style="' . $container_styles . ' display: flex; flex-direction: column; align-items: ' . ($text_align === 'center' ? 'center' : ($text_align === 'right' ? 'flex-end' : 'flex-start')) . ';">';
+                    $html .= '<span style="' . $label_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
+                    $html .= '<span style="' . $number_styles . '">' . esc_html($display_number) . '</span>';
+                    break;
+
+                case 'left':
+                    $html .= '<span style="' . $label_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
+                    $html .= '<span style="' . $number_styles . '">' . esc_html($display_number) . '</span>';
+                    break;
+
+                case 'right':
+                    $html .= '<span style="' . $number_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($display_number) . '</span>';
+                    $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
+                    break;
+
+                case 'bottom':
+                    $html = '<div class="element" style="' . $container_styles . ' display: flex; flex-direction: column; align-items: ' . ($text_align === 'center' ? 'center' : ($text_align === 'right' ? 'flex-end' : 'flex-start')) . ';">';
+                    $html .= '<span style="' . $number_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($display_number) . '</span>';
+                    $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
+                    break;
+
+                default:
+                    $html .= '<span style="' . $label_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
+                    $html .= '<span style="' . $number_styles . '">' . esc_html($display_number) . '</span>';
+            }
+            
+            $html .= '</div>';
+            return $html;
+        } else {
+            // Sans label, affichage simple
+            return '<div class="element" style="' . $base_styles . '">' . esc_html($display_number) . '</div>';
+        }
     }
     
     /**
