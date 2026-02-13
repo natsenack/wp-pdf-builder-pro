@@ -3999,6 +3999,23 @@ class PDF_Builder_Unified_Ajax_Handler {
     }
     
     /**
+     * Helper: Map text-align CSS values to flexbox justify-content values
+     * @param string $text_align CSS text-align value (left, center, right, etc.)
+     * @return string flexbox justify-content value
+     */
+    private function map_text_align_to_justify_content($text_align) {
+        switch ($text_align) {
+            case 'center':
+                return 'center';
+            case 'right':
+                return 'flex-end';
+            case 'left':
+            default:
+                return 'flex-start';
+        }
+    }
+    
+    /**
      * Rendu d'une ligne de séparation
      */
     private function render_line($element, $base_styles) {
@@ -4099,12 +4116,14 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Styles pour la date
             $date_styles = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color};";
 
-            // Layout selon la position du label
-            $html = '<div class="element" style="' . $container_styles . ' display: flex; align-items: center; justify-content: ' . $text_align . ';">';
+            // Layout selon la position du label - Mapper text_align à justify-content flexbox
+            $justify_content = $this->map_text_align_to_justify_content($text_align);
+            $align_items_h = ($text_align === 'center' ? 'center' : ($text_align === 'right' ? 'flex-end' : 'flex-start'));
+            $html = '<div class="element" style="' . $container_styles . ' display: flex; align-items: center; justify-content: ' . $justify_content . ';">';
             
             switch ($label_position) {
                 case 'top':
-                    $html = '<div class="element" style="' . $container_styles . ' display: flex; flex-direction: column; align-items: ' . ($text_align === 'center' ? 'center' : ($text_align === 'right' ? 'flex-end' : 'flex-start')) . ';">';
+                    $html = '<div class="element" style="' . $container_styles . ' display: flex; flex-direction: column; align-items: ' . $align_items_h . ';">';
                     $html .= '<span style="' . $label_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
                     $html .= '<span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span>';
                     break;
@@ -4251,12 +4270,14 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Styles pour le numéro
             $number_styles = "font-family: {$number_font_family}; font-size: {$number_font_size}px; font-weight: {$number_font_weight}; font-style: {$number_font_style}; color: {$number_color};";
 
-            // Layout selon la position du label
-            $html = '<div class="element" style="' . $container_styles . ' display: flex; align-items: center; justify-content: ' . $text_align . ';">';
+            // Layout selon la position du label - Mapper text_align à justify-content flexbox
+            $justify_content = $this->map_text_align_to_justify_content($text_align);
+            $align_items_h = ($text_align === 'center' ? 'center' : ($text_align === 'right' ? 'flex-end' : 'flex-start'));
+            $html = '<div class="element" style="' . $container_styles . ' display: flex; align-items: center; justify-content: ' . $justify_content . ';">';
             
             switch ($label_position) {
                 case 'top':
-                    $html = '<div class="element" style="' . $container_styles . ' display: flex; flex-direction: column; align-items: ' . ($text_align === 'center' ? 'center' : ($text_align === 'right' ? 'flex-end' : 'flex-start')) . ';">';
+                    $html = '<div class="element" style="' . $container_styles . ' display: flex; flex-direction: column; align-items: ' . $align_items_h . ';">';
                     $html .= '<span style="' . $label_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
                     $html .= '<span style="' . $number_styles . '">' . esc_html($display_number) . '</span>';
                     break;
@@ -4287,6 +4308,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         } else {
             // Sans label, affichage simple avec alignement vertical
             $vertical_align = $element['verticalAlign'] ?? 'top';
+            $justify_content = $this->map_text_align_to_justify_content($text_align);
             $align_styles = ' display: flex; align-items: ';
             if ($vertical_align === 'middle') {
                 $align_styles .= 'center;';
@@ -4295,7 +4317,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             } else {
                 $align_styles .= 'flex-start;';
             }
-            $align_styles .= ' justify-content: ' . $text_align . ';';
+            $align_styles .= ' justify-content: ' . $justify_content . ';';
             return '<div class="element" style="' . $base_styles . $align_styles . '">' . esc_html($display_number) . '</div>';
         }
     }

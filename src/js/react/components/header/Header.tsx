@@ -1040,6 +1040,19 @@ export const Header = memo(function Header({
       return "";
     };
 
+    // Helper pour mapper text-align CSS à flexbox justify-content
+    const mapTextAlignToJustifyContent = (textAlign: string | undefined): string => {
+      switch (textAlign) {
+        case "center":
+          return "center";
+        case "right":
+          return "flex-end";
+        case "left":
+        default:
+          return "flex-start";
+      }
+    };
+
     // Helper pour générer les styles globaux applicables au contenu interne
     const buildGlobalStyles = (el: any): string => {
       let globalStyle = "";
