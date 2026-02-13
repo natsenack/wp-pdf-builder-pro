@@ -3879,11 +3879,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         $bodyFontWeight = isset($element['bodyFontWeight']) ? $element['bodyFontWeight'] : 'normal';
         $bodyFontStyle = isset($element['bodyFontStyle']) ? $element['bodyFontStyle'] : 'normal';
         
-        $inner_styles = 'text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . $textColor . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle;
+        // CRITICAL: Appliquer le padding via padding CSS (comme React dessine avec offset)
+        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . $textColor . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle;
         $inner_styles .= ' width: 100%; height: 100%; box-sizing: border-box;';
-        
-        // Appliquer le padding via margin sur le contenu plutôt que padding sur le conteneur
-        $content_margin = 'margin: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px;';
         
         // Pour l'alignement vertical, on utilise flexbox
         if ($verticalAlign === 'middle') {
