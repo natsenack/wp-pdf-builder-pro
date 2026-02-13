@@ -3037,7 +3037,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             padding: 0;
             border: 0;
             box-sizing: border-box;
-            line-height: 1;
         }
         * {
             margin: 0;
@@ -3051,7 +3050,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             padding: 0;
             border: 0;
             overflow: hidden;
-            line-height: 1;
         }
         .pdf-canvas {
             position: relative;
