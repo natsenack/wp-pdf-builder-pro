@@ -1404,7 +1404,7 @@ const drawCustomerInfo = (
   } else {
     customerData = {
       name: "Marie Dupont",
-      address: "15 rue des Lilas, 75001 Paris",
+      address: "15 rue des Lilas, 75001 Paris\nFrance",
       email: "marie.dupont@email.com",
       phone: "+33 6 12 34 56 78",
     };
