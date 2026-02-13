@@ -3635,12 +3635,15 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Appliquer l'alignement horizontal et vertical
         $letterSpacingStyle = $letterSpacing !== 0 ? ' letter-spacing: ' . $letterSpacing . 'px;' : '';
         
-        // ✅ Construire les styles du conteneur interne
-        // CRITICAL: PAS de padding ici car React dessine avec offset, pas avec padding CSS
-        // CRITICAL: En React, le padding est appliqué directement sur les coordonnées de dessin
-        // textX = x + paddingHorizontal, startY = y + paddingVertical
-        // En HTML, on utilise position absolue PUIS padding pour reproduire cela exactement
-        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . esc_attr($textColor) . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle;
+        // CRITICAL FIX pour le décalage vertical:
+        // En React Canvas, fillText() positionne à la BASELINE, le texte commence à y + paddingVertical + fontSize
+        // En HTML, le texte dans un div commence en HAUT avec line-height qui ajoute de l'espace
+        // Solution: line-height: 1 pour éliminer l'espace vertical, puis simuler le leading avec margin-bottom sur chaque ligne
+        
+        // Calculer le leading (espace entre lignes) basé sur lineHeight
+        $leading = ($lineHeight - 1) * $bodyFontSize;
+        
+        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: 1; white-space: pre-line; color: ' . esc_attr($textColor) . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle;
         $inner_styles .= ' width: 100%; height: 100%; box-sizing: border-box;';
         
         // Pour l'alignement vertical, on utilise flexbox SIMPLEMENT
@@ -3652,8 +3655,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
         }
         
-        // Style de l'en-tête (inline pour éviter balise <style> invalide dans un div)
-        $header_style = 'color: ' . esc_attr($headerTextColor) . '; font-family: ' . esc_attr($headerFontFamily) . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . esc_attr($headerFontWeight) . '; font-style: ' . esc_attr($headerFontStyle) . '; line-height: 1.2; margin-bottom: 8px;';
+        // Style de l'en-tête avec line-height: 1 aussi
+        $header_style = 'color: ' . esc_attr($headerTextColor) . '; font-family: ' . esc_attr($headerFontFamily) . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . esc_attr($headerFontWeight) . '; font-style: ' . esc_attr($headerFontStyle) . '; line-height: 1; margin-bottom: ' . (8 + $leading) . 'px;';
         
         $html = '<div class="element" style="' . $base_styles . '">';
         $html .= '<div style="' . $inner_styles . '">';
@@ -4202,10 +4205,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                       ($letter_spacing_match[0] ?? '');
         
         // Le div extérieur est UNIQUEMENT un conteneur positionné
-        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; overflow: hidden;">';
-        
-        // Le div intérieur contient le texte avec TOUTES les propriétés de texte
-        // white-space: pre-line pour préserver les sauts de ligne (pas nl2br)box-sizing: border-box; overflow: hidden;">';
+        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
         
         // Le div intérieur contient le texte avec TOUTES les propriétés de texte
         // white-space: pre-line pour préserver les sauts de ligne (pas nl2br)
@@ -4213,7 +4213,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         $inner_style = 'white-space: pre-line; ' . 
                       'line-height: ' . $dompdf_line_height . '; ' . 
                       $text_styles . ' ' .
-                      'margin: 0; padding: 0; display: block; box-sizing: border-box
+                      'margin: 0; padding: 0; display: block; box-sizing: border-box;';
+        
+        $html .= '<div style="' . $inner_style . '">' . esc_html($text) . '</div>';
+        $html .= '</div>';
         
         return $html;
     }
