@@ -3884,34 +3884,34 @@ class PDF_Builder_Unified_Ajax_Handler {
             $outer_div_styles .= ' border-radius: ' . esc_attr($border_radius) . 'px;';
         }
         
-        // Ajouter flexbox pour l'alignement vertical
-        $outer_div_styles .= ' display: flex;';
+        // Utiliser display: table-cell pour l'alignement (compatible Dompdf)
+        $outer_div_styles .= ' display: table-cell;';
         
-        // Alignement vertical
+        // Alignement vertical avec vertical-align
         switch ($vertical_align) {
             case 'top':
-                $outer_div_styles .= ' align-items: flex-start;';
+                $outer_div_styles .= ' vertical-align: top;';
                 break;
             case 'bottom':
-                $outer_div_styles .= ' align-items: flex-end;';
+                $outer_div_styles .= ' vertical-align: bottom;';
                 break;
             case 'center':
             default:
-                $outer_div_styles .= ' align-items: center;';
+                $outer_div_styles .= ' vertical-align: middle;';
                 break;
         }
         
-        // Alignement horizontal
+        // Alignement horizontal avec text-align
         switch ($horizontal_align) {
             case 'center':
-                $outer_div_styles .= ' justify-content: center;';
+                $outer_div_styles .= ' text-align: center;';
                 break;
             case 'right':
-                $outer_div_styles .= ' justify-content: flex-end;';
+                $outer_div_styles .= ' text-align: right;';
                 break;
             case 'left':
             default:
-                $outer_div_styles .= ' justify-content: flex-start;';
+                $outer_div_styles .= ' text-align: left;';
                 break;
         }
         
@@ -3923,17 +3923,20 @@ class PDF_Builder_Unified_Ajax_Handler {
             case 'cover':
                 // L'image couvre tout le conteneur
                 $img_styles .= ' width: 100%; height: 100%;';
+                $img_styles .= ' display: block;';
                 break;
             
             case 'fill':
                 // L'image remplit complètement le conteneur (déformation possible)
                 $img_styles .= ' width: 100%; height: 100%;';
+                $img_styles .= ' display: block;';
                 break;
             
             case 'none':
                 // Taille originale
                 $img_styles .= ' max-width: ' . $width . 'px;';
                 $img_styles .= ' max-height: ' . $height . 'px;';
+                $img_styles .= ' display: inline-block;';
                 break;
             
             case 'contain':
@@ -3942,11 +3945,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                 // L'image garde ses proportions et tient dans le conteneur
                 $img_styles .= ' max-width: 100%; max-height: 100%;';
                 $img_styles .= ' height: auto;';
+                $img_styles .= ' display: inline-block;';
                 break;
         }
-        
-        // L'image est un élément block pour que flexbox fonctionne correctement
-        $img_styles .= ' display: block;';
         
         // Opacité
         if ($opacity < 1) {

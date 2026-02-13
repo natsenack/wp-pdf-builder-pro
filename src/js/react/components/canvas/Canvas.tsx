@@ -3169,10 +3169,10 @@ export const Canvas = function Canvas({
               ctx.translate(-centerX, -centerY);
             }
 
-            // Si borderRadius > 0, créer un chemin arrondi
+            // Si borderRadius > 0, créer un chemin arrondi sur le CONTENEUR
             if (borderRadius > 0) {
               ctx.beginPath();
-              roundedRect(ctx, imageX, imageY, logoWidth, logoHeight, borderRadius);
+              roundedRect(ctx, 0, 0, containerWidth, containerHeight, borderRadius);
               ctx.clip();
             }
 
