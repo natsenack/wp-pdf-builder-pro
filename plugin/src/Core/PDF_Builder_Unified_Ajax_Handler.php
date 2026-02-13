@@ -3111,8 +3111,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         $width = $element['width'] ?? 100;
         $height = $element['height'] ?? 30;
         
-        // Styles de base
-        $styles = "left: {$x}px; top: {$y}px; width: {$width}px; height: {$height}px;";
+        // Styles de base avec position absolute explicite pour garantir le positionnement
+        // (même si défini dans la classe CSS .element, certains CSS peuvent l'écraser)
+        $styles = "position: absolute; margin: 0; padding: 0; left: {$x}px; top: {$y}px; width: {$width}px; height: {$height}px;";
         
         // Appliquer les styles de l'élément
         $styles .= $this->build_element_styles($element);
