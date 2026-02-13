@@ -3660,8 +3660,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         $lineHeightValue = floatval($layout_props['lineHeight']);
         $gap = $this->calculate_line_gap($container_font_size, $lineHeightValue);
         
-        // Styles pour chaque ligne de body (COMME REACT)
-        $line_style_base = "font-size: {$body_font['size']}px; font-family: {$body_font['family']}; font-weight: {$body_font['weight']}; font-style: {$body_font['style']}; color: {$colors['text']}; margin: 0; padding: 0;";
+        // Styles pour chaque ligne de body (COMME REACT) - line-height:1 pour hauteur stricte
+        $line_style_base = "font-size: {$body_font['size']}px; font-family: {$body_font['family']}; font-weight: {$body_font['weight']}; font-style: {$body_font['style']}; color: {$colors['text']}; margin: 0; padding: 0; line-height: 1;";
         
         // Génération HTML - margin-bottom comme gap React pour compatibilité DOMPDF
         $html = '<div class="element" style="' . $container_styles . '">';
@@ -3839,12 +3839,12 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Génération HTML - margin-bottom comme gap React pour compatibilité DOMPDF
         $html = '<div class="element" style="' . $container_styles . '">';
-        // Chaque ligne avec margin-bottom (sauf dernière) = gap de React
+        // Chaque ligne avec margin-bottom (sauf dernière) = gap de React + line-height:1 pour hauteur stricte
         $total_lines = count($processedLines);
         foreach ($processedLines as $index => $line) {
             $is_last = ($index === $total_lines - 1);
             $line_margin = $is_last ? '' : " margin-bottom: {$gap}px;";
-            $html .= '<div style="margin: 0; padding: 0;' . $line_margin . '">' . $line . '</div>';
+            $html .= '<div style="margin: 0; padding: 0; line-height: 1;' . $line_margin . '">' . $line . '</div>';
         }
         $html .= '</div>'; // Fermer element container
         return $html;
@@ -4428,13 +4428,13 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Splitter le texte par les sauts de ligne (SOLUTION DOMPDF)
         $lines = preg_split('/\r\n|\n|\r/', $text);
         
-        // Générer HTML avec margin-bottom (= gap React) entre les lignes
+        // Générer HTML avec margin-bottom (= gap React) entre les lignes + line-height:1 pour hauteur stricte
         $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
         $total_lines = count($lines);
         foreach ($lines as $index => $line) {
             $is_last = ($index === $total_lines - 1);
             $line_margin = $is_last ? '' : " margin-bottom: {$gap}px;";
-            $html .= '<div style="margin: 0; padding: 0; font-size: ' . $font_size . 'px;' . $line_margin . ' ' . $text_styles . '">' . esc_html($line) . '</div>';
+            $html .= '<div style="margin: 0; padding: 0; font-size: ' . $font_size . 'px; line-height: 1;' . $line_margin . ' ' . $text_styles . '">' . esc_html($line) . '</div>';
         }
         $html .= '</div>';
         
