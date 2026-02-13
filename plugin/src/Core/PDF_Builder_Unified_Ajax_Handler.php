@@ -3634,27 +3634,22 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Style header
         $header_style = "color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; margin-bottom: 8px;";
         
-        // Récupérer le line-height value pour le contenu
+        // Récupérer le line-height value pour calculer le gap (COMME REACT)
         $lineHeightValue = floatval($layout_props['lineHeight']);
+        $gap = round(($lineHeightValue - 1) * $body_font['size']); // Même calcul que React
         
-        // NOUVELLE MÉTHODE avec SPAN : Utiliser des spans inline séparés par <br>
-        $content_html = '';
-        $line_count = count($lines);
-        for ($i = 0; $i < $line_count; $i++) {
-            $content_html .= '<span>' . $lines[$i] . '</span>';
-            if ($i < $line_count - 1) {
-                $content_html .= '<br>';
-            }
-        }
+        // Ajouter le gap flexbox au conteneur (COMME REACT)
+        $container_styles .= " gap: {$gap}px;";
         
-        $content_style = "margin: 0; padding: 0; display: block; line-height: {$lineHeightValue};";
-        
-        // Génération HTML avec un seul conteneur pour le contenu
+        // Génération HTML avec flexbox gap (COMME REACT - pas de <br>)
         $html = '<div class="element" style="' . $container_styles . '">';
         if ($show['headers']) {
             $html .= '<div style="' . $header_style . '">Informations Client</div>';
         }
-        $html .= '<div style="' . $content_style . '">' . $content_html . '</div>';
+        // Chaque ligne dans un div séparé, gap gère l'espacement
+        foreach ($lines as $line) {
+            $html .= '<div style="margin: 0; padding: 0;">' . $line . '</div>';
+        }
         $html .= '</div>';
         
         return $html;
@@ -3805,8 +3800,12 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Style pour <strong>
         $strong_style = "color: {$colors['header']}; font-weight: bold;";
         
-        // Récupérer le line-height value pour le contenu
+        // Récupérer le line-height value pour calculer le gap (COMME REACT)
         $lineHeightValue = floatval($layout_props['lineHeight']);
+        $gap = round(($lineHeightValue - 1) * $body_font['size']); // Même calcul que React
+        
+        // Ajouter le gap flexbox au conteneur (COMME REACT)
+        $container_styles .= " gap: {$gap}px;";
         
         // Traiter les lignes pour ajouter les styles aux balises <strong>
         $processedLines = array_map(function($line) use ($strong_style) {
@@ -3814,17 +3813,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             return preg_replace('/<strong>/', '<strong style="' . $strong_style . '">', $line);
         }, $lines);
         
-        // NOUVELLE MÉTHODE avec SPAN : Envelopper chaque ligne dans un span et séparer par <br>
-        $content_parts = [];
-        foreach ($processedLines as $line) {
-            $content_parts[] = '<span>' . $line . '</span>';
-        }
-        $content_html = implode('<br>', $content_parts);
-        $content_style = "margin: 0; padding: 0; display: block; line-height: {$lineHeightValue};";
-        
-        // Générer le HTML avec un seul conteneur pour le contenu
+        // Génération HTML avec flexbox gap (COMME REACT - pas de <br>)
         $html = '<div class="element" style="' . $container_styles . '">';
-        $html .= '<div style="' . $content_style . '">' . $content_html . '</div>';
+        // Chaque ligne dans un div séparé, gap gère l'espacement
+        foreach ($processedLines as $line) {
+            $html .= '<div style="margin: 0; padding: 0;">' . $line . '</div>';
+        }
         $html .= '</div>';
         return $html;
     }
@@ -4393,23 +4387,11 @@ class PDF_Builder_Unified_Ajax_Handler {
                       ($text_transform_match[0] ?? '') . ' ' .
                       ($letter_spacing_match[0] ?? '');
         
-        // NOUVELLE MÉTHODE avec SPAN : Utiliser des spans inline au lieu de divs block
-        // DOMPDF gère mieux le line-height sur les éléments inline
-        $lines = explode("\n", $text);
-        $content_html = '';
-        $line_count = count($lines);
-        
-        for ($i = 0; $i < $line_count; $i++) {
-            $content_html .= '<span>' . esc_html($lines[$i]) . '</span>';
-            if ($i < $line_count - 1) {
-                $content_html .= '<br>';
-            }
-        }
-        
-        $content_style = 'margin: 0; padding: 0; display: block; line-height: ' . $line_height_ratio . '; ' . $text_styles;
+        // MÉTHODE ALIGNÉE SUR REACT : white-space: pre-wrap + line-height direct
+        $content_style = 'margin: 0; padding: 0; white-space: pre-wrap; line-height: ' . $line_height_ratio . '; ' . $text_styles;
         
         $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
-        $html .= '<div style="' . $content_style . '">' . $content_html . '</div>';
+        $html .= '<div style="' . $content_style . '">' . esc_html($text) . '</div>';
         $html .= '</div>';
         
         return $html;
