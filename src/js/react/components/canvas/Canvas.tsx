@@ -3048,8 +3048,6 @@ export const Canvas = function Canvas({
 
             let logoWidth: number;
             let logoHeight: number;
-            let offsetX = 0;
-            let offsetY = 0;
 
             switch (objectFit) {
               case "contain":
@@ -3068,11 +3066,11 @@ export const Canvas = function Canvas({
                 if (containerAspectRatio > imageAspectRatio) {
                   logoWidth = containerWidth;
                   logoHeight = logoWidth / imageAspectRatio;
-                  offsetY = (containerHeight - logoHeight) / 2;
+                  // offsetY sera calculé selon verticalAlign plus tard
                 } else {
                   logoHeight = containerHeight;
                   logoWidth = logoHeight * imageAspectRatio;
-                  offsetX = (containerWidth - logoWidth) / 2;
+                  // offsetX sera calculé selon horizontalAlign plus tard
                 }
                 break;
 
@@ -3150,9 +3148,9 @@ export const Canvas = function Canvas({
             }
             // Pour "top", baseY reste à 0
 
-            // Position finale de l'image avec les offsets (pour cover/contain)
-            const imageX = baseX + offsetX;
-            const imageY = baseY + offsetY;
+            // Position finale de l'image (plus besoin d'offsets supplémentaires)
+            const imageX = baseX;
+            const imageY = baseY;
 
             // Sauvegarder le contexte
             ctx.save();
