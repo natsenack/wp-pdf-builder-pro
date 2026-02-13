@@ -1556,6 +1556,10 @@ const drawCustomerInfo = (
 
   const textX = getTextX();
 
+  // 🔍 DEBUG: Log des coordonnées customer_info
+  console.log(`[React Canvas customer_info] Element ID: ${element.id} | x: ${element.x} | y: ${element.y} | width: ${element.width} | height: ${element.height}`);
+  console.log(`[React Canvas customer_info] paddingH: ${paddingHorizontal} | paddingV: ${paddingVertical} | textX: ${textX} | startY: ${startY}`);
+
   // En-tête
   if (showHeaders) {
     ctx.fillStyle = normalizeColor(props.headerTextColor || "#111827");
@@ -2092,6 +2096,10 @@ const drawCompanyInfo = (
     "lines:",
     lines.map((l) => l.text),
   );
+
+  // 🔍 DEBUG: Log des coordonnées company_info
+  console.log(`[React Canvas company_info] Element ID: ${element.id} | x: ${element.x} | y: ${element.y} | width: ${element.width} | height: ${element.height}`);
+  console.log(`[React Canvas company_info] paddingH: ${paddingHorizontal} | paddingV: ${paddingVertical}`);
 
   // Appliquer la police du corps par défaut
   ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
