@@ -2874,11 +2874,7 @@ class PDF_Builder_Unified_Ajax_Handler {
     private function get_template($template_id) {
         global $wpdb;
         
-        // Les templates sont stockés dans la table wp_pdf_builder_templates
         $table_name = $wpdb->prefix . 'pdf_builder_templates';
-        
-        error_log("[PDF Builder] Recherche template ID '{$template_id}' dans table {$table_name}");
-        
         $template = $wpdb->get_row(
             $wpdb->prepare(
                 "SELECT * FROM {$table_name} WHERE id = %d",
@@ -2887,17 +2883,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             ARRAY_A
         );
         
-        if (!$template) {
-            error_log("[PDF Builder] Template #{$template_id} introuvable dans la table");
-            error_log("[PDF Builder] Utilisation du template fallback");
-            return $this->get_fallback_template($template_id);
-        }
-        
-        error_log("[PDF Builder] Template trouvé: " . ($template['name'] ?? 'sans nom'));
-        error_log("[PDF Builder] Template data length: " . strlen($template['template_data'] ?? ''));
-        error_log("[PDF Builder] Template JSON preview: " . substr($template['template_data'] ?? '', 0, 200));
-        
-        return $template;
+        return $template ?: $this->get_fallback_template($template_id);
     }
 
     /**
@@ -2981,34 +2967,20 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
 
         if (!$template_data || !isset($template_data['elements'])) {
-            error_log("[PDF Builder] Template data invalide ou manquante");
-            error_log("[PDF Builder] Template data keys: " . (is_array($template_data) ? implode(', ', array_keys($template_data)) : 'NOT ARRAY'));
             return $this->generate_fallback_html($template, $all_data);
         }
 
         $elements = $template_data['elements'];
 
-        // Support de deux formats de canvas:
-        // 1. Format avec objet canvas: {canvas: {width, height}, elements: []}
-        // 2. Format plat: {canvasWidth, canvasHeight, elements: []}
-        // Dimensions par défaut : A4 @ 96 DPI (794×1123px) - cohérent avec React Canvas
+        // Support des deux formats de canvas - Dimensions par défaut : A4 @ 96 DPI
         if (isset($template_data['canvas'])) {
-            // Format avec objet canvas
             $canvas = $template_data['canvas'];
             $width = $canvas['width'] ?? 794;
             $height = $canvas['height'] ?? 1123;
-            $dpi = $canvas['dpi'] ?? 96;  // 96 DPI = pixels écran (React)
-            $orientation = $canvas['orientation'] ?? 'portrait';
         } else {
-            // Format plat (par défaut)
             $width = $template_data['canvasWidth'] ?? 794;
             $height = $template_data['canvasHeight'] ?? 1123;
-            $dpi = $template_data['dpi'] ?? 96;
-            $orientation = $template_data['orientation'] ?? 'portrait';
         }
-
-        error_log("[PDF Builder] Canvas dimensions: {$width}x{$height} px");
-        error_log("[PDF Builder] Nombre d'éléments à rendre: " . count($elements));
 
         // Début du HTML
         $html = '<!DOCTYPE html>
@@ -3095,10 +3067,6 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         // Générer chaque élément
         foreach ($elements as $element) {
-            // DEBUG: Logger les coordonnées exactes de chaque élément
-            if (isset($element['type']) && ($element['type'] === 'company_logo' || $element['type'] === 'customer_info')) {
-                error_log("[PDF Builder DEBUG] Élément {$element['type']} - x={$element['x']}, y={$element['y']}, width={$element['width']}, height={$element['height']}");
-            }
             $html .= $this->render_element($element, $all_data, $is_premium, $format);
         }
 
@@ -3107,9 +3075,6 @@ class PDF_Builder_Unified_Ajax_Handler {
 </body>
 </html>';
 
-        error_log("[PDF Builder] HTML généré - Longueur totale: " . strlen($html) . " caractères");
-        error_log("[PDF Builder] HTML preview (500 premiers caractères): " . substr($html, 0, 500));
-
         return $html;
     }
 
@@ -3117,31 +3082,19 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Génère le HTML d'un élément
      */
     private function render_element($element, $order_data, $is_premium = false, $format = 'html') {
-        $type = $element['type'] ?? 'text';
-        $element_id = $element['id'] ?? 'unknown';
-        
-        error_log("[PDF Builder] Rendu élément : type={$type}, id={$element_id}");
-        
         // Vérifier si l'élément est visible
         if (isset($element['visible']) && $element['visible'] === false) {
-            error_log("[PDF Builder] Élément {$element_id} non visible, ignoré");
             return '';
         }
         
+        $type = $element['type'] ?? 'text';
         $x = $element['x'] ?? 0;
         $y = $element['y'] ?? 0;
         $width = $element['width'] ?? 100;
         $height = $element['height'] ?? 30;
         
-        // DEBUG CRITICAL: Logger TOUTES les positions
-        error_log("[PDF Builder POSITION DEBUG] Type: {$type} | ID: {$element_id} | X: {$x} | Y: {$y} | Width: {$width} | Height: {$height}");
-        
-        // Styles de base avec position absolute explicite pour garantir le positionnement
-        // (même si défini dans la classe CSS .element, certains CSS peuvent l'écraser)
-        // DEBUG: !important pour forcer les positions exactes
+        // Styles de base avec position absolute et dimensions
         $styles = "position: absolute !important; margin: 0 !important; left: {$x}px !important; top: {$y}px !important; width: {$width}px !important; height: {$height}px !important;";
-        
-        // Appliquer les styles de l'élément
         $styles .= $this->build_element_styles($element);
         
         // Rendu spécifique par type
@@ -3218,86 +3171,73 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Construit les styles CSS d'un élément
      */
     private function build_element_styles($element) {
-        $styles = '';
+        $style_map = [
+            'fontSize' => 'font-size: %spx;',
+            'fontFamily' => 'font-family: %s;',
+            'fontWeight' => 'font-weight: %s;',
+            'fontStyle' => 'font-style: %s;',
+            'textDecoration' => 'text-decoration: %s;',
+            'textTransform' => 'text-transform: %s;',
+            'textAlign' => 'text-align: %s;',
+            'textColor' => 'color: %s;',
+        ];
         
-        // Polices et texte
-        if (isset($element['fontSize'])) {
-            $styles .= " font-size: {$element['fontSize']}px;";
-        }
-        if (isset($element['fontFamily'])) {
-            $styles .= " font-family: {$element['fontFamily']};";
-        }
-        if (isset($element['fontWeight'])) {
-            $styles .= " font-weight: {$element['fontWeight']};";
-        }
-        if (isset($element['fontStyle'])) {
-            $styles .= " font-style: {$element['fontStyle']};";
-        }
-        if (isset($element['textDecoration'])) {
-            $styles .= " text-decoration: {$element['textDecoration']};";
-        }
-        if (isset($element['textTransform'])) {
-            $styles .= " text-transform: {$element['textTransform']};";
-        }
-        if (isset($element['letterSpacing']) && $element['letterSpacing'] !== 'normal') {
-            $letterSpacingValue = floatval($element['letterSpacing']) . 'px';
-            $styles .= " letter-spacing: {$letterSpacingValue};";
-        }
-        if (isset($element['wordSpacing']) && $element['wordSpacing'] !== 'normal') {
-            $styles .= " word-spacing: {$element['wordSpacing']};";
-        }
-        if (isset($element['lineHeight'])) {
-            $lineHeightValue = floatval($element['lineHeight']);
-            $styles .= " line-height: {$lineHeightValue};";
-        }
-        if (isset($element['textAlign'])) {
-            $styles .= " text-align: {$element['textAlign']};";
-        }
-        // NOTE: vertical-align ne fonctionne PAS avec position: absolute
-        // Il est géré dans le rendu spécifique de chaque élément via flexbox
+        $styles = [];
         
-        // Couleurs
-        if (isset($element['textColor'])) {
-            $styles .= " color: {$element['textColor']};";
-        }
-        // Appliquer le fond seulement si showBackground est activé (ou non défini pour rétrocompatibilité)
-        if (isset($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
-            // Si showBackground est défini, on le respecte, sinon on affiche le fond pour rétrocompatibilité
-            if (!isset($element['showBackground']) || $element['showBackground'] === true) {
-                $styles .= " background-color: {$element['backgroundColor']};";
+        // Appliquer les styles simples via mapping
+        foreach ($style_map as $prop => $css) {
+            if (isset($element[$prop])) {
+                $styles[] = sprintf($css, $element[$prop]);
             }
         }
         
-        // Bordures - Respecter showBorders (ou non défini pour rétrocompatibilité)
+        // Letter spacing
+        if (isset($element['letterSpacing']) && $element['letterSpacing'] !== 'normal') {
+            $styles[] = 'letter-spacing: ' . floatval($element['letterSpacing']) . 'px;';
+        }
+        
+        // Word spacing
+        if (isset($element['wordSpacing']) && $element['wordSpacing'] !== 'normal') {
+            $styles[] = 'word-spacing: ' . $element['wordSpacing'] . ';';
+        }
+        
+        // Line height
+        if (isset($element['lineHeight'])) {
+            $styles[] = 'line-height: ' . floatval($element['lineHeight']) . ';';
+        }
+        
+        // Background color (avec respect de showBackground)
+        if (isset($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
+            if (!isset($element['showBackground']) || $element['showBackground']) {
+                $styles[] = 'background-color: ' . $element['backgroundColor'] . ';';
+            }
+        }
+        
+        // Bordures (avec respect de showBorders)
         if (isset($element['borderWidth']) && $element['borderWidth'] > 0) {
-            // Si showBorders est défini, on le respecte, sinon on affiche les bordures pour rétrocompatibilité
-            if (!isset($element['showBorders']) || $element['showBorders'] === true) {
+            if (!isset($element['showBorders']) || $element['showBorders']) {
                 $border_color = $element['borderColor'] ?? '#000000';
                 $border_style = $element['borderStyle'] ?? 'solid';
-                $styles .= " border: {$element['borderWidth']}px {$border_style} {$border_color};";
+                $styles[] = "border: {$element['borderWidth']}px {$border_style} {$border_color};";
             }
-        }
-        if (isset($element['borderRadius']) && $element['borderRadius'] > 0) {
-            $styles .= " border-radius: {$element['borderRadius']}px;";
         }
         
-        // Opacité
+        // Border radius
+        if (isset($element['borderRadius']) && $element['borderRadius'] > 0) {
+            $styles[] = 'border-radius: ' . $element['borderRadius'] . 'px;';
+        }
+        
+        // Opacité (normalisation auto)
         if (isset($element['opacity'])) {
-            $opacity = $element['opacity'];
-            // Normaliser: si > 1, c'est un pourcentage (0-100), sinon c'est déjà 0-1
-            if ($opacity > 1) {
-                $opacity = $opacity / 100;
-            }
-            // Appliquer seulement si transparence < 100%
+            $opacity = $element['opacity'] > 1 ? $element['opacity'] / 100 : $element['opacity'];
             if ($opacity < 1) {
-                $styles .= " opacity: {$opacity};";
+                $styles[] = 'opacity: ' . $opacity . ';';
             }
-            // Si opacity = 1, élément complètement opaque (pas de style nécessaire)
         }
         
         // Rotation
         if (isset($element['rotation']) && $element['rotation'] != 0) {
-            $styles .= " transform: rotate({$element['rotation']}deg);";
+            $styles[] = 'transform: rotate(' . $element['rotation'] . 'deg);';
         }
         
         // Ombre
@@ -3305,16 +3245,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             $offsetX = $element['shadowOffsetX'] ?? 0;
             $offsetY = $element['shadowOffsetY'] ?? 0;
             $blur = $element['shadowBlur'] ?? 0;
-            $color = $element['shadowColor'] ?? '#000000';
             if ($offsetX != 0 || $offsetY != 0 || $blur != 0) {
-                $styles .= " box-shadow: {$offsetX}px {$offsetY}px {$blur}px {$color};";
+                $color = $element['shadowColor'] ?? '#000000';
+                $styles[] = "box-shadow: {$offsetX}px {$offsetY}px {$blur}px {$color};";
             }
         }
         
-        // NOTE: Le padding n'est PAS appliqué ici car il est géré dans le rendu spécifique
-        // de chaque type d'élément (pour éviter les conflits avec box-sizing)
-        
-        return $styles;
+        return ' ' . implode(' ', $styles);
     }
 
     /**
@@ -3355,6 +3292,64 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $content = nl2br(esc_html($content));
                 return $content;
         }
+    }
+
+    /**
+     * Helper: Extrait les propriétés de padding avec fallback
+     */
+    private function extract_padding($element) {
+        $default_padding = $element['padding'] ?? 12;
+        return [
+            'horizontal' => $element['paddingHorizontal'] ?? $default_padding,
+            'vertical' => $element['paddingVertical'] ?? $default_padding
+        ];
+    }
+    
+    /**
+     * Helper: Extrait les propriétés de police avec fallback
+     */
+    private function extract_font_props($element, $prefix = '', $defaults = []) {
+        $default_family = $defaults['family'] ?? ($element['fontFamily'] ?? 'DejaVu Sans');
+        $default_size = $defaults['size'] ?? 12;
+        $default_weight = $defaults['weight'] ?? 'normal';
+        $default_style = $defaults['style'] ?? 'normal';
+        
+        $family_key = $prefix ? "{$prefix}FontFamily" : 'fontFamily';
+        $size_key = $prefix ? "{$prefix}FontSize" : 'fontSize';
+        $weight_key = $prefix ? "{$prefix}FontWeight" : 'fontWeight';
+        $style_key = $prefix ? "{$prefix}FontStyle" : 'fontStyle';
+        
+        return [
+            'family' => $element[$family_key] ?? $default_family,
+            'size' => $element[$size_key] ?? $default_size,
+            'weight' => $element[$weight_key] ?? $default_weight,
+            'style' => $element[$style_key] ?? $default_style
+        ];
+    }
+    
+    /**
+     * Helper: Extrait les propriétés de couleur avec fallback
+     */
+    private function extract_colors($element, $defaults = []) {
+        return [
+            'text' => $element['textColor'] ?? ($defaults['text'] ?? '#374151'),
+            'header' => $element['headerTextColor'] ?? ($defaults['header'] ?? '#111827'),
+            'background' => $element['backgroundColor'] ?? ($defaults['background'] ?? '#ffffff'),
+            'border' => $element['borderColor'] ?? ($defaults['border'] ?? '#e5e7eb')
+        ];
+    }
+    
+    /**
+     * Helper: Extrait les propriétés de layout
+     */
+    private function extract_layout_props($element) {
+        return [
+            'layout' => $element['layout'] ?? 'vertical',
+            'textAlign' => $element['textAlign'] ?? 'left',
+            'verticalAlign' => $element['verticalAlign'] ?? 'top',
+            'lineHeight' => floatval($element['lineHeight'] ?? 1.2),
+            'letterSpacing' => floatval($element['letterSpacing'] ?? 0)
+        ];
     }
 
     /**
@@ -3537,165 +3532,118 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Rendu des informations client
      */
     private function render_customer_info_element($element, $order_data, $base_styles, $is_premium = false) {
-        // Récupérer le padding horizontal et vertical (backward compatibility avec padding unique)
-        $paddingHorizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : (isset($element['padding']) ? intval($element['padding']) : 12);
-        $paddingVertical = isset($element['paddingVertical']) ? intval($element['paddingVertical']) : (isset($element['padding']) ? intval($element['padding']) : 12);
+        // Extraction des propriétés via helpers
+        $padding = $this->extract_padding($element);
+        $layout_props = $this->extract_layout_props($element);
+        $colors = $this->extract_colors($element);
+        $header_font = $this->extract_font_props($element, 'header', ['size' => 14, 'weight' => 'bold']);
+        $body_font = $this->extract_font_props($element, 'body', ['size' => 12]);
         
-        // Récupérer les propriétés de disposition
-        $layout = isset($element['layout']) ? $element['layout'] : 'vertical';
-        $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'left';
-        $verticalAlign = isset($element['verticalAlign']) ? $element['verticalAlign'] : 'top';
-        // Line-height par défaut 1.2 (cohérent avec React Canvas)
-        $lineHeight = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.2;
-        $letterSpacing = isset($element['letterSpacing']) ? floatval($element['letterSpacing']) : 0;
+        // Options d'affichage
+        $show = [
+            'headers' => $element['showHeaders'] ?? true,
+            'fullName' => $element['showFullName'] ?? true,
+            'address' => $element['showAddress'] ?? true,
+            'email' => $element['showEmail'] ?? true,
+            'phone' => $element['showPhone'] ?? true,
+            'payment' => $element['showPaymentMethod'] ?? false,
+            'transaction' => $element['showTransactionId'] ?? false
+        ];
         
-        // Récupérer les options d'affichage
-        $showHeaders = $element['showHeaders'] ?? true;
-        $showBackground = $element['showBackground'] ?? true;
-        $showBorders = $element['showBorders'] ?? true;
-        $showFullName = $element['showFullName'] ?? true;
-        
-        // Récupérer les couleurs
-        $headerTextColor = isset($element['headerTextColor']) ? $element['headerTextColor'] : '#111827';
-        $textColor = isset($element['textColor']) ? $element['textColor'] : '#374151';
-        $backgroundColor = isset($element['backgroundColor']) ? $element['backgroundColor'] : '#ffffff';
-        $borderColor = isset($element['borderColor']) ? $element['borderColor'] : '#e5e7eb';
-        
-        // Récupérer les propriétés de police pour l'en-tête
-        $headerFontFamily = isset($element['headerFontFamily']) ? $element['headerFontFamily'] : (isset($element['fontFamily']) ? $element['fontFamily'] : 'DejaVu Sans');
-        $headerFontSize = isset($element['headerFontSize']) ? intval($element['headerFontSize']) : 14;
-        $headerFontWeight = isset($element['headerFontWeight']) ? $element['headerFontWeight'] : 'bold';
-        $headerFontStyle = isset($element['headerFontStyle']) ? $element['headerFontStyle'] : 'normal';
-        
-        // Récupérer les propriétés de police pour le corps
-        $bodyFontFamily = isset($element['bodyFontFamily']) ? $element['bodyFontFamily'] : (isset($element['fontFamily']) ? $element['fontFamily'] : 'DejaVu Sans');
-        $bodyFontSize = isset($element['bodyFontSize']) ? intval($element['bodyFontSize']) : 12;
-        $bodyFontWeight = isset($element['bodyFontWeight']) ? $element['bodyFontWeight'] : 'normal';
-        $bodyFontStyle = isset($element['bodyFontStyle']) ? $element['bodyFontStyle'] : 'normal';
-        
-        // Construire les lignes selon le layout (sans l'en-tête qui sera affiché séparément)
+        // Construction des lignes selon le layout
         $lines = [];
+        $customer = $order_data['customer'];
+        $billing = $order_data['billing'];
         
-        // Récupérer les options d'affichage des informations de paiement
-        $showPaymentMethod = isset($element['showPaymentMethod']) ? $element['showPaymentMethod'] : false;
-        $showTransactionId = isset($element['showTransactionId']) ? $element['showTransactionId'] : false;
-
-        if ($layout === 'vertical') {
-            // Mode vertical : une info par ligne
-            if ($showFullName) {
-                $lines[] = esc_html($order_data['customer']['full_name']);
+        if ($layout_props['layout'] === 'vertical') {
+            if ($show['fullName']) $lines[] = esc_html($customer['full_name']);
+            if ($show['address']) {
+                // Split par \n pour supporter les adresses multi-lignes (comme React)
+                $address_lines = explode("\n", $billing['full_address']);
+                foreach ($address_lines as $addr_line) {
+                    if (trim($addr_line)) $lines[] = esc_html($addr_line);
+                }
             }
-            if ($element['showAddress'] ?? true) {
-                $lines[] = esc_html($order_data['billing']['full_address']);
+            if ($show['email']) $lines[] = esc_html($customer['email']);
+            if ($show['phone'] && !empty($customer['phone'])) $lines[] = esc_html($customer['phone']);
+            if ($show['payment']) {
+                $payment_method = $order_data['order']['payment_method'] ?? 'Carte bancaire';
+                $lines[] = 'Paiement: ' . esc_html($payment_method);
             }
-            if ($element['showEmail'] ?? true) {
-                $lines[] = esc_html($order_data['customer']['email']);
+            if ($show['transaction']) {
+                $transaction_id = $order_data['order']['transaction_id'] ?? 'N/A';
+                $lines[] = 'ID: ' . esc_html($transaction_id);
             }
-            if (($element['showPhone'] ?? true) && !empty($order_data['customer']['phone'])) {
-                $lines[] = esc_html($order_data['customer']['phone']);
+        } elseif ($layout_props['layout'] === 'horizontal') {
+            $line1 = $line2 = $line3 = '';
+            if ($show['fullName']) $line1 .= esc_html($customer['full_name']);
+            if ($show['email']) $line1 .= ($line1 ? ' | ' : '') . esc_html($customer['email']);
+            // Remplacer \n par , pour garder compact (comme React)
+            if ($show['address']) $line2 .= esc_html(str_replace("\n", ', ', $billing['full_address']));
+            if ($show['phone'] && !empty($customer['phone'])) $line2 .= ($line2 ? ' | ' : '') . esc_html($customer['phone']);
+            if ($show['payment']) {
+                $payment_method = $order_data['order']['payment_method'] ?? 'Carte bancaire';
+                $line3 .= 'Paiement: ' . esc_html($payment_method);
             }
-            if ($showPaymentMethod) {
-                $lines[] = 'Paiement: Carte bancaire';
-            }
-            if ($showTransactionId) {
-                $lines[] = 'ID: TXN123456789';
-            }
-        } elseif ($layout === 'horizontal') {
-            // Mode horizontal : plusieurs infos par ligne
-            $line1 = '';
-            $line2 = '';
-            $line3 = '';
-            
-            if ($showFullName) {
-                $line1 .= esc_html($order_data['customer']['full_name']);
-            }
-            if ($element['showEmail'] ?? true) {
-                $line1 .= ($line1 ? ' | ' : '') . esc_html($order_data['customer']['email']);
-            }
-            if ($element['showAddress'] ?? true) {
-                $line2 .= esc_html($order_data['billing']['full_address']);
-            }
-            if (($element['showPhone'] ?? true) && !empty($order_data['customer']['phone'])) {
-                $line2 .= ($line2 ? ' | ' : '') . esc_html($order_data['customer']['phone']);
-            }
-            if ($showPaymentMethod) {
-                $line3 .= 'Paiement: Carte bancaire';
-            }
-            if ($showTransactionId) {
-                $line3 .= ($line3 ? ' | ' : '') . 'ID: TXN123456789';
+            if ($show['transaction']) {
+                $transaction_id = $order_data['order']['transaction_id'] ?? 'N/A';
+                $line3 .= ($line3 ? ' | ' : '') . 'ID: ' . esc_html($transaction_id);
             }
             
             if ($line1) $lines[] = $line1;
             if ($line2) $lines[] = $line2;
             if ($line3) $lines[] = $line3;
-        } elseif ($layout === 'compact') {
-            // Mode compact : nom en premier, puis reste avec séparateurs
-            if ($showFullName) {
-                $lines[] = esc_html($order_data['customer']['full_name']);
+        } else { // compact
+            if ($show['fullName']) $lines[] = esc_html($customer['full_name']);
+            
+            $compact_parts = [];
+            // Remplacer \n par , pour mode compact (comme React)
+            if ($show['address']) $compact_parts[] = esc_html(str_replace("\n", ', ', $billing['full_address']));
+            if ($show['email']) $compact_parts[] = esc_html($customer['email']);
+            if ($show['phone'] && !empty($customer['phone'])) $compact_parts[] = esc_html($customer['phone']);
+            if ($show['payment']) {
+                $payment_method = $order_data['order']['payment_method'] ?? 'Carte bancaire';
+                $compact_parts[] = 'Paiement: ' . esc_html($payment_method);
+            }
+            if ($show['transaction']) {
+                $transaction_id = $order_data['order']['transaction_id'] ?? 'N/A';
+                $compact_parts[] = 'ID: ' . esc_html($transaction_id);
             }
             
-            $compactLine = '';
-            if ($element['showAddress'] ?? true) {
-                $compactLine .= esc_html($order_data['billing']['full_address']);  // Adresse complète
-            }
-            if ($element['showEmail'] ?? true) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($order_data['customer']['email']);
-            }
-            if (($element['showPhone'] ?? true) && !empty($order_data['customer']['phone'])) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($order_data['customer']['phone']);
-            }
-            if ($showPaymentMethod) {
-                $compactLine .= ($compactLine ? ' • ' : '') . 'Paiement: Carte bancaire';
-            }
-            if ($showTransactionId) {
-                $compactLine .= ($compactLine ? ' • ' : '') . 'ID: TXN123456789';
-            }
-            
-            if ($compactLine) $lines[] = $compactLine;
+            if ($compact_parts) $lines[] = implode(' • ', $compact_parts);
         }
         
-        // Appliquer l'alignement horizontal et vertical
-        $letterSpacingStyle = $letterSpacing !== 0 ? ' letter-spacing: ' . $letterSpacing . 'px;' : '';
+        // Styles du conteneur
+        $letter_spacing = $layout_props['letterSpacing'] ? " letter-spacing: {$layout_props['letterSpacing']}px;" : '';
+        $container_styles = $base_styles . 
+            "; padding: {$padding['vertical']}px {$padding['horizontal']}px;" .
+            " text-align: {$layout_props['textAlign']};" .
+            " color: {$colors['text']};" .
+            " font-family: {$body_font['family']};" .
+            " font-size: {$body_font['size']}px;" .
+            " font-weight: {$body_font['weight']};" .
+            " font-style: {$body_font['style']};" .
+            " line-height: {$layout_props['lineHeight']};" .
+            " white-space: pre-line;" . $letter_spacing;
         
-        // STRUCTURE SIMPLE comme product_table et text (qui fonctionnent!)
-        // Le $base_styles contient déjà position:absolute avec top:Y du JSON
-        // On ajoute juste le padding et les styles de texte au conteneur unique
-        
-        $container_styles = $base_styles . '; padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px;';
-        $container_styles .= ' text-align: ' . $textAlign . ';';
-        $container_styles .= ' color: ' . esc_attr($textColor) . ';';
-        $container_styles .= ' font-family: ' . $bodyFontFamily . ';';
-        $container_styles .= ' font-size: ' . $bodyFontSize . 'px;';
-        $container_styles .= ' font-weight: ' . $bodyFontWeight . ';';
-        $container_styles .= ' font-style: ' . $bodyFontStyle . ';';
-        $container_styles .= ' line-height: ' . $lineHeight . ';';
-        $container_styles .= ' white-space: pre-line;';
-        $container_styles .= $letterSpacingStyle;
-        
-        // Alignement vertical avec flexbox si nécessaire
-        if ($verticalAlign !== 'top') {
-            $container_styles .= ' display: flex; flex-direction: column;';
-            if ($verticalAlign === 'middle') {
-                $container_styles .= ' justify-content: center;';
-            } elseif ($verticalAlign === 'bottom') {
-                $container_styles .= ' justify-content: flex-end;';
-            }
+        // Alignement vertical via flexbox
+        if ($layout_props['verticalAlign'] === 'middle') {
+            $container_styles .= ' display: flex; flex-direction: column; justify-content: center;';
+        } elseif ($layout_props['verticalAlign'] === 'bottom') {
+            $container_styles .= ' display: flex; flex-direction: column; justify-content: flex-end;';
         }
         
-        // Style de l'en-tête
-        $header_style = 'color: ' . esc_attr($headerTextColor) . '; font-family: ' . esc_attr($headerFontFamily) . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . esc_attr($headerFontWeight) . '; font-style: ' . esc_attr($headerFontStyle) . '; line-height: 1.2; margin-bottom: 8px;';
+        // Style header
+        $header_style = "color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; line-height: 1.2; margin-bottom: 8px;";
         
+        // Génération HTML
         $html = '<div class="element" style="' . $container_styles . '">';
-        
-        // Header si activé
-        if ($showHeaders) {
+        if ($show['headers']) {
             $html .= '<div style="' . $header_style . '">Informations Client</div>';
         }
-        
-        // Contenu
         $html .= implode("\n", $lines);
-        
         $html .= '</div>';
+        
         return $html;
     }
     
@@ -3703,229 +3651,147 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Rendu des informations entreprise
      */
     private function render_company_info_element($element, $order_data, $base_styles, $is_premium = false, $format = 'html') {
-        // Récupérer le padding horizontal et vertical (backward compatibility avec padding unique)
-        $paddingHorizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : (isset($element['padding']) ? intval($element['padding']) : 12);
-        $paddingVertical = isset($element['paddingVertical']) ? intval($element['paddingVertical']) : (isset($element['padding']) ? intval($element['padding']) : 12);
+        // Extraction des propriétés via helpers
+        $padding = $this->extract_padding($element);
+        $layout_props = $this->extract_layout_props($element);
+        $layout_props['lineHeight'] = floatval($element['lineHeight'] ?? 1.1); // Override pour company
         
-        // Récupérer les propriétés de disposition
-        $layout = isset($element['layout']) ? $element['layout'] : 'vertical';
-        $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'left';
-        $verticalAlign = isset($element['verticalAlign']) ? $element['verticalAlign'] : 'top';
-        $lineHeight = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.1;
-        $letterSpacing = isset($element['letterSpacing']) ? floatval($element['letterSpacing']) : 0;
-        
-        // ✅ NEW: Thèmes prédéfinis
-        $companyThemes = [
-            'corporate' => [
-                'backgroundColor' => '#ffffff',
-                'borderColor' => '#1f2937',
-                'textColor' => '#374151',
-                'headerTextColor' => '#111827',
-            ],
-            'modern' => [
-                'backgroundColor' => '#ffffff',
-                'borderColor' => '#3b82f6',
-                'textColor' => '#1e40af',
-                'headerTextColor' => '#1e3a8a',
-            ],
-            'elegant' => [
-                'backgroundColor' => '#ffffff',
-                'borderColor' => '#8b5cf6',
-                'textColor' => '#6d28d9',
-                'headerTextColor' => '#581c87',
-            ],
-            'minimal' => [
-                'backgroundColor' => '#ffffff',
-                'borderColor' => '#e5e7eb',
-                'textColor' => '#374151',
-                'headerTextColor' => '#111827',
-            ],
-            'professional' => [
-                'backgroundColor' => '#ffffff',
-                'borderColor' => '#059669',
-                'textColor' => '#047857',
-                'headerTextColor' => '#064e3b',
-            ],
+        // Thèmes prédéfinis
+        $themes = [
+            'corporate' => ['backgroundColor' => '#ffffff', 'borderColor' => '#1f2937', 'textColor' => '#374151', 'headerTextColor' => '#111827'],
+            'modern' => ['backgroundColor' => '#ffffff', 'borderColor' => '#3b82f6', 'textColor' => '#1e40af', 'headerTextColor' => '#1e3a8a'],
+            'elegant' => ['backgroundColor' => '#ffffff', 'borderColor' => '#8b5cf6', 'textColor' => '#6d28d9', 'headerTextColor' => '#581c87'],
+            'minimal' => ['background Color' => '#ffffff', 'borderColor' => '#e5e7eb', 'textColor' => '#374151', 'headerTextColor' => '#111827'],
+            'professional' => ['backgroundColor' => '#ffffff', 'borderColor' => '#059669', 'textColor' => '#047857', 'headerTextColor' => '#064e3b'],
         ];
         
-        // Récupérer le thème
-        $themeName = isset($element['theme']) ? $element['theme'] : 'corporate';
-        $theme = isset($companyThemes[$themeName]) ? $companyThemes[$themeName] : $companyThemes['corporate'];
+        $theme = $themes[$element['theme'] ?? 'corporate'] ?? $themes['corporate'];
+        $colors = [
+            'text' => $element['textColor'] ?? $theme['textColor'],
+            'header' => $element['headerTextColor'] ?? $theme['headerTextColor'],
+            'background' => $element['backgroundColor'] ?? $theme['backgroundColor'],
+            'border' => $element['borderColor'] ?? $theme['borderColor']
+        ];
         
-        // Appliquer les couleurs du thème (en priorité sur les couleurs personnalisées)
-        $backgroundColor = isset($element['backgroundColor']) && !empty($element['backgroundColor']) ? $element['backgroundColor'] : $theme['backgroundColor'];
-        $borderColor = isset($element['borderColor']) && !empty($element['borderColor']) ? $element['borderColor'] : $theme['borderColor'];
-        $textColor = isset($element['textColor']) && !empty($element['textColor']) ? $element['textColor'] : $theme['textColor'];
-        $headerTextColor = isset($element['headerTextColor']) && !empty($element['headerTextColor']) ? $element['headerTextColor'] : $theme['headerTextColor'];
+        $header_font = $this->extract_font_props($element, 'header', ['size' => 14, 'weight' => 'bold']);
+        $body_font = $this->extract_font_props($element, 'body', ['size' => 12]);
         
-        // ✅ HELPER: Formater le numéro de téléphone (ajouter un point tous les 2 chiffres)
-        $formatPhoneNumber = function($phone) {
-            if (empty($phone)) return $phone;
+        // Helper pour formater le téléphone
+        $format_phone = function($phone) {
+            if (empty($phone)) return '';
             $cleaned = preg_replace('/\D/', '', $phone);
-            $chunks = str_split($cleaned, 2);
-            return implode('.', $chunks);
+            return $cleaned ? implode('.', str_split($cleaned, 2)) : '';
         };
         
-        // Récupérer les données de l'entreprise depuis l'élément canvas (pas depuis les options WordPress)
-        // Helper pour s'assurer qu'on a une string et pas un array
-        $getString = function($value) {
-            if (is_array($value)) {
-                return isset($value[0]) ? (string)$value[0] : '';
-            }
-            return isset($value) ? (string)$value : '';
+        // Helper pour convertir en string
+        $to_string = function($value) {
+            return is_array($value) ? ($value[0] ?? '') : ($value ?? '');
         };
         
-        $companyName = $getString($element['companyName'] ?? get_bloginfo('name'));
-        $address = $getString($element['companyAddress'] ?? get_option('woocommerce_store_address', ''));
-        $city = $getString($element['companyCity'] ?? get_option('woocommerce_store_city', ''));
-        $postcode = $getString($element['companyPostcode'] ?? get_option('woocommerce_store_postcode', ''));
-        $email = $getString($element['companyEmail'] ?? get_option('admin_email', ''));
-        $phone = $getString($element['companyPhone'] ?? get_option('woocommerce_store_phone', ''));
-        $siret = $getString($element['companySiret'] ?? get_option('pdf_builder_company_siret', ''));
-        $rcs = $getString($element['companyRcs'] ?? get_option('pdf_builder_company_rcs', ''));
-        $tva = $getString($element['companyTva'] ?? get_option('pdf_builder_company_vat', ''));
-        $capital = $getString($element['companyCapital'] ?? get_option('pdf_builder_company_capital', ''));
+        // Données de l'entreprise
+        $company = [
+            'name' => $to_string($element['companyName'] ?? get_bloginfo('name')),
+            'address' => $to_string($element['companyAddress'] ?? get_option('woocommerce_store_address', '')),
+            'city' => $to_string($element['companyCity'] ?? get_option('woocommerce_store_city', '')),
+            'email' => $to_string($element['companyEmail'] ?? get_option('admin_email', '')),
+            'phone' => $format_phone($to_string($element['companyPhone'] ?? get_option('woocommerce_store_phone', ''))),
+            'siret' => $to_string($element['companySiret'] ?? get_option('pdf_builder_company_siret', '')),
+            'rcs' => $to_string($element['companyRcs'] ?? get_option('pdf_builder_company_rcs', '')),
+            'tva' => $to_string($element['companyTva'] ?? get_option('pdf_builder_company_vat', '')),
+            'capital' => $to_string($element['companyCapital'] ?? get_option('pdf_builder_company_capital', ''))
+        ];
         
-        // Ajouter le symbole € au capital s'il n'est pas déjà présent
-        if (!empty($capital) && strpos($capital, '€') === false) {
-            $capital .= ' €';
+        // Ajouter € au capital si absent
+        if ($company['capital'] && strpos($company['capital'], '€') === false) {
+            $company['capital'] .= ' €';
         }
         
-        // ✅ NEW: Formater le téléphone
-        $phone = $formatPhoneNumber($phone);
+        // Options d'affichage
+        $show = [
+            'name' => $element['showCompanyName'] ?? true,
+            'address' => $element['showAddress'] ?? true,
+            'email' => $element['showEmail'] ?? true,
+            'phone' => $element['showPhone'] ?? true,
+            'siret' => $element['showSiret'] ?? true,
+            'vat' => $element['showVat'] ?? true,
+            'rcs' => $element['showRcs'] ?? true,
+            'capital' => $element['showCapital'] ?? true
+        ];
         
-        // Construire les lignes selon le layout
-        $lines = [];
+        // Construction des lignes
+        $lines = [];\n        $add_line = function($content) use (&$lines) { if ($content) $lines[] = $content; };
         
-        if ($layout === 'vertical') {
-            // Mode vertical : une info par ligne (ordre identique au React)
-            if ($element['showCompanyName'] ?? true) {
-                $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
+        if ($layout_props['layout'] === 'vertical') {
+            if ($show['name']) $add_line('<strong>' . esc_html($company['name']) . '</strong>');
+            if ($show['address'] && $company['address']) {
+                $add_line(esc_html($company['address']));
+                if ($company['city']) $add_line(esc_html($company['city']));
             }
-            // Afficher adresse puis ville séparément (comme React) pour éviter duplication
-            if (($element['showAddress'] ?? true) && $address) {
-                $lines[] = esc_html($address);
-                // Afficher la ville sur une ligne séparée si elle existe
-                if ($city) {
-                    $lines[] = esc_html($city);
-                }
-            }
-            if (($element['showSiret'] ?? true) && $siret) {
-                $lines[] = esc_html($siret);
-            }
-            if (($element['showVat'] ?? true) && $tva) {
-                $lines[] = esc_html($tva);
-            }
-            if (($element['showRcs'] ?? true) && $rcs) {
-                $lines[] = esc_html($rcs);
-            }
-            if (($element['showCapital'] ?? true) && $capital) {
-                $lines[] = esc_html($capital);
-            }
-            if (($element['showEmail'] ?? true) && $email) {
-                $lines[] = esc_html($email);
-            }
-            if (($element['showPhone'] ?? true) && $phone) {
-                $lines[] = esc_html($phone);
-            }
-        } elseif ($layout === 'horizontal') {
-            // Mode horizontal : plusieurs infos par ligne, groupées logiquement
-            if ($element['showCompanyName'] ?? true) {
-                $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
-            }
+            if ($show['siret'] && $company['siret']) $add_line(esc_html($company['siret']));
+            if ($show['vat'] && $company['tva']) $add_line(esc_html($company['tva']));
+            if ($show['rcs'] && $company['rcs']) $add_line(esc_html($company['rcs']));
+            if ($show['capital'] && $company['capital']) $add_line(esc_html($company['capital']));
+            if ($show['email'] && $company['email']) $add_line(esc_html($company['email']));
+            if ($show['phone'] && $company['phone']) $add_line(esc_html($company['phone']));
+        } elseif ($layout_props['layout'] === 'horizontal') {
+            if ($show['name']) $add_line('<strong>' . esc_html($company['name']) . '</strong>');
             
-            // Ligne 1: Adresse + Ville (si elle existe)
-            $line1 = '';
-            if (($element['showAddress'] ?? true) && $address) {
-                $line1 .= esc_html($address);
-                if ($city) {
-                    $line1 .= ', ' . esc_html($city);
-                }
+            $parts = [];
+            if ($show['address'] && $company['address']) {
+                $addr = esc_html($company['address']);
+                if ($company['city']) $addr .= ', ' . esc_html($company['city']);
+                $parts[] = $addr;
             }
-            if ($line1) $lines[] = $line1;
+            if ($parts) $add_line(implode('', $parts));
             
-            // Ligne 2: Email + Phone
-            $line2 = '';
-            if (($element['showEmail'] ?? true) && $email) {
-                $line2 .= esc_html($email);
-            }
-            if (($element['showPhone'] ?? true) && $phone) {
-                $line2 .= ($line2 ? ' | ' : '') . esc_html($phone);
-            }
-            if ($line2) $lines[] = $line2;
+            $parts = [];
+            if ($show['email'] && $company['email']) $parts[] = esc_html($company['email']);
+            if ($show['phone'] && $company['phone']) $parts[] = esc_html($company['phone']);
+            if ($parts) $add_line(implode(' | ', $parts));
             
-            // Ligne 3: Infos légales (SIRET | RCS | TVA | Capital)
-            $line3 = '';
-            if (($element['showSiret'] ?? true) && $siret) {
-                $line3 .= esc_html($siret);
-            }
-            if (($element['showRcs'] ?? true) && $rcs) {
-                $line3 .= ($line3 ? ' | ' : '') . esc_html($rcs);
-            }
-            if (($element['showVat'] ?? true) && $tva) {
-                $line3 .= ($line3 ? ' | ' : '') . esc_html($tva);
-            }
-            if (($element['showCapital'] ?? true) && $capital) {
-                $line3 .= ($line3 ? ' | ' : '') . esc_html($capital);
-            }
-            if ($line3) $lines[] = $line3;
-        } elseif ($layout === 'compact') {
-            // Mode compact : nom en en-tête + reste avec séparateurs (ordre identique au React)
-            if ($element['showCompanyName'] ?? true) {
-                $lines[] = '<strong>' . esc_html($companyName) . '</strong>';
-            }
+            $parts = [];
+            if ($show['siret'] && $company['siret']) $parts[] = esc_html($company['siret']);
+            if ($show['rcs'] && $company['rcs']) $parts[] = esc_html($company['rcs']);
+            if ($show['vat'] && $company['tva']) $parts[] = esc_html($company['tva']);
+            if ($show['capital'] && $company['capital']) $parts[] = esc_html($company['capital']);
+            if ($parts) $add_line(implode(' | ', $parts));
+        } else { // compact
+            if ($show['name']) $add_line('<strong>' . esc_html($company['name']) . '</strong>');
             
-            $compactLine = '';
-            if (($element['showAddress'] ?? true) && $address) {
-                $compactLine .= esc_html($address);
-            }
-            if (($element['showEmail'] ?? true) && $email) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($email);
-            }
-            if (($element['showPhone'] ?? true) && $phone) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($phone);
-            }
-            if (($element['showSiret'] ?? true) && $siret) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($siret);
-            }
-            if (($element['showVat'] ?? true) && $tva) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($tva);
-            }
-            if (($element['showRcs'] ?? true) && $rcs) {
-                $compactLine .= ($compactLine ? ' • ' : '') . esc_html($rcs);
-            }
-            
-            if ($compactLine) $lines[] = $compactLine;
+            $parts = [];
+            if ($show['address'] && $company['address']) $parts[] = esc_html($company['address']);
+            if ($show['email'] && $company['email']) $parts[] = esc_html($company['email']);
+            if ($show['phone'] && $company['phone']) $parts[] = esc_html($company['phone']);
+            if ($show['siret'] && $company['siret']) $parts[] = esc_html($company['siret']);
+            if ($show['vat'] && $company['tva']) $parts[] = esc_html($company['tva']);
+            if ($show['rcs'] && $company['rcs']) $parts[] = esc_html($company['rcs']);
+            if ($parts) $add_line(implode(' • ', $parts));
         }
         
-        // Appliquer l'alignement horizontal et vertical
-        $letterSpacingStyle = $letterSpacing !== 0 ? ' letter-spacing: ' . $letterSpacing . 'px;' : '';
+        // Styles
+        $letter_spacing = $layout_props['letterSpacing'] ? \" letter-spacing: {$layout_props['letterSpacing']}px;\" : '';
+        $container_styles = $base_styles . 
+            \"; padding: {$padding['vertical']}px {$padding['horizontal']}px;\" .
+            \" text-align: {$layout_props['textAlign']};\" .
+            \" line-height: {$layout_props['lineHeight']};\" .
+            \" white-space: pre-line;\" .
+            \" color: {$colors['text']};\" .
+            \" font-family: {$body_font['family']};\" .
+            \" font-size: {$body_font['size']}px;\" .
+            \" font-weight: {$body_font['weight']};\" .
+            \" font-style: {$body_font['style']};\" .
+            $letter_spacing .
+            ' width: 100%; height: 100%;';
         
-        // ✅ NEW: Ajouter couleurs du thème et polices
-        $headerFontFamily = isset($element['headerFontFamily']) ? $element['headerFontFamily'] : (isset($element['fontFamily']) ? $element['fontFamily'] : 'DejaVu Sans');
-        $headerFontSize = isset($element['headerFontSize']) ? intval($element['headerFontSize']) : 14;
-        $headerFontWeight = isset($element['headerFontWeight']) ? $element['headerFontWeight'] : 'bold';
-        $headerFontStyle = isset($element['headerFontStyle']) ? $element['headerFontStyle'] : 'normal';
-        
-        $bodyFontFamily = isset($element['bodyFontFamily']) ? $element['bodyFontFamily'] : (isset($element['fontFamily']) ? $element['fontFamily'] : 'DejaVu Sans');
-        $bodyFontSize = isset($element['bodyFontSize']) ? intval($element['bodyFontSize']) : 12;
-        $bodyFontWeight = isset($element['bodyFontWeight']) ? $element['bodyFontWeight'] : 'normal';
-        $bodyFontStyle = isset($element['bodyFontStyle']) ? $element['bodyFontStyle'] : 'normal';
-        
-        // CRITICAL: Appliquer le padding via padding CSS (comme React dessine avec offset)
-        // MAIS ATTENTION: box-sizing: border-box inclut les bordures dans les dimensions !
-        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . $textColor . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle;
-        // ❌ PROBLEME: box-sizing: border-box AVEC borderWidth fait que la bordure mange dans le contenu
-        $inner_styles .= ' width: 100%; height: 100%;';
-        
-        // Pour l'alignement vertical, on utilise flexbox
-        if ($verticalAlign === 'middle') {
-            $inner_styles .= ' display: flex; flex-direction: column; justify-content: center; height: 100%;';
-        } elseif ($verticalAlign === 'bottom') {
-            $inner_styles .= ' display: flex; flex-direction: column; justify-content: flex-end; height: 100%;';
+        // Alignement vertical
+        if ($layout_props['verticalAlign'] === 'middle') {
+            $container_styles .= ' display: flex; flex-direction: column; justify-content: center;';
+        } elseif ($layout_props['verticalAlign'] === 'bottom') {
+            $container_styles .= ' display: flex; flex-direction: column; justify-content: flex-end;';
         }
         
-        // Style pour les éléments strong (header) - inline pour éviter balise <style> invalide
+        // Style pour <strong>
+        $strong_style = \"color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; line-height: 1.2;\";
         $strong_style = 'color: ' . esc_attr($headerTextColor) . '; font-family: ' . esc_attr($headerFontFamily) . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . esc_attr($headerFontWeight) . '; font-style: ' . esc_attr($headerFontStyle) . '; line-height: 1.2;';
         
         // Traiter les lignes pour ajouter les styles aux balises <strong>

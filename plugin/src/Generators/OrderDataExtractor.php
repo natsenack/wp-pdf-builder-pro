@@ -72,6 +72,7 @@ class OrderDataExtractor
             'status' => $this->order->get_status(),
             'status_label' => wc_get_order_status_name($this->order->get_status()),
             'payment_method' => $this->order->get_payment_method_title(),
+            'transaction_id' => $this->order->get_transaction_id(),
             'shipping_method' => $this->order->get_shipping_method(),
             'currency' => $this->order->get_currency(),
             'notes' => $this->order->get_customer_note(),
