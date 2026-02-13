@@ -3015,6 +3015,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>' . esc_html($template['name'] ?? 'Document') . '</title>
     <style>
         /* 
@@ -3031,6 +3032,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             margin: 0;
             size: ' . $width . 'px ' . $height . 'px;
         }
+        html {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            box-sizing: border-box;
+            line-height: 1;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -3041,15 +3049,23 @@ class PDF_Builder_Unified_Ajax_Handler {
             font-family: "DejaVu Sans", "Arial Unicode MS", sans-serif;
             margin: 0;
             padding: 0;
+            border: 0;
+            overflow: hidden;
+            line-height: 1;
         }
         .pdf-canvas {
             position: relative;
+            display: block;
             width: ' . $width . 'px;
             height: ' . $height . 'px;
             background: #ffffff;
             margin: 0;
             padding: 0;
+            border: 0;
             overflow: hidden;
+            /* Empêcher tout décalage de positionnement */
+            top: 0;
+            left: 0;
         }
         .element {
             position: absolute;
