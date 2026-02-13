@@ -3846,7 +3846,19 @@ class PDF_Builder_Unified_Ajax_Handler {
         $src = $element['src'] ?? '';
         if (!$src) return '';
         
+        // Extraire les dimensions du conteneur
+        $width = $element['width'] ?? 100;
+        $height = $element['height'] ?? 100;
+        
+        // Propriétés de style
         $object_fit = $element['objectFit'] ?? 'contain';
+        $alignment = $element['alignment'] ?? 'left';
+        $opacity = isset($element['opacity']) ? floatval($element['opacity']) : 1;
+        $border_radius = isset($element['borderRadius']) ? intval($element['borderRadius']) : 0;
+        $show_border = $element['showBorder'] ?? false;
+        $border_color = $element['borderColor'] ?? '#e5e7eb';
+        $border_width = isset($element['borderWidth']) ? intval($element['borderWidth']) : 1;
+        $background_color = $element['backgroundColor'] ?? 'transparent';
         
         // Convertir l'image en base64 pour compatibilité Dompdf
         $image_data = $this->get_image_as_base64($src);
@@ -3854,7 +3866,89 @@ class PDF_Builder_Unified_Ajax_Handler {
             $src = $image_data;
         }
         
-        return '<div class="element" style="' . $base_styles . '"><img src="' . $src . '" style="width: 100%; height: 100%; object-fit: ' . $object_fit . ';" /></div>';
+        // Dimensions du conteneur interne (avec marges de 10px comme React)
+        $container_width = $width - 20;
+        $container_height = $height - 20;
+        
+        // Styles du conteneur externe
+        $outer_div_styles = $base_styles;
+        if ($background_color !== 'transparent') {
+            $outer_div_styles .= ' background-color: ' . esc_attr($background_color) . ';';
+        }
+        // Assurer overflow: hidden pour le border-radius si nécessaire
+        if ($border_radius > 0) {
+            $outer_div_styles .= ' overflow: hidden;';
+        }
+        
+        // Styles du conteneur interne
+        $inner_div_styles = 'position: relative;';
+        $inner_div_styles .= ' width: ' . $container_width . 'px;';
+        $inner_div_styles .= ' height: ' . $container_height . 'px;';
+        $inner_div_styles .= ' margin: 10px;';
+        
+        // Styles de l'image selon object-fit
+        $img_styles = '';
+        
+        // Pour Dompdf, on utilise une approche simplifiée
+        // car il ne supporte pas bien object-fit, transform, etc.
+        switch ($object_fit) {
+            case 'cover':
+                // L'image couvre tout le conteneur
+                $img_styles .= ' width: 100%; height: 100%;';
+                break;
+            
+            case 'fill':
+                // L'image remplit complètement le conteneur (déformation possible)
+                $img_styles .= ' width: 100%; height: 100%;';
+                break;
+            
+            case 'none':
+                // Taille originale, centrée (approximation)
+                $img_styles .= ' max-width: ' . $container_width . 'px;';
+                $img_styles .= ' max-height: ' . $container_height . 'px;';
+                break;
+            
+            case 'contain':
+            case 'scale-down':
+            default:
+                // L'image garde ses proportions et tient dans le conteneur
+                $img_styles .= ' max-width: 100%; max-height: 100%;';
+                $img_styles .= ' height: auto;';
+                break;
+        }
+        
+        // Alignement horizontal
+        $img_styles .= ' display: block;';
+        if ($alignment === 'center') {
+            $img_styles .= ' margin-left: auto; margin-right: auto;';
+        } elseif ($alignment === 'right') {
+            $img_styles .= ' margin-left: auto; margin-right: 0;';
+        } else { // left
+            $img_styles .= ' margin-left: 0; margin-right: 0;';
+        }
+        
+        // Opacité
+        if ($opacity < 1) {
+            $img_styles .= ' opacity: ' . esc_attr($opacity) . ';';
+        }
+        
+        // Border radius (sur l'image)
+        if ($border_radius > 0) {
+            $img_styles .= ' border-radius: ' . esc_attr($border_radius) . 'px;';
+        }
+        
+        // Bordure
+        if ($show_border && $border_width > 0) {
+            $img_styles .= ' border: ' . esc_attr($border_width) . 'px solid ' . esc_attr($border_color) . ';';
+            // Box-sizing pour que la bordure soit incluse dans les dimensions
+            $img_styles .= ' box-sizing: border-box;';
+        }
+        
+        return '<div class="element" style="' . $outer_div_styles . '">
+            <div style="' . $inner_div_styles . '">
+                <img src="' . esc_attr($src) . '" style="' . $img_styles . '" />
+            </div>
+        </div>';
     }
     
     /**
