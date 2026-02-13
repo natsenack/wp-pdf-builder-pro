@@ -3797,12 +3797,12 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Style pour <strong>
-        $strong_style = "color: {$colors['hea - DOMPDF ne supporte pas bien line-height, on utilise margin-bottom
+        $strong_style = "color: {$colors['header']}; font-weight: bold;";
+        
+        // Style pour chaque ligne de contenu - DOMPDF ne supporte pas bien line-height, on utilise margin-bottom
         $lineHeightValue = floatval($layout_props['lineHeight']);
         $marginBottom = ($lineHeightValue - 1) * $body_font['size']; // Convertir line-height en espacement pixel
-        $line_style = "margin: 0 0 {$marginBottom}px 0; padding: 0; line-height: 1.2
-        // Style pour chaque ligne de contenu
-        $line_style = "margin: 0; padding: 0; line-height: {$layout_props['lineHeight']};";
+        $line_style = "margin: 0 0 {$marginBottom}px 0; padding: 0; line-height: 1.2;";
         
         // Traiter les lignes pour ajouter les styles aux balises <strong>
         $processedLines = array_map(function($line) use ($strong_style) {
