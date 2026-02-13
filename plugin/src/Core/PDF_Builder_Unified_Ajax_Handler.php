@@ -3060,10 +3060,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             height: ' . $height . 'px !important;
             background: #ffffff !important;
             overflow: hidden !important;
-            /* Force le positionnement exact à l'origine */
+            /* Force exact positioning at origin */
             top: 0 !important;
             left: 0 !important;
-            /* Force l'accélération matérielle et le positionnement précis */
+            /* Force hardware acceleration and precise positioning */
             transform: translate3d(0, 0, 0) !important;
             -webkit-transform: translate3d(0, 0, 0) !important;
         }
