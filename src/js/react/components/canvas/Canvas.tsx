@@ -3156,6 +3156,8 @@ export const Canvas = function Canvas({
               containerSize: { width: containerWidth, height: containerHeight },
               logoSize: { width: logoWidth, height: logoHeight },
               calculatedPosition: { x: baseX, y: baseY },
+              elementRotation: element.rotation,
+              imageRotation: rotation,
               elementProps: {
                 horizontalAlign: element.horizontalAlign,
                 verticalAlign: element.verticalAlign,
@@ -3193,6 +3195,7 @@ export const Canvas = function Canvas({
 
             // Essayer de dessiner l'image - si elle n'est pas chargée, cela ne fera rien
             // mais au moins on aura essayé
+            console.log('🎨 Drawing logo at:', { imageX, imageY, logoWidth, logoHeight, rotation });
             ctx.drawImage(img, imageX, imageY, logoWidth, logoHeight);
 
             // Restaurer après le clip du borderRadius de l'image
