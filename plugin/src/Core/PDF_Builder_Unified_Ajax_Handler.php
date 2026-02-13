@@ -3133,6 +3133,12 @@ class PDF_Builder_Unified_Ajax_Handler {
         $width = $element['width'] ?? 100;
         $height = $element['height'] ?? 30;
         
+        // HACK TEMPORAIRE: Ajustement pour customer_info qui a un décalage de ~10px vers le bas
+        if ($type === 'customer_info') {
+            $y = $y - 10; // Compensation du décalage observé
+            error_log("[PDF Builder] AJUSTEMENT Y customer_info: {$element['y']} -> {$y}");
+        }
+        
         // DEBUG CRITICAL: Logger TOUTES les positions
         error_log("[PDF Builder POSITION DEBUG] Type: {$type} | ID: {$element_id} | X: {$x} | Y: {$y} | Width: {$width} | Height: {$height}");
         
@@ -4317,10 +4323,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                       ($letter_spacing_match[0] ?? '');
         
         // Le div extérieur est UNIQUEMENT un conteneur positionné
-        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; overflow: hidden;">';
-        
-        // Ajouter le séparateur horizontal si activé
-        if ($element['showSeparator'] ?? true) {box-sizing: border-box; overflow: hidden;">';
+        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
         
         // Ajouter le séparateur horizontal si activé
         if ($element['showSeparator'] ?? true) {
@@ -4344,7 +4347,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         $inner_style = 'white-space: pre-line; ' . 
                       'line-height: ' . $line_height_px . '; ' . 
                       $text_styles . ' ' .
-                      'margin: 0; padding: 0; display: block; box-sizing: border-box
+                      'margin: 0; padding: 0; display: block; box-sizing: border-box;';
+        
+        $html .= '<div style="' . $inner_style . '">' . esc_html($text) . '</div>';
+        $html .= '</div>';
         
         return $html;
     }
