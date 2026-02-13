@@ -3637,18 +3637,19 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // ✅ Construire les styles du conteneur interne
         // CRITICAL: PAS de padding ici car React dessine avec offset, pas avec padding CSS
-        // CRITICAL: Appliquer le padding via margin sur le contenu interne, PAS sur le outer div
-        // Cela reproduit exactement ce que React Canvas fait
-        $contentMargin = 'margin: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px;';
+        // CRITICAL: En React, le padding est appliqué directement sur les coordonnées de dessin
+        // textX = x + paddingHorizontal, startY = y + paddingVertical
+        // En HTML, on utilise position absolue PUIS padding pour reproduire cela exactement
+        $inner_styles = 'padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . esc_attr($textColor) . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle;
+        $inner_styles .= ' width: 100%; height: 100%; box-sizing: border-box;';
         
-        $inner_styles = $contentMargin . ' text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . esc_attr($textColor) . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle;
-        // Pas de width/height - laisser le contenu float naturellement
-        
-        // Pour l'alignement vertical, on utilise position relative + transform
-        if ($verticalAlign === 'middle') {
-            $inner_styles .= ' position: relative; top: 50%; transform: translateY(-50%);';
-        } elseif ($verticalAlign === 'bottom') {
-            $inner_styles .= ' position: absolute; bottom: ' . $paddingVertical . 'px; left: ' . $paddingHorizontal . 'px;';
+        // Pour l'alignement vertical, on utilise flexbox SIMPLEMENT
+        if ($verticalAlign !== 'top') {
+            if ($verticalAlign === 'middle') {
+                $inner_styles .= ' display: flex; align-items: center; justify-content: center; flex-direction: column;';
+            } elseif ($verticalAlign === 'bottom') {
+                $inner_styles .= ' display: flex; align-items: flex-end; justify-content: flex-end; flex-direction: column;';
+            }
         }
         
         // Style de l'en-tête (inline pour éviter balise <style> invalide dans un div)
