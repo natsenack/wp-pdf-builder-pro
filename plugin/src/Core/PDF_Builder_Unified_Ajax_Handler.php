@@ -3620,25 +3620,33 @@ class PDF_Builder_Unified_Ajax_Handler {
             " font-size: {$body_font['size']}px;" .
             " font-weight: {$body_font['weight']};" .
             " font-style: {$body_font['style']};" .
-            " line-height: {$layout_props['lineHeight']};" .
-            " white-space: pre-line;" . $letter_spacing;
+            $letter_spacing;
         
         // Alignement vertical via flexbox
+        $container_styles .= ' display: flex; flex-direction: column;';
         if ($layout_props['verticalAlign'] === 'middle') {
-            $container_styles .= ' display: flex; flex-direction: column; justify-content: center;';
+            $container_styles .= ' justify-content: center;';
         } elseif ($layout_props['verticalAlign'] === 'bottom') {
-            $container_styles .= ' display: flex; flex-direction: column; justify-content: flex-end;';
+            $container_styles .= ' justify-content: flex-end;';
+        } else {
+            $container_styles .= ' justify-content: flex-start;';
         }
         
         // Style header
         $header_style = "color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; line-height: 1.2; margin-bottom: 8px;";
         
-        // Génération HTML
+        // Style pour chaque ligne de contenu
+        $line_style = "margin: 0; padding: 0; line-height: {$layout_props['lineHeight']};";
+        
+        // Génération HTML avec div pour chaque ligne
         $html = '<div class="element" style="' . $container_styles . '">';
         if ($show['headers']) {
             $html .= '<div style="' . $header_style . '">Informations Client</div>';
         }
-        $html .= implode("\n", $lines);
+        // Générer chaque ligne dans un div séparé pour un rendu correct
+        foreach ($lines as $line) {
+            $html .= '<div style="' . $line_style . '">' . $line . '</div>';
+        }
         $html .= '</div>';
         
         return $html;
@@ -3771,8 +3779,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         $container_styles = $base_styles . 
             "; padding: {$padding['vertical']}px {$padding['horizontal']}px;" .
             " text-align: {$layout_props['textAlign']};" .
-            " line-height: {$layout_props['lineHeight']};" .
-            " white-space: pre-line;" .
             " color: {$colors['text']};" .
             " font-family: {$body_font['family']};" .
             " font-size: {$body_font['size']}px;" .
@@ -3791,15 +3797,21 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Style pour <strong>
         $strong_style = "color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; line-height: 1.2;";
         
+        // Style pour chaque ligne de contenu
+        $line_style = "margin: 0; padding: 0; line-height: {$layout_props['lineHeight']};";
+        
         // Traiter les lignes pour ajouter les styles aux balises <strong>
         $processedLines = array_map(function($line) use ($strong_style) {
             // Remplacer <strong> par <strong style="...">
             return preg_replace('/<strong>/', '<strong style="' . $strong_style . '">', $line);
         }, $lines);
         
-        // Générer le HTML
+        // Générer le HTML avec div pour chaque ligne
         $html = '<div class="element" style="' . $container_styles . '">';
-        $html .= implode("\n", $processedLines);
+        // Générer chaque ligne dans un div séparé pour un rendu correct
+        foreach ($processedLines as $line) {
+            $html .= '<div style="' . $line_style . '">' . $line . '</div>';
+        }
         $html .= '</div>';
         return $html;
     }
