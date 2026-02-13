@@ -4377,18 +4377,14 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Rendu de texte dynamique
      * 
-     * NOTE: dynamic_text utilise white-space: pre-wrap + line-height direct
-     * (et non margin-bottom comme customer_info/company_info)
-     * Car le texte peut être multiligne et nécessite un traitement spécifique.
+     * SOLUTION DOMPDF COMPATIBLE: Utilise margin-bottom entre les lignes
+     * Comme customer_info et company_info - splitter le texte par \n
      */
     private function render_dynamic_text($element, $order_data, $base_styles) {
         $text = $element['text'] ?? $element['textTemplate'] ?? 'Signature du client';
         
         // Supprimer le line-height du base_styles (éviter les doublons)
         $base_styles_clean = preg_replace('/line-height:\s*[^;]+;/', '', $base_styles);
-        
-        // Récupérer le line-height ratio pour le texte multiligne
-        $line_height_ratio = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.3;
         
         // Extraire les propriétés de positionnement
         preg_match('/left:\s*[^;]+;/', $base_styles_clean, $left_match);
@@ -4402,8 +4398,11 @@ class PDF_Builder_Unified_Ajax_Handler {
                           ($width_match[0] ?? '') . ' ' . 
                           ($height_match[0] ?? '');
         
+        // Extraire font-size pour le calcul de spacing
+        preg_match('/font-size:\s*(\d+(?:\.\d+)?)/i', $base_styles_clean, $font_size_match);
+        $font_size = isset($font_size_match[1]) ? floatval($font_size_match[1]) : 12;
+        
         // Extraire les propriétés de texte
-        preg_match('/font-size:\s*[^;]+;/', $base_styles_clean, $font_size_match);
         preg_match('/font-family:\s*[^;]+;/', $base_styles_clean, $font_family_match);
         preg_match('/font-weight:\s*[^;]+;/', $base_styles_clean, $font_weight_match);
         preg_match('/font-style:\s*[^;]+;/', $base_styles_clean, $font_style_match);
@@ -4413,8 +4412,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         preg_match('/text-transform:\s*[^;]+;/', $base_styles_clean, $text_transform_match);
         preg_match('/letter-spacing:\s*[^;]+;/', $base_styles_clean, $letter_spacing_match);
         
-        $text_styles = ($font_size_match[0] ?? '') . ' ' . 
-                      ($font_family_match[0] ?? '') . ' ' . 
+        $text_styles = ($font_family_match[0] ?? '') . ' ' . 
                       ($font_weight_match[0] ?? '') . ' ' . 
                       ($font_style_match[0] ?? '') . ' ' . 
                       ($text_align_match[0] ?? '') . ' ' . 
@@ -4423,11 +4421,21 @@ class PDF_Builder_Unified_Ajax_Handler {
                       ($text_transform_match[0] ?? '') . ' ' .
                       ($letter_spacing_match[0] ?? '');
         
-        // MÉTHODE ALIGNÉE SUR REACT : white-space: pre-wrap + line-height direct
-        $content_style = 'margin: 0; padding: 0; white-space: pre-wrap; line-height: ' . $line_height_ratio . '; ' . $text_styles;
+        // Récupérer le line-height et calculer le spacing
+        $line_height_ratio = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.3;
+        $line_spacing = $this->calculate_line_spacing($font_size, $line_height_ratio);
         
+        // Splitter le texte par les sauts de ligne (SOLUTION DOMPDF)
+        $lines = preg_split('/\r\n|\n|\r/', $text);
+        
+        // Générer HTML avec margin-bottom entre les lignes (comme customer_info)
         $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
-        $html .= '<div style="' . $content_style . '">' . esc_html($text) . '</div>';
+        $total_lines = count($lines);
+        foreach ($lines as $index => $line) {
+            $is_last = ($index === $total_lines - 1);
+            $line_margin = $is_last ? '' : " margin-bottom: {$line_spacing}px;";
+            $html .= '<div style="margin: 0; padding: 0;' . $line_margin . ' font-size: ' . $font_size . 'px; ' . $text_styles . '">' . esc_html($line) . '</div>';
+        }
         $html .= '</div>';
         
         return $html;
