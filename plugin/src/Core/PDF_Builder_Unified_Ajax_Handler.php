@@ -3637,16 +3637,24 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Récupérer le line-height value pour le contenu
         $lineHeightValue = floatval($layout_props['lineHeight']);
         
-        // NOUVELLE MÉTHODE : Joindre les lignes avec \n et utiliser white-space: pre-line
-        $content_text = implode("\n", $lines);
-        $content_style = "margin: 0; padding: 0; white-space: pre-line; line-height: {$lineHeightValue};";
+        // NOUVELLE MÉTHODE avec SPAN : Utiliser des spans inline séparés par <br>
+        $content_html = '';
+        $line_count = count($lines);
+        for ($i = 0; $i < $line_count; $i++) {
+            $content_html .= '<span>' . $lines[$i] . '</span>';
+            if ($i < $line_count - 1) {
+                $content_html .= '<br>';
+            }
+        }
+        
+        $content_style = "margin: 0; padding: 0; display: block; line-height: {$lineHeightValue};";
         
         // Génération HTML avec un seul conteneur pour le contenu
         $html = '<div class="element" style="' . $container_styles . '">';
         if ($show['headers']) {
             $html .= '<div style="' . $header_style . '">Informations Client</div>';
         }
-        $html .= '<div style="' . $content_style . '">' . $content_text . '</div>';
+        $html .= '<div style="' . $content_style . '">' . $content_html . '</div>';
         $html .= '</div>';
         
         return $html;
@@ -3806,10 +3814,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             return preg_replace('/<strong>/', '<strong style="' . $strong_style . '">', $line);
         }, $lines);
         
-        // NOUVELLE MÉTHODE : Joindre les lignes avec \n et utiliser white-space: pre-line
-        // ATTENTION : avec du HTML dedans (<strong>), on doit les joindre avec <br> au lieu de \n
-        $content_html = implode('<br>', $processedLines);
-        $content_style = "margin: 0; padding: 0; line-height: {$lineHeightValue};";
+        // NOUVELLE MÉTHODE avec SPAN : Envelopper chaque ligne dans un span et séparer par <br>
+        $content_parts = [];
+        foreach ($processedLines as $line) {
+            $content_parts[] = '<span>' . $line . '</span>';
+        }
+        $content_html = implode('<br>', $content_parts);
+        $content_style = "margin: 0; padding: 0; display: block; line-height: {$lineHeightValue};";
         
         // Générer le HTML avec un seul conteneur pour le contenu
         $html = '<div class="element" style="' . $container_styles . '">';
@@ -4382,12 +4393,23 @@ class PDF_Builder_Unified_Ajax_Handler {
                       ($text_transform_match[0] ?? '') . ' ' .
                       ($letter_spacing_match[0] ?? '');
         
-        // NOUVELLE MÉTHODE : Un seul conteneur avec white-space: pre-line + line-height
-        // C'est bien mieux supporté par DOMPDF que des divs multiples
-        $content_style = 'margin: 0; padding: 0; white-space: pre-line; line-height: ' . $line_height_ratio . '; ' . $text_styles;
+        // NOUVELLE MÉTHODE avec SPAN : Utiliser des spans inline au lieu de divs block
+        // DOMPDF gère mieux le line-height sur les éléments inline
+        $lines = explode("\n", $text);
+        $content_html = '';
+        $line_count = count($lines);
+        
+        for ($i = 0; $i < $line_count; $i++) {
+            $content_html .= '<span>' . esc_html($lines[$i]) . '</span>';
+            if ($i < $line_count - 1) {
+                $content_html .= '<br>';
+            }
+        }
+        
+        $content_style = 'margin: 0; padding: 0; display: block; line-height: ' . $line_height_ratio . '; ' . $text_styles;
         
         $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
-        $html .= '<div style="' . $content_style . '">' . esc_html($text) . '</div>';
+        $html .= '<div style="' . $content_style . '">' . $content_html . '</div>';
         $html .= '</div>';
         
         return $html;
