@@ -4360,11 +4360,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Récupérer le line-height EXACT du JSON (string ou number)
         $line_height_ratio = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.3;
         
-        // Calculer le marginBottom pour DOMPDF (qui ne supporte pas bien line-height)
-        $font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 14;
-        $margin_bottom = ($line_height_ratio - 1) * $font_size;
-        
-        error_log('[PDF Builder] Dynamic_Text lineHeight ratio: ' . $line_height_ratio . ', fontSize: ' . $font_size . 'px, marginBottom calculé: ' . $margin_bottom . 'px');
+        error_log('[PDF Builder] Dynamic_Text lineHeight ratio: ' . $line_height_ratio);
         
         // Extraire les propriétés de positionnement (pour le conteneur) et de texte (pour le contenu)
         preg_match('/left:\s*[^;]+;/', $base_styles_clean, $left_match);
@@ -4399,13 +4395,12 @@ class PDF_Builder_Unified_Ajax_Handler {
                       ($text_transform_match[0] ?? '') . ' ' .
                       ($letter_spacing_match[0] ?? '');
         
-        // Le div extérieur est UNIQUEMENT un conteneur positionné
-        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
+        // Le div extérieur est UNIQUEMENT un conteneur positionné avec line-height pour DOMPDF
+        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden; line-height: ' . $line_height_ratio . ';">';
         
-        // Traiter le texte ligne par ligne pour appliquer le margin-bottom
-        // Cela gère correctement le line-height pour DOMPDF
+        // Traiter le texte ligne par ligne - margin/padding à zéro, line-height du parent gère l'espacement
         $lines = explode("\n", $text);
-        $inner_style = 'margin: 0 0 ' . $margin_bottom . 'px 0; padding: 0; display: block; box-sizing: border-box;' . $text_styles;
+        $inner_style = 'margin: 0; padding: 0; display: block; box-sizing: border-box;' . $text_styles;
         
         foreach ($lines as $line) {
             $html .= '<div style="' . $inner_style . '">' . esc_html($line) . '</div>';
