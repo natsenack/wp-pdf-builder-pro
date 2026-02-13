@@ -3979,13 +3979,18 @@ class PDF_Builder_Unified_Ajax_Handler {
         if ($background_color !== 'transparent') {
             $outer_div_styles .= ' background-color: ' . esc_attr($background_color) . ';';
         }
-        $outer_div_styles .= ' position: relative;'; // Pour le positionnement absolu interne
         $outer_div_styles .= ' overflow: hidden;'; // Pour respecter les limites
+        $outer_div_styles .= ' box-sizing: border-box;';
         
-        // Wrapper positionné avec les marges calculées
-        $wrapper_styles = 'position: absolute;';
-        $wrapper_styles .= ' left: ' . round($base_x, 2) . 'px;';
-        $wrapper_styles .= ' top: ' . round($base_y, 2) . 'px;';
+        // Utiliser padding pour créer les offsets (au lieu de position absolute)
+        // Cela permet un positionnement compatible Dompdf
+        $outer_div_styles .= ' padding-left: ' . round($base_x, 2) . 'px;';
+        $outer_div_styles .= ' padding-top: ' . round($base_y, 2) . 'px;';
+        $outer_div_styles .= ' padding-right: ' . round($container_width - $logo_width - $base_x, 2) . 'px;';
+        $outer_div_styles .= ' padding-bottom: ' . round($container_height - $logo_height - $base_y, 2) . 'px;';
+        
+        // Wrapper de l'image
+        $wrapper_styles = 'display: block;';
         $wrapper_styles .= ' width: ' . round($logo_width, 2) . 'px;';
         $wrapper_styles .= ' height: ' . round($logo_height, 2) . 'px;';
         
