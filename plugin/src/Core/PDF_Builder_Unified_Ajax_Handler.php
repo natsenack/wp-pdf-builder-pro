@@ -3066,7 +3066,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             padding: 0 !important;
             border: 0 !important;
             overflow: hidden;
-            /* CRITICAL: S'assurer qu'il n'y a AUCUN offset */
+            /* CRITICAL: Assurer aucun offset */
             transform: translate(0, 0);
         }
         .element {
