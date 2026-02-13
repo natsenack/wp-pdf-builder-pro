@@ -3770,17 +3770,17 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Styles
-        $letter_spacing = $layout_props['letterSpacing'] ? \" letter-spacing: {$layout_props['letterSpacing']}px;\" : '';
+        $letter_spacing = $layout_props['letterSpacing'] ? " letter-spacing: {$layout_props['letterSpacing']}px;" : '';
         $container_styles = $base_styles . 
-            \"; padding: {$padding['vertical']}px {$padding['horizontal']}px;\" .
-            \" text-align: {$layout_props['textAlign']};\" .
-            \" line-height: {$layout_props['lineHeight']};\" .
-            \" white-space: pre-line;\" .
-            \" color: {$colors['text']};\" .
-            \" font-family: {$body_font['family']};\" .
-            \" font-size: {$body_font['size']}px;\" .
-            \" font-weight: {$body_font['weight']};\" .
-            \" font-style: {$body_font['style']};\" .
+            "; padding: {$padding['vertical']}px {$padding['horizontal']}px;" .
+            " text-align: {$layout_props['textAlign']};" .
+            " line-height: {$layout_props['lineHeight']};" .
+            " white-space: pre-line;" .
+            " color: {$colors['text']};" .
+            " font-family: {$body_font['family']};" .
+            " font-size: {$body_font['size']}px;" .
+            " font-weight: {$body_font['weight']};" .
+            " font-style: {$body_font['style']};" .
             $letter_spacing .
             ' width: 100%; height: 100%;';
         
@@ -3792,7 +3792,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Style pour <strong>
-        $strong_style = \"color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; line-height: 1.2;\";
+        $strong_style = "color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; line-height: 1.2;";
         $strong_style = 'color: ' . esc_attr($headerTextColor) . '; font-family: ' . esc_attr($headerFontFamily) . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . esc_attr($headerFontWeight) . '; font-style: ' . esc_attr($headerFontStyle) . '; line-height: 1.2;';
         
         // Traiter les lignes pour ajouter les styles aux balises <strong>
