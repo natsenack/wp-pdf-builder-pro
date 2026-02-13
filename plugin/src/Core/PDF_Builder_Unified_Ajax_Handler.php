@@ -3210,9 +3210,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         if (isset($element['textAlign'])) {
             $styles .= " text-align: {$element['textAlign']};";
         }
-        if (isset($element['verticalAlign'])) {
-            $styles .= " vertical-align: {$element['verticalAlign']};";
-        }
+        // NOTE: vertical-align ne fonctionne PAS avec position: absolute
+        // Il est géré dans le rendu spécifique de chaque élément via flexbox
         
         // Couleurs
         if (isset($element['textColor'])) {
@@ -3491,7 +3490,7 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Rendu des informations client
      */
-    private function render_customer_info_element($element, $order_data, $base_styles) {
+    private function render_customer_info_element($element, $order_data, $base_styles, $is_premium = false) {
         // Récupérer le padding horizontal et vertical (backward compatibility avec padding unique)
         $paddingHorizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : (isset($element['padding']) ? intval($element['padding']) : 12);
         $paddingVertical = isset($element['paddingVertical']) ? intval($element['paddingVertical']) : (isset($element['padding']) ? intval($element['padding']) : 12);
@@ -3600,15 +3599,14 @@ class PDF_Builder_Unified_Ajax_Handler {
             $inner_styles .= ' display: flex; flex-direction: column; justify-content: flex-end; height: 100%;';
         }
         
+        // Style de l'en-tête (inline pour éviter balise <style> invalide dans un div)
+        $header_style = 'color: ' . esc_attr($headerTextColor) . '; font-family: ' . esc_attr($headerFontFamily) . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . esc_attr($headerFontWeight) . '; font-style: ' . esc_attr($headerFontStyle) . '; line-height: 1.2; margin-bottom: 8px;';
+        
         $html = '<div class="element" style="' . $base_styles . '">';
-        $html .= '<style>';
-        // Style pour l'en-tête "Informations Client" (utilise headerFont*)
-        $html .= '.customer-info-header { color: ' . $headerTextColor . '; font-family: ' . $headerFontFamily . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . $headerFontWeight . '; font-style: ' . $headerFontStyle . '; line-height: 1.2; margin-bottom: 8px; }';
-        $html .= '</style>';
         $html .= '<div style="' . $inner_styles . '">';
         // Afficher l'en-tête SÉPARÉMENT, avant les lignes de contenu (comme dans React)
         if ($showHeaders) {
-            $html .= '<div class="customer-info-header">Informations Client</div>';
+            $html .= '<div style="' . $header_style . '">Informations Client</div>';
         }
         // DEBUG: Log des lignes finales
         error_log('[PDF Builder] Final lines count: ' . count($lines));
@@ -3841,15 +3839,19 @@ class PDF_Builder_Unified_Ajax_Handler {
             $inner_styles .= ' display: flex; flex-direction: column; justify-content: flex-end; height: 100%;';
         }
         
-        // Générer le HTML avec styles de police pour le header (strong)
+        // Style pour les éléments strong (header) - inline pour éviter balise <style> invalide
+        $strong_style = 'color: ' . esc_attr($headerTextColor) . '; font-family: ' . esc_attr($headerFontFamily) . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . esc_attr($headerFontWeight) . '; font-style: ' . esc_attr($headerFontStyle) . '; line-height: 1.2;';
+        
+        // Traiter les lignes pour ajouter les styles aux balises <strong>
+        $processedLines = array_map(function($line) use ($strong_style) {
+            // Remplacer <strong> par <strong style="...">
+            return preg_replace('/<strong>/', '<strong style="' . $strong_style . '">', $line);
+        }, $lines);
+        
+        // Générer le HTML
         $html = '<div class="element" style="' . $base_styles . '">';
-        $html .= '<style>';
-        // ✅ Header (strong) utilise toujours line-height 1.2, pas le line-height personnalisé
-        $html .= 'strong { color: ' . $headerTextColor . '; font-family: ' . $headerFontFamily . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . $headerFontWeight . '; font-style: ' . $headerFontStyle . '; line-height: 1.2; }';
-        $html .= '</style>';
         $html .= '<div style="' . $inner_styles . '">';
-        // Plus besoin de html_entity_decode car htmlspecialchars préserve les caractères UTF-8
-        $html .= implode("\n", $lines);
+        $html .= implode("\n", $processedLines);
         $html .= '</div>';
         $html .= '</div>';
         return $html;
