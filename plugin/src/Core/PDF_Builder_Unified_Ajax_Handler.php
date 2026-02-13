@@ -3657,42 +3657,44 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Appliquer l'alignement horizontal et vertical
         $letterSpacingStyle = $letterSpacing !== 0 ? ' letter-spacing: ' . $letterSpacing . 'px;' : '';
         
-        // CRITICAL FIX pour le décalage vertical:
-        // En React Canvas, le header et le contenu sont dessinés à des positions Y absolues DANS le bloc
-        // Header à y=paddingVertical, puis y+=25, contenu à y=37px
-        // En HTML, on doit reproduire cela avec position absolue pour header ET contenu
-        // Sinon le header "pousse" le contenu vers le bas dans le flux normal
+        // STRUCTURE SIMPLE comme product_table et text (qui fonctionnent!)
+        // Le $base_styles contient déjà position:absolute avec top:Y du JSON
+        // On ajoute juste le padding et les styles de texte au conteneur unique
         
-        // Calculer le leading (espace entre lignes) basé sur lineHeight
-        $leading = ($lineHeight - 1) * $bodyFontSize;
+        $container_styles = $base_styles . '; padding: ' . $paddingVertical . 'px ' . $paddingHorizontal . 'px;';
+        $container_styles .= ' text-align: ' . $textAlign . ';';
+        $container_styles .= ' color: ' . esc_attr($textColor) . ';';
+        $container_styles .= ' font-family: ' . $bodyFontFamily . ';';
+        $container_styles .= ' font-size: ' . $bodyFontSize . 'px;';
+        $container_styles .= ' font-weight: ' . $bodyFontWeight . ';';
+        $container_styles .= ' font-style: ' . $bodyFontStyle . ';';
+        $container_styles .= ' line-height: ' . $lineHeight . ';';
+        $container_styles .= ' white-space: pre-line;';
+        $container_styles .= $letterSpacingStyle;
         
-        // Container interne avec position relative pour que les enfants puissent être positionnés absolument
-        $inner_styles = 'position: relative; width: 100%; height: 100%;';
+        // Alignement vertical avec flexbox si nécessaire
+        if ($verticalAlign !== 'top') {
+            $container_styles .= ' display: flex; flex-direction: column;';
+            if ($verticalAlign === 'middle') {
+                $container_styles .= ' justify-content: center;';
+            } elseif ($verticalAlign === 'bottom') {
+                $container_styles .= ' justify-content: flex-end;';
+            }
+        }
         
-        // Style de l'en-tête - POSITION ABSOLUE comme React dessine à une coordonnée Y
-        // En React: ctx.fillText("Informations Client", textX, paddingVertical) avec textBaseline="top"
-        // PAS de compensation borderWidth car le Y du JSON est déjà correct (proof: product_table fonctionne)
-        $header_style = 'position: absolute; left: ' . $paddingHorizontal . 'px; top: ' . $paddingVertical . 'px; color: ' . esc_attr($headerTextColor) . '; font-family: ' . esc_attr($headerFontFamily) . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . esc_attr($headerFontWeight) . '; font-style: ' . esc_attr($headerFontStyle) . '; line-height: 1; margin: 0; text-align: ' . $textAlign . ';';
+        // Style de l'en-tête
+        $header_style = 'color: ' . esc_attr($headerTextColor) . '; font-family: ' . esc_attr($headerFontFamily) . '; font-size: ' . $headerFontSize . 'px; font-weight: ' . esc_attr($headerFontWeight) . '; font-style: ' . esc_attr($headerFontStyle) . '; line-height: 1.2; margin-bottom: 8px;';
         
-        // Style du contenu - POSITION ABSOLUE aussi
-        // En React: après header, y += 25, donc contenu commence à paddingVertical + 25
-        $content_top = $showHeaders ? ($paddingVertical + 25) : $paddingVertical;
-        $content_style = 'position: absolute; left: ' . $paddingHorizontal . 'px; top: ' . $content_top . 'px; right: ' . $paddingHorizontal . 'px; text-align: ' . $textAlign . '; line-height: ' . $lineHeight . '; white-space: pre-line; color: ' . esc_attr($textColor) . '; font-family: ' . $bodyFontFamily . '; font-size: ' . $bodyFontSize . 'px; font-weight: ' . $bodyFontWeight . '; font-style: ' . $bodyFontStyle . ';' . $letterSpacingStyle . ' margin: 0;';
+        $html = '<div class="element" style="' . $container_styles . '">';
         
-        $html = '<div class="element" style="' . $base_styles . '">';
-        $html .= '<div style="' . $inner_styles . '">';
-        
-        // Header en position absolue (comme React dessine à une coordonnée Y fixe)
+        // Header si activé
         if ($showHeaders) {
             $html .= '<div style="' . $header_style . '">Informations Client</div>';
         }
         
-        // Contenu en position absolue (comme React dessine à y = paddingVertical + 25)
-        $html .= '<div style="' . $content_style . '">';
+        // Contenu
         $html .= implode("\n", $lines);
-        $html .= '</div>';
         
-        $html .= '</div>';
         $html .= '</div>';
         return $html;
     }
