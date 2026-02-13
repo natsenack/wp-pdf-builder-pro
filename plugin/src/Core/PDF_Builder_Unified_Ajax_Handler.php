@@ -3868,6 +3868,11 @@ class PDF_Builder_Unified_Ajax_Handler {
             $src = $image_data;
         }
         
+        // IMPORTANT: Retirer les styles de bordure de $base_styles car on les gère manuellement
+        // La bordure doit uniquement être sur l'image, pas sur le conteneur
+        $base_styles = preg_replace('/\s*border[^;]*;/', '', $base_styles);
+        $base_styles = preg_replace('/\s*border-radius[^;]*;/', '', $base_styles);
+        
         // Obtenir les dimensions naturelles de l'image (approximation si pas disponibles)
         // Pour une vraie cohérence, il faudrait lire les dimensions réelles
         // Ici on suppose un ratio 1:1 par défaut (peut être amélioré)
