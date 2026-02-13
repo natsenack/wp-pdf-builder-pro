@@ -3630,17 +3630,21 @@ class PDF_Builder_Unified_Ajax_Handler {
             if ($compact_parts) $lines[] = implode(' • ', $compact_parts);
         }
         
-        // Styles du conteneur - nettoyer base_styles pour éviter conflits
-        $base_styles_clean = preg_replace('/padding:\s*[^;]+;/', '', $base_styles); // Retirer padding du base_styles
+        // Styles du conteneur - nettoyer TOUS les padding pour DOMPDF
+        $base_styles_clean = preg_replace('/padding(-top|-bottom|-left|-right)?:\s*[^;]+;/i', '', $base_styles);
+        // Retirer aussi les !important de position qui causent des conflits DOMPDF
+        $base_styles_clean = str_replace('!important', '', $base_styles_clean);
+        
         $letter_spacing = $layout_props['letterSpacing'] ? " letter-spacing: {$layout_props['letterSpacing']}px;" : '';
         $container_styles = $base_styles_clean . 
-            "; padding: {$padding['vertical']}px {$padding['horizontal']}px;" .
+            " padding: {$padding['vertical']}px {$padding['horizontal']}px;" .
             " text-align: {$layout_props['textAlign']};" .
             " color: {$colors['text']};" .
             " font-family: {$body_font['family']};" .
             " font-size: {$body_font['size']}px;" .
             " font-weight: {$body_font['weight']};" .
             " font-style: {$body_font['style']};" .
+            " box-sizing: border-box;" .
             $letter_spacing;
         
         // Alignement vertical via flexbox
@@ -3803,9 +3807,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             if ($parts) $add_line(implode(' • ', $parts));
         }
         
-        // Styles
+        // Styles - nettoyer TOUS les padding pour DOMPDF (comme customer_info)
+        $base_styles_clean = preg_replace('/padding(-top|-bottom|-left|-right)?:\s*[^;]+;/i', '', $base_styles);
+        // Retirer aussi les !important de position qui causent des conflits DOMPDF
+        $base_styles_clean = str_replace('!important', '', $base_styles_clean);
+        
         $letter_spacing = $layout_props['letterSpacing'] ? " letter-spacing: {$layout_props['letterSpacing']}px;" : '';
-        $container_styles = $base_styles . 
+        $container_styles = $base_styles_clean . 
             "; padding: {$padding['vertical']}px {$padding['horizontal']}px;" .
             " text-align: {$layout_props['textAlign']};" .
             " color: {$colors['text']};" .
@@ -3813,6 +3821,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             " font-size: {$body_font['size']}px;" .
             " font-weight: {$body_font['weight']};" .
             " font-style: {$body_font['style']};" .
+            " box-sizing: border-box;" .
             $letter_spacing .
             ' width: 100%; height: 100%;';
         
@@ -4385,8 +4394,11 @@ class PDF_Builder_Unified_Ajax_Handler {
     private function render_dynamic_text($element, $order_data, $base_styles) {
         $text = $element['text'] ?? $element['textTemplate'] ?? 'Signature du client';
         
-        // Supprimer le line-height du base_styles (éviter les doublons)
-        $base_styles_clean = preg_replace('/line-height:\s*[^;]+;/', '', $base_styles);
+        // Nettoyer TOUS les padding ET line-height du base_styles pour DOMPDF (comme customer_info)
+        $base_styles_clean = preg_replace('/padding(-top|-bottom|-left|-right)?:\s*[^;]+;/i', '', $base_styles);
+        $base_styles_clean = preg_replace('/line-height:\s*[^;]+;/', '', $base_styles_clean);
+        // Retirer aussi les !important de position qui causent des conflits DOMPDF
+        $base_styles_clean = str_replace('!important', '', $base_styles_clean);
         
         // Récupérer fontSize et lineHeight DIRECTEMENT DU JSON (comme customer_info)
         $font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
@@ -4489,8 +4501,11 @@ class PDF_Builder_Unified_Ajax_Handler {
         error_log('[PDF Builder] Mentions lineHeight from JSON: ' . ($element['lineHeight'] ?? 'NOT SET'));
         error_log('[PDF Builder] Mentions base_styles AVANT nettoyage: ' . substr($base_styles, 0, 200));
         
-        // Supprimer le line-height du base_styles car on va le gérer spécifiquement
-        $base_styles_clean = preg_replace('/line-height:\s*[^;]+;/', '', $base_styles);
+        // Nettoyer TOUS les padding ET line-height pour DOMPDF (comme customer_info)
+        $base_styles_clean = preg_replace('/padding(-top|-bottom|-left|-right)?:\s*[^;]+;/i', '', $base_styles);
+        $base_styles_clean = preg_replace('/line-height:\s*[^;]+;/', '', $base_styles_clean);
+        // Retirer aussi les !important de position qui causent des conflits DOMPDF
+        $base_styles_clean = str_replace('!important', '', $base_styles_clean);
         
         error_log('[PDF Builder] Mentions base_styles APRÈS nettoyage: ' . substr($base_styles_clean, 0, 200));
         
