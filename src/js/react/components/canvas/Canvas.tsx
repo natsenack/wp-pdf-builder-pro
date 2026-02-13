@@ -3198,7 +3198,12 @@ export const Canvas = function Canvas({
 
             // Essayer de dessiner l'image - si elle n'est pas chargée, cela ne fera rien
             // mais au moins on aura essayé
-            console.log('🎨 Drawing logo at:', { imageX, imageY, logoWidth, logoHeight, rotation });
+            const transform = ctx.getTransform();
+            console.log('🎨 Drawing logo at:', { 
+              imageX, imageY, logoWidth, logoHeight, rotation,
+              canvasTransform: { a: transform.a, b: transform.b, c: transform.c, d: transform.d, e: transform.e, f: transform.f },
+              willDrawAt: { globalX: transform.e + imageX, globalY: transform.f + imageY }
+            });
             ctx.drawImage(img, imageX, imageY, logoWidth, logoHeight);
 
             // Restaurer après le clip du borderRadius de l'image
