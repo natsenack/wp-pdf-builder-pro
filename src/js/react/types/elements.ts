@@ -881,28 +881,6 @@ export interface CompanyInfoElement extends BaseElement {
 }
 
 // Interface spécifique pour les éléments CompanyLogo
-export interface CompanyLogoElement extends BaseElement {
-  type: "company_logo";
-  // Propriétés d'image
-  src?: string;
-  logoUrl?: string;
-  alt?: string;
-  fit?: "contain" | "cover" | "fill" | "none" | "scale-down";
-  position?:
-    | "center"
-    | "top"
-    | "bottom"
-    | "left"
-    | "right"
-    | "top-left"
-    | "top-right"
-    | "bottom-left"
-    | "bottom-right";
-  opacity?: number;
-  alignment?: "left" | "center" | "right";
-  maintainAspectRatio?: boolean;
-}
-
 // Interface spécifique pour les éléments CustomerInfo
 export interface CustomerInfoElement extends BaseElement {
   type: "customer_info";
@@ -988,6 +966,10 @@ export interface CompanyLogoElement extends BaseElement {
   maintainAspectRatio?: boolean;
   borderRadius?: number;
   objectFit?: string;
+  showBorder?: boolean;
+  borderColor?: string;
+  borderWidth?: number;
+  backgroundColor?: string;
 }
 
 // Aliases pour les types Properties manquants

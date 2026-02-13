@@ -3172,6 +3172,26 @@ export const Canvas = function Canvas({
             // mais au moins on aura essayé
             ctx.drawImage(img, imageX, imageY, logoWidth, logoHeight);
 
+            // Dessiner la bordure si showBorder est activé
+            const showBorder = props.showBorder ?? false;
+            const borderColor = props.borderColor || "#e5e7eb";
+            const borderWidth = props.borderWidth || 1;
+            
+            if (showBorder && borderWidth > 0) {
+              ctx.strokeStyle = normalizeColor(borderColor);
+              ctx.lineWidth = borderWidth;
+              
+              if (borderRadius > 0) {
+                // Si borderRadius, dessiner un rectangle arrondi
+                ctx.beginPath();
+                roundedRect(ctx, imageX, imageY, logoWidth, logoHeight, borderRadius);
+                ctx.stroke();
+              } else {
+                // Rectangle simple
+                ctx.strokeRect(imageX, imageY, logoWidth, logoHeight);
+              }
+            }
+
             // Restaurer le contexte
             ctx.restore();
           } catch (error) {

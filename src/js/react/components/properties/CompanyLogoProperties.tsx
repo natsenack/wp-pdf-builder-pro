@@ -215,12 +215,55 @@ export function CompanyLogoProperties({ element, onChange, activeTab, setActiveT
             </label>
             <input
               type="checkbox"
-              checked={element.showBorder !== false}
+              checked={element.showBorder === true}
               onChange={(e) => onChange(element.id, 'showBorder', e.target.checked)}
               style={{ marginRight: '8px' }}
             />
             <span style={{ fontSize: '11px', color: '#666' }}>Affiche une bordure autour du logo</span>
           </div>
+
+          {element.showBorder && (
+            <>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                  Épaisseur de la bordure
+                </label>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  step="1"
+                  value={element.borderWidth || 1}
+                  onChange={(e) => onChange(element.id, 'borderWidth', parseInt(e.target.value))}
+                  style={{
+                    width: '100%',
+                    marginTop: '4px'
+                  }}
+                />
+                <div style={{ fontSize: '11px', color: '#666', textAlign: 'center', marginTop: '2px' }}>
+                  {element.borderWidth || 1} px
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '6px' }}>
+                  Couleur de la bordure
+                </label>
+                <input
+                  type="color"
+                  value={element.borderColor || '#e5e7eb'}
+                  onChange={(e) => onChange(element.id, 'borderColor', e.target.value)}
+                  style={{
+                    width: '100%',
+                    height: '36px',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}
+                />
+              </div>
+            </>
+          )}
         </>
       )}
 
