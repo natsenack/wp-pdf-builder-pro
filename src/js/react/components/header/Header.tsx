@@ -3105,10 +3105,47 @@ export const Header = memo(function Header({
 
       {/* Modale des paramètres du template */}
       {showSettingsModal && (
-        <div className="canvas-modal-overlay" style={{ display: "flex" }}>
-          <div className="canvas-modal-container">
-            <div className="canvas-modal-header">
-              <h3>
+        <div 
+          className="canvas-modal-overlay" 
+          style={{ 
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10000
+          }}
+        >
+          <div 
+            className="canvas-modal-container"
+            style={{
+              background: '#fff',
+              borderRadius: '8px',
+              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2)',
+              width: '500px',
+              maxWidth: '90vw',
+              maxHeight: '85vh',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column'
+            }}
+          >
+            <div 
+              className="canvas-modal-header"
+              style={{
+                background: '#f5f5f5',
+                borderBottom: '1px solid #ddd',
+                padding: '20px 24px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#333' }}>
                 <span style={{ fontSize: "24px" }}>📄</span> Paramètres du
                 template
               </h3>
@@ -3117,13 +3154,33 @@ export const Header = memo(function Header({
                 className="canvas-modal-close"
                 onClick={() => setShowSettingsModal(false)}
                 title="Fermer"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '24px',
+                  color: '#666',
+                  padding: 0,
+                  width: '32px',
+                  height: '32px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
               >
                 &times;
               </button>
             </div>
-            <div className="canvas-modal-body">
-              <div className="setting-group">
-                <label className="setting-label">Nom du template</label>
+            <div 
+              className="canvas-modal-body"
+              style={{
+                padding: '24px',
+                overflowY: 'auto',
+                flex: 1
+              }}
+            >
+              <div className="setting-group" style={{ marginBottom: '20px' }}>
+                <label className="setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Nom du template</label>
                 <input
                   type="text"
                   value={editedTemplateName}
@@ -3132,17 +3189,19 @@ export const Header = memo(function Header({
                   placeholder="Entrez le nom du template"
                   autoComplete="off"
                   name="template_name_unique"
+                  style={{ width: '100%', padding: '8px 12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px' }}
                 />
               </div>
 
-              <div className="setting-group">
-                <label className="setting-label">Description</label>
+              <div className="setting-group" style={{ marginBottom: '20px' }}>
+                <label className="setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Description</label>
                 <textarea
                   value={editedTemplateDescription}
                   onChange={(e) => setEditedTemplateDescription(e.target.value)}
                   className="setting-textarea"
                   placeholder="Description du template..."
                   rows={3}
+                  style={{ width: '100%', padding: '8px 12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', resize: 'vertical' }}
                 />
               </div>
 
@@ -3297,10 +3356,31 @@ export const Header = memo(function Header({
                 </div>
               </div>
             </div>
-            <div className="canvas-modal-footer">
+            <div 
+              className="canvas-modal-footer"
+              style={{
+                borderTop: '1px solid #ddd',
+                padding: '16px 24px',
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: '12px',
+                background: '#f9f9f9'
+              }}
+            >
               <button
                 onClick={() => setShowSettingsModal(false)}
                 className="canvas-modal-btn canvas-modal-btn-secondary"
+                style={{
+                  padding: '10px 20px',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                  background: '#fff',
+                  color: '#333',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
               >
                 Annuler
               </button>
@@ -3319,6 +3399,17 @@ export const Header = memo(function Header({
                   setShowSettingsModal(false);
                 }}
                 className="canvas-modal-btn canvas-modal-btn-primary"
+                style={{
+                  padding: '10px 20px',
+                  border: 'none',
+                  borderRadius: '4px',
+                  background: '#0073aa',
+                  color: '#fff',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
               >
                 Sauvegarder
               </button>
