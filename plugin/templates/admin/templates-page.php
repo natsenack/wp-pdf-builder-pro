@@ -31,16 +31,33 @@ $templates_nonce = wp_create_nonce('pdf_builder_templates');
 // Vérifier si la notification a été rejetée (cookie)
 $notice_dismissed = isset($_COOKIE['pdf_builder_template_limit_notice_dismissed']) && $_COOKIE['pdf_builder_template_limit_notice_dismissed'] === 'true';
 
-// Vérifications freemium - Temporairement désactivé
-$user_can_create = true; // TODO: Implémenter vérification licence
-$templates_count = 0; // TODO: Compter les templates utilisateur
-$is_premium = false; // TODO: Implémenter vérification licence premium
+// Vérifier le statut Premium
+$is_premium = false;
+if (class_exists('\PDF_Builder\Managers\PDF_Builder_License_Manager')) {
+    $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+    $is_premium = $license_manager->isPremium();
+}
+
+// Compter les templates utilisateur
+global $wpdb;
+$table_templates = $wpdb->prefix . 'pdf_builder_templates';
+$templates_count = (int) $wpdb->get_var($wpdb->prepare(
+    "SELECT COUNT(*) FROM $table_templates WHERE user_id = %d",
+    get_current_user_id()
+));
+
+// Déterminer si l'utilisateur peut créer un nouveau template
+// Premium: illimité, Gratuit: max 1 template
+$user_can_create = $is_premium || $templates_count < 1;
 
 // Créer templates par défaut si aucun template et utilisateur gratuit
 if ($templates_count === 0 && !$is_premium) {
     \PDF_Builder\TemplateDefaults::create_default_templates_for_user(get_current_user_id());
     // Recharger le compteur après création
-    $templates_count = 1; // TODO: Compter les templates utilisateur après création
+    $templates_count = (int) $wpdb->get_var($wpdb->prepare(
+        "SELECT COUNT(*) FROM $table_templates WHERE user_id = %d",
+        get_current_user_id()
+    ));
 }
 
 // Fonction helper pour parser les paramètres canvas
