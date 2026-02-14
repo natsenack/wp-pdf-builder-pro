@@ -102,6 +102,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_debug_html");
         add_action('wp_ajax_pdf_builder_get_preview_html', [$this, 'handle_get_preview_html']);
         error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_get_preview_html");
+        add_action('wp_ajax_pdf_builder_get_orders_list', [$this, 'handle_get_orders_list']);
+        error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_get_orders_list");
     }
 
     /**
@@ -4725,6 +4727,57 @@ class PDF_Builder_Unified_Ajax_Handler {
 </html>';
 
         return $html;
+    }
+
+    /**
+     * Récupère la liste des commandes WooCommerce pour le select d'aperçu
+     */
+    public function handle_get_orders_list() {
+        try {
+            // Vérifier le nonce
+            if (!$this->nonce_manager->validate_ajax_request('get_orders_list')) {
+                wp_send_json_error(['message' => 'Nonce invalide']);
+                return;
+            }
+
+            // Vérifier les permissions
+            if (!current_user_can('manage_woocommerce')) {
+                wp_send_json_error(['message' => 'Permissions insuffisantes']);
+                return;
+            }
+
+            // Récupérer les commandes récentes (limitées à 50 pour performance)
+            $args = [
+                'limit' => 50,
+                'orderby' => 'date',
+                'order' => 'DESC',
+                'status' => ['wc-processing', 'wc-completed', 'wc-on-hold', 'wc-pending'],
+            ];
+
+            $orders = wc_get_orders($args);
+            $orders_list = [];
+
+            foreach ($orders as $order) {
+                $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+                if (empty(trim($customer_name))) {
+                    $customer_name = $order->get_billing_email() ?: 'Client anonyme';
+                }
+
+                $orders_list[] = [
+                    'id' => $order->get_id(),
+                    'number' => $order->get_order_number(),
+                    'customer' => trim($customer_name),
+                    'date' => $order->get_date_created()->date('d/m/Y'),
+                    'total' => wc_price($order->get_total(), ['currency' => $order->get_currency()]),
+                ];
+            }
+
+            wp_send_json_success($orders_list);
+
+        } catch (Exception $e) {
+            $this->debug_log("Erreur lors de la récupération des commandes: " . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors de la récupération des commandes']);
+        }
     }
 }
 

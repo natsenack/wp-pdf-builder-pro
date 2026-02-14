@@ -107,14 +107,42 @@ export const Header = memo(function Header({
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewOrderId, setPreviewOrderId] = useState("");
   const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
+  const [availableOrders, setAvailableOrders] = useState<Array<{id: string, number: string, customer: string, date: string, total: string}>>([]);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(false);
 
   // Vérifier le statut premium depuis pdfBuilderData
   const isPremium = (window as any).pdfBuilderData?.license?.isPremium || false;
 
   // Ouvrir la modale d'aperçu
-  const handlePreview = () => {
+  const handlePreview = async () => {
     setShowPreviewModal(true);
     setPreviewOrderId("");
+    setIsLoadingOrders(true);
+    
+    try {
+      // Récupérer la liste des commandes WooCommerce
+      const response = await fetch((window as any).pdfBuilderData?.ajaxUrl || "", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          action: "pdf_builder_get_orders_list",
+          nonce: (window as any).pdfBuilderNonce || "",
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.data) {
+          setAvailableOrders(data.data);
+        }
+      }
+    } catch (error) {
+      console.error("Erreur lors du chargement des commandes:", error);
+    } finally {
+      setIsLoadingOrders(false);
+    }
   };
 
   // Ouvrir le HTML avec boutons Télécharger et Imprimer
@@ -790,7 +818,7 @@ export const Header = memo(function Header({
   }, [canvasSettings.performanceMonitoring]);
 
   // State pour le throttling du scroll
-  const [scrollTimeout, setScrollTimeout] = useState<NodeJS.Timeout | null>(
+  const [scrollTimeout, setScrollTimeout] = useState<number | null>(
     null,
   );
 
@@ -907,8 +935,8 @@ export const Header = memo(function Header({
     templateInput?: any,
   ) => {
     // Utiliser les paramètres passés OU les données locales (pour compatibilité)
-    const canvasWidth = canvasInput?.width || state.canvas?.width || 794;
-    const canvasHeight = canvasInput?.height || state.canvas?.height || 1123;
+    const canvasWidth = canvasInput?.width || state.template?.canvasWidth || 794;
+    const canvasHeight = canvasInput?.height || state.template?.canvasHeight || 1123;
     const elements = elementsInput || state.elements || [];
     const template = templateInput || state.template || {};
 
@@ -1670,7 +1698,7 @@ export const Header = memo(function Header({
             // Helper pour valider si une valeur doit être affichée
             const isValidValue = (value: string | any): boolean => {
               const stringValue = convertToString(value);
-              return (
+              return !!(
                 stringValue &&
                 stringValue.trim() !== "" &&
                 stringValue !== "Non indiqué" &&
@@ -3335,26 +3363,39 @@ export const Header = memo(function Header({
                   Numéro de commande WooCommerce{" "}
                   <span style={{ fontSize: "12px", color: "#e11d48" }}>*</span>
                 </label>
-                <input
-                  type="text"
-                  value={previewOrderId}
-                  onChange={(e) => setPreviewOrderId(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (
-                      e.key === "Enter" &&
-                      !isGeneratingPreview &&
-                      previewOrderId.trim()
-                    ) {
-                      generatePDF();
-                    }
-                  }}
-                  className="setting-input"
-                  placeholder="Ex: 123"
-                  autoFocus
-                  disabled={isGeneratingPreview}
-                />
+                {isLoadingOrders ? (
+                  <div style={{ 
+                    padding: "8px 12px", 
+                    border: "1px solid #d1d5db", 
+                    borderRadius: "4px",
+                    backgroundColor: "#f9fafb",
+                    color: "#6b7280",
+                    fontSize: "14px"
+                  }}>
+                    ⏳ Chargement des commandes...
+                  </div>
+                ) : (
+                  <select
+                    value={previewOrderId}
+                    onChange={(e) => setPreviewOrderId(e.target.value)}
+                    className="setting-input"
+                    disabled={isGeneratingPreview}
+                    style={{ cursor: isGeneratingPreview ? "not-allowed" : "pointer" }}
+                  >
+                    <option value="">
+                      {availableOrders.length === 0 
+                        ? "Aucune commande trouvée" 
+                        : "Sélectionnez une commande"}
+                    </option>
+                    {availableOrders.map((order) => (
+                      <option key={order.id} value={order.id}>
+                        #{order.number} - {order.customer} ({order.date}) - {order.total}
+                      </option>
+                    ))}
+                  </select>
+                )}
                 <div className="setting-hint">
-                  Le numéro de commande est requis pour générer le document avec
+                  Sélectionnez la commande WooCommerce pour générer le document avec
                   les vraies données (client, produits, totaux, etc.)
                 </div>
               </div>
