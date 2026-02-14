@@ -3108,7 +3108,7 @@ export const Header = memo(function Header({
         <div className="canvas-modal-overlay" style={{ display: "flex" }}>
           <div className="canvas-modal-container">
             <div className="canvas-modal-header">
-              <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "600" }}>
+              <h3>
                 <span style={{ fontSize: "24px" }}>📄</span> Paramètres du
                 template
               </h3>
@@ -3117,14 +3117,6 @@ export const Header = memo(function Header({
                 className="canvas-modal-close"
                 onClick={() => setShowSettingsModal(false)}
                 title="Fermer"
-                style={{
-                  background: "none",
-                  border: "none",
-                  fontSize: "24px",
-                  cursor: "pointer",
-                  color: "#666",
-                  padding: "4px",
-                }}
               >
                 &times;
               </button>
@@ -3138,6 +3130,8 @@ export const Header = memo(function Header({
                   onChange={(e) => setEditedTemplateName(e.target.value)}
                   className="setting-input"
                   placeholder="Entrez le nom du template"
+                  autoComplete="off"
+                  name="template_name_unique"
                 />
               </div>
 
@@ -3249,56 +3243,57 @@ export const Header = memo(function Header({
                     Aimantation à la grille
                   </label>
                 </div>
-                <div className="setting-group">
-                  <label className="setting-label">Statut</label>
-                  <div className="setting-status-tags">
-                    {isNewTemplate && (
-                      <span className="status-tag status-new">
-                        Nouveau template
-                      </span>
-                    )}
-                    {deferredIsModified && (
-                      <span className="status-tag status-modified">
-                        Modifié
-                      </span>
-                    )}
-                    {isEditingExistingTemplate && (
-                      <span className="status-tag status-editing">
-                        Édition existante
-                      </span>
-                    )}
-                  </div>
-                </div>
+              </div>
 
-                <div className="setting-group">
-                  <label className="setting-label">Informations système</label>
-                  <div className="setting-info">
-                    <div>Template ID: {templateName || "N/A"}</div>
-                    <div>
-                      Dernière modification:{" "}
-                      {new Date().toLocaleString("fr-FR")}
-                    </div>
-                    <div>
-                      État:{" "}
-                      {deferredIsSaving
-                        ? "Enregistrement..."
-                        : deferredIsModified
-                          ? "Modifié"
-                          : "Sauvegardé"}
-                    </div>
-                    {canvasSettings.performanceMonitoring && (
-                      <div>
-                        Performance: {performanceMetrics.fps} FPS,{" "}
-                        {performanceMetrics.memoryUsage}MB RAM
-                      </div>
-                    )}
-                    {canvasSettings.debugMode && (
-                      <div>
-                        Debug: FPS Target {canvasSettings.fpsTarget}, Memory
-                        Limit {canvasSettings.memoryLimitJs}MB
-                      </div>
-                    )}
+              <div className="setting-group">
+                <label className="setting-label">Statut</label>
+                <div className="setting-status-tags">
+                  {isNewTemplate && (
+                    <span className="status-tag status-new">
+                      Nouveau template
+                    </span>
+                  )}
+                  {deferredIsModified && (
+                    <span className="status-tag status-modified">
+                      Modifié
+                    </span>
+                  )}
+                  {isEditingExistingTemplate && (
+                    <span className="status-tag status-editing">
+                      Édition existante
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="setting-group">
+                <label className="setting-label">Informations système</label>
+                <div className="setting-info">
+                  <div>Template ID: {templateName || "N/A"}</div>
+                  <div>
+                    Dernière modification:{" "}
+                    {new Date().toLocaleString("fr-FR")}
                   </div>
+                  <div>
+                    État:{" "}
+                    {deferredIsSaving
+                      ? "Enregistrement..."
+                      : deferredIsModified
+                        ? "Modifié"
+                        : "Sauvegardé"}
+                  </div>
+                  {canvasSettings.performanceMonitoring && (
+                    <div>
+                      Performance: {performanceMetrics.fps} FPS,{" "}
+                      {performanceMetrics.memoryUsage}MB RAM
+                    </div>
+                  )}
+                  {canvasSettings.debugMode && (
+                    <div>
+                      Debug: FPS Target {canvasSettings.fpsTarget}, Memory
+                      Limit {canvasSettings.memoryLimitJs}MB
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -3337,7 +3332,7 @@ export const Header = memo(function Header({
         <div className="canvas-modal-overlay" style={{ display: "flex" }}>
           <div className="canvas-modal-container" style={{ maxWidth: "500px" }}>
             <div className="canvas-modal-header">
-              <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "600" }}>
+              <h3>
                 <span style={{ fontSize: "24px" }}>👁️</span> Générer un aperçu
               </h3>
               <button
@@ -3345,14 +3340,6 @@ export const Header = memo(function Header({
                 className="canvas-modal-close"
                 onClick={() => setShowPreviewModal(false)}
                 title="Fermer"
-                style={{
-                  background: "none",
-                  border: "none",
-                  fontSize: "24px",
-                  cursor: "pointer",
-                  color: "#666",
-                  padding: "4px",
-                }}
               >
                 &times;
               </button>
