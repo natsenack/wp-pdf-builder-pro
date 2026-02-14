@@ -3307,21 +3307,31 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Helper: Extrait les propriétés de police avec fallback
      */
     private function extract_font_props($element, $prefix = '', $defaults = []) {
-        $default_family = $defaults['family'] ?? ($element['fontFamily'] ?? 'DejaVu Sans');
+        // Récupérer la police par défaut pour le prefix
+        // Pour 'header', utiliser fontFamily de l'élément si headerFontFamily n'existe pas
+        $default_family = $element['fontFamily'] ?? 'DejaVu Sans';
         $default_size = $defaults['size'] ?? 12;
         $default_weight = $defaults['weight'] ?? 'normal';
         $default_style = $defaults['style'] ?? 'normal';
         
+        // Construire les clés pour le prefix (ex: 'header' → 'headerFontFamily')
         $family_key = $prefix ? "{$prefix}FontFamily" : 'fontFamily';
         $size_key = $prefix ? "{$prefix}FontSize" : 'fontSize';
         $weight_key = $prefix ? "{$prefix}FontWeight" : 'fontWeight';
         $style_key = $prefix ? "{$prefix}FontStyle" : 'fontStyle';
         
+        // Pour family, accepter aussi une version avec 'body' ou 'header' prefix du fontFamily
+        $specific_family = $element[$family_key] ?? null;
+        if (!$specific_family && $prefix) {
+            // Fallback: utiliser fontFamily si la version spécifique n'existe pas
+            $specific_family = $element['fontFamily'] ?? $defaults['family'] ?? $default_family;
+        }
+        
         return [
-            'family' => $element[$family_key] ?? $default_family,
-            'size' => $element[$size_key] ?? $default_size,
-            'weight' => $element[$weight_key] ?? $default_weight,
-            'style' => $element[$style_key] ?? $default_style
+            'family' => $specific_family ?? $default_family,
+            'size' => $element[$size_key] ?? $defaults['size'] ?? $default_size,
+            'weight' => $element[$weight_key] ?? $defaults['weight'] ?? $default_weight,
+            'style' => $element[$style_key] ?? $defaults['style'] ?? $default_style
         ];
     }
     
