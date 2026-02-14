@@ -79,7 +79,7 @@ class AdminScriptLoader
                 'pdf-builder-templates-page',
                 PDF_BUILDER_PRO_ASSETS_URL . 'css/templates-page-css.min.css',
                 [],
-                PDF_BUILDER_PRO_VERSION
+                PDF_BUILDER_PRO_VERSION . '-' . time()
             );
         }
         
