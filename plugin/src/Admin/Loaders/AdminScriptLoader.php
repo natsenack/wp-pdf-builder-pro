@@ -47,6 +47,19 @@ class AdminScriptLoader
     {
         error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url'));
 
+        // DÉBOGAGE RÉSEAU - Ajouter en tout premier pour capturer TOUTES les erreurs
+        $current_url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+        if (strpos($current_url, 'pdf-builder') !== false) {
+            $debug_file = dirname(dirname(dirname(__DIR__))) . '/templates/admin/debug-network-errors.php';
+            if (file_exists($debug_file)) {
+                $debug_content = file_get_contents($debug_file);
+                // Extraire le JavaScript du fichier (enlever les balises <script>)
+                $debug_content = preg_replace('/<\/?script[^>]*>/', '', $debug_content);
+                wp_add_inline_script('jquery', $debug_content, 'before');
+                error_log('[WP AdminScriptLoader] Network debug script injected');
+            }
+        }
+
         // Ajouter un filtre pour corriger les templates Elementor qui sont chargés comme des scripts JavaScript
         // Appliquer toujours, pas seulement sur les pages PDF Builder
         \add_filter('script_loader_tag', [$this, 'fixElementorTemplates'], 10, 3);
