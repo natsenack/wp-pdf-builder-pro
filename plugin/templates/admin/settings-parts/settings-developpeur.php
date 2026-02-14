@@ -129,130 +129,7 @@
                 </table>
             </section>
 
-            <section id="dev-debug-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
-                <h3 class="pdfb-section-title">🔍 Paramètres de Debug</h3>
 
-                <table class="pdfb-form-table">
-                    <tr>
-                        <th scope="row"><label for="debug_php_errors">Errors PHP</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_debug_php_errors]" value="0">
-                                    <input type="checkbox" id="debug_php_errors" name="pdf_builder_settings[pdf_builder_debug_php_errors]" value="1" <?php echo isset($settings['pdf_builder_debug_php_errors']) && $settings['pdf_builder_debug_php_errors'] ? 'checked' : ''; ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Debug PHP</span>
-                            </div>
-                            <div class="toggle-description">Affiche les erreurs/warnings PHP du plugin</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="debug_javascript">Debug JavaScript</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_debug_javascript]" value="0">
-                                    <input type="checkbox" id="debug_javascript" name="pdf_builder_settings[pdf_builder_debug_javascript]" value="1" <?php echo isset($settings['pdf_builder_debug_javascript']) && $settings['pdf_builder_debug_javascript'] ? 'checked' : ''; ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Debug JS</span>
-                            </div>
-                            <div class="toggle-description">Active les logs détaillés en console (emojis: 🚀 start, ✅ success, ❌ error, ⚠️ warn)</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="debug_javascript_verbose">Logs Verbeux JS</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_debug_javascript_verbose]" value="0">
-                                    <input type="checkbox" id="debug_javascript_verbose" name="pdf_builder_settings[pdf_builder_debug_javascript_verbose]" value="1" <?php echo isset($settings['pdf_builder_debug_javascript_verbose']) && $settings['pdf_builder_debug_javascript_verbose'] ? 'checked' : ''; ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Logs détaillés</span>
-                            </div>
-                            <div class="toggle-description">Active les logs détaillés (rendu, interactions, etc.). À désactiver en production.</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="debug_ajax">Debug AJAX</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_debug_ajax]" value="0">
-                                    <input type="checkbox" id="debug_ajax" name="pdf_builder_settings[pdf_builder_debug_ajax]" value="1" <?php echo isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax'] ? 'checked' : ''; ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Debug AJAX</span>
-                            </div>
-                            <div class="toggle-description">Enregistre toutes les requêtes AJAX avec requête/réponse</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="debug_performance">Métriques Performance</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_debug_performance]" value="0">
-                                    <input type="checkbox" id="debug_performance" name="pdf_builder_settings[pdf_builder_debug_performance]" value="1" <?php echo isset($settings['pdf_builder_debug_performance']) && $settings['pdf_builder_debug_performance'] ? 'checked' : ''; ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Debug perf.</span>
-                            </div>
-                            <div class="toggle-description">Affiche le temps d'exécution et l'utilisation mémoire des opérations</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="debug_database">Requêtes BD</label></th>
-                        <td>
-                            <div class="toggle-container">
-                                <label class="toggle-switch">
-                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_debug_database]" value="0">
-                                    <input type="checkbox" id="debug_database" name="pdf_builder_settings[pdf_builder_debug_database]" value="1" <?php echo isset($settings['pdf_builder_debug_database']) && $settings['pdf_builder_debug_database'] ? 'checked' : ''; ?> />
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <span class="toggle-label">Debug DB</span>
-                            </div>
-                            <div class="toggle-description">Enregistre les requêtes SQL exécutées par le plugin</div>
-                        </td>
-                    </tr>
-                </table>
-            </section>
-
-            <section id="dev-logs-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
-                <h3 class="pdfb-section-title">Fichiers Logs</h3>
-
-                <table class="pdfb-form-table">
-                    <tr>
-                     <th scope="row"><label for="log_level">Niveau de Log</label></th>
-                        <td>
-                            <select id="log_level" name="pdf_builder_settings[pdf_builder_log_level]" style="width: 200px;">
-                                <option value="0" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 0) ? 'selected' : ''; ?>>Aucun log</option>
-                                <option value="1" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 1) ? 'selected' : ''; ?>>Erreurs uniquement</option>
-                                <option value="2" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 2) ? 'selected' : ''; ?>>Erreurs + Avertissements</option>
-                                <option value="3" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 3) ? 'selected' : ''; ?>>Info complète</option>
-                                <option value="4" <?php echo (isset($settings['pdf_builder_log_level']) && $settings['pdf_builder_log_level'] == 4) ? 'selected' : ''; ?>>Détails (Développement)</option>
-                            </select>
-                            <p class="description">0=Aucun, 1=Erreurs, 2=Warn, 3=Info, 4=Détails</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="log_file_size">Taille Max Log</label></th>
-                        <td>
-                            <input type="number" id="log_file_size" name="pdf_builder_settings[pdf_builder_log_file_size]" value="<?php echo isset($settings['pdf_builder_log_file_size']) ? intval($settings['pdf_builder_log_file_size']) : '10'; ?>" min="1" max="100" /> MB
-                            <p class="description">Rotation automatique quand le log dépasse cette taille</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="log_retention">Retention Logs</label></th>
-                        <td>
-                            <input type="number" id="log_retention" name="pdf_builder_settings[pdf_builder_log_retention]" value="<?php echo isset($settings['pdf_builder_log_retention']) ? intval($settings['pdf_builder_log_retention']) : '30'; ?>" min="1" max="365" /> jours
-                            <p class="description">Supprime automatiquement les logs plus vieux que ce délai</p>
-                        </td>
-                    </tr>
-                </table>
-            </section>
 
             <section id="dev-optimizations-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <h3 class="pdfb-section-title">Optimisations Avancées</h3>
@@ -492,46 +369,7 @@
                         <p style="margin-top: 5px;"><strong>Dépend de :</strong> <span style="color: #2196f3; font-weight: bold;">Système d'aperçu PDF</span></p>
                     </div>
 
-                    <div style="background: #e3f2fd; border: 1px solid #2196f3; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                        <h4 style="color: #0d47a1; margin-top: 0;">🔧 Corrections Mineures v1.1.0</h4>
-                        <p style="margin-bottom: 15px;"><strong>Statut :</strong> <span style="color: #ff9800; font-weight: bold;">EN ATTENTE - FINALISATION</span></p>
 
-                        <div style="background: #f8f9fa; border-left: 4px solid #2196f3; padding: 15px; margin: 15px 0;">
-                            <h5 style="margin-top: 0; color: #0d47a1;">📋 Corrections identifiées :</h5>
-                            <ul style="margin-bottom: 0;">
-                                <li><strong>Système d'Aperçu PDF/PNG/JPG :</strong> Implémentation complète du système d'aperçu multi-format</li>
-                                <li><strong>Activation Onboarding Production :</strong> Vérifier que l'onboarding s'active en production (WP_DEBUG=false)</li>
-                                <li><strong>Nettoyage Styles Temporaires :</strong> Supprimer/déplacer les styles inline temporaires vers debug.css</li>
-                                <li><strong>Tests d'Intégration Complets :</strong> Validation Canvas/Metabox avec données réelles</li>
-                                <li><strong>Tests Performance & Charge :</strong> Validation < 2s génération, cache hit ratio > 80%</li>
-                                <li><strong>Tests Sécurité & Robustesse :</strong> Audit complet et gestion d'erreurs</li>
-                                <li><strong>Tests Utilisateur & UX :</strong> Validation expérience utilisateur finale</li>
-                                <li><strong>Tests Compatibilité Navigateurs :</strong> Chrome, Firefox, Safari, Edge</li>
-                            </ul>
-                        </div>
-
-                        <div style="background: #f1f8e9; border-left: 4px solid #4caf50; padding: 15px; margin: 15px 0;">
-                            <h5 style="margin-top: 0; color: #2e7d32;">🎯 Actions requises :</h5>
-                            <ol style="margin-bottom: 0;">
-                                <li><strong>Implémenter système d'aperçu :</strong> PDF/PNG/JPG avec conversion côté serveur</li>
-                                <li><strong>Vérifier l'onboarding :</strong> Tester activation en mode production</li>
-                                <li><strong>Audit CSS :</strong> Identifier et nettoyer les styles temporaires</li>
-                                <li><strong>Tests d'intégration :</strong> Validation transitions Canvas ↔ Metabox</li>
-                                <li><strong>Tests performance :</strong> Mesure temps génération et cache efficiency</li>
-                                <li><strong>Tests sécurité :</strong> Audit permissions, sanitisation, rate limiting</li>
-                                <li><strong>Tests UX :</strong> Workflows intuitifs, gestion erreurs user-friendly</li>
-                                <li><strong>Tests compatibilité :</strong> Validation cross-browser et responsive</li>
-                            </ol>
-                        </div>
-
-                        <div style="background: #fff3e0; border-left: 4px solid #ff9800; padding: 15px; margin: 15px 0;">
-                            <h5 style="margin-top: 0; color: #e65100;">⚠️ Impact sur la release :</h5>
-                            <p style="margin-bottom: 0;">Ces corrections sont critiques pour atteindre la version 1.1.0 stable. Le système d'aperçu PDF/PNG/JPG est essentiel pour l'expérience utilisateur, permettant aux clients de prévisualiser leurs documents avant génération finale.</p>
-                        </div>
-
-                        <p style="margin-top: 15px;"><strong>Priorité :</strong> <span style="color: #dc3545; font-weight: bold;">CRITIQUE</span> - Bloque la release v1.1.0</p>
-                        <p style="margin-top: 5px;"><strong>Échéance :</strong> <span style="color: #dc3545; font-weight: bold;">Janvier 2026</span></p>
-                    </div>
 
                     <div style="background: #e3f2fd; border: 1px solid #2196f3; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
                         <h4 style="color: #0d47a1; margin-top: 0;">🖼️ Menu "Galerie" - À CACHER EN PRODUCTION</h4>
@@ -568,24 +406,7 @@
                 </div>
             </section>
 
-            <section id="dev-console-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
-                <h3 class="section-title">Console Code</h3>
 
-                <table class="pdfb-form-table">
-                    <tr>
-                        <th scope="row"><label for="test_code">Code Test</label></th>
-                        <td>
-                            <textarea id="test_code" style="width: 100%; height: 150px; font-family: monospace; padding: 10px;"></textarea>
-                            <p class="description">Zone d'essai pour du code JavaScript (exécution côté client)</p>
-                            <div style="margin-top: 10px;">
-                                <button type="button" id="execute_code_btn" class="button button-secondary">▶️ Exécuter Code JS</button>
-                                <button type="button" id="clear_console_btn" class="button button-secondary" style="margin-left: 10px;">🗑️ Vider Console</button>
-                                <span id="code_result" style="margin-left: 20px; font-weight: bold;"></span>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </section>
 
             <section id="dev-hooks-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <!-- Tableau de références des hooks disponibles -->
@@ -799,15 +620,12 @@
             // Afficher/masquer les sections développeur
             const sections = [
                 '#dev-license-section',
-                '#dev-debug-section', 
-                '#dev-logs-section',
                 '#dev-optimizations-section',
                 '#dev-logs-viewer-section',
                 '#dev-tools-section',
                 '#dev-notifications-test-section',
                 '#dev-shortcuts-section',
                 '#dev-todo-section',
-                '#dev-console-section',
                 '#dev-hooks-section',
                 '#dev-database-section'
             ];
