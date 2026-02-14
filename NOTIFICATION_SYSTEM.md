@@ -86,6 +86,17 @@ showInfoNotification(message);
 - ⚠️ **Actions via form submit** (rechargements de page - pas de notification AJAX)
 - ✅ Messages WordPress notices utilisés à la place
 
+### Développeur
+
+- ✅ **Génération clé licence test** → Success/Error + notification unifiée
+- ✅ **Suppression clé licence test** → Success/Error + notification unifiée
+- ✅ **Nettoyage complet licence** → Success/Error + notification unifiée
+- ✅ **Vérification expiration licence** → Success/Error + notification unifiée
+- ✅ **Toggle mode test licence** → Success/Error + notification unifiée
+- ✅ **Génération clé test (v2)** → Success/Error + notification unifiée
+- ✅ **Suppression clé test (v2)** → Success/Error + notification unifiée
+- ✅ **Validation clé test** → Success/Error + notification unifiée
+
 ## 🎯 Notifications À Ajouter (Optionnel)
 
 ### Priorité HAUTE 🔴

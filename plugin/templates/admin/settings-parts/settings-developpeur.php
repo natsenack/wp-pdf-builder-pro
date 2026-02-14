@@ -828,12 +828,24 @@
                         // Activer le bouton copier
                         $('#copy_license_key_btn').prop('disabled', false);
                         $('#delete_license_key_btn').show();
+                        // Notification unifiée
+                        if (typeof showSuccessNotification !== 'undefined') {
+                            showSuccessNotification('Clé de licence de test générée avec succès');
+                        }
                     } else {
                         $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                        // Notification unifiée
+                        if (typeof showErrorNotification !== 'undefined') {
+                            showErrorNotification(response.data.message || 'Erreur lors de la génération de la clé');
+                        }
                     }
                 },
                 error: function(xhr, status, error) {
                     $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                    // Notification unifiée
+                    if (typeof showErrorNotification !== 'undefined') {
+                        showErrorNotification('Erreur de communication lors de la génération de la clé');
+                    }
                 },
                 complete: function() {
                     // Réactiver le bouton
@@ -894,12 +906,24 @@
                         $status.html('<span style="color: #28a745;">✅ Clé supprimée avec succès !</span>');
                         $('#copy_license_key_btn').prop('disabled', true);
                         $btn.hide();
+                        // Notification unifiée
+                        if (typeof showSuccessNotification !== 'undefined') {
+                            showSuccessNotification('Clé de licence de test supprimée avec succès');
+                        }
                     } else {
                         $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                        // Notification unifiée
+                        if (typeof showErrorNotification !== 'undefined') {
+                            showErrorNotification(response.data.message || 'Erreur lors de la suppression de la clé');
+                        }
                     }
                 },
                 error: function(xhr, status, error) {
                     $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                    // Notification unifiée
+                    if (typeof showErrorNotification !== 'undefined') {
+                        showErrorNotification('Erreur de communication lors de la suppression de la clé');
+                    }
                 },
                 complete: function() {
                     $btn.prop('disabled', false).text('🗑️ Supprimer');
@@ -959,11 +983,19 @@
                     } else {
                         console.error('🔐 [Test de Licence] Erreur lors du nettoyage:', response.data.message);
                         $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                        // Notification unifiée
+                        if (typeof showErrorNotification !== 'undefined') {
+                            showErrorNotification(response.data.message || 'Erreur lors du nettoyage de la licence');
+                        }
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('🔐 [Test de Licence] Erreur AJAX lors du nettoyage:', error);
                     $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                    // Notification unifiée
+                    if (typeof showErrorNotification !== 'undefined') {
+                        showErrorNotification('Erreur de communication lors du nettoyage de la licence');
+                    }
                 },
                 complete: function() {
                     $btn.prop('disabled', false).text('🧹 Nettoyer complètement la licence');
@@ -1006,14 +1038,26 @@
                         
                         $status.html('<span style="color: #28a745;">' + message + '</span>');
                         console.log('🔍 [Vérification Expiration] Vérification réussie');
+                        // Notification unifiée
+                        if (typeof showSuccessNotification !== 'undefined') {
+                            showSuccessNotification('Vérification d\'expiration terminée avec succès');
+                        }
                     } else {
                         console.error('🔍 [Vérification Expiration] Erreur:', response.data.message);
                         $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                        // Notification unifiée
+                        if (typeof showErrorNotification !== 'undefined') {
+                            showErrorNotification(response.data.message || 'Erreur lors de la vérification d\'expiration');
+                        }
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('🔍 [Vérification Expiration] Erreur AJAX:', error);
                     $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                    // Notification unifiée
+                    if (typeof showErrorNotification !== 'undefined') {
+                        showErrorNotification('Erreur de communication lors de la vérification d\'expiration');
+                    }
                 },
                 complete: function() {
                     $btn.prop('disabled', false).text('🔍 Vérifier expiration manuellement');
@@ -1065,14 +1109,26 @@
                             currentUrl.searchParams.set('cache_bust', cacheBust);
                             window.location.href = currentUrl.toString();
                         }, 1000);
+                        // Notification unifiée
+                        if (typeof showSuccessNotification !== 'undefined') {
+                            showSuccessNotification('Mode test ' + (isActive ? 'activé' : 'désactivé') + ' avec succès');
+                        }
                     } else {
                         console.error('🔐 [Test de Licence] Erreur lors du basculement:', response.data.message);
                         $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                        // Notification unifiée
+                        if (typeof showErrorNotification !== 'undefined') {
+                            showErrorNotification(response.data.message || 'Erreur lors du changement de mode test');
+                        }
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('🔐 [Test de Licence] Erreur AJAX lors du basculement:', error);
                     $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                    // Notification unifiée
+                    if (typeof showErrorNotification !== 'undefined') {
+                        showErrorNotification('Erreur de communication lors du changement de mode test');
+                    }
                 },
                 complete: function() {
                     const currentMode = $('#license_test_mode').is(':checked') ? '1' : '0';
@@ -1113,14 +1169,26 @@
                         $status.html('<span style="color: #28a745;">✅ Clé générée: ' + response.data.test_key + '</span>');
                         $('#delete_license_key_btn').show();
                         console.log('🔐 [Test de Licence] Clé générée avec succès:', response.data.test_key);
+                        // Notification unifiée
+                        if (typeof showSuccessNotification !== 'undefined') {
+                            showSuccessNotification('Nouvelle clé de licence de test générée');
+                        }
                     } else {
                         console.error('🔐 [Test de Licence] Erreur lors de la génération:', response.data.message);
                         $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                        // Notification unifiée
+                        if (typeof showErrorNotification !== 'undefined') {
+                            showErrorNotification(response.data.message || 'Erreur lors de la génération de la clé de test');
+                        }
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('🔐 [Test de Licence] Erreur AJAX lors de la génération:', error);
                     $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                    // Notification unifiée
+                    if (typeof showErrorNotification !== 'undefined') {
+                        showErrorNotification('Erreur de communication lors de la génération de la clé de test');
+                    }
                 },
                 complete: function() {
                     $btn.prop('disabled', false).text('🔑 Générer');
@@ -1164,14 +1232,26 @@
                         $status.html('<span style="color: #28a745;">✅ Clé supprimée avec succès</span>');
                         $btn.hide();
                         console.log('🔐 [Test de Licence] Clé supprimée avec succès');
+                        // Notification unifiée
+                        if (typeof showSuccessNotification !== 'undefined') {
+                            showSuccessNotification('Clé de licence de test supprimée avec succès');
+                        }
                     } else {
                         console.error('🔐 [Test de Licence] Erreur lors de la suppression:', response.data.message);
                         $status.html('<span style="color: #dc3545;">❌ Erreur: ' + (response.data.message || 'Erreur inconnue') + '</span>');
+                        // Notification unifiée
+                        if (typeof showErrorNotification !== 'undefined') {
+                            showErrorNotification(response.data.message || 'Erreur lors de la suppression de la clé de test');
+                        }
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('🔐 [Test de Licence] Erreur AJAX lors de la suppression:', error);
                     $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                    // Notification unifiée
+                    if (typeof showErrorNotification !== 'undefined') {
+                        showErrorNotification('Erreur de communication lors de la suppression de la clé de test');
+                    }
                 },
                 complete: function() {
                     $btn.prop('disabled', false).text('🗑️ Supprimer');
@@ -1204,12 +1284,24 @@
                 success: function(response) {
                     if (response.success && response.data.valid) {
                         $status.html('<span style="color: #28a745;">✅ Clé validée avec succès</span>');
+                        // Notification unifiée
+                        if (typeof showSuccessNotification !== 'undefined') {
+                            showSuccessNotification('Clé de licence validée avec succès');
+                        }
                     } else {
                         $status.html('<span style="color: #dc3545;">❌ Clé invalide</span>');
+                        // Notification unifiée
+                        if (typeof showErrorNotification !== 'undefined') {
+                            showErrorNotification('Clé de licence invalide');
+                        }
                     }
                 },
                 error: function(xhr, status, error) {
                     $status.html('<span style="color: #dc3545;">❌ Erreur AJAX: ' + error + '</span>');
+                    // Notification unifiée
+                    if (typeof showErrorNotification !== 'undefined') {
+                        showErrorNotification('Erreur de communication lors de la validation de la clé');
+                    }
                 },
                 complete: function() {
                     $btn.prop('disabled', false).text('✅ Valider');
