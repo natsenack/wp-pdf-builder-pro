@@ -93,47 +93,13 @@ class AdminScriptLoader
         if (strpos($current_url, 'pdf-builder') !== false) {
             error_log('[WP AdminScriptLoader] Loading settings scripts - URL contains pdf-builder: ' . $current_url);
 
-            // Enqueue WordPress core scripts needed for the plugin
-            wp_enqueue_script('wp-date'); // Provides moment.js
+            // Enqueue WordPress core scripts needed for the plugin (ESSENTIALS ONLY)
             wp_enqueue_script('wp-element'); // Provides React
             wp_enqueue_script('wp-components'); // Provides React components
-            wp_enqueue_script('wp-api'); // Provides WordPress API
             wp_enqueue_script('wp-data'); // Provides Redux store
             wp_enqueue_script('wp-hooks'); // Provides hooks
             wp_enqueue_script('wp-i18n'); // Provides internationalization
-            wp_enqueue_script('wp-url'); // Provides URL utilities
-            wp_enqueue_script('wp-keycodes'); // Provides keycodes
-            wp_enqueue_script('wp-compose'); // Provides compose utilities
-            wp_enqueue_script('wp-html-entities'); // Provides HTML entities
-            wp_enqueue_script('wp-primitives'); // Provides primitives
-            wp_enqueue_script('wp-warning'); // Provides warning system
-            wp_enqueue_script('wp-token-list'); // Provides token list
-            wp_enqueue_script('wp-core-data'); // Provides core data
-            wp_enqueue_script('wp-core-commands'); // Provides core commands
-            wp_enqueue_script('wp-block-editor'); // Provides block editor
-            wp_enqueue_script('wp-rich-text'); // Provides rich text
-            wp_enqueue_script('wp-commands'); // Provides commands
-            wp_enqueue_script('wp-blob'); // Provides blob utilities
-            wp_enqueue_script('wp-shortcode'); // Provides shortcode
-            wp_enqueue_script('wp-media-utils'); // Provides media utilities
-            wp_enqueue_script('wp-notices'); // Provides notices
-            wp_enqueue_script('wp-preferences'); // Provides preferences
-            wp_enqueue_script('wp-preferences-persistence'); // Provides preferences persistence
-            wp_enqueue_script('wp-editor'); // Provides editor
-            wp_enqueue_script('wp-plugins'); // Provides plugins
-            wp_enqueue_script('wp-edit-post'); // Provides edit post
-            wp_enqueue_script('wp-viewport'); // Provides viewport
-            wp_enqueue_script('wp-interface'); // Provides interface
-            wp_enqueue_script('wp-redux-routine'); // Provides redux routine
-            wp_enqueue_script('wp-priority-queue'); // Provides priority queue
-            wp_enqueue_script('wp-server-side-render'); // Provides server side render
-            wp_enqueue_script('wp-autop'); // Provides autop
-            wp_enqueue_script('wp-wordcount'); // Provides wordcount
-            wp_enqueue_script('wp-annotations'); // Provides annotations
-            wp_enqueue_script('wp-dom'); // Provides DOM utilities
-            wp_enqueue_script('wp-a11y'); // Provides accessibility
-            wp_enqueue_script('wp-dom-ready'); // Provides DOM ready
-            wp_enqueue_script('wp-polyfill'); // Provides polyfills
+            wp_enqueue_script('wp-api'); // Provides WordPress API
 
             // Charger les utilitaires PDF Builder en premier (PerformanceMetrics, LocalCache, etc.) - seulement si le fichier existe
             $utils_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-utils.js';
@@ -414,47 +380,13 @@ class AdminScriptLoader
         $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.min.js';
         \wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle', 'pdf-builder-notifications', 'wp-element', 'wp-components'], $cache_bust, true);
 
-        // Enqueue WordPress core scripts for React editor
-        wp_enqueue_script('wp-date'); // Provides moment.js
+        // Enqueue WordPress core scripts for React editor (ESSENTIALS ONLY)
         wp_enqueue_script('wp-element'); // Provides React
         wp_enqueue_script('wp-components'); // Provides React components
-        wp_enqueue_script('wp-api'); // Provides WordPress API
         wp_enqueue_script('wp-data'); // Provides Redux store
         wp_enqueue_script('wp-hooks'); // Provides hooks
         wp_enqueue_script('wp-i18n'); // Provides internationalization
-        wp_enqueue_script('wp-url'); // Provides URL utilities
-        wp_enqueue_script('wp-keycodes'); // Provides keycodes
-        wp_enqueue_script('wp-compose'); // Provides compose utilities
-        wp_enqueue_script('wp-html-entities'); // Provides HTML entities
-        wp_enqueue_script('wp-primitives'); // Provides primitives
-        wp_enqueue_script('wp-warning'); // Provides warning system
-        wp_enqueue_script('wp-token-list'); // Provides token list
-        wp_enqueue_script('wp-core-data'); // Provides core data
-        wp_enqueue_script('wp-core-commands'); // Provides core commands
-        wp_enqueue_script('wp-block-editor'); // Provides block editor
-        wp_enqueue_script('wp-rich-text'); // Provides rich text
-        wp_enqueue_script('wp-commands'); // Provides commands
-        wp_enqueue_script('wp-blob'); // Provides blob utilities
-        wp_enqueue_script('wp-shortcode'); // Provides shortcode
-        wp_enqueue_script('wp-media-utils'); // Provides media utilities
-        wp_enqueue_script('wp-notices'); // Provides notices
-        wp_enqueue_script('wp-preferences'); // Provides preferences
-        wp_enqueue_script('wp-preferences-persistence'); // Provides preferences persistence
-        wp_enqueue_script('wp-editor'); // Provides editor
-        wp_enqueue_script('wp-plugins'); // Provides plugins
-        wp_enqueue_script('wp-edit-post'); // Provides edit post
-        wp_enqueue_script('wp-viewport'); // Provides viewport
-        wp_enqueue_script('wp-interface'); // Provides interface
-        wp_enqueue_script('wp-redux-routine'); // Provides redux routine
-        wp_enqueue_script('wp-priority-queue'); // Provides priority queue
-        wp_enqueue_script('wp-server-side-render'); // Provides server side render
-        wp_enqueue_script('wp-autop'); // Provides autop
-        wp_enqueue_script('wp-wordcount'); // Provides wordcount
-        wp_enqueue_script('wp-annotations'); // Provides annotations
-        wp_enqueue_script('wp-dom'); // Provides DOM utilities
-        wp_enqueue_script('wp-a11y'); // Provides accessibility
-        wp_enqueue_script('wp-dom-ready'); // Provides DOM ready
-        wp_enqueue_script('wp-polyfill'); // Provides polyfills
+        wp_enqueue_script('wp-api'); // Provides WordPress API
 
         // NOTE: react-vendor.min.js n'existe pas et a été supprimé du build webpack
         // React est fourni par WordPress core (wp-element)
