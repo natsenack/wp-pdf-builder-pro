@@ -11,11 +11,11 @@
             <h3 style="display: flex; justify-content: flex-start; align-items: center;">
                 <span>👨‍💻 Paramètres Développeur</span>
             </h3>
-            <p class="developer-warning">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
+            <p class="pdfb-developer-warning">⚠️ Cette section est réservée aux développeurs. Les modifications ici peuvent affecter le fonctionnement du plugin.</p>
 
-                <h3 class="section-title">🔐 Contrôle d'Accès</h3>
+                <h3 class="pdfb-section-title">🔐 Contrôle d'Accès</h3>
 
-             <table class="form-table">
+             <table class="pdfb-form-table">
                 <tr>
                     <th scope="row"><label for="developer_enabled">Mode Développeur</label></th>
                     <td>
@@ -37,20 +37,20 @@
                     <th scope="row"><label for="developer_password">Mot de Passe Dev</label></th>
                     <td>
                         <!-- Champ username caché pour l'accessibilité -->
-                        <input type="text" autocomplete="username" class="hidden-element" />
+                        <input type="text" autocomplete="username" class="pdfb-hidden-element" />
                         <div class="developer-field-group">
                             <input type="password" id="developer_password" name="pdf_builder_settings[pdf_builder_developer_password]"
                                    placeholder="Laisser vide pour aucun mot de passe" autocomplete="current-password"
                                    class="developer-input"
                                    value="<?php echo esc_attr($settings['pdf_builder_developer_password'] ?? ''); ?>" />
-                            <button type="button" id="toggle_password" class="button button-secondary developer-button">
+                            <button type="button" id="toggle_password" class="button button-secondary pdfb-developer-button">
                                 👁️ Afficher
                             </button>
                         </div>
                         <p class="description">Protège les outils développeur avec un mot de passe (optionnel)</p>
                         <?php if (!empty($settings['developer_password'])) :
                             ?>
-                        <p class="description developer-password-set">✓ Mot de passe configuré et sauvegardé</p>
+                        <p class="description pdfb-developer-password-set">✓ Mot de passe configuré et sauvegardé</p>
                             <?php
                         endif; ?>
                     </td>
@@ -58,23 +58,23 @@
              </table>
 
             <section id="dev-license-section" class="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'developer-section-hidden' : ''; ?>">
-                <h3 class="section-title">🔐 Test de Licence</h3>
+                <h3 class="pdfb-section-title">🔐 Test de Licence</h3>
 
-                <table class="form-table">
+                <table class="pdfb-form-table">
                     <tr>
                         <th scope="row"><label for="license_test_mode">Mode Test Licence</label></th>
                         <td>
                             <div class="developer-field-group">
-                                <button type="button" id="toggle_license_test_mode_btn" class="button button-secondary developer-button">
+                                <button type="button" id="toggle_license_test_mode_btn" class="button button-secondary pdfb-developer-button">
                                     🎚️ <?php echo $license_test_mode ? 'Désactiver' : 'Activer'; ?> Mode Test
                                 </button>
-                                <span id="license_test_mode_status" class="license-test-mode-status <?php echo $license_test_mode ? 'license-test-mode-active' : 'license-test-mode-inactive'; ?>">
+                                <span id="license_test_mode_status" class="pdfb-license-test-mode-status <?php echo $license_test_mode ? 'pdfb-license-test-mode-active' : 'pdfb-license-test-mode-inactive'; ?>">
                                     <?php echo $license_test_mode ? '✅ MODE TEST ACTIF' : '❌ Mode test inactif'; ?>
                                 </span>
                             </div>
                             <p class="description">Basculer le mode test pour développer et tester sans serveur de licence en production</p>
                             <input type="hidden" name="pdf_builder_settings[pdf_builder_license_test_mode_enabled]" value="0">
-                            <input type="checkbox" id="license_test_mode" name="pdf_builder_settings[pdf_builder_license_test_mode_enabled]" value="1" <?php checked($license_test_mode, '1'); ?> class="hidden-element" />
+                            <input type="checkbox" id="license_test_mode" name="pdf_builder_settings[pdf_builder_license_test_mode_enabled]" value="1" <?php checked($license_test_mode, '1'); ?> class="pdfb-hidden-element" />
                             <input type="hidden" id="toggle_license_test_mode_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
                         </td>
                     </tr>
@@ -83,15 +83,15 @@
                         <td>
                             <div class="developer-field-group">
                                 <input type="text" id="license_test_key" readonly class="license-test-key-input" placeholder="Générer une clé..." value="<?php echo esc_attr($license_test_key); ?>" />
-                                <button type="button" id="generate_license_key_btn" class="button button-secondary developer-button">
+                                <button type="button" id="generate_license_key_btn" class="button button-secondary pdfb-developer-button">
                                     🔑 Générer
                                 </button>
-                                <button type="button" id="copy_license_key_btn" class="button button-secondary developer-button">
+                                <button type="button" id="copy_license_key_btn" class="button button-secondary pdfb-developer-button">
                                     📋 Copier
                                 </button>
                                 <?php if ($license_test_key) :
                                     ?>
-                                <button type="button" id="delete_license_key_btn" class="button button-link-delete developer-button">
+                                <button type="button" id="delete_license_key_btn" class="button pdfb-button-link-delete pdfb-developer-button">
                                     🗑️ Supprimer
                                 </button>
                                     <?php
@@ -130,9 +130,9 @@
             </section>
 
             <section id="dev-debug-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
-                <h3 class="section-title">🔍 Paramètres de Debug</h3>
+                <h3 class="pdfb-section-title">🔍 Paramètres de Debug</h3>
 
-                <table class="form-table">
+                <table class="pdfb-form-table">
                     <tr>
                         <th scope="row"><label for="debug_php_errors">Errors PHP</label></th>
                         <td>
@@ -221,9 +221,9 @@
             </section>
 
             <section id="dev-logs-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
-                <h3 class="section-title">Fichiers Logs</h3>
+                <h3 class="pdfb-section-title">Fichiers Logs</h3>
 
-                <table class="form-table">
+                <table class="pdfb-form-table">
                     <tr>
                      <th scope="row"><label for="log_level">Niveau de Log</label></th>
                         <td>
@@ -255,9 +255,9 @@
             </section>
 
             <section id="dev-optimizations-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
-                <h3 class="section-title">Optimisations Avancées</h3>
+                <h3 class="pdfb-section-title">Optimisations Avancées</h3>
 
-                <table class="form-table">
+                <table class="pdfb-form-table">
                     <tr>
                         <th scope="row"><label for="force_https">Forcer HTTPS API</label></th>
                         <td>
@@ -276,7 +276,7 @@
             </section>
 
             <section id="dev-logs-viewer-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
-                <h3 class="section-title">Visualiseur de Logs Temps Réel</h3>
+                <h3 class="pdfb-section-title">Visualiseur de Logs Temps Réel</h3>
 
                 <div style="margin-bottom: 15px;">
                     <button type="button" id="refresh_logs_btn" class="button button-secondary">🔄 Actualiser Logs</button>
@@ -571,7 +571,7 @@
             <section id="dev-console-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <h3 class="section-title">Console Code</h3>
 
-                <table class="form-table">
+                <table class="pdfb-form-table">
                     <tr>
                         <th scope="row"><label for="test_code">Code Test</label></th>
                         <td>
@@ -628,7 +628,7 @@
             <h3 class="section-title">📊 Monitoring des Performances</h3>
             <p style="color: #666; margin-bottom: 15px;">Outils pour mesurer et analyser les performances du système.</p>
 
-            <table class="form-table">
+            <table class="pdfb-form-table">
                 <tr>
                     <th scope="row"><label for="performance_monitoring">Monitoring Performance</label></th>
                     <td>
@@ -1484,6 +1484,57 @@
     display: none !important;
 }
 
+/* Styles pour les toggles améliorés */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-switch label {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #dee2e6;
+    border-radius: 12px;
+    transition: 0.3s;
+    border: 1px solid #adb5bd;
+    height: 22px;
+}
+
+.toggle-switch label:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    top: 2px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked + label {
+    background: #6c757d;
+    border-color: #5a6268;
+    height: 22px;
+}
+
+.toggle-switch input:checked + label:before {
+    transform: translateX(26px);
+}
+
 /* Amélioration du toggle */
 .toggle-container {
     display: flex;
@@ -1501,4 +1552,282 @@
     font-size: 13px;
     color: #666;
 }
-</style>
+
+/* Styles pour les champs développeur */
+.developer-field-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.developer-input {
+    flex: 1;
+    max-width: 300px;
+}
+
+.developer-button {
+    white-space: nowrap;
+}
+
+/* Styles pour les sections */
+.section-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 8px;
+}
+
+/* Styles pour les boutons développeur */
+.button.button-secondary.pdfb-developer-button {
+    background: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+.button.button-secondary.pdfb-developer-button:hover {
+    background: #5a6268;
+    border-color: #5a6268;
+}
+
+.button.pdfb-button-link-delete {
+    color: #dc3545;
+}
+
+.button.pdfb-button-link-delete:hover {
+    color: #c82333;
+    background: #f8d7da;
+}
+
+/* Styles pour les avertissements développeur */
+.pdfb-developer-warning {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    color: #856404;
+    font-weight: 500;
+}
+
+/* Styles pour le statut du mode test licence */
+.pdfb-license-test-mode-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 10px;
+    transition: all 0.3s ease;
+}
+
+.pdfb-license-test-mode-active {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.pdfb-license-test-mode-inactive {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Styles pour les champs de clé de licence */
+.pdfb-license-test-key-input {
+    flex: 1;
+    max-width: 400px;
+    font-family: monospace;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+/* Styles pour les éléments cachés */
+.pdfb-hidden-element {
+    display: none !important;
+}
+
+/* Styles pour les descriptions de mot de passe */
+.pdfb-developer-password-set {
+    color: #28a745 !important;
+    font-weight: 500;
+}
+
+/* Styles pour les sections développeur */
+section[id^="dev-"] {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+section[id^="dev-"] h3.pdfb-section-title {
+    margin-top: 0;
+    color: #495057;
+}
+
+/* Styles pour les tableaux de formulaire */
+.pdfb-form-table th {
+    width: 200px;
+    padding-right: 20px;
+    vertical-align: top;
+    font-weight: 600;
+}
+
+.pdfb-form-table td {
+    vertical-align: top;
+}
+
+/* Styles pour les statuts AJAX */
+#license_key_status, #check_expiration_status {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* Styles pour les conteneurs de statut base de données */
+#database_status_container {
+    margin-top: 15px;
+}
+
+#database_status {
+    font-family: monospace;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 8px 12px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* Styles pour les boutons d'action développeur */
+.pdfb-developer-action-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+/* Styles pour les logs développeur */
+.pdfb-developer-logs {
+    background: #2d3748;
+    color: #e2e8f0;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    padding: 15px;
+    border-radius: 6px;
+    max-height: 400px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Styles pour les outils développeur */
+.pdfb-developer-tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.pdfb-developer-tool-card {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+
+.pdfb-developer-tool-card h4 {
+    margin-top: 0;
+    color: #495057;
+}
+
+.pdfb-developer-tool-card .button {
+    margin-top: 10px;
+}
+
+/* Styles pour les raccourcis développeur */
+.pdfb-developer-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.pdfb-shortcut-item {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 15px;
+    text-align: center;
+}
+
+.pdfb-shortcut-item h5 {
+    margin-top: 0;
+    color: #495057;
+}
+
+.pdfb-shortcut-key {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-family: monospace;
+    font-weight: bold;
+    color: #495057;
+    display: inline-block;
+    margin: 5px 0;
+}
+
+/* Styles pour la console développeur */
+#developer_console_output {
+    background: #1a202c;
+    color: #e2e8f0;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    padding: 15px;
+    border-radius: 6px;
+    height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    border: 1px solid #2d3748;
+}
+
+/* Styles pour les hooks développeur */
+.pdfb-developer-hooks-list {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 15px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.pdfb-hook-item {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 8px;
+}
+
+.pdfb-hook-item:last-child {
+    margin-bottom: 0;
+}
+
+.pdfb-hook-name {
+    font-family: monospace;
+    font-weight: bold;
+    color: #495057;
+}
+
+.pdfb-hook-description {
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 4px;
+}
