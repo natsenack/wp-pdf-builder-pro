@@ -233,14 +233,6 @@ class AdminScriptLoader
                         [],
                         PDF_BUILDER_PRO_VERSION
                     );
-                    
-                    // Charger le CSS global pour toutes les pages de settings
-                    \wp_enqueue_style(
-                        'pdf-builder-settings-global',
-                        PDF_BUILDER_PLUGIN_URL . 'assets/css/settings-global-css.min.css',
-                        [],
-                        PDF_BUILDER_PRO_VERSION
-                    );
                 }
             }
 

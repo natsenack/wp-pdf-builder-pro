@@ -26,7 +26,6 @@ module.exports = {
     // Preview system removed
     "notifications-css": "./src/css/notifications.css",
     "settings-systeme-css": "./src/css/settings-systeme.css",
-    "settings-global-css": "./src/css/settings-global.css",
   },
   output: {
     path: outputPath,
