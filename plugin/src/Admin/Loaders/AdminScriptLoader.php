@@ -45,21 +45,6 @@ class AdminScriptLoader
      */
     public function loadAdminScripts($hook = null)
     {
-        error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url'));
-
-        // DÉBOGAGE RÉSEAU - Ajouter en tout premier pour capturer TOUTES les erreurs
-        $current_url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
-        if (strpos($current_url, 'pdf-builder') !== false) {
-            $debug_file = dirname(dirname(dirname(__DIR__))) . '/templates/admin/debug-network-errors.php';
-            if (file_exists($debug_file)) {
-                $debug_content = file_get_contents($debug_file);
-                // Extraire le JavaScript du fichier (enlever les balises <script>)
-                $debug_content = preg_replace('/<\/?script[^>]*>/', '', $debug_content);
-                wp_add_inline_script('jquery', $debug_content, 'before');
-                error_log('[WP AdminScriptLoader] Network debug script injected');
-            }
-        }
-
         // Ajouter un filtre pour corriger les templates Elementor qui sont chargés comme des scripts JavaScript
         // Appliquer toujours, pas seulement sur les pages PDF Builder
         \add_filter('script_loader_tag', [$this, 'fixElementorTemplates'], 10, 3);
@@ -320,50 +305,8 @@ class AdminScriptLoader
             wp_add_inline_script('pdf-builder-settings-tabs', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';', 'before');
         }
 
-        // Version du cache bust
-        $version_param = PDF_BUILDER_PRO_VERSION . '-' . time();
-
-        // Scripts de l'API Preview 1.4 - seulement si les fichiers existent
-        $preview_client_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-preview-api-client.min.js';
-        if (file_exists($preview_client_js)) {
-            // AJOUTER UN SCRIPT DE TEST TRÈS SIMPLE
-
-            
-            // Define variables BEFORE loading the script
-            $preview_data = [
-                'ajaxurl' => \admin_url('admin-ajax.php'),
-                'nonce' => \wp_create_nonce('pdf_builder_order_actions'),
-                'version' => PDF_BUILDER_PRO_VERSION,
-                'timestamp' => time(),
-                'strings' => [
-                    'error_loading_preview' => \__('Erreur lors du chargement de l\'aperçu', 'pdf-builder-pro'),
-                    'generating_pdf' => \__('Génération du PDF en cours...', 'pdf-builder-pro'),
-                ]
-            ];
-        \wp_add_inline_script('jquery', 'window.pdfBuilderData = ' . wp_json_encode($preview_data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . '; window.pdfBuilderNonce = "' . esc_js(\wp_create_nonce('pdf_builder_ajax')) . '";', 'after');
-            
-            \wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-api-client.min.js', ['jquery', 'wp-element', 'wp-api'], $version_param, true);
-            
-            $preview_integration_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-preview-integration.min.js';
-            if (file_exists($preview_integration_js)) {
-                \wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-integration.min.js', ['pdf-preview-api-client', 'wp-element', 'wp-api'], $version_param, true);
-
-                // Localize ajaxurl for integration script
-                \wp_localize_script('pdf-preview-integration', 'pdfBuilderAjax', [
-                    'ajaxurl' => \admin_url('admin-ajax.php'),
-                    'nonce' => \wp_create_nonce('pdf_builder_order_actions')
-                ]);
-            }
-        }
-
-        // Outils développeur asynchrones - seulement si le fichier existe
-        $developer_tools_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/developer-tools.js';
-        if (file_exists($developer_tools_js)) {
-            \wp_enqueue_script('pdf-builder-developer-tools', PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js', ['jquery', 'pdf-preview-api-client', 'wp-element', 'wp-api'], $version_param, true);
-        }
-        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-developer-tools: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/developer-tools.js');
-        // error_log('[WP AdminScriptLoader] Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set'));
-        // error_log('[WP AdminScriptLoader] Current hook: ' . $hook);
+        // NOTE: Scripts pdf-preview-api-client.min.js et pdf-preview-integration.min.js désactivés
+        // car ils n'existent pas et causaient des erreurs "Unexpected token '<'"
 
         // Scripts pour l'éditeur React
         if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor') {
@@ -418,40 +361,23 @@ class AdminScriptLoader
         
         error_log('[WP AdminScriptLoader] loadReactEditorScripts STARTED at ' . date('Y-m-d H:i:s') . ' for page: ' . (isset($_GET['page']) ? $_GET['page'] : 'unknown') . ', hook: ' . $hook);
 
-        // VÉRIFICATION DES FICHIERS AVANT CHARGEMENT
-        $throttle_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/ajax-throttle.min.js';
-        $react_vendors_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/react-vendor.min.js';
-        $runtime_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/runtime.min.js';
-        $react_main_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-react.min.js';
-        $react_init_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-react-init.min.js';
-
-        error_log('[WP AdminScriptLoader] REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set'));
-        error_log('[WP AdminScriptLoader] Current URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set'));
-
         // CHARGER LA MÉDIATHÈQUE WORDPRESS POUR LES COMPOSANTS REACT
         \wp_enqueue_media();
-        error_log('[WP AdminScriptLoader] wp_enqueue_media() called for React editor');
 
         $cache_bust = microtime(true) . '-' . rand(1000, 9999);
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
 
-        error_log('[WP AdminScriptLoader] Cache bust: ' . $cache_bust);
-        error_log('[WP AdminScriptLoader] Version param: ' . $version_param);
-
         // AJAX throttle manager
         $throttle_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/ajax-throttle.min.js';
         \wp_enqueue_script('pdf-builder-ajax-throttle', $throttle_url, [], $cache_bust, true);
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-ajax-throttle: ' . $throttle_url . ' with cache_bust: ' . $cache_bust);
 
         // Notifications system
         $notifications_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/notifications.min.js';
         \wp_enqueue_script('pdf-builder-notifications', $notifications_url, ['jquery', 'wp-element', 'wp-components', 'wp-notices'], $cache_bust, true);
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications: ' . $notifications_url . ' with cache_bust: ' . $cache_bust);
 
         // Notifications CSS
         $notifications_css_url = PDF_BUILDER_PRO_ASSETS_URL . 'css/notifications.min.css';
         \wp_enqueue_style('pdf-builder-notifications', $notifications_css_url, [], $cache_bust);
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-notifications CSS: ' . $notifications_css_url . ' with cache_bust: ' . $cache_bust);
 
         // Localize notifications data
         \wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
@@ -487,7 +413,6 @@ class AdminScriptLoader
         // Wrapper script
         $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.min.js';
         \wp_enqueue_script('pdf-builder-wrap', $wrap_helper_url, ['pdf-builder-ajax-throttle', 'pdf-builder-notifications', 'wp-element', 'wp-components'], $cache_bust, true);
-        // error_log('[WP AdminScriptLoader] Enqueued pdf-builder-wrap: ' . $wrap_helper_url);
 
         // Enqueue WordPress core scripts for React editor
         wp_enqueue_script('wp-date'); // Provides moment.js
@@ -531,22 +456,15 @@ class AdminScriptLoader
         wp_enqueue_script('wp-dom-ready'); // Provides DOM ready
         wp_enqueue_script('wp-polyfill'); // Provides polyfills
 
-        // Enqueue React vendor bundle (contains React and ReactDOM)
-        $react_vendor_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/react-vendor.min.js';
-        if (!wp_script_is('pdf-builder-react-vendor', 'enqueued')) {
-            \wp_enqueue_script('pdf-builder-react-vendor', $react_vendor_url, [], $version_param, false);
-            error_log('[WP AdminScriptLoader] VENDOR ENQUEUED: ' . $react_vendor_url);
-        }
+        // NOTE: react-vendor.min.js n'existe pas et a été supprimé du build webpack
+        // React est fourni par WordPress core (wp-element)
         
         // Main React app bundle  
         $react_main_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react.min.js';
         if (!wp_script_is('pdf-builder-react-main', 'enqueued')) {
             \wp_enqueue_script('pdf-builder-react-main', $react_main_url, ['wp-element', 'wp-components', 'wp-data', 'wp-hooks', 'wp-api', 'media-views'], $version_param, true);
             \wp_script_add_data('pdf-builder-react-main', 'type', 'text/javascript');
-            error_log('[WP AdminScriptLoader] MAIN ENQUEUED: ' . $react_main_url);
         }
-        
-        error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-vendor and pdf-builder-react-main with dependencies');
         
         // Localize script data BEFORE enqueuing
         $localize_data = [
@@ -889,13 +807,8 @@ class AdminScriptLoader
             error_log('[WP AdminScriptLoader] Enqueued pdf-builder-react-initializer');
         }
 
-        // Scripts de l'API Preview
-        $preview_client_path = PDF_BUILDER_ASSETS_DIR . 'js/pdf-preview-api-client.min.js';
-        $preview_client_mtime = file_exists($preview_client_path) ? filemtime($preview_client_path) : time();
-        $version_param_api = PDF_BUILDER_PRO_VERSION . '-' . $preview_client_mtime;
-        
-        \wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-api-client.min.js', ['jquery'], $version_param_api, true);
-        \wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-integration.min.js', ['pdf-preview-api-client'], $version_param_api, true);
+        // NOTE: Scripts pdf-preview-api-client et pdf-preview-integration désactivés
+        // car ils n'existent pas (causaient des erreurs "Unexpected token '<'")
 
         // Script d'initialisation avec debug - exécuté immédiatement après la localisation
         $init_script = "

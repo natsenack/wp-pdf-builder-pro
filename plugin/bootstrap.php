@@ -130,49 +130,6 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
 // ============================================================================
 
 /**
- * Désactiver complètement les emoji WordPress pour éviter les erreurs "wp-emoji-loader.min.js"
- * Les emoji peuvent causer des erreurs "Unexpected token '<'" quand chargés dans certains contextes
- */
-add_action('init', function() {
-    // Retirer les actions qui ajoutent les emoji
-    remove_action('wp_head', 'print_emoji_detection_script', 7);
-    remove_action('admin_print_scripts', 'print_emoji_detection_script');
-    remove_action('wp_print_styles', 'print_emoji_styles');
-    remove_action('admin_print_styles', 'print_emoji_styles');
-    remove_filter('the_content_feed', 'wp_staticize_emoji');
-    remove_filter('comment_text_rss', 'wp_staticize_emoji');
-    remove_filter('wp_mail', 'wp_staticize_emoji_for_email');
-    
-    // Filtrer TinyMCE
-    add_filter('tiny_mce_plugins', function($plugins) {
-        if (is_array($plugins)) {
-            return array_diff($plugins, array('wpemoji'));
-        }
-        return $plugins;
-    });
-    
-    // Désactiver les emoji DNS prefetch
-    add_filter('wp_resource_hints', function($urls, $relation_type) {
-        if ('dns-prefetch' === $relation_type) {
-            $emoji_svg_url = apply_filters('emoji_svg_url', 'https://s.w.org/images/core/emoji/');
-            $urls = array_diff($urls, array($emoji_svg_url));
-        }
-        return $urls;
-    }, 10, 2);
-}, 1);
-
-// Désactiver emoji au niveau des scripts WordPress
-add_filter('script_loader_tag', function($tag, $handle, $src) {
-    if (strpos($handle, 'emoji') !== false || strpos($src, 'emoji') !== false) {
-        error_log('[PDF Builder] Blocking emoji script: ' . $handle . ' - ' . $src);
-        return '<!-- emoji script blocked -->';
-    }
-    return $tag;
-}, 10, 3);
-
-// ============================================================================
-
-/**
  * Chargement unique et centralisé de l'autoloader Composer
  * Évite les chargements redondants dans différents fichiers
  * SEULEMENT pendant la phase plugins_loaded, jamais au niveau global
