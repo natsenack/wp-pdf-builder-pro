@@ -152,28 +152,7 @@
                 </table>
             </section>
 
-            <section id="dev-logs-viewer-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
-                <h3 class="pdfb-section-title">Visualiseur de Logs Temps Réel</h3>
 
-                <div style="margin-bottom: 15px;">
-                    <button type="button" id="refresh_logs_btn" class="button button-secondary">🔄 Actualiser Logs</button>
-                    <button type="button" id="clear_logs_btn" class="button button-secondary" style="margin-left: 10px;">🗑️ Vider Logs</button>
-                    <select id="log_filter" style="margin-left: 10px;">
-                        <option value="all">Tous les logs</option>
-                        <option value="error">Erreurs uniquement</option>
-                        <option value="warning">Avertissements</option>
-                        <option value="info">Info</option>
-                        <option value="debug">Debug</option>
-                    </select>
-                </div>
-
-                <div id="logs_container" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; padding: 15px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 12px; line-height: 1.4;">
-                    <div id="logs_content" style="white-space: pre-wrap;">
-                        <!-- Logs will be loaded here -->
-                        <em style="color: #666;">Cliquez sur "Actualiser Logs" pour charger les logs récents...</em>
-                    </div>
-                </div>
-            </section>
 
             <section id="dev-tools-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <h3 class="section-title">Outils de Développement</h3>
@@ -410,39 +389,75 @@
 
             <section id="dev-hooks-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
                 <!-- Tableau de références des hooks disponibles -->
-                <h3 class="section-title">Hooks Disponibles</h3>
-
-                <table class="wp-list-table widefat fixed striped">
-                    <thead>
-                        <tr>
-                            <th style="width: 25%;">Hook</th>
-                            <th style="width: 50%;">Description</th>
-                            <th style="width: 25%;">Typage</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>pdf_builder_template_data</code></td>
-                            <td>Filtre les données de template</td>
-                            <td><span style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px;">filter</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>pdf_builder_element_render</code></td>
-                            <td>Rendu d'un élément du canvas</td>
-                            <td><span style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px;">filter</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>pdf_builder_security_check</code></td>
-                            <td>Vérifications de sécurité personnalisées</td>
-                            <td><span style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px;">filter</span></td>
-                        </tr>
-                        <tr>
-                            <td><code>pdf_builder_before_save</code></td>
-                            <td>Avant sauvegarde des paramètres</td>
-                            <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="pdfb-accordion-item">
+                    <button type="button" class="pdfb-accordion-toggle" data-target="#hooks-accordion-content">
+                        <span class="pdfb-accordion-icon">▶</span>
+                        <h3 class="section-title" style="display: inline; margin: 0 0 0 10px;">Hooks Disponibles</h3>
+                    </button>
+                    <div id="hooks-accordion-content" class="pdfb-accordion-content" style="display: block;">
+                        <table class="wp-list-table widefat fixed striped">
+                            <thead>
+                                <tr>
+                                    <th style="width: 25%;">Hook</th>
+                                    <th style="width: 50%;">Description</th>
+                                    <th style="width: 25%;">Typage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>pdf_builder_template_data</code></td>
+                                    <td>Filtre les données de template</td>
+                                    <td><span style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px;">filter</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code>pdf_builder_element_render</code></td>
+                                    <td>Rendu d'un élément du canvas</td>
+                                    <td><span style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px;">filter</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code>pdf_builder_security_check</code></td>
+                                    <td>Vérifications de sécurité personnalisées</td>
+                                    <td><span style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px;">filter</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code>pdf_builder_before_save</code></td>
+                                    <td>Avant sauvegarde des paramètres</td>
+                                    <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code>pdf_builder_after_save</code></td>
+                                    <td>Après sauvegarde des paramètres</td>
+                                    <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code>pdf_builder_initialize_canvas</code></td>
+                                    <td>Initialisation du canvas editor</td>
+                                    <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code>pdf_builder_render_complete</code></td>
+                                    <td>Rendu PNG/PDF terminé</td>
+                                    <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code>pdf_builder_pdf_generated</code></td>
+                                    <td>PDF généré avec succès</td>
+                                    <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code>pdf_builder_admin_page_loaded</code></td>
+                                    <td>Page d'administration chargée</td>
+                                    <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code>pdf_builder_cache_cleared</code></td>
+                                    <td>Cache vidé avec succès</td>
+                                    <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </section>
 
             <!-- Section Monitoring des Performances -->
@@ -571,11 +586,7 @@
                 </div>
             </section>
 
-            <!-- Note: Les paramètres sont maintenant sauvegardés via le bouton flottant AJAX -->
-            <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
-                <h3 style="margin-top: 0; color: #495057;">💾 Sauvegarde Automatique</h3>
-                <p style="margin-bottom: 15px; color: #666;">Tous les paramètres sont automatiquement sauvegardés via le bouton flottant en bas à droite.</p>
-            </div>
+
 
 
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
@@ -621,7 +632,6 @@
             const sections = [
                 '#dev-license-section',
                 '#dev-optimizations-section',
-                '#dev-logs-viewer-section',
                 '#dev-tools-section',
                 '#dev-notifications-test-section',
                 '#dev-shortcuts-section',
@@ -1283,6 +1293,32 @@
                 }
             });
         });
+
+        // Gestionnaire pour le toggle accordéon des Hooks Disponibles
+        $('.pdfb-accordion-toggle').on('click', function(e) {
+            e.preventDefault();
+            const $toggle = $(this);
+            const targetId = $toggle.data('target');
+            const $content = $(targetId);
+
+            console.log('🪝 [Accordéon Hooks] Toggle cliqué, target:', targetId);
+
+            $toggle.toggleClass('open');
+            
+            if ($toggle.hasClass('open')) {
+                $content.slideDown(300).removeClass('collapsed');
+                console.log('🪝 [Accordéon Hooks] Accordéon ouvert');
+            } else {
+                $content.slideUp(300).addClass('collapsed');
+                console.log('🪝 [Accordéon Hooks] Accordéon fermé');
+            }
+        });
+
+        // Initialiser l'accordéon au chargement
+        if ($('#hooks-accordion-content').length) {
+            $('.pdfb-accordion-toggle').addClass('open');
+            console.log('🪝 [Accordéon Hooks] Initialisé avec état ouvert');
+        }
     });
 })(jQuery);
 </script>
@@ -1660,6 +1696,58 @@ section[id^="dev-"] h3.pdfb-section-title {
     font-size: 12px;
     color: #6c757d;
     margin-top: 4px;
+}
+
+/* Accordéon styles pour Hooks Disponibles */
+.pdfb-accordion-item {
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.pdfb-accordion-toggle {
+    width: 100%;
+    text-align: left;
+    background: linear-gradient(135deg, #667eea 0%, #5568d3 100%);
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.pdfb-accordion-toggle:hover {
+    background: linear-gradient(135deg, #5568d3 0%, #4557c0 100%);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.pdfb-accordion-icon {
+    display: inline-block;
+    transition: transform 0.3s ease;
+    font-size: 12px;
+    margin-right: 10px;
+}
+
+.pdfb-accordion-toggle.open .pdfb-accordion-icon {
+    transform: rotate(90deg);
+}
+
+.pdfb-accordion-content {
+    background: white;
+    max-height: 1000px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    padding: 20px;
+}
+
+.pdfb-accordion-content.collapsed {
+    max-height: 0;
+    padding: 0 20px;
+    display: none;
 }
 </style>
 
