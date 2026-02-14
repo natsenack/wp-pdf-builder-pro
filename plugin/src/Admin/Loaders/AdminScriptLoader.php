@@ -69,7 +69,7 @@ class AdminScriptLoader
                 'pdf-builder-dashboard',
                 PDF_BUILDER_PRO_ASSETS_URL . 'css/dashboard-css.min.css',
                 [],
-                PDF_BUILDER_PRO_VERSION
+                PDF_BUILDER_PRO_VERSION . '-' . time()
             );
         }
         
