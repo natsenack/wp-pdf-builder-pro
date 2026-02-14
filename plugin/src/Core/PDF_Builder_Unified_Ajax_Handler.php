@@ -1310,29 +1310,73 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function save_developer_settings() {
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            // error_log('PDF Builder: Starting save_developer_settings');
-            // error_log('PDF Builder: POST data keys: ' . implode(', ', array_keys($_POST)));
+            error_log('PDF Builder: Starting save_developer_settings');
+            error_log('PDF Builder: POST data keys: ' . implode(', ', array_keys($_POST)));
         }
 
-        $settings = [
-            'pdf_builder_developer_enabled' => isset($_POST['pdf_builder_developer_enabled']) ? '1' : '0',
-            'pdf_builder_developer_password' => sanitize_text_field($_POST['pdf_builder_developer_password'] ?? ''),
-            'pdf_builder_license_test_mode_enabled' => isset($_POST['license_test_mode']) ? '1' : '0',
-            'pdf_builder_license_test_key' => sanitize_text_field($_POST['pdf_builder_license_test_key'] ?? ''),
-        ];
+        $saved_count = 0;
+        $settings = pdf_builder_get_option('pdf_builder_settings', array());
 
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            // error_log('PDF Builder: Settings to save: ' . json_encode($settings));
-        }
+        // Check if data is in the nested pdf_builder_settings array
+        if (isset($_POST['pdf_builder_settings']) && is_array($_POST['pdf_builder_settings'])) {
+            $developer_settings = [
+                'pdf_builder_developer_enabled',
+                'pdf_builder_developer_password',
+                'pdf_builder_license_test_mode_enabled',
+                'pdf_builder_license_test_key',
+                'pdf_builder_debug_php_errors',
+                'pdf_builder_debug_js_errors',
+                'pdf_builder_debug_wpdb_errors',
+                'pdf_builder_debug_ajax_requests',
+                'pdf_builder_performance_monitoring',
+                'pdf_builder_error_reporting'
+            ];
 
-        foreach ($settings as $key => $value) {
-            update_option($key, $value);
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                // error_log('PDF Builder: Saved option ' . $key . ' = ' . $value);
+            foreach ($developer_settings as $setting_key) {
+                if (isset($_POST['pdf_builder_settings'][$setting_key])) {
+                    $value = $_POST['pdf_builder_settings'][$setting_key];
+                    
+                    // Sanitize based on field type
+                    if (strpos($setting_key, 'enabled') !== false || 
+                        strpos($setting_key, 'monitoring') !== false ||
+                        strpos($setting_key, 'reporting') !== false) {
+                        // Boolean fields
+                        $settings[$setting_key] = !empty($value) ? '1' : '0';
+                    } else {
+                        // Text fields (password, test key, etc.)
+                        $settings[$setting_key] = sanitize_text_field($value);
+                    }
+                    
+                    error_log('PDF Builder: Developer setting ' . $setting_key . ' = ' . $settings[$setting_key]);
+                    $saved_count++;
+                }
+            }
+
+            // Handle license-related settings that should be saved separately
+            $license_keys = [
+                'pdf_builder_license_test_key',
+                'pdf_builder_license_test_mode_enabled'
+            ];
+
+            foreach ($license_keys as $license_key) {
+                if (isset($settings[$license_key])) {
+                    // Save to separate row
+                    pdf_builder_update_option($license_key, $settings[$license_key]);
+                    error_log("[PDF Builder AJAX] Saved license key to separate row: {$license_key}");
+                    
+                    // Remove from unified settings
+                    unset($settings[$license_key]);
+                }
+            }
+
+            // Save unified settings
+            if ($saved_count > 0) {
+                pdf_builder_update_option('pdf_builder_settings', $settings);
+                error_log('PDF Builder: Saved ' . $saved_count . ' developer settings');
             }
         }
 
-        return count($settings);
+        return $saved_count;
     }
 
     /**
