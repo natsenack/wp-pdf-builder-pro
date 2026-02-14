@@ -3735,15 +3735,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             'phone' => $format_phone($to_string($element['companyPhone'] ?? get_option('woocommerce_store_phone', ''))),
             'siret' => $to_string($element['companySiret'] ?? get_option('pdf_builder_company_siret', '')),
             'rcs' => $to_string($element['companyRcs'] ?? get_option('pdf_builder_company_rcs', '')),
-            'tva' => $to_string($element['companyTva'] ?? get_option('pdf_builder_company_vat', '')),
+            'tva' => $to_string($element['companyTva'] ?? pdf_builder_get_option('pdf_builder_company_vat', '')),
             'capital' => $to_string($element['companyCapital'] ?? get_option('pdf_builder_company_capital', ''))
         ];
-        
-        // DEBUG: Log des données TVA
-        error_log('[PDF Builder] Company Info - showVat: ' . ($element['showVat'] ?? 'NOT SET'));
-        error_log('[PDF Builder] Company Info - companyTva from element: ' . ($element['companyTva'] ?? 'NOT SET'));
-        error_log('[PDF Builder] Company Info - company tva value: ' . ($company['tva'] ?? 'EMPTY'));
-        error_log('[PDF Builder] Company Info - pdf_builder_company_vat option: ' . get_option('pdf_builder_company_vat', 'EMPTY'));
         
         // Ajouter € au capital si absent
         if ($company['capital'] && strpos($company['capital'], '€') === false) {
