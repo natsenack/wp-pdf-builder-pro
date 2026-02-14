@@ -158,7 +158,8 @@ export const useCanvasDrop = ({
           (element as any).companyPhone = company.phone || "";
           (element as any).companyEmail = company.email || "";
           (element as any).companySiret = company.siret || "";
-          (element as any).companyTva = company.tva || "";
+          // ✅ FIX: La propriété JavaScript est 'vat' pas 'tva'
+          (element as any).companyTva = company.vat || "";
           (element as any).companyRcs = company.rcs || "";
           (element as any).companyCapital = company.capital || "";
 

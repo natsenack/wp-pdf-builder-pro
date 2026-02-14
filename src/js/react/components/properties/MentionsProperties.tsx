@@ -129,8 +129,8 @@ export function MentionsProperties({
     // Ajouter TVA si requis et disponible
     if (config.showVat !== false && config.tva && config.tva.trim()) {
       mentionParts.push(`TVA: ${config.tva}`);
-    } else if (config.showVat !== false && pluginCompany.tva) {
-      mentionParts.push(`TVA: ${pluginCompany.tva}`);
+    } else if (config.showVat !== false && pluginCompany.vat) {
+      mentionParts.push(`TVA: ${pluginCompany.vat}`);
     }
 
     // Assembler avec le séparateur

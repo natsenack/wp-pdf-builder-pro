@@ -173,7 +173,7 @@ export function CompanyInfoProperties({
 
     // TVA
     if (config.showVat !== false) {
-      const tva = config.companyTva || pluginCompany.tva || "";
+      const tva = config.companyTva || pluginCompany.vat || "";
       if (isValidValue(tva)) {
         companyParts.push(`TVA: ${tva}`);
       }

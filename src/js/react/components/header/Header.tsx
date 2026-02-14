@@ -1716,7 +1716,7 @@ export const Header = memo(function Header({
                   element.companySiret || pluginCompany.siret || "",
                 ),
                 tva: convertToString(
-                  element.companyTva || pluginCompany.tva || "",
+                  element.companyTva || pluginCompany.vat || "",
                 ),
                 rcs: convertToString(
                   element.companyRcs || pluginCompany.rcs || "",
@@ -2336,7 +2336,7 @@ export const Header = memo(function Header({
                 email: element.email || pluginCompany.email || "",
                 phone: element.phone || pluginCompany.phone || "",
                 siret: element.siret || pluginCompany.siret || "",
-                tva: element.tva || pluginCompany.tva || "",
+                tva: element.tva || pluginCompany.vat || "",
               };
             };
 
