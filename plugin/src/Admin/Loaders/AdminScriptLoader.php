@@ -38,15 +38,6 @@ class AdminScriptLoader
 
         // Enregistrer le hook pour charger les scripts admin
         \add_action('admin_enqueue_scripts', [$this, 'loadAdminScripts'], 20);
-        
-        // STRATÉGIE ULTRA-AGGRESSIVE pour bloquer les emojis sur les pages PDF Builder
-        // Hook init @ priority 1 = TRÈS TÔT dans le cycle WordPress
-        \add_action('init', [$this, 'disableEmojisOnPdfBuilderPages'], 1);
-        // Modifier le registre de scripts au niveau le plus bas
-        \add_action('wp_default_scripts', [$this, 'removeEmojiFromScriptRegistry'], 1);
-        // Filtres de backup au cas où les scripts passeraient quand même
-        \add_filter('script_loader_tag', [$this, 'filterEmojiScriptTag'], 10, 3);
-        \add_filter('style_loader_tag', [$this, 'filterEmojiStyleTag'], 10, 3);
     }
 
     /**
@@ -55,26 +46,6 @@ class AdminScriptLoader
     public function loadAdminScripts($hook = null)
     {
         error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url'));
-
-        // Double vérification : désactiver les emojis si on est sur une page PDF Builder
-        $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
-        if (strpos($current_page, 'pdf-builder') !== false) {
-            // Vérifier si les scripts emoji sont encore là et les désenregistrer
-            global $wp_scripts, $wp_styles;
-            
-            if (isset($wp_scripts->registered['wp-emoji-loader'])) {
-                \wp_deregister_script('wp-emoji-loader');
-                error_log('[PDF Builder AdminScriptLoader] Force deregistered wp-emoji-loader in loadAdminScripts');
-            }
-            if (isset($wp_scripts->registered['wp-emoji'])) {
-                \wp_deregister_script('wp-emoji');
-                error_log('[PDF Builder AdminScriptLoader] Force deregistered wp-emoji in loadAdminScripts');
-            }
-            if (isset($wp_styles->registered['print-emoji-styles'])) {
-                \wp_deregister_style('print-emoji-styles');
-                error_log('[PDF Builder AdminScriptLoader] Force deregistered print-emoji-styles in loadAdminScripts');
-            }
-        }
 
         // Ajouter un filtre pour corriger les templates Elementor qui sont chargés comme des scripts JavaScript
         // Appliquer toujours, pas seulement sur les pages PDF Builder
@@ -296,7 +267,7 @@ class AdminScriptLoader
                 'php' => isset($settings['pdf_builder_debug_php']) && $settings['pdf_builder_debug_php'],
                 'ajax' => isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax']
             ];
-            \wp_add_inline_script('pdf-builder-notifications', 'window.pdfBuilderDebugSettings = ' . \wp_json_encode($debug_settings) . ';', 'before');
+            \wp_add_inline_script('pdf-builder-notifications', 'window.pdfBuilderDebugSettings = ' . \wp_json_encode($debug_settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';', 'before');
 
             // Localize notifications data pour les pages de paramètres
             \wp_localize_script('pdf-builder-notifications', 'pdfBuilderNotifications', [
@@ -333,7 +304,7 @@ class AdminScriptLoader
                 'php' => isset($settings['pdf_builder_debug_php']) && $settings['pdf_builder_debug_php'],
                 'ajax' => isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax']
             ];
-            wp_add_inline_script('pdf-builder-settings-tabs', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings) . ';', 'before');
+            wp_add_inline_script('pdf-builder-settings-tabs', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';', 'before');
         }
 
         // Version du cache bust
@@ -356,7 +327,7 @@ class AdminScriptLoader
                     'generating_pdf' => \__('Génération du PDF en cours...', 'pdf-builder-pro'),
                 ]
             ];
-        \wp_add_inline_script('jquery', 'window.pdfBuilderData = ' . wp_json_encode($preview_data) . '; window.pdfBuilderNonce = "' . \wp_create_nonce('pdf_builder_ajax') . '";', 'after');
+        \wp_add_inline_script('jquery', 'window.pdfBuilderData = ' . wp_json_encode($preview_data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . '; window.pdfBuilderNonce = "' . esc_js(\wp_create_nonce('pdf_builder_ajax')) . '";', 'after');
             
             \wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-api-client.min.js', ['jquery', 'wp-element', 'wp-api'], $version_param, true);
             
@@ -513,7 +484,7 @@ class AdminScriptLoader
             'php' => isset($settings['pdf_builder_debug_php']) && $settings['pdf_builder_debug_php'],
             'ajax' => isset($settings['pdf_builder_debug_ajax']) && $settings['pdf_builder_debug_ajax']
         ];
-        wp_add_inline_script('pdf-builder-notifications', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings) . ';', 'before');
+        wp_add_inline_script('pdf-builder-notifications', 'window.pdfBuilderDebugSettings = ' . wp_json_encode($debug_settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';', 'before');
 
         // Wrapper script
         $wrap_helper_url = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-wrap.min.js';
@@ -673,7 +644,7 @@ class AdminScriptLoader
             
             // Définir aussi window.pdfBuilderCanvasSettings pour la compatibilité React
             wp_add_inline_script('pdf-builder-react-main', 
-                'window.pdfBuilderCanvasSettings = ' . wp_json_encode($canvas_settings) . ';'
+                'window.pdfBuilderCanvasSettings = ' . wp_json_encode($canvas_settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';'
             );
         }
 
@@ -686,38 +657,7 @@ class AdminScriptLoader
         } else {
             $available_dpis = [$available_dpi_string];
         }
-        // TEST: Ajouter un script de test pour vérifier si notre JS peut s'exécuter
-        wp_add_inline_script('jquery', '
-            (function() {
-                try {
-                    // console.log("🧪 [PDF Builder Test] Script de test chargé avec succès");
-                    // console.log("🧪 [PDF Builder Test] jQuery version:", jQuery.fn.jquery);
-                    // console.log("🧪 [PDF Builder Test] Window object disponible:", typeof window !== "undefined");
-                    
-                    // Tester si on peut définir des variables globales
-                    window.pdfBuilderTestExecuted = true;
-                    // console.log("🧪 [PDF Builder Test] Variable globale définie:", window.pdfBuilderTestExecuted);
-                    
-                    // Tester si nos scripts sont chargés après un délai
-                    setTimeout(function() {
-                        // console.log("🔍 [PDF Builder Test] Vérification des scripts après délai:");
-                        // console.log("🔍 [PDF Builder Test] pdf-builder-react.min.js chargé:", typeof window.pdfBuilderReact !== "undefined");
-                        // console.log("🔍 [PDF Builder Test] pdfBuilderData disponible:", typeof window.pdfBuilderData !== "undefined");
-                        if (window.pdfBuilderData) {
-                            // console.log("🔍 [PDF Builder Test] pdfBuilderData.license:", window.pdfBuilderData.license);
-                            // console.log("🔍 [PDF Builder Test] pdfBuilderData.canvasSettings:", !!window.pdfBuilderData.canvasSettings);
-                        }
-                        
-                        // Tester si React est disponible
-                        // console.log("🔍 [PDF Builder Test] React disponible:", typeof window.React !== "undefined");
-                        // console.log("🔍 [PDF Builder Test] ReactDOM disponible:", typeof window.ReactDOM !== "undefined");
-                    }, 2000);
-                    
-                } catch (error) {
-                    // console.error("🧪 [PDF Builder Test] Erreur dans le script de test:", error);
-                }
-            })();
-        ');        $available_dpis = array_map('strval', $available_dpis);
+        $available_dpis = array_map('strval', $available_dpis);
 
         $available_formats_string = pdf_builder_get_option('pdf_builder_canvas_formats', 'A4');
         if (is_string($available_formats_string) && strpos($available_formats_string, ',') !== false) {
@@ -745,13 +685,13 @@ class AdminScriptLoader
 
         // Définir aussi window variables pour la compatibilité
         wp_add_inline_script('pdf-builder-react-main', 
-            'window.availableDpis = ' . wp_json_encode($available_dpis) . ';'
+            'window.availableDpis = ' . wp_json_encode($available_dpis, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';'
         );
         wp_add_inline_script('pdf-builder-react-main', 
-            'window.availableFormats = ' . wp_json_encode($available_formats) . ';'
+            'window.availableFormats = ' . wp_json_encode($available_formats, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';'
         );
         wp_add_inline_script('pdf-builder-react-main', 
-            'window.availableOrientations = ' . wp_json_encode($available_orientations) . ';'
+            'window.availableOrientations = ' . wp_json_encode($available_orientations, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ';'
         );
 
         // error_log('[WP AdminScriptLoader] Localize data prepared: ' . print_r($localize_data, true));
@@ -855,11 +795,15 @@ class AdminScriptLoader
         // Also set window.pdfBuilderData directly before React initializes
         static $inline_scripts_added = false;
         if (!$inline_scripts_added) {
-            wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderData = ' . wp_json_encode($localize_data) . ';', 'before');
-            error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData');
+            // Utiliser JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT pour échapper TOUT le HTML/JS
+            $safe_json_data = wp_json_encode($localize_data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+            
+            wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderData = ' . $safe_json_data . ';', 'before');
+            error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderData (HEX encoded)');
 
             // Also set window.pdfBuilderNonce for AJAX calls
-            wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderNonce = "' . \wp_create_nonce('pdf_builder_ajax') . '";', 'before');
+            $nonce = \wp_create_nonce('pdf_builder_ajax');
+            wp_add_inline_script('pdf-builder-react-main', 'window.pdfBuilderNonce = "' . esc_js($nonce) . '";', 'before');
             error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderNonce');
             $inline_scripts_added = true;
         }
@@ -1175,105 +1119,6 @@ class AdminScriptLoader
         error_log('[PDF Builder] Finished Elementor script filtering');
         return $content;
     }
-
-    /**
-     * Désactiver COMPLÈTEMENT les emojis sur les pages PDF Builder (Hook: init @ priority 1)
-     * Cette méthode s'exécute très tôt pour bloquer l'enregistrement initial des scripts emoji
-     * Note: On désactive globalement pour l'admin car le hook init est AVANT $_GET['page']
-     */
-    public function disableEmojisOnPdfBuilderPages()
-    {
-        // Le hook init @ priority 1 est TRÈS TÔT - on ne peut pas vérifier $_GET['page'] de manière fiable
-        // On désactive donc les emojis GLOBALEMENT pour toutes les pages admin
-        // Ce n'est pas un problème - les emojis ne sont pas nécessaires dans notre plugin
-        if (!is_admin()) {
-            return;
-        }
-
-        error_log('[PDF Builder] 🚫 COMPLETE emoji disable (global admin)');
-
-        // SUPPRIMER TOUTES LES ACTIONS EMOJI du core WordPress
-        \remove_action('admin_print_styles', 'print_emoji_styles');
-        \remove_action('wp_head', 'print_emoji_detection_script', 7);
-        \remove_action('admin_print_scripts', 'print_emoji_detection_script');
-        \remove_action('wp_print_styles', 'print_emoji_styles');
-        \remove_filter('wp_mail', 'wp_staticize_emoji_for_email');
-        \remove_filter('the_content_feed', 'wp_staticize_emoji');
-        \remove_filter('comment_text_rss', 'wp_staticize_emoji');
-        
-        // SUPPRIMER LES FILTRES TinyMCE emoji
-        \add_filter('tiny_mce_plugins', function($plugins) {
-            return is_array($plugins) ? array_diff($plugins, ['wpemoji']) : $plugins;
-        });
-        
-        error_log('[PDF Builder] ✅ All emoji actions/filters removed');
-    }
-    
-    /**
-     * Retirer les scripts emoji du registre global WordPress (Hook: wp_default_scripts @ priority 1)
-     * Cette méthode empêche l'enregistrement même des scripts emoji
-     */
-    public function removeEmojiFromScriptRegistry($scripts)
-    {
-        // Ce hook est appelé TRÈS TÔT, avant $_GET['page']
-        // On désactive pour tout l'admin - pas de problème pour les performances
-        if (!is_admin()) {
-            return;
-        }
-        
-        // Accéder au registre de scripts et supprimer les emojis
-        if (isset($scripts->registered['wp-emoji-loader'])) {
-            unset($scripts->registered['wp-emoji-loader']);
-            error_log('[PDF Builder] 🗑️ Removed wp-emoji-loader from script registry');
-        }
-        
-        if (isset($scripts->registered['wp-emoji'])) {
-            unset($scripts->registered['wp-emoji']);
-            error_log('[PDF Builder] 🗑️ Removed wp-emoji from script registry');
-        }
-    }
-
-    /**
-     * Filtrer les balises de script emoji pour les bloquer complètement
-     */
-    public function filterEmojiScriptTag($tag, $handle, $src)
-    {
-        // Vérifier si on est sur une page PDF Builder
-        $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
-        if (strpos($current_page, 'pdf-builder') === false) {
-            return $tag;
-        }
-
-        // Bloquer complètement les scripts emoji
-        if (strpos($handle, 'emoji') !== false) {
-            error_log('[PDF Builder AdminScriptLoader] Blocking emoji script: ' . $handle);
-            return '';  // Retourner une chaîne vide pour bloquer le script
-        }
-
-        return $tag;
-    }
-
-    /**
-     * Filtrer les balises de style emoji pour les bloquer complètement
-     */
-    public function filterEmojiStyleTag($tag, $handle, $href)
-    {
-        // Vérifier si on est sur une page PDF Builder
-        $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
-        if (strpos($current_page, 'pdf-builder') === false) {
-            return $tag;
-        }
-
-        // Bloquer complètement les styles emoji
-        if (strpos($handle, 'emoji') !== false || strpos($href, 'emoji') !== false) {
-            error_log('[PDF Builder AdminScriptLoader] Blocking emoji style: ' . $handle);
-            return '';  // Retourner une chaîne vide pour bloquer le style
-        }
-
-        return $tag;
-    }
-}
-
 
 
 
