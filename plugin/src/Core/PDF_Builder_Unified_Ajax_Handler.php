@@ -4927,6 +4927,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                 // Formater le prix en texte brut (sans HTML) pour l'affichage dans le select
                 $total = number_format($order->get_total(), 2, ',', ' ');
                 $currency = get_woocommerce_currency_symbol($order->get_currency());
+                // Décoder les entités HTML (&euro; → €)
+                $currency = html_entity_decode($currency, ENT_QUOTES | ENT_HTML5, 'UTF-8');
                 $total_formatted = $total . ' ' . $currency;
 
                 $orders_list[] = [
