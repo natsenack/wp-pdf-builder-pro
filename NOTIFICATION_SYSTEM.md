@@ -49,7 +49,8 @@ showInfoNotification(message)
 ## 📍 Notifications Déjà Actives
 
 ### Settings (Paramètres)
-- ✅ **Sauvegarde des paramètres généraux** → Success/Error
+- ✅ **Sauvegarde des paramètres généraux** → Success/Error (settings-main.php)
+- ✅ **Bouton flottant "Enregistrer"** → Success/Error + notification unifiée
 - ✅ **Template assigné à statut** → Success/Error
 - ✅ **Canvas saved** (settings-contenu.php)
 
