@@ -812,8 +812,8 @@
 
                     <style>
                     @keyframes supportPulse {
-                        0%, 100% { transform: scale(1);
-                        50% { transform: scale(1.1);
+                        0%, 100% { transform: scale(1); }
+                        50% { transform: scale(1.1); }
                     }
 
                     .premium-support:hover {
@@ -857,13 +857,13 @@
                     }
 
                     @keyframes rocketFloat {
-                        0%, 100% { transform: translateY(0px) rotate(-5deg);
-                        50% { transform: translateY(-10px) rotate(5deg);
+                        0%, 100% { transform: translateY(0px) rotate(-5deg); }
+                        50% { transform: translateY(-10px) rotate(5deg); }
                     }
 
                     @keyframes textGlow {
-                        0% { text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-                        100% { text-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.5);
+                        0% { text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+                        100% { text-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.5); }
                     }
 
                     @keyframes particleFloat {
