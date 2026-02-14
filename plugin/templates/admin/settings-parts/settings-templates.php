@@ -133,8 +133,8 @@
 
         // Chargement des mappings
         private function load_mappings() {
-            $settings = pdf_builder_get_option('pdf_builder_settings', array());
-            $raw_option = $settings['pdf_builder_order_status_templates'] ?? [];
+            // Charger depuis l'option dédiée (sauvegardée par save_templates_settings)
+            $raw_option = pdf_builder_get_option('pdf_builder_order_status_templates', array());
             
             $this->current_mappings = $raw_option;
 
@@ -143,16 +143,15 @@
                 $this->current_mappings = [];
             }
 
-            // Nettoyer les mappings obsolètes
+            // Nettoyer les mappings obsolètes (statuts supprimés)
             if (!empty($this->current_mappings) && !empty($this->order_statuses)) {
                 $valid_statuses = array_keys($this->order_statuses);
-                $this->current_mappings = array_intersect_key($this->current_mappings, array_flip($valid_statuses));
+                $cleaned_mappings = array_intersect_key($this->current_mappings, array_flip($valid_statuses));
 
-                // Sauvegarder si nécessaire
-                $settings = pdf_builder_get_option('pdf_builder_settings', array());
-                if (count($this->current_mappings) !== count($settings['pdf_builder_order_status_templates'] ?? [])) {
-                    $settings['pdf_builder_order_status_templates'] = $this->current_mappings;
-                    pdf_builder_update_option('pdf_builder_settings', $settings);
+                // Sauvegarder si nettoyage effectué
+                if (count($cleaned_mappings) !== count($this->current_mappings)) {
+                    pdf_builder_update_option('pdf_builder_order_status_templates', $cleaned_mappings);
+                    $this->current_mappings = $cleaned_mappings;
                 }
             }
         }
