@@ -1119,7 +1119,5 @@ class AdminScriptLoader
         error_log('[PDF Builder] Finished Elementor script filtering');
         return $content;
     }
-
-
-
+}
 
