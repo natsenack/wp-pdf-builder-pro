@@ -55,6 +55,43 @@ export function serializeCanvasData(
       // Copy TOUTES les propriétés d'abord
       const serialized: any = { ...el };
 
+      // ✅ ENRICHISSEMENT: Ajouter les données de l'entreprise pour company_info si manquantes
+      if (el.type === "company_info") {
+        const pdfBuilderData = (window as any).pdfBuilderData;
+        if (pdfBuilderData && pdfBuilderData.company) {
+          const company = pdfBuilderData.company;
+
+          // Enrichir seulement si les propriétés manquent ou sont vides
+          if (!serialized.companyName || serialized.companyName === "Non indiqué") {
+            serialized.companyName = company.name || "";
+          }
+          if (!serialized.companyAddress || serialized.companyAddress === "Non indiqué") {
+            serialized.companyAddress = company.address || "";
+          }
+          if (!serialized.companyCity) {
+            serialized.companyCity = company.city || "";
+          }
+          if (!serialized.companyPhone || serialized.companyPhone === "Non indiqué") {
+            serialized.companyPhone = company.phone || "";
+          }
+          if (!serialized.companyEmail || serialized.companyEmail === "Non indiqué") {
+            serialized.companyEmail = company.email || "";
+          }
+          if (!serialized.companySiret || serialized.companySiret === "Non indiqué") {
+            serialized.companySiret = company.siret || "";
+          }
+          if (!serialized.companyTva || serialized.companyTva === "Non indiqué") {
+            serialized.companyTva = company.tva || "";
+          }
+          if (!serialized.companyRcs || serialized.companyRcs === "Non indiqué") {
+            serialized.companyRcs = company.rcs || "";
+          }
+          if (!serialized.companyCapital || serialized.companyCapital === "Non indiqué") {
+            serialized.companyCapital = company.capital || "";
+          }
+        }
+      }
+
       // Log pour vérifier que layout, textAlign, etc. sont bien sérialisés
       if (el.type === "customer_info" || el.type === "company_info") {
         console.log(`[CanvasPersistence] Serializing ${el.type}:`, {
@@ -64,6 +101,7 @@ export function serializeCanvasData(
           verticalAlign: (el as any).verticalAlign,
           paddingHorizontal: (el as any).paddingHorizontal,
           paddingVertical: (el as any).paddingVertical,
+          companyTva: (el as any).companyTva, // ✅ Log TVA pour debug
         });
       }
 
