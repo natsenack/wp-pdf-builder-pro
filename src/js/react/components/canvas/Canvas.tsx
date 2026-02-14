@@ -338,6 +338,141 @@ const calculateTextYWithPadding = (
       return paddingConfig.top || 10;
   }
 };
+
+// ✅ Nouvelle fonction pour estimer les dimensions minimales basées sur le contenu
+const calculateMinDimensions = (element: Element): { minWidth: number; minHeight: number } => {
+  const defaultMinWidth = 40; // Minimum très réduit
+  const defaultMinHeight = 20;
+
+  switch (element.type) {
+    // Éléments texte -> basé sur la longueur du texte
+    case "text":
+    case "dynamic_text": {
+      const textEl = element as TextElement;
+      const fontSize = textEl.fontSize || 12;
+      const text = textEl.text || "Text";
+      
+      // Estimer la hauteur avec interlignage
+      const lines = text.split("\n").length;
+      const lineHeight = fontSize + (fontSize * 0.4); // 40% d'interlignage
+      const estimatedHeight = Math.ceil(lines * lineHeight + 8); // 8px padding
+      
+      // Estimer la largeur
+      const avgCharWidth = fontSize * 0.6; // Approximation basée sur la police
+      const longestLine = text.split("\n").reduce((max, line) => 
+        Math.max(max, line.length), 0);
+      const estimatedWidth = Math.ceil(Math.max(longestLine * avgCharWidth + 16, 40));
+      
+      return {
+        minWidth: Math.max(estimatedWidth, 40),
+        minHeight: Math.max(estimatedHeight, 20)
+      };
+    }
+
+    case "order_number": {
+      const orderEl = element as OrderNumberElement;
+      const fontSize = orderEl.fontSize || 12;
+      const format = orderEl.format || "CMD-{order_number}";
+      const estimatedWidth = Math.ceil(format.length * fontSize * 0.5 + 16);
+      const minHeight = orderEl.showLabel ? fontSize * 2.5 : fontSize + 8;
+      return {
+        minWidth: Math.max(estimatedWidth, 60),
+        minHeight: Math.max(minHeight, 24)
+      };
+    }
+
+    case "document_type": {
+      const docEl = element as DocumentTypeElement;
+      const fontSize = docEl.fontSize || 18;
+      const text = docEl.title || docEl.text || "DOCUMENT";
+      const estimatedWidth = Math.ceil(text.length * fontSize * 0.5 + 20);
+      return {
+        minWidth: Math.max(estimatedWidth, 80),
+        minHeight: Math.max(fontSize + 12, 30)
+      };
+    }
+
+    // Images -> carré minimum
+    case "company_logo":
+    case "image":
+      return {
+        minWidth: 40,
+        minHeight: 40
+      };
+
+    // Lignes -> largeur minimale importante, hauteur faible
+    case "line":
+    case "separator":
+      return {
+        minWidth: 50,
+        minHeight: 2
+      };
+
+    // Tables -> taille minimale pour être lisible
+    case "product_table":
+      return {
+        minWidth: 150,
+        minHeight: 80
+      };
+
+    // Infos clientèle -> bloc de texte
+    case "customer_info":
+      return {
+        minWidth: 120,
+        minHeight: 50
+      };
+
+    // Infos entreprise -> généralement plus grand
+    case "company_info":
+      return {
+        minWidth: 150,
+        minHeight: 80
+      };
+
+    // Formes -> minimum carré
+    case "rectangle":
+    case "circle":
+      return {
+        minWidth: 40,
+        minHeight: 40
+      };
+
+    // Défaut
+    default:
+      return {
+        minWidth: defaultMinWidth,
+        minHeight: defaultMinHeight
+      };
+  }
+};
+
+// ✅ Fonction pour ajouter un chemin de clipping (limite le contenu à la boîte de l'élément)
+const applyClippingPath = (ctx: CanvasRenderingContext2D, element: Element) => {
+  ctx.beginPath();
+  
+  // Créer un rectangle de clipping avec arrondi optionnel
+  const borderRadius = (element as any).borderRadius || 0;
+  
+  if (borderRadius && borderRadius > 0) {
+    // Chemin avec coins arrondis
+    const radius = Math.min(borderRadius, element.width / 2, element.height / 2);
+    ctx.moveTo(radius, 0);
+    ctx.lineTo(element.width - radius, 0);
+    ctx.quadraticCurveTo(element.width, 0, element.width, radius);
+    ctx.lineTo(element.width, element.height - radius);
+    ctx.quadraticCurveTo(element.width, element.height, element.width - radius, element.height);
+    ctx.lineTo(radius, element.height);
+    ctx.quadraticCurveTo(0, element.height, 0, element.height - radius);
+    ctx.lineTo(0, radius);
+    ctx.quadraticCurveTo(0, 0, radius, 0);
+  } else {
+    // Rectangle simple
+    ctx.rect(0, 0, element.width, element.height);
+  }
+  
+  ctx.clip();
+};
+
 const drawRectangle = (ctx: CanvasRenderingContext2D, element: Element) => {
   const props = element as RectangleElement;
   const colors = createShapeColors(props);
@@ -3767,6 +3902,9 @@ export const Canvas = function Canvas({
         // Pas de rotation, translation normale
         ctx.translate(element.x, element.y);
       }
+
+      // ✅ NOUVELLE LIGNE: Appliquer le clipping rectangle pour limiter le contenu
+      applyClippingPath(ctx, element);
 
       // Dessiner selon le type d'élément
       switch (element.type) {
