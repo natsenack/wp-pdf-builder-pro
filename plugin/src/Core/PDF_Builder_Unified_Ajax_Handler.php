@@ -4924,12 +4924,17 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $customer_name = $order->get_billing_email() ?: 'Client anonyme';
                 }
 
+                // Formater le prix en texte brut (sans HTML) pour l'affichage dans le select
+                $total = number_format($order->get_total(), 2, ',', ' ');
+                $currency = get_woocommerce_currency_symbol($order->get_currency());
+                $total_formatted = $total . ' ' . $currency;
+
                 $orders_list[] = [
                     'id' => $order->get_id(),
                     'number' => $order->get_order_number(),
                     'customer' => trim($customer_name),
                     'date' => $order->get_date_created()->date('d/m/Y'),
-                    'total' => wc_price($order->get_total(), ['currency' => $order->get_currency()]),
+                    'total' => $total_formatted,
                 ];
             }
 
