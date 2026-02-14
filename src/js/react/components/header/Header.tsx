@@ -866,98 +866,6 @@ export const Header = memo(function Header({
     setDragStart(null);
   }, [jsonModalMode, showJsonModal]);
 
-  // Convertir JSON to HTML et afficher dans une nouvelle fenêtre
-  const convertJsonToHtml = useCallback(async () => {
-    if (isGeneratingHtml) return;
-
-    setIsGeneratingHtml(true);
-    try {
-      console.log("[PREVIEW] Générant aperçu du canvas...");
-
-      // Récupérer le canvas
-      const canvas = document.querySelector("canvas");
-      if (!canvas) {
-        throw new Error("Canvas non trouvé");
-      }
-
-      // Convertir en image PNG
-      const imageData = canvas.toDataURL("image/png");
-
-      // Créer l'HTML simple
-      const html = `<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aperçu - ${templateName || "Template"}</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      padding: 20px;
-      background: #f5f5f5;
-      font-family: Arial, sans-serif;
-    }
-    .container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .preview {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      max-width: 900px;
-    }
-    img {
-      display: block;
-      max-width: 100%;
-      height: auto;
-      border: 1px solid #ddd;
-    }
-    .info {
-      margin-top: 20px;
-      padding: 12px;
-      background: #d4edda;
-      border: 1px solid #c3e6cb;
-      border-radius: 4px;
-      color: #155724;
-      font-size: 14px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="preview">
-      <img src="${imageData}" alt="Aperçu du template" />
-      <div class="info">
-        ✅ Cet aperçu montre exactement ce que tu vois dans l'éditeur
-      </div>
-    </div>
-  </div>
-</body>
-</html>`;
-
-      // Ouvrir dans une nouvelle fenêtre
-      const newWindow = window.open("", "_blank");
-      if (newWindow) {
-        newWindow.document.write(html);
-        newWindow.document.close();
-        console.log("[PREVIEW] Aperçu généré avec succès");
-      } else {
-        throw new Error("Impossible d'ouvrir une nouvelle fenêtre");
-      }
-    } catch (error) {
-      console.error("[PREVIEW] Erreur:", error);
-      alert(
-        `❌ Erreur: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
-      );
-    } finally {
-      setIsGeneratingHtml(false);
-    }
-  }, [isGeneratingHtml, templateName]);
-
   const buttonBaseStyles = {
     padding: "10px 16px",
     border: "none",
@@ -1069,7 +977,6 @@ export const Header = memo(function Header({
         globalStyle += `letter-spacing: ${el.letterSpacing};`;
       if (el.wordSpacing && el.wordSpacing !== "normal")
         globalStyle += `word-spacing: ${el.wordSpacing};`;
-      if (el.lineHeight) globalStyle += `line-height: ${el.lineHeight};`;
       return globalStyle;
     };
 
@@ -1101,7 +1008,7 @@ export const Header = memo(function Header({
       margin: 0;
       font-family: Arial, sans-serif;
       font-size: 12px;
-      line-height: 1.4;
+      line-height: 1.1;
       white-space: normal;
     }
     .element > * { 
@@ -1150,8 +1057,6 @@ export const Header = memo(function Header({
           styles += ` font-style: ${element.fontStyle};`;
         if (element.textDecoration && element.textDecoration !== "none")
           styles += ` text-decoration: ${element.textDecoration};`;
-        if (element.lineHeight)
-          styles += ` line-height: ${element.lineHeight};`;
         if (element.letterSpacing && element.letterSpacing !== "normal")
           styles += ` letter-spacing: ${element.letterSpacing};`;
         if (element.wordSpacing && element.wordSpacing !== "normal")
@@ -1238,11 +1143,8 @@ export const Header = memo(function Header({
             }
             // Layout property avec gap calculé
             if (element.layout) {
-              const lineHeightValue = element.lineHeight
-                ? parseFloat(element.lineHeight)
-                : 1.2;
               const fontSize = element.fontSize || 12;
-              const gap = Math.round(fontSize * (lineHeightValue - 1));
+              const gap = Math.round(fontSize * 0.1);
               const layoutStr = buildFlexLayout(element.layout, gap);
               if (layoutStr) styles += ` ${layoutStr}`;
             }
@@ -1426,8 +1328,6 @@ export const Header = memo(function Header({
               tableStyles += ` font-style: ${element.fontStyle};`;
             if (element.textDecoration && element.textDecoration !== "none")
               tableStyles += ` text-decoration: ${element.textDecoration};`;
-            if (element.lineHeight)
-              tableStyles += ` line-height: ${element.lineHeight};`;
             if (element.letterSpacing && element.letterSpacing !== "normal")
               tableStyles += ` letter-spacing: ${element.letterSpacing};`;
             if (element.wordSpacing && element.wordSpacing !== "normal")
@@ -2134,11 +2034,8 @@ export const Header = memo(function Header({
                   );
                 }
 
-                const lineHeightValue = element.lineHeight
-                  ? parseFloat(element.lineHeight)
-                  : 1.2;
                 const fontSize = element.fontSize || 12;
-                const gap = Math.round(fontSize * (lineHeightValue - 1));
+                const gap = Math.round(fontSize * 0.1);
                 companyContent = `<div style="display: flex; flex-direction: column; gap: ${gap}px;">${parts.join("")}</div>`;
               }
 
@@ -2309,11 +2206,8 @@ export const Header = memo(function Header({
 
             // Layout property (vertical ou horizontal) avec gap calculé
             if (element.layout) {
-              const lineHeightValue = element.lineHeight
-                ? parseFloat(element.lineHeight)
-                : 1.2;
               const fontSize = element.fontSize || 12;
-              const gap = Math.round(fontSize * (lineHeightValue - 1));
+              const gap = Math.round(fontSize * 0.1);
               const layoutStr = buildFlexLayout(element.layout, gap);
               if (layoutStr) styles += ` ${layoutStr}`;
             }
@@ -2424,11 +2318,6 @@ export const Header = memo(function Header({
               styles += ` background-color: ${element.backgroundColor};`;
             }
 
-            // LineHeight depuis propriétés
-            if (element.lineHeight) {
-              styles += ` line-height: ${element.lineHeight};`;
-            }
-
             // Separator property
             if (element.showSeparator) {
               styles += ` border-bottom: 1px solid ${element.borderColor || "#e5e7eb"};`;
@@ -2436,11 +2325,8 @@ export const Header = memo(function Header({
 
             // Layout property avec gap calculé
             if (element.layout) {
-              const lineHeightValue = element.lineHeight
-                ? parseFloat(element.lineHeight)
-                : 1.2;
               const fontSize = element.fontSize || 12;
-              const gap = Math.round(fontSize * (lineHeightValue - 1));
+              const gap = Math.round(fontSize * 0.1);
               const layoutStr = buildFlexLayout(element.layout, gap);
               if (layoutStr) styles += ` ${layoutStr}`;
             }
@@ -2543,182 +2429,16 @@ export const Header = memo(function Header({
     return html;
   };
 
-  // Fonction pour générer et afficher l'aperçu HTML
+  // Fonction pour générer et afficher l'aperçu HTML (vrai HTML, pas PNG)
   const handleShowHtmlPreview = async () => {
     setIsGeneratingHtml(true);
     try {
-      const templateId = state.currentTemplateId || state.template?.id;
-      if (!templateId) {
-        alert("❌ Aucun template actuellement édité");
-        return;
-      }
-
-      const ajaxUrl =
-        (window as any).pdfBuilderData?.ajaxUrl || "/wp-admin/admin-ajax.php";
-
-      // Étape 1: Récupérer les données SAUVEGARDÉES du serveur
-      const formData = new FormData();
-      formData.append("action", "pdf_builder_get_template_elements");
-      formData.append("template_id", templateId);
-      formData.append("nonce", (window as any).pdfBuilderData?.nonce || "");
-
-      const response = await fetch(ajaxUrl, {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-      if (!data.success) {
-        throw new Error(
-          data.data?.message || "Erreur lors de la récupération des données",
-        );
-      }
-
-      const elements = data.data.elements || [];
-      const canvas = data.data.canvas || { width: 794, height: 1123 };
-
-      // Étape 2: Créer un canvas temporaire pour redessiner
-      const tempCanvas = document.createElement("canvas");
-      tempCanvas.width = canvas.width;
-      tempCanvas.height = canvas.height;
-
-      const ctx = tempCanvas.getContext("2d");
-      if (!ctx) {
-        throw new Error("Impossible de créer un contexte canvas");
-      }
-
-      // Redessiner les éléments
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-
-      // Fonction helper pour dessiner le contenu simplifié
-      const drawElement = (element: any) => {
-        if (element.visible === false) return;
-
-        ctx.save();
-        ctx.translate(element.x || 0, element.y || 0);
-
-        if (element.rotation) {
-          const centerX = (element.width || 0) / 2;
-          const centerY = (element.height || 0) / 2;
-          ctx.translate(centerX, centerY);
-          ctx.rotate((element.rotation * Math.PI) / 180);
-          ctx.translate(-centerX, -centerY);
-        }
-
-        // Fond
-        if (
-          element.backgroundColor &&
-          element.backgroundColor !== "transparent" &&
-          element.showBackground !== false
-        ) {
-          ctx.fillStyle = element.backgroundColor;
-          ctx.fillRect(0, 0, element.width || 100, element.height || 50);
-        }
-
-        // Bordure
-        if (element.borderWidth && element.borderWidth > 0) {
-          ctx.strokeStyle = element.borderColor || "#e5e7eb";
-          ctx.lineWidth = element.borderWidth;
-          ctx.strokeRect(0, 0, element.width || 100, element.height || 50);
-        }
-
-        // Texte
-        ctx.fillStyle = element.textColor || "#000000";
-        ctx.font = `${element.fontStyle || "normal"} ${element.fontWeight || "normal"} ${element.fontSize || 12}px ${element.fontFamily || "Arial"}`;
-        ctx.textAlign = element.textAlign || "left";
-        ctx.textBaseline =
-          element.verticalAlign === "middle"
-            ? "middle"
-            : element.verticalAlign === "bottom"
-              ? "bottom"
-              : "top";
-
-        let textX = 0;
-        let textY =
-          element.verticalAlign === "middle"
-            ? (element.height || 50) / 2
-            : element.verticalAlign === "bottom"
-              ? (element.height || 50) - 5
-              : 5;
-
-        if (element.textAlign === "center") {
-          textX = (element.width || 100) / 2;
-        } else if (element.textAlign === "right") {
-          textX = (element.width || 100) - 5;
-        } else {
-          textX = 5;
-        }
-
-        const text = element.text || element.content || element.title || "";
-        if (text) {
-          ctx.fillText(text.toString().substring(0, 50), textX, textY);
-        }
-
-        ctx.restore();
-      };
-
-      // Dessiner tous les éléments
-      elements.forEach(drawElement);
-
-      // Étape 3: Capturer en PNG base64
-      const canvasImageData = tempCanvas.toDataURL("image/png");
-
-      // Étape 4: Créer l'HTML avec l'image
-      const html = `<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aperçu PDF - ${data.data.template?.name || "Template"}</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      padding: 20px; 
-      background: #f5f5f5;
-      font-family: Arial, sans-serif;
-    }
-    .container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .preview {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    img {
-      display: block;
-      max-width: 100%;
-      height: auto;
-      border: 1px solid #e5e7eb;
-    }
-    .info {
-      margin-top: 20px;
-      padding: 12px;
-      background: #f0f9ff;
-      border-left: 4px solid #0ea5e9;
-      border-radius: 4px;
-      color: #0c4a6e;
-      font-size: 13px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="preview">
-      <img src="${canvasImageData}" alt="Aperçu du canvas" />
-      <div class="info">
-        ✅ Cet aperçu prévisualise vos données SAUVEGARDÉES (JSON du serveur). Il est fidèle à ce qui sera généré.
-      </div>
-    </div>
-  </div>
-</body>
-</html>`;
-
+      // Utiliser generatePDFSimulationHTML pour générer du vrai HTML positionné
+      const html = generatePDFSimulationHTML(
+        state.elements,
+        state.canvas,
+        state.template,
+      );
       setGeneratedHtml(html);
       setJsonModalMode("html");
     } catch (error) {
