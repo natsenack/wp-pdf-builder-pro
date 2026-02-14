@@ -189,9 +189,16 @@
                                     <span class="canvas-card-icon">🎨</span>
                                 </div>
                                 <h4>Affichage & Dimensions</h4>
+                                <span class="canvas-card-badge">Essentiel</span>
                             </header>
                             <main class="canvas-card-content">
                                 <p>Configurez les dimensions, le format, les couleurs et l'apparence générale du canvas.</p>
+                                <div class="canvas-card-features">
+                                    <span class="feature-tag active">📐 Dimensions</span>
+                                    <span class="feature-tag active">🎨 Couleurs</span>
+                                    <span class="feature-tag active">📄 Format</span>
+                                    <span class="feature-tag">🖼️ Bordures</span>
+                                </div>
                             </main>
                             <aside class="canvas-card-preview">
                                 <div class="preview-format">
@@ -233,9 +240,16 @@
                                     <span class="canvas-card-icon">🧭</span>
                                 </div>
                                 <h4>Navigation & Zoom</h4>
+                                <span class="canvas-card-badge new">Amélioré</span>
                             </header>
                             <main class="canvas-card-content">
                                 <p>Configurez la grille, les guides, le zoom et les options de navigation du canvas.</p>
+                                <div class="canvas-card-features">
+                                    <span class="feature-tag active">📐 Grille</span>
+                                    <span class="feature-tag active">📏 Guides</span>
+                                    <span class="feature-tag active">🔍 Zoom</span>
+                                    <span class="feature-tag active">🔗 Snap</span>
+                                </div>
                             </main>
                             <aside class="canvas-card-preview">
                                 <div id="card-grid-preview" class="grid-preview-container">
@@ -293,9 +307,16 @@
                                     <span class="canvas-card-icon">🎯</span>
                                 </div>
                                 <h4>Comportement & Export</h4>
+                                <span class="canvas-card-badge pro">Avancé</span>
                             </header>
                             <main class="canvas-card-content">
                                 <p>Configurez les interactions, la sélection, les raccourcis et les options d'export du canvas.</p>
+                                <div class="canvas-card-features">
+                                    <span class="feature-tag active">👆 Sélection</span>
+                                    <span class="feature-tag active">⌨️ Raccourcis</span>
+                                    <span class="feature-tag">🖱️ Glisser-déposer</span>
+                                    <span class="feature-tag">📤 Export</span>
+                                </div>
                             </main>
                             <aside class="canvas-card-preview">
                                 <div class="interactions-preview-container">
@@ -382,9 +403,16 @@
                                     <span class="canvas-card-icon">⚙️</span>
                                 </div>
                                 <h4>Performance & Système</h4>
+                                <span class="canvas-card-badge new">Optimisé</span>
                             </header>
                             <main class="canvas-card-content">
                                 <p>Optimisez les performances, la mémoire et configurez les options de debug et monitoring.</p>
+                                <div class="canvas-card-features">
+                                    <span class="feature-tag active">⚡ FPS</span>
+                                    <span class="feature-tag active">💾 RAM</span>
+                                    <span class="feature-tag active">🔄 Lazy Load</span>
+                                    <span class="feature-tag">🐛 Debug</span>
+                                </div>
                             </main>
                             <aside class="canvas-card-preview">
                                 <div class="performance-preview-container">
