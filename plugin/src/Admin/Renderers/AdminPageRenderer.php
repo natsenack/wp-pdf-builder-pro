@@ -23,7 +23,7 @@ class AdminPageRenderer
         $plugin_version = $this->admin->getPluginVersion();
 
         // Charger le template dashboard-page.php qui utilise les classes avec préfixe pdfb-
-        $template_path = plugin_dir_path(dirname(dirname(__FILE__))) . 'templates/admin/dashboard-page.php';
+        $template_path = PDF_BUILDER_PLUGIN_DIR . 'templates/admin/dashboard-page.php';
         
         if (file_exists($template_path)) {
             ob_start();
