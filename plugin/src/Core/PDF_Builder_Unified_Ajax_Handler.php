@@ -3355,28 +3355,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             'layout' => $element['layout'] ?? 'vertical',
             'textAlign' => $element['textAlign'] ?? 'left',
             'verticalAlign' => $element['verticalAlign'] ?? 'top',
-            'lineHeight' => floatval($element['lineHeight'] ?? 1.2),
             'letterSpacing' => floatval($element['letterSpacing'] ?? 0)
         ];
-    }
-    
-    /**
-     * Helper: Calcule le spacing uniforme entre les lignes (DOMPDF compatible)
-     * 
-     * Calcul: margin-bottom = fontSize × (lineHeight - 1)
-     * 
-     * Exemples:
-     * - fontSize=12px, lineHeight=1.5 → margin-bottom = 12 × 0.5 = 6px
-     * - fontSize=14px, lineHeight=1.2 → margin-bottom = 14 × 0.2 = 2.8px (arrondi 3px)
-     * - fontSize=16px, lineHeight=1.8 → margin-bottom = 16 × 0.8 = 12.8px (arrondi 13px)
-     * 
-     * 
-     * @param float $fontSize Taille de la police en px
-     * @param float $lineHeight Ratio de hauteur de ligne (ex: 1.2, 1.5)
-     * @return int Gap arrondi en px (équivalent React gap)
-     */
-    private function calculate_line_gap($fontSize, $lineHeight) {
-        return round($fontSize * (floatval($lineHeight) - 1));
     }
 
     /**
@@ -3670,13 +3650,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Style header
         $header_style = "color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; margin-bottom: 8px;";
         
-        // Récupérer le fontSize GLOBAL du conteneur (element.fontSize) pour calculer le gap
-        $container_font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
-        $lineHeightValue = floatval($layout_props['lineHeight']);
-        $gap = $this->calculate_line_gap($container_font_size, $lineHeightValue);
-        
-        // Styles pour chaque ligne de body (COMME REACT) - line-height:1 pour hauteur stricte
-        $line_style_base = "font-size: {$body_font['size']}px; font-family: {$body_font['family']}; font-weight: {$body_font['weight']}; font-style: {$body_font['style']}; color: {$colors['text']}; margin: 0; padding: 0; line-height: 1;";
+        // Styles pour chaque ligne de body - espacement fixe: 4px
+        $line_style_base = "font-size: {$body_font['size']}px; font-family: {$body_font['family']}; font-weight: {$body_font['weight']}; font-style: {$body_font['style']}; color: {$colors['text']}; margin: 0; padding: 0;";
         
         // Génération HTML - margin-bottom comme gap React pour compatibilité DOMPDF
         $html = '<div class="element" style="' . $container_styles . '">';
@@ -3687,7 +3662,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $total_lines = count($lines);
         foreach ($lines as $index => $line) {
             $is_last = ($index === $total_lines - 1);
-            $line_margin = $is_last ? '' : " margin-bottom: {$gap}px;";
+            $line_margin = $is_last ? '' : " margin-bottom: 4px;";
             $html .= '<div style="' . $line_style_base . $line_margin . '">' . $line . '</div>';
         }
         $html .= '</div>';
@@ -3702,7 +3677,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Extraction des propriétés via helpers
         $padding = $this->extract_padding($element);
         $layout_props = $this->extract_layout_props($element);
-        $layout_props['lineHeight'] = floatval($element['lineHeight'] ?? 1.1); // Override pour company
         
         // Thèmes prédéfinis
         $themes = [
@@ -3853,20 +3827,14 @@ class PDF_Builder_Unified_Ajax_Handler {
             return preg_replace('/<strong>/', '<strong style="' . $strong_style . '">', $line);
         }, $lines);
         
-        // Calcul du gap - méthode identique à React
-        // Utilise fontSize et lineHeight du JSON pour calcul cohérent
-        $container_font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
-        $lineHeightValue = floatval($layout_props['lineHeight']);
-        $gap = $this->calculate_line_gap($container_font_size, $lineHeightValue);
-        
-        // Génération HTML - margin-bottom comme gap React pour compatibilité DOMPDF
+        // Génération HTML - spacing fixe entre les lignes
         $html = '<div class="element" style="' . $container_styles . '">';
-        // Chaque ligne avec margin-bottom (sauf dernière) = gap de React + line-height:1 pour hauteur stricte
+        // Chaque ligne avec espacement fixe (sauf dernière)
         $total_lines = count($processedLines);
         foreach ($processedLines as $index => $line) {
             $is_last = ($index === $total_lines - 1);
-            $line_margin = $is_last ? '' : " margin-bottom: {$gap}px;";
-            $html .= '<div style="margin: 0; padding: 0; line-height: 1;' . $line_margin . '">' . $line . '</div>';
+            $line_margin = $is_last ? '' : " margin-bottom: 4px;";
+            $html .= '<div style="margin: 0; padding: 0;' . $line_margin . '">' . $line . '</div>';
         }
         $html .= '</div>'; // Fermer element container
         return $html;
@@ -4412,12 +4380,11 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Retirer aussi les !important de position qui causent des conflits DOMPDF
         $base_styles_clean = str_replace('!important', '', $base_styles_clean);
         
-        // Récupérer fontSize et lineHeight DIRECTEMENT DU JSON (comme customer_info)
+        // Récupérer fontSize DIRECTEMENT DU JSON (lineHeight system removed - using fixed 1.2 spacing)
         $font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
-        $line_height_ratio = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.3;
         
-        // Calculer le gap (= espacement entre lignes, comme React)
-        $gap = $this->calculate_line_gap($font_size, $line_height_ratio);
+        // Calculer le gap avec espacement fixe: 1.2 * fontSize (ligne-height = 1.2)
+        $gap = round($font_size * 0.2);
         
         // Extraire les propriétés de positionnement
         preg_match('/left:\s*[^;]+;/', $base_styles_clean, $left_match);
@@ -4509,26 +4476,15 @@ class PDF_Builder_Unified_Ajax_Handler {
             $text = $element['text'] ?? 'Conditions générales de vente disponibles sur demande.';
         }
         
-        // DEBUG: Log le lineHeight lu du JSON
-        error_log('[PDF Builder] Mentions lineHeight from JSON: ' . ($element['lineHeight'] ?? 'NOT SET'));
-        error_log('[PDF Builder] Mentions base_styles AVANT nettoyage: ' . substr($base_styles, 0, 200));
-        
         // Nettoyer TOUS les padding ET line-height pour DOMPDF (comme customer_info)
         $base_styles_clean = preg_replace('/padding(-top|-bottom|-left|-right)?:\s*[^;]+;/i', '', $base_styles);
         $base_styles_clean = preg_replace('/line-height:\s*[^;]+;/', '', $base_styles_clean);
         // Retirer aussi les !important de position qui causent des conflits DOMPDF
         $base_styles_clean = str_replace('!important', '', $base_styles_clean);
         
-        error_log('[PDF Builder] Mentions base_styles APRÈS nettoyage: ' . substr($base_styles_clean, 0, 200));
-        
-        // Récupérer le line-height EXACT du JSON (string ou number)
-        $line_height_ratio = isset($element['lineHeight']) ? floatval($element['lineHeight']) : 1.2;
-        
-        // Calculer le marginBottom pour DOMPDF (qui ne supporte pas bien line-height)
+        // Utiliser un espacement fixe: 1.2 * fontSize (lineHeight system removed)
         $font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 10;
-        $margin_bottom = ($line_height_ratio - 1) * $font_size;
-        
-        error_log('[PDF Builder] Mentions lineHeight ratio: ' . $line_height_ratio . ', fontSize: ' . $font_size . 'px, marginBottom calculé: ' . $margin_bottom . 'px');
+        $margin_bottom = round($font_size * 0.2); // équivalent à line-height: 1.2
         
         // Extraire les propriétés de positionnement (pour le conteneur) et de texte (pour le contenu)
         // On garde UNIQUEMENT position, left, top, width, height sur le conteneur

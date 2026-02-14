@@ -394,8 +394,7 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
     padding,
   );
 
-  // ✅ NEW: Support pour lineHeight et letterSpacing
-  const lineHeight = parseFloat(props.lineHeight as any) || 1.2;
+  // ✅ NEW: Support pour letterSpacing
   const letterSpacing = parseFloat(props.letterSpacing as any) || 0;
   const text = props.text || "Text";
 
@@ -444,7 +443,7 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
 
     // Espacement entre les lignes
     if (index < lines.length - 1) {
-      currentY += fontConfig.size * lineHeight;
+      currentY += fontConfig.size * 1.2;
     }
   });
 };
@@ -1364,8 +1363,7 @@ const drawCustomerInfo = (
   const showPhone = props.showPhone !== false;
   const showPaymentMethod = props.showPaymentMethod !== false;
   const showTransactionId = props.showTransactionId !== false;
-  // ✅ NEW: Récupérer lineHeight et letterSpacing
-  const lineHeight = parseFloat(props.lineHeight as any) || 1.5;
+  // ✅ NEW: Récupérer letterSpacing
   const letterSpacing = parseFloat(props.letterSpacing as any) || 0;
   // Alignement vertical
   const verticalAlign = props.verticalAlign || "top";
@@ -1610,8 +1608,8 @@ const drawCustomerInfo = (
       ctx.fillText(lineText, textX, y);
     }
 
-    // Appliquer le lineHeight au lieu de la valeur fixe de 18
-    y += bodyFontSize * lineHeight;
+    // Appliquer le line-height fixe (1.2)
+    y += bodyFontSize * 1.2;
   });
 };
 
@@ -1766,7 +1764,6 @@ const drawCompanyLine = (
   x: number,
   y: number,
   fontSize: number,
-  lineHeight: number = 1.2,
   letterSpacing: number = 0,
 ) => {
   if (letterSpacing !== 0) {
@@ -1808,7 +1805,7 @@ const drawCompanyLine = (
     ctx.fillText(text, x, y);
   }
 
-  return y + fontSize * lineHeight;
+  return y + fontSize * 1.2;
 };
 
 const drawCompanyInfo = (
@@ -2113,8 +2110,7 @@ const drawCompanyInfo = (
   // Appliquer la police du corps par défaut
   ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
 
-  // Récupérer lineHeight et letterSpacing du JSON
-  const lineHeight = parseFloat(props.lineHeight as any) || 1.1;
+  // Récupérer letterSpacing du JSON
   const letterSpacing = parseFloat(props.letterSpacing as any) || 0;
 
   // Dessiner toutes les lignes
@@ -2135,15 +2131,13 @@ const drawCompanyInfo = (
 
     ctx.font = `${config.style} ${config.weight} ${config.size}px ${config.family}`;
     if (lineData.isHeader) ctx.fillStyle = colors.headerText;
-    // ✅ Header utilise toujours lineHeight 1.2, les infos utilisent le lineHeight personnalisé
-    const currentLineHeight = lineData.isHeader ? 1.2 : lineHeight;
+    // Line height fixe: 1.2
     y = drawCompanyLine(
       ctx,
       lineData.text,
       x,
       y,
       config.size,
-      currentLineHeight,
       letterSpacing,
     );
     if (lineData.isHeader) ctx.fillStyle = colors.text;
@@ -3713,13 +3707,8 @@ export const Canvas = function Canvas({
       const wrappedLines = wrapText(text, maxWidth);
 
       // Calculer le nombre maximum de lignes qui peuvent tenir
-      // Utiliser le lineHeight de l'élément s'il est défini, sinon utiliser fontSize * 1.2
-      const lineHeightValue = props.lineHeight
-        ? typeof props.lineHeight === "number"
-          ? props.lineHeight
-          : parseFloat(props.lineHeight)
-        : 1.2;
-      const lineHeight = fontSize * lineHeightValue;
+      // Utiliser un line-height fixe: 1.2 * fontSize
+      const lineHeight = fontSize * 1.2;
       const maxLines = Math.floor(
         (element.height - (showSeparator ? 25 : 15)) / lineHeight,
       );

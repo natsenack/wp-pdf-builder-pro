@@ -482,7 +482,7 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
     const styleProperties = new Set([
       // ===== STYLES TEXTE =====
       'fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'fontColor', 'color',
-      'textAlign', 'textDecoration', 'textTransform', 'letterSpacing', 'wordSpacing', 'lineHeight',
+      'textAlign', 'textDecoration', 'textTransform', 'letterSpacing', 'wordSpacing',
       
       // ===== STYLES FOND & BORDURES =====
       'backgroundColor', 'bgColor', 'showBackground',

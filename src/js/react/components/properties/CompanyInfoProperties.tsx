@@ -1733,40 +1733,6 @@ export function CompanyInfoProperties({
                 marginBottom: "6px",
               }}
             >
-              Espacement des lignes des informations{" "}
-              <span style={{ color: "#666", fontSize: "10px" }}>
-                ({(parseFloat(String(element.lineHeight || 1.0))).toFixed(1)})
-              </span>
-            </label>
-            <input
-              type="range"
-              min="0.8"
-              max="3"
-              step="0.1"
-              value={parseFloat(String(element.lineHeight || 1.0))}
-              onChange={(e) =>
-                onChange(element.id, "lineHeight", parseFloat(e.target.value))
-              }
-              style={{
-                width: "100%",
-                height: "6px",
-                borderRadius: "3px",
-                background: "#ddd",
-                outline: "none",
-                cursor: "pointer",
-              }}
-            />
-          </div>
-
-          <div style={{ marginBottom: "12px" }}>
-            <label
-              style={{
-                display: "block",
-                fontSize: "12px",
-                fontWeight: "bold",
-                marginBottom: "6px",
-              }}
-            >
               Espacement des lettres{" "}
               <span style={{ color: "#666", fontSize: "10px" }}>
                 ({(parseFloat(String(element.letterSpacing || 0))).toFixed(2)}px)
