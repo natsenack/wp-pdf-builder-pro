@@ -920,7 +920,7 @@ export const useCanvasInteraction = ({
           isDraggingRef.current = true;
           // ✅ CORRECTION: Mettre en cache les IDs sélectionnés dans ref pour éviter state stale
           selectedElementsRef.current = [...state.selection.selectedElements];
-          
+
           // Stocker les positions de départ de tous les éléments sélectionnés
           const startPositions: Record<string, { x: number; y: number }> = {};
           selectedElementsRef.current.forEach((id) => {
@@ -1021,7 +1021,10 @@ export const useCanvasInteraction = ({
         selectionPointsRef.current = [{ x, y }];
         // ✅ CORRECTION: Mémoriser le zoom/pan courants pour éviter les changements
         selectionZoomRef.current = state.canvas.zoom;
-        selectionPanRef.current = { x: state.canvas.pan.x, y: state.canvas.pan.y };
+        selectionPanRef.current = {
+          x: state.canvas.pan.x,
+          y: state.canvas.pan.y,
+        };
         if (selectionMode === "rectangle") {
           selectionRectRef.current = { x, y, width: 0, height: 0 };
         }
@@ -1300,21 +1303,27 @@ export const useCanvasInteraction = ({
             const textEl = el as any;
             const fontSize = textEl.fontSize || 12;
             const text = textEl.text || "Text";
-            
+
             // Estimer la hauteur avec interlignage
             const lines = text.split("\n").length;
-            const lineHeight = fontSize + (fontSize * 0.4);
+            const lineHeight = fontSize + fontSize * 0.4;
             const estimatedHeight = Math.ceil(lines * lineHeight + 8);
-            
+
             // Estimer la largeur
             const avgCharWidth = fontSize * 0.6;
-            const longestLine = text.split("\n").reduce((max: number, line: string) => 
-              Math.max(max, line.length), 0);
-            const estimatedWidth = Math.ceil(Math.max(longestLine * avgCharWidth + 16, 40));
-            
+            const longestLine = text
+              .split("\n")
+              .reduce(
+                (max: number, line: string) => Math.max(max, line.length),
+                0,
+              );
+            const estimatedWidth = Math.ceil(
+              Math.max(longestLine * avgCharWidth + 16, 40),
+            );
+
             return {
               minWidth: Math.max(estimatedWidth, 40),
-              minHeight: Math.max(estimatedHeight, 20)
+              minHeight: Math.max(estimatedHeight, 20),
             };
           }
 
@@ -1322,11 +1331,13 @@ export const useCanvasInteraction = ({
             const orderEl = el as any;
             const fontSize = orderEl.fontSize || 12;
             const format = orderEl.format || "CMD-{order_number}";
-            const estimatedWidth = Math.ceil(format.length * fontSize * 0.5 + 16);
+            const estimatedWidth = Math.ceil(
+              format.length * fontSize * 0.5 + 16,
+            );
             const minHeight = orderEl.showLabel ? fontSize * 2.5 : fontSize + 8;
             return {
               minWidth: Math.max(estimatedWidth, 60),
-              minHeight: Math.max(minHeight, 24)
+              minHeight: Math.max(minHeight, 24),
             };
           }
 
@@ -1337,7 +1348,7 @@ export const useCanvasInteraction = ({
             const estimatedWidth = Math.ceil(text.length * fontSize * 0.5 + 20);
             return {
               minWidth: Math.max(estimatedWidth, 80),
-              minHeight: Math.max(fontSize + 12, 30)
+              minHeight: Math.max(fontSize + 12, 30),
             };
           }
 
@@ -1346,7 +1357,7 @@ export const useCanvasInteraction = ({
           case "image":
             return {
               minWidth: 40,
-              minHeight: 40
+              minHeight: 40,
             };
 
           // Lignes
@@ -1354,27 +1365,27 @@ export const useCanvasInteraction = ({
           case "separator":
             return {
               minWidth: 50,
-              minHeight: 2
+              minHeight: 2,
             };
 
           // Tables
           case "product_table":
             return {
               minWidth: 150,
-              minHeight: 80
+              minHeight: 80,
             };
 
           // Infos
           case "customer_info":
             return {
               minWidth: 120,
-              minHeight: 50
+              minHeight: 50,
             };
 
           case "company_info":
             return {
               minWidth: 150,
-              minHeight: 80
+              minHeight: 80,
             };
 
           // Formes
@@ -1382,13 +1393,13 @@ export const useCanvasInteraction = ({
           case "circle":
             return {
               minWidth: 40,
-              minHeight: 40
+              minHeight: 40,
             };
 
           default:
             return {
               minWidth: defaultMinWidth,
-              minHeight: defaultMinHeight
+              minHeight: defaultMinHeight,
             };
         }
       };
@@ -1398,16 +1409,31 @@ export const useCanvasInteraction = ({
       switch (handle) {
         case "se": {
           // Sud-Est (coin bas-droit) - coin suit directement la souris
-          updates.width = Math.max(minDimensions.minWidth, currentX - element.x);
-          updates.height = Math.max(minDimensions.minHeight, currentY - element.y);
+          updates.width = Math.max(
+            minDimensions.minWidth,
+            currentX - element.x,
+          );
+          updates.height = Math.max(
+            minDimensions.minHeight,
+            currentY - element.y,
+          );
           break;
         }
         case "sw": {
           // Sud-Ouest (coin bas-gauche)
-          const newX = Math.min(currentX, element.x + element.width - minDimensions.minWidth);
-          updates.width = Math.max(minDimensions.minWidth, element.x + element.width - newX);
+          const newX = Math.min(
+            currentX,
+            element.x + element.width - minDimensions.minWidth,
+          );
+          updates.width = Math.max(
+            minDimensions.minWidth,
+            element.x + element.width - newX,
+          );
           updates.x = newX;
-          updates.height = Math.max(minDimensions.minHeight, currentY - element.y);
+          updates.height = Math.max(
+            minDimensions.minHeight,
+            currentY - element.y,
+          );
           break;
         }
         case "ne": {
@@ -1416,7 +1442,10 @@ export const useCanvasInteraction = ({
             currentY,
             element.y + element.height - minDimensions.minHeight,
           );
-          updates.width = Math.max(minDimensions.minWidth, currentX - element.x);
+          updates.width = Math.max(
+            minDimensions.minWidth,
+            currentX - element.x,
+          );
           updates.height = Math.max(
             minDimensions.minHeight,
             element.y + element.height - newY,
@@ -1426,12 +1455,18 @@ export const useCanvasInteraction = ({
         }
         case "nw": {
           // Nord-Ouest (coin haut-gauche) - coin suit directement la souris
-          const newX = Math.min(currentX, element.x + element.width - minDimensions.minWidth);
+          const newX = Math.min(
+            currentX,
+            element.x + element.width - minDimensions.minWidth,
+          );
           const newY = Math.min(
             currentY,
             element.y + element.height - minDimensions.minHeight,
           );
-          updates.width = Math.max(minDimensions.minWidth, element.x + element.width - newX);
+          updates.width = Math.max(
+            minDimensions.minWidth,
+            element.x + element.width - newX,
+          );
           updates.height = Math.max(
             minDimensions.minHeight,
             element.y + element.height - newY,
@@ -1455,19 +1490,31 @@ export const useCanvasInteraction = ({
         }
         case "s": {
           // Sud (bas) - coin suit directement la souris
-          updates.height = Math.max(minDimensions.minHeight, currentY - element.y);
+          updates.height = Math.max(
+            minDimensions.minHeight,
+            currentY - element.y,
+          );
           break;
         }
         case "w": {
           // Ouest (gauche)
-          const newX = Math.min(currentX, element.x + element.width - minDimensions.minWidth);
-          updates.width = Math.max(minDimensions.minWidth, element.x + element.width - newX);
+          const newX = Math.min(
+            currentX,
+            element.x + element.width - minDimensions.minWidth,
+          );
+          updates.width = Math.max(
+            minDimensions.minWidth,
+            element.x + element.width - newX,
+          );
           updates.x = newX;
           break;
         }
         case "e": {
           // Est (droite) - coin suit directement la souris
-          updates.width = Math.max(minDimensions.minWidth, currentX - element.x);
+          updates.width = Math.max(
+            minDimensions.minWidth,
+            currentX - element.x,
+          );
           break;
         }
       }

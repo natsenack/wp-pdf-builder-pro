@@ -3,25 +3,25 @@
  * C'est LE système central qui garantit que contentAlign, labelPosition, etc. ne sont jamais perdus
  */
 
-import { debugWarn, debugError } from './debug';
-import type { Element } from '../types/elements';
+import { debugWarn, debugError } from "./debug";
+import type { Element } from "../types/elements";
 
 /**
  * FONCTION CRITIQUE: Normalise les éléments sans perdre AUCUNE propriété personnalisée
  * Utilisée au chargement APRÈS le parsing JSON
- * 
+ *
  * Propriétés à préserver ABSOLUMENT:
  * - contentAlign, labelPosition (order_number)
  * - Toute propriété custom ajoutée via l'éditeur
  */
 export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
   if (!Array.isArray(elements)) {
-    debugWarn('❌ [NORMALIZE] Elements n\'est pas un array:', typeof elements);
+    debugWarn("❌ [NORMALIZE] Elements n'est pas un array:", typeof elements);
     return [];
   }
 
   return elements.map((el, idx) => {
-    if (!el || typeof el !== 'object') {
+    if (!el || typeof el !== "object") {
       debugWarn(`❌ [NORMALIZE] Element ${idx} invalide:`, el);
       return {} as Element;
     }
@@ -30,123 +30,153 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
 
     // Créer une copie COMPLÈTE (spread shallow)
     // Convertir les tirets en underscores pour les types d'éléments (migration des anciennes données)
-    const elementType = (element.type as string || 'unknown').replace(/-/g, '_');
-    
+    const elementType = ((element.type as string) || "unknown").replace(
+      /-/g,
+      "_",
+    );
+
     const normalized: Element = {
       ...element,
-      id: element.id as string || `element-${idx}`,
+      id: (element.id as string) || `element-${idx}`,
       type: elementType,
       x: Number(element.x) || 0,
       y: Number(element.y) || 0,
       width: Number(element.width) || 100,
-      height: Number(element.height) || 100
+      height: Number(element.height) || 100,
     } as Element;
 
     // ============================================================
     // AJOUTER LES VALEURS PAR DÉFAUT POUR LES PROPRIÉTÉS OBLIGATOIRES
     // ============================================================
     // Cela garantit que tous les éléments chargés auront les propriétés requises
-    
+
     // Propriétés communes requises (position et dimensions)
-    if (typeof normalized.x !== 'number' || normalized.x === undefined) {
+    if (typeof normalized.x !== "number" || normalized.x === undefined) {
       (normalized as any).x = element.x ? Number(element.x) : 0;
     }
-    if (typeof normalized.y !== 'number' || normalized.y === undefined) {
+    if (typeof normalized.y !== "number" || normalized.y === undefined) {
       (normalized as any).y = element.y ? Number(element.y) : 0;
     }
-    if (typeof normalized.width !== 'number' || normalized.width === undefined) {
+    if (
+      typeof normalized.width !== "number" ||
+      normalized.width === undefined
+    ) {
       (normalized as any).width = element.width ? Number(element.width) : 100;
     }
-    if (typeof normalized.height !== 'number' || normalized.height === undefined) {
-      (normalized as any).height = element.height ? Number(element.height) : 100;
+    if (
+      typeof normalized.height !== "number" ||
+      normalized.height === undefined
+    ) {
+      (normalized as any).height = element.height
+        ? Number(element.height)
+        : 100;
     }
 
     // Propriétés obligatoires spécifiques par type d'élément
     switch (elementType) {
-      case 'text':
-      case 'dynamic_text':
-      case 'conditional_text':
+      case "text":
+      case "dynamic_text":
+      case "conditional_text":
         // Requiert: content
         if (!normalized.content) {
-          (normalized as any).content = '';
+          (normalized as any).content = "";
         }
         break;
 
-      case 'image':
-      case 'logo':
-      case 'image_upload':
+      case "image":
+      case "logo":
+      case "image_upload":
         // Requiert: src
         if (!normalized.src) {
-          (normalized as any).src = '';
+          (normalized as any).src = "";
         }
         break;
 
-      case 'shape':
-      case 'shape_rectangle':
-      case 'shape_circle':
-      case 'shape_line':
-      case 'shape_arrow':
-      case 'shape_triangle':
-      case 'shape_star':
+      case "shape":
+      case "shape_rectangle":
+      case "shape_circle":
+      case "shape_line":
+      case "shape_arrow":
+      case "shape_triangle":
+      case "shape_star":
         // Requiert: type
-        if (!normalized.type || normalized.type === 'shape') {
-          (normalized as any).type = 'rectangle';
+        if (!normalized.type || normalized.type === "shape") {
+          (normalized as any).type = "rectangle";
         }
         break;
 
-      case 'line':
+      case "line":
         // Requiert: start_x, start_y, end_x, end_y
-        if (typeof normalized.start_x !== 'number') {
-          (normalized as any).start_x = (element as any).start_x ? Number((element as any).start_x) : 0;
+        if (typeof normalized.start_x !== "number") {
+          (normalized as any).start_x = (element as any).start_x
+            ? Number((element as any).start_x)
+            : 0;
         }
-        if (typeof normalized.start_y !== 'number') {
-          (normalized as any).start_y = (element as any).start_y ? Number((element as any).start_y) : 0;
+        if (typeof normalized.start_y !== "number") {
+          (normalized as any).start_y = (element as any).start_y
+            ? Number((element as any).start_y)
+            : 0;
         }
-        if (typeof normalized.end_x !== 'number') {
-          (normalized as any).end_x = (element as any).end_x ? Number((element as any).end_x) : 100;
+        if (typeof normalized.end_x !== "number") {
+          (normalized as any).end_x = (element as any).end_x
+            ? Number((element as any).end_x)
+            : 100;
         }
-        if (typeof normalized.end_y !== 'number') {
-          (normalized as any).end_y = (element as any).end_y ? Number((element as any).end_y) : 100;
+        if (typeof normalized.end_y !== "number") {
+          (normalized as any).end_y = (element as any).end_y
+            ? Number((element as any).end_y)
+            : 100;
         }
         break;
 
-      case 'rectangle':
+      case "rectangle":
         // Requiert: x, y, width, height (déjà définis plus haut)
         break;
 
-      case 'circle':
+      case "circle":
         // Requiert: cx, cy, r
-        if (typeof normalized.cx !== 'number') {
-          (normalized as any).cx = (element as any).cx ? Number((element as any).cx) : 50;
+        if (typeof normalized.cx !== "number") {
+          (normalized as any).cx = (element as any).cx
+            ? Number((element as any).cx)
+            : 50;
         }
-        if (typeof normalized.cy !== 'number') {
-          (normalized as any).cy = (element as any).cy ? Number((element as any).cy) : 50;
+        if (typeof normalized.cy !== "number") {
+          (normalized as any).cy = (element as any).cy
+            ? Number((element as any).cy)
+            : 50;
         }
-        if (typeof normalized.r !== 'number') {
-          (normalized as any).r = (element as any).r ? Number((element as any).r) : 40;
+        if (typeof normalized.r !== "number") {
+          (normalized as any).r = (element as any).r
+            ? Number((element as any).r)
+            : 40;
         }
         break;
 
-      case 'order_number':
+      case "order_number":
         // Requiert: format
         if (!normalized.format) {
-          (normalized as any).format = 'CMD-{order_number}';
+          (normalized as any).format = "CMD-{order_number}";
         }
         break;
 
-      case 'barcode':
-      case 'qrcode':
-      case 'qrcode_dynamic':
+      case "barcode":
+      case "qrcode":
+      case "qrcode_dynamic":
         // Requiert: type (ou data pour code)
-        if (!normalized.type || normalized.type === 'barcode' || normalized.type === 'qrcode') {
-          (normalized as any).type = elementType === 'barcode' ? 'CODE128' : 'QRCODE';
+        if (
+          !normalized.type ||
+          normalized.type === "barcode" ||
+          normalized.type === "qrcode"
+        ) {
+          (normalized as any).type =
+            elementType === "barcode" ? "CODE128" : "QRCODE";
         }
         if (!normalized.data && !normalized.content) {
-          (normalized as any).data = '123456789';
+          (normalized as any).data = "123456789";
         }
         break;
 
-      case 'product_table':
+      case "product_table":
         // Propriétés pour tableau produits
         if (!normalized.showHeaders) {
           (normalized as any).showHeaders = true;
@@ -167,7 +197,7 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
           (normalized as any).showGlobalDiscount = false;
         }
         if (!normalized.dataSource) {
-          (normalized as any).dataSource = 'order_items';
+          (normalized as any).dataSource = "order_items";
         }
         if (!normalized.columns) {
           (normalized as any).columns = {
@@ -175,7 +205,7 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
             name: true,
             quantity: true,
             price: true,
-            total: true
+            total: true,
           };
         }
         // Styles globaux
@@ -183,52 +213,52 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
           (normalized as any).globalFontSize = 11;
         }
         if (!normalized.globalFontFamily) {
-          (normalized as any).globalFontFamily = 'Arial';
+          (normalized as any).globalFontFamily = "Arial";
         }
         if (!normalized.globalFontWeight) {
-          (normalized as any).globalFontWeight = 'normal';
+          (normalized as any).globalFontWeight = "normal";
         }
         if (!normalized.globalFontStyle) {
-          (normalized as any).globalFontStyle = 'normal';
+          (normalized as any).globalFontStyle = "normal";
         }
         // Styles lignes
         if (!normalized.rowFontSize) {
           (normalized as any).rowFontSize = 11;
         }
         if (!normalized.rowFontFamily) {
-          (normalized as any).rowFontFamily = 'Arial';
+          (normalized as any).rowFontFamily = "Arial";
         }
         if (!normalized.rowFontWeight) {
-          (normalized as any).rowFontWeight = 'normal';
+          (normalized as any).rowFontWeight = "normal";
         }
         if (!normalized.rowFontStyle) {
-          (normalized as any).rowFontStyle = 'normal';
+          (normalized as any).rowFontStyle = "normal";
         }
         if (!normalized.rowTextColor) {
-          (normalized as any).rowTextColor = '#374151';
+          (normalized as any).rowTextColor = "#374151";
         }
         // Styles totaux
         if (!normalized.totalFontSize) {
           (normalized as any).totalFontSize = 12;
         }
         if (!normalized.totalFontFamily) {
-          (normalized as any).totalFontFamily = 'Arial';
+          (normalized as any).totalFontFamily = "Arial";
         }
         if (!normalized.totalFontWeight) {
-          (normalized as any).totalFontWeight = 'bold';
+          (normalized as any).totalFontWeight = "bold";
         }
         if (!normalized.totalFontStyle) {
-          (normalized as any).totalFontStyle = 'normal';
+          (normalized as any).totalFontStyle = "normal";
         }
         if (!normalized.totalTextColor) {
-          (normalized as any).totalTextColor = '#111827';
+          (normalized as any).totalTextColor = "#111827";
         }
         if (!normalized.verticalAlign) {
-          (normalized as any).verticalAlign = 'top';
+          (normalized as any).verticalAlign = "top";
         }
         break;
 
-      case 'customer_info':
+      case "customer_info":
         // Propriétés pour infos client
         if (!normalized.showHeaders) {
           (normalized as any).showHeaders = true;
@@ -243,7 +273,7 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
           (normalized as any).showName = true;
         }
         if (!normalized.layout) {
-          (normalized as any).layout = 'vertical';
+          (normalized as any).layout = "vertical";
         }
         if (!normalized.showLabels) {
           (normalized as any).showLabels = true;
@@ -253,24 +283,24 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
           (normalized as any).headerFontSize = 12;
         }
         if (!normalized.headerFontFamily) {
-          (normalized as any).headerFontFamily = 'Arial';
+          (normalized as any).headerFontFamily = "Arial";
         }
         if (!normalized.headerFontWeight) {
-          (normalized as any).headerFontWeight = 'bold';
+          (normalized as any).headerFontWeight = "bold";
         }
         // Styles corps
         if (!normalized.bodyFontSize) {
           (normalized as any).bodyFontSize = 11;
         }
         if (!normalized.bodyFontFamily) {
-          (normalized as any).bodyFontFamily = 'Arial';
+          (normalized as any).bodyFontFamily = "Arial";
         }
         if (!normalized.bodyFontWeight) {
-          (normalized as any).bodyFontWeight = 'normal';
+          (normalized as any).bodyFontWeight = "normal";
         }
         break;
 
-      case 'company_info':
+      case "company_info":
         // Propriétés pour infos entreprise
         if (!normalized.showHeaders) {
           (normalized as any).showHeaders = false;
@@ -283,14 +313,14 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
         }
         break;
 
-      case 'company_logo':
+      case "company_logo":
         // Propriétés pour logo entreprise
         if (!normalized.objectFit) {
-          (normalized as any).objectFit = 'contain';
+          (normalized as any).objectFit = "contain";
         }
         break;
 
-      case 'order_number':
+      case "order_number":
         // Propriétés pour numéro de commande
         if (!normalized.showHeaders) {
           (normalized as any).showHeaders = true;
@@ -308,29 +338,29 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
           (normalized as any).showDate = false;
         }
         if (!normalized.labelText) {
-          (normalized as any).labelText = 'Commande #';
+          (normalized as any).labelText = "Commande #";
         }
         if (!normalized.labelPosition) {
-          (normalized as any).labelPosition = 'before';
+          (normalized as any).labelPosition = "before";
         }
         if (!normalized.dateFormat) {
-          (normalized as any).dateFormat = 'DD/MM/YYYY';
+          (normalized as any).dateFormat = "DD/MM/YYYY";
         }
         // Styles entête
         if (!normalized.headerFontSize) {
           (normalized as any).headerFontSize = 12;
         }
         if (!normalized.headerFontFamily) {
-          (normalized as any).headerFontFamily = 'Arial';
+          (normalized as any).headerFontFamily = "Arial";
         }
         if (!normalized.headerFontWeight) {
-          (normalized as any).headerFontWeight = 'bold';
+          (normalized as any).headerFontWeight = "bold";
         }
         if (!normalized.headerFontStyle) {
-          (normalized as any).headerFontStyle = 'normal';
+          (normalized as any).headerFontStyle = "normal";
         }
         if (!normalized.headerTextColor) {
-          (normalized as any).headerTextColor = '#111827';
+          (normalized as any).headerTextColor = "#111827";
         }
         // Styles numéro et date
         if (!normalized.numberFontSize) {
@@ -341,21 +371,21 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
         }
         // Styles corps
         if (!normalized.bodyFontFamily) {
-          (normalized as any).bodyFontFamily = 'Arial';
+          (normalized as any).bodyFontFamily = "Arial";
         }
         if (!normalized.bodyFontWeight) {
-          (normalized as any).bodyFontWeight = 'normal';
+          (normalized as any).bodyFontWeight = "normal";
         }
         if (!normalized.bodyFontStyle) {
-          (normalized as any).bodyFontStyle = 'normal';
+          (normalized as any).bodyFontStyle = "normal";
         }
         if (!normalized.contentAlign) {
-          (normalized as any).contentAlign = 'left';
+          (normalized as any).contentAlign = "left";
         }
         break;
 
-      case 'mentions':
-      case 'note':
+      case "mentions":
+      case "note":
         // Propriétés pour les mentions légales
         if (!normalized.showEmail) {
           (normalized as any).showEmail = true;
@@ -370,69 +400,70 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
           (normalized as any).showVat = true;
         }
         if (!normalized.separator) {
-          (normalized as any).separator = ' • ';
+          (normalized as any).separator = " • ";
         }
         if (!normalized.showSeparator) {
           (normalized as any).showSeparator = true;
         }
         if (!normalized.separatorStyle) {
-          (normalized as any).separatorStyle = 'solid';
+          (normalized as any).separatorStyle = "solid";
         }
         if (!normalized.mentionType) {
-          (normalized as any).mentionType = 'dynamic';
+          (normalized as any).mentionType = "dynamic";
         }
         if (!normalized.selectedMentions) {
           (normalized as any).selectedMentions = [];
         }
         if (!normalized.medleySeparator) {
-          (normalized as any).medleySeparator = '\n\n';
+          (normalized as any).medleySeparator = "\n\n";
         }
         if (!normalized.showBackground) {
           (normalized as any).showBackground = false;
         }
         if (!normalized.text) {
-          (normalized as any).text = '';
+          (normalized as any).text = "";
         }
         break;
 
-      case 'document_type':
+      case "document_type":
         // Requiert: documentType
         if (!normalized.documentType) {
-          (normalized as any).documentType = 'invoice';
+          (normalized as any).documentType = "invoice";
         }
         break;
 
-      case 'woocommerce_order_date':
-      case 'woocommerce_invoice_number':
+      case "woocommerce_order_date":
+      case "woocommerce_invoice_number":
         // Ces types doivent avoir au moins un contenu par défaut
         if (!normalized.content && !normalized.text) {
-          (normalized as any).content = elementType === 'woocommerce_order_date' ? 
-            new Date().toLocaleDateString() : 
-            'INV-001';
+          (normalized as any).content =
+            elementType === "woocommerce_order_date"
+              ? new Date().toLocaleDateString()
+              : "INV-001";
         }
         break;
 
       // Layouts et structures
-      case 'layout_header':
-      case 'layout_footer':
-      case 'layout_sidebar':
-      case 'layout_section':
-      case 'layout_container':
+      case "layout_header":
+      case "layout_footer":
+      case "layout_sidebar":
+      case "layout_section":
+      case "layout_container":
         if (!normalized.content) {
-          (normalized as any).content = '';
+          (normalized as any).content = "";
         }
         break;
 
       // Éléments dynamiques
-      case 'table_dynamic':
-      case 'gradient_box':
-      case 'shadow_box':
-      case 'rounded_box':
-      case 'border_box':
-      case 'background_pattern':
-      case 'watermark':
+      case "table_dynamic":
+      case "gradient_box":
+      case "shadow_box":
+      case "rounded_box":
+      case "border_box":
+      case "background_pattern":
+      case "watermark":
         if (!normalized.content) {
-          (normalized as any).content = '';
+          (normalized as any).content = "";
         }
         break;
     }
@@ -447,128 +478,230 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
  */
 export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
   if (!Array.isArray(elements)) {
-    debugWarn('❌ [SAVE NORMALIZE] Elements n\'est pas un array');
+    debugWarn("❌ [SAVE NORMALIZE] Elements n'est pas un array");
     return [];
   }
 
   return elements.map((el, idx) => {
-    if (!el || typeof el !== 'object') {
+    if (!el || typeof el !== "object") {
       debugWarn(`❌ [SAVE NORMALIZE] Element ${idx} invalide`);
       return {} as Element;
     }
 
     // Créer une copie COMPLÈTE
     const normalized: Element = {
-      ...el
+      ...el,
     } as Element;
 
     // Valider les champs critiques
     if (!normalized.id) normalized.id = `element-${idx}`;
-    if (!normalized.type) normalized.type = 'unknown';
-    if (typeof normalized.x !== 'number') normalized.x = 0;
-    if (typeof normalized.y !== 'number') normalized.y = 0;
-    if (typeof normalized.width !== 'number') normalized.width = 100;
-    if (typeof normalized.height !== 'number') normalized.height = 100;
+    if (!normalized.type) normalized.type = "unknown";
+    if (typeof normalized.x !== "number") normalized.x = 0;
+    if (typeof normalized.y !== "number") normalized.y = 0;
+    if (typeof normalized.width !== "number") normalized.width = 100;
+    if (typeof normalized.height !== "number") normalized.height = 100;
 
     // CRITICAL: Log les propriétés order_number avant sauvegarde
-    if (normalized.type === 'order_number') {
+    if (normalized.type === "order_number") {
     }
 
     // Filtrer les propriétés non sérialisables (Date, Function, etc)
     const serializable: Record<string, unknown> = {};
-    
+
     // ========== PROPRIÉTÉS CRITIQUES À PRÉSERVER ==========
     // Les styles dédans ce set ne doivent JAMAIS être perdus lors de la sauvegarde
     const styleProperties = new Set([
       // ===== STYLES TEXTE =====
-      'fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'fontColor', 'color',
-      'textAlign', 'textDecoration', 'textTransform', 'wordSpacing',
-      
+      "fontFamily",
+      "fontSize",
+      "fontWeight",
+      "fontStyle",
+      "fontColor",
+      "color",
+      "textAlign",
+      "textDecoration",
+      "textTransform",
+      "wordSpacing",
+
       // ===== STYLES FOND & BORDURES =====
-      'backgroundColor', 'bgColor', 'showBackground',
-      'border', 'borderTop', 'borderBottom', 'borderLeft', 'borderRight', 'borderColor', 'borderWidth', 'borderStyle', 'borderRadius',
-      
+      "backgroundColor",
+      "bgColor",
+      "showBackground",
+      "border",
+      "borderTop",
+      "borderBottom",
+      "borderLeft",
+      "borderRight",
+      "borderColor",
+      "borderWidth",
+      "borderStyle",
+      "borderRadius",
+
       // ===== ESPACES & DIMENSIONS =====
-      'padding', 'margin', 'width', 'height', 'x', 'y', 'display',
-      
+      "padding",
+      "margin",
+      "width",
+      "height",
+      "x",
+      "y",
+      "display",
+
       // ===== PROPRIÉTÉS VISUELLES =====
-      'opacity', 'zIndex', 'rotation', 'scale', 'visible', 'locked',
-      
+      "opacity",
+      "zIndex",
+      "rotation",
+      "scale",
+      "visible",
+      "locked",
+
       // ===== SÉPARATEURS (Mentions & autres) =====
-      'showSeparator', 'separatorStyle', 'separator',
-      
+      "showSeparator",
+      "separatorStyle",
+      "separator",
+
       // ===== PROPRIÉTÉS MENTIONS =====
-      'showEmail', 'showPhone', 'showSiret', 'showVat',
-      'mentionType', 'selectedMentions', 'medleySeparator', 'theme',
-      
+      "showEmail",
+      "showPhone",
+      "showSiret",
+      "showVat",
+      "mentionType",
+      "selectedMentions",
+      "medleySeparator",
+      "theme",
+
       // ===== PROPRIÉTÉS COMPANY_INFO =====
-      'showCompanyName', 'showAddress', 'showRcs', 'showCapital',
-      'layout',
-      'headerFontFamily', 'headerFontWeight', 'headerFontStyle',
-      'bodyFontSize', 'bodyFontFamily', 'bodyFontWeight', 'bodyFontStyle',
-      
+      "showCompanyName",
+      "showAddress",
+      "showRcs",
+      "showCapital",
+      "layout",
+      "headerFontFamily",
+      "headerFontWeight",
+      "headerFontStyle",
+      "bodyFontSize",
+      "bodyFontFamily",
+      "bodyFontWeight",
+      "bodyFontStyle",
+
       // ===== PROPRIÉTÉS PRODUCT_TABLE =====
-      'showHeaders', 'showBorders', 'showAlternatingRows', 'showShipping', 'showTax', 'showGlobalDiscount',
-      'globalFontSize', 'globalFontFamily', 'globalFontWeight', 'globalFontStyle',
-      'headerFontSize', 'headerFontFamily', 'headerFontWeight', 'headerFontStyle', 'headerTextColor', 'headerBackgroundColor',
-      'rowFontSize', 'rowFontFamily', 'rowFontWeight', 'rowFontStyle', 'rowTextColor',
-      'totalFontSize', 'totalFontFamily', 'totalFontWeight', 'totalFontStyle', 'totalTextColor',
-      'alternateRowColor', 'verticalAlign', 'tableStyle',
-      
+      "showHeaders",
+      "showBorders",
+      "showAlternatingRows",
+      "showShipping",
+      "showTax",
+      "showGlobalDiscount",
+      "globalFontSize",
+      "globalFontFamily",
+      "globalFontWeight",
+      "globalFontStyle",
+      "headerFontSize",
+      "headerFontFamily",
+      "headerFontWeight",
+      "headerFontStyle",
+      "headerTextColor",
+      "headerBackgroundColor",
+      "rowFontSize",
+      "rowFontFamily",
+      "rowFontWeight",
+      "rowFontStyle",
+      "rowTextColor",
+      "totalFontSize",
+      "totalFontFamily",
+      "totalFontWeight",
+      "totalFontStyle",
+      "totalTextColor",
+      "alternateRowColor",
+      "verticalAlign",
+      "tableStyle",
+
       // ===== PROPRIÉTÉS CUSTOMER_INFO =====
-      'showName', 'showFullName', 'showPaymentMethod', 'showTransactionId',
-      'bodyFontSize', 'bodyFontFamily', 'bodyFontWeight', 'bodyFontStyle',
-      
+      "showName",
+      "showFullName",
+      "showPaymentMethod",
+      "showTransactionId",
+      "bodyFontSize",
+      "bodyFontFamily",
+      "bodyFontWeight",
+      "bodyFontStyle",
+
       // ===== PROPRIÉTÉS ORDER_NUMBER =====
-      'showLabel', 'showDate', 'labelText', 'labelPosition', 'dateFormat',
-      'numberFontSize', 'dateFontSize',
-      'contentAlign', 'format',
-      
+      "showLabel",
+      "showDate",
+      "labelText",
+      "labelPosition",
+      "dateFormat",
+      "numberFontSize",
+      "dateFontSize",
+      "contentAlign",
+      "format",
+
       // ===== PROPRIÉTÉS IMAGES =====
-      'objectFit', 'fit', 'alignment',
-      
+      "objectFit",
+      "fit",
+      "alignment",
+
       // ===== CONTENU =====
-      'text', 'content', 'src', 'alt', 'label'
+      "text",
+      "content",
+      "src",
+      "alt",
+      "label",
     ]);
-    
-    Object.keys(normalized).forEach(key => {
+
+    Object.keys(normalized).forEach((key) => {
       const value = normalized[key];
       const type = typeof value;
 
       // DEBUG: Log des propriétés spéciales
-      if (key.includes('🎯') || key.includes('interactions') || key.includes('comportement') || key.includes('behavior')) {
-        // 
+      if (
+        key.includes("🎯") ||
+        key.includes("interactions") ||
+        key.includes("comportement") ||
+        key.includes("behavior")
+      ) {
+        //
       }
 
       // Garder: string, number, boolean, null, undefined
       // Garder: objects simples et arrays
       // REJETER: functions, symbols, dates (sauf si sérialisées)
       if (
-        value === null || 
+        value === null ||
         value === undefined ||
-        type === 'string' || 
-        type === 'number' || 
-        type === 'boolean'
+        type === "string" ||
+        type === "number" ||
+        type === "boolean"
       ) {
         serializable[key] = value;
-      } else if (type === 'object') {
+      } else if (type === "object") {
         try {
           // Vérifier si c'est sérialisable
           JSON.stringify(value);
           serializable[key] = value;
         } catch {
-          debugWarn(`⚠️  [SAVE NORMALIZE] Propriété non sérialisable ${key} skippée`, value);
+          debugWarn(
+            `⚠️  [SAVE NORMALIZE] Propriété non sérialisable ${key} skippée`,
+            value,
+          );
         }
       } else {
         // Propriétés rejetées (functions, etc.)
-        debugWarn(`⚠️  [SAVE NORMALIZE] Propriété rejetée: ${key} (type: ${type})`);
+        debugWarn(
+          `⚠️  [SAVE NORMALIZE] Propriété rejetée: ${key} (type: ${type})`,
+        );
       }
     });
 
     // ✅ VÉRIFICATION: Log des propriétés de style critiques existantes
-    if (normalized.type === 'text' || normalized.type === 'mentions' || normalized.type === 'company_info') {
-      const existingStyles = Array.from(styleProperties).filter(prop => serializable[prop] !== undefined);
-      // 
+    if (
+      normalized.type === "text" ||
+      normalized.type === "mentions" ||
+      normalized.type === "company_info"
+    ) {
+      const existingStyles = Array.from(styleProperties).filter(
+        (prop) => serializable[prop] !== undefined,
+      );
+      //
     }
 
     return serializable as Element;
@@ -578,26 +711,36 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
 /**
  * Valide que les propriétés critiques sont présentes
  */
-export function validateElementIntegrity(elements: Element[], elementType: string): boolean {
-  const elementsOfType = elements.filter(el => el.type === elementType);
-  
+export function validateElementIntegrity(
+  elements: Element[],
+  elementType: string,
+): boolean {
+  const elementsOfType = elements.filter((el) => el.type === elementType);
+
   if (elementsOfType.length === 0) {
     return true; // Pas d'éléments de ce type
   }
 
   let allValid = true;
   elementsOfType.forEach((el, idx) => {
-    const required: (keyof Element)[] = ['id', 'type', 'x', 'y', 'width', 'height'];
-    const missing = required.filter(key => !(key in el));
+    const required: (keyof Element)[] = [
+      "id",
+      "type",
+      "x",
+      "y",
+      "width",
+      "height",
+    ];
+    const missing = required.filter((key) => !(key in el));
 
     if (missing.length > 0) {
-      debugError(`❌ [VALIDATE] Element ${idx} missing: ${missing.join(', ')}`);
+      debugError(`❌ [VALIDATE] Element ${idx} missing: ${missing.join(", ")}`);
       allValid = false;
     }
 
-    if (elementType === 'order_number') {
-      const hasContentAlign = 'contentAlign' in el;
-      const hasLabelPosition = 'labelPosition' in el;
+    if (elementType === "order_number") {
+      const hasContentAlign = "contentAlign" in el;
+      const hasLabelPosition = "labelPosition" in el;
 
       if (!hasContentAlign || !hasLabelPosition) {
         allValid = false;
@@ -614,6 +757,3 @@ export function validateElementIntegrity(elements: Element[], elementType: strin
 export function debugElementState(elements: Element[], label: string): void {
   // Debug function - logs removed for production
 }
-
-
-

@@ -1014,7 +1014,9 @@ export const Header = memo(function Header({
     };
 
     // Helper pour mapper text-align CSS à flexbox justify-content
-    const mapTextAlignToJustifyContent = (textAlign: string | undefined): string => {
+    const mapTextAlignToJustifyContent = (
+      textAlign: string | undefined,
+    ): string => {
       switch (textAlign) {
         case "center":
           return "center";
@@ -1123,8 +1125,11 @@ export const Header = memo(function Header({
         if (!visible) return;
 
         // Calculer les dimensions ajustées si padding
-        const { width: adjustedW, height: adjustedH, paddingStyle } =
-          calculateAdjustedDimensions(w, h, element.padding);
+        const {
+          width: adjustedW,
+          height: adjustedH,
+          paddingStyle,
+        } = calculateAdjustedDimensions(w, h, element.padding);
 
         // Construire les styles UNIQUEMENT à partir du JSON
         let styles = `left: ${x}px; top: ${y}px; width: ${adjustedW}px; height: ${adjustedH}px;`;
@@ -2217,19 +2222,19 @@ export const Header = memo(function Header({
 
               if (element.showHeaders !== false) {
                 customerParts.push(
-                  `<div style="font-size: ${headerFontSize}px; font-family: ${headerFontFamily}; font-weight: ${headerFontWeight}; font-style: ${headerFontStyle}; color: ${headerTextColor}; margin-bottom: 4px; line-height: 1.1;">Client</div>`,
+                  `<div style="font-size: ${headerFontSize}px; font-family: ${headerFontFamily}; font-weight: ${headerFontWeight}; font-style: ${headerFontStyle}; color: ${headerTextColor}; margin-bottom: 4px;">Client</div>`,
                 );
               }
 
               if (element.showFullName !== false) {
                 customerParts.push(
-                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0; line-height: 1.1;">Prénom Nom</div>`,
+                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0;">Prénom Nom</div>`,
                 );
               }
 
               if (element.showAddress !== false) {
                 customerParts.push(
-                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0; line-height: 1.1;">123 Rue de la Paix, 75000 Paris</div>`,
+                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0;">123 Rue de la Paix, 75000 Paris</div>`,
                 );
               }
 
@@ -2241,7 +2246,7 @@ export const Header = memo(function Header({
 
               if (element.showPhone !== false) {
                 customerParts.push(
-                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0; line-height: 1.1;">+01 23 45 67 89</div>`,
+                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0;">+01 23 45 67 89</div>`,
                 );
               }
 
@@ -2487,7 +2492,7 @@ export const Header = memo(function Header({
 
         // Wrapper l'élément avec tous les styles
         let containerStyles = styles;
-        
+
         // Pour les éléments complexes, utiliser overflow: auto plutôt que visible
         if (
           element.type === "customer_info" ||
@@ -2495,9 +2500,12 @@ export const Header = memo(function Header({
           element.type === "company_info"
         ) {
           // Autoriser le scroll si le contenu est trop volumineux
-          containerStyles = containerStyles.replace("overflow: hidden", "overflow: auto");
+          containerStyles = containerStyles.replace(
+            "overflow: hidden",
+            "overflow: auto",
+          );
         }
-        
+
         html += `<div class="element" style="${containerStyles}">${content}</div>`;
       });
     } else {

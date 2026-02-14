@@ -58,37 +58,61 @@ export function serializeCanvasData(
       // ✅ ENRICHISSEMENT: Ajouter les données de l'entreprise pour company_info si manquantes
       if (el.type === "company_info") {
         const pdfBuilderData = (window as any).pdfBuilderData;
-        
+
         if (pdfBuilderData && pdfBuilderData.company) {
           const company = pdfBuilderData.company;
 
           // Enrichir seulement si les propriétés manquent ou sont vides
-          if (!serialized.companyName || serialized.companyName === "Non indiqué") {
+          if (
+            !serialized.companyName ||
+            serialized.companyName === "Non indiqué"
+          ) {
             serialized.companyName = company.name || "";
           }
-          if (!serialized.companyAddress || serialized.companyAddress === "Non indiqué") {
+          if (
+            !serialized.companyAddress ||
+            serialized.companyAddress === "Non indiqué"
+          ) {
             serialized.companyAddress = company.address || "";
           }
           if (!serialized.companyCity) {
             serialized.companyCity = company.city || "";
           }
-          if (!serialized.companyPhone || serialized.companyPhone === "Non indiqué") {
+          if (
+            !serialized.companyPhone ||
+            serialized.companyPhone === "Non indiqué"
+          ) {
             serialized.companyPhone = company.phone || "";
           }
-          if (!serialized.companyEmail || serialized.companyEmail === "Non indiqué") {
+          if (
+            !serialized.companyEmail ||
+            serialized.companyEmail === "Non indiqué"
+          ) {
             serialized.companyEmail = company.email || "";
           }
-          if (!serialized.companySiret || serialized.companySiret === "Non indiqué") {
+          if (
+            !serialized.companySiret ||
+            serialized.companySiret === "Non indiqué"
+          ) {
             serialized.companySiret = company.siret || "";
           }
-          if (!serialized.companyTva || serialized.companyTva === "Non indiqué") {
+          if (
+            !serialized.companyTva ||
+            serialized.companyTva === "Non indiqué"
+          ) {
             // ✅ FIX: La propriété JavaScript est 'vat' pas 'tva'
             serialized.companyTva = company.vat || "";
           }
-          if (!serialized.companyRcs || serialized.companyRcs === "Non indiqué") {
+          if (
+            !serialized.companyRcs ||
+            serialized.companyRcs === "Non indiqué"
+          ) {
             serialized.companyRcs = company.rcs || "";
           }
-          if (!serialized.companyCapital || serialized.companyCapital === "Non indiqué") {
+          if (
+            !serialized.companyCapital ||
+            serialized.companyCapital === "Non indiqué"
+          ) {
             serialized.companyCapital = company.capital || "";
           }
         }

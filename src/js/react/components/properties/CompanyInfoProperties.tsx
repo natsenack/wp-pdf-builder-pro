@@ -100,13 +100,18 @@ export function CompanyInfoProperties({
 
   // Helper pour normaliser le padding en nombre (gère les objets padding complexes)
   const normalizePadding = (
-    value: number | { top?: number; right?: number; bottom?: number; left?: number } | undefined,
-    defaultValue: number = 12
+    value:
+      | number
+      | { top?: number; right?: number; bottom?: number; left?: number }
+      | undefined,
+    defaultValue: number = 12,
   ): number => {
-    if (typeof value === 'number') return value;
-    if (typeof value === 'object' && value !== null) {
+    if (typeof value === "number") return value;
+    if (typeof value === "object" && value !== null) {
       // Si c'est un objet, on prend la moyenne ou la première valeur disponible
-      return value.top ?? value.left ?? value.right ?? value.bottom ?? defaultValue;
+      return (
+        value.top ?? value.left ?? value.right ?? value.bottom ?? defaultValue
+      );
     }
     return defaultValue;
   };
@@ -781,7 +786,6 @@ export function CompanyInfoProperties({
               />
             </div>
           </div>
-
         </>
       )}
 
@@ -1639,7 +1643,6 @@ export function CompanyInfoProperties({
               }}
             />
           </div>
-
         </>
       )}
     </>

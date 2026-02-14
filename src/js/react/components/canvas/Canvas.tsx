@@ -340,7 +340,9 @@ const calculateTextYWithPadding = (
 };
 
 // ✅ Nouvelle fonction pour estimer les dimensions minimales basées sur le contenu
-const calculateMinDimensions = (element: Element): { minWidth: number; minHeight: number } => {
+const calculateMinDimensions = (
+  element: Element,
+): { minWidth: number; minHeight: number } => {
   const defaultMinWidth = 40; // Minimum très réduit
   const defaultMinHeight = 20;
 
@@ -351,21 +353,24 @@ const calculateMinDimensions = (element: Element): { minWidth: number; minHeight
       const textEl = element as TextElement;
       const fontSize = textEl.fontSize || 12;
       const text = textEl.text || "Text";
-      
+
       // Estimer la hauteur avec interlignage
       const lines = text.split("\n").length;
-      const lineHeight = fontSize + (fontSize * 0.4); // 40% d'interlignage
+      const lineHeight = fontSize + fontSize * 0.4; // 40% d'interlignage
       const estimatedHeight = Math.ceil(lines * lineHeight + 8); // 8px padding
-      
+
       // Estimer la largeur
       const avgCharWidth = fontSize * 0.6; // Approximation basée sur la police
-      const longestLine = text.split("\n").reduce((max, line) => 
-        Math.max(max, line.length), 0);
-      const estimatedWidth = Math.ceil(Math.max(longestLine * avgCharWidth + 16, 40));
-      
+      const longestLine = text
+        .split("\n")
+        .reduce((max, line) => Math.max(max, line.length), 0);
+      const estimatedWidth = Math.ceil(
+        Math.max(longestLine * avgCharWidth + 16, 40),
+      );
+
       return {
         minWidth: Math.max(estimatedWidth, 40),
-        minHeight: Math.max(estimatedHeight, 20)
+        minHeight: Math.max(estimatedHeight, 20),
       };
     }
 
@@ -377,7 +382,7 @@ const calculateMinDimensions = (element: Element): { minWidth: number; minHeight
       const minHeight = orderEl.showLabel ? fontSize * 2.5 : fontSize + 8;
       return {
         minWidth: Math.max(estimatedWidth, 60),
-        minHeight: Math.max(minHeight, 24)
+        minHeight: Math.max(minHeight, 24),
       };
     }
 
@@ -388,7 +393,7 @@ const calculateMinDimensions = (element: Element): { minWidth: number; minHeight
       const estimatedWidth = Math.ceil(text.length * fontSize * 0.5 + 20);
       return {
         minWidth: Math.max(estimatedWidth, 80),
-        minHeight: Math.max(fontSize + 12, 30)
+        minHeight: Math.max(fontSize + 12, 30),
       };
     }
 
@@ -397,7 +402,7 @@ const calculateMinDimensions = (element: Element): { minWidth: number; minHeight
     case "image":
       return {
         minWidth: 40,
-        minHeight: 40
+        minHeight: 40,
       };
 
     // Lignes -> largeur minimale importante, hauteur faible
@@ -405,28 +410,28 @@ const calculateMinDimensions = (element: Element): { minWidth: number; minHeight
     case "separator":
       return {
         minWidth: 50,
-        minHeight: 2
+        minHeight: 2,
       };
 
     // Tables -> taille minimale pour être lisible
     case "product_table":
       return {
         minWidth: 150,
-        minHeight: 80
+        minHeight: 80,
       };
 
     // Infos clientèle -> bloc de texte
     case "customer_info":
       return {
         minWidth: 120,
-        minHeight: 50
+        minHeight: 50,
       };
 
     // Infos entreprise -> généralement plus grand
     case "company_info":
       return {
         minWidth: 150,
-        minHeight: 80
+        minHeight: 80,
       };
 
     // Formes -> minimum carré
@@ -434,14 +439,14 @@ const calculateMinDimensions = (element: Element): { minWidth: number; minHeight
     case "circle":
       return {
         minWidth: 40,
-        minHeight: 40
+        minHeight: 40,
       };
 
     // Défaut
     default:
       return {
         minWidth: defaultMinWidth,
-        minHeight: defaultMinHeight
+        minHeight: defaultMinHeight,
       };
   }
 };
@@ -449,18 +454,27 @@ const calculateMinDimensions = (element: Element): { minWidth: number; minHeight
 // ✅ Fonction pour ajouter un chemin de clipping (limite le contenu à la boîte de l'élément)
 const applyClippingPath = (ctx: CanvasRenderingContext2D, element: Element) => {
   ctx.beginPath();
-  
+
   // Créer un rectangle de clipping avec arrondi optionnel
   const borderRadius = (element as any).borderRadius || 0;
-  
+
   if (borderRadius && borderRadius > 0) {
     // Chemin avec coins arrondis
-    const radius = Math.min(borderRadius, element.width / 2, element.height / 2);
+    const radius = Math.min(
+      borderRadius,
+      element.width / 2,
+      element.height / 2,
+    );
     ctx.moveTo(radius, 0);
     ctx.lineTo(element.width - radius, 0);
     ctx.quadraticCurveTo(element.width, 0, element.width, radius);
     ctx.lineTo(element.width, element.height - radius);
-    ctx.quadraticCurveTo(element.width, element.height, element.width - radius, element.height);
+    ctx.quadraticCurveTo(
+      element.width,
+      element.height,
+      element.width - radius,
+      element.height,
+    );
     ctx.lineTo(radius, element.height);
     ctx.quadraticCurveTo(0, element.height, 0, element.height - radius);
     ctx.lineTo(0, radius);
@@ -469,7 +483,7 @@ const applyClippingPath = (ctx: CanvasRenderingContext2D, element: Element) => {
     // Rectangle simple
     ctx.rect(0, 0, element.width, element.height);
   }
-  
+
   ctx.clip();
 };
 
@@ -1501,8 +1515,8 @@ const drawCustomerInfo = (
     }
     if (showAddress) {
       // Split par \n pour supporter les adresses multi-lignes (ex: adresse postale\npays)
-      const addressLines = customerData.address.split('\n');
-      addressLines.forEach(line => lines.push(line));
+      const addressLines = customerData.address.split("\n");
+      addressLines.forEach((line) => lines.push(line));
     }
     if (showEmail) {
       lines.push(customerData.email);
@@ -1527,7 +1541,7 @@ const drawCustomerInfo = (
     if (showEmail) line1 += (line1 ? " | " : "") + customerData.email;
 
     // Ligne 2: Adresse + Téléphone (remplacer \n par , pour garder compact)
-    if (showAddress) line2 += customerData.address.replace(/\n/g, ', ');
+    if (showAddress) line2 += customerData.address.replace(/\n/g, ", ");
     if (showPhone) line2 += (line2 ? " | " : "") + customerData.phone;
 
     // Ligne 3: Paiement + Transaction ID
@@ -1548,7 +1562,7 @@ const drawCustomerInfo = (
     // Reste des infos en mode compact
     let compactText = "";
     if (showAddress) {
-      compactText += customerData.address.replace(/\n/g, ', '); // Remplacer \n par , pour mode compact
+      compactText += customerData.address.replace(/\n/g, ", "); // Remplacer \n par , pour mode compact
     }
     if (showEmail) {
       compactText += (compactText ? " • " : "") + customerData.email;
@@ -1611,16 +1625,10 @@ const drawCustomerInfo = (
   let startY: number;
   switch (verticalAlign) {
     case "middle":
-      startY = Math.max(
-        12,
-        (element.height - totalContentHeight) / 2,
-      );
+      startY = Math.max(12, (element.height - totalContentHeight) / 2);
       break;
     case "bottom":
-      startY = Math.max(
-        12,
-        element.height - totalContentHeight - 12,
-      );
+      startY = Math.max(12, element.height - totalContentHeight - 12);
       break;
     default: // top
       startY = 12;
@@ -1643,7 +1651,9 @@ const drawCustomerInfo = (
   const textX = getTextX();
 
   // 🔍 DEBUG: Log des coordonnées customer_info
-  console.log(`[React Canvas customer_info] Element ID: ${element.id} | x: ${element.x} | y: ${element.y} | width: ${element.width} | height: ${element.height}`);
+  console.log(
+    `[React Canvas customer_info] Element ID: ${element.id} | x: ${element.x} | y: ${element.y} | width: ${element.width} | height: ${element.height}`,
+  );
 
   // En-tête
   if (showHeaders) {
@@ -1976,7 +1986,10 @@ const drawCompanyInfo = (
       lines.push({ text: companyData.email, isHeader: false });
     }
     if (shouldDisplayValue(companyData.phone, displayConfig.phone)) {
-      lines.push({ text: formatPhoneNumber(companyData.phone), isHeader: false });
+      lines.push({
+        text: formatPhoneNumber(companyData.phone),
+        isHeader: false,
+      });
     }
     // Infos légales après
     [
@@ -2017,8 +2030,7 @@ const drawCompanyInfo = (
     }
     if (shouldDisplayValue(companyData.phone, displayConfig.phone)) {
       contactLine +=
-        (contactLine ? " | " : "") +
-        formatPhoneNumber(companyData.phone);
+        (contactLine ? " | " : "") + formatPhoneNumber(companyData.phone);
     }
     if (contactLine) lines.push({ text: contactLine, isHeader: false });
 
@@ -2034,9 +2046,7 @@ const drawCompanyInfo = (
       legalLine += (legalLine ? " | " : "") + companyData.tva;
     }
     if (shouldDisplayValue(companyData.capital, displayConfig.capital)) {
-      legalLine +=
-        (legalLine ? " | " : "") +
-        companyData.capital;
+      legalLine += (legalLine ? " | " : "") + companyData.capital;
     }
     if (legalLine) lines.push({ text: legalLine, isHeader: false });
   } else if (layout === "compact") {
@@ -2105,7 +2115,9 @@ const drawCompanyInfo = (
   );
 
   // 🔍 DEBUG: Log des coordonnées company_info
-  console.log(`[React Canvas company_info] Element ID: ${element.id} | x: ${element.x} | y: ${element.y} | width: ${element.width} | height: ${element.height}`);
+  console.log(
+    `[React Canvas company_info] Element ID: ${element.id} | x: ${element.x} | y: ${element.y} | width: ${element.width} | height: ${element.height}`,
+  );
 
   // Appliquer la police du corps par défaut
   ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
@@ -2129,13 +2141,7 @@ const drawCompanyInfo = (
     ctx.font = `${config.style} ${config.weight} ${config.size}px ${config.family}`;
     if (lineData.isHeader) ctx.fillStyle = colors.headerText;
     // Line height fixe: 1.2
-    y = drawCompanyLine(
-      ctx,
-      lineData.text,
-      x,
-      y,
-      config.size,
-    );
+    y = drawCompanyLine(ctx, lineData.text, x, y, config.size);
     if (lineData.isHeader) ctx.fillStyle = colors.text;
   });
 };
@@ -2425,15 +2431,15 @@ const drawWoocommerceOrderDate = (
 
   // Gestion du label
   const showLabel = props.showLabel !== false;
-  const labelText = props.labelText || 'Date de la facture :';
-  const labelPosition = props.labelPosition || 'left';
+  const labelText = props.labelText || "Date de la facture :";
+  const labelPosition = props.labelPosition || "left";
   const labelSpacing = props.labelSpacing || 8;
-  
+
   // Config police du label
-  const labelFontFamily = props.labelFontFamily || props.fontFamily || 'Arial';
+  const labelFontFamily = props.labelFontFamily || props.fontFamily || "Arial";
   const labelFontSize = props.labelFontSize || props.fontSize || 12;
-  const labelFontWeight = props.labelFontWeight || 'normal';
-  const labelFontStyle = props.labelFontStyle || 'normal';
+  const labelFontWeight = props.labelFontWeight || "normal";
+  const labelFontStyle = props.labelFontStyle || "normal";
   const labelColor = props.labelColor || props.color || colorConfig.text;
 
   if (showLabel) {
@@ -2456,7 +2462,7 @@ const drawWoocommerceOrderDate = (
 
     // Calculer les positions selon labelPosition
     switch (labelPosition) {
-      case 'top':
+      case "top":
         // Label au-dessus de la date
         labelX = calculateTextX(element, props.textAlign, padding);
         labelY = padding.top;
@@ -2464,37 +2470,45 @@ const drawWoocommerceOrderDate = (
         dateY = padding.top + labelHeight + labelSpacing;
         break;
 
-      case 'left':
+      case "left":
         // Label à gauche de la date
         const totalWidth = labelWidth + labelSpacing + dateWidth;
-        if (props.textAlign === 'center') {
+        if (props.textAlign === "center") {
           labelX = (element.width - totalWidth) / 2;
-        } else if (props.textAlign === 'right') {
+        } else if (props.textAlign === "right") {
           labelX = element.width - padding.right - totalWidth;
         } else {
           labelX = padding.left;
         }
-        labelY = calculateTextYWithPadding(element, props.verticalAlign, padding);
+        labelY = calculateTextYWithPadding(
+          element,
+          props.verticalAlign,
+          padding,
+        );
         dateX = labelX + labelWidth + labelSpacing;
         dateY = labelY;
         break;
 
-      case 'right':
+      case "right":
         // Label à droite de la date
         const totalWidthRight = dateWidth + labelSpacing + labelWidth;
-        if (props.textAlign === 'center') {
+        if (props.textAlign === "center") {
           dateX = (element.width - totalWidthRight) / 2;
-        } else if (props.textAlign === 'right') {
+        } else if (props.textAlign === "right") {
           dateX = element.width - padding.right - totalWidthRight;
         } else {
           dateX = padding.left;
         }
-        dateY = calculateTextYWithPadding(element, props.verticalAlign, padding);
+        dateY = calculateTextYWithPadding(
+          element,
+          props.verticalAlign,
+          padding,
+        );
         labelX = dateX + dateWidth + labelSpacing;
         labelY = dateY;
         break;
 
-      case 'bottom':
+      case "bottom":
         // Label en-dessous de la date
         dateX = calculateTextX(element, props.textAlign, padding);
         dateY = padding.top;
@@ -2506,15 +2520,21 @@ const drawWoocommerceOrderDate = (
     // Dessiner le label
     ctx.fillStyle = labelColor;
     ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-    ctx.textAlign = (labelPosition === 'left' || labelPosition === 'right') ? 'left' : (props.textAlign as CanvasTextAlign || 'left');
-    ctx.textBaseline = 'top';
+    ctx.textAlign =
+      labelPosition === "left" || labelPosition === "right"
+        ? "left"
+        : (props.textAlign as CanvasTextAlign) || "left";
+    ctx.textBaseline = "top";
     ctx.fillText(labelText, labelX, labelY);
 
     // Dessiner la date
     ctx.fillStyle = colorConfig.text;
     ctx.font = `${fontConfig.style} ${fontConfig.weight} ${fontConfig.size}px ${fontConfig.family}`;
-    ctx.textAlign = (labelPosition === 'left' || labelPosition === 'right') ? 'left' : (props.textAlign as CanvasTextAlign || 'left');
-    ctx.textBaseline = 'top';
+    ctx.textAlign =
+      labelPosition === "left" || labelPosition === "right"
+        ? "left"
+        : (props.textAlign as CanvasTextAlign) || "left";
+    ctx.textBaseline = "top";
     ctx.fillText(displayDate, dateX, dateY);
   } else {
     // Sans label, affichage normal
@@ -2548,21 +2568,45 @@ const formatOrderDate = (
 
     // Noms des mois en français
     const monthNames = [
-      "janvier", "février", "mars", "avril", "mai", "juin",
-      "juillet", "août", "septembre", "octobre", "novembre", "décembre"
+      "janvier",
+      "février",
+      "mars",
+      "avril",
+      "mai",
+      "juin",
+      "juillet",
+      "août",
+      "septembre",
+      "octobre",
+      "novembre",
+      "décembre",
     ];
     const monthNamesShort = [
-      "jan", "fév", "mar", "avr", "mai", "juin",
-      "juil", "août", "sep", "oct", "nov", "déc"
+      "jan",
+      "fév",
+      "mar",
+      "avr",
+      "mai",
+      "juin",
+      "juil",
+      "août",
+      "sep",
+      "oct",
+      "nov",
+      "déc",
     ];
 
     // Noms des jours en français
     const dayNames = [
-      "dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"
+      "dimanche",
+      "lundi",
+      "mardi",
+      "mercredi",
+      "jeudi",
+      "vendredi",
+      "samedi",
     ];
-    const dayNamesShort = [
-      "dim", "lun", "mar", "mer", "jeu", "ven", "sam"
-    ];
+    const dayNamesShort = ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"];
 
     let formattedDate: string;
     switch (format) {
@@ -2632,15 +2676,15 @@ const drawWoocommerceInvoiceNumber = (
 
   // Gestion du label
   const showLabel = props.showLabel !== false;
-  const labelText = props.labelText || 'Numéro de facture :';
-  const labelPosition = props.labelPosition || 'left';
+  const labelText = props.labelText || "Numéro de facture :";
+  const labelPosition = props.labelPosition || "left";
   const labelSpacing = props.labelSpacing || 8;
-  
+
   // Config police du label
-  const labelFontFamily = props.labelFontFamily || props.fontFamily || 'Arial';
+  const labelFontFamily = props.labelFontFamily || props.fontFamily || "Arial";
   const labelFontSize = props.labelFontSize || props.fontSize || 12;
-  const labelFontWeight = props.labelFontWeight || 'normal';
-  const labelFontStyle = props.labelFontStyle || 'normal';
+  const labelFontWeight = props.labelFontWeight || "normal";
+  const labelFontStyle = props.labelFontStyle || "normal";
   const labelColor = props.labelColor || props.color || colorConfig.text;
 
   if (showLabel) {
@@ -2663,7 +2707,7 @@ const drawWoocommerceInvoiceNumber = (
 
     // Calculer les positions selon labelPosition
     switch (labelPosition) {
-      case 'top':
+      case "top":
         // Label au-dessus du numéro
         labelX = calculateTextX(element, props.textAlign, padding);
         labelY = padding.top;
@@ -2671,37 +2715,45 @@ const drawWoocommerceInvoiceNumber = (
         numberY = padding.top + labelHeight + labelSpacing;
         break;
 
-      case 'left':
+      case "left":
         // Label à gauche du numéro
         const totalWidth = labelWidth + labelSpacing + numberWidth;
-        if (props.textAlign === 'center') {
+        if (props.textAlign === "center") {
           labelX = (element.width - totalWidth) / 2;
-        } else if (props.textAlign === 'right') {
+        } else if (props.textAlign === "right") {
           labelX = element.width - padding.right - totalWidth;
         } else {
           labelX = padding.left;
         }
-        labelY = calculateTextYWithPadding(element, props.verticalAlign, padding);
+        labelY = calculateTextYWithPadding(
+          element,
+          props.verticalAlign,
+          padding,
+        );
         numberX = labelX + labelWidth + labelSpacing;
         numberY = labelY;
         break;
 
-      case 'right':
+      case "right":
         // Label à droite du numéro
         const totalWidthRight = numberWidth + labelSpacing + labelWidth;
-        if (props.textAlign === 'center') {
+        if (props.textAlign === "center") {
           numberX = (element.width - totalWidthRight) / 2;
-        } else if (props.textAlign === 'right') {
+        } else if (props.textAlign === "right") {
           numberX = element.width - padding.right - totalWidthRight;
         } else {
           numberX = padding.left;
         }
-        numberY = calculateTextYWithPadding(element, props.verticalAlign, padding);
+        numberY = calculateTextYWithPadding(
+          element,
+          props.verticalAlign,
+          padding,
+        );
         labelX = numberX + numberWidth + labelSpacing;
         labelY = numberY;
         break;
 
-      case 'bottom':
+      case "bottom":
         // Label en-dessous du numéro
         numberX = calculateTextX(element, props.textAlign, padding);
         numberY = padding.top;
@@ -2713,15 +2765,21 @@ const drawWoocommerceInvoiceNumber = (
     // Dessiner le label
     ctx.fillStyle = labelColor;
     ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-    ctx.textAlign = (labelPosition === 'left' || labelPosition === 'right') ? 'left' : (props.textAlign as CanvasTextAlign || 'left');
-    ctx.textBaseline = 'top';
+    ctx.textAlign =
+      labelPosition === "left" || labelPosition === "right"
+        ? "left"
+        : (props.textAlign as CanvasTextAlign) || "left";
+    ctx.textBaseline = "top";
     ctx.fillText(labelText, labelX, labelY);
 
     // Dessiner le numéro
     ctx.fillStyle = colorConfig.text;
     ctx.font = `${fontConfig.style} ${fontConfig.weight} ${fontConfig.size}px ${fontConfig.family}`;
-    ctx.textAlign = (labelPosition === 'left' || labelPosition === 'right') ? 'left' : (props.textAlign as CanvasTextAlign || 'left');
-    ctx.textBaseline = 'top';
+    ctx.textAlign =
+      labelPosition === "left" || labelPosition === "right"
+        ? "left"
+        : (props.textAlign as CanvasTextAlign) || "left";
+    ctx.textBaseline = "top";
     ctx.fillText(displayText, numberX, numberY);
   } else {
     // Sans label, affichage normal
@@ -3372,8 +3430,12 @@ export const Canvas = function Canvas({
             const imageY = (containerHeight - logoHeight) / 2;
 
             // 🔍 DEBUG: Log des coordonnées company_logo
-            console.log(`[React Canvas company_logo] Element ID: ${element.id} | x: ${element.x} | y: ${element.y} | containerW: ${containerWidth} | containerH: ${containerHeight}`);
-            console.log(`[React Canvas company_logo] imageX: ${imageX} | imageY: ${imageY} | logoW: ${logoWidth} | logoH: ${logoHeight}`);
+            console.log(
+              `[React Canvas company_logo] Element ID: ${element.id} | x: ${element.x} | y: ${element.y} | containerW: ${containerWidth} | containerH: ${containerHeight}`,
+            );
+            console.log(
+              `[React Canvas company_logo] imageX: ${imageX} | imageY: ${imageY} | logoW: ${logoWidth} | logoH: ${logoHeight}`,
+            );
 
             // Appliquer l'opacité
             if (opacity < 1) {
@@ -3384,7 +3446,14 @@ export const Canvas = function Canvas({
             if (borderRadius > 0) {
               ctx.save();
               ctx.beginPath();
-              roundedRect(ctx, imageX, imageY, logoWidth, logoHeight, borderRadius);
+              roundedRect(
+                ctx,
+                imageX,
+                imageY,
+                logoWidth,
+                logoHeight,
+                borderRadius,
+              );
               ctx.clip();
             }
 
@@ -3418,7 +3487,6 @@ export const Canvas = function Canvas({
 
             // Le contexte a déjà été restauré ci-dessus
             return;
-
           } catch (error) {
             debugError(`❌ [LOGO] Error rendering image ${logoUrl}:`, error);
             // En cas d'erreur, dessiner un placeholder

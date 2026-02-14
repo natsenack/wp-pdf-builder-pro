@@ -408,7 +408,6 @@ export function CustomerInfoProperties({
               />
             </div>
           </div>
-
         </>
       )}
 

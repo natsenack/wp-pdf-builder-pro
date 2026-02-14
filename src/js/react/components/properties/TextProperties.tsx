@@ -445,7 +445,6 @@ export function TextProperties({
               style={{ width: "100%" }}
             />
           </div>
-
         </>
       )}
     </>
