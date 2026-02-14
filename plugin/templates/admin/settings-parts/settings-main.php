@@ -295,23 +295,37 @@ jQuery(document).ready(function($) {
         
         if ($activeForm.length > 0) {
             var fieldCount = 0;
+            var templateFields = {};
             $activeForm.find('input, select, textarea').each(function() {
                 var $field = $(this);
                 var fieldName = $field.attr('name');
                 if (fieldName && fieldName !== '_wpnonce') { // Skip _wpnonce as we set it explicitly
+                    var fieldValue = '';
                     if ($field.attr('type') === 'checkbox') {
-                        ajaxData[fieldName] = $field.is(':checked') ? '1' : '0';
+                        fieldValue = $field.is(':checked') ? '1' : '0';
                     } else if ($field.attr('type') === 'radio') {
                         if ($field.is(':checked')) {
-                            ajaxData[fieldName] = $field.val();
+                            fieldValue = $field.val();
+                        } else {
+                            return; // Skip non-checked radios
                         }
                     } else {
-                        ajaxData[fieldName] = $field.val() || '';
+                        fieldValue = $field.val() || '';
                     }
+                    ajaxData[fieldName] = fieldValue;
                     fieldCount++;
+                    
+                    // Log des champs templates spécifiquement
+                    if (fieldName.indexOf('order_status_templates') !== -1) {
+                        templateFields[fieldName] = fieldValue;
+                        console.log('[TEMPLATE FIELD]', fieldName, '=', fieldValue);
+                    }
                 }
             });
-        console.log('PDF Builder Settings: Collected', fieldCount, 'fields');
+            console.log('PDF Builder Settings: Collected', fieldCount, 'fields');
+            if (Object.keys(templateFields).length > 0) {
+                console.log('PDF Builder Settings: Template fields found:', templateFields);
+            }
         }
 
         // Log détaillé des données AJAX avant envoi
@@ -323,6 +337,7 @@ jQuery(document).ready(function($) {
             pdfBuilderAjax: typeof pdf_builder_ajax !== 'undefined' ? 'EXISTS' : 'NOT FOUND',
             pdfBuilderAjaxNonce: (typeof pdf_builder_ajax !== 'undefined' && pdf_builder_ajax.nonce) ? pdf_builder_ajax.nonce.substring(0, 10) + '...' : 'NOT SET'
         });
+        console.log('PDF Builder Settings: Full AJAX data:', JSON.stringify(ajaxData, null, 2));
 
         console.log('PDF Builder Settings: Sending AJAX request to:', ajaxurl);
 

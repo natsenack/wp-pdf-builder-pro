@@ -551,14 +551,22 @@ class AjaxHandler
             $settings_to_save = [];
             $templates_data = [];
 
+            error_log('======================== HANDLE SAVE ALL SETTINGS START ========================');
+            error_log('PHP: handleSaveAllSettings() called');
+            error_log('PHP: POST keys at start: ' . implode(', ', array_keys($_POST)));
+            
             // Si les données arrivent sous forme de tableau imbriqué pdf_builder_settings[...]
             if (isset($_POST['pdf_builder_settings']) && is_array($_POST['pdf_builder_settings'])) {
                 error_log('PHP: Found pdf_builder_settings array in POST');
+                error_log('PHP: pdf_builder_settings structure: ' . print_r($_POST['pdf_builder_settings'], true));
                 
                 // Extraire les templates mappings si présents
                 if (isset($_POST['pdf_builder_settings']['pdf_builder_order_status_templates']) && is_array($_POST['pdf_builder_settings']['pdf_builder_order_status_templates'])) {
                     $templates_data = $this->sanitizeFieldValue('pdf_builder_order_status_templates', $_POST['pdf_builder_settings']['pdf_builder_order_status_templates']);
                     error_log('PHP: Found templates data in nested array: ' . json_encode($templates_data));
+                    error_log('PHP: Template count: ' . count($templates_data));
+                } else {
+                    error_log('PHP: pdf_builder_order_status_templates NOT found in nested array');
                 }
                 
                 // Traiter les autres paramètres dans le tableau
@@ -590,14 +598,23 @@ class AjaxHandler
                 }
             }
 
-            error_log('PHP: Received POST keys: ' . implode(', ', array_keys($_POST)));
-            error_log('PHP: Settings to save: ' . implode(', ', array_keys($settings_to_save)));
+            error_log('PHP: Final POST keys: ' . implode(', ', array_keys($_POST)));
+            error_log('PHP: Settings to save count: ' . count($settings_to_save));
+            error_log('PHP: Settings to save keys: ' . implode(', ', array_keys($settings_to_save)));
+            error_log('PHP: Templates data count: ' . count($templates_data));
             error_log('PHP: Templates data: ' . json_encode($templates_data));
 
             // Sauvegarder les templates séparément si des données existent
             if (!empty($templates_data)) {
-                pdf_builder_update_option('pdf_builder_order_status_templates', $templates_data);
-                error_log('PHP: Templates data saved to pdf_builder_order_status_templates');
+                error_log('PHP: Attempting to save templates to pdf_builder_order_status_templates');
+                $result = pdf_builder_update_option('pdf_builder_order_status_templates', $templates_data);
+                error_log('PHP: Save result: ' . ($result ? 'SUCCESS' : 'FAILED'));
+                
+                // Vérifier immédiatement ce qui a été sauvegardé
+                $saved_value = pdf_builder_get_option('pdf_builder_order_status_templates', []);
+                error_log('PHP: Verification - saved value: ' . json_encode($saved_value));
+            } else {
+                error_log('PHP: Templates data is EMPTY - skipping save');
             }
 
             if (empty($settings_to_save) && empty($templates_data)) {
@@ -1966,33 +1983,58 @@ class AjaxHandler
     public function ajaxSaveSettings()
     {
         try {
+            error_log('======================== AJAX SAVE SETTINGS START ========================');
+            error_log('PDF Builder: ajaxSaveSettings() called');
+            error_log('PDF Builder: Request method: ' . $_SERVER['REQUEST_METHOD']);
+            error_log('PDF Builder: Content-Type: ' . ($_SERVER['CONTENT_TYPE'] ?? 'not set'));
+            
             // Vérifier les permissions
             if (!current_user_can('manage_options')) {
+                error_log('PDF Builder: Permission denied for user: ' . get_current_user_id());
                 wp_send_json_error(['message' => __('Permissions insuffisantes', 'pdf-builder-pro')]);
                 return;
             }
+            error_log('PDF Builder: Permissions OK');
 
             // Vérifier le nonce - accepter plusieurs formats de nonce
             $nonce = $_POST['_wpnonce'] ?? $_POST['nonce'] ?? '';
+            error_log('PDF Builder: Nonce received: ' . substr($nonce, 0, 15) . '...');
             $nonce_valid = false;
             
             // Essayer plusieurs actions de nonce possibles
             if (pdf_builder_verify_nonce($nonce, 'pdf_builder_ajax')) {
                 $nonce_valid = true;
+                error_log('PDF Builder: Nonce valid for pdf_builder_ajax');
             } elseif (pdf_builder_verify_nonce($nonce, 'pdf_builder_settings')) {
                 $nonce_valid = true;
+                error_log('PDF Builder: Nonce valid for pdf_builder_settings');
             }
             
             if (!$nonce_valid) {
-                error_log('PDF Builder: Nonce validation failed - nonce: ' . substr($nonce, 0, 10) . '...');
+                error_log('PDF Builder: Nonce validation FAILED - nonce: ' . substr($nonce, 0, 10) . '...');
                 wp_send_json_error(['message' => __('Nonce invalide', 'pdf-builder-pro')]);
                 return;
             }
 
             $tab = sanitize_text_field($_POST['tab'] ?? 'general');
             
-            error_log("PDF Builder: ajaxSaveSettings() called for tab: {$tab}");
+            error_log("PDF Builder: Tab: {$tab}");
             error_log('PDF Builder: POST data keys: ' . implode(', ', array_keys($_POST)));
+            
+            // Log des données templates si présentes
+            if (isset($_POST['pdf_builder_settings'])) {
+                error_log('PDF Builder: Found pdf_builder_settings array');
+                error_log('PDF Builder: pdf_builder_settings keys: ' . implode(', ', array_keys($_POST['pdf_builder_settings'])));
+                if (isset($_POST['pdf_builder_settings']['pdf_builder_order_status_templates'])) {
+                    error_log('PDF Builder: Found pdf_builder_order_status_templates in nested array');
+                    error_log('PDF Builder: Templates data: ' . json_encode($_POST['pdf_builder_settings']['pdf_builder_order_status_templates']));
+                }
+            }
+            
+            if (isset($_POST['pdf_builder_order_status_templates'])) {
+                error_log('PDF Builder: Found pdf_builder_order_status_templates at root level');
+                error_log('PDF Builder: Templates data: ' . json_encode($_POST['pdf_builder_order_status_templates']));
+            }
 
             // Utiliser le handler unifié qui gère maintenant les tableaux imbriqués
             $this->handleSaveAllSettings();
