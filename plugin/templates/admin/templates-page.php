@@ -927,32 +927,30 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
 </div>
 
 <script>
-// Fonction pour afficher modal upgrade
-function showUpgradeModal(reason) {
-    const modal = document.getElementById('upgrade-modal-' + reason);
-    if (modal) {
-        modal.style.display = 'flex';
+    // Fonction pour afficher modal upgrade
+    function showUpgradeModal(reason) {
+        const modal = document.getElementById('upgrade-modal-' + reason);
+        if (modal) {
+            modal.style.display = 'flex';
 
-        // Tracking pour analytics (si disponible)
-        if (typeof gtag !== 'undefined') {
-            gtag('event', 'upgrade_modal_shown', {
-                'reason': reason,
-                'user_type': 'free',
-                'page': 'templates'
-            });
+            // Tracking pour analytics (si disponible)
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'upgrade_modal_shown', {
+                    'reason': reason,
+                    'user_type': 'free',
+                    'page': 'templates'
+                });
+            }
         }
     }
-}
 
-// Fermer modal au clic sur overlay ou bouton close
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('modal-overlay') || e.target.classList.contains('modal-close')) {
-        e.target.closest('.modal-overlay').style.display = 'none';
-    }
-});
+    // Fermer modal au clic sur overlay ou bouton close
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal-overlay') || e.target.classList.contains('modal-close')) {
+            e.target.closest('.modal-overlay').style.display = 'none';
+        }
+    });
 </script>
-    </div>
-</div>
 
 <!-- JavaScript pour la gestion des templates -->
 <script>
