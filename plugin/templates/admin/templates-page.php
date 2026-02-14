@@ -195,13 +195,13 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
         <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border: 1px solid #dee2e6;">
             <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">Filtrer par type</h3>
             <div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; flex-wrap: wrap; -webkit-flex-wrap: wrap; -moz-flex-wrap: wrap; -ms-flex-wrap: wrap; -o-flex-wrap: wrap;">
-                <button class="filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 6px 12px;">📄 Tous</button>
-                <button class="filter-btn button button-secondary" data-filter="facture" style="font-size: 12px; padding: 6px 12px; background: #007cba; border-color: #007cba; color: white;">🧾 Factures</button>
-                <button class="filter-btn button button-secondary" data-filter="devis" style="font-size: 12px; padding: 6px 12px; background: #28a745; border-color: #28a745; color: white;">📋 Devis</button>
-                <button class="filter-btn button button-secondary" data-filter="commande" style="font-size: 12px; padding: 6px 12px; background: #ffc107; border-color: #ffc107; color: #212529;">📦 Commandes</button>
-                <button class="filter-btn button button-secondary" data-filter="contrat" style="font-size: 12px; padding: 6px 12px; background: #dc3545; border-color: #dc3545; color: white;">📑 Contrats</button>
-                <button class="filter-btn button button-secondary" data-filter="newsletter" style="font-size: 12px; padding: 6px 12px; background: #6f42c1; border-color: #6f42c1; color: white;">📰 Newsletters</button>
-                <button class="filter-btn button button-secondary" data-filter="autre" style="font-size: 12px; padding: 6px 12px; background: #6c757d; border-color: #6c757d; color: white;">📄 Autres</button>
+                <button class="pdfb-filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 6px 12px;">📄 Tous</button>
+                <button class="pdfb-filter-btn button button-secondary" data-filter="facture" style="font-size: 12px; padding: 6px 12px; background: #007cba; border-color: #007cba; color: white;">🧾 Factures</button>
+                <button class="pdfb-filter-btn button button-secondary" data-filter="devis" style="font-size: 12px; padding: 6px 12px; background: #28a745; border-color: #28a745; color: white;">📋 Devis</button>
+                <button class="pdfb-filter-btn button button-secondary" data-filter="commande" style="font-size: 12px; padding: 6px 12px; background: #ffc107; border-color: #ffc107; color: #212529;">📦 Commandes</button>
+                <button class="pdfb-filter-btn button button-secondary" data-filter="contrat" style="font-size: 12px; padding: 6px 12px; background: #dc3545; border-color: #dc3545; color: white;">📑 Contrats</button>
+                <button class="pdfb-filter-btn button button-secondary" data-filter="newsletter" style="font-size: 12px; padding: 6px 12px; background: #6f42c1; border-color: #6f42c1; color: white;">📰 Newsletters</button>
+                <button class="pdfb-filter-btn button button-secondary" data-filter="autre" style="font-size: 12px; padding: 6px 12px; background: #6c757d; border-color: #6c757d; color: white;">📄 Autres</button>
             </div>
         </div>
 
@@ -290,7 +290,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                     // Déterminer si c'est un template "en trop" pour les utilisateurs gratuits
                     $is_excess_template = (!$is_premium && $template_counter > 1);
 
-                    echo '<div class="template-card template-type-' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; padding: 20px; background: ' . ($is_excess_template ? '#f8f8f8' : '#fff') . '; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; ' . ($is_excess_template ? 'opacity: 0.6;' : 'cursor: pointer;') . ' min-height: 350px; position: relative;" ' . ($is_excess_template ? '' : 'onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';"') . '>';
+                    echo '<div class="pdfb-template-card template-type-' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; padding: 20px; background: ' . ($is_excess_template ? '#f8f8f8' : '#fff') . '; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; ' . ($is_excess_template ? 'opacity: 0.6;' : 'cursor: pointer;') . ' min-height: 350px; position: relative;" ' . ($is_excess_template ? '' : 'onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';"') . '>';
 
                     // Conteneur pour organiser le contenu de la carte
                     echo '<div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; flex-direction: column; -webkit-flex-direction: column; -moz-flex-direction: column; -ms-flex-direction: column; -o-flex-direction: column; height: 100%;">';
@@ -321,7 +321,7 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                     ];
                     $type_label = isset($type_labels[$template_type]) ? $type_labels[$template_type] : $type_labels['autre'];
 
-                    echo '<div class="template-type-badge" style="position: absolute; top: 10px; left: 10px; background: ' . $type_color . '; color: white; padding: 4px 8px; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
+                    echo '<div class="pdfb-template-type-badge" style="position: absolute; top: 10px; left: 10px; background: ' . $type_color . '; color: white; padding: 4px 8px; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
                     echo $type_label;
                     echo '</div>';
 
@@ -378,9 +378,9 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
         </div>
 
         <!-- Modale de la galerie de modèles prédéfinis -->
-        <div id="template-gallery-modal" class="template-gallery-modal template-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
-            <div class="template-modal-content" style="background: #fff; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; padding: 0; max-width: 1200px; width: 95%; max-height: 90vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); -webkit-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -moz-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -ms-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -o-box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
-                <div class="template-modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 25px 30px; border-bottom: 1px solid var(--pdf-border); background: var(--pdf-light); color: var(--pdf-text);">
+        <div id="template-gallery-modal" class="pdfb-template-gallery-modal template-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
+            <div class="pdfb-template-modal-content" style="background: #fff; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; padding: 0; max-width: 1200px; width: 95%; max-height: 90vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); -webkit-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -moz-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -ms-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -o-box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
+                <div class="pdfb-template-modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 25px 30px; border-bottom: 1px solid var(--pdf-border); background: var(--pdf-light); color: var(--pdf-text);">
                     <div>
                         <h2 style="margin: 0; font-size: 24px; font-weight: 600;">🎨 Galerie de Modèles Prédéfinis</h2>
                         <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 14px; color: var(--pdf-secondary);">Choisissez un modèle professionnel pour commencer</p>
@@ -393,13 +393,13 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
                     <div style="margin-bottom: 30px;">
                         <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">Filtrer par catégorie</h3>
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <button class="gallery-filter-btn button button-secondary active" data-filter="all">📄 Tous</button>
-                            <button class="gallery-filter-btn button button-secondary facture" data-filter="facture">🧾 Factures</button>
-                            <button class="gallery-filter-btn button button-secondary devis" data-filter="devis">📋 Devis</button>
+                            <button class="pdfb-gallery-filter-btn button button-secondary active" data-filter="all">📄 Tous</button>
+                            <button class="pdfb-gallery-filter-btn button button-secondary facture" data-filter="facture">🧾 Factures</button>
+                            <button class="pdfb-gallery-filter-btn button button-secondary devis" data-filter="devis">📋 Devis</button>
                             <!-- Catégories désactivées temporairement -->
-                            <!-- <button class="gallery-filter-btn button button-secondary commande" data-filter="commande">📦 Commandes</button> -->
-                            <!-- <button class="gallery-filter-btn button button-secondary contrat" data-filter="contrat">📑 Contrats</button> -->
-                            <!-- <button class="gallery-filter-btn button button-secondary newsletter" data-filter="newsletter">📰 Newsletters</button> -->
+                            <!-- <button class="pdfb-gallery-filter-btn button button-secondary commande" data-filter="commande">📦 Commandes</button> -->
+                            <!-- <button class="pdfb-gallery-filter-btn button button-secondary contrat" data-filter="contrat">📑 Contrats</button> -->
+                            <!-- <button class="pdfb-gallery-filter-btn button button-secondary newsletter" data-filter="newsletter">📰 Newsletters</button> -->
                         </div>
                     </div>
 
@@ -770,13 +770,13 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
 }
 </style>
 
-<div id="upgrade-modal-template" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center;">
-    <div class="modal-content" style="background: white; border-radius: 12px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
-        <div class="modal-header" style="padding: 20px 30px; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
+<div id="upgrade-modal-template" class="pdfb-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center;">
+    <div class="pdfb-modal-content" style="background: white; border-radius: 12px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+        <div class="pdfb-modal-header" style="padding: 20px 30px; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
             <h3 style="margin: 0; color: #23282d; font-size: 24px;">🚀 Débloquer la Création de Templates</h3>
-            <button class="modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+            <button class="pdfb-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
         </div>
-        <div class="modal-body" style="padding: 30px;">
+        <div class="pdfb-modal-body" style="padding: 30px;">
             <div class="upgrade-feature" style="text-align: center; margin-bottom: 30px;">
                 <div class="feature-icon" style="font-size: 64px; margin-bottom: 20px;">🎨</div>
                 <h4 style="color: #23282d; font-size: 20px; margin-bottom: 15px;">Templates Illimités & Personnalisés</h4>
@@ -804,13 +804,13 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
 </div>
 
 <!-- Modal d'upgrade pour galerie de modèles -->
-<div id="upgrade-modal-gallery" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center;">
-    <div class="modal-content" style="background: white; border-radius: 12px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
-        <div class="modal-header" style="padding: 20px 30px; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
+<div id="upgrade-modal-gallery" class="pdfb-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center;">
+    <div class="pdfb-modal-content" style="background: white; border-radius: 12px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+        <div class="pdfb-modal-header" style="padding: 20px 30px; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
             <h3 style="margin: 0; color: #23282d; font-size: 24px;">🎨 Modèles Prédéfinis Premium</h3>
-            <button class="modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+            <button class="pdfb-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
         </div>
-        <div class="modal-body" style="padding: 30px;">
+        <div class="pdfb-modal-body" style="padding: 30px;">
             <div class="upgrade-feature" style="text-align: center; margin-bottom: 30px;">
                 <div class="feature-icon" style="font-size: 64px; margin-bottom: 20px;">🖼️</div>
                 <h4 style="color: #23282d; font-size: 20px; margin-bottom: 15px;">Galerie de Modèles Professionnels</h4>
@@ -1202,7 +1202,7 @@ function selectPredefinedTemplate(templateSlug) {
 </script>
 
 <!-- Modal des paramètres du template (dynamique - créée par JavaScript) -->
-<div id="template-settings-modal" class="template-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center;">
+<div id="template-settings-modal" class="pdfb-template-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center;">
 </div>
 
 <script>
@@ -1242,18 +1242,18 @@ function loadTemplateSettings(templateId) {
                 modalContent.className = 'template-modal-content';
                 modalContent.style.cssText = 'background: #fff; border-radius: 12px; padding: 0; max-width: 600px; width: 95%; max-height: 80vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
                 modalContent.innerHTML = `
-                    <div class="template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <div class="pdfb-template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                         <div>
                             <h2 style="margin: 0; font-size: 24px; font-weight: 600;">⚙️ Erreur de chargement</h2>
                             <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Impossible de charger les paramètres</p>
                         </div>
                         <button onclick="closeTemplateSettingsModal()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
                     </div>
-                    <div class="template-modal-body" style="padding: 30px; text-align: center; color: #dc3545;">
+                    <div class="pdfb-template-modal-body" style="padding: 30px; text-align: center; color: #dc3545;">
                         <div style="font-size: 2rem; margin-bottom: 20px;">❌</div>
                         <p>${errorMsg}</p>
                     </div>
-                    <div class="template-modal-footer" style="display: flex; justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;">
+                    <div class="pdfb-template-modal-footer" style="display: flex; justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;">
                         <button onclick="closeTemplateSettingsModal()" class="button button-secondary" style="padding: 10px 20px;">Fermer</button>
                     </div>
                 `;
@@ -1276,18 +1276,18 @@ function loadTemplateSettings(templateId) {
             modalContent.className = 'template-modal-content';
             modalContent.style.cssText = 'background: #fff; border-radius: 12px; padding: 0; max-width: 600px; width: 95%; max-height: 80vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
             modalContent.innerHTML = `
-                <div class="template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div class="pdfb-template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                     <div>
                         <h2 style="margin: 0; font-size: 24px; font-weight: 600;">⚙️ Erreur de chargement</h2>
                         <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Impossible de charger les paramètres</p>
                     </div>
                     <button onclick="closeTemplateSettingsModal()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
                 </div>
-                <div class="template-modal-body" style="padding: 30px; text-align: center; color: #dc3545;">
+                <div class="pdfb-template-modal-body" style="padding: 30px; text-align: center; color: #dc3545;">
                     <div style="font-size: 2rem; margin-bottom: 20px;">❌</div>
                     <p>Erreur de communication avec le serveur</p>
                 </div>
-                <div class="template-modal-footer" style="display: flex; justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;">
+                <div class="pdfb-template-modal-footer" style="display: flex; justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;">
                     <button onclick="closeTemplateSettingsModal()" class="button button-secondary" style="padding: 10px 20px;">Fermer</button>
                 </div>
             `;
@@ -1314,30 +1314,30 @@ function displayTemplateSettings(template) {
     modalContent.className = 'template-modal-content';
     modalContent.style.cssText = 'background: #fff; border-radius: 12px; padding: 0; max-width: 600px; width: 95%; max-height: 80vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
     modalContent.innerHTML = `
-        <div class="template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <div class="pdfb-template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
             <div>
                 <h2 style="margin: 0; font-size: 24px; font-weight: 600;">⚙️ Paramètres du Template</h2>
                 <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Configuration de "${template.name || 'Template'}"</p>
             </div>
             <button onclick="closeTemplateSettingsModal()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
         </div>
-        <div class="template-modal-body" style="padding: 30px; max-height: calc(80vh - 200px); overflow-y: auto;">
+        <div class="pdfb-template-modal-body" style="padding: 30px; max-height: calc(80vh - 200px); overflow-y: auto;">
             <div style="text-align: center; padding: 40px;">
                 <div style="font-size: 2rem; margin-bottom: 20px;">⏳</div>
                 <p>Chargement des paramètres...</p>
             </div>
         </div>
-        <div class="template-modal-footer template-settings-modal-footer" style="padding: 20px 32px; border-top: 1px solid #e1e5e9; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; min-height: 80px;">
-            <div class="template-settings-footer-content" style="flex: 1; padding-right: 20px;">
-                <div class="template-settings-footer-title" style="font-size: 16px; font-weight: 600; color: #23282d; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
-                    <span class="template-settings-icon">⚙️</span>
+        <div class="pdfb-template-modal-footer template-settings-modal-footer" style="padding: 20px 32px; border-top: 1px solid #e1e5e9; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; min-height: 80px;">
+            <div class="pdfb-template-settings-footer-content" style="flex: 1; padding-right: 20px;">
+                <div class="pdfb-template-settings-footer-title" style="font-size: 16px; font-weight: 600; color: #23282d; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+                    <span class="pdfb-template-settings-icon">⚙️</span>
                     Paramètres du Template
                 </div>
-                <div class="template-settings-footer-subtitle" style="font-size: 14px; color: #6c757d; font-style: italic;">
+                <div class="pdfb-template-settings-footer-subtitle" style="font-size: 14px; color: #6c757d; font-style: italic;">
                     Configuration de "Template par défaut"
                 </div>
             </div>
-            <div class="template-settings-footer-actions" style="display: flex; gap: 12px; flex-shrink: 0;">
+            <div class="pdfb-template-settings-footer-actions" style="display: flex; gap: 12px; flex-shrink: 0;">
                 <button onclick="closeTemplateSettingsModal()" class="canvas-modal-btn canvas-modal-btn-secondary" style="padding: 12px 24px; border-radius: 8px; font-weight: 500; font-size: 14px; border: none; cursor: pointer; min-width: 100px; background: #6c757d; color: #ffffff;">Annuler</button>
                 <button onclick="saveTemplateSettings()" class="canvas-modal-btn canvas-modal-btn-primary" style="padding: 12px 24px; border-radius: 8px; font-weight: 500; font-size: 14px; border: none; cursor: pointer; min-width: 100px; background: #007cba; color: #ffffff;">💾 Enregistrer</button>
             </div>

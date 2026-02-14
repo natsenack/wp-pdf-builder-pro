@@ -60,6 +60,29 @@ class AdminScriptLoader
         // Styles CSS de base
         \wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
         
+        // Charger les styles spécifiques à chaque page
+        $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+        
+        // Dashboard styles
+        if ($current_page === 'pdf-builder-dashboard') {
+            \wp_enqueue_style(
+                'pdf-builder-dashboard',
+                PDF_BUILDER_PRO_ASSETS_URL . 'css/dashboard-css.min.css',
+                [],
+                PDF_BUILDER_PRO_VERSION
+            );
+        }
+        
+        // Templates page styles
+        if ($current_page === 'pdf-builder-templates') {
+            \wp_enqueue_style(
+                'pdf-builder-templates-page',
+                PDF_BUILDER_PRO_ASSETS_URL . 'css/templates-page-css.min.css',
+                [],
+                PDF_BUILDER_PRO_VERSION
+            );
+        }
+        
         // Charger le CSS unifié qui contient les styles pour le bouton flottant
         $unified_css = PDF_BUILDER_PRO_ASSETS_PATH . 'css/pdf-builder-unified.css';
         if (file_exists($unified_css)) {

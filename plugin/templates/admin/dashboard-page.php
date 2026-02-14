@@ -12,44 +12,44 @@ if (!defined('ABSPATH')) {
 }
 ?>
 <div class="wrap">
-    <div class="pdf-builder-dashboard">
-        <div class="dashboard-header">
+    <div class="pdfb-pdf-builder-dashboard">
+        <div class="pdfb-dashboard-header">
             <h1>📄 PDF Builder Pro</h1>
-            <p class="dashboard-subtitle">Constructeur de PDF professionnel avec éditeur visuel avancé</p>
-            <div class="dashboard-meta">
-                <span class="version-info">Version <?php echo esc_html($plugin_version); ?></span>
-                <span class="last-update">Dernière mise à jour: <?php echo date('d/m/Y'); ?></span>
+            <p class="pdfb-dashboard-subtitle">Constructeur de PDF professionnel avec éditeur visuel avancé</p>
+            <div class="pdfb-dashboard-meta">
+                <span class="pdfb-version-info">Version <?php echo esc_html($plugin_version); ?></span>
+                <span class="pdfb-last-update">Dernière mise à jour: <?php echo date('d/m/Y'); ?></span>
             </div>
         </div>
 
         <!-- Statistiques rapides -->
-        <div class="dashboard-stats">
-            <div class="stat-card">
-                <div class="stat-icon">📋</div>
-                <div class="stat-content">
-                    <div class="stat-number"><?php echo number_format($stats['templates']); ?></div>
-                    <div class="stat-label">Templates</div>
+        <div class="pdfb-dashboard-stats">
+            <div class="pdfb-stat-card">
+                <div class="pdfb-stat-icon">📋</div>
+                <div class="pdfb-stat-content">
+                    <div class="pdfb-stat-number"><?php echo number_format($stats['templates']); ?></div>
+                    <div class="pdfb-stat-label">Templates</div>
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon">📄</div>
-                <div class="stat-content">
-                    <div class="stat-number"><?php echo number_format($stats['documents']); ?></div>
-                    <div class="stat-label">Documents générés</div>
+            <div class="pdfb-stat-card">
+                <div class="pdfb-stat-icon">📄</div>
+                <div class="pdfb-stat-content">
+                    <div class="pdfb-stat-number"><?php echo number_format($stats['documents']); ?></div>
+                    <div class="pdfb-stat-label">Documents générés</div>
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon">📈</div>
-                <div class="stat-content">
-                    <div class="stat-number"><?php echo number_format($stats['today']); ?></div>
-                    <div class="stat-label">Aujourd'hui</div>
+            <div class="pdfb-stat-card">
+                <div class="pdfb-stat-icon">📈</div>
+                <div class="pdfb-stat-content">
+                    <div class="pdfb-stat-number"><?php echo number_format($stats['today']); ?></div>
+                    <div class="pdfb-stat-label">Aujourd'hui</div>
                 </div>
             </div>
         </div>
 
         <!-- Actions principales -->
-        <div class="dashboard-actions">
-            <div class="action-card primary">
+        <div class="pdfb-dashboard-actions">
+            <div class="pdfb-action-card primary">
                 <h3>⚛️ Créer un nouveau PDF</h3>
                 <p>Utilisez notre éditeur React moderne pour concevoir vos documents</p>
                 <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>"
@@ -58,7 +58,7 @@ if (!defined('ABSPATH')) {
                 </a>
             </div>
 
-            <div class="action-card">
+            <div class="pdfb-action-card">
                 <h3>📋 Gérer les Templates</h3>
                 <p>Créez, modifiez et organisez vos modèles de documents</p>
                 <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates'); ?>"
@@ -67,7 +67,7 @@ if (!defined('ABSPATH')) {
                 </a>
             </div>
 
-            <div class="action-card">
+            <div class="pdfb-action-card">
                 <h3>⚙️ Paramètres & Configuration</h3>
                 <p>Configurez les paramètres avancés, polices, qualité d'impression et options WooCommerce</p>
                 <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates'); ?>"
@@ -78,60 +78,60 @@ if (!defined('ABSPATH')) {
         </div>
 
         <!-- Guide rapide -->
-        <div class="dashboard-guide">
+        <div class="pdfb-dashboard-guide">
             <h3>🚀 Guide de démarrage rapide</h3>
-            <div class="guide-steps">
-                <div class="step">
-                    <span class="step-number">1</span>
-                    <div class="step-content">
+            <div class="pdfb-guide-steps">
+                <div class="pdfb-step">
+                    <span class="pdfb-pdfb-step-number">1</span>
+                    <div class="pdfb-pdfb-step-content">
                         <h4>🛠️ Configuration initiale</h4>
                         <p>Vérifiez la version Pro/Gratuite et les statistiques de votre installation</p>
                         <small>💡 La page d'accueil affiche automatiquement votre version et les métriques en temps réel</small>
                     </div>
                 </div>
-                <div class="step">
-                    <span class="step-number">2</span>
-                    <div class="step-content">
+                <div class="pdfb-step">
+                    <span class="pdfb-pdfb-step-number">2</span>
+                    <div class="pdfb-pdfb-step-content">
                         <h4>📋 Créez votre premier template</h4>
                         <p>Allez dans "Templates PDF" → "Créer un nouveau template"</p>
                         <small>💡 Utilisez l'éditeur React avec Canvas avancé, grille d'aimantation et guides</small>
                     </div>
                 </div>
-                <div class="step">
-                    <span class="step-number">3</span>
-                    <div class="step-content">
+                <div class="pdfb-step">
+                    <span class="pdfb-pdfb-step-number">3</span>
+                    <div class="pdfb-pdfb-step-content">
                         <h4>🎨 Concevez votre PDF</h4>
                         <p>Ajoutez des éléments : texte, images, formes, code-barres, variables WooCommerce</p>
                         <small>💡 Les propriétés sont organisées en accordéons pour une meilleure ergonomie</small>
                     </div>
                 </div>
-                <div class="step">
-                    <span class="step-number">4</span>
-                    <div class="step-content">
+                <div class="pdfb-step">
+                    <span class="pdfb-pdfb-step-number">4</span>
+                    <div class="pdfb-pdfb-step-content">
                         <h4>🛒 Intégrez WooCommerce</h4>
                         <p>Utilisez les variables dynamiques : {{order_number}}, {{customer_name}}, etc.</p>
                         <small>💡 Aperçu direct dans les metabox des commandes WooCommerce</small>
                     </div>
                 </div>
-                <div class="step">
-                    <span class="step-number">5</span>
-                    <div class="step-content">
+                <div class="pdfb-step">
+                    <span class="pdfb-pdfb-step-number">5</span>
+                    <div class="pdfb-pdfb-step-content">
                         <h4>⚙️ Configurez les paramètres avancés</h4>
                         <p>Ajustez les marges, la qualité d'impression, la compression PDF</p>
                         <small>💡 Paramètres Canvas complets : dimensions, orientation, grille, zoom</small>
                     </div>
                 </div>
-                <div class="step">
-                    <span class="step-number">6</span>
-                    <div class="step-content">
+                <div class="pdfb-step">
+                    <span class="pdfb-pdfb-step-number">6</span>
+                    <div class="pdfb-pdfb-step-content">
                         <h4>📤 Générez et testez</h4>
                         <p>Prévisualisez votre PDF et ajustez si nécessaire</p>
                         <small>💡 Utilisez l'API Preview intégrée pour des aperçus haute qualité</small>
                     </div>
                 </div>
-                <div class="step">
-                    <span class="step-number">7</span>
-                    <div class="step-content">
+                <div class="pdfb-step">
+                    <span class="pdfb-pdfb-step-number">7</span>
+                    <div class="pdfb-pdfb-step-content">
                         <h4>🔄 Automatisez (optionnel)</h4>
                         <p>Configurez des workflows automatisés pour la génération en masse</p>
                         <small>💡 Idéal pour factures, devis, reçus WooCommerce</small>
@@ -141,11 +141,11 @@ if (!defined('ABSPATH')) {
         </div>
 
         <!-- Fonctionnalités complètes -->
-        <div class="dashboard-features">
+        <div class="pdfb-dashboard-features">
             <h3>✨ Fonctionnalités de PDF Builder Pro</h3>
-            <div class="features-grid">
+            <div class="pdfb-features-grid">
                 <!-- Éditeur React -->
-                <div class="feature-category">
+                <div class="pdfb-feature-category">
                     <h4>⚛️ Éditeur React</h4>
                     <ul>
                         <li>Interface moderne et réactive</li>
@@ -164,7 +164,7 @@ if (!defined('ABSPATH')) {
                 </div>
 
                 <!-- Éléments de Design -->
-                <div class="feature-category">
+                <div class="pdfb-feature-category">
                     <h4>📐 Éléments de Design</h4>
                     <ul>
                         <li>Textes avec formatage riche</li>
@@ -180,7 +180,7 @@ if (!defined('ABSPATH')) {
                 </div>
 
                 <!-- Gestion des Templates -->
-                <div class="feature-category">
+                <div class="pdfb-feature-category">
                     <h4>📋 Gestion des Templates</h4>
                     <ul>
                         <li>Création de modèles personnalisés</li>
@@ -197,7 +197,7 @@ if (!defined('ABSPATH')) {
                 </div>
 
                 <!-- Intégration WooCommerce -->
-                <div class="feature-category">
+                <div class="pdfb-feature-category">
                     <h4>🛒 WooCommerce</h4>
                     <ul>
                         <li>Factures automatiques</li>
@@ -211,7 +211,7 @@ if (!defined('ABSPATH')) {
                 </div>
 
                 <!-- Export et Qualité -->
-                <div class="feature-category">
+                <div class="pdfb-feature-category">
                     <h4>📤 Export & Qualité</h4>
                     <ul>
                         <li>PDF haute qualité</li>
@@ -225,7 +225,7 @@ if (!defined('ABSPATH')) {
                 </div>
 
                 <!-- Paramètres Avancés -->
-                <div class="feature-category">
+                <div class="pdfb-feature-category">
                     <h4>⚙️ Paramètres Avancés</h4>
                     <ul>
                         <li>Configuration React</li>
@@ -238,7 +238,7 @@ if (!defined('ABSPATH')) {
                 </div>
 
                 <!-- API et Intégrations -->
-                <div class="feature-category">
+                <div class="pdfb-feature-category">
                     <h4>🔗 API & Intégrations</h4>
                     <ul>
                         <li>API REST complète</li>
@@ -252,7 +252,7 @@ if (!defined('ABSPATH')) {
                 </div>
 
                 <!-- Interface Utilisateur Améliorée -->
-                <div class="feature-category">
+                <div class="pdfb-feature-category">
                     <h4>🎨 Interface Utilisateur</h4>
                     <ul>
                         <li>Accordéons organisés pour les propriétés</li>
@@ -270,7 +270,7 @@ if (!defined('ABSPATH')) {
                 </div>
 
                 <!-- Sécurité et Performance -->
-                <div class="feature-category">
+                <div class="pdfb-feature-category">
                     <h4>🔒 Sécurité & Performance</h4>
                     <ul>
                         <li>Validation stricte des données</li>
@@ -287,7 +287,7 @@ if (!defined('ABSPATH')) {
                 </div>
 
                 <!-- Intégration WooCommerce -->
-                <div class="feature-category">
+                <div class="pdfb-feature-category">
                     <h4>🛒 WooCommerce</h4>
                     <ul>
                         <li>Variables de commande intégrées</li>
@@ -300,7 +300,7 @@ if (!defined('ABSPATH')) {
                 </div>
 
                 <!-- Gestion des Versions -->
-                <div class="feature-category">
+                <div class="pdfb-feature-category">
                     <h4>📦 Gestion des Versions</h4>
                     <ul>
                         <li>Version Pro avec fonctionnalités complètes</li>
@@ -316,27 +316,27 @@ if (!defined('ABSPATH')) {
             </div>
 
             <!-- Nouvelles fonctionnalités -->
-            <div class="new-features">
+            <div class="pdfb-new-features">
                 <h4>🆕 Nouvelles fonctionnalités (v1.1.0)</h4>
-                <div class="new-features-list">
-                    <div class="new-feature-item">
-                        <span class="feature-badge">INTERFACE</span>
+                <div class="pdfb-new-features-list">
+                    <div class="pdfb-new-feature-item">
+                        <span class="pdfb-feature-badge">INTERFACE</span>
                         <strong>Accordéons organisés</strong> - Police globale du tableau maintenant dans un accordéon pliable
                     </div>
-                    <div class="new-feature-item">
-                        <span class="feature-badge">VERSION</span>
+                    <div class="pdfb-new-feature-item">
+                        <span class="pdfb-feature-badge">VERSION</span>
                         <strong>Gestion des versions</strong> - Système pro/gratuit avec détection automatique de licence
                     </div>
-                    <div class="new-feature-item">
-                        <span class="feature-badge">STATS</span>
+                    <div class="pdfb-new-feature-item">
+                        <span class="pdfb-feature-badge">STATS</span>
                         <strong>Statistiques dynamiques</strong> - Comptage en temps réel des templates et documents
                     </div>
-                    <div class="new-feature-item">
-                        <span class="feature-badge">UI</span>
+                    <div class="pdfb-new-feature-item">
+                        <span class="pdfb-feature-badge">UI</span>
                         <strong>Page d'accueil optimisée</strong> - Pleine largeur et informations de version
                     </div>
-                    <div class="new-feature-item">
-                        <span class="feature-badge">PERF</span>
+                    <div class="pdfb-new-feature-item">
+                        <span class="pdfb-feature-badge">PERF</span>
                         <strong>Synchronisation des versions</strong> - Gestion centralisée et cohérente des numéros de version
                     </div>
                 </div>
