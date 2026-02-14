@@ -2,6 +2,7 @@ const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 const isDev = process.env.NODE_ENV === "development";
@@ -135,6 +136,16 @@ module.exports = {
           },
         },
         extractComments: false,
+      }),
+      new CssMinimizerPlugin({
+        minimizerOptions: {
+          preset: [
+            "default",
+            {
+              discardComments: { removeAll: true },
+            },
+          ],
+        },
       }),
     ],
     runtimeChunk: false,
