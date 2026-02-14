@@ -84,6 +84,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         add_action('wp_ajax_pdf_builder_test_ajax', [$this, 'handle_test_ajax']);
         add_action('wp_ajax_test_ajax', [$this, 'handle_test_ajax']);
         add_action('wp_ajax_pdf_builder_test_routes', [$this, 'handle_test_routes']);
+        add_action('wp_ajax_pdf_builder_test_hook', [$this, 'handle_test_hook']);
 
         // Actions développeur
         add_action('wp_ajax_pdf_builder_get_fresh_nonce', [$this, 'handle_get_fresh_nonce']);
@@ -2336,6 +2337,95 @@ class PDF_Builder_Unified_Ajax_Handler {
                  'failed_routes' => $failed_routes
              ]);
          }
+     }
+
+     /**
+      * Handler pour tester les hooks disponibles
+      */
+     public function handle_test_hook() {
+         if (!$this->nonce_manager->validate_ajax_request()) {
+             wp_send_json_error('Nonce invalide');
+             return;
+         }
+
+         // Vérifier les paramètres
+         $hook_name = isset($_POST['hookName']) ? sanitize_text_field($_POST['hookName']) : '';
+         $hook_type = isset($_POST['hookType']) ? sanitize_text_field($_POST['hookType']) : 'action';
+
+         if (empty($hook_name)) {
+             wp_send_json_error('Hook name is required');
+             return;
+         }
+
+         // Vérifier que c'est un hook valide du plugin
+         $valid_hooks = [
+             'pdf_builder_template_data',
+             'pdf_builder_element_render',
+             'pdf_builder_security_check',
+             'pdf_builder_before_save',
+             'pdf_builder_after_save',
+             'pdf_builder_initialize_canvas',
+             'pdf_builder_render_complete',
+             'pdf_builder_pdf_generated',
+             'pdf_builder_admin_page_loaded',
+             'pdf_builder_cache_cleared'
+         ];
+
+         if (!in_array($hook_name, $valid_hooks, true)) {
+             wp_send_json_error('Hook non reconnu');
+             return;
+         }
+
+         // Récupérer les informations du hook
+         global $wp_filter;
+         
+         $is_registered = isset($wp_filter[$hook_name]);
+         $callback_count = 0;
+         $callbacks = [];
+
+         if ($is_registered && is_array($wp_filter[$hook_name])) {
+             foreach ($wp_filter[$hook_name] as $priority => $hooks_by_priority) {
+                 if (is_array($hooks_by_priority)) {
+                     foreach ($hooks_by_priority as $hook_id => $hook_data) {
+                         if (is_array($hook_data) && isset($hook_data['function'])) {
+                             $callback_count++;
+                             
+                             // Essayer de déterminer le nom de la fonction/classe
+                             $function_name = 'Unknown';
+                             $function = $hook_data['function'];
+                             
+                             if (is_string($function)) {
+                                 $function_name = $function;
+                             } elseif (is_array($function) && count($function) >= 2) {
+                                 $class_name = is_object($function[0]) ? get_class($function[0]) : $function[0];
+                                 $method_name = $function[1];
+                                 $function_name = $class_name . '::' . $method_name;
+                             } elseif (is_object($function) && $function instanceof \Closure) {
+                                 $function_name = 'Closure';
+                             }
+
+                             $callbacks[] = [
+                                 'function' => $function_name,
+                                 'priority' => (int) $priority,
+                                 'accepted_args' => isset($hook_data['accepted_args']) ? (int) $hook_data['accepted_args'] : 1
+                             ];
+                         }
+                     }
+                 }
+             }
+
+             // Trier par priorité
+             usort($callbacks, function($a, $b) {
+                 return $a['priority'] - $b['priority'];
+             });
+         }
+
+         wp_send_json_success([
+             'type' => $hook_type,
+             'is_registered' => $is_registered,
+             'callback_count' => $callback_count,
+             'callbacks' => $callbacks
+         ]);
      }
 
      /**

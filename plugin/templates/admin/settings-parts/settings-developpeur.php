@@ -398,61 +398,72 @@
                         <table class="wp-list-table widefat fixed striped">
                             <thead>
                                 <tr>
-                                    <th style="width: 25%;">Hook</th>
-                                    <th style="width: 50%;">Description</th>
-                                    <th style="width: 25%;">Typage</th>
+                                    <th style="width: 22%;">Hook</th>
+                                    <th style="width: 43%;">Description</th>
+                                    <th style="width: 15%;">Typage</th>
+                                    <th style="width: 20%; text-align: center;">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                                <tr data-hook="pdf_builder_template_data" data-type="filter">
                                     <td><code>pdf_builder_template_data</code></td>
                                     <td>Filtre les données de template</td>
                                     <td><span style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px;">filter</span></td>
+                                    <td style="text-align: center;"><button type="button" class="pdfb-hook-test-btn button button-small" data-hook="pdf_builder_template_data">🧪 Tester</button></td>
                                 </tr>
-                                <tr>
+                                <tr data-hook="pdf_builder_element_render" data-type="filter">
                                     <td><code>pdf_builder_element_render</code></td>
                                     <td>Rendu d'un élément du canvas</td>
                                     <td><span style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px;">filter</span></td>
+                                    <td style="text-align: center;"><button type="button" class="pdfb-hook-test-btn button button-small" data-hook="pdf_builder_element_render">🧪 Tester</button></td>
                                 </tr>
-                                <tr>
+                                <tr data-hook="pdf_builder_security_check" data-type="filter">
                                     <td><code>pdf_builder_security_check</code></td>
                                     <td>Vérifications de sécurité personnalisées</td>
                                     <td><span style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px;">filter</span></td>
+                                    <td style="text-align: center;"><button type="button" class="pdfb-hook-test-btn button button-small" data-hook="pdf_builder_security_check">🧪 Tester</button></td>
                                 </tr>
-                                <tr>
+                                <tr data-hook="pdf_builder_before_save" data-type="action">
                                     <td><code>pdf_builder_before_save</code></td>
                                     <td>Avant sauvegarde des paramètres</td>
                                     <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                                    <td style="text-align: center;"><button type="button" class="pdfb-hook-test-btn button button-small" data-hook="pdf_builder_before_save">🧪 Tester</button></td>
                                 </tr>
-                                <tr>
+                                <tr data-hook="pdf_builder_after_save" data-type="action">
                                     <td><code>pdf_builder_after_save</code></td>
                                     <td>Après sauvegarde des paramètres</td>
                                     <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                                    <td style="text-align: center;"><button type="button" class="pdfb-hook-test-btn button button-small" data-hook="pdf_builder_after_save">🧪 Tester</button></td>
                                 </tr>
-                                <tr>
+                                <tr data-hook="pdf_builder_initialize_canvas" data-type="action">
                                     <td><code>pdf_builder_initialize_canvas</code></td>
                                     <td>Initialisation du canvas editor</td>
                                     <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                                    <td style="text-align: center;"><button type="button" class="pdfb-hook-test-btn button button-small" data-hook="pdf_builder_initialize_canvas">🧪 Tester</button></td>
                                 </tr>
-                                <tr>
+                                <tr data-hook="pdf_builder_render_complete" data-type="action">
                                     <td><code>pdf_builder_render_complete</code></td>
                                     <td>Rendu PNG/PDF terminé</td>
                                     <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                                    <td style="text-align: center;"><button type="button" class="pdfb-hook-test-btn button button-small" data-hook="pdf_builder_render_complete">🧪 Tester</button></td>
                                 </tr>
-                                <tr>
+                                <tr data-hook="pdf_builder_pdf_generated" data-type="action">
                                     <td><code>pdf_builder_pdf_generated</code></td>
                                     <td>PDF généré avec succès</td>
                                     <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                                    <td style="text-align: center;"><button type="button" class="pdfb-hook-test-btn button button-small" data-hook="pdf_builder_pdf_generated">🧪 Tester</button></td>
                                 </tr>
-                                <tr>
+                                <tr data-hook="pdf_builder_admin_page_loaded" data-type="action">
                                     <td><code>pdf_builder_admin_page_loaded</code></td>
                                     <td>Page d'administration chargée</td>
                                     <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                                    <td style="text-align: center;"><button type="button" class="pdfb-hook-test-btn button button-small" data-hook="pdf_builder_admin_page_loaded">🧪 Tester</button></td>
                                 </tr>
-                                <tr>
+                                <tr data-hook="pdf_builder_cache_cleared" data-type="action">
                                     <td><code>pdf_builder_cache_cleared</code></td>
                                     <td>Cache vidé avec succès</td>
                                     <td><span style="background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">action</span></td>
+                                    <td style="text-align: center;"><button type="button" class="pdfb-hook-test-btn button button-small" data-hook="pdf_builder_cache_cleared">🧪 Tester</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1319,6 +1330,80 @@
             $('.pdfb-accordion-toggle').addClass('open');
             console.log('🪝 [Accordéon Hooks] Initialisé avec état ouvert');
         }
+
+        // Gestionnaire pour tester les hooks disponibles
+        $(document).on('click', '.pdfb-hook-test-btn', function(e) {
+            e.preventDefault();
+            const $btn = $(this);
+            const hookName = $btn.data('hook');
+            const $row = $btn.closest('tr');
+            const hookType = $row.data('type');
+            
+            const originalText = $btn.html();
+            $btn.prop('disabled', true).html('⏳ Test en cours...');
+            
+            console.log('🪝 [Test Hook] Lancement test pour:', hookName, '(type:', hookType + ')');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_test_hook',
+                    hookName: hookName,
+                    hookType: hookType,
+                    nonce: $('#check_db_status_nonce').val()
+                },
+                success: function(response) {
+                    console.log('🪝 [Test Hook] Réponse AJAX:', response);
+
+                    if (response.success) {
+                        const hookInfo = response.data;
+                        
+                        // Créer une notification de succès
+                        if (typeof showSuccessNotification !== 'undefined') {
+                            showSuccessNotification(`Hook « ${hookName} » testé avec succès! Voir console pour détails.`);
+                        }
+
+                        // Afficher les informations dans la console
+                        console.log(`
+🪝 ════════════════════════════════════════════════════
+🪝 RÉSULTAT TEST HOOK: ${hookName}
+🪝 ════════════════════════════════════════════════════
+Type: ${hookInfo.type}
+Enregistré: ${hookInfo.is_registered ? 'OUI ✅' : 'NON ❌'}
+Nombre de callbacks: ${hookInfo.callback_count}
+${hookInfo.callbacks.length > 0 ? '
+Callbacks attachés:' : 'Aucun callback enregistré'}
+${hookInfo.callbacks.map((cb, idx) => `  ${idx + 1}. ${cb.function} (priorité: ${cb.priority})`).join('\n')}
+🪝 ════════════════════════════════════════════════════
+                        `);
+
+                        // Log detaillé
+                        console.table({
+                            'Hook': hookName,
+                            'Type': hookType,
+                            'Enregistré': hookInfo.is_registered ? 'Oui' : 'Non',
+                            'Callbacks': hookInfo.callback_count,
+                            'Détails': JSON.stringify(hookInfo.callbacks)
+                        });
+                    } else {
+                        if (typeof showErrorNotification !== 'undefined') {
+                            showErrorNotification('Erreur lors du test: ' + (response.data || 'Erreur inconnue'));
+                        }
+                        console.error('🪝 [Test Hook] Erreur:', response.data);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    if (typeof showErrorNotification !== 'undefined') {
+                        showErrorNotification('Erreur AJAX: ' + error);
+                    }
+                    console.error('🪝 [Test Hook] Erreur AJAX:', error, xhr);
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).html(originalText);
+                }
+            });
+        });
     });
 })(jQuery);
 </script>
@@ -1748,6 +1833,35 @@ section[id^="dev-"] h3.pdfb-section-title {
     max-height: 0;
     padding: 0 20px;
     display: none;
+}
+
+/* Styles pour les boutons de test des hooks */
+.pdfb-hook-test-btn {
+    background: linear-gradient(135deg, #667eea 0%, #5568d3 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 4px !important;
+    padding: 5px 12px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2) !important;
+}
+
+.pdfb-hook-test-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #5568d3 0%, #4557c0 100%) !important;
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4) !important;
+    transform: translateY(-2px) !important;
+}
+
+.pdfb-hook-test-btn:active:not(:disabled) {
+    transform: translateY(0) !important;
+}
+
+.pdfb-hook-test-btn:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
 }
 </style>
 
