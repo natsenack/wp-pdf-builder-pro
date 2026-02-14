@@ -86,7 +86,7 @@ function get_canvas_modal_value($key, $default = '') {
 
 <!-- MODAL AFFICHAGE -->
 <div id="canvas-affichage-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-    <div class="canvas-modal-container" style="display: block; z-index: 10001;">
+    <div class="canvas-modal-container">
         <div class="canvas-modal-header">
             <div style="flex: 1; display: flex; align-items: center; gap: 15px;">
                 <h3 style="margin: 0;"><span style="font-size: 24px;">📐</span> Paramètres d'Affichage</h3>
@@ -339,7 +339,7 @@ function get_canvas_modal_value($key, $default = '') {
 
 <!-- MODAL NAVIGATION -->
 <div id="canvas-navigation-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-    <div class="canvas-modal-container" style="display: block; z-index: 10001;">
+    <div class="canvas-modal-container">
         <div class="canvas-modal-header">
             <h3><span style="font-size: 24px;">🧭</span> Paramètres de Navigation</h3>
             <button type="button" class="canvas-modal-close">&times;</button>
@@ -413,7 +413,7 @@ function get_canvas_modal_value($key, $default = '') {
 
 <!-- MODAL COMPORTEMENT -->
 <div id="canvas-comportement-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-    <div class="canvas-modal-container" style="display: block; z-index: 10001;">
+    <div class="canvas-modal-container">
         <div class="canvas-modal-header">
             <h3><span style="font-size: 24px;">🎯</span> Paramètres de Comportement</h3>
             <button type="button" class="canvas-modal-close">&times;</button>

@@ -1361,12 +1361,14 @@ body.toplevel_page_wp-pdf-builder-pro .update-nag,
     height: 100%;
     background: rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(6px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     z-index: 10000;
     animation: modalFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Centrage sans display flex par défaut pour éviter l'ouverture automatique */
+    align-items: center;
+    justify-content: center;
 }
+
+/* Retirer le sélecteur conditionnel qui ne sert plus */
 
 .canvas-modal-container {
     background: #ffffff;
