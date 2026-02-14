@@ -1361,22 +1361,28 @@
                         
                         // Créer une notification de succès
                         if (typeof showSuccessNotification !== 'undefined') {
-                            showSuccessNotification(`Hook « ${hookName} » testé avec succès! Voir console pour détails.`);
+                            showSuccessNotification('Hook ' + hookName + ' testé avec succès! Voir console pour détails.');
                         }
 
                         // Afficher les informations dans la console
-                        console.log(`
-🪝 ════════════════════════════════════════════════════
-🪝 RÉSULTAT TEST HOOK: ${hookName}
-🪝 ════════════════════════════════════════════════════
-Type: ${hookInfo.type}
-Enregistré: ${hookInfo.is_registered ? 'OUI ✅' : 'NON ❌'}
-Nombre de callbacks: ${hookInfo.callback_count}
-${hookInfo.callbacks.length > 0 ? '
-Callbacks attachés:' : 'Aucun callback enregistré'}
-${hookInfo.callbacks.map((cb, idx) => `  ${idx + 1}. ${cb.function} (priorité: ${cb.priority})`).join('\n')}
-🪝 ════════════════════════════════════════════════════
-                        `);
+                        let consoleMsg = '🪝 ════════════════════════════════════════════════════\n';
+                        consoleMsg += '🪝 RÉSULTAT TEST HOOK: ' + hookName + '\n';
+                        consoleMsg += '🪝 ════════════════════════════════════════════════════\n';
+                        consoleMsg += 'Type: ' + hookInfo.type + '\n';
+                        consoleMsg += 'Enregistré: ' + (hookInfo.is_registered ? 'OUI ✅' : 'NON ❌') + '\n';
+                        consoleMsg += 'Nombre de callbacks: ' + hookInfo.callback_count + '\n';
+                        
+                        if (hookInfo.callbacks.length > 0) {
+                            consoleMsg += '\nCallbacks attachés:\n';
+                            hookInfo.callbacks.forEach(function(cb, idx) {
+                                consoleMsg += '  ' + (idx + 1) + '. ' + cb.function + ' (priorité: ' + cb.priority + ')\n';
+                            });
+                        } else {
+                            consoleMsg += '\nAucun callback enregistré\n';
+                        }
+                        
+                        consoleMsg += '🪝 ════════════════════════════════════════════════════';
+                        console.log(consoleMsg);
 
                         // Log detaillé
                         console.table({
