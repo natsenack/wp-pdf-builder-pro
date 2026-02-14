@@ -854,8 +854,17 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
 
     // Fermer modal au clic sur overlay ou bouton close
     document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('modal-overlay') || e.target.classList.contains('modal-close')) {
-            e.target.closest('.modal-overlay').style.display = 'none';
+        // Vérifier si c'est un bouton close ou un overlay
+        if (e.target.classList.contains('pdfb-modal-overlay') || 
+            e.target.classList.contains('pdfb-modal-close') ||
+            e.target.classList.contains('modal-overlay') || 
+            e.target.classList.contains('modal-close')) {
+            
+            // Trouver le modal parent le plus proche
+            const modal = e.target.closest('.pdfb-modal-overlay') || e.target.closest('.modal-overlay');
+            if (modal) {
+                modal.style.display = 'none';
+            }
         }
     });
 </script>
