@@ -73,8 +73,8 @@ export const PDFBuilderApp: React.FC<AppProps> = ({
 
   if (!isReady) {
     return (
-      <div className="pdf-builder-loading">
-        <div className="spinner"></div>
+      <div className="pdfb-pdf-builder-loading">
+        <div className="pdfb-spinner"></div>
         <p>Initialisation du PDF Builder...</p>
       </div>
     );
@@ -82,13 +82,13 @@ export const PDFBuilderApp: React.FC<AppProps> = ({
 
   return (
     <EditorProvider>
-      <div className="pdf-builder-editor">
+      <div className="pdfb-pdf-builder-editor">
         <Header title={title} scale={scale} onZoomChange={handleZoomChange} />
 
-        <div className="pdf-builder-body">
+        <div className="pdfb-pdf-builder-body">
           <ElementLibrary />
 
-          <main className="pdf-builder-main">
+          <main className="pdfb-pdf-builder-main">
             <Toolbar selectedElement={selectedElement} />
             <Canvas
               scale={scale}

@@ -85,7 +85,7 @@ export const SaveIndicator: FC<SaveIndicatorProps> = ({
   return (
     <>
       <div
-        className={`save-indicator save-indicator--${state}`}
+        className={`pdfb-save-indicator pdfb-save-indicator--${state}`}
         title={getTitle()}
         aria-label={getTitle()}
         style={{
@@ -114,21 +114,21 @@ export const SaveIndicator: FC<SaveIndicatorProps> = ({
           animation: 'slideInDown 0.3s ease-out forwards'
         }}
       >
-      <div className="save-indicator__content">
+      <div className="pdfb-save-indicator__content">
         {/* Spinner pour 'saving' */}
         {state === 'saving' && (
-          <div className="save-indicator__spinner">
-            <div className="save-indicator__spinner-dot save-indicator__spinner-dot--1"></div>
-            <div className="save-indicator__spinner-dot save-indicator__spinner-dot--2"></div>
-            <div className="save-indicator__spinner-dot save-indicator__spinner-dot--3"></div>
+          <div className="pdfb-save-indicator__spinner">
+            <div className="pdfb-save-indicator__spinner-dot pdfb-save-indicator__spinner-dot--1"></div>
+            <div className="pdfb-save-indicator__spinner-dot pdfb-save-indicator__spinner-dot--2"></div>
+            <div className="pdfb-save-indicator__spinner-dot pdfb-save-indicator__spinner-dot--3"></div>
           </div>
         )}
 
         {/* Barre de progression pour 'saving' */}
         {state === 'saving' && showProgressBar && (
-          <div className="save-indicator__progress-bar">
+          <div className="pdfb-save-indicator__progress-bar">
             <div
-              className="save-indicator__progress-fill"
+              className="pdfb-save-indicator__progress-fill"
               style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
             />
           </div>
@@ -137,7 +137,7 @@ export const SaveIndicator: FC<SaveIndicatorProps> = ({
         {/* Checkmark pour 'saved' */}
         {state === 'saved' && (
           <svg
-            className="save-indicator__icon"
+            className="pdfb-save-indicator__icon"
             width="20"
             height="20"
             viewBox="0 0 20 20"
@@ -157,7 +157,7 @@ export const SaveIndicator: FC<SaveIndicatorProps> = ({
         {/* Exclamation pour 'error' */}
         {state === 'error' && (
           <svg
-            className="save-indicator__icon"
+            className="pdfb-save-indicator__icon"
             width="20"
             height="20"
             viewBox="0 0 20 20"
@@ -176,7 +176,7 @@ export const SaveIndicator: FC<SaveIndicatorProps> = ({
         )}
 
         {/* Text label */}
-        <span className="save-indicator__text">
+        <span className="pdfb-save-indicator__text">
           {state === 'saving' && 'Sauvegarde...'}
           {state === 'saved' && 'Sauvegardé'}
           {state === 'error' && 'Erreur'}
@@ -185,7 +185,7 @@ export const SaveIndicator: FC<SaveIndicatorProps> = ({
         {/* Bouton retry pour les erreurs */}
         {state === 'error' && onRetry && (
           <button
-            className="save-indicator__retry-btn"
+            className="pdfb-save-indicator__retry-btn"
             onClick={onRetry}
             title="Réessayer"
             aria-label="Réessayer la sauvegarde"
@@ -197,7 +197,7 @@ export const SaveIndicator: FC<SaveIndicatorProps> = ({
 
       {/* Message d'erreur détaillé */}
       {state === 'error' && error && (
-        <div className="save-indicator__error-message">{error}</div>
+        <div className="pdfb-save-indicator__error-message">{error}</div>
       )}
       </div>
     </>

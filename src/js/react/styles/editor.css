@@ -28,14 +28,14 @@ body {
    Editor Layout
    ==================================================================== */
 
-.pdf-builder-editor {
+.pdfb-pdf-builder-editor {
   display: flex;
   flex-direction: column;
   height: 100vh;
   background: #fafafa;
 }
 
-.pdf-builder-header {
+.pdfb-pdf-builder-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -47,26 +47,26 @@ body {
   z-index: 100;
 }
 
-.header-left {
+.pdfb-header-left {
   flex: 1;
   display: flex;
   align-items: center;
 }
 
-.header-title {
+.pdfb-header-title {
   margin: 0;
   font-size: 20px;
   font-weight: 600;
   color: var(--text-color);
 }
 
-.header-center {
+.pdfb-header-center {
   flex: 1;
   display: flex;
   justify-content: center;
 }
 
-.zoom-controls {
+.pdfb-zoom-controls {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -75,7 +75,7 @@ body {
   border-radius: 4px;
 }
 
-.zoom-btn {
+.pdfb-zoom-btn {
   background: white;
   border: 1px solid var(--border-color);
   padding: 6px 10px;
@@ -85,13 +85,13 @@ body {
   transition: all 0.2s;
 }
 
-.zoom-btn:hover {
+.pdfb-zoom-btn:hover {
   background: var(--primary-color);
   color: white;
   border-color: var(--primary-color);
 }
 
-.zoom-value {
+.pdfb-zoom-value {
   font-size: 13px;
   font-weight: 600;
   color: var(--text-color);
@@ -99,15 +99,15 @@ body {
   text-align: center;
 }
 
-.header-right {
+.pdfb-header-right {
   flex: 1;
   display: flex;
   justify-content: flex-end;
   gap: 10px;
 }
 
-.btn-save,
-.btn-preview {
+.pdfb-btn-save,
+.pdfb-btn-preview {
   background: white;
   border: 1px solid var(--border-color);
   padding: 8px 16px;
@@ -118,13 +118,13 @@ body {
   transition: all 0.2s;
 }
 
-.btn-save:hover {
+.pdfb-btn-save:hover {
   background: #e8f0ff;
   border-color: var(--primary-color);
   color: var(--primary-color);
 }
 
-.btn-preview:hover {
+.pdfb-btn-preview:hover {
   background: #f0f0f0;
   border-color: #999;
 }
@@ -133,13 +133,13 @@ body {
    Editor Body
    ==================================================================== */
 
-.pdf-builder-body {
+.pdfb-pdf-builder-body {
   display: flex;
   flex: 1;
   overflow: hidden;
 }
 
-.pdf-builder-main {
+.pdfb-pdf-builder-main {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -150,7 +150,7 @@ body {
    Element Library (Left Sidebar)
    ==================================================================== */
 
-.element-library {
+.pdfb-element-library {
   width: var(--sidebar-width);
   background: white;
   border-right: 1px solid var(--border-color);
@@ -159,14 +159,14 @@ body {
   flex-direction: column;
 }
 
-.library-header {
+.pdfb-library-header {
   padding: 15px;
   border-bottom: 1px solid var(--border-color);
   font-weight: 600;
   font-size: 13px;
 }
 
-.library-search {
+.pdfb-library-search {
   width: 100%;
   padding: 8px;
   margin: 10px;
@@ -175,16 +175,16 @@ body {
   font-size: 12px;
 }
 
-.library-categories {
+.pdfb-library-categories {
   flex: 1;
   overflow-y: auto;
 }
 
-.library-category {
+.pdfb-library-category {
   border-bottom: 1px solid var(--border-color);
 }
 
-.category-title {
+.pdfb-category-title {
   padding: 10px 15px;
   background: #f5f5f5;
   font-weight: 500;
@@ -193,18 +193,18 @@ body {
   user-select: none;
 }
 
-.category-title:hover {
+.pdfb-category-title:hover {
   background: #efefef;
 }
 
-.category-items {
+.pdfb-category-items {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
   padding: 10px;
 }
 
-.element-item {
+.pdfb-element-item {
   background: #f9f9f9;
   border: 1px solid var(--border-color);
   padding: 10px;
@@ -215,13 +215,13 @@ body {
   transition: all 0.2s;
 }
 
-.element-item:hover {
+.pdfb-element-item:hover {
   background: #f0f7ff;
   border-color: var(--primary-color);
   box-shadow: 0 2px 4px rgba(0, 102, 204, 0.1);
 }
 
-.element-item.dragging {
+.pdfb-element-item.dragging {
   opacity: 0.5;
 }
 
@@ -229,7 +229,7 @@ body {
    Toolbar
    ==================================================================== */
 
-.pdf-builder-toolbar {
+.pdfb-pdf-builder-toolbar {
   height: 50px;
   background: white;
   border-bottom: 1px solid var(--border-color);
@@ -240,7 +240,7 @@ body {
   overflow-x: auto;
 }
 
-.toolbar-group {
+.pdfb-toolbar-group {
   display: flex;
   align-items: center;
   gap: 5px;
@@ -248,11 +248,11 @@ body {
   border-right: 1px solid var(--border-color);
 }
 
-.toolbar-group:last-child {
+.pdfb-toolbar-group:last-child {
   border-right: none;
 }
 
-.toolbar-btn {
+.pdfb-toolbar-btn {
   background: white;
   border: 1px solid var(--border-color);
   padding: 6px 12px;
@@ -262,11 +262,11 @@ body {
   transition: all 0.2s;
 }
 
-.toolbar-btn:hover {
+.pdfb-toolbar-btn:hover {
   background: var(--secondary-color);
 }
 
-.toolbar-btn.active {
+.pdfb-toolbar-btn.active {
   background: var(--primary-color);
   color: white;
   border-color: var(--primary-color);
@@ -276,7 +276,7 @@ body {
    Canvas Area
    ==================================================================== */
 
-.pdf-canvas-wrapper {
+.pdfb-pdf-canvas-wrapper {
   flex: 1;
   overflow: auto;
   background: #efefef;
@@ -286,35 +286,35 @@ body {
   padding: 20px;
 }
 
-.pdf-canvas-container {
+.pdfb-pdf-canvas-container {
   background: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border-radius: 2px;
   overflow: hidden;
 }
 
-.pdf-canvas {
+.pdfb-pdf-canvas {
   width: 210mm;
   min-height: 297mm;
   background: white;
   position: relative;
 }
 
-.canvas-page {
+.pdfb-canvas-page {
   width: 100%;
   height: 100%;
   position: relative;
   overflow: hidden;
 }
 
-.canvas-content {
+.pdfb-canvas-content {
   width: 100%;
   height: 100%;
   padding: 20px;
   position: relative;
 }
 
-.canvas-empty {
+.pdfb-canvas-empty {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -325,7 +325,7 @@ body {
   text-align: center;
 }
 
-.canvas-element {
+.pdfb-canvas-element {
   position: absolute;
   border: 1px dashed var(--border-color);
   padding: 4px;
@@ -333,12 +333,12 @@ body {
   transition: all 0.1s;
 }
 
-.canvas-element.selected {
+.pdfb-canvas-element.selected {
   border: 2px solid var(--primary-color);
   background: rgba(0, 102, 204, 0.05);
 }
 
-.canvas-element:hover {
+.pdfb-canvas-element:hover {
   border-color: var(--primary-color);
 }
 
@@ -346,7 +346,7 @@ body {
    Properties Panel (Right Sidebar)
    ==================================================================== */
 
-.properties-panel {
+.pdfb-properties-panel {
   width: var(--properties-width);
   background: white;
   border-left: 1px solid var(--border-color);
@@ -355,7 +355,7 @@ body {
   overflow: hidden;
 }
 
-.panel-header {
+.pdfb-panel-header {
   padding: 15px;
   border-bottom: 1px solid var(--border-color);
   display: flex;
@@ -363,12 +363,12 @@ body {
   align-items: center;
 }
 
-.panel-title {
+.pdfb-panel-title {
   font-weight: 600;
   font-size: 13px;
 }
 
-.panel-close {
+.pdfb-panel-close {
   background: none;
   border: none;
   cursor: pointer;
@@ -376,21 +376,21 @@ body {
   color: #999;
 }
 
-.panel-close:hover {
+.pdfb-panel-close:hover {
   color: var(--text-color);
 }
 
-.panel-content {
+.pdfb-panel-content {
   flex: 1;
   overflow-y: auto;
   padding: 15px;
 }
 
-.property-group {
+.pdfb-property-group {
   margin-bottom: 20px;
 }
 
-.property-label {
+.pdfb-property-label {
   display: block;
   font-size: 12px;
   font-weight: 500;
@@ -398,9 +398,9 @@ body {
   color: var(--text-color);
 }
 
-.property-input,
-.property-select,
-.property-textarea {
+.pdfb-property-input,
+.pdfb-property-select,
+.pdfb-property-textarea {
   width: 100%;
   padding: 8px;
   border: 1px solid var(--border-color);
@@ -409,9 +409,9 @@ body {
   font-family: inherit;
 }
 
-.property-input:focus,
-.property-select:focus,
-.property-textarea:focus {
+.pdfb-property-input:focus,
+.pdfb-property-select:focus,
+.pdfb-property-textarea:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
@@ -421,7 +421,7 @@ body {
    Loading State
    ==================================================================== */
 
-.pdf-builder-loading {
+.pdfb-pdf-builder-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -431,7 +431,7 @@ body {
   gap: 20px;
 }
 
-.spinner {
+.pdfb-spinner {
   width: 40px;
   height: 40px;
   border: 3px solid var(--secondary-color);
@@ -458,24 +458,24 @@ body {
 }
 
 @media (max-width: 768px) {
-  .pdf-builder-header {
+  .pdfb-pdf-builder-header {
     flex-wrap: wrap;
     height: auto;
     padding: 10px;
   }
 
-  .header-left,
-  .header-center,
-  .header-right {
+  .pdfb-header-left,
+  .pdfb-header-center,
+  .pdfb-header-right {
     flex: 1 100%;
   }
 
-  .pdf-builder-body {
+  .pdfb-pdf-builder-body {
     flex-direction: column;
   }
 
-  .element-library,
-  .properties-panel {
+  .pdfb-element-library,
+  .pdfb-properties-panel {
     width: 100%;
     max-height: 200px;
   }

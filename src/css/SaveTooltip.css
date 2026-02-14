@@ -3,7 +3,7 @@
  * Styles pour la notification de sauvegarde en survol
  */
 
-.save-tooltip {
+.pdfb-save-tooltip {
   position: fixed;
   top: 20px;
   right: 20px;
@@ -12,7 +12,7 @@
 }
 
 /* Indicateur */
-.save-tooltip__indicator {
+.pdfb-save-tooltip__indicator {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,18 +27,18 @@
 }
 
 /* États de l'indicateur */
-.save-tooltip--saving .save-tooltip__indicator {
+.pdfb-save-tooltip--saving .pdfb-save-tooltip__indicator {
   border-color: #0073aa;
   background: #f0f6fc;
   animation: pulse-save 1s ease-in-out infinite;
 }
 
-.save-tooltip--saved .save-tooltip__indicator {
+.pdfb-save-tooltip--saved .pdfb-save-tooltip__indicator {
   border-color: #00a32a;
   background: #f0f8f1;
 }
 
-.save-tooltip--error .save-tooltip__indicator {
+.pdfb-save-tooltip--error .pdfb-save-tooltip__indicator {
   border-color: #d63638;
   background: #fdf7f7;
 }
@@ -53,14 +53,14 @@
 }
 
 /* Spinner */
-.save-tooltip__spinner {
+.pdfb-save-tooltip__spinner {
   display: inline-block;
   width: 20px;
   height: 20px;
   position: relative;
 }
 
-.save-tooltip__spinner-dot {
+.pdfb-save-tooltip__spinner-dot {
   width: 4px;
   height: 4px;
   background: #0073aa;
@@ -69,15 +69,15 @@
   animation: spinner-rotate 1.2s linear infinite;
 }
 
-.save-tooltip__spinner-dot:nth-child(1) {
+.pdfb-save-tooltip__spinner-dot:nth-child(1) {
   animation-delay: 0s;
 }
 
-.save-tooltip__spinner-dot:nth-child(2) {
+.pdfb-save-tooltip__spinner-dot:nth-child(2) {
   animation-delay: 0.4s;
 }
 
-.save-tooltip__spinner-dot:nth-child(3) {
+.pdfb-save-tooltip__spinner-dot:nth-child(3) {
   animation-delay: 0.8s;
 }
 
@@ -96,29 +96,29 @@
 }
 
 /* Icônes */
-.save-tooltip__icon {
+.pdfb-save-tooltip__icon {
   display: block;
   color: currentColor;
 }
 
-.save-tooltip--saving .save-tooltip__icon {
+.pdfb-save-tooltip--saving .pdfb-save-tooltip__icon {
   color: #0073aa;
 }
 
-.save-tooltip--saved .save-tooltip__icon {
+.pdfb-save-tooltip--saved .pdfb-save-tooltip__icon {
   color: #00a32a;
 }
 
-.save-tooltip--error .save-tooltip__icon {
+.pdfb-save-tooltip--error .pdfb-save-tooltip__icon {
   color: #d63638;
 }
 
-.save-tooltip--idle .save-tooltip__icon {
+.pdfb-save-tooltip--idle .pdfb-save-tooltip__icon {
   color: #4b5563;
 }
 
 /* Tooltip popup */
-.save-tooltip__popup {
+.pdfb-save-tooltip__popup {
   position: absolute;
   top: 50px;
   right: 0;
@@ -142,7 +142,7 @@
   }
 }
 
-.save-tooltip__label {
+.pdfb-save-tooltip__label {
   font-size: 13px;
   color: #333;
   font-weight: 500;
@@ -151,7 +151,7 @@
 }
 
 /* Barre de progression */
-.save-tooltip__progress-bar {
+.pdfb-save-tooltip__progress-bar {
   width: 100%;
   height: 4px;
   background-color: #e0e0e0;
@@ -160,7 +160,7 @@
   margin-top: 8px;
 }
 
-.save-tooltip__progress-fill {
+.pdfb-save-tooltip__progress-fill {
   height: 100%;
   background: linear-gradient(90deg, #0073aa 0%, #00a0d2 100%);
   transition: width 0.3s ease;
@@ -168,7 +168,7 @@
 }
 
 /* Bouton Sauvegarder maintenant */
-.save-tooltip__button {
+.pdfb-save-tooltip__button {
   width: 100%;
   padding: 8px 12px;
   background: #0073aa;
@@ -182,27 +182,27 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
-.save-tooltip__button:hover {
+.pdfb-save-tooltip__button:hover {
   background: #005a87;
 }
 
-.save-tooltip__button:active {
+.pdfb-save-tooltip__button:active {
   background: #004466;
 }
 
 /* Mobile responsive */
 @media (max-width: 640px) {
-  .save-tooltip {
+  .pdfb-save-tooltip {
     top: 10px;
     right: 10px;
   }
 
-  .save-tooltip__indicator {
+  .pdfb-save-tooltip__indicator {
     width: 36px;
     height: 36px;
   }
 
-  .save-tooltip__popup {
+  .pdfb-save-tooltip__popup {
     min-width: 200px;
     top: 45px;
     right: -20px;

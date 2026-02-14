@@ -10,7 +10,7 @@ interface ErrorFallbackProps {
 
 export const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetError }) => {
   return (
-    <div className="pdf-builder-error">
+    <div className="pdfb-pdf-builder-error">
       <h2>❌ Error Loading PDF Builder</h2>
       <details style={{ whiteSpace: 'pre-wrap', marginTop: '10px' }}>
         <summary>Error Details</summary>

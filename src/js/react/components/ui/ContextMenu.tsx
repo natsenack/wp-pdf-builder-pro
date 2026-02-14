@@ -185,7 +185,7 @@ export const ContextMenu: FC<ContextMenuProps> = ({
   const menuElement = (
     <div
       ref={menuRef}
-      className="context-menu"
+      className="pdfb-context-menu"
       onMouseLeave={() => {
         // Délai plus long pour permettre la navigation vers les sous-menus
         if (closeTimeoutRef.current) {
@@ -236,14 +236,14 @@ export const ContextMenu: FC<ContextMenuProps> = ({
       {items.map((item) => (
         <div key={item.id}>
           {item.section ? (
-            <div className="context-menu-section" style={{padding: '2px 6px 1px'}}>
-              <div className="context-menu-section-title" style={{fontSize: '8px', fontWeight: '600', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0px', marginBottom: '0px'}}>{item.section}</div>
+            <div className="pdfb-context-menu-section" style={{padding: '2px 6px 1px'}}>
+              <div className="pdfb-context-menu-section-title" style={{fontSize: '8px', fontWeight: '600', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0px', marginBottom: '0px'}}>{item.section}</div>
             </div>
           ) : item.separator ? (
-            <div className="context-menu-separator" style={{height: '1px', background: 'linear-gradient(90deg, transparent 0%, #e2e8f0 20%, #e2e8f0 80%, transparent 100%)', margin: '1px 0', border: 'none'}}></div>
+            <div className="pdfb-context-menu-separator" style={{height: '1px', background: 'linear-gradient(90deg, transparent 0%, #e2e8f0 20%, #e2e8f0 80%, transparent 100%)', margin: '1px 0', border: 'none'}}></div>
           ) : (
             <div
-              className={`context-menu-item ${item.disabled ? 'disabled' : ''}`}
+              className={`pdfb-context-menu-item ${item.disabled ? 'pdfb-disabled' : ''}`}
               data-item-id={item.id}
               onClick={() => handleItemClick(item)}
               onMouseEnter={() => {
@@ -270,11 +270,11 @@ export const ContextMenu: FC<ContextMenuProps> = ({
                 fontWeight: '500',
               }}
             >
-              {item.icon && <span className="context-menu-item-icon" style={{width: '10px', height: '10px', marginRight: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: item.disabled ? '#94a3b8' : '#64748b', fontSize: '9px'}}>{item.icon}</span>}
-              {item.label && <span className="context-menu-item-text" style={{flex: '1', fontSize: '10px', fontWeight: '500', color: item.disabled ? '#94a3b8' : '#334155'}}>{item.label}</span>}
-              {item.shortcut && <span className="context-menu-item-shortcut" style={{fontSize: '8px', fontWeight: '500', color: item.disabled ? '#94a3b8' : '#64748b', background: 'rgba(148, 163, 184, 0.1)', padding: '0px 1px', borderRadius: '1px', marginLeft: '3px'}}>{item.shortcut}</span>}
+              {item.icon && <span className="pdfb-context-menu-item-icon" style={{width: '10px', height: '10px', marginRight: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: item.disabled ? '#94a3b8' : '#64748b', fontSize: '9px'}}>{item.icon}</span>}
+              {item.label && <span className="pdfb-context-menu-item-text" style={{flex: '1', fontSize: '10px', fontWeight: '500', color: item.disabled ? '#94a3b8' : '#334155'}}>{item.label}</span>}
+              {item.shortcut && <span className="pdfb-context-menu-item-shortcut" style={{fontSize: '8px', fontWeight: '500', color: item.disabled ? '#94a3b8' : '#64748b', background: 'rgba(148, 163, 184, 0.1)', padding: '0px 1px', borderRadius: '1px', marginLeft: '3px'}}>{item.shortcut}</span>}
               {item.children && item.children.length > 0 && (
-                <span className="context-menu-submenu-arrow" style={{marginLeft: '4px', color: '#64748b', fontSize: '8px'}}>▶</span>
+                <span className="pdfb-context-menu-submenu-arrow" style={{marginLeft: '4px', color: '#64748b', fontSize: '8px'}}>▶</span>
               )}
             </div>
           )}

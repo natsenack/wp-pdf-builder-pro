@@ -2,7 +2,7 @@
 /* Cross-browser compatibility with vendor prefixes */
 
 /* PDF Preview Modal Styles */
-.pdf-preview-modal-overlay {
+.pdfb-pdf-preview-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -27,7 +27,7 @@
   z-index: 10000;
 }
 
-.pdf-preview-modal-content {
+.pdfb-pdf-preview-modal-content {
   background: white;
   border-radius: 8px;
   -webkit-border-radius: 8px;
@@ -56,7 +56,7 @@
   overflow: hidden;
 }
 
-.pdf-preview-modal-header {
+.pdfb-pdf-preview-modal-header {
   display: flex;
   display: -webkit-flex;
   display: -moz-flex;
@@ -77,14 +77,14 @@
   background: rgba(219, 234, 254, 0.9);
 }
 
-.pdf-preview-modal-title {
+.pdfb-pdf-preview-modal-title {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
   color: #333;
 }
 
-.pdf-preview-modal-close {
+.pdfb-pdf-preview-modal-close {
   background: none;
   border: none;
   font-size: 24px;
@@ -119,12 +119,12 @@
   -o-transition: background-color 0.2s;
 }
 
-.pdf-preview-modal-close:hover {
+.pdfb-pdf-preview-modal-close:hover {
   background-color: #e9ecef;
   color: #333;
 }
 
-.pdf-preview-modal-body {
+.pdfb-pdf-preview-modal-body {
   flex: 1;
   -webkit-flex: 1;
   -moz-flex: 1;
@@ -135,7 +135,7 @@
   background: #fff;
 }
 
-.pdf-preview-loading-overlay {
+.pdfb-pdf-preview-loading-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -165,7 +165,7 @@
   z-index: 10;
 }
 
-.pdf-preview-spinner {
+.pdfb-pdf-preview-spinner {
   width: 40px;
   height: 40px;
   border: 4px solid #f3f3f3;
@@ -201,7 +201,7 @@
   100% { -o-transform: rotate(360deg); }
 }
 
-.pdf-preview-error {
+.pdfb-pdf-preview-error {
   text-align: center;
   padding: 40px 20px;
   color: #721c24;
@@ -211,12 +211,12 @@
   margin: 20px 0;
 }
 
-.pdf-preview-error p {
+.pdfb-pdf-preview-error p {
   margin: 0 0 10px 0;
   font-weight: bold;
 }
 
-.error-message {
+.pdfb-error-message {
   font-family: monospace;
   background: #fff;
   padding: 10px;
@@ -225,7 +225,7 @@
   word-break: break-all;
 }
 
-.pdf-preview-error-close {
+.pdfb-pdf-preview-error-close {
   background: #dc3545;
   color: white;
   border: none;
@@ -235,27 +235,27 @@
   margin-top: 15px;
 }
 
-.pdf-preview-error-close:hover {
+.pdfb-pdf-preview-error-close:hover {
   background: #c82333;
 }
 
 /* Masquer les notifications WordPress et autres plugins dans le PDF Builder */
 /* Cible les pages du PDF Builder Pro */
-body.toplevel_page_wp-pdf-builder-pro .notice,
-body.toplevel_page_wp-pdf-builder-pro .notice-info,
-body.toplevel_page_wp-pdf-builder-pro .notice-warning,
-body.toplevel_page_wp-pdf-builder-pro .notice-error,
-body.toplevel_page_wp-pdf-builder-pro .notice-success,
-body.toplevel_page_wp-pdf-builder-pro .updated,
-body.toplevel_page_wp-pdf-builder-pro .update-nag,
+body.toplevel_page_wp-pdf-builder-pro .pdfb-notice,
+body.toplevel_page_wp-pdf-builder-pro .pdfb-notice-info,
+body.toplevel_page_wp-pdf-builder-pro .pdfb-notice-warning,
+body.toplevel_page_wp-pdf-builder-pro .pdfb-notice-error,
+body.toplevel_page_wp-pdf-builder-pro .pdfb-notice-success,
+body.toplevel_page_wp-pdf-builder-pro .pdfb-updated,
+body.toplevel_page_wp-pdf-builder-pro .pdfb-update-nag,
 /* Masquer spécifiquement dans les metaboxes du PDF Builder */
-#wp-pdf-builder-pro-metabox .notice,
-#wp-pdf-builder-pro-metabox .notice-info,
-#wp-pdf-builder-pro-metabox .notice-warning,
-#wp-pdf-builder-pro-metabox .notice-error,
-#wp-pdf-builder-pro-metabox .notice-success,
-#wp-pdf-builder-pro-metabox .updated,
-#wp-pdf-builder-pro-metabox .error {
+#wp-pdf-builder-pro-metabox .pdfb-notice,
+#wp-pdf-builder-pro-metabox .pdfb-notice-info,
+#wp-pdf-builder-pro-metabox .pdfb-notice-warning,
+#wp-pdf-builder-pro-metabox .pdfb-notice-error,
+#wp-pdf-builder-pro-metabox .pdfb-notice-success,
+#wp-pdf-builder-pro-metabox .pdfb-updated,
+#wp-pdf-builder-pro-metabox .pdfb-error {
   display: none !important;
 }
 

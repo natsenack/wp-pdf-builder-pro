@@ -3,7 +3,7 @@
  * Styles pour l'indicateur de sauvegarde en haut à droite
  */
 
-.save-indicator {
+.pdfb-save-indicator {
   position: fixed;
   top: 50px;
   right: 20px;
@@ -26,9 +26,9 @@
   transform: none;
 }
 
-.save-indicator--saving,
-.save-indicator--saved,
-.save-indicator--error {
+.pdfb-save-indicator--saving,
+.pdfb-save-indicator--saved,
+.pdfb-save-indicator--error {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
@@ -36,23 +36,23 @@
 }
 
 /* States */
-.save-indicator--saving {
+.pdfb-save-indicator--saving {
   border-color: #0073aa;
   background: #f0f6fc;
 }
 
-.save-indicator--saved {
+.pdfb-save-indicator--saved {
   border-color: #46b450;
   background: #f0fdf4;
 }
 
-.save-indicator--error {
+.pdfb-save-indicator--error {
   border-color: #dc2626;
   background: #fef2f2;
 }
 
 /* Content */
-.save-indicator__content {
+.pdfb-save-indicator__content {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -60,13 +60,13 @@
 }
 
 /* Spinner */
-.save-indicator__spinner {
+.pdfb-save-indicator__spinner {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.save-indicator__spinner-dot {
+.pdfb-save-indicator__spinner-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -74,39 +74,39 @@
   animation: pulse 1.4s infinite;
 }
 
-.save-indicator__spinner-dot--1 {
+.pdfb-save-indicator__spinner-dot--1 {
   animation-delay: 0s;
 }
 
-.save-indicator__spinner-dot--2 {
+.pdfb-save-indicator__spinner-dot--2 {
   animation-delay: 0.2s;
 }
 
-.save-indicator__spinner-dot--3 {
+.pdfb-save-indicator__spinner-dot--3 {
   animation-delay: 0.4s;
 }
 
 /* Icon */
-.save-indicator__icon {
+.pdfb-save-indicator__icon {
   flex-shrink: 0;
   width: 20px;
   height: 20px;
 }
 
-.save-indicator--saving .save-indicator__icon {
+.pdfb-save-indicator--saving .pdfb-save-indicator__icon {
   color: #0073aa;
 }
 
-.save-indicator--saved .save-indicator__icon {
+.pdfb-save-indicator--saved .pdfb-save-indicator__icon {
   color: #46b450;
 }
 
-.save-indicator--error .save-indicator__icon {
+.pdfb-save-indicator--error .pdfb-save-indicator__icon {
   color: #dc2626;
 }
 
 /* Text */
-.save-indicator__text {
+.pdfb-save-indicator__text {
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
@@ -116,20 +116,20 @@
   line-height: 1.4;
 }
 
-.save-indicator--saving .save-indicator__text {
+.pdfb-save-indicator--saving .pdfb-save-indicator__text {
   color: #0073aa;
 }
 
-.save-indicator--saved .save-indicator__text {
+.pdfb-save-indicator--saved .pdfb-save-indicator__text {
   color: #46b450;
 }
 
-.save-indicator--error .save-indicator__text {
+.pdfb-save-indicator--error .pdfb-save-indicator__text {
   color: #dc2626;
 }
 
 /* Retry button */
-.save-indicator__retry-btn {
+.pdfb-save-indicator__retry-btn {
   flex-shrink: 0;
   width: 24px;
   height: 24px;
@@ -144,17 +144,17 @@
   transition: all 0.2s ease;
 }
 
-.save-indicator__retry-btn:hover {
+.pdfb-save-indicator__retry-btn:hover {
   background: rgba(220, 38, 38, 0.1);
   color: #991b1b;
 }
 
-.save-indicator__retry-btn:active {
+.pdfb-save-indicator__retry-btn:active {
   transform: scale(0.95);
 }
 
 /* Error message */
-.save-indicator__error-message {
+.pdfb-save-indicator__error-message {
   position: absolute;
   top: 100%;
   left: 0;
@@ -207,7 +207,7 @@
 }
 
 /* Barre de progression */
-.save-indicator__progress-bar {
+.pdfb-save-indicator__progress-bar {
   width: 60px;
   height: 4px;
   background-color: #e0e0e0;
@@ -216,7 +216,7 @@
   margin-left: 8px;
 }
 
-.save-indicator__progress-fill {
+.pdfb-save-indicator__progress-fill {
   height: 100%;
   background: linear-gradient(90deg, #0073aa 0%, #00a0d2 100%);
   border-radius: 2px;
@@ -226,29 +226,29 @@
 
 /* Mobile responsive */
 @media (max-width: 640px) {
-  .save-indicator {
+  .pdfb-save-indicator {
     padding: 10px 12px;
     font-size: 12px;
     max-width: calc(100vw - 40px);
   }
 
-  .save-indicator--top-right,
-  .save-indicator--top-left {
+  .pdfb-save-indicator--top-right,
+  .pdfb-save-indicator--top-left {
     top: 10px;
   }
 
-  .save-indicator--bottom-right,
-  .save-indicator--bottom-left {
+  .pdfb-save-indicator--bottom-right,
+  .pdfb-save-indicator--bottom-left {
     bottom: 10px;
   }
 
-  .save-indicator--top-right,
-  .save-indicator--bottom-right {
+  .pdfb-save-indicator--top-right,
+  .pdfb-save-indicator--bottom-right {
     right: 10px;
   }
 
-  .save-indicator--top-left,
-  .save-indicator--bottom-left {
+  .pdfb-save-indicator--top-left,
+  .pdfb-save-indicator--bottom-left {
     left: 10px;
   }
 }

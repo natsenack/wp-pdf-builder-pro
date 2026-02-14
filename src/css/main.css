@@ -46,26 +46,26 @@ html, body {
   color: var(--text-color);
 }
 
-.pdf-builder-container {
+.pdfb-pdf-builder-container {
   width: 100%; height: 100%;
   display: flex; flex-direction: column;
   background: white;
 }
 
-.pdf-builder-header {
+.pdfb-pdf-builder-header {
   padding: 12px;
   border-bottom: 1px solid var(--border-color);
   background: white;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.pdf-builder-header h1 {
+.pdfb-pdf-builder-header h1 {
   margin: 0;
   font-size: 20px;
   font-weight: 600;
 }
 
-.pdf-builder-content {
+.pdfb-pdf-builder-content {
   flex: 1;
   display: flex;
   overflow: hidden;
@@ -73,7 +73,7 @@ html, body {
 }
 
 /* SIDEBAR */
-.pdf-builder-sidebar {
+.pdfb-pdf-builder-sidebar {
   width: 300px;
   background: white;
   border-right: 1px solid var(--border-color);
@@ -82,7 +82,7 @@ html, body {
 }
 
 /* CANVAS */
-.pdf-builder-canvas {
+.pdfb-pdf-builder-canvas {
   flex: 1;
   display: flex;
   background: var(--light-bg);
@@ -91,7 +91,7 @@ html, body {
 }
 
 /* TOOLBAR */
-.pdf-builder-toolbar {
+.pdfb-pdf-builder-toolbar {
   display: flex;
   gap: 8px;
   padding: 8px;
@@ -99,7 +99,7 @@ html, body {
   border-bottom: 1px solid var(--border-color);
 }
 
-.pdf-builder-toolbar button {
+.pdfb-pdf-builder-toolbar button {
   padding: 6px 12px;
   border: 1px solid var(--border-color);
   background: white;
@@ -109,7 +109,7 @@ html, body {
   transition: all 0.2s ease;
 }
 
-.pdf-builder-toolbar button:hover {
+.pdfb-pdf-builder-toolbar button:hover {
   background: var(--light-bg);
   border-color: var(--primary-color);
   color: var(--primary-color);

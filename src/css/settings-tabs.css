@@ -4,23 +4,23 @@
 
 
 /* Styles pour le contenu des onglets */
-.tab-content {
+.pdfb-tab-content {
     display: none;
 }
 
-.tab-content.active {
+.pdfb-tab-content.active {
     display: block;
 }
 
 /* Styles pour les sections dans les onglets */
-.tab-section {
+.pdfb-tab-section {
     background: #fff;
     border: 1px solid #ddd;
     margin-bottom: 20px;
     padding: 15px;
 }
 
-.tab-section h3 {
+.pdfb-tab-section h3 {
     border-bottom: 1px solid #ddd;
     margin: 0 0 15px 0;
     padding-bottom: 8px;
@@ -28,14 +28,14 @@
     font-weight: 600;
 }
 
-.tab-section h4 {
+.pdfb-tab-section h4 {
     margin: 15px 0 8px 0;
     font-size: 13px;
     font-weight: 600;
 }
 
 /* Styles pour les boutons */
-.button-primary {
+.pdfb-button-primary {
     background: #0073aa;
     border: 1px solid #0073aa;
     color: #fff;
@@ -49,13 +49,13 @@
     vertical-align: top;
 }
 
-.button-primary:hover,
-.button-primary:focus {
+.pdfb-button-primary:hover,
+.pdfb-button-primary:focus {
     background: #005177;
     border-color: #005177;
 }
 
-.button-secondary {
+.pdfb-button-secondary {
     background: #f7f7f7;
     border: 1px solid #ccc;
     color: #555;
@@ -69,33 +69,33 @@
     vertical-align: top;
 }
 
-.button-secondary:hover,
-.button-secondary:focus {
+.pdfb-button-secondary:hover,
+.pdfb-button-secondary:focus {
     background: #e9e9e9;
     border-color: #999;
 }
 
 /* Styles pour les messages */
-.notice {
+.pdfb-notice {
     background: #fff;
     border-left: 4px solid #00a0d2;
     margin: 15px 0;
     padding: 8px 12px;
 }
 
-.notice-success {
+.pdfb-notice-success {
     border-left-color: #46b450;
 }
 
-.notice-error {
+.pdfb-notice-error {
     border-left-color: #dc3232;
 }
 
-.notice-warning {
+.pdfb-notice-warning {
     border-left-color: #ffb900;
 }
 
-.notice-info {
+.pdfb-notice-info {
     border-left-color: #00a0d2;
 }
 

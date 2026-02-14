@@ -1,13 +1,13 @@
 /* PDF Builder Pro - Predefined Templates Manager Styles */
 
-.pdf-builder-predefined-container {
+.pdfb-pdf-builder-predefined-container {
     display: flex;
     gap: 30px;
     margin-top: 20px;
 }
 
-.templates-list-section,
-.template-editor-section {
+.pdfb-templates-list-section,
+.pdfb-template-editor-section {
     flex: 1;
     background: linear-gradient(145deg, #ffffff 0%, #fafbfc 100%);
     border: 1px solid rgba(59, 130, 246, 0.1);
@@ -19,27 +19,27 @@
     padding: 24px;
 }
 
-.templates-list-section {
+.pdfb-templates-list-section {
     max-width: 400px;
 }
 
-.template-editor-section {
+.pdfb-template-editor-section {
     max-width: 600px;
 }
 
 /* Templates List */
-.templates-actions {
+.pdfb-templates-actions {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
 }
 
-.templates-list {
+.pdfb-templates-list {
     max-height: 600px;
     overflow-y: auto;
 }
 
-.template-item {
+.pdfb-template-item {
     border: 1px solid rgba(59, 130, 246, 0.15);
     border-radius: 12px;
     padding: 18px;
@@ -50,7 +50,7 @@
     -webkit-backdrop-filter: blur(8px);
 }
 
-.template-item:hover {
+.pdfb-template-item:hover {
     box-shadow:
         0 12px 32px rgba(59, 130, 246, 0.12),
         0 0 0 1px rgba(59, 130, 246, 0.1);
@@ -59,30 +59,30 @@
     background: linear-gradient(135deg, rgba(219, 234, 254, 0.95) 0%, rgba(191, 219, 254, 0.95) 100%);
 }
 
-.template-header {
+.pdfb-template-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 10px;
 }
 
-.template-header h3 {
+.pdfb-template-header h3 {
     margin: 0;
     font-size: 16px;
     color: #0f172a;
     font-weight: 600;
 }
 
-.template-actions {
+.pdfb-template-actions {
     display: flex;
     gap: 5px;
 }
 
-.template-meta {
+.pdfb-template-meta {
     margin-bottom: 10px;
 }
 
-.category {
+.pdfb-category {
     display: inline-block;
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     color: white;
@@ -95,7 +95,7 @@
     box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
 }
 
-.description {
+.pdfb-description {
     display: block;
     color: #4b5563;
     font-size: 13px;
@@ -103,11 +103,11 @@
 }
 }
 
-.template-json {
+.pdfb-template-json {
     margin-bottom: 10px;
 }
 
-.template-json details {
+.pdfb-template-json details {
     border: 1px solid rgba(59, 130, 246, 0.15);
     border-radius: 8px;
     background: rgba(239, 246, 255, 0.6);
@@ -115,7 +115,7 @@
     -webkit-backdrop-filter: blur(4px);
 }
 
-.template-json summary {
+.pdfb-template-json summary {
     padding: 10px 14px;
     cursor: pointer;
     font-weight: 600;
@@ -124,11 +124,11 @@
     border-radius: 6px 6px 0 0;
 }
 
-.template-json summary:hover {
+.pdfb-template-json summary:hover {
     background: rgba(219, 234, 254, 0.9);
 }
 
-.template-json pre {
+.pdfb-template-json pre {
     margin: 0;
     padding: 14px;
     background: rgba(219, 234, 254, 0.9);
@@ -143,12 +143,12 @@
     border-top: 1px solid rgba(59, 130, 246, 0.1);
 }
 
-.template-preview {
+.pdfb-template-preview {
     text-align: center;
     margin-top: 10px;
 }
 
-.template-preview img {
+.pdfb-template-preview img {
     max-width: 100%;
     max-height: 200px;
     width: auto;
@@ -159,17 +159,17 @@
     box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
 }
 
-.preview-actions {
+.pdfb-preview-actions {
     margin-top: 10px;
     text-align: center;
 }
 
-.preview-actions .button {
+.pdfb-preview-actions .pdfb-button {
     font-size: 11px;
     padding: 4px 8px;
 }
 
-.no-preview {
+.pdfb-no-preview {
     padding: 24px;
     background: rgba(239, 246, 255, 0.6);
     border: 1px solid rgba(59, 130, 246, 0.1);
@@ -180,7 +180,7 @@
     -webkit-backdrop-filter: blur(4px);
 }
 
-.no-templates {
+.pdfb-no-templates {
     text-align: center;
     padding: 48px;
     color: #4b5563;
@@ -192,20 +192,20 @@
 }
 
 /* Form Styles */
-.form-row {
+.pdfb-form-row {
     margin-bottom: 20px;
 }
 
-.form-row label {
+.pdfb-form-row label {
     display: block;
     font-weight: 600;
     margin-bottom: 6px;
     color: #0f172a;
 }
 
-.form-row input[type="text"],
-.form-row select,
-.form-row textarea {
+.pdfb-form-row input[type="text"],
+.pdfb-form-row select,
+.pdfb-form-row textarea {
     width: 100%;
     padding: 10px 14px;
     border: 1px solid rgba(59, 130, 246, 0.15);
@@ -218,27 +218,27 @@
     -webkit-backdrop-filter: blur(4px);
 }
 
-.form-row input[type="text"]:focus,
-.form-row select:focus,
-.form-row textarea:focus {
+.pdfb-form-row input[type="text"]:focus,
+.pdfb-form-row select:focus,
+.pdfb-form-row textarea:focus {
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     outline: none;
 }
 
-.form-row textarea {
+.pdfb-form-row textarea {
     resize: vertical;
     font-family: monospace;
 }
 
-.form-row small {
+.pdfb-form-row small {
     display: block;
     color: #4b5563;
     font-size: 12px;
     margin-top: 4px;
 }
 
-.json-editor-container {
+.pdfb-json-editor-container {
     position: relative;
     border: 1px solid rgba(59, 130, 246, 0.15);
     border-radius: 8px;
@@ -248,7 +248,7 @@
     -webkit-backdrop-filter: blur(4px);
 }
 
-.json-editor-container textarea {
+.pdfb-json-editor-container textarea {
     border: none;
     border-radius: 0;
     margin: 0;
@@ -259,7 +259,7 @@
     resize: none;
 }
 
-.form-actions {
+.pdfb-form-actions {
     display: flex;
     gap: 12px;
     margin-top: 32px;
@@ -268,20 +268,20 @@
 }
 
 /* CodeMirror Override */
-.CodeMirror {
+.pdfb-CodeMirror {
     height: 400px;
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     font-size: 13px;
     line-height: 1.4;
 }
 
-.CodeMirror-focused {
+.pdfb-CodeMirror-focused {
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 /* Modal Styles */
-.pdf-builder-modal {
+.pdfb-pdf-builder-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -297,7 +297,7 @@
     animation: modalFadeIn 0.3s ease-out;
 }
 
-.modal-content {
+.pdfb-modal-content {
     background: linear-gradient(145deg, #ffffff 0%, #fafbfc 100%);
     border: 1px solid rgba(59, 130, 246, 0.1);
     border-radius: 16px;
@@ -310,7 +310,7 @@
     overflow: hidden;
 }
 
-.modal-header {
+.pdfb-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -321,13 +321,13 @@
     -webkit-backdrop-filter: blur(10px);
 }
 
-.modal-header h3 {
+.pdfb-modal-header h3 {
     margin: 0;
     color: #0f172a;
     font-weight: 600;
 }
 
-.close-modal {
+.pdfb-close-modal {
     background: rgba(219, 234, 254, 0.8);
     border: 1px solid rgba(59, 130, 246, 0.2);
     font-size: 18px;
@@ -345,7 +345,7 @@
     -webkit-backdrop-filter: blur(8px);
 }
 
-.close-modal:hover {
+.pdfb-close-modal:hover {
     background: rgba(191, 219, 254, 0.9);
     border-color: rgba(59, 130, 246, 0.3);
     color: #3b82f6;
@@ -353,16 +353,16 @@
 }
 
 /* Boutons de navigation avec icônes */
-.button-previous, .button-next {
+.pdfb-button-previous, .pdfb-button-next {
     position: relative;
     font-weight: 600;
 }
 
-.button-previous {
+.pdfb-button-previous {
     padding-left: 40px;
 }
 
-.button-previous::before {
+.pdfb-button-previous::before {
     content: '←';
     position: absolute;
     left: 12px;
@@ -374,16 +374,16 @@
     transition: transform 0.2s ease;
 }
 
-.button-previous:hover::before {
+.pdfb-button-previous:hover::before {
     transform: translateY(-50%) translateX(-2px);
 }
 
-.button-next {
+.pdfb-button-next {
     position: relative;
     padding-right: 44px;
 }
 
-.button-next::after {
+.pdfb-button-next::after {
     content: '→';
     position: absolute;
     right: 14px;
@@ -396,12 +396,12 @@
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.button-next:hover::after {
+.pdfb-button-next:hover::after {
     transform: translateY(-50%) translateX(3px);
     color: #2563eb;
 }
 
-.modal-body {
+.pdfb-modal-body {
     padding: 20px;
     max-height: 70vh;
     overflow-y: auto;
@@ -420,13 +420,13 @@
 }
 
 /* Loading States */
-.loading {
+.pdfb-loading {
     opacity: 0.6;
     pointer-events: none;
     position: relative;
 }
 
-.loading::after {
+.pdfb-loading::after {
     content: '';
     position: absolute;
     top: 50%;
@@ -446,7 +446,7 @@
 }
 
 /* Success/Error Messages */
-.admin-notice {
+.pdfb-admin-notice {
     position: fixed;
     top: 40px;
     right: 20px;
@@ -458,11 +458,11 @@
     animation: slideInRight 0.3s ease-out;
 }
 
-.admin-notice:nth-child(2) {
+.pdfb-admin-notice:nth-child(2) {
     top: 100px;
 }
 
-.admin-notice:nth-child(3) {
+.pdfb-admin-notice:nth-child(3) {
     top: 160px;
 }
 
@@ -477,7 +477,7 @@
     }
 }
 
-.success-message {
+.pdfb-success-message {
     background: #d4edda;
     border: 1px solid #c3e6cb;
     color: #155724;
@@ -485,7 +485,7 @@
     border-radius: 6px;
 }
 
-.error-message {
+.pdfb-error-message {
     background: #f8d7da;
     border: 1px solid #f5c6cb;
     color: #721c24;
@@ -495,31 +495,31 @@
 
 /* Responsive */
 @media (max-width: 1200px) {
-    .pdf-builder-predefined-container {
+    .pdfb-pdf-builder-predefined-container {
         flex-direction: column;
     }
 
-    .templates-list-section,
-    .template-editor-section {
+    .pdfb-templates-list-section,
+    .pdfb-template-editor-section {
         max-width: none;
     }
 }
 
 @media (max-width: 768px) {
-    .template-header {
+    .pdfb-template-header {
         flex-direction: column;
         gap: 10px;
     }
 
-    .template-actions {
+    .pdfb-template-actions {
         justify-content: center;
     }
 
-    .form-actions {
+    .pdfb-form-actions {
         flex-direction: column;
     }
 
-    .modal-content {
+    .pdfb-modal-content {
         max-width: 95%;
         max-height: 95%;
     }

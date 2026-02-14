@@ -3106,7 +3106,7 @@ export const Header = memo(function Header({
       {/* Modale des paramètres du template */}
       {showSettingsModal && (
         <div 
-          className="canvas-modal-overlay" 
+          className="pdfb-canvas-modal-overlay" 
           style={{ 
             position: 'fixed',
             top: 0,
@@ -3121,7 +3121,7 @@ export const Header = memo(function Header({
           }}
         >
           <div 
-            className="canvas-modal-container"
+            className="pdfb-canvas-modal-container"
             style={{
               background: '#fff',
               borderRadius: '8px',
@@ -3135,7 +3135,7 @@ export const Header = memo(function Header({
             }}
           >
             <div 
-              className="canvas-modal-header"
+              className="pdfb-canvas-modal-header"
               style={{
                 background: '#f5f5f5',
                 borderBottom: '1px solid #ddd',
@@ -3151,7 +3151,7 @@ export const Header = memo(function Header({
               </h3>
               <button
                 type="button"
-                className="canvas-modal-close"
+                className="pdfb-canvas-modal-close"
                 onClick={() => setShowSettingsModal(false)}
                 title="Fermer"
                 style={{
@@ -3172,20 +3172,20 @@ export const Header = memo(function Header({
               </button>
             </div>
             <div 
-              className="canvas-modal-body"
+              className="pdfb-canvas-modal-body"
               style={{
                 padding: '24px',
                 overflowY: 'auto',
                 flex: 1
               }}
             >
-              <div className="setting-group" style={{ marginBottom: '20px' }}>
-                <label className="setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Nom du template</label>
+              <div className="pdfb-setting-group" style={{ marginBottom: '20px' }}>
+                <label className="pdfb-setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Nom du template</label>
                 <input
                   type="text"
                   value={editedTemplateName}
                   onChange={(e) => setEditedTemplateName(e.target.value)}
-                  className="setting-input"
+                  className="pdfb-setting-input"
                   placeholder="Entrez le nom du template"
                   autoComplete="off"
                   name="template_name_unique"
@@ -3193,45 +3193,45 @@ export const Header = memo(function Header({
                 />
               </div>
 
-              <div className="setting-group" style={{ marginBottom: '20px' }}>
-                <label className="setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Description</label>
+              <div className="pdfb-setting-group" style={{ marginBottom: '20px' }}>
+                <label className="pdfb-setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Description</label>
                 <textarea
                   value={editedTemplateDescription}
                   onChange={(e) => setEditedTemplateDescription(e.target.value)}
-                  className="setting-textarea"
+                  className="pdfb-setting-textarea"
                   placeholder="Description du template..."
                   rows={3}
                   style={{ width: '100%', padding: '8px 12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', resize: 'vertical' }}
                 />
               </div>
 
-              <div className="setting-group" style={{ marginBottom: '20px' }}>
-                <label className="setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Dimensions du canvas</label>
-                <div className="setting-input-group" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div className="pdfb-setting-group" style={{ marginBottom: '20px' }}>
+                <label className="pdfb-setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Dimensions du canvas</label>
+                <div className="pdfb-setting-input-group" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <input
                     type="number"
                     value={editedCanvasWidth}
                     disabled={true}
-                    className="setting-input setting-input-disabled"
+                    className="pdfb-setting-input setting-input-disabled"
                     placeholder="Largeur"
                     style={{ flex: 1, padding: '8px 12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', background: '#f5f5f5', color: '#999' }}
                   />
-                  <span className="setting-input-separator" style={{ color: '#999', fontSize: '16px' }}>×</span>
+                  <span className="pdfb-setting-input-separator" style={{ color: '#999', fontSize: '16px' }}>×</span>
                   <input
                     type="number"
                     value={editedCanvasHeight}
                     disabled={true}
-                    className="setting-input setting-input-disabled"
+                    className="pdfb-setting-input setting-input-disabled"
                     placeholder="Hauteur"
                     style={{ flex: 1, padding: '8px 12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', background: '#f5f5f5', color: '#999' }}
                   />
-                  <span className="setting-unit" style={{ color: '#666', fontSize: '14px' }}>px</span>
+                  <span className="pdfb-setting-unit" style={{ color: '#666', fontSize: '14px' }}>px</span>
                 </div>
               </div>
 
-              <div className="setting-group" style={{ marginBottom: '20px' }}>
-                <label className="setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Statut</label>
-                <div className="setting-status-tags" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <div className="pdfb-setting-group" style={{ marginBottom: '20px' }}>
+                <label className="pdfb-setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Statut</label>
+                <div className="pdfb-setting-status-tags" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   {isNewTemplate && (
                     <span className="status-tag status-new" style={{ padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: 500, background: '#e7f3ff', color: '#0073aa', border: '1px solid #0073aa' }}>
                       Nouveau template
@@ -3250,9 +3250,9 @@ export const Header = memo(function Header({
                 </div>
               </div>
 
-              <div className="setting-group" style={{ marginBottom: '20px' }}>
-                <label className="setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Informations système</label>
-                <div className="setting-info" style={{ fontSize: '12px', color: '#666', lineHeight: '1.6', background: '#f9f9f9', padding: '12px', borderRadius: '4px', border: '1px solid #e0e0e0' }}>
+              <div className="pdfb-setting-group" style={{ marginBottom: '20px' }}>
+                <label className="pdfb-setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Informations système</label>
+                <div className="pdfb-setting-info" style={{ fontSize: '12px', color: '#666', lineHeight: '1.6', background: '#f9f9f9', padding: '12px', borderRadius: '4px', border: '1px solid #e0e0e0' }}>
                   <div>Template ID: {templateName || "N/A"}</div>
                   <div>
                     Dernière modification:{" "}
@@ -3282,7 +3282,7 @@ export const Header = memo(function Header({
               </div>
             </div>
             <div 
-              className="canvas-modal-footer"
+              className="pdfb-canvas-modal-footer"
               style={{
                 borderTop: '1px solid #ddd',
                 padding: '16px 24px',
@@ -3294,7 +3294,7 @@ export const Header = memo(function Header({
             >
               <button
                 onClick={() => setShowSettingsModal(false)}
-                className="canvas-modal-btn canvas-modal-btn-secondary"
+                className="pdfb-canvas-modal-btn canvas-modal-btn-secondary"
                 style={{
                   padding: '10px 20px',
                   border: '1px solid #ccc',
@@ -3323,7 +3323,7 @@ export const Header = memo(function Header({
 
                   setShowSettingsModal(false);
                 }}
-                className="canvas-modal-btn canvas-modal-btn-primary"
+                className="pdfb-canvas-modal-btn canvas-modal-btn-primary"
                 style={{
                   padding: '10px 20px',
                   border: 'none',
@@ -3345,24 +3345,24 @@ export const Header = memo(function Header({
 
       {/* Modale d'aperçu avec sélection de format */}
       {showPreviewModal && (
-        <div className="canvas-modal-overlay" style={{ display: "flex" }}>
-          <div className="canvas-modal-container" style={{ maxWidth: "500px" }}>
-            <div className="canvas-modal-header">
+        <div className="pdfb-canvas-modal-overlay" style={{ display: "flex" }}>
+          <div className="pdfb-canvas-modal-container" style={{ maxWidth: "500px" }}>
+            <div className="pdfb-canvas-modal-header">
               <h3>
                 <span style={{ fontSize: "24px" }}>👁️</span> Générer un aperçu
               </h3>
               <button
                 type="button"
-                className="canvas-modal-close"
+                className="pdfb-canvas-modal-close"
                 onClick={() => setShowPreviewModal(false)}
                 title="Fermer"
               >
                 &times;
               </button>
             </div>
-            <div className="canvas-modal-body">
-              <div className="setting-group">
-                <label className="setting-label">
+            <div className="pdfb-canvas-modal-body">
+              <div className="pdfb-setting-group">
+                <label className="pdfb-setting-label">
                   Numéro de commande WooCommerce{" "}
                   <span style={{ fontSize: "12px", color: "#e11d48" }}>*</span>
                 </label>
@@ -3381,7 +3381,7 @@ export const Header = memo(function Header({
                   <select
                     value={previewOrderId}
                     onChange={(e) => setPreviewOrderId(e.target.value)}
-                    className="setting-input"
+                    className="pdfb-setting-input"
                     disabled={isGeneratingPreview}
                     style={{ cursor: isGeneratingPreview ? "not-allowed" : "pointer" }}
                   >
@@ -3397,14 +3397,14 @@ export const Header = memo(function Header({
                     ))}
                   </select>
                 )}
-                <div className="setting-hint">
+                <div className="pdfb-setting-hint">
                   Sélectionnez la commande WooCommerce pour générer le document avec
                   les vraies données (client, produits, totaux, etc.)
                 </div>
               </div>
 
-              <div className="setting-group" style={{ marginTop: "24px" }}>
-                <label className="setting-label">Format de sortie</label>
+              <div className="pdfb-setting-group" style={{ marginTop: "24px" }}>
+                <label className="pdfb-setting-label">Format de sortie</label>
                 <div
                   style={{
                     display: "grid",
@@ -3591,10 +3591,10 @@ export const Header = memo(function Header({
                 </div>
               )}
             </div>
-            <div className="canvas-modal-footer">
+            <div className="pdfb-canvas-modal-footer">
               <button
                 onClick={() => setShowPreviewModal(false)}
-                className="canvas-modal-btn canvas-modal-btn-secondary"
+                className="pdfb-canvas-modal-btn canvas-modal-btn-secondary"
                 disabled={isGeneratingPreview}
               >
                 Annuler
