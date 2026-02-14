@@ -65,8 +65,8 @@ class AjaxHandler
         \add_action('wp_ajax_pdf_builder_get_canvas_orientations', [$this, 'ajaxGetCanvasOrientations']);
         \add_action('wp_ajax_pdf_builder_save_canvas_modal_settings', [$this, 'ajaxSaveCanvasModalSettings']);
 
-        // Hook AJAX pour la sauvegarde des paramètres - REMOVED: handled by Unified Ajax Handler
-        // \add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajaxSaveSettings']);
+        // Hook AJAX pour la sauvegarde des paramètres depuis le bouton flottant
+        \add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajaxSaveSettings']);
     }
 
     /**
@@ -1968,76 +1968,38 @@ class AjaxHandler
         try {
             // Vérifier les permissions
             if (!current_user_can('manage_options')) {
-                wp_send_json_error(__('Permissions insuffisantes', 'pdf-builder-pro'));
+                wp_send_json_error(['message' => __('Permissions insuffisantes', 'pdf-builder-pro')]);
                 return;
             }
 
-            // Vérifier le nonce
-            if (!pdf_builder_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings')) {
-                wp_send_json_error(__('Nonce invalide', 'pdf-builder-pro'));
+            // Vérifier le nonce - accepter plusieurs formats de nonce
+            $nonce = $_POST['_wpnonce'] ?? $_POST['nonce'] ?? '';
+            $nonce_valid = false;
+            
+            // Essayer plusieurs actions de nonce possibles
+            if (pdf_builder_verify_nonce($nonce, 'pdf_builder_ajax')) {
+                $nonce_valid = true;
+            } elseif (pdf_builder_verify_nonce($nonce, 'pdf_builder_settings')) {
+                $nonce_valid = true;
+            }
+            
+            if (!$nonce_valid) {
+                error_log('PDF Builder: Nonce validation failed - nonce: ' . substr($nonce, 0, 10) . '...');
+                wp_send_json_error(['message' => __('Nonce invalide', 'pdf-builder-pro')]);
                 return;
             }
 
             $tab = sanitize_text_field($_POST['tab'] ?? 'general');
-            $saved_count = 0;
+            
+            error_log("PDF Builder: ajaxSaveSettings() called for tab: {$tab}");
+            error_log('PDF Builder: POST data keys: ' . implode(', ', array_keys($_POST)));
 
-            // Traiter les données selon l'onglet
-            if ($tab === 'general') {
-                // Sauvegarder les paramètres généraux
-                $option_keys = [
-                    'pdf_builder_license_key',
-                    'pdf_builder_license_email',
-                    'pdf_builder_enable_debug',
-                    'pdf_builder_max_templates',
-                    'pdf_builder_default_format',
-                    'pdf_builder_default_orientation'
-                ];
-
-                foreach ($option_keys as $key) {
-                    if (isset($_POST[$key])) {
-                        $value = sanitize_text_field($_POST[$key]);
-                        if (pdf_builder_update_option($key, $value)) {
-                            $saved_count++;
-                        }
-                    }
-                }
-            } elseif ($tab === 'advanced') {
-                // Sauvegarder les paramètres avancés
-                $option_keys = [
-                    'pdf_builder_cache_enabled',
-                    'pdf_builder_cache_expiry',
-                    'pdf_builder_performance_mode',
-                    'pdf_builder_error_reporting',
-                    'pdf_builder_custom_css',
-                    'pdf_builder_custom_js'
-                ];
-
-                foreach ($option_keys as $key) {
-                    if (isset($_POST[$key])) {
-                        if ($key === 'pdf_builder_custom_css' || $key === 'pdf_builder_custom_js') {
-                            $value = wp_kses_post($_POST[$key]); // Permettre HTML limité
-                        } else {
-                            $value = sanitize_text_field($_POST[$key]);
-                        }
-                        if (pdf_builder_update_option($key, $value)) {
-                            $saved_count++;
-                        }
-                    }
-                }
-            }
-
-            if ($saved_count > 0) {
-                wp_send_json_success([
-                    'message' => sprintf(__('Paramètres sauvegardés (%d)', 'pdf-builder-pro'), $saved_count),
-                    'saved_count' => $saved_count
-                ]);
-            } else {
-                wp_send_json_error(__('Aucun paramètre n\'a été modifié', 'pdf-builder-pro'));
-            }
+            // Utiliser le handler unifié qui gère maintenant les tableaux imbriqués
+            $this->handleSaveAllSettings();
 
         } catch (Exception $e) {
-            error_log('PDF Builder: Error saving settings: ' . $e->getMessage());
-            wp_send_json_error(__('Erreur lors de la sauvegarde: ', 'pdf-builder-pro') . $e->getMessage());
+            error_log('PDF Builder: Error in ajaxSaveSettings: ' . $e->getMessage());
+            wp_send_json_error(['message' => __('Erreur lors de la sauvegarde: ', 'pdf-builder-pro') . $e->getMessage()]);
         }
     }
 }
