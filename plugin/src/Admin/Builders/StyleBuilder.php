@@ -70,11 +70,6 @@ class StyleBuilder
             $properties_found[] = 'textTransform=' . $element['textTransform'];
         }
 
-        if (isset($element['letterSpacing']) && $element['letterSpacing'] != 0) {
-            $style .= "letter-spacing: {$element['letterSpacing']}px; ";
-            $properties_found[] = 'letterSpacing=' . $element['letterSpacing'];
-        }
-
         // ========== PROPRIÉTÉS DE FOND ET BORDURES ==========
 
         if (isset($element['showBackground']) && $element['showBackground'] && isset($element['backgroundColor'])) {

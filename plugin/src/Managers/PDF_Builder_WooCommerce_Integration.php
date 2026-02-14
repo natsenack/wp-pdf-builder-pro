@@ -686,9 +686,6 @@ class PDF_Builder_WooCommerce_Integration
         if (isset($element_styles['textTransform'])) {
             $style .= "text-transform: {$element_styles['textTransform']}; ";
         }
-        if (isset($element_styles['letterSpacing'])) {
-            $style .= "letter-spacing: {$element_styles['letterSpacing']}; ";
-        }
         if (isset($element_styles['wordSpacing'])) {
             $style .= "word-spacing: {$element_styles['wordSpacing']}; ";
         }

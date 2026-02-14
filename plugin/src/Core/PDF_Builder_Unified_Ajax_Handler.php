@@ -3131,8 +3131,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $content = $element['text'] ?? $element['content'] ?? '';
                 
                 // ✅ Support du padding horizontal et vertical (backward compatibility)
-                $paddingHorizontal = isset($element['paddingHorizontal']) ? floatval($element['paddingHorizontal']) : (isset($element['padding']) ? floatval($element['padding']) : 12);
-                $paddingVertical = isset($element['paddingVertical']) ? floatval($element['paddingVertical']) : (isset($element['padding']) ? floatval($element['padding']) : 12);
+                $paddingHorizontal = 12;
+                $paddingVertical = 12;
                 $verticalAlign = isset($element['verticalAlign']) ? $element['verticalAlign'] : 'top';
                 
                 // Styles du conteneur interne avec padding et alignement
@@ -3187,11 +3187,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             if (isset($element[$prop])) {
                 $css .= sprintf($format, $element[$prop]) . ' ';
             }
-        }
-        
-        // Letter spacing (ignorer 'normal')
-        if (($element['letterSpacing'] ?? 'normal') !== 'normal') {
-            $css .= 'letter-spacing: ' . floatval($element['letterSpacing']) . 'px; ';
         }
         
         // Word spacing (ignorer 'normal')

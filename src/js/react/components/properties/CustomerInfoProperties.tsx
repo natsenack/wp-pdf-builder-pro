@@ -1297,48 +1297,6 @@ export function CustomerInfoProperties({
                 marginBottom: "4px",
               }}
             >
-              Padding horizontal:{" "}
-              {element.paddingHorizontal !== undefined
-                ? element.paddingHorizontal
-                : element.padding || 12}
-              px
-            </label>
-            <input
-              type="range"
-              min={0}
-              max={50}
-              value={
-                element.paddingHorizontal !== undefined
-                  ? element.paddingHorizontal
-                  : element.padding || 12
-              }
-              onChange={(e) =>
-                onChange(
-                  element.id,
-                  "paddingHorizontal",
-                  parseInt(e.target.value),
-                )
-              }
-              style={{
-                width: "100%",
-                height: "6px",
-                borderRadius: "3px",
-                background: "#ddd",
-                outline: "none",
-                cursor: "pointer",
-              }}
-            />
-          </div>
-
-          <div style={{ marginBottom: "12px" }}>
-            <label
-              style={{
-                display: "block",
-                fontSize: "12px",
-                fontWeight: "bold",
-                marginBottom: "4px",
-              }}
-            >
               Padding vertical:{" "}
               {element.paddingVertical !== undefined
                 ? element.paddingVertical

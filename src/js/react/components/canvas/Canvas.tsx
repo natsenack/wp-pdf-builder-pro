@@ -1420,17 +1420,6 @@ const drawCustomerInfo = (
   const fontFamily = props.fontFamily || "Arial";
   const fontWeight = props.fontWeight || "normal";
   const fontStyle = props.fontStyle || "normal";
-  // ✅ NEW: Padding horizontal et vertical séparés (backward compatibility avec padding unique)
-  const paddingHorizontal = normalizePaddingToNumber(
-    props.paddingHorizontal !== undefined
-      ? props.paddingHorizontal
-      : props.padding,
-    12,
-  );
-  const paddingVertical = normalizePaddingToNumber(
-    props.paddingVertical !== undefined ? props.paddingVertical : props.padding,
-    12,
-  );
   // Propriétés de police pour l'en-tête
   const headerFontSize = props.headerFontSize || fontSize + 2;
   const headerFontFamily = props.headerFontFamily || fontFamily;
@@ -1576,7 +1565,7 @@ const drawCustomerInfo = (
 
     if (compactText) {
       // Word wrap si le texte dépasse
-      const maxWidth = element.width - paddingHorizontal * 2;
+      const maxWidth = element.width - 24;
       ctx.font = `${bodyFontStyle} ${bodyFontWeight} ${bodyFontSize}px ${bodyFontFamily}`;
 
       const words = compactText.split(" ");
@@ -1623,18 +1612,18 @@ const drawCustomerInfo = (
   switch (verticalAlign) {
     case "middle":
       startY = Math.max(
-        paddingVertical,
+        12,
         (element.height - totalContentHeight) / 2,
       );
       break;
     case "bottom":
       startY = Math.max(
-        paddingVertical,
-        element.height - totalContentHeight - paddingVertical,
+        12,
+        element.height - totalContentHeight - 12,
       );
       break;
     default: // top
-      startY = paddingVertical;
+      startY = 12;
   }
 
   let y = startY;
@@ -1645,9 +1634,9 @@ const drawCustomerInfo = (
       case "center":
         return element.width / 2;
       case "right":
-        return element.width - paddingHorizontal;
+        return element.width - 12;
       default: // left
-        return paddingHorizontal;
+        return 12;
     }
   };
 
@@ -1655,7 +1644,6 @@ const drawCustomerInfo = (
 
   // 🔍 DEBUG: Log des coordonnées customer_info
   console.log(`[React Canvas customer_info] Element ID: ${element.id} | x: ${element.x} | y: ${element.y} | width: ${element.width} | height: ${element.height}`);
-  console.log(`[React Canvas customer_info] paddingH: ${paddingHorizontal} | paddingV: ${paddingVertical} | textX: ${textX} | startY: ${startY}`);
 
   // En-tête
   if (showHeaders) {
@@ -1897,17 +1885,6 @@ const drawCompanyInfo = (
     bodyWeight: normalizeFontWeight(props.bodyFontWeight || "normal"),
     bodyStyle: props.bodyFontStyle || "normal",
   };
-  // ✅ NEW: Padding horizontal et vertical séparés (backward compatibility)
-  const paddingHorizontal = normalizePaddingToNumber(
-    props.paddingHorizontal !== undefined
-      ? props.paddingHorizontal
-      : props.padding,
-    12,
-  );
-  const paddingVertical = normalizePaddingToNumber(
-    props.paddingVertical !== undefined ? props.paddingVertical : props.padding,
-    12,
-  );
 
   // Configuration d'affichage
   const displayConfig = {
@@ -1961,14 +1938,14 @@ const drawCompanyInfo = (
       case "center":
         return element.width / 2;
       case "right":
-        return element.width - paddingHorizontal;
+        return element.width - 12;
       default: // left
-        return paddingHorizontal;
+        return 12;
     }
   };
 
   let x = getTextX();
-  let y = paddingVertical + 10;
+  let y = 12 + 10;
 
   // Récupération des données d'entreprise
   const companyData = getCompanyData();
@@ -2094,7 +2071,7 @@ const drawCompanyInfo = (
 
     if (compactText) {
       // Word wrap si le texte dépasse
-      const maxWidth = element.width - paddingHorizontal * 2;
+      const maxWidth = element.width - 24;
       ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
 
       const words = compactText.split(" ");
@@ -2129,7 +2106,6 @@ const drawCompanyInfo = (
 
   // 🔍 DEBUG: Log des coordonnées company_info
   console.log(`[React Canvas company_info] Element ID: ${element.id} | x: ${element.x} | y: ${element.y} | width: ${element.width} | height: ${element.height}`);
-  console.log(`[React Canvas company_info] paddingH: ${paddingHorizontal} | paddingV: ${paddingVertical}`);
 
   // Appliquer la police du corps par défaut
   ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
