@@ -443,7 +443,7 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
 
     // Espacement entre les lignes
     if (index < lines.length - 1) {
-      currentY += fontConfig.size * 1.2;
+      currentY += fontConfig.size * 1.1;
     }
   });
 };
@@ -1608,8 +1608,8 @@ const drawCustomerInfo = (
       ctx.fillText(lineText, textX, y);
     }
 
-    // Appliquer le line-height fixe (1.2)
-    y += bodyFontSize * 1.2;
+    // Appliquer le line-height fixe (1.1)
+    y += bodyFontSize * 1.1;
   });
 };
 
@@ -1805,7 +1805,7 @@ const drawCompanyLine = (
     ctx.fillText(text, x, y);
   }
 
-  return y + fontSize * 1.2;
+  return y + fontSize * 1.1;
 };
 
 const drawCompanyInfo = (
@@ -3707,8 +3707,8 @@ export const Canvas = function Canvas({
       const wrappedLines = wrapText(text, maxWidth);
 
       // Calculer le nombre maximum de lignes qui peuvent tenir
-      // Utiliser un line-height fixe: 1.2 * fontSize
-      const lineHeight = fontSize * 1.2;
+      // Utiliser un line-height fixe: 1.1 * fontSize
+      const lineHeight = fontSize * 1.1;
       const maxLines = Math.floor(
         (element.height - (showSeparator ? 25 : 15)) / lineHeight,
       );

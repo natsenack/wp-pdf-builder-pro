@@ -3658,12 +3658,11 @@ class PDF_Builder_Unified_Ajax_Handler {
         if ($show['headers']) {
             $html .= '<div style="' . $header_style . '">Informations Client</div>';
         }
-        // Chaque ligne avec margin-bottom (sauf dernière) = gap de React
+        // Chaque ligne sans margin-bottom (espacement serré)
         $total_lines = count($lines);
         foreach ($lines as $index => $line) {
             $is_last = ($index === $total_lines - 1);
-            $line_margin = $is_last ? '' : " margin-bottom: 4px;";
-            $html .= '<div style="' . $line_style_base . $line_margin . '">' . $line . '</div>';
+            $html .= '<div style="' . $line_style_base . '">' . $line . '</div>';
         }
         $html .= '</div>';
         
@@ -3833,7 +3832,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $total_lines = count($processedLines);
         foreach ($processedLines as $index => $line) {
             $is_last = ($index === $total_lines - 1);
-            $line_margin = $is_last ? '' : " margin-bottom: 4px;";
+            $line_margin = $is_last ? '' : " margin-bottom: 2px;";
             $html .= '<div style="margin: 0; padding: 0;' . $line_margin . '">' . $line . '</div>';
         }
         $html .= '</div>'; // Fermer element container
@@ -4384,7 +4383,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
         
         // Calculer le gap avec espacement fixe: 1.2 * fontSize (ligne-height = 1.2)
-        $gap = round($font_size * 0.2);
+        $gap = round($font_size * 0.1);
         
         // Extraire les propriétés de positionnement
         preg_match('/left:\s*[^;]+;/', $base_styles_clean, $left_match);
@@ -4484,7 +4483,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Utiliser un espacement fixe: 1.2 * fontSize (lineHeight system removed)
         $font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 10;
-        $margin_bottom = round($font_size * 0.2); // équivalent à line-height: 1.2
+        $margin_bottom = round($font_size * 0.1); // équivalent à line-height: 1.1
         
         // Extraire les propriétés de positionnement (pour le conteneur) et de texte (pour le contenu)
         // On garde UNIQUEMENT position, left, top, width, height sur le conteneur

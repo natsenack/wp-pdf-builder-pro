@@ -130,7 +130,7 @@ const Toggle = ({
       style={{
         fontSize: "11px",
         color: "#666",
-        lineHeight: "1.4",
+        lineHeight: "1.1",
       }}
     >
       {description}

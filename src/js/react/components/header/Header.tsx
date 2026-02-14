@@ -2236,31 +2236,31 @@ export const Header = memo(function Header({
 
               if (element.showHeaders !== false) {
                 customerParts.push(
-                  `<div style="font-size: ${headerFontSize}px; font-family: ${headerFontFamily}; font-weight: ${headerFontWeight}; font-style: ${headerFontStyle}; color: ${headerTextColor}; margin-bottom: 8px;">Client</div>`,
+                  `<div style="font-size: ${headerFontSize}px; font-family: ${headerFontFamily}; font-weight: ${headerFontWeight}; font-style: ${headerFontStyle}; color: ${headerTextColor}; margin-bottom: 4px;">Client</div>`,
                 );
               }
 
               if (element.showFullName !== false) {
                 customerParts.push(
-                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">Prénom Nom</div>`,
+                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0;">Prénom Nom</div>`,
                 );
               }
 
               if (element.showAddress !== false) {
                 customerParts.push(
-                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">123 Rue de la Paix, 75000 Paris</div>`,
+                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0;">123 Rue de la Paix, 75000 Paris</div>`,
                 );
               }
 
               if (element.showEmail !== false) {
                 customerParts.push(
-                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">client@example.com</div>`,
+                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0;">client@example.com</div>`,
                 );
               }
 
               if (element.showPhone !== false) {
                 customerParts.push(
-                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor};">+01 23 45 67 89</div>`,
+                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0;">+01 23 45 67 89</div>`,
                 );
               }
 
