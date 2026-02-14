@@ -1355,9 +1355,39 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Sauvegarde des paramètres templates
      */
     private function save_templates_settings() {
-        $order_status_templates = isset($_POST['order_status_templates']) ? $_POST['order_status_templates'] : [];
-        pdf_builder_update_option('pdf_builder_order_status_templates', $order_status_templates);
-        return 1;
+        error_log('[UNIFIED AJAX] save_templates_settings called');
+        error_log('[UNIFIED AJAX] POST keys: ' . implode(', ', array_keys($_POST)));
+        
+        // Chercher les données dans la structure imbriquée
+        $order_status_templates = [];
+        if (isset($_POST['pdf_builder_settings']['pdf_builder_order_status_templates'])) {
+            $order_status_templates = $_POST['pdf_builder_settings']['pdf_builder_order_status_templates'];
+            error_log('[UNIFIED AJAX] Found templates in nested structure: ' . json_encode($order_status_templates));
+        } elseif (isset($_POST['order_status_templates'])) {
+            // Fallback pour l'ancien format
+            $order_status_templates = $_POST['order_status_templates'];
+            error_log('[UNIFIED AJAX] Found templates in flat structure: ' . json_encode($order_status_templates));
+        } else {
+            error_log('[UNIFIED AJAX] No template data found in POST');
+        }
+        
+        // Nettoyer les valeurs vides
+        $clean_templates = [];
+        foreach ($order_status_templates as $status => $template_id) {
+            if (!empty($template_id)) {
+                $clean_templates[sanitize_text_field($status)] = sanitize_text_field($template_id);
+            }
+        }
+        
+        error_log('[UNIFIED AJAX] Clean templates to save: ' . json_encode($clean_templates));
+        $result = pdf_builder_update_option('pdf_builder_order_status_templates', $clean_templates);
+        error_log('[UNIFIED AJAX] Save result: ' . ($result ? 'SUCCESS' : 'FAILED'));
+        
+        // Vérification immédiate
+        $saved_value = pdf_builder_get_option('pdf_builder_order_status_templates', []);
+        error_log('[UNIFIED AJAX] Verification - value in DB: ' . json_encode($saved_value));
+        
+        return count($clean_templates) > 0 ? 1 : 0;
     }
 
     /**
