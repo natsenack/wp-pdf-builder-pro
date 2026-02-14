@@ -764,6 +764,43 @@
     'use strict';
 
     $(document).ready(function() {
+        // Gestionnaire pour afficher/masquer les sections développeur
+        $('#developer_enabled').on('change', function() {
+            const isEnabled = $(this).is(':checked');
+            const $status = $('#developer_status_indicator');
+            
+            // Mettre à jour l'indicateur de statut
+            if (isEnabled) {
+                $status.removeClass('developer-status-inactive').addClass('developer-status-active').text('ACTIF');
+            } else {
+                $status.removeClass('developer-status-active').addClass('developer-status-inactive').text('INACTIF');
+            }
+            
+            // Afficher/masquer les sections développeur
+            const sections = [
+                '#dev-license-section',
+                '#dev-debug-section', 
+                '#dev-logs-section',
+                '#dev-optimizations-section',
+                '#dev-logs-viewer-section',
+                '#dev-tools-section',
+                '#dev-notifications-test-section',
+                '#dev-shortcuts-section',
+                '#dev-todo-section',
+                '#dev-console-section',
+                '#dev-hooks-section',
+                '#dev-database-section'
+            ];
+            
+            sections.forEach(function(section) {
+                if (isEnabled) {
+                    $(section).slideDown(300);
+                } else {
+                    $(section).slideUp(300);
+                }
+            });
+        });
+
         // Gestionnaire pour le bouton de génération de clé de test
         $('#generate_license_key_btn').on('click', function(e) {
             e.preventDefault();
