@@ -3826,14 +3826,11 @@ class PDF_Builder_Unified_Ajax_Handler {
             return preg_replace('/<strong>/', '<strong style="' . $strong_style . '">', $line);
         }, $lines);
         
-        // Génération HTML - espacement personnalisable entre les lignes
+        // Génération HTML - sans espacement entre les lignes
         $html = '<div class="element" style="' . $container_styles . '">';
-        // Chaque ligne avec espacement personnalisable (sauf dernière)
-        $total_lines = count($processedLines);
-        foreach ($processedLines as $index => $line) {
-            $is_last = ($index === $total_lines - 1);
-            $line_margin = $is_last ? '' : " margin-bottom: {$line_spacing}px;";
-            $html .= '<div style="margin: 0; padding: 0;' . $line_margin . '">' . $line . '</div>';
+        // Chaque ligne sans margin-bottom
+        foreach ($processedLines as $line) {
+            $html .= '<div style="margin: 0; padding: 0;">' . $line . '</div>';
         }
         $html .= '</div>'; // Fermer element container
         return $html;

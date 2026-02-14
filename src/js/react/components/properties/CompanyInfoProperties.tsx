@@ -1038,7 +1038,7 @@ export function CompanyInfoProperties({
                   </label>
                   <input
                     type="number"
-                    value={element.lineSpacing || 2}
+                    value={element.lineSpacing || 0}
                     onChange={(e) =>
                       onChange(element.id, "lineSpacing", parseInt(e.target.value) || 0)
                     }
