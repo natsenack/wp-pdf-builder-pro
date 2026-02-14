@@ -8,13 +8,149 @@ $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstanc
 $is_premium = $license_manager->isPremium();
 ?>
 
+<style>
+/* Layout flexbox pour les paramètres PDF avec aperçu */
+.pdfb-pdf-settings-wrapper {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
 
+.pdfb-pdf-settings-left {
+    flex: 1;
+    min-width: 0;
+}
+
+.pdfb-pdf-preview-panel {
+    flex: 0 0 350px;
+    background: linear-gradient(135deg, #667eea 0%, #5568d3 100%);
+    border-radius: 12px;
+    padding: 25px;
+    color: white;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+    position: sticky;
+    top: 20px;
+}
+
+.pdfb-pdf-preview-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pdfb-pdf-preview-canvas {
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.pdfb-pdf-preview-frame {
+    width: 100%;
+    aspect-ratio: var(--preview-ratio, 210/297);
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #999;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+}
+
+.pdfb-pdf-preview-frame::before {
+    content: attr(data-format);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.pdfb-pdf-preview-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.pdfb-pdf-info-item {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.pdfb-pdf-info-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 600;
+    opacity: 0.9;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.pdfb-pdf-info-value {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.pdfb-pdf-quality-bar {
+    background: rgba(255, 255, 255, 0.2);
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.pdfb-pdf-quality-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981 0%, #fbbf24 50%, #ef4444 100%);
+    width: 90%;
+    border-radius: 3px;
+}
+
+.pdfb-pdf-file-size {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 15px;
+    font-size: 13px;
+    text-align: center;
+}
+
+.pdfb-pdf-file-size-value {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 4px 0;
+}
+
+@media (max-width: 1200px) {
+    .pdfb-pdf-settings-wrapper {
+        flex-direction: column;
+    }
+    
+    .pdfb-pdf-preview-panel {
+        flex: none;
+        width: 100%;
+        position: static;
+    }
+}
+</style>
 
             <!-- Section Principale -->
             <section id="pdf" class="pdf-section contenu-canvas-section">
             <h3 class="" style="display: flex; justify-content: flex-start; align-items: center;">
                 <span>📄 Configuration PDF</span>
             </h3>
+            
+            <div class="pdfb-pdf-settings-wrapper">
+                <div class="pdfb-pdf-settings-left">
                 <h4 style="color: #495057; margin-top: 0; border-bottom: 2px solid #007cba; padding-bottom: 10px;">
                     ⚙️ Paramètres principaux
                 </h4>
@@ -230,7 +366,140 @@ $is_premium = $license_manager->isPremium();
                         </table>
                     </section>
                 <?php endif; ?>
+                </div><!-- pdfb-pdf-settings-left -->
+                
+                <!-- Panel d'aperçu PDF -->
+                <div class="pdfb-pdf-preview-panel">
+                    <div class="pdfb-pdf-preview-title">
+                        👁️ Aperçu PDF
+                    </div>
+                    
+                    <div class="pdfb-pdf-preview-canvas">
+                        <div class="pdfb-pdf-preview-frame" data-format="A4" id="pdf-preview-frame" style="--preview-ratio: 210/297;">
+                        </div>
+                    </div>
+                    
+                    <div class="pdfb-pdf-preview-info">
+                        <div class="pdfb-pdf-info-item">
+                            <span class="pdfb-pdf-info-label">Format</span>
+                            <span class="pdfb-pdf-info-value" id="preview-format">A4</span>
+                        </div>
+                        <div class="pdfb-pdf-info-item">
+                            <span class="pdfb-pdf-info-label">Orientation</span>
+                            <span class="pdfb-pdf-info-value" id="preview-orientation">Portrait</span>
+                        </div>
+                        <div class="pdfb-pdf-info-item">
+                            <span class="pdfb-pdf-info-label">Qualité</span>
+                            <span class="pdfb-pdf-info-value" id="preview-quality">Haute</span>
+                            <div class="pdfb-pdf-quality-bar">
+                                <div class="pdfb-pdf-quality-fill" id="preview-quality-bar" style="width: 100%;"></div>
+                            </div>
+                        </div>
+                        <div class="pdfb-pdf-info-item">
+                            <span class="pdfb-pdf-info-label">Compression</span>
+                            <span class="pdfb-pdf-info-value" id="preview-compression">Moyenne</span>
+                        </div>
+                    </div>
+                    
+                    <div class="pdfb-pdf-file-size">
+                        <span style="opacity: 0.9;">Taille estimée</span>
+                        <div class="pdfb-pdf-file-size-value" id="preview-file-size">~850 KB</div>
+                        <small style="opacity: 0.8;">*(à titre indicatif)</small>
+                    </div>
+                </div><!-- pdfb-pdf-preview-panel -->
+                
+            </div><!-- pdfb-pdf-settings-wrapper -->
                 </section>
+
+            <!-- JavaScript pour l'aperçu PDF en temps réel -->
+            <script>
+            (function($) {
+                'use strict';
+                
+                // Configuration des formats PDF
+                const pdfFormats = {
+                    'A4': { width: 210, height: 297, ratio: '210/297' },
+                    'A3': { width: 297, height: 420, ratio: '297/420' },
+                    'Letter': { width: 215.9, height: 279.4, ratio: '215.9/279.4' }
+                };
+                
+                // Configuration des qualités
+                const qualityConfigs = {
+                    'low': { label: 'Rapide', factor: 0.6, compression: 'Élevée' },
+                    'medium': { label: 'Équilibré', factor: 0.8, compression: 'Moyenne' },
+                    'high': { label: 'Haute', factor: 1.0, compression: 'Minimale' }
+                };
+                
+                // Fonction pour mettre à jour l'aperçu
+                function updatePdfPreview() {
+                    const quality = $('#pdf_quality').val() || 'high';
+                    const format = $('#default_format').val() || 'A4';
+                    const orientation = $('#default_orientation').val() || 'portrait';
+                    const compression = $('#pdf_compression').val() || 'medium';
+                    const exportQuality = parseInt($('#export_quality').val()) || 90;
+                    
+                    console.log('📄 [PDF Preview Update] Quality:', quality, 'Format:', format, 'Orientation:', orientation, 'Compression:', compression, 'Export Quality:', exportQuality);
+                    
+                    // Mises à jour visuelles
+                    const qualityConfig = qualityConfigs[quality] || qualityConfigs['high'];
+                    const formatConfig = pdfFormats[format] || pdfFormats['A4'];
+                    
+                    // Ratio d'aspect
+                    let ratio = formatConfig.ratio;
+                    if (orientation === 'landscape') {
+                        ratio = formatConfig.ratio.split('/').reverse().join('/');
+                    }
+                    
+                    $('#pdf-preview-frame').css('--preview-ratio', ratio);
+                    $('#pdf-preview-frame').attr('data-format', format + ' ' + (orientation === 'portrait' ? '📋' : '📄'));
+                    
+                    // Infos
+                    $('#preview-format').text(format);
+                    $('#preview-orientation').text(orientation === 'portrait' ? 'Portrait' : 'Paysage');
+                    $('#preview-quality').text(qualityConfig.label);
+                    
+                    // Gestion de la compression
+                    const compressionLabel = (qualityConfigs[compression] && qualityConfigs[compression].compression) ? qualityConfigs[compression].compression : 'Moyenne';
+                    $('#preview-compression').text(compressionLabel);
+                    
+                    // Barre de qualité
+                    const qualityPercent = Math.round((exportQuality / 100) * 100);
+                    $('#preview-quality-bar').css('width', qualityPercent + '%');
+                    
+                    // Estimation de taille
+                    const baseSizeKb = 500;
+                    const qualityMultiplier = qualityConfig.factor;
+                    const compressionFactor = compression === 'high' ? 0.6 : (compression === 'medium' ? 0.85 : 1.0);
+                    const estimatedSize = Math.round(baseSizeKb * qualityMultiplier * (exportQuality / 100) * compressionFactor);
+                    
+                    $('#preview-file-size').text('~' + (estimatedSize < 1024 ? estimatedSize + ' KB' : (estimatedSize / 1024).toFixed(1) + ' MB'));
+                    
+                    console.log('📄 [PDF Preview] Aperçu mis à jour - Taille estimée:', estimatedSize + 'KB');
+                }
+                
+                // Écouter les changements avec support input et change
+                $(document).ready(function() {
+                    console.log('📄 [PDF Settings] Initialisation du système d\'aperçu PDF');
+                    
+                    // Sélects et dropdowns (événement change)
+                    $('#pdf_quality, #default_format, #default_orientation, #pdf_compression').on('change', function() {
+                        console.log('📄 [PDF Change Event] Sélecteur changé:', $(this).attr('id'), 'Valeur:', $(this).val());
+                        updatePdfPreview();
+                    });
+                    
+                    // Input number (événement input pour temps réel + change pour le fallback)
+                    $('#export_quality').on('input change', function() {
+                        console.log('📄 [PDF Input Event] Qualité export changée:', $(this).val());
+                        updatePdfPreview();
+                    });
+                    
+                    // Initialisation
+                    console.log('📄 [PDF Settings] Initialisation de l\'aperçu');
+                    updatePdfPreview();
+                    console.log('📄 [PDF Settings] Système d\'aperçu PDF prêt');
+                });
+            })(jQuery);
+            </script>
 
             <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 

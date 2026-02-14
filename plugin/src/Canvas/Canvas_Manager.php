@@ -155,7 +155,15 @@ class Canvas_Manager
             'enable_keyboard_shortcuts' => ($settings['pdf_builder_canvas_keyboard_shortcuts'] ?? ($defaults['enable_keyboard_shortcuts'] ? '1' : '0')) == '1',
             'canvas_selection_mode' => $settings['pdf_builder_canvas_selection_mode'] ?? $defaults['canvas_selection_mode'],
             'debug_mode' => ($settings['pdf_builder_canvas_debug_mode'] ?? ($defaults['debug_mode'] ? '1' : '0')) == '1',
-            'show_fps' => ($settings['pdf_builder_canvas_show_fps'] ?? ($defaults['show_fps'] ? '1' : '0')) == '1'
+            'show_fps' => ($settings['pdf_builder_canvas_show_fps'] ?? ($defaults['show_fps'] ? '1' : '0')) == '1',
+            
+            // === PARAMÈTRES PDF (Configuration PDF tab) ===
+            'pdf_quality' => $settings['pdf_builder_pdf_quality'] ?? $defaults['pdf_quality'],
+            'pdf_format' => $settings['pdf_builder_default_format'] ?? $defaults['pdf_format'],
+            'pdf_orientation' => $settings['pdf_builder_default_orientation'] ?? $defaults['pdf_orientation'],
+            'pdf_compression' => $settings['pdf_builder_pdf_compression'] ?? $defaults['pdf_compression'],
+            'pdf_cache_enabled' => ($settings['pdf_builder_pdf_cache_enabled'] ?? ($defaults['pdf_cache_enabled'] ? '1' : '0')) == '1',
+            'pdf_page_break' => ($settings['pdf_builder_pdf_page_break_enabled'] ?? ($defaults['pdf_page_break'] ? '1' : '0')) == '1'
         ];
     }
 
@@ -227,7 +235,15 @@ class Canvas_Manager
             'enable_keyboard_shortcuts' => true,
             'canvas_selection_mode' => 'click',
             'debug_mode' => false,
-            'show_fps' => false
+            'show_fps' => false,
+            
+            // Paramètres PDF par défaut
+            'pdf_quality' => 'high',
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_compression' => 'medium',
+            'pdf_cache_enabled' => false,
+            'pdf_page_break' => false
         ];
     }
 
