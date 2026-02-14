@@ -2924,14 +2924,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             return;
         }
 
-        // Vérifier le statut premium pour PNG/JPG
-        if (class_exists('\PDF_Builder\Managers\PDF_Builder_License_Manager')) {
-            $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
-            if (!$license_manager->isPremium()) {
-                wp_send_json_error(['message' => 'Cette fonctionnalité nécessite une licence premium'], 403);
-                return;
-            }
-        }
+        // NOTE: Prévisualisation HTML disponible pour tous (pas seulement premium)
+        // La vérification premium est faite ailleurs pour la génération PNG/JPG
 
         $template_id = sanitize_text_field($_POST['template_id'] ?? '');
         $order_id = intval($_POST['order_id'] ?? 0);
