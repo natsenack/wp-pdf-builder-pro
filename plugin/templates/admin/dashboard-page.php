@@ -82,56 +82,56 @@ if (!defined('ABSPATH')) {
             <h3>🚀 Guide de démarrage rapide</h3>
             <div class="pdfb-guide-steps">
                 <div class="pdfb-step">
-                    <span class="pdfb-pdfb-step-number">1</span>
-                    <div class="pdfb-pdfb-step-content">
+                    <span class="pdfb-step-number">1</span>
+                    <div class="pdfb-step-content">
                         <h4>🛠️ Configuration initiale</h4>
                         <p>Vérifiez la version Pro/Gratuite et les statistiques de votre installation</p>
                         <small>💡 La page d'accueil affiche automatiquement votre version et les métriques en temps réel</small>
                     </div>
                 </div>
                 <div class="pdfb-step">
-                    <span class="pdfb-pdfb-step-number">2</span>
-                    <div class="pdfb-pdfb-step-content">
+                    <span class="pdfb-step-number">2</span>
+                    <div class="pdfb-step-content">
                         <h4>📋 Créez votre premier template</h4>
                         <p>Allez dans "Templates PDF" → "Créer un nouveau template"</p>
                         <small>💡 Utilisez l'éditeur React avec Canvas avancé, grille d'aimantation et guides</small>
                     </div>
                 </div>
                 <div class="pdfb-step">
-                    <span class="pdfb-pdfb-step-number">3</span>
-                    <div class="pdfb-pdfb-step-content">
+                    <span class="pdfb-step-number">3</span>
+                    <div class="pdfb-step-content">
                         <h4>🎨 Concevez votre PDF</h4>
                         <p>Ajoutez des éléments : texte, images, formes, code-barres, variables WooCommerce</p>
                         <small>💡 Les propriétés sont organisées en accordéons pour une meilleure ergonomie</small>
                     </div>
                 </div>
                 <div class="pdfb-step">
-                    <span class="pdfb-pdfb-step-number">4</span>
-                    <div class="pdfb-pdfb-step-content">
+                    <span class="pdfb-step-number">4</span>
+                    <div class="pdfb-step-content">
                         <h4>🛒 Intégrez WooCommerce</h4>
                         <p>Utilisez les variables dynamiques : {{order_number}}, {{customer_name}}, etc.</p>
                         <small>💡 Aperçu direct dans les metabox des commandes WooCommerce</small>
                     </div>
                 </div>
                 <div class="pdfb-step">
-                    <span class="pdfb-pdfb-step-number">5</span>
-                    <div class="pdfb-pdfb-step-content">
+                    <span class="pdfb-step-number">5</span>
+                    <div class="pdfb-step-content">
                         <h4>⚙️ Configurez les paramètres avancés</h4>
                         <p>Ajustez les marges, la qualité d'impression, la compression PDF</p>
                         <small>💡 Paramètres Canvas complets : dimensions, orientation, grille, zoom</small>
                     </div>
                 </div>
                 <div class="pdfb-step">
-                    <span class="pdfb-pdfb-step-number">6</span>
-                    <div class="pdfb-pdfb-step-content">
+                    <span class="pdfb-step-number">6</span>
+                    <div class="pdfb-step-content">
                         <h4>📤 Générez et testez</h4>
                         <p>Prévisualisez votre PDF et ajustez si nécessaire</p>
                         <small>💡 Utilisez l'API Preview intégrée pour des aperçus haute qualité</small>
                     </div>
                 </div>
                 <div class="pdfb-step">
-                    <span class="pdfb-pdfb-step-number">7</span>
-                    <div class="pdfb-pdfb-step-content">
+                    <span class="pdfb-step-number">7</span>
+                    <div class="pdfb-step-content">
                         <h4>🔄 Automatisez (optionnel)</h4>
                         <p>Configurez des workflows automatisés pour la génération en masse</p>
                         <small>💡 Idéal pour factures, devis, reçus WooCommerce</small>
@@ -342,255 +342,6 @@ if (!defined('ABSPATH')) {
                 </div>
             </div>
         </div>
-
-        <style>
-            .pdf-builder-dashboard {
-                width: 100%;
-                padding: 0 20px;
-                box-sizing: border-box;
-            }
-
-            .dashboard-meta {
-                display: flex;
-                gap: 20px;
-                margin-top: 10px;
-                font-size: 14px;
-                color: #666;
-            }
-
-            .version-info {
-                color: #2271b1;
-                font-weight: 500;
-            }
-
-            .last-update {
-                color: #666;
-            }
-
-            .dashboard-subtitle {
-                color: #666;
-                font-size: 16px;
-                margin-top: 10px;
-            }
-
-            .dashboard-stats {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 20px;
-                margin-bottom: 30px;
-            }
-
-            .stat-card {
-                background: #fff;
-                border: 1px solid #e1e1e1;
-                border-radius: 8px;
-                padding: 20px;
-                display: flex;
-                align-items: center;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-
-            .stat-icon {
-                font-size: 32px;
-                margin-right: 15px;
-            }
-
-            .stat-number {
-                font-size: 28px;
-                font-weight: bold;
-                color: #2271b1;
-            }
-
-            .stat-label {
-                color: #666;
-                font-size: 14px;
-            }
-
-            .dashboard-actions {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 20px;
-                margin-bottom: 30px;
-            }
-
-            .action-card {
-                background: #fff;
-                border: 1px solid #e1e1e1;
-                border-radius: 8px;
-                padding: 25px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-
-            .action-card.primary {
-                border-color: #2271b1;
-                background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
-            }
-
-            .action-card h3 {
-                margin-top: 0;
-                color: #1d2327;
-            }
-
-            .action-card p {
-                color: #666;
-                margin-bottom: 15px;
-            }
-
-            .dashboard-guide {
-                background: #fff;
-                border: 1px solid #e1e1e1;
-                border-radius: 8px;
-                padding: 25px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-
-            .guide-steps {
-                display: flex;
-                flex-wrap: nowrap;
-                gap: 15px;
-                margin-top: 20px;
-                justify-content: flex-start;
-                overflow-x: auto;
-                padding-bottom: 10px;
-            }
-
-            .step {
-                display: flex;
-                align-items: flex-start;
-                min-width: 200px;
-                flex: 0 0 auto;
-                max-width: 250px;
-            }
-
-            .step-number {
-                background: #2271b1;
-                color: white;
-                width: 30px;
-                height: 30px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: bold;
-                margin-right: 15px;
-                flex-shrink: 0;
-            }
-
-            .step-content h4 {
-                margin: 0 0 5px 0;
-                color: #1d2327;
-            }
-
-            .step-content small {
-                display: block;
-                color: #888;
-                font-size: 12px;
-                margin-top: 5px;
-                font-style: italic;
-            }
-
-            /* Styles pour la section fonctionnalités */
-            .dashboard-features {
-                background: #fff;
-                border: 1px solid #e1e1e1;
-                border-radius: 8px;
-                padding: 25px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                margin-top: 30px;
-            }
-
-            .dashboard-features h3 {
-                margin-top: 0;
-                color: #1d2327;
-                border-bottom: 2px solid #2271b1;
-                padding-bottom: 10px;
-            }
-
-            .features-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 25px;
-                margin-top: 25px;
-            }
-
-            .feature-category {
-                background: #f8f9fa;
-                border: 1px solid #e9ecef;
-                border-radius: 6px;
-                padding: 20px;
-            }
-
-            .feature-category h4 {
-                margin: 0 0 15px 0;
-                color: #2271b1;
-                font-size: 16px;
-                border-bottom: 1px solid #dee2e6;
-                padding-bottom: 8px;
-            }
-
-            .feature-category ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-
-            .feature-category li {
-                padding: 4px 0;
-                color: #495057;
-                font-size: 14px;
-                position: relative;
-                padding-left: 20px;
-            }
-
-            .feature-category li:before {
-                content: "✓";
-                color: #28a745;
-                font-weight: bold;
-                position: absolute;
-                left: 0;
-            }
-
-            /* Styles pour les nouvelles fonctionnalités */
-            .new-features {
-                margin-top: 30px;
-                padding-top: 20px;
-                border-top: 1px solid #dee2e6;
-            }
-
-            .new-features h4 {
-                color: #2271b1;
-                margin-bottom: 15px;
-            }
-
-            .new-features-list {
-                display: grid;
-                gap: 10px;
-            }
-
-            .new-feature-item {
-                display: flex;
-                align-items: center;
-                padding: 10px;
-                background: #f8f9ff;
-                border-radius: 4px;
-                border-left: 4px solid #2271b1;
-            }
-
-            .feature-badge {
-                background: #2271b1;
-                color: white;
-                padding: 2px 8px;
-                border-radius: 12px;
-                font-size: 10px;
-                font-weight: bold;
-                margin-right: 10px;
-                flex-shrink: 0;
-            }
-
-            .new-feature-item strong {
-                color: #1d2327;
-            }
-        </style>
     </div>
 </div>
 

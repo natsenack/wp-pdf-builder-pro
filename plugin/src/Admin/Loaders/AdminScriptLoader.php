@@ -63,8 +63,8 @@ class AdminScriptLoader
         // Charger les styles spécifiques à chaque page
         $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
         
-        // Dashboard styles
-        if ($current_page === 'pdf-builder-dashboard') {
+        // Dashboard styles (page d'accueil = 'pdf-builder-pro')
+        if ($current_page === 'pdf-builder-pro') {
             \wp_enqueue_style(
                 'pdf-builder-dashboard',
                 PDF_BUILDER_PRO_ASSETS_URL . 'css/dashboard-css.min.css',
