@@ -1071,7 +1071,6 @@ export const Header = memo(function Header({
       margin: 0;
       font-family: Arial, sans-serif;
       font-size: 12px;
-      line-height: 1.4;
       white-space: pre-wrap;
       display: block;
     }
