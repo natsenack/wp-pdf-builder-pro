@@ -480,95 +480,6 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
             </div>
         </div>
 
-        <!-- Modale des paramètres du template -->
-        <div id="template-settings-modal" class="canvas-modal-overlay" style="display: none;">
-            <div class="canvas-modal-container">
-                <div class="canvas-modal-header">
-                    <h3 id="template-settings-title">⚙️ Paramètres du Template</h3>
-                    <button onclick="closeTemplateSettingsModal()" class="canvas-modal-close">&times;</button>
-                </div>
-
-                <div id="template-settings-content" class="canvas-modal-body">
-                    <div class="setting-group">
-                        <label class="setting-label">Nom du template</label>
-                        <input type="text" id="template-name-input" class="setting-input">
-                    </div>
-
-                    <div class="setting-group">
-                        <label class="setting-label">Description</label>
-                        <textarea id="template-description-input" rows="3" class="setting-textarea"></textarea>
-                    </div>
-
-                    <div class="setting-group">
-                        <label class="setting-label">Template public</label>
-                        <div class="setting-checkbox-group">
-                            <label class="setting-checkbox-label">
-                                <input type="checkbox" id="template-public" class="setting-checkbox">
-                                Visible par tous les utilisateurs
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="setting-group">
-                        <label class="setting-label">Format de papier</label>
-                        <select id="template-paper-size" class="setting-select">
-                            <option value="A4">A4 (794 × 1123 px)</option>
-                            <option value="A3">A3 (840 × 1191 px)</option>
-                            <option value="Letter">Letter (612 × 792 px)</option>
-                            <option value="Legal">Legal (612 × 1008 px)</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-group">
-                        <label class="setting-label">Orientation</label>
-                        <select id="template-orientation" class="setting-select">
-                            <option value="portrait">Portrait</option>
-                            <option value="landscape">Paysage</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-group">
-                        <label class="setting-label">Résolution (DPI)</label>
-                        <select id="template-dpi" class="setting-select">
-                            <option value="72">72 DPI (Écran)</option>
-                            <option value="96">96 DPI (Web)</option>
-                            <option value="150">150 DPI (Impression moyenne)</option>
-                            <option value="300">300 DPI (Impression haute qualité)</option>
-                            <option value="600">600 DPI (Impression professionnelle)</option>
-                        </select>
-                    </div>
-
-                    <div class="setting-group">
-                        <label class="setting-label">Catégorie</label>
-                        <select id="template-category" class="setting-select">
-                            <option value="facture">Facture</option>
-                            <option value="devis">Devis</option>
-                            <option value="commande">Bon de commande</option>
-                            <option value="contrat">Contrat</option>
-                            <option value="newsletter">Newsletter</option>
-                            <option value="autre">Autre</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="canvas-modal-footer template-settings-modal-footer">
-                    <div class="template-settings-footer-content">
-                        <div class="template-settings-footer-title">
-                            <span class="template-settings-icon">⚙️</span>
-                            Paramètres du Template
-                        </div>
-                        <div class="template-settings-footer-subtitle">
-                            Configuration de "Template par défaut"
-                        </div>
-                    </div>
-                    <div class="template-settings-footer-actions">
-                        <button onclick="closeTemplateSettingsModal()" class="canvas-modal-btn canvas-modal-btn-secondary">Annuler</button>
-                        <button onclick="saveTemplateSettings()" class="canvas-modal-btn canvas-modal-btn-primary">💾 Enregistrer</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div id="no-templates" style="display: none; text-align: center; padding: 40px; color: var(--pdf-secondary);">
             <div style="font-size: 3rem; margin-bottom: 1rem;">📄</div>
             <h3 style="color: var(--pdf-text);"><?php _e('Aucun template trouvé', 'pdf-builder-pro'); ?></h3>
@@ -1436,6 +1347,13 @@ function displayTemplateSettings(template) {
     modal.innerHTML = '';
     modal.appendChild(modalContent);
     modal.style.display = 'flex';
+    
+    // Fermer le modal en cliquant sur l'overlay (en dehors du contenu)
+    modal.onclick = function(e) {
+        if (e.target === modal) {
+            closeTemplateSettingsModal();
+        }
+    };
 
     // Maintenant traiter les données et remplacer le contenu
     var content = modalContent.querySelector('.template-modal-body');
