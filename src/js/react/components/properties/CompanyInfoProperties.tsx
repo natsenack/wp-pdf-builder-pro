@@ -1640,47 +1640,6 @@ export function CompanyInfoProperties({
             />
           </div>
 
-          <div style={{ marginBottom: "12px" }}>
-            <label
-              style={{
-                display: "block",
-                fontSize: "12px",
-                fontWeight: "bold",
-                marginBottom: "4px",
-              }}
-            >
-              Padding vertical:{" "}
-              {normalizePadding(
-                element.paddingVertical,
-                normalizePadding(element.padding, 12)
-              )}
-              px
-            </label>
-            <input
-              type="range"
-              min={0}
-              max={50}
-              value={normalizePadding(
-                element.paddingVertical,
-                normalizePadding(element.padding, 12)
-              )}
-              onChange={(e) =>
-                onChange(
-                  element.id,
-                  "paddingVertical",
-                  parseInt(e.target.value),
-                )
-              }
-              style={{
-                width: "100%",
-                height: "6px",
-                borderRadius: "3px",
-                background: "#ddd",
-                outline: "none",
-                cursor: "pointer",
-              }}
-            />
-          </div>
         </>
       )}
     </>
