@@ -201,29 +201,99 @@
                                 </div>
                             </main>
                             <aside class="canvas-card-preview">
-                                <div class="preview-format">
-                                    <div >
-                                        <span id="card-canvas-width"><?php echo esc_html(get_canvas_option_contenu('canvas_width', '794')); ?></span>×
-                                        <span id="card-canvas-height"><?php echo esc_html(get_canvas_option_contenu('canvas_height', '1123')); ?></span>px
-                                        <div style="font-size: 10px; color: #666; margin-top: 5px;">
-                                            DEBUG: width=<?php echo get_canvas_option_contenu('canvas_width', '794'); ?>, height=<?php echo get_canvas_option_contenu('canvas_height', '1123'); ?>
+                                <div class="dimensions-preview-container">
+                                    <?php
+                                    $width = intval(get_canvas_option_contenu('canvas_width', '794'));
+                                    $height = intval(get_canvas_option_contenu('canvas_height', '1123'));
+                                    $dpi = intval(get_canvas_option_contenu('canvas_dpi', '96'));
+                                    $format = get_canvas_option_contenu('canvas_format', 'A4');
+                                    $bgColor = get_canvas_option_contenu('canvas_bg_color', '#ffffff');
+                                    $borderColor = get_canvas_option_contenu('canvas_border_color', '#cccccc');
+                                    
+                                    // Protection contre division par zéro
+                                    $dpi = max(1, $dpi);
+                                    $widthMM = round(($width / $dpi) * 25.4, 1);
+                                    $heightMM = round(($height / $dpi) * 25.4, 1);
+                                    
+                                    // Calcul du ratio pour le preview (max 100px de hauteur)
+                                    $ratio = $width / $height;
+                                    $previewHeight = 100;
+                                    $previewWidth = round($previewHeight * $ratio);
+                                    ?>
+                                    
+                                    <!-- Canvas miniature -->
+                                    <div class="canvas-preview-wrapper">
+                                        <!-- Règles de mesure -->
+                                        <div class="ruler ruler-horizontal">
+                                            <div class="ruler-tick"></div>
+                                            <div class="ruler-tick"></div>
+                                            <div class="ruler-tick"></div>
+                                            <div class="ruler-tick"></div>
+                                            <div class="ruler-tick"></div>
+                                        </div>
+                                        <div class="ruler ruler-vertical">
+                                            <div class="ruler-tick"></div>
+                                            <div class="ruler-tick"></div>
+                                            <div class="ruler-tick"></div>
+                                            <div class="ruler-tick"></div>
+                                            <div class="ruler-tick"></div>
+                                        </div>
+                                        
+                                        <!-- Canvas miniature avec couleurs réelles -->
+                                        <div class="mini-canvas-preview" style="width: <?php echo $previewWidth; ?>px; height: <?php echo $previewHeight; ?>px; background-color: <?php echo esc_attr($bgColor); ?>; border-color: <?php echo esc_attr($borderColor); ?>;">
+                                            <!-- Badge du format -->
+                                            <div class="format-badge"><?php echo esc_html($format); ?></div>
+                                            
+                                            <!-- Éléments de démonstration -->
+                                            <div class="demo-elements">
+                                                <div class="demo-element text-sample" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);"></div>
+                                                <div class="demo-element image-sample" style="background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);"></div>
+                                                <div class="demo-element shape-sample" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);"></div>
+                                            </div>
+                                            
+                                            <!-- Indicateurs de coins -->
+                                            <div class="corner-indicator top-left"></div>
+                                            <div class="corner-indicator top-right"></div>
+                                            <div class="corner-indicator bottom-left"></div>
+                                            <div class="corner-indicator bottom-right"></div>
+                                        </div>
+                                        
+                                        <!-- Indicateurs de dimensions -->
+                                        <div class="dimension-indicator width-indicator">
+                                            <span><?php echo $width; ?>px</span>
+                                        </div>
+                                        <div class="dimension-indicator height-indicator">
+                                            <span><?php echo $height; ?>px</span>
                                         </div>
                                     </div>
-                                    <span class="preview-size" id="card-canvas-dpi">
-                                        <?php
-                                        $width = intval(get_canvas_option_contenu('canvas_width', '794'));
-                                        $height = intval(get_canvas_option_contenu('canvas_height', '1123'));
-                                        $dpi = intval(get_canvas_option_contenu('canvas_dpi', '96'));
-                                        $format = get_canvas_option_contenu('canvas_format', 'A4');
-
-                                        // Protection contre division par zéro
-                                        $dpi = max(1, $dpi); // Au minimum 1 DPI pour éviter division par zéro
-
-                                        $widthMM = round(($width / $dpi) * 25.4, 1);
-                                        $heightMM = round(($height / $dpi) * 25.4, 1);
-                                        echo esc_html("{$dpi} DPI - {$format} ({$widthMM}×{$heightMM}mm)");
-                                        ?>
-                                    </span>
+                                    
+                                    <!-- Informations détaillées -->
+                                    <div class="preview-details">
+                                        <div class="detail-item">
+                                            <span class="detail-label">DPI</span>
+                                            <span class="detail-value"><?php echo $dpi; ?></span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Taille réelle</span>
+                                            <span class="detail-value"><?php echo $widthMM; ?>×<?php echo $heightMM; ?>mm</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Ratio</span>
+                                            <span class="detail-value"><?php echo round($ratio, 2); ?></span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Palette de couleurs -->
+                                    <div class="color-palette">
+                                        <div class="color-swatch" title="Couleur de fond">
+                                            <div class="swatch" style="background-color: <?php echo esc_attr($bgColor); ?>;"></div>
+                                            <span class="color-label">Fond</span>
+                                        </div>
+                                        <div class="color-swatch" title="Couleur de bordure">
+                                            <div class="swatch" style="background-color: <?php echo esc_attr($borderColor); ?>;"></div>
+                                            <span class="color-label">Bordure</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </aside>
                             <footer class="canvas-card-actions">
