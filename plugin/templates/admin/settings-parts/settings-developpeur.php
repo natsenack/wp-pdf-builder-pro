@@ -1843,3 +1843,9 @@ section[id^="dev-"] h3.pdfb-section-title {
     color: #6c757d;
     margin-top: 4px;
 }
+</style>
+
+<?php
+// Inclure les modales et le bouton flottant à la fin pour éviter les conflits de structure
+require_once __DIR__ . '/settings-modals.php';
+?>
