@@ -504,7 +504,7 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
       // ===== PROPRIÉTÉS COMPANY_INFO =====
       'showCompanyName', 'showAddress', 'showRcs', 'showCapital',
       'layout',
-      'headerFontSize', 'headerFontFamily', 'headerFontWeight', 'headerFontStyle',
+      'headerFontFamily', 'headerFontWeight', 'headerFontStyle',
       'bodyFontSize', 'bodyFontFamily', 'bodyFontWeight', 'bodyFontStyle',
       
       // ===== PROPRIÉTÉS PRODUCT_TABLE =====
