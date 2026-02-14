@@ -232,12 +232,21 @@ $is_premium = $license_manager->isPremium();
                 <tr>
                     <th scope="row"><label for="export_format">Format export</label></th>
                     <td>
-                        <?php $can_use_multi_format_export = \PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('multi_format_export'); ?>
+                        <?php 
+                            $can_use_multi_format_export = \PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('multi_format_export');
+                            $current_export_format = $settings['pdf_builder_canvas_export_format'] ?? 'pdf';
+                            $png_disabled = !$can_use_multi_format_export ? 'disabled' : '';
+                            $png_label = !$can_use_multi_format_export ? 'PNG ⭐ PREMIUM' : 'PNG';
+                            $jpg_disabled = !$can_use_multi_format_export ? 'disabled' : '';
+                            $jpg_label = !$can_use_multi_format_export ? 'JPG ⭐ PREMIUM' : 'JPG';
+                            $svg_disabled = !$can_use_multi_format_export ? 'disabled' : '';
+                            $svg_label = !$can_use_multi_format_export ? 'SVG ⭐ PREMIUM' : 'SVG';
+                        ?>
                         <select id="export_format" name="pdf_builder_settings[pdf_builder_canvas_export_format]">
-                            <option value="pdf" <?php selected($settings['pdf_builder_canvas_export_format'] ?? 'pdf', 'pdf'); ?>>PDF</option>
-                            <option value="png" <?php selected($settings['pdf_builder_canvas_export_format'] ?? 'pdf', 'png'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'PNG ⭐ PREMIUM' : 'PNG'; ?></option>
-                            <option value="jpg" <?php selected($settings['pdf_builder_canvas_export_format'] ?? 'pdf', 'jpg'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'JPG ⭐ PREMIUM' : 'JPG'; ?></option>
-                            <option value="svg" <?php selected($settings['pdf_builder_canvas_export_format'] ?? 'pdf', 'svg'); ?> <?php echo !$can_use_multi_format_export ? 'disabled' : ''; ?>><?php echo !$can_use_multi_format_export ? 'SVG ⭐ PREMIUM' : 'SVG'; ?></option>
+                            <option value="pdf" <?php selected($current_export_format, 'pdf'); ?>>PDF</option>
+                            <option value="png" <?php selected($current_export_format, 'png'); ?> <?php echo esc_attr($png_disabled); ?>><?php echo esc_html($png_label); ?></option>
+                            <option value="jpg" <?php selected($current_export_format, 'jpg'); ?> <?php echo esc_attr($jpg_disabled); ?>><?php echo esc_html($jpg_label); ?></option>
+                            <option value="svg" <?php selected($current_export_format, 'svg'); ?> <?php echo esc_attr($svg_disabled); ?>><?php echo esc_html($svg_label); ?></option>
                         </select>
                         <?php if (!$can_use_multi_format_export): ?>
                         <div class="info-box" style="margin-top: 8px; padding: 8px; background: #fff3cd; border: 1px solid #f39c12; border-radius: 4px; font-size: 12px;">
