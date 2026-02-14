@@ -764,16 +764,22 @@
     'use strict';
 
     $(document).ready(function() {
+        console.log('🔧 [Mode Développeur] Document ready, initialisation du gestionnaire toggle');
+        
         // Gestionnaire pour afficher/masquer les sections développeur
         $('#developer_enabled').on('change', function() {
             const isEnabled = $(this).is(':checked');
             const $status = $('#developer_status_indicator');
             
+            console.log('🔧 [Mode Développeur] Toggle changé:', isEnabled);
+            
             // Mettre à jour l'indicateur de statut
             if (isEnabled) {
                 $status.removeClass('developer-status-inactive').addClass('developer-status-active').text('ACTIF');
+                console.log('🔧 [Mode Développeur] Indicateur mis à ACTIF');
             } else {
                 $status.removeClass('developer-status-active').addClass('developer-status-inactive').text('INACTIF');
+                console.log('🔧 [Mode Développeur] Indicateur mis à INACTIF');
             }
             
             // Afficher/masquer les sections développeur
@@ -794,11 +800,20 @@
             
             sections.forEach(function(section) {
                 if (isEnabled) {
-                    $(section).slideDown(300);
+                    $(section).slideDown(300).removeClass('developer-section-hidden');
+                    console.log('🔧 [Mode Développeur] Section affichée:', section);
                 } else {
-                    $(section).slideUp(300);
+                    $(section).slideUp(300).addClass('developer-section-hidden');
+                    console.log('🔧 [Mode Développeur] Section masquée:', section);
                 }
             });
+            
+            console.log('🔧 [Mode Développeur] Toutes les sections mises à jour');
+            
+            // Notification pour informer l'utilisateur de sauvegarder
+            if (typeof showInfoNotification !== 'undefined') {
+                showInfoNotification('Cliquez sur "Enregistrer" pour sauvegarder les changements du mode développeur');
+            }
         });
 
         // Gestionnaire pour le bouton de génération de clé de test
@@ -1440,8 +1455,50 @@
 })(jQuery);
 </script>
 
+<style>
+/* Styles pour l'indicateur de statut du mode développeur */
+.developer-status-indicator {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 10px;
+    transition: all 0.3s ease;
+}
 
+.developer-status-active {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
 
+.developer-status-inactive {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
 
+/* Styles pour les sections développeur */
+.developer-section-hidden {
+    display: none !important;
+}
 
+/* Amélioration du toggle */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
+.toggle-label {
+    font-weight: 500;
+    color: #333;
+}
+
+.toggle-description {
+    margin-top: 5px;
+    font-size: 13px;
+    color: #666;
+}
+</style>
