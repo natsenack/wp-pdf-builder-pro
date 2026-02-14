@@ -631,6 +631,155 @@
     transform: scale(1.2);
 }
 
+/* Nouvelles fonctionnalités */
+.pdfb-new-features {
+    margin-top: 32px;
+    padding-top: 28px;
+    border-top: 2px solid #e2e8f0;
+    position: relative;
+}
+
+.pdfb-new-features::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.pdfb-new-features h4 {
+    margin: 0 0 20px 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: -0.4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #f8f9ff 0%, #fff5f7 100%);
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.pdfb-new-features h4::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+}
+
+.pdfb-new-features-list {
+    display: grid;
+    gap: 12px;
+    animation: fadeInUp 0.7s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+    animation-delay: 0.3s;
+}
+
+.pdfb-new-feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.pdfb-new-feature-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    transform: scaleY(0);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pdfb-new-feature-item:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.12),
+                0 2px 8px rgba(0, 0, 0, 0.05);
+    transform: translateX(4px);
+    background: #ffffff;
+}
+
+.pdfb-new-feature-item:hover::before {
+    transform: scaleY(1);
+}
+
+.pdfb-feature-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.pdfb-feature-badge::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transform: rotate(45deg);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0%, 100% {
+        transform: translateX(-100%) rotate(45deg);
+    }
+    50% {
+        transform: translateX(100%) rotate(45deg);
+    }
+}
+
+.pdfb-new-feature-item strong {
+    color: #1e293b;
+    font-weight: 600;
+    transition: color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pdfb-new-feature-item:hover strong {
+    color: #667eea;
+}
+
+.pdfb-new-feature-item {
+    font-size: 14px;
+    color: #475569;
+    line-height: 1.6;
+}
+
+/* Animation d'entrée échelonnée pour les feature items */
+.pdfb-new-feature-item:nth-child(1) { animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards; animation-delay: 0.35s; }
+.pdfb-new-feature-item:nth-child(2) { animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards; animation-delay: 0.4s; }
+.pdfb-new-feature-item:nth-child(3) { animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards; animation-delay: 0.45s; }
+.pdfb-new-feature-item:nth-child(4) { animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards; animation-delay: 0.5s; }
+.pdfb-new-feature-item:nth-child(5) { animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards; animation-delay: 0.55s; }
+
 /* Responsive */
 @media (max-width: 768px) {
     .pdfb-dashboard-header {

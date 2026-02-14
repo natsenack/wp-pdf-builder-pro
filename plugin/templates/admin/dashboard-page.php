@@ -317,7 +317,7 @@ if (!defined('ABSPATH')) {
 
             <!-- Nouvelles fonctionnalités -->
             <div class="pdfb-new-features">
-                <h4>🆕 Nouvelles fonctionnalités (v1.1.0)</h4>
+                <h4>🆕 Nouvelles fonctionnalités (v1.0.1.1)</h4>
                 <div class="pdfb-new-features-list">
                     <div class="pdfb-new-feature-item">
                         <span class="pdfb-feature-badge">INTERFACE</span>
