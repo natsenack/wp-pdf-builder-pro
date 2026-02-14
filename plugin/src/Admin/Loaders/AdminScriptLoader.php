@@ -331,21 +331,6 @@ class AdminScriptLoader
             
             \wp_enqueue_script('pdf-preview-api-client', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-api-client.min.js', ['jquery', 'wp-element', 'wp-api'], $version_param, true);
             
-            // Debug: Add script to check if variables are defined after the main script
-            wp_add_inline_script('pdf-preview-api-client', '
-                console.log("[DEBUG] PDF Builder variables check after script load:");
-                console.log("[DEBUG] window.pdfBuilderData:", typeof window.pdfBuilderData, window.pdfBuilderData);
-                console.log("[DEBUG] window.pdfBuilderNonce:", typeof window.pdfBuilderNonce, window.pdfBuilderNonce);
-            ');
-            
-            // Debug: Add script to check if variables are defined
-            wp_add_inline_script('pdf-preview-api-client', '
-                console.log("[DEBUG] PDF Builder variables check:");
-                console.log("[DEBUG] window.pdfBuilderData:", typeof window.pdfBuilderData, window.pdfBuilderData);
-                console.log("[DEBUG] window.pdfBuilderNonce:", typeof window.pdfBuilderNonce, window.pdfBuilderNonce);
-                console.log("[DEBUG] pdfBuilderData (global):", typeof pdfBuilderData, pdfBuilderData);
-            ');
-            
             $preview_integration_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-preview-integration.min.js';
             if (file_exists($preview_integration_js)) {
                 \wp_enqueue_script('pdf-preview-integration', PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-preview-integration.min.js', ['pdf-preview-api-client', 'wp-element', 'wp-api'], $version_param, true);
@@ -789,9 +774,9 @@ class AdminScriptLoader
             }
         }
 
-        \wp_localize_script('pdf-builder-react-main', 'pdfBuilderData', $localize_data);
-        error_log('[WP AdminScriptLoader] \wp_localize_script called for pdf-builder-react-main with data: ' . json_encode($localize_data));
-
+        // Ne PAS utiliser wp_localize_script - il n'échappe pas assez agressivement le HTML
+        // On utilise uniquement wp_add_inline_script avec JSON_HEX_* ci-dessous
+        
         // Also set window.pdfBuilderData directly before React initializes
         static $inline_scripts_added = false;
         if (!$inline_scripts_added) {
@@ -807,17 +792,6 @@ class AdminScriptLoader
             error_log('[WP AdminScriptLoader] wp_add_inline_script called to set window.pdfBuilderNonce');
             $inline_scripts_added = true;
         }
-
-        // DEBUG: Add inline script to check if data is available
-        wp_add_inline_script('pdf-builder-react-main', '
-            console.log("[DEBUG] pdfBuilderData available:", typeof window.pdfBuilderData);
-            if (window.pdfBuilderData) {
-                console.log("[DEBUG] pdfBuilderData.company:", window.pdfBuilderData.company);
-                console.log("[DEBUG] Full pdfBuilderData:", window.pdfBuilderData);
-            } else {
-                console.log("[DEBUG] pdfBuilderData is not defined");
-            }
-        ', 'after');
 
         // Emergency reload script - DISABLED - Don't force reload
         // The React wrapper handles its own initialization without hard reload requirements
