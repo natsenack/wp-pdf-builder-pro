@@ -1038,8 +1038,6 @@ export const Header = memo(function Header({
         globalStyle += `text-decoration: ${el.textDecoration};`;
       if (el.textTransform && el.textTransform !== "none")
         globalStyle += `text-transform: ${el.textTransform};`;
-      if (el.letterSpacing && el.letterSpacing !== "normal")
-        globalStyle += `letter-spacing: ${el.letterSpacing};`;
       if (el.wordSpacing && el.wordSpacing !== "normal")
         globalStyle += `word-spacing: ${el.wordSpacing};`;
       return globalStyle;
@@ -1143,8 +1141,6 @@ export const Header = memo(function Header({
           styles += ` font-style: ${element.fontStyle};`;
         if (element.textDecoration && element.textDecoration !== "none")
           styles += ` text-decoration: ${element.textDecoration};`;
-        if (element.letterSpacing && element.letterSpacing !== "normal")
-          styles += ` letter-spacing: ${element.letterSpacing};`;
         if (element.wordSpacing && element.wordSpacing !== "normal")
           styles += ` word-spacing: ${element.wordSpacing};`;
         if (element.textTransform && element.textTransform !== "none")
@@ -1423,8 +1419,6 @@ export const Header = memo(function Header({
               tableStyles += ` font-style: ${element.fontStyle};`;
             if (element.textDecoration && element.textDecoration !== "none")
               tableStyles += ` text-decoration: ${element.textDecoration};`;
-            if (element.letterSpacing && element.letterSpacing !== "normal")
-              tableStyles += ` letter-spacing: ${element.letterSpacing};`;
             if (element.wordSpacing && element.wordSpacing !== "normal")
               tableStyles += ` word-spacing: ${element.wordSpacing};`;
             if (

@@ -529,52 +529,14 @@ const drawText = (ctx: CanvasRenderingContext2D, element: Element) => {
     padding,
   );
 
-  // ✅ NEW: Support pour letterSpacing
-  const letterSpacing = parseFloat(props.letterSpacing as any) || 0;
   const text = props.text || "Text";
 
   // Gérer les lignes séparées par \n
   const lines = text.split("\n");
   let currentY = y;
-  const originalTextAlign = ctx.textAlign;
 
   lines.forEach((line: string, index: number) => {
-    // Appliquer le letter-spacing
-    if (letterSpacing !== 0) {
-      // Utiliser Array.from() pour gérer correctement les emoji et caractères multi-byte
-      const chars = Array.from(line);
-      ctx.textAlign = "left";
-      let charX = x;
-
-      // Si l'alignement original était "center" ou "right", calculer l'offset
-      if (originalTextAlign !== "left") {
-        // Calculer la largeur totale avec letterSpacing
-        let totalWidth = 0;
-        for (let i = 0; i < chars.length; i++) {
-          totalWidth += ctx.measureText(chars[i]).width;
-          if (i < chars.length - 1) totalWidth += letterSpacing;
-        }
-
-        // Ajuster selon l'alignement original
-        if (originalTextAlign === "center") {
-          charX = x - totalWidth / 2;
-        } else if (originalTextAlign === "right") {
-          charX = x - totalWidth;
-        }
-      }
-
-      // Dessiner caractère par caractère (maintenant correctement avec emoji)
-      for (let i = 0; i < chars.length; i++) {
-        const char = chars[i];
-        ctx.fillText(char, charX, currentY);
-        charX += ctx.measureText(char).width + letterSpacing;
-      }
-
-      // Restaurer l'alignement original
-      ctx.textAlign = originalTextAlign;
-    } else {
-      ctx.fillText(line, x, currentY);
-    }
+    ctx.fillText(line, x, currentY);
 
     // Espacement entre les lignes
     if (index < lines.length - 1) {
@@ -1498,8 +1460,6 @@ const drawCustomerInfo = (
   const showPhone = props.showPhone !== false;
   const showPaymentMethod = props.showPaymentMethod !== false;
   const showTransactionId = props.showTransactionId !== false;
-  // ✅ NEW: Récupérer letterSpacing
-  const letterSpacing = parseFloat(props.letterSpacing as any) || 0;
   // Alignement vertical
   const verticalAlign = props.verticalAlign || "top";
 
@@ -1707,43 +1667,9 @@ const drawCustomerInfo = (
 
   ctx.font = `${bodyFontStyle} ${bodyFontWeight} ${bodyFontSize}px ${bodyFontFamily}`;
 
-  // Dessiner les lignes avec support du letter-spacing et lineHeight
+  // Dessiner les lignes avec support du lineHeight
   lines.forEach((lineText) => {
-    if (letterSpacing !== 0) {
-      // Utiliser Array.from() pour gérer correctement les emoji
-      const chars = Array.from(lineText);
-      const originalTextAlign = ctx.textAlign;
-      ctx.textAlign = "left";
-      let charX = textX;
-
-      // Si l'alignement original était "center" ou "right", calculer l'offset
-      if (originalTextAlign !== "left") {
-        // Calculer la largeur totale avec letterSpacing
-        let totalWidth = 0;
-        for (let i = 0; i < chars.length; i++) {
-          totalWidth += ctx.measureText(chars[i]).width;
-          if (i < chars.length - 1) totalWidth += letterSpacing;
-        }
-
-        // Ajuster selon l'alignement original
-        if (originalTextAlign === "center") {
-          charX = textX - totalWidth / 2;
-        } else if (originalTextAlign === "right") {
-          charX = textX - totalWidth;
-        }
-      }
-
-      // Dessiner caractère par caractère
-      for (let i = 0; i < chars.length; i++) {
-        const char = chars[i];
-        ctx.fillText(char, charX, y);
-        charX += ctx.measureText(char).width + letterSpacing;
-      }
-
-      ctx.textAlign = originalTextAlign;
-    } else {
-      ctx.fillText(lineText, textX, y);
-    }
+    ctx.fillText(lineText, textX, y);
 
     // Appliquer le line-height basé sur bodyLineHeight (cohérence avec calcul de hauteur)
     y += bodyLineHeight;
@@ -1901,47 +1827,8 @@ const drawCompanyLine = (
   x: number,
   y: number,
   fontSize: number,
-  letterSpacing: number = 0,
 ) => {
-  if (letterSpacing !== 0) {
-    // Utiliser Array.from() pour gérer correctement les emoji et les caractères multi-byte
-    const chars = Array.from(text);
-
-    // Sauvegarder l'alignement original et passer en "left" pour la précision
-    const originalTextAlign = ctx.textAlign;
-    ctx.textAlign = "left";
-    let charX = x;
-
-    // Si l'alignement original était "center" ou "right", on doit calculer l'offset
-    if (originalTextAlign !== "left") {
-      // Calculer la largeur totale du texte avec letterSpacing
-      let totalWidth = 0;
-      for (let i = 0; i < chars.length; i++) {
-        totalWidth += ctx.measureText(chars[i]).width;
-        if (i < chars.length - 1) totalWidth += letterSpacing;
-      }
-
-      // Ajuster la position selon l'alignement
-      if (originalTextAlign === "center") {
-        charX = x - totalWidth / 2;
-      } else if (originalTextAlign === "right") {
-        charX = x - totalWidth;
-      }
-    }
-
-    // Dessiner caractère par caractère (maintenant correctement avec emoji)
-    for (let i = 0; i < chars.length; i++) {
-      const char = chars[i];
-      ctx.fillText(char, charX, y);
-      charX += ctx.measureText(char).width + letterSpacing;
-    }
-
-    ctx.textAlign = originalTextAlign;
-  } else {
-    // Sans letter-spacing, dessiner le texte en une seule fois
-    ctx.fillText(text, x, y);
-  }
-
+  ctx.fillText(text, x, y);
   return y + fontSize * 1.1;
 };
 
@@ -2247,9 +2134,6 @@ const drawCompanyInfo = (
   // Appliquer la police du corps par défaut
   ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
 
-  // Récupérer letterSpacing du JSON
-  const letterSpacing = parseFloat(props.letterSpacing as any) || 0;
-
   // Dessiner toutes les lignes
   lines.forEach((lineData) => {
     const config = lineData.isHeader
@@ -2275,7 +2159,6 @@ const drawCompanyInfo = (
       x,
       y,
       config.size,
-      letterSpacing,
     );
     if (lineData.isHeader) ctx.fillStyle = colors.text;
   });

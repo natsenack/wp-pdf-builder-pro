@@ -446,36 +446,6 @@ export function TextProperties({
             />
           </div>
 
-          <div style={{ marginBottom: "12px" }}>
-            <label
-              style={{
-                display: "block",
-                fontSize: "12px",
-                fontWeight: "bold",
-                marginBottom: "6px",
-              }}
-            >
-              Espacement des lettres{" "}
-              <span style={{ color: "#666", fontSize: "10px" }}>
-                ({parseFloat(element.letterSpacing || 0).toFixed(2)}px)
-              </span>
-            </label>
-            <input
-              type="range"
-              min="-2"
-              max="5"
-              step="0.1"
-              value={parseFloat(element.letterSpacing) || 0}
-              onChange={(e) =>
-                onChange(
-                  element.id,
-                  "letterSpacing",
-                  parseFloat(e.target.value),
-                )
-              }
-              style={{ width: "100%" }}
-            />
-          </div>
         </>
       )}
     </>

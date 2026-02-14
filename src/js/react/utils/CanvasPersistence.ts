@@ -101,8 +101,6 @@ export function serializeCanvasData(
           layout: (el as any).layout,
           textAlign: (el as any).textAlign,
           verticalAlign: (el as any).verticalAlign,
-          paddingHorizontal: (el as any).paddingHorizontal,
-          paddingVertical: (el as any).paddingVertical,
           companyTva: (el as any).companyTva, // ✅ Log TVA pour debug
         });
       }
