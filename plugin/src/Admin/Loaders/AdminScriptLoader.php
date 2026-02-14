@@ -39,8 +39,10 @@ class AdminScriptLoader
         // Enregistrer le hook pour charger les scripts admin
         \add_action('admin_enqueue_scripts', [$this, 'loadAdminScripts'], 20);
         
-        // Désactiver les emojis sur les pages PDF Builder pour éviter les erreurs de chargement
-        \add_action('init', [$this, 'disableEmojisOnPdfBuilderPages'], 11);
+        // Désactiver les emojis sur les pages PDF Builder - PRIORITE 9 pour être avant loadAdminScripts
+        \add_action('admin_init', [$this, 'disableEmojisOnPdfBuilderPages'], 9);
+        \add_filter('script_loader_tag', [$this, 'filterEmojiScriptTag'], 10, 3);
+        \add_filter('style_loader_tag', [$this, 'filterEmojiStyleTag'], 10, 3);
     }
 
     /**
@@ -49,6 +51,26 @@ class AdminScriptLoader
     public function loadAdminScripts($hook = null)
     {
         error_log('[WP AdminScriptLoader] loadAdminScripts called with hook: ' . ($hook ?: 'null') . ', URL: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'no url'));
+
+        // Double vérification : désactiver les emojis si on est sur une page PDF Builder
+        $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+        if (strpos($current_page, 'pdf-builder') !== false) {
+            // Vérifier si les scripts emoji sont encore là et les désenregistrer
+            global $wp_scripts, $wp_styles;
+            
+            if (isset($wp_scripts->registered['wp-emoji-loader'])) {
+                \wp_deregister_script('wp-emoji-loader');
+                error_log('[PDF Builder AdminScriptLoader] Force deregistered wp-emoji-loader in loadAdminScripts');
+            }
+            if (isset($wp_scripts->registered['wp-emoji'])) {
+                \wp_deregister_script('wp-emoji');
+                error_log('[PDF Builder AdminScriptLoader] Force deregistered wp-emoji in loadAdminScripts');
+            }
+            if (isset($wp_styles->registered['print-emoji-styles'])) {
+                \wp_deregister_style('print-emoji-styles');
+                error_log('[PDF Builder AdminScriptLoader] Force deregistered print-emoji-styles in loadAdminScripts');
+            }
+        }
 
         // Ajouter un filtre pour corriger les templates Elementor qui sont chargés comme des scripts JavaScript
         // Appliquer toujours, pas seulement sur les pages PDF Builder
@@ -1163,24 +1185,69 @@ class AdminScriptLoader
 
         // Vérifier si on est sur une page PDF Builder
         $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
-        if (strpos($current_page, 'pdf-builder') === false && strpos($current_page, 'wc-orders') === false) {
+        if (strpos($current_page, 'pdf-builder') === false) {
             return;
         }
 
+        error_log('[PDF Builder AdminScriptLoader] Disabling emojis for page: ' . $current_page);
+
+        // Désenregistrer complètement les scripts emoji - plus agressif que wp_dequeue_script
+        \wp_deregister_script('wp-emoji');
+        \wp_deregister_script('wp-emoji-loader');
+
+        // Désactiver les styles emoji
+        \wp_deregister_style('print-emoji-styles');
+        
         // Désactiver les fonctions emoji de WordPress
         \remove_action('admin_print_styles', 'print_emoji_styles');
-        \remove_action('wp_head', 'print_emoji_detection_script', 7);
         \remove_action('admin_print_scripts', 'print_emoji_detection_script');
+        \remove_action('wp_head', 'print_emoji_detection_script', 7);
         \remove_action('wp_print_styles', 'print_emoji_styles');
         \remove_filter('wp_mail', 'wp_staticize_emoji_for_email');
         \remove_filter('the_content_feed', 'wp_staticize_emoji');
         \remove_filter('comment_text_rss', 'wp_staticize_emoji');
-        
-        // Désactiver les scripts emoji enregistrés
-        \wp_dequeue_script('wp-emoji');
-        \wp_dequeue_script('wp-emoji-loader');
 
-        error_log('[PDF Builder AdminScriptLoader] Emojis disabled for PDF Builder pages');
+        error_log('[PDF Builder AdminScriptLoader] Emojis deregistered for PDF Builder pages');
+    }
+
+    /**
+     * Filtrer les balises de script emoji pour les bloquer complètement
+     */
+    public function filterEmojiScriptTag($tag, $handle, $src)
+    {
+        // Vérifier si on est sur une page PDF Builder
+        $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+        if (strpos($current_page, 'pdf-builder') === false) {
+            return $tag;
+        }
+
+        // Bloquer complètement les scripts emoji
+        if (strpos($handle, 'emoji') !== false) {
+            error_log('[PDF Builder AdminScriptLoader] Blocking emoji script: ' . $handle);
+            return '';  // Retourner une chaîne vide pour bloquer le script
+        }
+
+        return $tag;
+    }
+
+    /**
+     * Filtrer les balises de style emoji pour les bloquer complètement
+     */
+    public function filterEmojiStyleTag($tag, $handle, $href)
+    {
+        // Vérifier si on est sur une page PDF Builder
+        $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+        if (strpos($current_page, 'pdf-builder') === false) {
+            return $tag;
+        }
+
+        // Bloquer complètement les styles emoji
+        if (strpos($handle, 'emoji') !== false || strpos($href, 'emoji') !== false) {
+            error_log('[PDF Builder AdminScriptLoader] Blocking emoji style: ' . $handle);
+            return '';  // Retourner une chaîne vide pour bloquer le style
+        }
+
+        return $tag;
     }
 }
 
