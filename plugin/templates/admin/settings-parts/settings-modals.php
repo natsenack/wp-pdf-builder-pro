@@ -495,7 +495,7 @@ function get_canvas_modal_value($key, $default = '') {
 
 <!-- MODAL SYSTEME -->
 <div id="canvas-systeme-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-    <div class="canvas-modal-container" style="display: block; z-index: 10001;">
+    <div class="canvas-modal-container">
         <div class="canvas-modal-header">
             <h3><span style="font-size: 24px;">⚙️</span> Paramètres Système</h3>
             <button type="button" class="canvas-modal-close">&times;</button>

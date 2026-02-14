@@ -224,14 +224,6 @@ class AdminScriptLoader
                     [],
                     PDF_BUILDER_PRO_VERSION
                 );
-                
-                // Charger le CSS simplifié du modal
-                \wp_enqueue_style(
-                    'modal-settings-css',
-                    PDF_BUILDER_PLUGIN_URL . 'assets/css/modal-settings-css.min.css',
-                    ['pdf-builder-react'],
-                    PDF_BUILDER_PRO_VERSION
-                );
             }
 
             // Définir les paramètres de debug JavaScript UNIQUEMENT pour les notifications

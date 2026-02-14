@@ -20,12 +20,11 @@ module.exports = {
     "pdf-builder-react-init": "./src/js/admin/pdf-builder-react-init.js",
     "pdf-builder-react-wrapper": "./src/js/admin/pdf-builder-react-wrapper.js",
     "ajax-throttle": "./src/js/admin/ajax-throttle.js",
-    "notifications": "./src/js/admin/notifications.js",
+    notifications: "./src/js/admin/notifications.js",
     "pdf-builder-wrap": "./src/js/admin/pdf-builder-wrap.js",
     "pdf-builder-init": "./src/js/admin/pdf-builder-init.js",
     // Preview system removed
     "notifications-css": "./src/css/notifications.css",
-    "modal-settings-css": "./src/css/modal-settings.css",
   },
   output: {
     path: outputPath,
@@ -120,7 +119,7 @@ module.exports = {
       new TerserPlugin({
         terserOptions: {
           compress: {
-            drop_console: false,  // Keep console.log for debugging
+            drop_console: false, // Keep console.log for debugging
             drop_debugger: true,
             passes: 2,
             pure_funcs: [],
@@ -139,7 +138,7 @@ module.exports = {
     splitChunks: {
       chunks: (chunk) => {
         // Don't split the pdf-builder-react entry - it needs to execute immediately
-        return chunk.name !== 'pdf-builder-react' && chunk.name !== 'runtime';
+        return chunk.name !== "pdf-builder-react" && chunk.name !== "runtime";
       },
       cacheGroups: {
         vendor: {
