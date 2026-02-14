@@ -551,12 +551,36 @@ class AjaxHandler
             $settings_to_save = [];
             $templates_data = [];
 
+            // Si les données arrivent sous forme de tableau imbriqué pdf_builder_settings[...]
+            if (isset($_POST['pdf_builder_settings']) && is_array($_POST['pdf_builder_settings'])) {
+                error_log('PHP: Found pdf_builder_settings array in POST');
+                
+                // Extraire les templates mappings si présents
+                if (isset($_POST['pdf_builder_settings']['pdf_builder_order_status_templates']) && is_array($_POST['pdf_builder_settings']['pdf_builder_order_status_templates'])) {
+                    $templates_data = $this->sanitizeFieldValue('pdf_builder_order_status_templates', $_POST['pdf_builder_settings']['pdf_builder_order_status_templates']);
+                    error_log('PHP: Found templates data in nested array: ' . json_encode($templates_data));
+                }
+                
+                // Traiter les autres paramètres dans le tableau
+                foreach ($_POST['pdf_builder_settings'] as $key => $value) {
+                    if ($key !== 'pdf_builder_order_status_templates') {
+                        $sanitized_value = $this->sanitizeFieldValue($key, $value);
+                        if ($sanitized_value !== '') {
+                            $settings_to_save[$key] = $sanitized_value;
+                        }
+                    }
+                }
+            }
+
+            // Traiter aussi les données directement dans $_POST (ancien format)
             foreach ($_POST as $key => $value) {
-                // Ne traiter que les clés qui commencent par pdf_builder_
-                if (strpos($key, 'pdf_builder_') === 0) {
+                // Ne traiter que les clés qui commencent par pdf_builder_ et qui ne sont pas le tableau imbriqué
+                if (strpos($key, 'pdf_builder_') === 0 && $key !== 'pdf_builder_settings') {
                     // Traiter pdf_builder_order_status_templates séparément
                     if ($key === 'pdf_builder_order_status_templates') {
-                        $templates_data = $this->sanitizeFieldValue($key, $value);
+                        if (empty($templates_data)) { // Ne pas écraser les données déjà trouvées dans le tableau imbriqué
+                            $templates_data = $this->sanitizeFieldValue($key, $value);
+                        }
                     } else {
                         $sanitized_value = $this->sanitizeFieldValue($key, $value);
                         if ($sanitized_value !== '') {
