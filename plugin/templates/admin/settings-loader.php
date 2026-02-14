@@ -190,6 +190,21 @@ function pdf_builder_load_settings_assets($hook) {
         'nonce' => $main_nonce
     ));
 
+    // Rendre la variable globale pour tous les scripts inline
+    add_action('admin_footer', function() use ($main_nonce) {
+        ?>
+        <script type="text/javascript">
+        // Rendre pdf_builder_ajax disponible globalement pour les scripts inline
+        if (typeof window.pdf_builder_ajax === 'undefined') {
+            window.pdf_builder_ajax = {
+                ajax_url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                nonce: '<?php echo $main_nonce; ?>'
+            };
+        }
+        </script>
+        <?php
+    });
+
     // Charger le script du bouton flottant de sauvegarde - seulement si le fichier existe
     $floating_save_js = PDF_BUILDER_PRO_ASSETS_PATH . 'js/floating-save-button.js';
     if (file_exists($floating_save_js)) {
