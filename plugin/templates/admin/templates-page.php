@@ -124,23 +124,43 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
 </script>
 
 <div class="wrap">
-    <h1><?php _e('📄 Gestion des Templates PDF', 'pdf-builder-pro'); ?></h1>
+    <div class="pdfb-templates-page">
+        
+        <!-- Header avec actions -->
+        <div class="pdfb-templates-header">
+            <div class="pdfb-templates-header-left">
+                <h1><?php _e('Templates PDF', 'pdf-builder-pro'); ?></h1>
+                <p><?php _e('Créez et gérez vos modèles de documents PDF professionnels', 'pdf-builder-pro'); ?></p>
+            </div>
+            <div class="pdfb-templates-header-right">
+                <?php if ($user_can_create): ?>
+                    <a href="#" class="button" id="create-template-btn">
+                        <span class="dashicons dashicons-plus"></span>
+                        <?php _e('Créer un Template', 'pdf-builder-pro'); ?>
+                    </a>
+                <?php else: ?>
+                    <button class="button" id="upgrade-required-btn" onclick="showUpgradeModal('gallery'); <?php if (!$is_premium): ?>showTemplateLimitNotice();<?php endif; ?>">
+                        <span class="dashicons dashicons-lock"></span>
+                        <?php _e('Créer un Template (Premium)', 'pdf-builder-pro'); ?>
+                    </button>
+                <?php endif; ?>
+                <button id="open-template-gallery" class="button" onclick="<?php if ($is_premium): ?>document.getElementById('template-gallery-modal').style.display = 'flex';<?php else: ?>showUpgradeModal('gallery'); showTemplateLimitNotice();<?php endif; ?>">
+                    🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
+                </button>
+            </div>
+        </div>
 
-    <!-- Debug section removed for production: API debug UI and tests have been stripped -->
-
-    <div style="background: #fff; padding: 20px; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-
-        <!-- Message limitation freemium - AU-DESSUS de Templates Disponibles -->
+        <!-- Message limitation freemium -->
         <?php if (!$is_premium && $templates_count >= 1): ?>
-            <div id="template-limit-notice" class="pdf-builder-notice notice-info" style="margin: 0 0 20px 0; padding: 15px; background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; position: relative; <?php echo $notice_dismissed ? 'display: none;' : ''; ?>">
-                <button type="button" class="pdf-builder-notice-dismiss" onclick="dismissTemplateLimitNotice()" style="position: absolute; top: 0; right: 1px; border: none; margin: 0; padding: 9px; background: none; color: #0c5460; cursor: pointer; font-size: 16px; line-height: 1;">
+            <div id="template-limit-notice" class="pdfb-notice-warning" style="<?php echo $notice_dismissed ? 'display: none;' : ''; ?>">
+                <button type="button" class="pdfb-notice-dismiss" onclick="dismissTemplateLimitNotice()">
                     <span class="dashicons dashicons-dismiss"></span>
                 </button>
-                <h4 style="margin: 0 0 10px 0; color: #0c5460;">
-                    <span class="dashicons dashicons-info" style="margin-right: 5px;"></span>
+                <h4>
+                    <span class="dashicons dashicons-info"></span>
                     <?php _e('Limite de Templates Atteinte', 'pdf-builder-pro'); ?>
                 </h4>
-                <p style="margin: 0 0 10px 0; color: #0c5460;">
+                <p>
                     <?php printf(
                         __('Vous avez créé %d template gratuit sur 1. Passez en Premium pour créer des templates illimités !', 'pdf-builder-pro'),
                         $templates_count
@@ -153,59 +173,19 @@ var orientationOptions = <?php echo json_encode($orientation_options); ?>;
             </div>
         <?php endif; ?>
 
-        <h2><?php _e('Templates Disponibles', 'pdf-builder-pro'); ?></h2>
-
-        <div style="margin: 20px 0;">
-            <?php if ($user_can_create): ?>
-                <a href="#" class="button button-primary" id="create-template-btn">
-                    <span class="dashicons dashicons-plus"></span>
-                    <?php _e('Créer un Template', 'pdf-builder-pro'); ?>
-                </a>
-            <?php else: ?>
-                <button class="button button-secondary" id="upgrade-required-btn"
-                        onclick="showUpgradeModal('gallery'); <?php if (!$is_premium): ?>showTemplateLimitNotice();<?php endif; ?>"
-                        style="background-color: #dc3545; border-color: #dc3545; color: white;">
-                    <span class="dashicons dashicons-lock"></span>
-                    <?php _e('Créer un Template (Premium)', 'pdf-builder-pro'); ?>
-                </button>
-            <?php endif; ?>
-
-            <button id="open-template-gallery" class="button button-secondary" style="margin-left: 10px;"
-                    onclick="<?php if ($is_premium): ?>document.getElementById('template-gallery-modal').style.display = 'flex';<?php else: ?>showUpgradeModal('gallery'); showTemplateLimitNotice();<?php endif; ?>">
-                🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
-            </button>
-
-            <!-- DEBUG: Affichage temporaire du nombre de templates -->
-            <span style="margin-left: 20px; color: #666; font-size: 12px; font-style: italic;">
-                📊 Templates créés: <strong><?php echo $templates_count; ?></strong>
-                <?php if (!$is_premium): ?>
-                    (limite: 1)
-                <?php else: ?>
-                    (illimité)
-                <?php endif; ?>
-            </span>
+        <!-- Barre de filtres -->
+        <div class="pdfb-templates-filters">
+            <strong>Filtrer par type</strong>
+            <button class="pdfb-filter-btn pdfb-active" data-filter="all">📄 Tous</button>
+            <button class="pdfb-filter-btn" data-filter="facture">🧾 Factures</button>
+            <button class="pdfb-filter-btn" data-filter="devis">📋 Devis</button>
+            <button class="pdfb-filter-btn" data-filter="commande">📦 Commandes</button>
+            <button class="pdfb-filter-btn" data-filter="contrat">📑 Contrats</button>
+            <button class="pdfb-filter-btn" data-filter="newsletter">📰 Newsletters</button>
+            <button class="pdfb-filter-btn" data-filter="autre">📄 Autres</button>
         </div>
 
-        <!-- Message pour utilisateurs gratuits sans templates -->
-        <?php if (!$is_premium && $templates_count === 0): ?>
-            <!-- Message supprimé selon demande utilisateur -->
-        <?php endif; ?>
-
-        <!-- Section de filtrage -->
-        <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; border: 1px solid #dee2e6;">
-            <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">Filtrer par type</h3>
-            <div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; flex-wrap: wrap; -webkit-flex-wrap: wrap; -moz-flex-wrap: wrap; -ms-flex-wrap: wrap; -o-flex-wrap: wrap;">
-                <button class="pdfb-filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 6px 12px;">📄 Tous</button>
-                <button class="pdfb-filter-btn button button-secondary" data-filter="facture" style="font-size: 12px; padding: 6px 12px; background: #007cba; border-color: #007cba; color: white;">🧾 Factures</button>
-                <button class="pdfb-filter-btn button button-secondary" data-filter="devis" style="font-size: 12px; padding: 6px 12px; background: #28a745; border-color: #28a745; color: white;">📋 Devis</button>
-                <button class="pdfb-filter-btn button button-secondary" data-filter="commande" style="font-size: 12px; padding: 6px 12px; background: #ffc107; border-color: #ffc107; color: #212529;">📦 Commandes</button>
-                <button class="pdfb-filter-btn button button-secondary" data-filter="contrat" style="font-size: 12px; padding: 6px 12px; background: #dc3545; border-color: #dc3545; color: white;">📑 Contrats</button>
-                <button class="pdfb-filter-btn button button-secondary" data-filter="newsletter" style="font-size: 12px; padding: 6px 12px; background: #6f42c1; border-color: #6f42c1; color: white;">📰 Newsletters</button>
-                <button class="pdfb-filter-btn button button-secondary" data-filter="autre" style="font-size: 12px; padding: 6px 12px; background: #6c757d; border-color: #6c757d; color: white;">📄 Autres</button>
-            </div>
-        </div>
-
-        <div id="templates-list" style="margin-top: 20px;">
+        <div id="templates-list" class="pdfb-templates-list">
 
             <!-- Section Templates Utilisateur -->
             <h3 style="margin: 30px 0 15px 0; color: #23282d; border-bottom: 2px solid #28a745; padding-bottom: 10px;">

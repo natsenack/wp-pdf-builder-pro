@@ -99,6 +99,57 @@
   border-color: transparent;
 }
 
+/* Notifications */
+.pdfb-notice-warning {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-left: 4px solid #f59e0b;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 28px;
+  position: relative;
+}
+
+.pdfb-notice-warning h4 {
+  margin: 0 0 12px 0;
+  color: #856404;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pdfb-notice-warning p {
+  margin: 0 0 16px 0;
+  color: #856404;
+  line-height: 1.6;
+}
+
+.pdfb-notice-dismiss {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #856404;
+  cursor: pointer;
+  padding: 8px;
+  font-size: 18px;
+  line-height: 1;
+  transition: all 0.2s;
+}
+
+.pdfb-notice-dismiss:hover {
+  color: #533f03;
+  transform: scale(1.1);
+}
+
+/* Liste de templates */
+.pdfb-templates-list {
+  margin-top: 28px;
+}
+
 /* Grille de templates */
 .pdfb-templates-grid {
   display: grid;
