@@ -1982,13 +1982,14 @@ const drawCompanyInfo = (
     }
     // Infos légales après
     [
-      [companyData.siret, displayConfig.siret],
-      [companyData.tva, displayConfig.vat],
-      [companyData.rcs, displayConfig.rcs],
-      [companyData.capital, displayConfig.capital],
-    ].forEach(([value, show]) => {
+      [companyData.siret, displayConfig.siret, "SIRET"],
+      [companyData.tva, displayConfig.vat, "TVA"],
+      [companyData.rcs, displayConfig.rcs, "RCS"],
+      [companyData.capital, displayConfig.capital, "Capital"],
+    ].forEach(([value, show, label]) => {
       if (shouldDisplayValue(value as string, show as boolean)) {
-        lines.push({ text: value as string, isHeader: false });
+        const displayText = `${label}: ${value as string}`;
+        lines.push({ text: displayText, isHeader: false });
       }
     });
   } else if (layout === "horizontal") {

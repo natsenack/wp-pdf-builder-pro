@@ -3835,7 +3835,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Style pour <strong>
-        $strong_style = "color: {$colors['header']}; font-weight: bold;";
+        $strong_style = "color: {$colors['header']}; font-weight: {$header_font['weight']}; font-size: {$header_font['size']}px; font-family: {$header_font['family']}; font-style: {$header_font['style']};";
         
         // Traiter les lignes pour ajouter les styles aux balises <strong>
         $processedLines = array_map(function($line) use ($strong_style) {
