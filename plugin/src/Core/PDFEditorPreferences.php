@@ -387,8 +387,6 @@ class PDFEditorPreferences {
                                 self.setPreference(key, value);
                             };
                         }
-
-                        console.log('[PDF Editor Preferences] wp.preferences transport overridden successfully');
                     } else {
                         // If wp.preferences is not ready yet, wait a bit and try again
                         var self = this;

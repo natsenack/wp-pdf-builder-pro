@@ -41,13 +41,10 @@
         form.submit();
     };
 
-    // Debug floating save button
+    // Floating save button handler
     $(document).on('click', '#pdf-builder-save-floating-btn', function(e) {
-        console.log('[JS] Floating save button clicked - adding hidden field');
-
         // Vérifier que le formulaire existe
         if ($('#pdf-builder-settings-form').length === 0) {
-            console.log('[JS] ERROR: Form #pdf-builder-settings-form not found!');
             return;
         }
 
@@ -78,10 +75,6 @@
         } else {
             console.log('No floating save field found');
         }
-
-        // Log all form data for debugging
-        var formData = $(this).serializeArray();
-        console.log('Form data: ' + JSON.stringify(formData));
     });
 
     // Only initialize modal functionality if we're on the license tab
@@ -115,23 +108,7 @@
         });
     }
 
-    // Debug when DOM is ready
-    $(document).ready(function() {
-        console.log('settings-main.js loaded and DOM ready');
-        // Check if floating button exists
-        if ($('#pdf-builder-save-floating-btn').length) {
-            console.log('Floating save button found in DOM');
-        } else {
-            console.log('Floating save button NOT found in DOM');
-        }
 
-        // Check if form exists
-        if ($('#pdf-builder-settings-form').length) {
-            console.log('Settings form found in DOM');
-        } else {
-            console.log('Settings form NOT found in DOM');
-        }
-    });
 
     
 

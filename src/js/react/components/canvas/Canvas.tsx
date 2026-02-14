@@ -1445,16 +1445,6 @@ const drawCustomerInfo = (
   const bodyFontWeight = props.bodyFontWeight || fontWeight;
   const bodyFontStyle = props.bodyFontStyle || fontStyle;
   const layout = props.layout || "vertical";
-  console.log(
-    "[Canvas drawCustomerInfo] Rendering with layout:",
-    layout,
-    "textAlign:",
-    props.textAlign,
-    "verticalAlign:",
-    props.verticalAlign,
-    "element.id:",
-    element.id,
-  );
   const showHeaders = props.showHeaders !== false;
   const showBorders = props.showBorders !== false;
   const showFullName = props.showFullName !== false;
@@ -1605,15 +1595,6 @@ const drawCustomerInfo = (
     }
   }
 
-  console.log(
-    "[Canvas drawCustomerInfo] Lines constructed:",
-    lines.length,
-    "lines:",
-    lines,
-    "for layout:",
-    layout,
-  );
-
   // Calculer la hauteur du contenu basé sur les vraies tailles de police
   const headerLineHeight = headerFontSize * 1.1 + 4; // fontSize + margin-bottom
   const bodyLineHeight = bodyFontSize * 1.1;
@@ -1649,11 +1630,6 @@ const drawCustomerInfo = (
   };
 
   const textX = getTextX();
-
-  // 🔍 DEBUG: Log des coordonnées customer_info
-  console.log(
-    `[React Canvas customer_info] Element ID: ${element.id} | x: ${element.x} | y: ${element.y} | width: ${element.width} | height: ${element.height}`,
-  );
 
   // En-tête
   if (showHeaders) {
@@ -1836,14 +1812,6 @@ const drawCompanyInfo = (
   state: BuilderState,
 ) => {
   const props = element as CompanyInfoElement;
-  console.log(
-    "[Canvas drawCompanyInfo] Called with element.id:",
-    element.id,
-    "layout:",
-    props.layout,
-    "textAlign:",
-    props.textAlign,
-  );
 
   // ✅ HELPER: Formater le numéro de téléphone (ajouter un point tous les 2 chiffres)
   const formatPhoneNumber = (phone: string): string => {
@@ -1962,7 +1930,6 @@ const drawCompanyInfo = (
 
   // Récupérer le layout
   const layout = props.layout || "vertical";
-  console.log("[Canvas drawCompanyInfo] Layout:", layout, "Building lines...");
 
   // Construire les lignes selon le layout
   const lines: Array<{ text: string; isHeader: boolean }> = [];
@@ -2106,18 +2073,6 @@ const drawCompanyInfo = (
       }
     }
   }
-
-  console.log(
-    "[Canvas drawCompanyInfo] Lines constructed:",
-    lines.length,
-    "lines:",
-    lines.map((l) => l.text),
-  );
-
-  // 🔍 DEBUG: Log des coordonnées company_info
-  console.log(
-    `[React Canvas company_info] Element ID: ${element.id} | x: ${element.x} | y: ${element.y} | width: ${element.width} | height: ${element.height}`,
-  );
 
   // Appliquer la police du corps par défaut
   ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
@@ -3461,14 +3416,6 @@ export const Canvas = function Canvas({
             const imageX = (containerWidth - logoWidth) / 2;
             const imageY = (containerHeight - logoHeight) / 2;
 
-            // 🔍 DEBUG: Log des coordonnées company_logo
-            console.log(
-              `[React Canvas company_logo] Element ID: ${element.id} | x: ${element.x} | y: ${element.y} | containerW: ${containerWidth} | containerH: ${containerHeight}`,
-            );
-            console.log(
-              `[React Canvas company_logo] imageX: ${imageX} | imageY: ${imageY} | logoW: ${logoWidth} | logoH: ${logoHeight}`,
-            );
-
             // Appliquer l'opacité
             if (opacity < 1) {
               ctx.globalAlpha = opacity;
@@ -4101,11 +4048,6 @@ export const Canvas = function Canvas({
         ctx.moveTo(centerX, centerY);
         ctx.lineTo(rotationHandleX, rotationHandleY);
         ctx.stroke();
-      } else {
-        console.log(
-          "[CANVAS] NOT drawing rotation handles because selectionRotationEnabled is:",
-          canvasSettings?.selectionRotationEnabled,
-        );
       }
 
       // Afficher les dimensions pour chaque élément sélectionné
