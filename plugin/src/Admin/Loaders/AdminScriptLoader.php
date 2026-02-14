@@ -196,11 +196,11 @@ class AdminScriptLoader
             }
 
             // Charger le CSS des notifications - seulement si le fichier existe
-            $notifications_css = PDF_BUILDER_PRO_ASSETS_PATH . 'css/notifications.min.css';
+            $notifications_css = PDF_BUILDER_PRO_ASSETS_PATH . 'css/notifications-css.min.css';
             if (file_exists($notifications_css)) {
                 \wp_enqueue_style(
-                    'pdf-builder-notifications',
-                    PDF_BUILDER_PRO_ASSETS_URL . 'css/notifications.min.css',
+                    'pdf-builder-notifications-css',
+                    PDF_BUILDER_PRO_ASSETS_URL . 'css/notifications-css.min.css',
                     [],
                     PDF_BUILDER_PRO_VERSION
                 );

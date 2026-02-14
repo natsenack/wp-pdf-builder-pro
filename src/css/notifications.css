@@ -1,154 +1,149 @@
 /**
  * PDF Builder Pro - Notifications CSS
- * Styles modernes et responsives pour le système de notifications
- * Version: 1.0.0
- * Updated: 2025-11-29
+ * Système de notifications moderne et unifié
+ * @version 2.0.0
  */
 
-/* Conteneur principal des notifications */
-.pdfb-pdf-builder-notifications-container {
+/* Container principal */
+.pdfb-notifications-container {
     position: fixed;
     z-index: 999999;
     pointer-events: none;
-    max-width: 400px;
-    width: 100%;
+    max-width: 420px;
+    width: calc(100% - 40px);
+    padding: 20px;
 }
 
 /* Positionnements */
-.pdfb-pdf-builder-notifications-container[data-position="top-left"] {
-    top: 35px;
-    left: 20px;
-    right: auto;
-    bottom: auto;
+.pdfb-notifications-container[data-position="top-left"] {
+    top: 32px;
+    left: 0;
 }
 
-.pdfb-pdf-builder-notifications-container[data-position="top-right"] {
-    top: 35px;
-    right: 20px;
-    left: auto;
-    bottom: auto;
+.pdfb-notifications-container[data-position="top-right"] {
+    top: 32px;
+    right: 0;
 }
 
-.pdfb-pdf-builder-notifications-container[data-position="bottom-left"] {
+.pdfb-notifications-container[data-position="bottom-left"] {
     bottom: 20px;
-    left: 20px;
-    top: auto;
-    right: auto;
+    left: 0;
 }
 
-.pdfb-pdf-builder-notifications-container[data-position="bottom-right"] {
+.pdfb-notifications-container[data-position="bottom-right"] {
     bottom: 20px;
-    right: 20px;
-    top: auto;
-    left: auto;
+    right: 0;
 }
 
-.pdfb-pdf-builder-notifications-container[data-position="top-center"] {
-    top: 20px;
+.pdfb-notifications-container[data-position="top-center"] {
+    top: 32px;
     left: 50%;
-    right: auto;
-    bottom: auto;
     transform: translateX(-50%);
 }
 
-.pdfb-pdf-builder-notifications-container[data-position="bottom-center"] {
+.pdfb-notifications-container[data-position="bottom-center"] {
     bottom: 20px;
     left: 50%;
-    right: auto;
-    top: auto;
     transform: translateX(-50%);
 }
 
 /* Notification individuelle */
-.pdfb-pdf-builder-notification {
+.pdfb-notification {
     position: relative;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     border-left: 4px solid;
     pointer-events: auto;
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateX(400px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
     overflow: hidden;
-    min-height: 50px;
+    min-height: 60px;
+    backdrop-filter: blur(10px);
 }
 
-.pdfb-pdf-builder-notification.visible {
+.pdfb-notification.visible {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
 }
 
-.pdfb-pdf-builder-notification.dismissible:hover {
-    transform: translateY(-2px);
+.pdfb-notification:hover {
+    transform: translateX(-4px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
-/* Animations d'entrée/sortie */
-.pdfb-pdf-builder-notification-slide {
-    animation: slideIn 0.3s ease-out;
+/* Animations */
+.pdfb-notification-slide {
+    animation: pdfbSlideIn 0.3s ease-out;
 }
 
-.pdfb-pdf-builder-notification-slide.dismissing {
-    animation: slideOut 0.3s ease-in forwards;
+.pdfb-notification-slide.dismissing {
+    animation: pdfbSlideOut 0.3s ease-in forwards;
 }
 
-.pdfb-pdf-builder-notification-fade {
-    animation: fadeIn 0.3s ease-out;
+@keyframes pdfbSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(400px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
-.pdfb-pdf-builder-notification-fade.dismissing {
-    animation: fadeOut 0.3s ease-in forwards;
+@keyframes pdfbSlideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(400px);
+    }
 }
 
-.pdfb-pdf-builder-notification-bounce {
-    animation: bounceIn 0.5s ease-out;
-}
-
-.pdfb-pdf-builder-notification-bounce.dismissing {
-    animation: bounceOut 0.3s ease-in forwards;
-}
-
-/* Contenu de la notification */
+/* Contenu */
 .pdfb-notification-content {
     display: flex;
     align-items: center;
-    padding: 12px 16px;
+    padding: 16px;
     gap: 12px;
     position: relative;
 }
 
 .pdfb-notification-icon {
-    font-size: 18px;
+    font-size: 20px;
     flex-shrink: 0;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
 }
 
 .pdfb-notification-message {
     flex: 1;
     font-size: 14px;
-    line-height: 1.4;
+    line-height: 1.5;
     font-weight: 500;
     word-wrap: break-word;
 }
 
-/* Bouton de fermeture */
+/* Bouton fermer */
 .pdfb-notification-close {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 4px;
+    padding: 6px;
     border-radius: 4px;
     color: inherit;
-    opacity: 0.7;
+    opacity: 0.6;
     transition: all 0.2s ease;
     flex-shrink: 0;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -156,13 +151,13 @@
 
 .pdfb-notification-close:hover {
     opacity: 1;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
-.pdfb-notification-close .pdfb-dashicons {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
+.pdfb-notification-close .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
 }
 
 /* Barre de progression */
@@ -172,7 +167,8 @@
     left: 0;
     right: 0;
     height: 3px;
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
 .pdfb-notification-progress {
@@ -181,21 +177,34 @@
     transition: width linear;
 }
 
-/* Bouton "Tout fermer" */
-.pdfb-notifications-dismiss-all {
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
-    padding: 8px 12px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    font-size: 12px;
-    color: #666;
-    transition: all 0.2s ease;
-    pointer-events: auto;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+/* Types de notifications */
+.pdfb-notification-success {
+    border-left-color: #27ae60;
+}
+
+.pdfb-notification-error {
+    border-left-color: #e74c3c;
+}
+
+.pdfb-notification-warning {
+    border-left-color: #f39c12;
+}
+
+.pdfb-notification-info {
+    border-left-color: #667eea;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pdfb-notifications-container {
+        max-width: 100%;
+        width: calc(100% - 20px);
+        padding: 10px;
+    }
+    
+    .pdfb-notification-content {
+        padding: 12px;
+    }
 }
 
 .pdfb-notifications-dismiss-all:hover {
