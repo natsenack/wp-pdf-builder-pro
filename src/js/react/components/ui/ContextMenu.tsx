@@ -1,6 +1,13 @@
-import { useEffect, useRef, useMemo, useState, useLayoutEffect, FC } from 'react';
-import { createPortal } from 'react-dom';
-import '../../../../css/ContextMenu.css';
+import {
+  useEffect,
+  useRef,
+  useMemo,
+  useState,
+  useLayoutEffect,
+  FC,
+} from "react";
+import { createPortal } from "react-dom";
+import "../../../../css/ContextMenu.css";
 
 export interface ContextMenuItem {
   id: string;
@@ -25,12 +32,15 @@ export const ContextMenu: FC<ContextMenuProps> = ({
   items,
   position,
   onClose,
-  isVisible
+  isVisible,
 }) => {
   const menuRef = useRef(null);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
-  const [submenuPosition, setSubmenuPosition] = useState<{ x: number; y: number } | null>(null);
+  const [submenuPosition, setSubmenuPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
   const closeTimeoutRef = useRef<number | null>(null);
 
   // Calculer la position corrigée pour garder le menu à l'écran
@@ -38,13 +48,13 @@ export const ContextMenu: FC<ContextMenuProps> = ({
     let adjustedX = position.x;
     let adjustedY = position.y;
 
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       // Largeur et hauteur estimées du menu compact
       const menuWidth = 160; // Max width du menu compact
 
       // Calculer la hauteur réelle en fonction du type d'éléments
       let menuHeight = 0;
-      items.forEach(item => {
+      items.forEach((item) => {
         if (item.section) {
           menuHeight += 14; // Hauteur des sections avec padding
         } else if (item.separator) {
@@ -90,7 +100,9 @@ export const ContextMenu: FC<ContextMenuProps> = ({
   useLayoutEffect(() => {
     if (openSubmenu && menuRef.current) {
       const menuElement = menuRef.current as HTMLElement;
-      const parentItem = menuElement.querySelector(`[data-item-id="${openSubmenu}"]`) as HTMLElement;
+      const parentItem = menuElement.querySelector(
+        `[data-item-id="${openSubmenu}"]`,
+      ) as HTMLElement;
 
       if (parentItem) {
         const menuRect = menuElement.getBoundingClientRect();
@@ -116,7 +128,7 @@ export const ContextMenu: FC<ContextMenuProps> = ({
           submenuY = 10;
         }
 
-        setSubmenuPosition(_prev => ({ x: submenuX, y: submenuY }));
+        setSubmenuPosition((_prev) => ({ x: submenuX, y: submenuY }));
       }
     } else {
       setSubmenuPosition(null);
@@ -136,7 +148,11 @@ export const ContextMenu: FC<ContextMenuProps> = ({
         if (mouseEvent.button === 2) return;
 
         // Vérifier si le clic est en dehors du menu
-        if (!(menuRef.current as HTMLElement).contains(event.target as HTMLElement)) {
+        if (
+          !(menuRef.current as HTMLElement).contains(
+            event.target as HTMLElement,
+          )
+        ) {
           onClose();
         }
       }, 10);
@@ -144,30 +160,37 @@ export const ContextMenu: FC<ContextMenuProps> = ({
 
     const handleContextMenu = (event: Event) => {
       // Empêcher l'ouverture d'un nouveau menu contextuel sur le menu existant
-      if (menuRef.current && (menuRef.current as HTMLElement).contains(event.target as HTMLElement)) {
+      if (
+        menuRef.current &&
+        (menuRef.current as HTMLElement).contains(event.target as HTMLElement)
+      ) {
         event.preventDefault();
       }
     };
 
     const handleEscape = (event: Event) => {
       const keyboardEvent = event as unknown as { key?: string };
-      if (keyboardEvent.key === 'Escape') {
+      if (keyboardEvent.key === "Escape") {
         onClose();
       }
     };
 
     // Délai minimal pour permettre au menu de se rendre
     const timer = setTimeout(() => {
-      document.addEventListener('mousedown', handleClickOutside, { passive: true });
-      document.addEventListener('contextmenu', handleContextMenu, { passive: true });
-      document.addEventListener('keydown', handleEscape, { passive: true });
+      document.addEventListener("mousedown", handleClickOutside, {
+        passive: true,
+      });
+      document.addEventListener("contextmenu", handleContextMenu, {
+        passive: true,
+      });
+      document.addEventListener("keydown", handleEscape, { passive: true });
     }, 50);
 
     return () => {
       clearTimeout(timer);
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('contextmenu', handleContextMenu);
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("contextmenu", handleContextMenu);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, [isVisible, onClose]);
 
@@ -204,46 +227,74 @@ export const ContextMenu: FC<ContextMenuProps> = ({
         }
       }}
       style={{
-        position: 'fixed',
+        position: "fixed",
         left: `${adjustedPosition.x}px`,
         top: `${adjustedPosition.y}px`,
         opacity: 1,
-        visibility: 'visible',
-        pointerEvents: 'auto',
+        visibility: "visible",
+        pointerEvents: "auto",
         zIndex: 999999,
-        background: 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
-        border: '1px solid #e2e8f0',
-        WebkitBorderRadius: '8px',
-        MozBorderRadius: '8px',
-        borderRadius: '8px',
-        WebkitBoxShadow: '0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)',
-        MozBoxShadow: '0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)',
-        minWidth: '120px',
-        maxWidth: '160px',
-        padding: '1px 0',
-        WebkitTransition: 'opacity 0.15s ease-in-out',
-        MozTransition: 'opacity 0.15s ease-in-out',
-        OTransition: 'opacity 0.15s ease-in-out',
-        transition: 'opacity 0.15s ease-in-out',
-        WebkitTransformOrigin: 'top left',
-        MozTransformOrigin: 'top left',
-        msTransformOrigin: 'top left',
-        OTransformOrigin: 'top left',
-        transformOrigin: 'top left',
+        background: "linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)",
+        border: "1px solid #e2e8f0",
+        WebkitBorderRadius: "8px",
+        MozBorderRadius: "8px",
+        borderRadius: "8px",
+        WebkitBoxShadow:
+          "0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)",
+        MozBoxShadow:
+          "0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)",
+        boxShadow:
+          "0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)",
+        minWidth: "120px",
+        maxWidth: "160px",
+        padding: "1px 0",
+        WebkitTransition: "opacity 0.15s ease-in-out",
+        MozTransition: "opacity 0.15s ease-in-out",
+        OTransition: "opacity 0.15s ease-in-out",
+        transition: "opacity 0.15s ease-in-out",
+        WebkitTransformOrigin: "top left",
+        MozTransformOrigin: "top left",
+        msTransformOrigin: "top left",
+        OTransformOrigin: "top left",
+        transformOrigin: "top left",
       }}
     >
       {items.map((item) => (
         <div key={item.id}>
           {item.section ? (
-            <div className="pdfb-context-menu-section" style={{padding: '2px 6px 1px'}}>
-              <div className="pdfb-context-menu-section-title" style={{fontSize: '8px', fontWeight: '600', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0px', marginBottom: '0px'}}>{item.section}</div>
+            <div
+              className="pdfb-context-menu-section"
+              style={{ padding: "2px 6px 1px" }}
+            >
+              <div
+                className="pdfb-context-menu-section-title"
+                style={{
+                  fontSize: "8px",
+                  fontWeight: "600",
+                  color: "#64748b",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                  padding: "0px",
+                  marginBottom: "0px",
+                }}
+              >
+                {item.section}
+              </div>
             </div>
           ) : item.separator ? (
-            <div className="pdfb-context-menu-separator" style={{height: '1px', background: 'linear-gradient(90deg, transparent 0%, #e2e8f0 20%, #e2e8f0 80%, transparent 100%)', margin: '1px 0', border: 'none'}}></div>
+            <div
+              className="pdfb-context-menu-separator"
+              style={{
+                height: "1px",
+                background:
+                  "linear-gradient(90deg, transparent 0%, #e2e8f0 20%, #e2e8f0 80%, transparent 100%)",
+                margin: "1px 0",
+                border: "none",
+              }}
+            ></div>
           ) : (
             <div
-              className={`pdfb-context-menu-item ${item.disabled ? 'pdfb-disabled' : ''}`}
+              className={`pdfb-context-menu-item ${item.disabled ? "pdfb-disabled" : ""}`}
               data-item-id={item.id}
               onClick={() => handleItemClick(item)}
               onMouseEnter={() => {
@@ -255,26 +306,78 @@ export const ContextMenu: FC<ContextMenuProps> = ({
                 }
               }}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                padding: '1px 4px',
-                cursor: item.disabled ? 'not-allowed' : 'pointer',
-                userSelect: 'none',
-                transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
-                position: 'relative',
-                minHeight: '16px',
-                border: 'none',
-                background: hoveredItem === item.id ? '#f1f5f9' : 'transparent',
-                color: item.disabled ? '#94a3b8' : '#334155',
-                fontSize: '11px',
-                fontWeight: '500',
+                display: "flex",
+                alignItems: "center",
+                padding: "1px 4px",
+                cursor: item.disabled ? "not-allowed" : "pointer",
+                userSelect: "none",
+                transition: "all 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
+                position: "relative",
+                minHeight: "16px",
+                border: "none",
+                background: hoveredItem === item.id ? "#f1f5f9" : "transparent",
+                color: item.disabled ? "#94a3b8" : "#334155",
+                fontSize: "11px",
+                fontWeight: "500",
               }}
             >
-              {item.icon && <span className="pdfb-context-menu-item-icon" style={{width: '10px', height: '10px', marginRight: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: item.disabled ? '#94a3b8' : '#64748b', fontSize: '9px'}}>{item.icon}</span>}
-              {item.label && <span className="pdfb-context-menu-item-text" style={{flex: '1', fontSize: '10px', fontWeight: '500', color: item.disabled ? '#94a3b8' : '#334155'}}>{item.label}</span>}
-              {item.shortcut && <span className="pdfb-context-menu-item-shortcut" style={{fontSize: '8px', fontWeight: '500', color: item.disabled ? '#94a3b8' : '#64748b', background: 'rgba(148, 163, 184, 0.1)', padding: '0px 1px', borderRadius: '1px', marginLeft: '3px'}}>{item.shortcut}</span>}
+              {item.icon && (
+                <span
+                  className="pdfb-context-menu-item-icon"
+                  style={{
+                    width: "10px",
+                    height: "10px",
+                    marginRight: "3px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: item.disabled ? "#94a3b8" : "#64748b",
+                    fontSize: "9px",
+                  }}
+                >
+                  {item.icon}
+                </span>
+              )}
+              {item.label && (
+                <span
+                  className="pdfb-context-menu-item-text"
+                  style={{
+                    flex: "1",
+                    fontSize: "10px",
+                    fontWeight: "500",
+                    color: item.disabled ? "#94a3b8" : "#334155",
+                  }}
+                >
+                  {item.label}
+                </span>
+              )}
+              {item.shortcut && (
+                <span
+                  className="pdfb-context-menu-item-shortcut"
+                  style={{
+                    fontSize: "8px",
+                    fontWeight: "500",
+                    color: item.disabled ? "#94a3b8" : "#64748b",
+                    background: "rgba(148, 163, 184, 0.1)",
+                    padding: "0px 1px",
+                    borderRadius: "1px",
+                    marginLeft: "3px",
+                  }}
+                >
+                  {item.shortcut}
+                </span>
+              )}
               {item.children && item.children.length > 0 && (
-                <span className="pdfb-context-menu-submenu-arrow" style={{marginLeft: '4px', color: '#64748b', fontSize: '8px'}}>▶</span>
+                <span
+                  className="pdfb-context-menu-submenu-arrow"
+                  style={{
+                    marginLeft: "4px",
+                    color: "#64748b",
+                    fontSize: "8px",
+                  }}
+                >
+                  ▶
+                </span>
               )}
             </div>
           )}
@@ -287,7 +390,7 @@ export const ContextMenu: FC<ContextMenuProps> = ({
   const renderSubmenus = () => {
     if (!openSubmenu || !submenuPosition) return null;
 
-    const parentItem = items.find(item => item.id === openSubmenu);
+    const parentItem = items.find((item) => item.id === openSubmenu);
     if (!parentItem || !parentItem.children) return null;
 
     return (
@@ -326,9 +429,6 @@ export const ContextMenu: FC<ContextMenuProps> = ({
       {menuElement}
       {renderSubmenus()}
     </>,
-    document.body
+    document.body,
   );
 };
-
-
-

@@ -107,7 +107,15 @@ export const Header = memo(function Header({
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewOrderId, setPreviewOrderId] = useState("");
   const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
-  const [availableOrders, setAvailableOrders] = useState<Array<{id: string, number: string, customer: string, date: string, total: string}>>([]);
+  const [availableOrders, setAvailableOrders] = useState<
+    Array<{
+      id: string;
+      number: string;
+      customer: string;
+      date: string;
+      total: string;
+    }>
+  >([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
 
   // Vérifier le statut premium depuis pdfBuilderData
@@ -118,19 +126,22 @@ export const Header = memo(function Header({
     setShowPreviewModal(true);
     setPreviewOrderId("");
     setIsLoadingOrders(true);
-    
+
     try {
       // Récupérer la liste des commandes WooCommerce
-      const response = await fetch((window as any).pdfBuilderData?.ajaxUrl || "", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+      const response = await fetch(
+        (window as any).pdfBuilderData?.ajaxUrl || "",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            action: "pdf_builder_get_orders_list",
+            nonce: (window as any).pdfBuilderNonce || "",
+          }),
         },
-        body: new URLSearchParams({
-          action: "pdf_builder_get_orders_list",
-          nonce: (window as any).pdfBuilderNonce || "",
-        }),
-      });
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -818,9 +829,7 @@ export const Header = memo(function Header({
   }, [canvasSettings.performanceMonitoring]);
 
   // State pour le throttling du scroll
-  const [scrollTimeout, setScrollTimeout] = useState<number | null>(
-    null,
-  );
+  const [scrollTimeout, setScrollTimeout] = useState<number | null>(null);
 
   // Optimisation: mémoriser le handler de scroll avec throttling
   const handleScroll = useCallback(() => {
@@ -935,8 +944,10 @@ export const Header = memo(function Header({
     templateInput?: any,
   ) => {
     // Utiliser les paramètres passés OU les données locales (pour compatibilité)
-    const canvasWidth = canvasInput?.width || state.template?.canvasWidth || 794;
-    const canvasHeight = canvasInput?.height || state.template?.canvasHeight || 1123;
+    const canvasWidth =
+      canvasInput?.width || state.template?.canvasWidth || 794;
+    const canvasHeight =
+      canvasInput?.height || state.template?.canvasHeight || 1123;
     const elements = elementsInput || state.elements || [];
     const template = templateInput || state.template || {};
 
@@ -3105,47 +3116,54 @@ export const Header = memo(function Header({
 
       {/* Modale des paramètres du template */}
       {showSettingsModal && (
-        <div 
-          className="pdfb-canvas-modal-overlay" 
-          style={{ 
-            position: 'fixed',
+        <div
+          className="pdfb-canvas-modal-overlay"
+          style={{
+            position: "fixed",
             top: 0,
             left: 0,
-            width: '100%',
-            height: '100%',
-            background: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 10000
+            width: "100%",
+            height: "100%",
+            background: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 10000,
           }}
         >
-          <div 
+          <div
             className="pdfb-canvas-modal-container"
             style={{
-              background: '#fff',
-              borderRadius: '8px',
-              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2)',
-              width: '500px',
-              maxWidth: '90vw',
-              maxHeight: '85vh',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column'
+              background: "#fff",
+              borderRadius: "8px",
+              boxShadow: "0 10px 40px rgba(0, 0, 0, 0.2)",
+              width: "500px",
+              maxWidth: "90vw",
+              maxHeight: "85vh",
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
-            <div 
+            <div
               className="pdfb-canvas-modal-header"
               style={{
-                background: '#f5f5f5',
-                borderBottom: '1px solid #ddd',
-                padding: '20px 24px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
+                background: "#f5f5f5",
+                borderBottom: "1px solid #ddd",
+                padding: "20px 24px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
               }}
             >
-              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: '#333' }}>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: "16px",
+                  fontWeight: 600,
+                  color: "#333",
+                }}
+              >
                 <span style={{ fontSize: "24px" }}>📄</span> Paramètres du
                 template
               </h3>
@@ -3155,32 +3173,46 @@ export const Header = memo(function Header({
                 onClick={() => setShowSettingsModal(false)}
                 title="Fermer"
                 style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '24px',
-                  color: '#666',
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "24px",
+                  color: "#666",
                   padding: 0,
-                  width: '32px',
-                  height: '32px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
+                  width: "32px",
+                  height: "32px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
                 &times;
               </button>
             </div>
-            <div 
+            <div
               className="pdfb-canvas-modal-body"
               style={{
-                padding: '24px',
-                overflowY: 'auto',
-                flex: 1
+                padding: "24px",
+                overflowY: "auto",
+                flex: 1,
               }}
             >
-              <div className="pdfb-setting-group" style={{ marginBottom: '20px' }}>
-                <label className="pdfb-setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Nom du template</label>
+              <div
+                className="pdfb-setting-group"
+                style={{ marginBottom: "20px" }}
+              >
+                <label
+                  className="pdfb-setting-label"
+                  style={{
+                    display: "block",
+                    marginBottom: "8px",
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    color: "#333",
+                  }}
+                >
+                  Nom du template
+                </label>
                 <input
                   type="text"
                   value={editedTemplateName}
@@ -3189,74 +3221,218 @@ export const Header = memo(function Header({
                   placeholder="Entrez le nom du template"
                   autoComplete="off"
                   name="template_name_unique"
-                  style={{ width: '100%', padding: '8px 12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px' }}
+                  style={{
+                    width: "100%",
+                    padding: "8px 12px",
+                    border: "1px solid #ddd",
+                    borderRadius: "4px",
+                    fontSize: "14px",
+                  }}
                 />
               </div>
 
-              <div className="pdfb-setting-group" style={{ marginBottom: '20px' }}>
-                <label className="pdfb-setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Description</label>
+              <div
+                className="pdfb-setting-group"
+                style={{ marginBottom: "20px" }}
+              >
+                <label
+                  className="pdfb-setting-label"
+                  style={{
+                    display: "block",
+                    marginBottom: "8px",
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    color: "#333",
+                  }}
+                >
+                  Description
+                </label>
                 <textarea
                   value={editedTemplateDescription}
                   onChange={(e) => setEditedTemplateDescription(e.target.value)}
                   className="pdfb-setting-textarea"
                   placeholder="Description du template..."
                   rows={3}
-                  style={{ width: '100%', padding: '8px 12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', resize: 'vertical' }}
+                  style={{
+                    width: "100%",
+                    padding: "8px 12px",
+                    border: "1px solid #ddd",
+                    borderRadius: "4px",
+                    fontSize: "14px",
+                    resize: "vertical",
+                  }}
                 />
               </div>
 
-              <div className="pdfb-setting-group" style={{ marginBottom: '20px' }}>
-                <label className="pdfb-setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Dimensions du canvas</label>
-                <div className="pdfb-setting-input-group" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div
+                className="pdfb-setting-group"
+                style={{ marginBottom: "20px" }}
+              >
+                <label
+                  className="pdfb-setting-label"
+                  style={{
+                    display: "block",
+                    marginBottom: "8px",
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    color: "#333",
+                  }}
+                >
+                  Dimensions du canvas
+                </label>
+                <div
+                  className="pdfb-setting-input-group"
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
                   <input
                     type="number"
                     value={editedCanvasWidth}
                     disabled={true}
                     className="pdfb-setting-input setting-input-disabled"
                     placeholder="Largeur"
-                    style={{ flex: 1, padding: '8px 12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', background: '#f5f5f5', color: '#999' }}
+                    style={{
+                      flex: 1,
+                      padding: "8px 12px",
+                      border: "1px solid #ddd",
+                      borderRadius: "4px",
+                      fontSize: "14px",
+                      background: "#f5f5f5",
+                      color: "#999",
+                    }}
                   />
-                  <span className="pdfb-setting-input-separator" style={{ color: '#999', fontSize: '16px' }}>×</span>
+                  <span
+                    className="pdfb-setting-input-separator"
+                    style={{ color: "#999", fontSize: "16px" }}
+                  >
+                    ×
+                  </span>
                   <input
                     type="number"
                     value={editedCanvasHeight}
                     disabled={true}
                     className="pdfb-setting-input setting-input-disabled"
                     placeholder="Hauteur"
-                    style={{ flex: 1, padding: '8px 12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', background: '#f5f5f5', color: '#999' }}
+                    style={{
+                      flex: 1,
+                      padding: "8px 12px",
+                      border: "1px solid #ddd",
+                      borderRadius: "4px",
+                      fontSize: "14px",
+                      background: "#f5f5f5",
+                      color: "#999",
+                    }}
                   />
-                  <span className="pdfb-setting-unit" style={{ color: '#666', fontSize: '14px' }}>px</span>
+                  <span
+                    className="pdfb-setting-unit"
+                    style={{ color: "#666", fontSize: "14px" }}
+                  >
+                    px
+                  </span>
                 </div>
               </div>
 
-              <div className="pdfb-setting-group" style={{ marginBottom: '20px' }}>
-                <label className="pdfb-setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Statut</label>
-                <div className="pdfb-setting-status-tags" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <div
+                className="pdfb-setting-group"
+                style={{ marginBottom: "20px" }}
+              >
+                <label
+                  className="pdfb-setting-label"
+                  style={{
+                    display: "block",
+                    marginBottom: "8px",
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    color: "#333",
+                  }}
+                >
+                  Statut
+                </label>
+                <div
+                  className="pdfb-setting-status-tags"
+                  style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}
+                >
                   {isNewTemplate && (
-                    <span className="status-tag status-new" style={{ padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: 500, background: '#e7f3ff', color: '#0073aa', border: '1px solid #0073aa' }}>
+                    <span
+                      className="status-tag status-new"
+                      style={{
+                        padding: "4px 12px",
+                        borderRadius: "12px",
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        background: "#e7f3ff",
+                        color: "#0073aa",
+                        border: "1px solid #0073aa",
+                      }}
+                    >
                       Nouveau template
                     </span>
                   )}
                   {deferredIsModified && (
-                    <span className="status-tag status-modified" style={{ padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: 500, background: '#fff3cd', color: '#856404', border: '1px solid #ffc107' }}>
+                    <span
+                      className="status-tag status-modified"
+                      style={{
+                        padding: "4px 12px",
+                        borderRadius: "12px",
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        background: "#fff3cd",
+                        color: "#856404",
+                        border: "1px solid #ffc107",
+                      }}
+                    >
                       Modifié
                     </span>
                   )}
                   {isEditingExistingTemplate && (
-                    <span className="status-tag status-editing" style={{ padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: 500, background: '#d4edda', color: '#155724', border: '1px solid #28a745' }}>
+                    <span
+                      className="status-tag status-editing"
+                      style={{
+                        padding: "4px 12px",
+                        borderRadius: "12px",
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        background: "#d4edda",
+                        color: "#155724",
+                        border: "1px solid #28a745",
+                      }}
+                    >
                       Édition existante
                     </span>
                   )}
                 </div>
               </div>
 
-              <div className="pdfb-setting-group" style={{ marginBottom: '20px' }}>
-                <label className="pdfb-setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Informations système</label>
-                <div className="pdfb-setting-info" style={{ fontSize: '12px', color: '#666', lineHeight: '1.6', background: '#f9f9f9', padding: '12px', borderRadius: '4px', border: '1px solid #e0e0e0' }}>
+              <div
+                className="pdfb-setting-group"
+                style={{ marginBottom: "20px" }}
+              >
+                <label
+                  className="pdfb-setting-label"
+                  style={{
+                    display: "block",
+                    marginBottom: "8px",
+                    fontSize: "14px",
+                    fontWeight: 500,
+                    color: "#333",
+                  }}
+                >
+                  Informations système
+                </label>
+                <div
+                  className="pdfb-setting-info"
+                  style={{
+                    fontSize: "12px",
+                    color: "#666",
+                    lineHeight: "1.6",
+                    background: "#f9f9f9",
+                    padding: "12px",
+                    borderRadius: "4px",
+                    border: "1px solid #e0e0e0",
+                  }}
+                >
                   <div>Template ID: {templateName || "N/A"}</div>
                   <div>
-                    Dernière modification:{" "}
-                    {new Date().toLocaleString("fr-FR")}
+                    Dernière modification: {new Date().toLocaleString("fr-FR")}
                   </div>
                   <div>
                     État:{" "}
@@ -3274,37 +3450,37 @@ export const Header = memo(function Header({
                   )}
                   {canvasSettings.debugMode && (
                     <div>
-                      Debug: FPS Target {canvasSettings.fpsTarget}, Memory
-                      Limit {canvasSettings.memoryLimitJs}MB
+                      Debug: FPS Target {canvasSettings.fpsTarget}, Memory Limit{" "}
+                      {canvasSettings.memoryLimitJs}MB
                     </div>
                   )}
                 </div>
               </div>
             </div>
-            <div 
+            <div
               className="pdfb-canvas-modal-footer"
               style={{
-                borderTop: '1px solid #ddd',
-                padding: '16px 24px',
-                display: 'flex',
-                justifyContent: 'flex-end',
-                gap: '12px',
-                background: '#f9f9f9'
+                borderTop: "1px solid #ddd",
+                padding: "16px 24px",
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "12px",
+                background: "#f9f9f9",
               }}
             >
               <button
                 onClick={() => setShowSettingsModal(false)}
                 className="pdfb-canvas-modal-btn canvas-modal-btn-secondary"
                 style={{
-                  padding: '10px 20px',
-                  border: '1px solid #ccc',
-                  borderRadius: '4px',
-                  background: '#fff',
-                  color: '#333',
-                  fontSize: '14px',
+                  padding: "10px 20px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                  background: "#fff",
+                  color: "#333",
+                  fontSize: "14px",
                   fontWeight: 500,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
+                  cursor: "pointer",
+                  transition: "all 0.2s",
                 }}
               >
                 Annuler
@@ -3325,15 +3501,15 @@ export const Header = memo(function Header({
                 }}
                 className="pdfb-canvas-modal-btn canvas-modal-btn-primary"
                 style={{
-                  padding: '10px 20px',
-                  border: 'none',
-                  borderRadius: '4px',
-                  background: '#0073aa',
-                  color: '#fff',
-                  fontSize: '14px',
+                  padding: "10px 20px",
+                  border: "none",
+                  borderRadius: "4px",
+                  background: "#0073aa",
+                  color: "#fff",
+                  fontSize: "14px",
                   fontWeight: 500,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
+                  cursor: "pointer",
+                  transition: "all 0.2s",
                 }}
               >
                 Sauvegarder
@@ -3346,7 +3522,10 @@ export const Header = memo(function Header({
       {/* Modale d'aperçu avec sélection de format */}
       {showPreviewModal && (
         <div className="pdfb-canvas-modal-overlay" style={{ display: "flex" }}>
-          <div className="pdfb-canvas-modal-container" style={{ maxWidth: "500px" }}>
+          <div
+            className="pdfb-canvas-modal-container"
+            style={{ maxWidth: "500px" }}
+          >
             <div className="pdfb-canvas-modal-header">
               <h3>
                 <span style={{ fontSize: "24px" }}>👁️</span> Générer un aperçu
@@ -3367,14 +3546,16 @@ export const Header = memo(function Header({
                   <span style={{ fontSize: "12px", color: "#e11d48" }}>*</span>
                 </label>
                 {isLoadingOrders ? (
-                  <div style={{ 
-                    padding: "8px 12px", 
-                    border: "1px solid #d1d5db", 
-                    borderRadius: "4px",
-                    backgroundColor: "#f9fafb",
-                    color: "#6b7280",
-                    fontSize: "14px"
-                  }}>
+                  <div
+                    style={{
+                      padding: "8px 12px",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "4px",
+                      backgroundColor: "#f9fafb",
+                      color: "#6b7280",
+                      fontSize: "14px",
+                    }}
+                  >
                     ⏳ Chargement des commandes...
                   </div>
                 ) : (
@@ -3383,23 +3564,26 @@ export const Header = memo(function Header({
                     onChange={(e) => setPreviewOrderId(e.target.value)}
                     className="pdfb-setting-input"
                     disabled={isGeneratingPreview}
-                    style={{ cursor: isGeneratingPreview ? "not-allowed" : "pointer" }}
+                    style={{
+                      cursor: isGeneratingPreview ? "not-allowed" : "pointer",
+                    }}
                   >
                     <option value="">
-                      {availableOrders.length === 0 
-                        ? "Aucune commande trouvée" 
+                      {availableOrders.length === 0
+                        ? "Aucune commande trouvée"
                         : "Sélectionnez une commande"}
                     </option>
                     {availableOrders.map((order) => (
                       <option key={order.id} value={order.id}>
-                        #{order.number} - {order.customer} ({order.date}) - {order.total}
+                        #{order.number} - {order.customer} ({order.date}) -{" "}
+                        {order.total}
                       </option>
                     ))}
                   </select>
                 )}
                 <div className="pdfb-setting-hint">
-                  Sélectionnez la commande WooCommerce pour générer le document avec
-                  les vraies données (client, produits, totaux, etc.)
+                  Sélectionnez la commande WooCommerce pour générer le document
+                  avec les vraies données (client, produits, totaux, etc.)
                 </div>
               </div>
 

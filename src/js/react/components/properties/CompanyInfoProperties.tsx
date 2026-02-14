@@ -950,7 +950,11 @@ export function CompanyInfoProperties({
                     type="number"
                     value={element.paddingTop || 8}
                     onChange={(e) =>
-                      onChange(element.id, "paddingTop", parseInt(e.target.value) || 0)
+                      onChange(
+                        element.id,
+                        "paddingTop",
+                        parseInt(e.target.value) || 0,
+                      )
                     }
                     min="0"
                     max="50"
@@ -980,7 +984,11 @@ export function CompanyInfoProperties({
                     type="number"
                     value={element.paddingHorizontal || 12}
                     onChange={(e) =>
-                      onChange(element.id, "paddingHorizontal", parseInt(e.target.value) || 0)
+                      onChange(
+                        element.id,
+                        "paddingHorizontal",
+                        parseInt(e.target.value) || 0,
+                      )
                     }
                     min="0"
                     max="50"
@@ -1010,7 +1018,11 @@ export function CompanyInfoProperties({
                     type="number"
                     value={element.paddingBottom || 12}
                     onChange={(e) =>
-                      onChange(element.id, "paddingBottom", parseInt(e.target.value) || 0)
+                      onChange(
+                        element.id,
+                        "paddingBottom",
+                        parseInt(e.target.value) || 0,
+                      )
                     }
                     min="0"
                     max="50"
@@ -1040,7 +1052,11 @@ export function CompanyInfoProperties({
                     type="number"
                     value={element.lineSpacing || 0}
                     onChange={(e) =>
-                      onChange(element.id, "lineSpacing", parseInt(e.target.value) || 0)
+                      onChange(
+                        element.id,
+                        "lineSpacing",
+                        parseInt(e.target.value) || 0,
+                      )
                     }
                     min="0"
                     max="20"
