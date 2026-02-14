@@ -58,8 +58,14 @@ export function serializeCanvasData(
       // ✅ ENRICHISSEMENT: Ajouter les données de l'entreprise pour company_info si manquantes
       if (el.type === "company_info") {
         const pdfBuilderData = (window as any).pdfBuilderData;
+        console.log('[CanvasPersistence SERIALIZE] pdfBuilderData exists:', !!pdfBuilderData);
+        console.log('[CanvasPersistence SERIALIZE] company data:', pdfBuilderData?.company);
+        
         if (pdfBuilderData && pdfBuilderData.company) {
           const company = pdfBuilderData.company;
+          
+          console.log('[CanvasPersistence SERIALIZE] Before enrichment - companyTva:', serialized.companyTva);
+          console.log('[CanvasPersistence SERIALIZE] company.tva value:', company.tva);
 
           // Enrichir seulement si les propriétés manquent ou sont vides
           if (!serialized.companyName || serialized.companyName === "Non indiqué") {
@@ -81,6 +87,7 @@ export function serializeCanvasData(
             serialized.companySiret = company.siret || "";
           }
           if (!serialized.companyTva || serialized.companyTva === "Non indiqué") {
+            console.log('[CanvasPersistence SERIALIZE] Enriching companyTva with:', company.tva);
             serialized.companyTva = company.tva || "";
           }
           if (!serialized.companyRcs || serialized.companyRcs === "Non indiqué") {
@@ -89,6 +96,10 @@ export function serializeCanvasData(
           if (!serialized.companyCapital || serialized.companyCapital === "Non indiqué") {
             serialized.companyCapital = company.capital || "";
           }
+          
+          console.log('[CanvasPersistence SERIALIZE] After enrichment - companyTva:', serialized.companyTva);
+        } else {
+          console.warn('[CanvasPersistence SERIALIZE] pdfBuilderData or company not available!');
         }
       }
 
