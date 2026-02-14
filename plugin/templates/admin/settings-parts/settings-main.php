@@ -354,6 +354,11 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     showStatus('<?php _e("Paramètres sauvegardés", "pdf-builder-pro"); ?>', 'success');
                     $btn.removeClass('saving').addClass('saved');
+                    
+                    // Notification unifiée
+                    if (typeof showSuccessNotification !== 'undefined') {
+                        showSuccessNotification(response.data.message || '<?php _e("Paramètres sauvegardés avec succès", "pdf-builder-pro"); ?>');
+                    }
                 } else {
                     console.log('PDF Builder Settings: Error details:', {
                         message: response.data.message || 'Unknown error',
@@ -361,6 +366,11 @@ jQuery(document).ready(function($) {
                     });
                     showStatus(response.data.message || '<?php _e("Erreur lors de la sauvegarde", "pdf-builder-pro"); ?>', 'error');
                     $btn.removeClass('saving').addClass('error');
+                    
+                    // Notification unifiée d'erreur
+                    if (typeof showErrorNotification !== 'undefined') {
+                        showErrorNotification(response.data.message || '<?php _e("Erreur lors de la sauvegarde", "pdf-builder-pro"); ?>');
+                    }
                 }
             },
             error: function(xhr, status, error) {
@@ -377,6 +387,11 @@ jQuery(document).ready(function($) {
                 }
                 showStatus(errorMsg, 'error');
                 $btn.removeClass('saving').addClass('error');
+                
+                // Notification unifiée d'erreur
+                if (typeof showErrorNotification !== 'undefined') {
+                    showErrorNotification(errorMsg);
+                }
             },
             complete: function() {
                 // Réactiver le bouton après un délai
