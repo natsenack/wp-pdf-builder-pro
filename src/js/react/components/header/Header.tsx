@@ -2236,31 +2236,31 @@ export const Header = memo(function Header({
 
               if (element.showHeaders !== false) {
                 customerParts.push(
-                  `<div style="font-size: ${headerFontSize}px; font-family: ${headerFontFamily}; font-weight: ${headerFontWeight}; font-style: ${headerFontStyle}; color: ${headerTextColor}; margin-bottom: 4px;">Client</div>`,
+                  `<div style="font-size: ${headerFontSize}px; font-family: ${headerFontFamily}; font-weight: ${headerFontWeight}; font-style: ${headerFontStyle}; color: ${headerTextColor}; margin-bottom: 4px; line-height: 1.1;">Client</div>`,
                 );
               }
 
               if (element.showFullName !== false) {
                 customerParts.push(
-                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0;">Prénom Nom</div>`,
+                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0; line-height: 1.1;">Prénom Nom</div>`,
                 );
               }
 
               if (element.showAddress !== false) {
                 customerParts.push(
-                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0;">123 Rue de la Paix, 75000 Paris</div>`,
+                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0; line-height: 1.1;">123 Rue de la Paix, 75000 Paris</div>`,
                 );
               }
 
               if (element.showEmail !== false) {
                 customerParts.push(
-                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0;">client@example.com</div>`,
+                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0; line-height: 1.1;">client@example.com</div>`,
                 );
               }
 
               if (element.showPhone !== false) {
                 customerParts.push(
-                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0;">+01 23 45 67 89</div>`,
+                  `<div style="font-size: ${bodyFontSize}px; font-family: ${bodyFontFamily}; font-weight: ${bodyFontWeight}; font-style: ${bodyFontStyle}; color: ${bodyTextColor}; margin: 0; line-height: 1.1;">+01 23 45 67 89</div>`,
                 );
               }
 
@@ -2522,8 +2522,8 @@ export const Header = memo(function Header({
           element.type === "product_table" ||
           element.type === "company_info"
         ) {
-          // Ajouter overflow pour les conteneurs complexes
-          containerStyles += ` overflow: hidden;`;
+          // Ne pas couper le contenu - laisser visible comme dans React
+          containerStyles += ` overflow: visible;`;
         }
         html += `<div class="element" style="${containerStyles}">${content}</div>`;
       });

@@ -1516,9 +1516,11 @@ const drawCustomerInfo = (
     layout,
   );
 
-  // Calculer la hauteur du contenu
-  const headerHeight = showHeaders ? 25 : 0;
-  const contentHeight = lines.length * 18; // 18px par ligne
+  // Calculer la hauteur du contenu basé sur les vraies tailles de police
+  const headerLineHeight = headerFontSize * 1.1 + 4; // fontSize + margin-bottom
+  const bodyLineHeight = bodyFontSize * 1.1;
+  const headerHeight = showHeaders ? headerLineHeight : 0;
+  const contentHeight = lines.length * bodyLineHeight;
   const totalContentHeight = headerHeight + contentHeight;
 
   // Calculer l'offset Y selon l'alignement vertical
@@ -1564,7 +1566,7 @@ const drawCustomerInfo = (
   if (showHeaders) {
     ctx.fillStyle = normalizeColor(props.headerTextColor || "#111827");
     ctx.fillText("Informations Client", textX, y);
-    y += 25;
+    y += headerLineHeight; // Utiliser la même valeur que le calcul de hauteur
     ctx.fillStyle = normalizeColor(props.textColor || "#000000");
   }
 
@@ -1608,8 +1610,8 @@ const drawCustomerInfo = (
       ctx.fillText(lineText, textX, y);
     }
 
-    // Appliquer le line-height fixe (1.1)
-    y += bodyFontSize * 1.1;
+    // Appliquer le line-height basé sur bodyLineHeight (cohérence avec calcul de hauteur)
+    y += bodyLineHeight;
   });
 };
 
