@@ -912,7 +912,7 @@ class PdfBuilderCore
             try {
                 window.pdfBuilderData = {
                     templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
-                    templateData: <?php echo $template_data ? wp_json_encode($template_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) : 'null'; ?>,
+                    templateData: <?php echo $template_data ? wp_json_encode($template_data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) : 'null'; ?>,
                     isEditing: <?php echo ($template_id || $template_data) ? 'true' : 'false'; ?>,
                     ajaxUrl: '<?php echo admin_url('admin-ajax.php'); ?>',
                     nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'

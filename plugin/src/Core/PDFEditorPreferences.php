@@ -347,7 +347,7 @@ class PDFEditorPreferences {
                 // Propriétés
                 nonce: '<?php echo esc_js($nonce); ?>',
                 ajaxUrl: '<?php echo esc_url($ajax_url); ?>',
-                preferences: <?php echo wp_json_encode($current_prefs); ?>,
+                preferences: <?php echo wp_json_encode($current_prefs, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
 
                 // Initialisation
                 init: function() {
