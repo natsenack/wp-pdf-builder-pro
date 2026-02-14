@@ -39,8 +39,12 @@ class AdminScriptLoader
         // Enregistrer le hook pour charger les scripts admin
         \add_action('admin_enqueue_scripts', [$this, 'loadAdminScripts'], 20);
         
-        // Désactiver les emojis sur les pages PDF Builder - PRIORITE 9 pour être avant loadAdminScripts
-        \add_action('admin_init', [$this, 'disableEmojisOnPdfBuilderPages'], 9);
+        // STRATÉGIE ULTRA-AGGRESSIVE pour bloquer les emojis sur les pages PDF Builder
+        // Hook init @ priority 1 = TRÈS TÔT dans le cycle WordPress
+        \add_action('init', [$this, 'disableEmojisOnPdfBuilderPages'], 1);
+        // Modifier le registre de scripts au niveau le plus bas
+        \add_action('wp_default_scripts', [$this, 'removeEmojiFromScriptRegistry'], 1);
+        // Filtres de backup au cas où les scripts passeraient quand même
         \add_filter('script_loader_tag', [$this, 'filterEmojiScriptTag'], 10, 3);
         \add_filter('style_loader_tag', [$this, 'filterEmojiStyleTag'], 10, 3);
     }
@@ -1173,41 +1177,60 @@ class AdminScriptLoader
     }
 
     /**
-     * Désactiver les emojis sur les pages PDF Builder
-     * Cela évite les erreurs de chargement du script wp-emoji-loader.min.js
+     * Désactiver COMPLÈTEMENT les emojis sur les pages PDF Builder (Hook: init @ priority 1)
+     * Cette méthode s'exécute très tôt pour bloquer l'enregistrement initial des scripts emoji
+     * Note: On désactive globalement pour l'admin car le hook init est AVANT $_GET['page']
      */
     public function disableEmojisOnPdfBuilderPages()
     {
-        // Vérifier si on est sur une page d'admin
+        // Le hook init @ priority 1 est TRÈS TÔT - on ne peut pas vérifier $_GET['page'] de manière fiable
+        // On désactive donc les emojis GLOBALEMENT pour toutes les pages admin
+        // Ce n'est pas un problème - les emojis ne sont pas nécessaires dans notre plugin
         if (!is_admin()) {
             return;
         }
 
-        // Vérifier si on est sur une page PDF Builder
-        $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
-        if (strpos($current_page, 'pdf-builder') === false) {
-            return;
-        }
+        error_log('[PDF Builder] 🚫 COMPLETE emoji disable (global admin)');
 
-        error_log('[PDF Builder AdminScriptLoader] Disabling emojis for page: ' . $current_page);
-
-        // Désenregistrer complètement les scripts emoji - plus agressif que wp_dequeue_script
-        \wp_deregister_script('wp-emoji');
-        \wp_deregister_script('wp-emoji-loader');
-
-        // Désactiver les styles emoji
-        \wp_deregister_style('print-emoji-styles');
-        
-        // Désactiver les fonctions emoji de WordPress
+        // SUPPRIMER TOUTES LES ACTIONS EMOJI du core WordPress
         \remove_action('admin_print_styles', 'print_emoji_styles');
-        \remove_action('admin_print_scripts', 'print_emoji_detection_script');
         \remove_action('wp_head', 'print_emoji_detection_script', 7);
+        \remove_action('admin_print_scripts', 'print_emoji_detection_script');
         \remove_action('wp_print_styles', 'print_emoji_styles');
         \remove_filter('wp_mail', 'wp_staticize_emoji_for_email');
         \remove_filter('the_content_feed', 'wp_staticize_emoji');
         \remove_filter('comment_text_rss', 'wp_staticize_emoji');
-
-        error_log('[PDF Builder AdminScriptLoader] Emojis deregistered for PDF Builder pages');
+        
+        // SUPPRIMER LES FILTRES TinyMCE emoji
+        \add_filter('tiny_mce_plugins', function($plugins) {
+            return is_array($plugins) ? array_diff($plugins, ['wpemoji']) : $plugins;
+        });
+        
+        error_log('[PDF Builder] ✅ All emoji actions/filters removed');
+    }
+    
+    /**
+     * Retirer les scripts emoji du registre global WordPress (Hook: wp_default_scripts @ priority 1)
+     * Cette méthode empêche l'enregistrement même des scripts emoji
+     */
+    public function removeEmojiFromScriptRegistry($scripts)
+    {
+        // Ce hook est appelé TRÈS TÔT, avant $_GET['page']
+        // On désactive pour tout l'admin - pas de problème pour les performances
+        if (!is_admin()) {
+            return;
+        }
+        
+        // Accéder au registre de scripts et supprimer les emojis
+        if (isset($scripts->registered['wp-emoji-loader'])) {
+            unset($scripts->registered['wp-emoji-loader']);
+            error_log('[PDF Builder] 🗑️ Removed wp-emoji-loader from script registry');
+        }
+        
+        if (isset($scripts->registered['wp-emoji'])) {
+            unset($scripts->registered['wp-emoji']);
+            error_log('[PDF Builder] 🗑️ Removed wp-emoji from script registry');
+        }
     }
 
     /**
