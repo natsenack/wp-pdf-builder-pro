@@ -1577,7 +1577,7 @@ export function ProductTableProperties({ element, onChange, activeTab, setActive
                     fontWeight: 'bold',
                     color: '#333',
                     textAlign: 'center',
-                    lineHeight: '1.2'
+                    lineHeight: '1.1'
                   }}>
                     {theme.name}
                   </div>

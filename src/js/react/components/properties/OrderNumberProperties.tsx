@@ -501,7 +501,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
             <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '8px', color: '#495057' }}>
               ℹ️ Information
             </div>
-            <div style={{ fontSize: '11px', color: '#6c757d', lineHeight: '1.4' }}>
+            <div style={{ fontSize: '11px', color: '#6c757d', lineHeight: '1.1' }}>
               Le numéro de commande est automatiquement récupéré depuis WooCommerce.
               Le format et la numérotation sont gérés par votre configuration WooCommerce.
             </div>
@@ -787,7 +787,7 @@ export function OrderNumberProperties({ element, onChange, activeTab, setActiveT
                     fontWeight: 'bold',
                     color: '#333',
                     textAlign: 'center',
-                    lineHeight: '1.2'
+                    lineHeight: '1.1'
                   }}>
                     {theme.name}
                   </div>

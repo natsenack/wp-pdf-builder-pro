@@ -57,11 +57,8 @@ class StyleBuilder
             $properties_found[] = 'textAlign=' . $element['textAlign'];
         }
 
-        if (isset($element['lineHeight']) && !empty($element['lineHeight'])) {
-            $line_height = is_numeric($element['lineHeight']) ? $element['lineHeight'] . 'px' : $element['lineHeight'];
-            $style .= "line-height: {$line_height}; ";
-            $properties_found[] = 'lineHeight=' . $element['lineHeight'];
-        }
+        // `lineHeight` deprecated: spacing is now controlled by fixed rules (do not inject)
+        // (anciennement géré ici — ignoré volontairement pour cohérence React/HTML/PDF)
 
         if (isset($element['textDecoration']) && !empty($element['textDecoration'])) {
             $style .= "text-decoration: {$element['textDecoration']}; ";

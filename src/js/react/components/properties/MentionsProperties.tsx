@@ -920,7 +920,7 @@ export function MentionsProperties({
                             style={{
                               fontSize: "10px",
                               color: "#666",
-                              lineHeight: "1.3",
+                              lineHeight: "1.1",
                             }}
                           >
                             {mention.text.length > 60

@@ -670,9 +670,8 @@ class PDF_Builder_WooCommerce_Integration
         if (isset($element_styles['fontFamily'])) {
             $style .= "font-family: {$element_styles['fontFamily']}; ";
         }
-        if (isset($element_styles['lineHeight'])) {
-            $style .= "line-height: {$element_styles['lineHeight']}; ";
-        }
+
+        // `lineHeight` deprecated — ignore incoming values to keep spacing consistent with React canvas
 
         // Text properties
         if (isset($element_styles['color'])) {
