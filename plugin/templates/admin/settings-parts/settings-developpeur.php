@@ -19,18 +19,18 @@
                 <tr>
                     <th scope="row"><label for="developer_enabled">Mode Développeur</label></th>
                     <td>
-                        <div class="toggle-container">
-                            <label class="toggle-switch">
+                        <div class="pdfb-toggle-container">
+                            <label class="pdfb-toggle-switch">
                                 <input type="hidden" name="pdf_builder_settings[pdf_builder_developer_enabled]" value="0">
                                 <input type="checkbox" id="developer_enabled" name="pdf_builder_settings[pdf_builder_developer_enabled]" value="1" <?php echo isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0' ? 'checked' : ''; ?> />
-                                <span class="toggle-slider"></span>
+                                <span class="pdfb-toggle-slider"></span>
                             </label>
-                            <span class="toggle-label">Activer le mode développeur</span>
+                            <span class="pdfb-toggle-label">Activer le mode développeur</span>
                             <span class="developer-status-indicator <?php echo isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0' ? 'developer-status-active' : 'developer-status-inactive'; ?>">
                                 <?php echo isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0' ? 'ACTIF' : 'INACTIF'; ?>
                             </span>
                         </div>
-                        <div class="toggle-description">Active le mode développeur avec logs détaillés</div>
+                        <div class="pdfb-toggle-description">Active le mode développeur avec logs détaillés</div>
                     </td>
                 </tr>
                 <tr>
@@ -766,20 +766,34 @@
     $(document).ready(function() {
         console.log('🔧 [Mode Développeur] Document ready, initialisation du gestionnaire toggle');
         
+        // Initialiser l'état du toggle au chargement
+        const $developerToggle = $('#developer_enabled');
+        const $toggleSwitch = $developerToggle.closest('.pdfb-toggle-switch');
+        if ($developerToggle.is(':checked')) {
+            $toggleSwitch.addClass('pdfb-checked');
+            console.log('🔧 [Mode Développeur] Toggle initialisé à coché');
+        } else {
+            $toggleSwitch.removeClass('pdfb-checked');
+            console.log('🔧 [Mode Développeur] Toggle initialisé à décoché');
+        }
+        
         // Gestionnaire pour afficher/masquer les sections développeur
         $('#developer_enabled').on('change', function() {
             const isEnabled = $(this).is(':checked');
             const $status = $('#developer_status_indicator');
+            const $toggleSwitch = $(this).closest('.pdfb-toggle-switch');
             
             console.log('🔧 [Mode Développeur] Toggle changé:', isEnabled);
             
-            // Mettre à jour l'indicateur de statut
+            // Mettre à jour la classe du toggle pour la couleur de fond
             if (isEnabled) {
+                $toggleSwitch.addClass('pdfb-checked');
                 $status.removeClass('developer-status-inactive').addClass('developer-status-active').text('ACTIF');
-                console.log('🔧 [Mode Développeur] Indicateur mis à ACTIF');
+                console.log('🔧 [Mode Développeur] Toggle mis à pdfb-checked, indicateur mis à ACTIF');
             } else {
+                $toggleSwitch.removeClass('pdfb-checked');
                 $status.removeClass('developer-status-active').addClass('developer-status-inactive').text('INACTIF');
-                console.log('🔧 [Mode Développeur] Indicateur mis à INACTIF');
+                console.log('🔧 [Mode Développeur] Toggle retiré pdfb-checked, indicateur mis à INACTIF');
             }
             
             // Afficher/masquer les sections développeur
@@ -1485,36 +1499,21 @@
 }
 
 /* Styles pour les toggles améliorés */
-.toggle-switch {
+.pdfb-toggle-switch {
     position: relative;
     display: inline-block;
     width: 50px;
     height: 24px;
-}
-
-.toggle-switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.toggle-switch label {
-    position: absolute;
     cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
     background: #dee2e6;
     border-radius: 12px;
     transition: 0.3s;
     border: 1px solid #adb5bd;
-    height: 22px;
+    vertical-align: middle;
 }
 
-.toggle-switch label:before {
+.pdfb-toggle-switch .pdfb-toggle-slider {
     position: absolute;
-    content: "";
     height: 18px;
     width: 18px;
     left: 2px;
@@ -1525,32 +1524,45 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.toggle-switch input:checked + label {
-    background: #6c757d;
-    border-color: #5a6268;
-    height: 22px;
-}
-
-.toggle-switch input:checked + label:before {
+.pdfb-toggle-switch input[type="checkbox"]:checked ~ .pdfb-toggle-slider {
     transform: translateX(26px);
 }
 
+.pdfb-toggle-switch input[type="checkbox"]:checked {
+    /* This selector doesn't work for background color */
+}
+
+/* Use JavaScript to add/remove class for background color */
+.pdfb-toggle-switch.pdfb-checked {
+    background: #667eea;
+    border-color: #5a67d8;
+}
+
+.pdfb-toggle-switch input[type="checkbox"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
 /* Amélioration du toggle */
-.toggle-container {
+.pdfb-toggle-container {
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-bottom: 8px;
 }
 
-.toggle-label {
+.pdfb-toggle-label {
     font-weight: 500;
     color: #333;
+    font-size: 14px;
 }
 
-.toggle-description {
+.pdfb-toggle-description {
     margin-top: 5px;
     font-size: 13px;
     color: #666;
+    margin-left: 60px; /* Align with toggle */
 }
 
 /* Styles pour les champs développeur */
