@@ -25,6 +25,7 @@ module.exports = {
     "pdf-builder-init": "./src/js/admin/pdf-builder-init.js",
     // Preview system removed
     "notifications-css": "./src/css/notifications.css",
+    "settings-systeme-css": "./src/css/settings-systeme.css",
   },
   output: {
     path: outputPath,

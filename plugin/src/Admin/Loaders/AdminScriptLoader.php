@@ -224,6 +224,16 @@ class AdminScriptLoader
                     [],
                     PDF_BUILDER_PRO_VERSION
                 );
+                
+                // Charger le CSS de l'onglet Système (si on est sur la page settings)
+                if (strpos($hook, 'settings') !== false) {
+                    \wp_enqueue_style(
+                        'pdf-builder-settings-systeme',
+                        PDF_BUILDER_PLUGIN_URL . 'assets/css/settings-systeme-css.min.css',
+                        [],
+                        PDF_BUILDER_PRO_VERSION
+                    );
+                }
             }
 
             // Définir les paramètres de debug JavaScript UNIQUEMENT pour les notifications

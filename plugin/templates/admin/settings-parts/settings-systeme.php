@@ -81,17 +81,17 @@
             </h3>
 
                 <!-- Section Cache et Performance -->
-                <section id="systeme" class="system-cache-section">
+                <section id="systeme" class="pdfb-system-cache-section">
                     <header>
                         <h3>
                             <span>
                                 📋 Cache & Performance - ⚠️ En attente d'implémentation
-                                <span class="cache-performance-status" id="cache-performance-status"><?php echo $cache_enabled ? 'ACTIF' : 'INACTIF'; ?></span>
+                                <span class="pdfb-cache-performance-status" id="cache-performance-status"><?php echo $cache_enabled ? 'ACTIF' : 'INACTIF'; ?></span>
                             </span>
                         </h3>
                     </header>
 
-                    <div class="system-section-content">
+                    <div class="pdfb-system-section-content">
                         <table class="form-table">
                             <tr>
                                 <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
@@ -174,45 +174,45 @@
                         </table>
 
                         <!-- Informations sur l'état du cache -->
-                        <article class="cache-status-info">
+                        <article class="pdfb-cache-status-info">
                             <header>
                                 <h4>📊 État du système de cache</h4>
                             </header>
-                            <div class="metric-grid">
-                                <div class="cache-metric-card" data-metric="size" style="pointer-events: none; cursor: default;">
-                                    <div class="metric-value">
+                            <div class="pdfb-metric-grid">
+                                <div class="pdfb-cache-metric-card" data-metric="size" style="pointer-events: none; cursor: default;">
+                                    <div class="pdfb-metric-value">
                                         <span id="cache-size-display"><?php echo $cache_file_count; ?> fichiers</span>
                                     </div>
-                                    <div class="metric-label">Taille du cache</div>
+                                    <div class="pdfb-metric-label">Taille du cache</div>
                                 </div>
-                                <div class="cache-metric-card" data-metric="transients" style="pointer-events: none; cursor: default;">
-                                    <div class="metric-value">
+                                <div class="pdfb-cache-metric-card" data-metric="transients" style="pointer-events: none; cursor: default;">
+                                    <div class="pdfb-metric-value">
                                         <?php echo intval($transient_count); ?>
                                     </div>
-                                    <div class="metric-label">Transients actifs</div>
+                                    <div class="pdfb-metric-label">Transients actifs</div>
                                 </div>
-                                <div class="cache-metric-card systeme-cache-status" data-metric="status" style="pointer-events: none; cursor: default;">
-                                    <div class="cache-enabled-indicator metric-value">
+                                <div class="pdfb-cache-metric-card pdfb-systeme-cache-status" data-metric="status" style="pointer-events: none; cursor: default;">
+                                    <div class="pdfb-cache-enabled-indicator metric-value">
                                     <?php echo $cache_enabled ? 'Cache activé' : 'Cache désactivé'; ?>
                                     </div>
-                                    <div class="metric-label">État du cache</div>
+                                    <div class="pdfb-metric-label">État du cache</div>
                                 </div>
-                                <div class="cache-metric-card" data-metric="cleanup" style="pointer-events: none; cursor: default;">
-                                    <div class="metric-value">
+                                <div class="pdfb-cache-metric-card" data-metric="cleanup" style="pointer-events: none; cursor: default;">
+                                    <div class="pdfb-metric-value">
                                         <?php echo $cache_last_cleanup; ?>
                                     </div>
-                                    <div class="metric-label">Dernier nettoyage</div>
+                                    <div class="pdfb-metric-label">Dernier nettoyage</div>
                                 </div>
                             </div>
                         </article>
                     </div>
                 </section>
                 <!-- Section Maintenance -->
-                <section id="systeme" class="system-maintenance-section">
+                <section id="systeme" class="pdfb-system-maintenance-section">
                     <h3>
                         <span style="display: inline-flex; align-items: center; gap: 10px;">
                             🔧 Maintenance
-                            <span class="maintenance-status"><?php echo $auto_maintenance === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
+                            <span class="pdfb-maintenance-status"><?php echo $auto_maintenance === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
                         </span>
                     </h3>
 
@@ -229,7 +229,7 @@
                     </table>
 
                     <!-- Section Maintenance Système -->
-                    <div class="system-section-content">
+                    <div class="pdfb-system-section-content">
                         <table class="form-table">
                             <tr>
                                 <th scope="row"><label for="systeme_auto_maintenance">Maintenance automatique</label></th>
@@ -240,7 +240,7 @@
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">Active la maintenance automatique hebdomadaire</p>
-                                    <div class="maintenance-info-box">
+                                    <div class="pdfb-maintenance-info-box">
                                         <strong>ℹ️ Ce que fait la maintenance automatique :</strong><br>
                                         • Optimisation de la base de données (réparation des tables)<br>
                                         • Vérification et réparation des templates<br>
@@ -253,80 +253,80 @@
                         </table>
 
                         <!-- Métriques de maintenance -->
-                        <article class="maintenance-status-info">
+                        <article class="pdfb-maintenance-status-info">
                             <header>
                                 <h4>📊 État de la maintenance</h4>
                             </header>
-                            <div class="metric-grid">
-                                <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="last-run" data-action="run-maintenance" title="Lancer la maintenance manuelle complète">
-                                    <div class="metric-card-header">
-                                        <div class="metric-icon">🔄</div>
-                                        <div class="metric-status" data-status="ready">
-                                            <span class="status-indicator"></span>
+                            <div class="pdfb-metric-grid">
+                                <button type="button" class="pdfb-maintenance-metric-card maintenance-action-btn" data-metric="last-run" data-action="run-maintenance" title="Lancer la maintenance manuelle complète">
+                                    <div class="pdfb-metric-card-header">
+                                        <div class="pdfb-metric-icon">🔄</div>
+                                        <div class="pdfb-metric-status" data-status="ready">
+                                            <span class="pdfb-status-indicator"></span>
                                         </div>
                                     </div>
-                                    <div class="metric-value">
+                                    <div class="pdfb-metric-value">
                                         <?php echo $last_maintenance; ?>
                                     </div>
-                                    <div class="metric-label">Dernière exécution</div>
-                                    <div class="metric-action">
+                                    <div class="pdfb-metric-label">Dernière exécution</div>
+                                    <div class="pdfb-metric-action">
                                         <span class="action-text">Lancer maintenant</span>
-                                        <span class="action-icon">▶️</span>
+                                        <span class="pdfb-action-icon">▶️</span>
                                     </div>
                                 </button>
 
-                                <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="next-run" data-action="schedule-maintenance" title="Programmer la prochaine maintenance automatique">
-                                    <div class="metric-card-header">
-                                        <div class="metric-icon">📅</div>
-                                        <div class="metric-status" data-status="scheduled">
-                                            <span class="status-indicator"></span>
+                                <button type="button" class="pdfb-maintenance-metric-card maintenance-action-btn" data-metric="next-run" data-action="schedule-maintenance" title="Programmer la prochaine maintenance automatique">
+                                    <div class="pdfb-metric-card-header">
+                                        <div class="pdfb-metric-icon">📅</div>
+                                        <div class="pdfb-metric-status" data-status="scheduled">
+                                            <span class="pdfb-status-indicator"></span>
                                         </div>
                                     </div>
-                                    <div class="metric-value">
+                                    <div class="pdfb-metric-value">
                                         <?php echo $next_maintenance; ?>
                                     </div>
-                                    <div class="metric-label">Prochaine exécution</div>
-                                    <div class="metric-action">
+                                    <div class="pdfb-metric-label">Prochaine exécution</div>
+                                    <div class="pdfb-metric-action">
                                         <span class="action-text">Programmer</span>
-                                        <span class="action-icon">⚙️</span>
+                                        <span class="pdfb-action-icon">⚙️</span>
                                     </div>
                                 </button>
 
-                                <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="status" data-action="toggle-maintenance" title="Activer/désactiver la maintenance automatique">
-                                    <div class="metric-card-header">
-                                        <div class="metric-icon">
+                                <button type="button" class="pdfb-maintenance-metric-card maintenance-action-btn" data-metric="status" data-action="toggle-maintenance" title="Activer/désactiver la maintenance automatique">
+                                    <div class="pdfb-metric-card-header">
+                                        <div class="pdfb-metric-icon">
                                             <?php echo $auto_maintenance === '1' ? '✅' : '❌'; ?>
                                         </div>
-                                        <div class="metric-status" data-status="<?php echo $auto_maintenance === '1' ? 'active' : 'inactive'; ?>">
-                                            <span class="status-indicator"></span>
+                                        <div class="pdfb-metric-status" data-status="<?php echo $auto_maintenance === '1' ? 'active' : 'inactive'; ?>">
+                                            <span class="pdfb-status-indicator"></span>
                                         </div>
                                     </div>
-                                    <div class="metric-value">
-                                        <span class="status-badge <?php echo $auto_maintenance === '1' ? 'status-active' : 'status-inactive'; ?>">
+                                    <div class="pdfb-metric-value">
+                                        <span class="pdfb-status-badge <?php echo $auto_maintenance === '1' ? 'pdfb-status-active' : 'pdfb-status-inactive'; ?>">
                                             <?php echo $auto_maintenance === '1' ? 'Activée' : 'Désactivée'; ?>
                                         </span>
                                     </div>
-                                    <div class="metric-label">Maintenance auto</div>
-                                    <div class="metric-action">
+                                    <div class="pdfb-metric-label">Maintenance auto</div>
+                                    <div class="pdfb-metric-action">
                                         <span class="action-text">Basculer</span>
-                                        <span class="action-icon">🔄</span>
+                                        <span class="pdfb-action-icon">🔄</span>
                                     </div>
                                 </button>
 
-                                <button type="button" class="maintenance-metric-card maintenance-action-btn" data-metric="manual" data-action="run-manual-maintenance" title="Exécuter manuellement toutes les tâches de maintenance">
-                                    <div class="metric-card-header">
-                                        <div class="metric-icon">🚀</div>
-                                        <div class="metric-status" data-status="manual">
-                                            <span class="status-indicator"></span>
+                                <button type="button" class="pdfb-maintenance-metric-card maintenance-action-btn" data-metric="manual" data-action="run-manual-maintenance" title="Exécuter manuellement toutes les tâches de maintenance">
+                                    <div class="pdfb-metric-card-header">
+                                        <div class="pdfb-metric-icon">🚀</div>
+                                        <div class="pdfb-metric-status" data-status="manual">
+                                            <span class="pdfb-status-indicator"></span>
                                         </div>
                                     </div>
-                                    <div class="metric-value">
-                                        <span class="manual-badge">Manuel</span>
+                                    <div class="pdfb-metric-value">
+                                        <span class="pdfb-manual-badge">Manuel</span>
                                     </div>
-                                    <div class="metric-label">Lancement manuel</div>
-                                    <div class="metric-action">
+                                    <div class="pdfb-metric-label">Lancement manuel</div>
+                                    <div class="pdfb-metric-action">
                                         <span class="action-text">Exécuter</span>
-                                        <span class="action-icon">⚡</span>
+                                        <span class="pdfb-action-icon">⚡</span>
                                     </div>
                                 </button>
                             </div>
@@ -334,7 +334,7 @@
                     </div>
                 </section>
                 <!-- Section Sauvegarde -->
-                <section id="systeme" class="system-backup-section">
+                <section id="systeme" class="pdfb-system-backup-section">
                     <header>
                         <h3>
                             <span>
@@ -343,14 +343,14 @@
                         </h3>
                     </header>
 
-                    <div class="system-section-content">
+                    <div class="pdfb-system-section-content">
                         <?php if (!$is_premium): ?>
                         <!-- Version gratuite - Sauvegardes non disponibles -->
-                        <article class="backup-info premium-feature">
+                        <article class="pdfb-backup-info premium-feature">
                             <header>
                                 <h4>🔒 Sauvegardes - Fonctionnalité Premium</h4>
                             </header>
-                            <div class="premium-feature-content" style="padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 2px solid #007cba; border-radius: 8px; text-align: center;">
+                            <div class="pdfb-premium-feature-content" style="padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 2px solid #007cba; border-radius: 8px; text-align: center;">
                                 <div style="font-size: 48px; margin-bottom: 15px;">⭐</div>
                                 <h3 style="color: #007cba; margin: 0 0 15px 0;">Sauvegardes Disponibles en Version Premium</h3>
                                 <p style="margin: 0 0 20px 0; color: #495057; font-size: 16px;">
@@ -370,7 +370,7 @@
                         <?php else: ?>
                         <!-- Version premium - Sauvegardes disponibles -->
                         <!-- Informations sur les sauvegardes -->
-                        <article class="backup-info">
+                        <article class="pdfb-backup-info">
                             <header>
                                 <h4>ℹ️ Informations</h4>
                             </header>
@@ -385,7 +385,7 @@
                             <tr>
                                 <th scope="row">Actions de sauvegarde</th>
                                 <td>
-                                    <div class="backup-actions">
+                                    <div class="pdfb-backup-actions">
                                         <button type="button" id="create-backup-btn" class="button button-primary">
                                             <span>📦</span> Créer une sauvegarde
                                         </button>
@@ -424,19 +424,19 @@
                             <header>
                                 <h4>📊 État des sauvegardes</h4>
                             </header>
-                            <div class="metric-grid">
+                            <div class="pdfb-metric-grid">
                                 <div class="backup-metric-card" data-metric="last-backup">
-                                    <div class="metric-value">
+                                    <div class="pdfb-metric-value">
                                         <?php echo $last_backup; ?>
                                     </div>
-                                    <div class="metric-label">Dernière sauvegarde</div>
+                                    <div class="pdfb-metric-label">Dernière sauvegarde</div>
                                     <div class="metric-hint">Cliquez pour créer</div>
                                 </div>
                                 <div class="backup-metric-card" data-metric="total-backups">
-                                    <div class="metric-value">
+                                    <div class="pdfb-metric-value">
                                         <?php echo $backup_count; ?>
                                     </div>
-                                    <div class="metric-label">Total sauvegardes</div>
+                                    <div class="pdfb-metric-label">Total sauvegardes</div>
                                     <div class="metric-hint">Cliquez pour lister</div>
                                 </div>
                             </div>
@@ -773,11 +773,11 @@
                             if ($icon.text() === '✅') {
                                 $icon.text('❌');
                                 $status.attr('data-status', 'inactive');
-                                $value.removeClass('status-active').addClass('status-inactive').text('Désactivée');
+                                $value.removeClass('pdfb-status-active').addClass('pdfb-status-inactive').text('Désactivée');
                             } else {
                                 $icon.text('✅');
                                 $status.attr('data-status', 'active');
-                                $value.removeClass('status-inactive').addClass('status-active').text('Activée');
+                                $value.removeClass('pdfb-status-inactive').addClass('pdfb-status-active').text('Activée');
                             }
                         } else if (action === 'schedule-maintenance') {
                             // Mettre à jour la date de prochaine maintenance
@@ -988,7 +988,7 @@
                             output += '<div class="backup-meta" style="font-size: 12px; color: #6c757d;">' + backup.size_human + ' • ' + backup.modified_human + ' • ' + backup.type.toUpperCase() + '</div>';
                             output += '</div>';
                             output += '</div>';
-                            output += '<div class="backup-actions" style="display: flex; gap: 8px;">';
+                            output += '<div class="pdfb-backup-actions" style="display: flex; gap: 8px;">';
                             output += '<button type="button" class="button button-small restore-backup-btn" data-filename="' + backup.filename + '" style="background: #28a745; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">🔄 Restaurer</button>';
                             output += '<button type="button" class="button button-small download-backup-btn" data-filename="' + backup.filename + '" style="background: #007cba; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">📥 Télécharger</button>';
                             output += '<button type="button" class="button button-small delete-backup-btn" data-filename="' + backup.filename + '" style="background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">🗑️ Supprimer</button>';
@@ -1219,6 +1219,11 @@
 
 })(jQuery);
 </script>
+
+
+
+
+
 
 
 
