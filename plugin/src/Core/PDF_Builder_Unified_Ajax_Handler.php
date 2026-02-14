@@ -202,8 +202,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'new_nonce' => $this->nonce_manager->generate_nonce()
                 ]);
             } else {
-                error_log("[UNIFIED AJAX] Sending error response - no settings saved");
-                wp_send_json_error(['message' => 'Aucun paramètre sauvegardé']);
+                error_log("[UNIFIED AJAX] Sending error response - save failed");
+                wp_send_json_error(['message' => 'Erreur lors de la sauvegarde en base de données']);
             }
 
         } catch (Exception $e) {
@@ -1381,13 +1381,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         error_log('[UNIFIED AJAX] Clean templates to save: ' . json_encode($clean_templates));
         
-        // Si aucun template à sauvegarder, retourner 0
-        if (count($clean_templates) === 0) {
-            error_log('[UNIFIED AJAX] No templates to save - returning 0');
-            return 0;
-        }
-        
-        // Tenter la sauvegarde
+        // Sauvegarder même si vide (permet de désélectionner tous les templates)
         $result = pdf_builder_update_option('pdf_builder_order_status_templates', $clean_templates);
         error_log('[UNIFIED AJAX] Save result: ' . ($result ? 'SUCCESS' : 'FAILED'));
         
@@ -1395,7 +1389,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $saved_value = pdf_builder_get_option('pdf_builder_order_status_templates', []);
         error_log('[UNIFIED AJAX] Verification - value in DB: ' . json_encode($saved_value));
         
-        // Retourner 1 seulement si la sauvegarde a réussi
+        // Retourner 1 si sauvegarde réussie, 0 si échec
         return $result ? 1 : 0;
     }
 
