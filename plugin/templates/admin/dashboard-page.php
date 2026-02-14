@@ -23,39 +23,6 @@ if (!defined('ABSPATH')) {
             </div>
         </div>
 
-        <!-- DEBUG INFO - À RETIRER APRÈS TEST -->
-        <div style="background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%); border-left: 4px solid #ff6b6b; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-            <h3 style="margin: 0 0 15px 0; color: #d63031; font-size: 18px;">🔧 Diagnostic Dashboard (DEBUG MODE)</h3>
-            <div style="background: white; padding: 15px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px;">
-                <p style="margin: 8px 0;"><strong>📊 Version:</strong> <span style="color: #0066ff;"><?php echo esc_html($plugin_version); ?></span></p>
-                <p style="margin: 8px 0;"><strong>🔐 Premium Status:</strong> 
-                    <?php if ($is_premium): ?>
-                        <span style="color: #00b894; font-weight: bold;">✅ PREMIUM ACTIF</span>
-                    <?php else: ?>
-                        <span style="color: #d63031; font-weight: bold;">❌ NON-PREMIUM (boutons verrouillés)</span>
-                    <?php endif; ?>
-                </p>
-                <p style="margin: 8px 0;"><strong>🎨 Lien Créer PDF:</strong> <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>" style="color: #667eea;"><?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?></a></p>
-                <p style="margin: 8px 0;"><strong>📋 Lien Templates:</strong> <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates'); ?>" style="color: #667eea;"><?php echo admin_url('admin.php?page=pdf-builder-templates'); ?></a></p>
-                <p style="margin: 8px 0;"><strong>⚙️ Lien Paramètres:</strong> <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings'); ?>" style="color: #667eea;"><?php echo admin_url('admin.php?page=pdf-builder-settings'); ?></a></p>
-                <p style="margin: 8px 0;"><strong>💅 CSS chargé:</strong> 
-                    <?php 
-                    $css_file = PDF_BUILDER_PLUGIN_DIR . 'assets/css/dashboard-css.min.css';
-                    if (file_exists($css_file)) {
-                        $size = filesize($css_file);
-                        echo '<span style="color: #00b894;">✅ ' . number_format($size) . ' octets (' . round($size/1024, 1) . ' KB)</span>';
-                    } else {
-                        echo '<span style="color: #d63031;">❌ NON TROUVÉ</span>';
-                    }
-                    ?>
-                </p>
-                <p style="margin: 12px 0 0 0; padding: 10px; background: #f8f9fa; border-radius: 4px; border-left: 3px solid #3498db;">
-                    <strong>💡 Test:</strong> Cliquez sur les liens bleus ci-dessus pour tester la navigation. Si ça fonctionne, le problème vient des boutons (pas des liens).
-                </p>
-            </div>
-        </div>
-        <!-- FIN DEBUG -->
-
         <!-- Statistiques rapides -->
         <div class="pdfb-dashboard-stats">
             <div class="pdfb-stat-card">
