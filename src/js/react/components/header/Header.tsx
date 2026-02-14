@@ -912,6 +912,71 @@ export const Header = memo(function Header({
     const elements = elementsInput || state.elements || [];
     const template = templateInput || state.template || {};
 
+    // Helper pour calculer les dimensions ajustées avec padding
+    const calculateAdjustedDimensions = (
+      width: number,
+      height: number,
+      padding: any,
+    ): { width: number; height: number; paddingStyle: string } => {
+      let paddingStyle = "";
+      let adjustedW = width;
+      let adjustedH = height;
+
+      if (padding) {
+        const top = (padding?.top || 0) as number;
+        const bottom = (padding?.bottom || 0) as number;
+        const left = (padding?.left || 0) as number;
+        const right = (padding?.right || 0) as number;
+
+        paddingStyle = `padding: ${top}px ${right}px ${bottom}px ${left}px;`;
+
+        // Réduire la hauteur et largeur pour compenser le padding
+        adjustedH = Math.max(0, height - top - bottom);
+        adjustedW = Math.max(0, width - left - right);
+      }
+
+      return {
+        width: adjustedW,
+        height: adjustedH,
+        paddingStyle,
+      };
+    };
+
+    // Helper pour créer un conteneur flexbox interne si nécessaire pour l'alignement vertical
+    const createFlexAlignmentWrapper = (
+      content: string,
+      verticalAlign: string | undefined,
+      textAlign: string | undefined,
+    ): { content: string; containerClass: string } => {
+      if (!verticalAlign || verticalAlign === "top") {
+        return { content, containerClass: "element--flex-start" };
+      }
+
+      const justifyValue =
+        textAlign === "center"
+          ? "center"
+          : textAlign === "right"
+            ? "flex-end"
+            : "flex-start";
+
+      const alignValue =
+        verticalAlign === "middle" || verticalAlign === "center"
+          ? "center"
+          : verticalAlign === "bottom"
+            ? "flex-end"
+            : "flex-start";
+
+      // Wrapper le contenu si c'est du texte simple
+      if (!content.includes("<div") && !content.includes("<table")) {
+        return {
+          content: `<div style="width: 100%; height: 100%; display: flex; align-items: ${alignValue}; justify-content: ${justifyValue};">${content}</div>`,
+          containerClass: "",
+        };
+      }
+
+      return { content, containerClass: "element--flex" };
+    };
+
     // Helper functions pour convertir les propriétés en CSS
     const buildSpacing = (value: any): string => {
       if (!value) return "";
@@ -980,7 +1045,7 @@ export const Header = memo(function Header({
       return globalStyle;
     };
 
-    // Construire le HTML simulant un PDF - ESSENTIELLEMENT MINIMAL
+    // Construire le HTML simulant un PDF avec CSS amélioré
     let html = `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1003,18 +1068,30 @@ export const Header = memo(function Header({
     .element { 
       position: absolute; 
       box-sizing: border-box;
-      overflow: visible;
+      overflow: hidden;
       padding: 0;
       margin: 0;
       font-family: Arial, sans-serif;
       font-size: 12px;
-      line-height: 1.1;
-      white-space: normal;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      display: block;
     }
     .element > * { 
       word-wrap: break-word;
       margin: 0;
       padding: 0;
+      font-family: inherit;
+    }
+    .element--flex {
+      display: flex !important;
+      align-items: center;
+    }
+    .element--flex-start {
+      align-items: flex-start !important;
+    }
+    .element--flex-end {
+      align-items: flex-end !important;
     }
     table { 
       border-collapse: collapse;
@@ -1022,10 +1099,14 @@ export const Header = memo(function Header({
       font-size: inherit;
       margin: 0;
       padding: 0;
+      table-layout: fixed;
     }
     table td, table th { 
       padding: 4px 6px;
       margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-wrap: break-word;
     }
   </style>
 </head>
@@ -1044,8 +1125,13 @@ export const Header = memo(function Header({
 
         if (!visible) return;
 
+        // Calculer les dimensions ajustées si padding
+        const { width: adjustedW, height: adjustedH, paddingStyle } =
+          calculateAdjustedDimensions(w, h, element.padding);
+
         // Construire les styles UNIQUEMENT à partir du JSON
-        let styles = `left: ${x}px; top: ${y}px; width: ${w}px; height: ${h}px;`;
+        let styles = `left: ${x}px; top: ${y}px; width: ${adjustedW}px; height: ${adjustedH}px;`;
+        let elementClasses = "element";
 
         // ===== FONT STYLES =====
         if (element.fontSize) styles += ` font-size: ${element.fontSize}px;`;
@@ -1065,7 +1151,7 @@ export const Header = memo(function Header({
           styles += ` text-transform: ${element.textTransform};`;
         if (element.textAlign) styles += ` text-align: ${element.textAlign};`;
         if (element.verticalAlign && element.verticalAlign !== "baseline")
-          styles += ` vertical-align: ${element.verticalAlign};`;
+          styles += ` line-height: ${adjustedH}px;`;
 
         // ===== COLORS =====
         if (element.textColor) styles += ` color: ${element.textColor};`;
@@ -1085,6 +1171,9 @@ export const Header = memo(function Header({
         if (element.borderRadius && element.borderRadius > 0) {
           styles += ` border-radius: ${element.borderRadius}px;`;
         }
+
+        // ===== PADDING =====
+        if (paddingStyle) styles += ` ${paddingStyle}`;
 
         // ===== SHADOWS =====
         if (element.shadowBlur && element.shadowBlur > 0) {
@@ -1108,31 +1197,12 @@ export const Header = memo(function Header({
           case "text":
           case "dynamic_text":
             content = element.text || element.content || "Texte";
-            if (element.autoWrap !== false)
-              styles += ` white-space: pre-wrap; overflow-wrap: break-word;`;
-
-            // Gérer l'alignement vertical comme dans Canvas
-            if (
-              element.verticalAlign === "middle" ||
-              element.verticalAlign === "center"
-            ) {
-              styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === "center" ? "center" : element.textAlign === "right" ? "flex-end" : "flex-start"};`;
-            } else if (element.verticalAlign === "bottom") {
-              styles += ` display: flex; align-items: flex-end; justify-content: ${element.textAlign === "center" ? "center" : element.textAlign === "right" ? "flex-end" : "flex-start"};`;
-            } else {
-              // top alignment (default)
-              styles += ` display: flex; align-items: flex-start; justify-content: ${element.textAlign === "center" ? "center" : element.textAlign === "right" ? "flex-end" : "flex-start"};`;
-            }
 
             // Appliquer styles globaux (font properties)
             const globalStylesText = buildGlobalStyles(element);
             if (globalStylesText) styles += ` ${globalStylesText}`;
 
-            // Ajouter padding/margin/border uniquement s'ils sont spécifiés
-            if (element.padding) {
-              const paddingStr = buildSpacing(element.padding);
-              if (paddingStr) styles += ` padding: ${paddingStr};`;
-            }
+            // Ajouter margin si présent
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
@@ -1141,35 +1211,44 @@ export const Header = memo(function Header({
               const borderStr = buildBorder(element.border);
               if (borderStr) styles += ` border: ${borderStr};`;
             }
-            // Layout property avec gap calculé
-            if (element.layout) {
-              const fontSize = element.fontSize || 12;
-              const gap = Math.round(fontSize * 0.1);
-              const layoutStr = buildFlexLayout(element.layout, gap);
-              if (layoutStr) styles += ` ${layoutStr}`;
+
+            // Gérer l'alignement vertical - créer un wrapper flexbox interne si nécessaire
+            if (
+              element.verticalAlign === "middle" ||
+              element.verticalAlign === "center" ||
+              element.verticalAlign === "bottom"
+            ) {
+              const justifyValue =
+                element.textAlign === "center"
+                  ? "center"
+                  : element.textAlign === "right"
+                    ? "flex-end"
+                    : "flex-start";
+
+              const alignValue =
+                element.verticalAlign === "middle" ||
+                element.verticalAlign === "center"
+                  ? "center"
+                  : element.verticalAlign === "bottom"
+                    ? "flex-end"
+                    : "flex-start";
+
+              content = `<div style="width: 100%; height: 100%; display: flex; flex-direction: row; align-items: ${alignValue}; justify-content: ${justifyValue}; flex-wrap: wrap;">${content}</div>`;
+            } else {
+              // Top alignment (default) - utiliser simple text-align
+              if (element.textAlign)
+                content = `<div style="text-align: ${element.textAlign}; width: 100%; height: 100%; overflow: hidden;">${content}</div>`;
             }
             break;
 
           case "document_type":
             content =
               element.title || element.text || element.content || "FACTURE";
-            // Si verticalAlign est middle, utiliser flex
-            if (
-              element.verticalAlign === "middle" ||
-              element.verticalAlign === "center"
-            ) {
-              styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === "center" ? "center" : "flex-start"};`;
-            } else {
-              styles += ` display: flex; align-items: center;`;
-            }
             // Appliquer styles globaux (font properties)
             const globalStylesDoc = buildGlobalStyles(element);
             if (globalStylesDoc) styles += ` ${globalStylesDoc}`;
-            // Padding/margin/border uniquement si spécifiés
-            if (element.padding) {
-              const paddingStr = buildSpacing(element.padding);
-              if (paddingStr) styles += ` padding: ${paddingStr};`;
-            }
+
+            // Ajouter margin si présent
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
@@ -1178,6 +1257,24 @@ export const Header = memo(function Header({
               const borderStr = buildBorder(element.border);
               if (borderStr) styles += ` border: ${borderStr};`;
             }
+
+            // Gérer l'alignement vertical
+            const docJustifyValue =
+              element.textAlign === "center"
+                ? "center"
+                : element.textAlign === "right"
+                  ? "flex-end"
+                  : "flex-start";
+
+            const docAlignValue =
+              element.verticalAlign === "middle" ||
+              element.verticalAlign === "center"
+                ? "center"
+                : element.verticalAlign === "bottom"
+                  ? "flex-end"
+                  : "flex-start";
+
+            content = `<div style="width: 100%; height: 100%; display: flex; align-items: ${docAlignValue}; justify-content: ${docJustifyValue};">${content}</div>`;
             break;
 
           case "order_number":
@@ -1186,17 +1283,14 @@ export const Header = memo(function Header({
             let orderContent = format.replace("{order_number}", orderNum);
             const globalStylesOrder = buildGlobalStyles(element);
 
-            // Gérer l'alignement vertical comme dans Canvas
-            if (
-              element.verticalAlign === "middle" ||
-              element.verticalAlign === "center"
-            ) {
-              styles += ` display: flex; align-items: center; justify-content: ${element.textAlign === "center" ? "center" : element.textAlign === "right" ? "flex-end" : "flex-start"};`;
-            } else if (element.verticalAlign === "bottom") {
-              styles += ` display: flex; align-items: flex-end; justify-content: ${element.textAlign === "center" ? "center" : element.textAlign === "right" ? "flex-end" : "flex-start"};`;
-            } else {
-              // top alignment (default)
-              styles += ` display: flex; align-items: flex-start; justify-content: ${element.textAlign === "center" ? "center" : element.textAlign === "right" ? "flex-end" : "flex-start"};`;
+            // Ajouter margin si présent
+            if (element.margin) {
+              const marginStr = buildSpacing(element.margin);
+              if (marginStr) styles += ` margin: ${marginStr};`;
+            }
+            if (element.border) {
+              const borderStr = buildBorder(element.border);
+              if (borderStr) styles += ` border: ${borderStr};`;
             }
 
             // Si label à afficher
@@ -1223,18 +1317,29 @@ export const Header = memo(function Header({
             if (element.contentAlign) {
               styles += ` text-align: ${element.contentAlign};`;
             }
-            // Padding/margin/border
-            if (element.padding) {
-              const paddingStr = buildSpacing(element.padding);
-              if (paddingStr) styles += ` padding: ${paddingStr};`;
-            }
-            if (element.margin) {
-              const marginStr = buildSpacing(element.margin);
-              if (marginStr) styles += ` margin: ${marginStr};`;
-            }
-            if (element.border) {
-              const borderStr = buildBorder(element.border);
-              if (borderStr) styles += ` border: ${borderStr};`;
+
+            // Gérer l'alignement vertical
+            const orderJustifyValue =
+              element.textAlign === "center"
+                ? "center"
+                : element.textAlign === "right"
+                  ? "flex-end"
+                  : "flex-start";
+
+            const orderAlignValue =
+              element.verticalAlign === "middle" ||
+              element.verticalAlign === "center"
+                ? "center"
+                : element.verticalAlign === "bottom"
+                  ? "flex-end"
+                  : "flex-start";
+
+            if (
+              element.verticalAlign === "middle" ||
+              element.verticalAlign === "center" ||
+              element.verticalAlign === "bottom"
+            ) {
+              content = `<div style="width: 100%; height: 100%; display: flex; align-items: ${orderAlignValue}; justify-content: ${orderJustifyValue}; flex-wrap: wrap;">${content}</div>`;
             }
             break;
 
@@ -1242,9 +1347,7 @@ export const Header = memo(function Header({
           case "image":
             if (element.src) {
               const globalStylesImg = buildGlobalStyles(element);
-              let imgStyles = `width: 100%; height: 100%; display: block;`;
-              if (element.objectFit)
-                imgStyles += ` object-fit: ${element.objectFit};`;
+              let imgStyles = `width: 100%; height: 100%; display: block; object-fit: ${element.objectFit || "cover"};`;
               if (element.opacity !== undefined && element.opacity < 1)
                 imgStyles += ` opacity: ${element.opacity};`;
               if (element.borderRadius && element.borderRadius > 0)
@@ -1254,11 +1357,7 @@ export const Header = memo(function Header({
             } else {
               content = "📦";
             }
-            // Padding/margin/border pour le conteneur
-            if (element.padding) {
-              const paddingStr = buildSpacing(element.padding);
-              if (paddingStr) styles += ` padding: ${paddingStr};`;
-            }
+            // Margin/border pour le conteneur
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
@@ -1292,14 +1391,10 @@ export const Header = memo(function Header({
             }
             content = `<div style="${lineInnerStyle}"></div>`;
 
-            // Conteneur flexible pour centrer verticalement (compatible HTML et PDF)
+            // Conteneur flexible pour centrer verticalement
             styles += ` display: flex; align-items: center;`;
 
-            // Padding/margin
-            if (element.padding) {
-              const paddingStr = buildSpacing(element.padding);
-              if (paddingStr) styles += ` padding: ${paddingStr};`;
-            }
+            // Margin
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
@@ -1309,7 +1404,7 @@ export const Header = memo(function Header({
           case "product_table":
           case "table":
             // Styles du TABLEAU - appliqués à partir du JSON
-            let tableStyles = `border-collapse: collapse; width: 100%;`;
+            let tableStyles = `border-collapse: collapse; width: 100%; table-layout: fixed;`;
 
             // Police globale - utiliser globalFontSize/Family si présentes, sinon fallback
             if (element.globalFontSize)
@@ -1339,7 +1434,7 @@ export const Header = memo(function Header({
               tableStyles += ` background-color: ${element.backgroundColor};`;
 
             // Styles pour les cellules du corps
-            let cellStyles = `padding: 8px;`;
+            let cellStyles = `padding: 8px; overflow: hidden; text-overflow: ellipsis;`;
             if (element.textAlign)
               cellStyles += ` text-align: ${element.textAlign};`;
             if (element.verticalAlign && element.verticalAlign !== "baseline")
@@ -1365,7 +1460,7 @@ export const Header = memo(function Header({
               cellStyles += ` font-style: ${element.bodyFontStyle};`;
 
             // Styles pour les en-têtes
-            let headerStyle = `padding: 8px;`;
+            let headerStyle = `padding: 8px; overflow: hidden; text-overflow: ellipsis;`;
             if (element.textAlign)
               headerStyle += ` text-align: ${element.textAlign};`;
             if (element.verticalAlign && element.verticalAlign !== "baseline")
@@ -1389,7 +1484,7 @@ export const Header = memo(function Header({
               headerStyle += ` font-style: ${element.headerFontStyle};`;
 
             // Styles pour les lignes de données
-            let rowStyle = `padding: 8px;`;
+            let rowStyle = `padding: 8px; overflow: hidden; text-overflow: ellipsis;`;
             if (element.textAlign)
               rowStyle += ` text-align: ${element.textAlign};`;
             if (element.verticalAlign && element.verticalAlign !== "baseline")
@@ -1410,7 +1505,7 @@ export const Header = memo(function Header({
               rowStyle += ` font-style: ${element.rowFontStyle};`;
 
             // Styles pour la ligne totale
-            let totalStyle = `padding: 8px;`;
+            let totalStyle = `padding: 8px; overflow: hidden; text-overflow: ellipsis;`;
             if (element.textAlign)
               totalStyle += ` text-align: ${element.textAlign};`;
             if (element.verticalAlign && element.verticalAlign !== "baseline")
@@ -1547,11 +1642,7 @@ export const Header = memo(function Header({
               content = tableHTML;
             }
 
-            // Ajouter styles de padding/margin/border si présents
-            if (element.padding) {
-              const paddingStr = buildSpacing(element.padding);
-              if (paddingStr) styles += ` padding: ${paddingStr};`;
-            }
+            // Ajouter margin/border si présents
             if (element.margin) {
               const marginStr = buildSpacing(element.margin);
               if (marginStr) styles += ` margin: ${marginStr};`;
@@ -2401,16 +2492,19 @@ export const Header = memo(function Header({
               `[${element.type}]`;
         }
 
-        // Wrapper l'élément avec tous les styles + overflow pour contenu interne
+        // Wrapper l'élément avec tous les styles
         let containerStyles = styles;
+        
+        // Pour les éléments complexes, utiliser overflow: auto plutôt que visible
         if (
           element.type === "customer_info" ||
           element.type === "product_table" ||
           element.type === "company_info"
         ) {
-          // Ne pas couper le contenu - laisser visible comme dans React
-          containerStyles += ` overflow: visible;`;
+          // Autoriser le scroll si le contenu est trop volumineux
+          containerStyles = containerStyles.replace("overflow: hidden", "overflow: auto");
         }
+        
         html += `<div class="element" style="${containerStyles}">${content}</div>`;
       });
     } else {
