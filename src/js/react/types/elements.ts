@@ -454,6 +454,7 @@ export interface CompanyInfoElement extends BaseElement {
   showRcs?: boolean;
   showCapital?: boolean;
   lineHeight?: number;
+  verticalAlign?: "top" | "middle" | "bottom";
 }
 
 export interface ElementProperties {
@@ -731,6 +732,12 @@ export interface CompanyInfoElementProperties extends BaseElementProperties {
   logoWidth?: number;
   logoHeight?: number;
   separator?: string;
+  // Propriétés de padding spécifiques
+  paddingTop?: number;
+  paddingHorizontal?: number;
+  paddingBottom?: number;
+  // Propriétés d'espacement
+  lineSpacing?: number;
   // Propriétés de police pour l'en-tête (nom de l'entreprise)
   headerFontSize?: number;
   headerFontFamily?: string;
@@ -766,6 +773,7 @@ export interface CompanyInfoElementProperties extends BaseElementProperties {
   iconsPosition?: "left" | "right";
   iconsSize?: number;
   iconsColor?: string;
+  verticalAlign?: "top" | "middle" | "bottom";
 }
 
 export interface ImageElement extends BaseElement {

@@ -1955,7 +1955,7 @@ const drawCompanyInfo = (
   };
 
   let x = getTextX();
-  let y = 12 + 10;
+  let y = props.paddingTop || 8; // Utiliser paddingTop personnalisable, défaut à 8px
 
   // Récupération des données d'entreprise
   const companyData = getCompanyData();
@@ -2121,6 +2121,38 @@ const drawCompanyInfo = (
 
   // Appliquer la police du corps par défaut
   ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
+
+  // Calculer la hauteur totale pour l'alignement vertical
+  let totalHeight = 0;
+  lines.forEach((lineData) => {
+    const config = lineData.isHeader
+      ? {
+          size: fontConfig.headerSize,
+          weight: fontConfig.headerWeight,
+          style: fontConfig.headerStyle,
+          family: fontConfig.headerFamily,
+        }
+      : {
+          size: fontConfig.bodySize,
+          weight: fontConfig.bodyWeight,
+          style: fontConfig.bodyStyle,
+          family: fontConfig.bodyFamily,
+        };
+    totalHeight += config.size * 1.1; // Même calcul que drawCompanyLine
+  });
+
+  // Ajuster la position Y selon l'alignement vertical
+  const verticalAlign = props.verticalAlign || "top";
+  const paddingTop = props.paddingTop || 8; // Utiliser paddingTop personnalisable
+  const paddingBottom = 22;
+  const availableHeight = element.height - paddingTop - paddingBottom;
+
+  if (verticalAlign === "middle") {
+    y = paddingTop + Math.max(0, (availableHeight - totalHeight) / 2);
+  } else if (verticalAlign === "bottom") {
+    y = paddingTop + Math.max(0, availableHeight - totalHeight);
+  }
+  // Pour "top", y reste à paddingTop
 
   // Dessiner toutes les lignes
   lines.forEach((lineData) => {

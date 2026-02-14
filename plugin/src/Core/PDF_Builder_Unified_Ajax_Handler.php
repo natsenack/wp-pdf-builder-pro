@@ -3792,8 +3792,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         $letter_spacing = $layout_props['letterSpacing'] ? " letter-spacing: {$layout_props['letterSpacing']}px;" : '';
         $container_styles = $base_styles_clean . 
-            "; padding: {$padding['vertical']}px {$padding['horizontal']}px;" .
-            " text-align: {$layout_props['textAlign']};" .
+            "; text-align: {$layout_props['textAlign']};" .
             " color: {$colors['text']};" .
             " font-family: {$body_font['family']};" .
             " font-size: {$body_font['size']}px;" .
@@ -3802,6 +3801,14 @@ class PDF_Builder_Unified_Ajax_Handler {
             " box-sizing: border-box;" .
             $letter_spacing .
             ' width: 100%; height: 100%;';
+        
+        // Utiliser les propriétés de padding personnalisables depuis l'élément
+        $padding_top = isset($element['paddingTop']) ? intval($element['paddingTop']) : 8;
+        $padding_horizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : 12;
+        $padding_bottom = isset($element['paddingBottom']) ? intval($element['paddingBottom']) : 12;
+        $line_spacing = isset($element['lineSpacing']) ? intval($element['lineSpacing']) : 2;
+        
+        $container_styles .= " padding: {$padding_top}px {$padding_horizontal}px {$padding_bottom}px {$padding_horizontal}px;";
         
         // Alignement vertical
         if ($layout_props['verticalAlign'] === 'middle') {
@@ -3819,13 +3826,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             return preg_replace('/<strong>/', '<strong style="' . $strong_style . '">', $line);
         }, $lines);
         
-        // Génération HTML - spacing fixe entre les lignes
+        // Génération HTML - espacement personnalisable entre les lignes
         $html = '<div class="element" style="' . $container_styles . '">';
-        // Chaque ligne avec espacement fixe (sauf dernière)
+        // Chaque ligne avec espacement personnalisable (sauf dernière)
         $total_lines = count($processedLines);
         foreach ($processedLines as $index => $line) {
             $is_last = ($index === $total_lines - 1);
-            $line_margin = $is_last ? '' : " margin-bottom: 2px;";
+            $line_margin = $is_last ? '' : " margin-bottom: {$line_spacing}px;";
             $html .= '<div style="margin: 0; padding: 0;' . $line_margin . '">' . $line . '</div>';
         }
         $html .= '</div>'; // Fermer element container

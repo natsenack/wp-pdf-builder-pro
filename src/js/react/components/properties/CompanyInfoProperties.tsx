@@ -902,6 +902,157 @@ export function CompanyInfoProperties({
                     <option value="right">Droite</option>
                   </select>
                 </div>
+
+                {/* Alignement vertical */}
+                <div style={{ marginBottom: "12px" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "11px",
+                      fontWeight: "bold",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    Alignement vertical
+                  </label>
+                  <select
+                    value={element.verticalAlign || "top"}
+                    onChange={(e) =>
+                      onChange(element.id, "verticalAlign", e.target.value)
+                    }
+                    style={{
+                      width: "100%",
+                      padding: "4px 8px",
+                      border: "1px solid #ccc",
+                      borderRadius: "3px",
+                      fontSize: "12px",
+                    }}
+                  >
+                    <option value="top">Haut</option>
+                    <option value="middle">Milieu</option>
+                    <option value="bottom">Bas</option>
+                  </select>
+                </div>
+
+                {/* Padding top */}
+                <div style={{ marginBottom: "12px" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "11px",
+                      fontWeight: "bold",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    Marge supérieure (px)
+                  </label>
+                  <input
+                    type="number"
+                    value={element.paddingTop || 8}
+                    onChange={(e) =>
+                      onChange(element.id, "paddingTop", parseInt(e.target.value) || 0)
+                    }
+                    min="0"
+                    max="50"
+                    style={{
+                      width: "100%",
+                      padding: "4px 8px",
+                      border: "1px solid #ccc",
+                      borderRadius: "3px",
+                      fontSize: "12px",
+                    }}
+                  />
+                </div>
+
+                {/* Padding horizontal */}
+                <div style={{ marginBottom: "12px" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "11px",
+                      fontWeight: "bold",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    Marge latérale (px)
+                  </label>
+                  <input
+                    type="number"
+                    value={element.paddingHorizontal || 12}
+                    onChange={(e) =>
+                      onChange(element.id, "paddingHorizontal", parseInt(e.target.value) || 0)
+                    }
+                    min="0"
+                    max="50"
+                    style={{
+                      width: "100%",
+                      padding: "4px 8px",
+                      border: "1px solid #ccc",
+                      borderRadius: "3px",
+                      fontSize: "12px",
+                    }}
+                  />
+                </div>
+
+                {/* Padding bottom */}
+                <div style={{ marginBottom: "12px" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "11px",
+                      fontWeight: "bold",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    Marge inférieure (px)
+                  </label>
+                  <input
+                    type="number"
+                    value={element.paddingBottom || 12}
+                    onChange={(e) =>
+                      onChange(element.id, "paddingBottom", parseInt(e.target.value) || 0)
+                    }
+                    min="0"
+                    max="50"
+                    style={{
+                      width: "100%",
+                      padding: "4px 8px",
+                      border: "1px solid #ccc",
+                      borderRadius: "3px",
+                      fontSize: "12px",
+                    }}
+                  />
+                </div>
+
+                {/* Line spacing */}
+                <div style={{ marginBottom: "12px" }}>
+                  <label
+                    style={{
+                      display: "block",
+                      fontSize: "11px",
+                      fontWeight: "bold",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    Espacement entre lignes (px)
+                  </label>
+                  <input
+                    type="number"
+                    value={element.lineSpacing || 2}
+                    onChange={(e) =>
+                      onChange(element.id, "lineSpacing", parseInt(e.target.value) || 0)
+                    }
+                    min="0"
+                    max="20"
+                    style={{
+                      width: "100%",
+                      padding: "4px 8px",
+                      border: "1px solid #ccc",
+                      borderRadius: "3px",
+                      fontSize: "12px",
+                    }}
+                  />
+                </div>
               </div>
             )}
           </div>
