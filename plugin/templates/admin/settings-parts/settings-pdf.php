@@ -3,7 +3,11 @@
 $settings = pdf_builder_get_option('pdf_builder_settings', array());
 error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($settings));
 
-// Vérifier si l'utilisateur a une licence premium
+// Recuperer les parametres du Canvas
+$canvas_format = $settings['pdf_builder_canvas_format'] ?? 'A4';
+$canvas_orientation = $settings['pdf_builder_canvas_default_orientation'] ?? 'portrait';
+
+// Verifier si l'utilisateur a une licence premium
 $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
 $is_premium = $license_manager->isPremium();
 ?>
@@ -181,23 +185,30 @@ $is_premium = $license_manager->isPremium();
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"><label for="default_format">Format de page</label></th>
+                    <th scope="row"><label>Format de page</label></th>
                     <td>
-                        <select id="default_format" name="pdf_builder_settings[pdf_builder_default_format]">
-                            <option value="A4" <?php selected($settings['pdf_builder_default_format'] ?? 'A4', 'A4'); ?>>A4</option>
-                            <option value="A3" <?php selected($settings['pdf_builder_default_format'] ?? 'A4', 'A3'); ?> disabled title="Bientôt disponible">A3 (soon)</option>
-                            <option value="Letter" <?php selected($settings['pdf_builder_default_format'] ?? 'A4', 'Letter'); ?> disabled title="Bientôt disponible">Letter (soon)</option>
-                        </select>
-                        <p class="description" style="margin-top:6px; color:#6c757d; font-size:12px;">Les formats A3 et Letter sont prévus; sélection désactivée pour l'instant.</p>
+                        <?php 
+                            $format_labels = ['A4' => 'A4', 'A3' => 'A3', 'Letter' => 'Lettre US'];
+                        ?>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-weight: 600; font-size: 16px; color: #667eea;">📋 <?php echo esc_html($format_labels[$canvas_format] ?? $canvas_format); ?></span>
+                            <a href="#" class="button button-small" onclick="if(window.PDFBuilderTabsAPI && PDFBuilderTabsAPI.switchToTab) { PDFBuilderTabsAPI.switchToTab('canvas'); return false; } else if(window.switchTab) { switchTab('canvas'); return false; } else { window.location.hash = '#canvas'; return false; }">Modifier dans Canvas →</a>
+                        </div>
+                        <p class="description" style="margin-top: 12px; color: #666; font-size: 12px;">Le format PDF est synchronisé avec le format du Canvas. Pour le modifier, accédez à l'onglet <strong>Canvas</strong>.</p>
                     </td>
                 </tr>
                 <tr>
-                    <th scope="row"><label for="default_orientation">Orientation</label></th>
+                    <th scope="row"><label>Orientation</label></th>
                     <td>
-                        <select id="default_orientation" name="pdf_builder_settings[pdf_builder_default_orientation]">
-                            <option value="portrait" <?php selected($settings['pdf_builder_default_orientation'] ?? 'portrait', 'portrait'); ?>>Portrait</option>
-                            <option value="landscape" <?php selected($settings['pdf_builder_default_orientation'] ?? 'portrait', 'landscape'); ?>>Paysage</option>
-                        </select>
+                        <?php 
+                            $orientation_labels = ['portrait' => 'Portrait', 'landscape' => 'Paysage'];
+                            $orientation_emoji = ($canvas_orientation === 'landscape') ? '📄' : '📋';
+                        ?>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-weight: 600; font-size: 16px; color: #667eea;"><?php echo $orientation_emoji; ?> <?php echo esc_html($orientation_labels[$canvas_orientation] ?? $canvas_orientation); ?></span>
+                            <a href="#" class="button button-small" onclick="if(window.PDFBuilderTabsAPI && PDFBuilderTabsAPI.switchToTab) { PDFBuilderTabsAPI.switchToTab('canvas'); return false; } else if(window.switchTab) { switchTab('canvas'); return false; } else { window.location.hash = '#canvas'; return false; }">Modifier dans Canvas →</a>
+                        </div>
+                        <p class="description" style="margin-top: 12px; color: #666; font-size: 12px;">L'orientation PDF est synchronisée avec l'orientation du Canvas. Pour la modifier, accédez à l'onglet <strong>Canvas</strong>.</p>
                     </td>
                 </tr>
                 <tr>
@@ -302,7 +313,7 @@ $is_premium = $license_manager->isPremium();
         </div><!-- pdfb-pdf-settings-left -->
 
         <!-- Panel d'aperçu PDF -->
-        <div class="pdfb-pdf-preview-panel">
+        <div class="pdfb-pdf-preview-panel" data-canvas-format="<?php echo esc_attr($canvas_format ?? 'A4'); ?>" data-canvas-orientation="<?php echo esc_attr($canvas_orientation ?? 'portrait'); ?>">
             <div class="pdfb-pdf-preview-title">
                 👁️ Aperçu PDF
             </div>
@@ -362,39 +373,39 @@ $is_premium = $license_manager->isPremium();
         'high': { label: 'Haute', factor: 1.0, compression: 'Minimale' }
     };
     
-    // Fonction pour mettre à jour l'aperçu
+    // Fonction pour mettre a jour l'apercu
     function updatePdfPreview() {
         const quality = $('#pdf_quality').val() || 'high';
-        const format = $('#default_format').val() || 'A4';
-        const orientation = $('#default_orientation').val() || 'portrait';
+        const canvasFormat = $('.pdfb-pdf-preview-panel').attr('data-canvas-format') || 'A4';
+        const canvasOrientation = $('.pdfb-pdf-preview-panel').attr('data-canvas-orientation') || 'portrait';
         const compression = $('#pdf_compression').val() || 'medium';
         const exportQuality = parseInt($('#export_quality').val()) || 90;
         
-        console.log('📄 [PDF Preview Update] Quality:', quality, 'Format:', format, 'Orientation:', orientation, 'Compression:', compression, 'Export Quality:', exportQuality);
+        console.log('📄 [PDF Preview Update] Quality:', quality, 'Format:', canvasFormat, 'Orientation:', canvasOrientation, 'Compression:', compression, 'Export Quality:', exportQuality);
         
-        // Mises à jour visuelles
+        // Mises a jour visuelles
         const qualityConfig = qualityConfigs[quality] || qualityConfigs['high'];
-        const formatConfig = pdfFormats[format] || pdfFormats['A4'];
+        const formatConfig = pdfFormats[canvasFormat] || pdfFormats['A4'];
         
         // Ratio d'aspect
         let ratio = formatConfig.ratio;
-        if (orientation === 'landscape') {
+        if (canvasOrientation === 'landscape') {
             ratio = formatConfig.ratio.split('/').reverse().join('/');
         }
         
         $('#pdf-preview-frame').css('--preview-ratio', ratio);
-        $('#pdf-preview-frame').attr('data-format', format + ' ' + (orientation === 'portrait' ? '📋' : '📄'));
+        $('#pdf-preview-frame').attr('data-format', canvasFormat + ' ' + (canvasOrientation === 'portrait' ? '📋' : '📄'));
         
         // Infos
-        $('#preview-format').text(format);
-        $('#preview-orientation').text(orientation === 'portrait' ? 'Portrait' : 'Paysage');
+        $('#preview-format').text(canvasFormat);
+        $('#preview-orientation').text(canvasOrientation === 'portrait' ? 'Portrait' : 'Paysage');
         $('#preview-quality').text(qualityConfig.label);
         
         // Gestion de la compression
         const compressionLabel = (qualityConfigs[compression] && qualityConfigs[compression].compression) ? qualityConfigs[compression].compression : 'Moyenne';
         $('#preview-compression').text(compressionLabel);
         
-        // Barre de qualité
+        // Barre de qualite
         const qualityPercent = Math.round((exportQuality / 100) * 100);
         $('#preview-quality-bar').css('width', qualityPercent + '%');
         
@@ -406,29 +417,29 @@ $is_premium = $license_manager->isPremium();
         
         $('#preview-file-size').text('~' + (estimatedSize < 1024 ? estimatedSize + ' KB' : (estimatedSize / 1024).toFixed(1) + ' MB'));
         
-        console.log('📄 [PDF Preview] Aperçu mis à jour - Taille estimée:', estimatedSize + 'KB');
+        console.log('📄 [PDF Preview] Apercu mis a jour - Taille estimee:', estimatedSize + 'KB');
     }
     
-    // Écouter les changements avec support input et change
+    // Ecouter les changements avec support input et change
     $(document).ready(function() {
-        console.log('📄 [PDF Settings] Initialisation du système d\'aperçu PDF');
+        console.log('📄 [PDF Settings] Initialisation du systeme d\'apercu PDF');
         
-        // Sélects et dropdowns (événement change)
-        $('#pdf_quality, #default_format, #default_orientation, #pdf_compression').on('change', function() {
-            console.log('📄 [PDF Change Event] Sélecteur changé:', $(this).attr('id'), 'Valeur:', $(this).val());
+        // Selects et dropdowns (evenement change) - Format et orientation viennent du Canvas
+        $('#pdf_quality, #pdf_compression').on('change', function() {
+            console.log('📄 [PDF Change Event] Selecteur change:', $(this).attr('id'), 'Valeur:', $(this).val());
             updatePdfPreview();
         });
         
-        // Input number (événement input pour temps réel + change pour le fallback)
+        // Input number (evenement input pour temps reel + change pour le fallback)
         $('#export_quality').on('input change', function() {
-            console.log('📄 [PDF Input Event] Qualité export changée:', $(this).val());
+            console.log('📄 [PDF Input Event] Qualite export changee:', $(this).val());
             updatePdfPreview();
         });
         
         // Initialisation
-        console.log('📄 [PDF Settings] Initialisation de l\'aperçu');
+        console.log('📄 [PDF Settings] Initialisation de l\'apercu');
         updatePdfPreview();
-        console.log('📄 [PDF Settings] Système d\'aperçu PDF prêt');
+        console.log('📄 [PDF Settings] Systeme d\'apercu PDF pret');
     });
 })(jQuery);
 </script>
