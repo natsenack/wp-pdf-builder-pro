@@ -3205,33 +3205,35 @@ export const Header = memo(function Header({
                 />
               </div>
 
-              <div className="setting-group">
-                <label className="setting-label">Dimensions du canvas</label>
-                <div className="setting-input-group">
+              <div className="setting-group" style={{ marginBottom: '20px' }}>
+                <label className="setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Dimensions du canvas</label>
+                <div className="setting-input-group" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <input
                     type="number"
                     value={editedCanvasWidth}
                     disabled={true}
                     className="setting-input setting-input-disabled"
                     placeholder="Largeur"
+                    style={{ flex: 1, padding: '8px 12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', background: '#f5f5f5', color: '#999' }}
                   />
-                  <span className="setting-input-separator">×</span>
+                  <span className="setting-input-separator" style={{ color: '#999', fontSize: '16px' }}>×</span>
                   <input
                     type="number"
                     value={editedCanvasHeight}
                     disabled={true}
                     className="setting-input setting-input-disabled"
                     placeholder="Hauteur"
+                    style={{ flex: 1, padding: '8px 12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', background: '#f5f5f5', color: '#999' }}
                   />
-                  <span className="setting-unit">px</span>
+                  <span className="setting-unit" style={{ color: '#666', fontSize: '14px' }}>px</span>
                 </div>
-                <div className="setting-hint">
+                <div className="setting-hint" style={{ marginTop: '6px', fontSize: '12px', color: '#666', fontStyle: 'italic' }}>
                   Les dimensions sont contrôlées par l'orientation
                 </div>
               </div>
 
-              <div className="setting-group">
-                <label className="setting-label">Orientation</label>
+              <div className="setting-group" style={{ marginBottom: '20px' }}>
+                <label className="setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Orientation</label>
                 <select
                   value={canvasOrientation}
                   onChange={(e) => {
@@ -3255,6 +3257,7 @@ export const Header = memo(function Header({
                     });
                   }}
                   className="setting-select"
+                  style={{ width: '100%', padding: '8px 12px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '14px', background: '#fff' }}
                 >
                   {orientationPermissions.allowPortrait && (
                     <option value="portrait">Portrait (794×1123 px)</option>
@@ -3265,17 +3268,17 @@ export const Header = memo(function Header({
                 </select>
                 {(!orientationPermissions.allowPortrait ||
                   !orientationPermissions.allowLandscape) && (
-                  <div className="setting-hint">
+                  <div className="setting-hint" style={{ marginTop: '6px', fontSize: '12px', color: '#666', fontStyle: 'italic' }}>
                     Certaines orientations sont désactivées dans les paramètres
                     du plugin.
                   </div>
                 )}
               </div>
 
-              <div className="setting-group">
-                <label className="setting-label">Options d'affichage</label>
-                <div className="setting-checkbox-group">
-                  <label className="setting-checkbox-label">
+              <div className="setting-group" style={{ marginBottom: '20px' }}>
+                <label className="setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Options d'affichage</label>
+                <div className="setting-checkbox-group" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <label className="setting-checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#333', cursor: 'pointer' }}>
                     <input
                       type="checkbox"
                       checked={showGuides}
@@ -3285,10 +3288,11 @@ export const Header = memo(function Header({
                         })
                       }
                       className="setting-checkbox"
+                      style={{ width: '16px', height: '16px', cursor: 'pointer' }}
                     />
                     Afficher les guides
                   </label>
-                  <label className="setting-checkbox-label">
+                  <label className="setting-checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#333', cursor: 'pointer' }}>
                     <input
                       type="checkbox"
                       checked={snapToGrid}
@@ -3298,36 +3302,37 @@ export const Header = memo(function Header({
                         })
                       }
                       className="setting-checkbox"
+                      style={{ width: '16px', height: '16px', cursor: 'pointer' }}
                     />
                     Aimantation à la grille
                   </label>
                 </div>
               </div>
 
-              <div className="setting-group">
-                <label className="setting-label">Statut</label>
-                <div className="setting-status-tags">
+              <div className="setting-group" style={{ marginBottom: '20px' }}>
+                <label className="setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Statut</label>
+                <div className="setting-status-tags" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   {isNewTemplate && (
-                    <span className="status-tag status-new">
+                    <span className="status-tag status-new" style={{ padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: 500, background: '#e7f3ff', color: '#0073aa', border: '1px solid #0073aa' }}>
                       Nouveau template
                     </span>
                   )}
                   {deferredIsModified && (
-                    <span className="status-tag status-modified">
+                    <span className="status-tag status-modified" style={{ padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: 500, background: '#fff3cd', color: '#856404', border: '1px solid #ffc107' }}>
                       Modifié
                     </span>
                   )}
                   {isEditingExistingTemplate && (
-                    <span className="status-tag status-editing">
+                    <span className="status-tag status-editing" style={{ padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: 500, background: '#d4edda', color: '#155724', border: '1px solid #28a745' }}>
                       Édition existante
                     </span>
                   )}
                 </div>
               </div>
 
-              <div className="setting-group">
-                <label className="setting-label">Informations système</label>
-                <div className="setting-info">
+              <div className="setting-group" style={{ marginBottom: '20px' }}>
+                <label className="setting-label" style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#333' }}>Informations système</label>
+                <div className="setting-info" style={{ fontSize: '12px', color: '#666', lineHeight: '1.6', background: '#f9f9f9', padding: '12px', borderRadius: '4px', border: '1px solid #e0e0e0' }}>
                   <div>Template ID: {templateName || "N/A"}</div>
                   <div>
                     Dernière modification:{" "}
