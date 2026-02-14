@@ -233,6 +233,14 @@ class AdminScriptLoader
                         [],
                         PDF_BUILDER_PRO_VERSION
                     );
+                    
+                    // Charger le CSS global des cartes pour tous les onglets settings
+                    \wp_enqueue_style(
+                        'pdf-builder-settings-cards',
+                        PDF_BUILDER_PLUGIN_URL . 'assets/css/settings-cards-css.min.css',
+                        [],
+                        PDF_BUILDER_PRO_VERSION
+                    );
                 }
             }
 
