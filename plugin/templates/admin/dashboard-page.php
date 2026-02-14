@@ -81,54 +81,54 @@ if (!defined('ABSPATH')) {
         <div class="pdfb-dashboard-guide">
             <h3>🚀 Guide de démarrage rapide</h3>
             <div class="pdfb-guide-steps">
-                <div class="pdfb-step">
+                <a href="<?php echo admin_url('admin.php?page=pdf-builder-pro'); ?>" class="pdfb-step pdfb-step-link">
                     <span class="pdfb-step-number">1</span>
                     <div class="pdfb-step-content">
                         <h4>🛠️ Configuration initiale</h4>
                         <p>Vérifiez la version Pro/Gratuite et les statistiques de votre installation</p>
                         <small>💡 La page d'accueil affiche automatiquement votre version et les métriques en temps réel</small>
                     </div>
-                </div>
-                <div class="pdfb-step">
+                </a>
+                <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates'); ?>" class="pdfb-step pdfb-step-link">
                     <span class="pdfb-step-number">2</span>
                     <div class="pdfb-step-content">
                         <h4>📋 Créez votre premier template</h4>
                         <p>Allez dans "Templates PDF" → "Créer un nouveau template"</p>
                         <small>💡 Utilisez l'éditeur React avec Canvas avancé, grille d'aimantation et guides</small>
                     </div>
-                </div>
-                <div class="pdfb-step">
+                </a>
+                <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>" class="pdfb-step pdfb-step-link">
                     <span class="pdfb-step-number">3</span>
                     <div class="pdfb-step-content">
                         <h4>🎨 Concevez votre PDF</h4>
                         <p>Ajoutez des éléments : texte, images, formes, code-barres, variables WooCommerce</p>
                         <small>💡 Les propriétés sont organisées en accordéons pour une meilleure ergonomie</small>
                     </div>
-                </div>
-                <div class="pdfb-step">
+                </a>
+                <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings'); ?>" class="pdfb-step pdfb-step-link">
                     <span class="pdfb-step-number">4</span>
                     <div class="pdfb-step-content">
                         <h4>🛒 Intégrez WooCommerce</h4>
                         <p>Utilisez les variables dynamiques : {{order_number}}, {{customer_name}}, etc.</p>
                         <small>💡 Aperçu direct dans les metabox des commandes WooCommerce</small>
                     </div>
-                </div>
-                <div class="pdfb-step">
+                </a>
+                <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings'); ?>" class="pdfb-step pdfb-step-link">
                     <span class="pdfb-step-number">5</span>
                     <div class="pdfb-step-content">
                         <h4>⚙️ Configurez les paramètres avancés</h4>
                         <p>Ajustez les marges, la qualité d'impression, la compression PDF</p>
                         <small>💡 Paramètres Canvas complets : dimensions, orientation, grille, zoom</small>
                     </div>
-                </div>
-                <div class="pdfb-step">
+                </a>
+                <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>" class="pdfb-step pdfb-step-link">
                     <span class="pdfb-step-number">6</span>
                     <div class="pdfb-step-content">
                         <h4>📤 Générez et testez</h4>
                         <p>Prévisualisez votre PDF et ajustez si nécessaire</p>
                         <small>💡 Utilisez l'API Preview intégrée pour des aperçus haute qualité</small>
                     </div>
-                </div>
+                </a>
                 <div class="pdfb-step">
                     <span class="pdfb-step-number">7</span>
                     <div class="pdfb-step-content">

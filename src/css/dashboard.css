@@ -362,8 +362,34 @@
 }
 
 .pdfb-guide-steps {
-    display: grid;
+    display: flex;
     gap: 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 10px 0 20px 0;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #667eea #e2e8f0;
+}
+
+/* Style de la scrollbar pour Webkit (Chrome, Safari, Edge) */
+.pdfb-guide-steps::-webkit-scrollbar {
+    height: 8px;
+}
+
+.pdfb-guide-steps::-webkit-scrollbar-track {
+    background: #e2e8f0;
+    border-radius: 10px;
+}
+
+.pdfb-guide-steps::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+    transition: background 0.3s;
+}
+
+.pdfb-guide-steps::-webkit-scrollbar-thumb:hover {
+    background: #5568d3;
 }
 
 .pdfb-step {
@@ -376,6 +402,19 @@
     transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     cursor: pointer;
+    min-width: 280px;
+    max-width: 320px;
+    flex-shrink: 0;
+    text-decoration: none;
+    color: inherit;
+}
+
+.pdfb-step-link {
+    cursor: pointer;
+}
+
+.pdfb-step-link:hover {
+    text-decoration: none;
 }
 
 .pdfb-step::before {
@@ -395,12 +434,30 @@
     border-color: #667eea;
     box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15),
                 0 2px 8px rgba(0, 0, 0, 0.05);
-    transform: translateX(6px);
+    transform: translateY(-4px) scale(1.02);
     background: #ffffff;
 }
 
 .pdfb-step:hover::before {
     transform: scaleY(1);
+}
+
+/* Effet particulier pour les étapes cliquables */
+.pdfb-step-link::after {
+    content: '→';
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%) translateX(10px);
+    font-size: 20px;
+    color: #667eea;
+    opacity: 0;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pdfb-step-link:hover::after {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
 }
 
 .pdfb-step-number {
