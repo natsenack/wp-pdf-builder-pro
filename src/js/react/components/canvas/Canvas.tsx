@@ -1973,13 +1973,19 @@ const drawCompanyInfo = (
         lines.push({ text: companyData.city, isHeader: false });
       }
     }
+    // Email et Téléphone AVANT les infos légales
+    if (shouldDisplayValue(companyData.email, displayConfig.email)) {
+      lines.push({ text: companyData.email, isHeader: false });
+    }
+    if (shouldDisplayValue(companyData.phone, displayConfig.phone)) {
+      lines.push({ text: formatPhoneNumber(companyData.phone), isHeader: false });
+    }
+    // Infos légales après
     [
       [companyData.siret, displayConfig.siret],
       [companyData.tva, displayConfig.vat],
       [companyData.rcs, displayConfig.rcs],
       [companyData.capital, displayConfig.capital],
-      [companyData.email, displayConfig.email],
-      [formatPhoneNumber(companyData.phone), displayConfig.phone],
     ].forEach(([value, show]) => {
       if (shouldDisplayValue(value as string, show as boolean)) {
         lines.push({ text: value as string, isHeader: false });

@@ -3766,12 +3766,14 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $add_line(esc_html($company['address']));
                 if ($company['city']) $add_line(esc_html($company['city']));
             }
+            // Email et Téléphone AVANT les infos légales
+            if ($show['email'] && $company['email']) $add_line(esc_html($company['email']));
+            if ($show['phone'] && $company['phone']) $add_line(esc_html($company['phone']));
+            // Infos légales après
             if ($show['siret'] && $company['siret']) $add_line('SIRET: ' . esc_html($company['siret']));
             if ($show['vat'] && $company['tva']) $add_line('TVA: ' . esc_html($company['tva']));
             if ($show['rcs'] && $company['rcs']) $add_line('RCS: ' . esc_html($company['rcs']));
             if ($show['capital'] && $company['capital']) $add_line('Capital: ' . esc_html($company['capital']));
-            if ($show['email'] && $company['email']) $add_line(esc_html($company['email']));
-            if ($show['phone'] && $company['phone']) $add_line(esc_html($company['phone']));
         } elseif ($layout_props['layout'] === 'horizontal') {
             if ($show['name']) $add_line('<strong>' . esc_html($company['name']) . '</strong>');
             
