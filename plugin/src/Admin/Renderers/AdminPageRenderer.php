@@ -21,6 +21,13 @@ class AdminPageRenderer
         // Récupérer les données nécessaires depuis l'admin
         $stats = $this->admin->getDashboardStats();
         $plugin_version = $this->admin->getPluginVersion();
+        
+        // Vérifier le statut premium
+        $is_premium = false;
+        if (class_exists('\PDF_Builder\Managers\PDF_Builder_License_Manager')) {
+            $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+            $is_premium = $license_manager->isPremium();
+        }
 
         // Charger le template dashboard-page.php qui utilise les classes avec préfixe pdfb-
         $template_path = PDF_BUILDER_PLUGIN_DIR . 'templates/admin/dashboard-page.php';

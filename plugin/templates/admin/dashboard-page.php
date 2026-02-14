@@ -4,6 +4,7 @@
  *
  * @var array $stats Dashboard statistics
  * @var string $plugin_version Plugin version
+ * @var bool $is_premium Premium status
  */
 
 // Prevent direct access
@@ -49,13 +50,20 @@ if (!defined('ABSPATH')) {
 
         <!-- Actions principales -->
         <div class="pdfb-dashboard-actions">
-            <div class="pdfb-action-card primary">
-                <h3>⚛️ Créer un nouveau PDF</h3>
+            <div class="pdfb-action-card pdfb-primary <?php echo !$is_premium ? 'pdfb-premium-locked' : ''; ?>">
+                <h3>⚛️ Créer un nouveau PDF<?php if (!$is_premium): ?> <span class="pdfb-premium-badge">PRO</span><?php endif; ?></h3>
                 <p>Utilisez notre éditeur React moderne pour concevoir vos documents</p>
-                <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>"
-                    class="button button-primary">
-                    Ouvrir l'Éditeur React
-                </a>
+                <?php if ($is_premium): ?>
+                    <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>"
+                        class="button button-primary">
+                        Ouvrir l'Éditeur React
+                    </a>
+                <?php else: ?>
+                    <button type="button" class="button button-primary pdfb-premium-button" 
+                        onclick="alert('Cette fonctionnalité nécessite une licence Premium. Veuillez mettre à niveau votre licence dans les paramètres.')">
+                        🔒 Fonction Premium
+                    </button>
+                <?php endif; ?>
             </div>
 
             <div class="pdfb-action-card">
@@ -67,13 +75,20 @@ if (!defined('ABSPATH')) {
                 </a>
             </div>
 
-            <div class="pdfb-action-card">
-                <h3>⚙️ Paramètres & Configuration</h3>
+            <div class="pdfb-action-card <?php echo !$is_premium ? 'pdfb-premium-locked' : ''; ?>">
+                <h3>⚙️ Paramètres & Configuration<?php if (!$is_premium): ?> <span class="pdfb-premium-badge">PRO</span><?php endif; ?></h3>
                 <p>Configurez les paramètres avancés, polices, qualité d'impression et options WooCommerce</p>
-                <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates'); ?>"
-                    class="button button-secondary">
-                    ➕ Créer un Template
-                </a>
+                <?php if ($is_premium): ?>
+                    <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings'); ?>"
+                        class="button button-secondary">
+                        Ouvrir les Paramètres
+                    </a>
+                <?php else: ?>
+                    <button type="button" class="button button-secondary pdfb-premium-button" 
+                        onclick="alert('Cette fonctionnalité nécessite une licence Premium. Veuillez mettre à niveau votre licence dans les paramètres.')">
+                        🔒 Fonction Premium
+                    </button>
+                <?php endif; ?>
             </div>
         </div>
 
