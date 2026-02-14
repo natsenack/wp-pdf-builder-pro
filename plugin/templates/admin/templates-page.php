@@ -128,16 +128,16 @@ var pdfBuilderAjax = {
 };
 
 // Variables pour les DPI disponibles
-var availableDpis = <?php echo json_encode($available_dpis); ?>;
-var dpiOptions = <?php echo json_encode($dpi_options); ?>;
+var availableDpis = <?php echo json_encode($available_dpis, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+var dpiOptions = <?php echo json_encode($dpi_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 
 // Variables pour les formats disponibles
-var availableFormats = <?php echo json_encode($available_formats); ?>;
-var formatOptions = <?php echo json_encode($format_options); ?>;
+var availableFormats = <?php echo json_encode($available_formats, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+var formatOptions = <?php echo json_encode($format_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 
 // Variables pour les orientations disponibles
-var availableOrientations = <?php echo json_encode($available_orientations); ?>;
-var orientationOptions = <?php echo json_encode($orientation_options); ?>;
+var availableOrientations = <?php echo json_encode($available_orientations, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 </script>
 
 <div class="wrap">

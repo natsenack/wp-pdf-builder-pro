@@ -569,21 +569,21 @@
 
                     // Initialize window.pdfBuilderCanvasSettings with current DB values
                     window.pdfBuilderCanvasSettings = {
-                        default_canvas_width: <?php echo json_encode(get_canvas_option_contenu('canvas_width', '794')); ?>,
-                        default_canvas_height: <?php echo json_encode(get_canvas_option_contenu('canvas_height', '1123')); ?>,
-                        default_canvas_dpi: <?php echo json_encode(get_canvas_option_contenu('canvas_dpi', '96')); ?>,
-                        default_canvas_format: <?php echo json_encode(get_canvas_option_contenu('canvas_format', 'A4')); ?>,
-                        default_canvas_unit: <?php echo json_encode(get_canvas_option_contenu('canvas_unit', 'px')); ?>,
-                        default_canvas_orientation: <?php echo json_encode(get_canvas_option_contenu('canvas_default_orientation', 'portrait')); ?>,
-                        canvas_background_color: <?php echo json_encode(get_canvas_option_contenu('canvas_bg_color', '#ffffff')); ?>,
+                        default_canvas_width: <?php echo json_encode(get_canvas_option_contenu('canvas_width', '794'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        default_canvas_height: <?php echo json_encode(get_canvas_option_contenu('canvas_height', '1123'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        default_canvas_dpi: <?php echo json_encode(get_canvas_option_contenu('canvas_dpi', '96'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        default_canvas_format: <?php echo json_encode(get_canvas_option_contenu('canvas_format', 'A4'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        default_canvas_unit: <?php echo json_encode(get_canvas_option_contenu('canvas_unit', 'px'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        default_canvas_orientation: <?php echo json_encode(get_canvas_option_contenu('canvas_default_orientation', 'portrait'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        canvas_background_color: <?php echo json_encode(get_canvas_option_contenu('canvas_bg_color', '#ffffff'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
                         <?php
                         // Vérifier si l'utilisateur est premium pour les paramètres de style avancés
                         $is_premium = defined('PDF_BUILDER_PRO_PREMIUM') ? PDF_BUILDER_PRO_PREMIUM : false;
                         if ($is_premium) {
                             // Utilisateur premium : utiliser les paramètres configurés
-                            echo 'border_color: ' . json_encode(get_canvas_option_contenu('canvas_border_color', '#cccccc')) . ',' . "\n";
-                            echo 'border_width: ' . json_encode(get_canvas_option_contenu('canvas_border_width', '1')) . ',' . "\n";
-                            echo 'container_background_color: ' . json_encode(get_canvas_option_contenu('canvas_container_bg_color', '#f8f9fa')) . ',' . "\n";
+                            echo 'border_color: ' . json_encode(get_canvas_option_contenu('canvas_border_color', '#cccccc'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ',' . "\n";
+                            echo 'border_width: ' . json_encode(get_canvas_option_contenu('canvas_border_width', '1'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ',' . "\n";
+                            echo 'container_background_color: ' . json_encode(get_canvas_option_contenu('canvas_container_bg_color', '#f8f9fa'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ',' . "\n";
                         } else {
                             // Utilisateur non-premium : forcer des paramètres par défaut
                             echo 'border_color: "#cccccc",' . "\n";
@@ -591,34 +591,34 @@
                             echo 'container_background_color: "#f8f9fa",' . "\n";
                         }
                         ?>
-                        shadow_enabled: <?php echo json_encode(get_canvas_option_contenu('canvas_shadow_enabled', '0') === '1'); ?>,
-                        show_grid: <?php echo json_encode(get_canvas_option_contenu('canvas_grid_enabled', '1') === '1'); ?>,
-                        grid_size: <?php echo json_encode(get_canvas_option_contenu('canvas_grid_size', '20')); ?>,
-                        show_guides: <?php echo json_encode(get_canvas_option_contenu('canvas_guides_enabled', '1') === '1'); ?>,
-                        snap_to_grid: <?php echo json_encode(get_canvas_option_contenu('canvas_snap_to_grid', '1') === '1'); ?>,
-                        zoom_min: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_min', '25')); ?>,
-                        zoom_max: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_max', '500')); ?>,
-                        zoom_default: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_default', '100')); ?>,
-                        zoom_step: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_step', '25')); ?>,
-                        export_quality: <?php echo json_encode(get_canvas_option_contenu('canvas_export_quality', '90')); ?>,
-                        export_format: <?php echo json_encode(get_canvas_option_contenu('canvas_export_format', 'png')); ?>,
-                        export_transparent: <?php echo json_encode(get_canvas_option_contenu('canvas_export_transparent', '0') === '1'); ?>,
-                        drag_enabled: <?php echo json_encode(get_canvas_option_contenu('canvas_drag_enabled', '1') === '1'); ?>,
-                        resize_enabled: <?php echo json_encode(get_canvas_option_contenu('canvas_resize_enabled', '1') === '1'); ?>,
-                        rotate_enabled: <?php echo json_encode(get_canvas_option_contenu('canvas_rotate_enabled', '1') === '1'); ?>,
-                        multi_select: <?php echo json_encode(get_canvas_option_contenu('canvas_multi_select', '1') === '1'); ?>,
-                        selection_mode: <?php echo json_encode(get_canvas_option_contenu('canvas_selection_mode', 'single')); ?>,
-                        keyboard_shortcuts: <?php echo json_encode(get_canvas_option_contenu('canvas_keyboard_shortcuts', '1') === '1'); ?>,
-                        fps_target: <?php echo json_encode(get_canvas_option_contenu('canvas_fps_target', '60')); ?>,
-                        memory_limit_js: <?php echo json_encode(get_canvas_option_contenu('canvas_memory_limit_js', '50')); ?>,
-                        response_timeout: <?php echo json_encode(get_canvas_option_contenu('canvas_response_timeout', '5000')); ?>,
-                        lazy_loading_editor: <?php echo json_encode(get_canvas_option_contenu('canvas_lazy_loading_editor', '1') === '1'); ?>,
-                        preload_critical: <?php echo json_encode(get_canvas_option_contenu('canvas_preload_critical', '1') === '1'); ?>,
-                        lazy_loading_plugin: <?php echo json_encode(get_canvas_option_contenu('canvas_lazy_loading_plugin', '1') === '1'); ?>,
-                        debug_enabled: <?php echo json_encode(get_canvas_option_contenu('canvas_debug_enabled', '0') === '1'); ?>,
-                        performance_monitoring: <?php echo json_encode(get_canvas_option_contenu('canvas_performance_monitoring', '0') === '1'); ?>,
-                        error_reporting: <?php echo json_encode(get_canvas_option_contenu('canvas_error_reporting', '0') === '1'); ?>,
-                        memory_limit_php: <?php echo json_encode(get_canvas_option_contenu('canvas_memory_limit_php', '128')); ?>
+                        shadow_enabled: <?php echo json_encode(get_canvas_option_contenu('canvas_shadow_enabled', '0') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        show_grid: <?php echo json_encode(get_canvas_option_contenu('canvas_grid_enabled', '1') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        grid_size: <?php echo json_encode(get_canvas_option_contenu('canvas_grid_size', '20'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        show_guides: <?php echo json_encode(get_canvas_option_contenu('canvas_guides_enabled', '1') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        snap_to_grid: <?php echo json_encode(get_canvas_option_contenu('canvas_snap_to_grid', '1') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        zoom_min: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_min', '25'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        zoom_max: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_max', '500'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        zoom_default: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_default', '100'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        zoom_step: <?php echo json_encode(get_canvas_option_contenu('canvas_zoom_step', '25'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        export_quality: <?php echo json_encode(get_canvas_option_contenu('canvas_export_quality', '90'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        export_format: <?php echo json_encode(get_canvas_option_contenu('canvas_export_format', 'png'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        export_transparent: <?php echo json_encode(get_canvas_option_contenu('canvas_export_transparent', '0') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        drag_enabled: <?php echo json_encode(get_canvas_option_contenu('canvas_drag_enabled', '1') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        resize_enabled: <?php echo json_encode(get_canvas_option_contenu('canvas_resize_enabled', '1') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        rotate_enabled: <?php echo json_encode(get_canvas_option_contenu('canvas_rotate_enabled', '1') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        multi_select: <?php echo json_encode(get_canvas_option_contenu('canvas_multi_select', '1') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        selection_mode: <?php echo json_encode(get_canvas_option_contenu('canvas_selection_mode', 'single'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        keyboard_shortcuts: <?php echo json_encode(get_canvas_option_contenu('canvas_keyboard_shortcuts', '1') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        fps_target: <?php echo json_encode(get_canvas_option_contenu('canvas_fps_target', '60'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        memory_limit_js: <?php echo json_encode(get_canvas_option_contenu('canvas_memory_limit_js', '50'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        response_timeout: <?php echo json_encode(get_canvas_option_contenu('canvas_response_timeout', '5000'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        lazy_loading_editor: <?php echo json_encode(get_canvas_option_contenu('canvas_lazy_loading_editor', '1') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        preload_critical: <?php echo json_encode(get_canvas_option_contenu('canvas_preload_critical', '1') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        lazy_loading_plugin: <?php echo json_encode(get_canvas_option_contenu('canvas_lazy_loading_plugin', '1') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        debug_enabled: <?php echo json_encode(get_canvas_option_contenu('canvas_debug_enabled', '0') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        performance_monitoring: <?php echo json_encode(get_canvas_option_contenu('canvas_performance_monitoring', '0') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        error_reporting: <?php echo json_encode(get_canvas_option_contenu('canvas_error_reporting', '0') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        memory_limit_php: <?php echo json_encode(get_canvas_option_contenu('canvas_memory_limit_php', '128'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>
                     };
                     
 
