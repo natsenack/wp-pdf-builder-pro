@@ -11,6 +11,8 @@ class CircleElementGenerator extends ElementGeneratorBase
 {
     public function generateHTML()
     {
+        error_log('CircleElementGenerator: Generating circle - ' . json_encode($this->element));
+        
         $x = $this->getProperty('x', 0);
         $y = $this->getProperty('y', 0);
         $width = $this->getProperty('width', 100);
@@ -40,6 +42,8 @@ class CircleElementGenerator extends ElementGeneratorBase
         
         $html .= 'box-sizing: border-box;">';
         $html .= '</div>';
+        
+        error_log('CircleElementGenerator: Generated HTML - ' . $html);
 
         return $html;
     }

@@ -11,6 +11,8 @@ class RectangleElementGenerator extends ElementGeneratorBase
 {
     public function generateHTML()
     {
+        error_log('RectangleElementGenerator: Generating rectangle - ' . json_encode($this->element));
+        
         $x = $this->getProperty('x', 0);
         $y = $this->getProperty('y', 0);
         $width = $this->getProperty('width', 100);
@@ -46,6 +48,8 @@ class RectangleElementGenerator extends ElementGeneratorBase
         
         $html .= 'box-sizing: border-box;">';
         $html .= '</div>';
+        
+        error_log('RectangleElementGenerator: Generated HTML - ' . $html);
 
         return $html;
     }
