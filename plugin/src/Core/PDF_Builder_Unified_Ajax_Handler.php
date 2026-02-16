@@ -99,6 +99,11 @@ class PDF_Builder_Unified_Ajax_Handler {
         error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_generate_pdf");
         add_action('wp_ajax_pdf_builder_generate_image', [$this, 'handle_generate_image']);
         error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_generate_image");
+        
+        // Actions de test moteur PDF
+        add_action('wp_ajax_pdf_builder_test_puppeteer', [$this, 'handle_test_puppeteer']);
+        add_action('wp_ajax_pdf_builder_test_all_engines', [$this, 'handle_test_all_engines']);
+        
         add_action('wp_ajax_pdf_builder_debug_html', [$this, 'handle_debug_html']);
         error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_debug_html");
         add_action('wp_ajax_pdf_builder_get_preview_html', [$this, 'handle_get_preview_html']);
@@ -2710,24 +2715,37 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             // Configurer le format papier depuis le template
             $template_data = json_decode($template['template_data'], true);
+            $width = $template_data['canvasWidth'] ?? 794;
+            $height = $template_data['canvasHeight'] ?? 1123;
             
-            // Initialiser DOMPDF avec configuration optimale
-            $dompdf = $this->init_dompdf();
+            // === NOUVEAU : UTILISER LE MOTEUR PDF (FACTORY) ===
+            $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
+            $this->debug_log("Moteur PDF utilisé: " . $engine->get_name());
             
-            $this->debug_log("Chargement HTML dans DOMPDF");
-            $dompdf->loadHtml($html);
-            
-            // Configurer le format papier
-            list($width, $height, $orientation) = $this->configure_paper_size($dompdf, $template_data);
-            
-            $this->debug_log("Rendu PDF en cours...");
-            $dompdf->render();
-            
-            $this->debug_log("Envoi du PDF au navigateur");
-            $dompdf->stream('facture-' . $order->get_order_number() . '.pdf', [
-                'Attachment' => false  // false = afficher dans le navigateur, true = télécharger
+            // Générer le PDF avec le moteur sélectionné
+            $pdf_content = $engine->generate($html, [
+                'width' => $width,
+                'height' => $height
             ]);
+            
+            if ($pdf_content === false) {
+                $this->debug_log("Échec génération PDF", "ERROR");
+                wp_die('Erreur lors de la génération du PDF', '', ['response' => 500]);
+            }
+            
+            $this->debug_log("PDF généré avec succès - Taille: " . strlen($pdf_content) . " bytes");
+            
+            // Envoyer le PDF au navigateur
+            $this->debug_log("Envoi du PDF au navigateur");
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: inline; filename="facture-' . $order->get_order_number() . '.pdf"');
+            header('Content-Length: ' . strlen($pdf_content));
+            header('Cache-Control: private, max-age=0, must-revalidate');
+            header('Pragma: public');
+            
+            echo $pdf_content;
             exit;
+            
         } catch (Exception $e) {
             $this->debug_log('Erreur génération PDF: ' . $e->getMessage(), "ERROR");
             wp_die('Erreur: ' . $e->getMessage(), '', ['response' => 500]);
@@ -2736,7 +2754,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
     /**
      * Génère une image (PNG/JPG) à partir d'un template et d'une commande
-     * Fonctionnalité PREMIUM uniquement (VERSION OPTIMISÉE)
+     * Fonctionnalité PREMIUM uniquement (VERSION OPTIMISÉE avec Factory)
      */
     public function handle_generate_image() {
         $this->debug_log("========== GÉNÉRATION IMAGE DÉMARRÉE ==========");
@@ -2809,94 +2827,40 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             $this->debug_log("Dimensions image: {$width}x{$height}px, format: {$format}");
             
-            // Créer des fichiers temporaires
-            $temp_dir = sys_get_temp_dir();
-            $temp_image = $temp_dir . '/pdf-builder-' . uniqid() . '.' . $format;
+            // === NOUVEAU : UTILISER LE MOTEUR PDF (FACTORY) ===
+            $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
+            $this->debug_log("Moteur utilisé pour génération image: " . $engine->get_name());
             
-            $this->debug_log("Fichier image : {$temp_image}");
+            // Générer l'image avec le moteur sélectionné
+            $image_content = $engine->generate_image($html, [
+                'format' => $format,
+                'width' => $width,
+                'height' => $height,
+                'quality' => 90
+            ]);
             
-            $conversion_success = false;
-            $conversion_method = '';
-            
-            // Méthode Imagick: HTML → PDF → Image
-            if (extension_loaded('imagick')) {
-                try {
-                    $this->debug_log("Tentative de génération avec Imagick (HTML → PDF → Image)");
-                    
-                    // Étape 1: Générer le PDF avec DOMPDF (version optimisée)
-                    $dompdf = $this->init_dompdf();
-                    $dompdf->setPaper([0, 0, $width * 0.75, $height * 0.75], 'portrait');
-                    $dompdf->loadHtml($html);
-                    $dompdf->render();
-                    
-                    // Sauvegarder le PDF temporaire
-                    $temp_pdf = $temp_dir . '/pdf-builder-' . uniqid() . '.pdf';
-                    file_put_contents($temp_pdf, $dompdf->output());
-                    
-                    $this->debug_log("PDF généré: " . filesize($temp_pdf) . " octets");
-                    
-                    // Étape 2: Convertir PDF → Image avec Imagick
-                    $imagick = new \Imagick();
-                    $imagick->setResolution(150, 150); // DPI pour meilleure qualité
-                    $imagick->readImage($temp_pdf . '[0]'); // Lire première page
-                    $imagick->setImageFormat($format === 'jpg' ? 'jpeg' : 'png');
-                    
-                    // Qualité pour JPG
-                    if ($format === 'jpg') {
-                        $imagick->setImageCompressionQuality(90);
-                    }
-                    
-                    // Redimensionner si nécessaire pour correspondre aux dimensions demandées
-                    $imagick->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1, true);
-                    
-                    // Sauvegarder l'image
-                    $imagick->writeImage($temp_image);
-                    $imagick->clear();
-                    $imagick->destroy();
-                    
-                    // Nettoyer le PDF temporaire
-                    @unlink($temp_pdf);
-                    
-                    if (file_exists($temp_image) && filesize($temp_image) > 0) {
-                        $conversion_success = true;
-                        $conversion_method = 'Imagick (dompdf + ImageMagick)';
-                        $this->debug_log("✅ Génération réussie avec Imagick: " . filesize($temp_image) . " octets");
-                    }
-                } catch (\Exception $e) {
-                    $this->debug_log("⚠️ Imagick échoué: " . $e->getMessage(), "WARNING");
-                    $this->debug_log("Stack trace: " . $e->getTraceAsString(), "WARNING");
-                }
-            } else {
-                $this->debug_log("Extension Imagick non disponible", "WARNING");
-            }
-            
-            // Méthode de fallback: Erreur si rien ne fonctionne
-            if (!$conversion_success) {
-                $this->debug_log("❌ Aucune méthode de conversion disponible", "ERROR");
+            if ($image_content === false) {
+                $this->debug_log("Échec génération image", "ERROR");
                 
+                // Message d'erreur détaillé
                 wp_send_json_error([
-                    'message' => "Extension Imagick non disponible",
-                    'details' => "Pour activer la génération d'images PNG/JPG, installez l'extension PHP Imagick:\n\n" .
-                                "Windows: Téléchargez la DLL depuis https://windows.php.net/downloads/pecl/releases/imagick/\n" .
-                                "Linux: apt-get install php-imagick ou yum install php-imagick\n" .
-                                "Redémarrez ensuite votre serveur web.",
-                    'code' => 'NO_IMAGICK'
-                ], 501);
+                    'message' => "Génération d'image échouée",
+                    'details' => "Le moteur " . $engine->get_name() . " n'a pas pu générer l'image. " .
+                                "Si vous utilisez Puppeteer, vérifiez la configuration. " .
+                                "Sinon, installez l'extension PHP Imagick.",
+                    'code' => 'IMAGE_GENERATION_FAILED'
+                ], 500);
             }
             
-            $this->debug_log("Méthode utilisée: {$conversion_method}");
-            
-            // Lire le contenu de l'image
-            $image_content = file_get_contents($temp_image);
-            
-            // Nettoyer le fichier temporaire
-            @unlink($temp_image);
+            $this->debug_log("Image générée avec succès - Taille: " . strlen($image_content) . " bytes");
             
             // Envoyer l'image au navigateur
             $mime_type = ($format === 'png') ? 'image/png' : 'image/jpeg';
             header('Content-Type: ' . $mime_type);
             header('Content-Disposition: attachment; filename="facture-' . $order->get_order_number() . '.' . $format . '"');
             header('Content-Length: ' . strlen($image_content));
+            header('Cache-Control: private, max-age=0, must-revalidate');
+            header('Pragma: public');
             
             echo $image_content;
             exit;
@@ -4989,6 +4953,157 @@ class PDF_Builder_Unified_Ajax_Handler {
         } catch (Exception $e) {
             $this->debug_log("Erreur lors de la récupération des commandes: " . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur lors de la récupération des commandes']);
+        }
+    }
+
+    /**
+     * Test de connexion Puppeteer
+     * Handler AJAX pour tester uniquement le moteur Puppeteer
+     */
+    public function handle_test_puppeteer() {
+        try {
+            // Vérifier nonce
+            check_ajax_referer('pdf_builder_test_puppeteer', '_ajax_nonce');
+
+            // Vérifier permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error(['message' => 'Permissions insuffisantes']);
+                return;
+            }
+
+            error_log("[PDF Engine Test] Test Puppeteer demandé");
+
+            // Charger la factory
+            require_once PDF_BUILDER_PATH . 'src/PDF/Engines/PDFEngineFactory.php';
+
+            // Récupérer la configuration actuelle
+            $config = [
+                'api_url' => get_option('pdf_builder_puppeteer_url', ''),
+                'api_token' => get_option('pdf_builder_puppeteer_token', ''),
+                'timeout' => get_option('pdf_builder_puppeteer_timeout', 30),
+                'fallback_enabled' => false, // Désactiver le fallback pour ce test
+            ];
+
+            // Valider la configuration
+            if (empty($config['api_url'])) {
+                wp_send_json_error([
+                    'message' => 'URL Puppeteer non configurée. Veuillez renseigner l\'URL de votre serveur Puppeteer.'
+                ]);
+                return;
+            }
+
+            if (empty($config['api_token'])) {
+                wp_send_json_error([
+                    'message' => 'Token Puppeteer non configuré. Veuillez renseigner le token d\'authentification.'
+                ]);
+                return;
+            }
+
+            // Créer une instance du moteur Puppeteer
+            $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create('puppeteer', $config);
+
+            if (!$engine) {
+                wp_send_json_error([
+                    'message' => 'Impossible de créer une instance du moteur Puppeteer'
+                ]);
+                return;
+            }
+
+            // Tester la connexion
+            $test_result = $engine->test_connection();
+
+            if ($test_result['success']) {
+                error_log("[PDF Engine Test] Puppeteer OK");
+                wp_send_json_success([
+                    'message' => sprintf(
+                        'Connexion Puppeteer réussie! 🎉<br>URL: %s<br>Temps de réponse: %dms',
+                        esc_html($config['api_url']),
+                        isset($test_result['response_time']) ? $test_result['response_time'] : 0
+                    )
+                ]);
+            } else {
+                error_log("[PDF Engine Test] Puppeteer ERREUR: " . $test_result['message']);
+                wp_send_json_error([
+                    'message' => sprintf(
+                        'Échec de connexion Puppeteer ❌<br>URL: %s<br>Erreur: %s<br><br>Vérifiez que:<br>• Le serveur Puppeteer est démarré<br>• L\'URL est correcte<br>• Le token est valide',
+                        esc_html($config['api_url']),
+                        esc_html($test_result['message'])
+                    )
+                ]);
+            }
+
+        } catch (Exception $e) {
+            error_log("[PDF Engine Test] Exception: " . $e->getMessage());
+            wp_send_json_error([
+                'message' => 'Erreur lors du test: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Test de tous les moteurs PDF
+     * Handler AJAX pour tester tous les moteurs disponibles
+     */
+    public function handle_test_all_engines() {
+        try {
+            // Vérifier nonce
+            check_ajax_referer('pdf_builder_test_engines', '_ajax_nonce');
+
+            // Vérifier permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error(['message' => 'Permissions insuffisantes']);
+                return;
+            }
+
+            error_log("[PDF Engine Test] Test de tous les moteurs demandé");
+
+            // Charger la factory
+            require_once PDF_BUILDER_PATH . 'src/PDF/Engines/PDFEngineFactory.php';
+
+            // Tester tous les moteurs
+            $results = \PDF_Builder\PDF\Engines\PDFEngineFactory::test_all_engines();
+
+            if (empty($results)) {
+                wp_send_json_error(['message' => 'Aucun moteur n\'a pu être testé']);
+                return;
+            }
+
+            // Formatter les résultats pour l'affichage
+            $formatted_results = [];
+
+            foreach ($results as $engine_name => $result) {
+                $status = $result['success'] ? 'DISPONIBLE' : 'INDISPONIBLE';
+                $icon = $result['success'] ? '✅' : '❌';
+                
+                $details = [
+                    'success' => $result['success'],
+                    'message' => sprintf(
+                        '%s %s - %s',
+                        $icon,
+                        strtoupper($engine_name),
+                        $status
+                    )
+                ];
+
+                if (isset($result['response_time'])) {
+                    $details['message'] .= sprintf(' (Temps: %dms)', $result['response_time']);
+                }
+
+                if (!$result['success'] && isset($result['message'])) {
+                    $details['message'] .= sprintf('<br>Raison: %s', esc_html($result['message']));
+                }
+
+                $formatted_results[$engine_name] = $details;
+            }
+
+            error_log("[PDF Engine Test] Résultats: " . json_encode($formatted_results));
+            wp_send_json_success($formatted_results);
+
+        } catch (Exception $e) {
+            error_log("[PDF Engine Test] Exception: " . $e->getMessage());
+            wp_send_json_error([
+                'message' => 'Erreur lors des tests: ' . $e->getMessage()
+            ]);
         }
     }
 }

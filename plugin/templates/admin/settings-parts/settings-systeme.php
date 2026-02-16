@@ -76,9 +76,291 @@
         $cache_last_cleanup = (function_exists('human_time_diff') ? human_time_diff(strtotime($cache_last_cleanup)) : $cache_last_cleanup) . ' ago';
     }
 ?>
+            <style>
+                .pdfb-engine-status {
+                    display: inline-block;
+                    padding: 4px 12px;
+                    margin-left: 12px;
+                    font-size: 11px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    border-radius: 12px;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+                    vertical-align: middle;
+                }
+                
+                .pdfb-system-pdf-engine-section .form-table th {
+                    width: 200px;
+                    font-weight: 600;
+                }
+                
+                .pdfb-system-pdf-engine-section .toggle-switch {
+                    position: relative;
+                    display: inline-block;
+                    width: 50px;
+                    height: 24px;
+                    vertical-align: middle;
+                }
+                
+                .pdfb-system-pdf-engine-section .toggle-switch input {
+                    opacity: 0;
+                    width: 0;
+                    height: 0;
+                }
+                
+                .pdfb-system-pdf-engine-section .toggle-slider {
+                    position: absolute;
+                    cursor: pointer;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: #ccc;
+                    transition: .3s;
+                    border-radius: 24px;
+                }
+                
+                .pdfb-system-pdf-engine-section .toggle-slider:before {
+                    position: absolute;
+                    content: "";
+                    height: 18px;
+                    width: 18px;
+                    left: 3px;
+                    bottom: 3px;
+                    background-color: white;
+                    transition: .3s;
+                    border-radius: 50%;
+                }
+                
+                .pdfb-system-pdf-engine-section input:checked + .toggle-slider {
+                    background-color: #2271b1;
+                }
+                
+                .pdfb-system-pdf-engine-section input:checked + .toggle-slider:before {
+                    transform: translateX(26px);
+                }
+                
+                #engine-test-result {
+                    margin-top: 15px;
+                    padding: 12px;
+                    border-radius: 4px;
+                    font-size: 13px;
+                    line-height: 1.6;
+                }
+                
+                #engine-test-result .notice {
+                    padding: 10px 15px;
+                    margin: 0;
+                }
+            </style>
+            
             <h3 style="display: flex; justify-content: flex-start; align-items: center;">
                 <span>⚙️ Système - Performance, Maintenance & Sauvegarde</span>
             </h3>
+
+                <!-- Section Moteur PDF -->
+                <section id="pdf-engine" class="pdfb-system-pdf-engine-section">
+                    <header>
+                        <h3>
+                            <span>
+                                🚀 Moteur de génération PDF
+                                <?php
+                                $current_engine = get_option('pdf_builder_engine', 'puppeteer');
+                                $puppeteer_url = get_option('pdf_builder_puppeteer_url', '');
+                                $puppeteer_available = !empty($puppeteer_url);
+                                $engine_status = $current_engine === 'puppeteer' && $puppeteer_available ? 'Puppeteer ACTIF' : 'DomPDF (Fallback)';
+                                ?>
+                                <span class="pdfb-engine-status" id="pdf-engine-status"><?php echo esc_html($engine_status); ?></span>
+                            </span>
+                        </h3>
+                    </header>
+
+                    <div class="pdfb-system-section-content">
+                        <!-- Notice service Puppeteer hébergé -->
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="font-size: 48px; line-height: 1;">🚀</div>
+                                <div style="flex: 1;">
+                                    <h4 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: white;">Service Puppeteer Hébergé & Maintenu</h4>
+                                    <p style="margin: 0 0 12px 0; font-size: 14px; line-height: 1.6; opacity: 0.95;">
+                                        Pas de serveur Puppeteer ? Pas de problème ! Accédez à notre infrastructure optimisée à partir de <strong>1,99€/mois</strong>.
+                                        <br>✨ Token unique sécurisé • 🌐 IP/URL dédiée • ⚡ Maintenance incluse • 🔒 99.9% uptime
+                                    </p>
+                                    <a href="#" id="puppeteer-commercial-link" class="button button-secondary" style="background: white; color: #667eea; border: none; padding: 8px 20px; font-weight: 600; text-decoration: none; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: transform 0.2s; display: inline-block; margin-top: 5px;">
+                                        📦 Découvrir nos offres (dès 1,99€/mois)
+                                    </a>
+                                    <script>
+                                    jQuery(document).ready(function($) {
+                                        $('#puppeteer-commercial-link').on('click', function(e) {
+                                            e.preventDefault();
+                                            alert('🚀 Service Puppeteer\n\nLe lien commercial sera bientôt disponible.\nRestez connecté pour plus d\'informations !\n\n� Plusieurs offres disponibles dès 1,99€/mois\n✅ Token unique fourni\n✅ IP/URL dédiée\n✅ Maintenance incluse');
+                                        });
+                                    });
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><label for="pdf_builder_engine">Moteur de génération</label></th>
+                                <td>
+                                    <select id="pdf_builder_engine" name="pdf_builder_engine" class="regular-text">
+                                        <option value="puppeteer" <?php selected($current_engine, 'puppeteer'); ?>>
+                                            Puppeteer (Recommandé) - Qualité supérieure + CSS moderne
+                                        </option>
+                                        <option value="dompdf" <?php selected($current_engine, 'dompdf'); ?>>
+                                            DomPDF - Fallback PHP intégré
+                                        </option>
+                                        <option value="auto" <?php selected($current_engine, 'auto'); ?>>
+                                            Auto - Tenter Puppeteer puis fallback DomPDF
+                                        </option>
+                                    </select>
+                                    <p class="description">
+                                        <strong>Puppeteer :</strong> Moteur moderne basé sur Chrome, excellent rendu CSS<br>
+                                        <strong>DomPDF :</strong> Moteur PHP intégré, support CSS limité mais sans dépendances externes<br>
+                                        <strong>Auto :</strong> Essaie Puppeteer puis bascule sur DomPDF si indisponible
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="pdf_builder_puppeteer_url">API Puppeteer - URL</label></th>
+                                <td>
+                                    <input type="url" id="pdf_builder_puppeteer_url" name="pdf_builder_puppeteer_url" 
+                                           value="<?php echo esc_attr($puppeteer_url); ?>" 
+                                           class="regular-text" 
+                                           placeholder="https://your-server.com/api/pdf">
+                                    <p class="description">
+                                        URL de votre serveur Puppeteer (ex: http://localhost:3000/api/pdf)
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="pdf_builder_puppeteer_token">API Puppeteer - Token</label></th>
+                                <td>
+                                    <input type="password" id="pdf_builder_puppeteer_token" name="pdf_builder_puppeteer_token" 
+                                           value="<?php echo esc_attr(get_option('pdf_builder_puppeteer_token', '')); ?>" 
+                                           class="regular-text" 
+                                           placeholder="your-secret-token">
+                                    <button type="button" class="button" onclick="document.getElementById('pdf_builder_puppeteer_token').type = document.getElementById('pdf_builder_puppeteer_token').type === 'password' ? 'text' : 'password';">
+                                        👁️ Afficher/Masquer
+                                    </button>
+                                    <p class="description">
+                                        Token d'authentification pour sécuriser l'API
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="pdf_builder_puppeteer_timeout">Timeout (secondes)</label></th>
+                                <td>
+                                    <input type="number" id="pdf_builder_puppeteer_timeout" name="pdf_builder_puppeteer_timeout" 
+                                           value="<?php echo esc_attr(get_option('pdf_builder_puppeteer_timeout', 30)); ?>" 
+                                           min="5" max="120" step="5" />
+                                    <p class="description">Durée maximale d'attente pour la génération PDF (5-120s)</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><label for="pdf_builder_puppeteer_fallback">Fallback automatique</label></th>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="hidden" name="pdf_builder_puppeteer_fallback" value="0">
+                                        <input type="checkbox" id="pdf_builder_puppeteer_fallback" name="pdf_builder_puppeteer_fallback" 
+                                               value="1" <?php checked(get_option('pdf_builder_puppeteer_fallback', true), '1'); ?>>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <p class="description">
+                                        En cas d'échec Puppeteer, basculer automatiquement sur DomPDF
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Test de connexion</th>
+                                <td>
+                                    <button type="button" class="button button-secondary" id="test-puppeteer-connection">
+                                        🧪 Tester Puppeteer
+                                    </button>
+                                    <button type="button" class="button button-secondary" id="test-all-engines" style="margin-left:10px;">
+                                        🔍 Tester tous les moteurs
+                                    </button>
+                                    <div id="engine-test-result" style="margin-top: 10px;"></div>
+                                    
+                                    <script>
+                                    jQuery(document).ready(function($) {
+                                        $('#test-puppeteer-connection').on('click', function() {
+                                            var $btn = $(this);
+                                            var $result = $('#engine-test-result');
+                                            
+                                            $btn.prop('disabled', true).text('⏳ Test en cours...');
+                                            $result.html('<p style="color: #666;">Test de connexion Puppeteer...</p>');
+                                            
+                                            $.ajax({
+                                                url: ajaxurl,
+                                                method: 'POST',
+                                                data: {
+                                                    action: 'pdf_builder_test_puppeteer',
+                                                    _ajax_nonce: '<?php echo wp_create_nonce('pdf_builder_test_puppeteer'); ?>'
+                                                },
+                                                success: function(response) {
+                                                    if (response.success) {
+                                                        $result.html('<div class="notice notice-success inline"><p><strong>✅ Succès!</strong><br>' + response.data.message + '</p></div>');
+                                                    } else {
+                                                        $result.html('<div class="notice notice-error inline"><p><strong>❌ Échec</strong><br>' + response.data.message + '</p></div>');
+                                                    }
+                                                },
+                                                error: function() {
+                                                    $result.html('<div class="notice notice-error inline"><p>Erreur de communication avec le serveur</p></div>');
+                                                },
+                                                complete: function() {
+                                                    $btn.prop('disabled', false).text('🧪 Tester Puppeteer');
+                                                }
+                                            });
+                                        });
+                                        
+                                        $('#test-all-engines').on('click', function() {
+                                            var $btn = $(this);
+                                            var $result = $('#engine-test-result');
+                                            
+                                            $btn.prop('disabled', true).text('⏳ Test en cours...');
+                                            $result.html('<p style="color: #666;">Test de tous les moteurs...</p>');
+                                            
+                                            $.ajax({
+                                                url: ajaxurl,
+                                                method: 'POST',
+                                                data: {
+                                                    action: 'pdf_builder_test_all_engines',
+                                                    _ajax_nonce: '<?php echo wp_create_nonce('pdf_builder_test_engines'); ?>'
+                                                },
+                                                success: function(response) {
+                                                    if (response.success) {
+                                                        var html = '<div class="notice notice-info inline"><p><strong>Résultats des tests:</strong></p><ul style="margin-left: 20px;">';
+                                                        $.each(response.data, function(engine, result) {
+                                                            var icon = result.success ? '✅' : '❌';
+                                                            html += '<li><strong>' + icon + ' ' + engine + ':</strong> ' + result.message + '</li>';
+                                                        });
+                                                        html += '</ul></div>';
+                                                        $result.html(html);
+                                                    } else {
+                                                        $result.html('<div class="notice notice-error inline"><p>Erreur lors des tests</p></div>');
+                                                    }
+                                                },
+                                                error: function() {
+                                                    $result.html('<div class="notice notice-error inline"><p>Erreur de communication avec le serveur</p></div>');
+                                                },
+                                                complete: function() {
+                                                    $btn.prop('disabled', false).text('🔍 Tester tous les moteurs');
+                                                }
+                                            });
+                                        });
+                                    });
+                                    </script>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </section>
 
                 <!-- Section Cache et Performance -->
                 <section id="systeme" class="pdfb-system-cache-section">
