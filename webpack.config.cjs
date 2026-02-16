@@ -77,6 +77,12 @@ module.exports = {
               sourceMap: isDev,
             },
           },
+          {
+            loader: "postcss-loader",
+            options: {
+              sourceMap: isDev,
+            },
+          },
         ],
       },
       {
