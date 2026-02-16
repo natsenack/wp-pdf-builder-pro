@@ -194,14 +194,14 @@
                             <main class="pdfb-canvas-card-content">
                                 <p>Configurez les dimensions, le format, les couleurs et l'apparence générale du canvas.</p>
                                 <div class="pdfb-canvas-card-features">
-                                    <span class="feature-tag active">📐 Dimensions</span>
-                                    <span class="feature-tag active">🎨 Couleurs</span>
-                                    <span class="feature-tag active">📄 Format</span>
-                                    <span class="feature-tag">🖼️ Bordures</span>
+                                    <span class="pdfb-feature-tag active">📐 Dimensions</span>
+                                    <span class="pdfb-feature-tag active">🎨 Couleurs</span>
+                                    <span class="pdfb-feature-tag active">📄 Format</span>
+                                    <span class="pdfb-feature-tag">🖼️ Bordures</span>
                                 </div>
                             </main>
                             <aside class="pdfb-canvas-card-preview">
-                                <div class="dimensions-preview-container">
+                                <div class="pdfb-dimensions-preview-container">
                                     <?php
                                     $width = intval(get_canvas_option_contenu('canvas_width', '794'));
                                     $height = intval(get_canvas_option_contenu('canvas_height', '1123'));
@@ -224,74 +224,74 @@
                                     <!-- Canvas miniature -->
                                     <div class="pdfb-canvas-preview-wrapper">
                                         <!-- Règles de mesure -->
-                                        <div class="ruler ruler-horizontal">
-                                            <div class="ruler-tick"></div>
-                                            <div class="ruler-tick"></div>
-                                            <div class="ruler-tick"></div>
-                                            <div class="ruler-tick"></div>
-                                            <div class="ruler-tick"></div>
+                                        <div class="pdfb-ruler ruler-horizontal">
+                                            <div class="pdfb-ruler-tick"></div>
+                                            <div class="pdfb-ruler-tick"></div>
+                                            <div class="pdfb-ruler-tick"></div>
+                                            <div class="pdfb-ruler-tick"></div>
+                                            <div class="pdfb-ruler-tick"></div>
                                         </div>
-                                        <div class="ruler ruler-vertical">
-                                            <div class="ruler-tick"></div>
-                                            <div class="ruler-tick"></div>
-                                            <div class="ruler-tick"></div>
-                                            <div class="ruler-tick"></div>
-                                            <div class="ruler-tick"></div>
+                                        <div class="pdfb-ruler ruler-vertical">
+                                            <div class="pdfb-ruler-tick"></div>
+                                            <div class="pdfb-ruler-tick"></div>
+                                            <div class="pdfb-ruler-tick"></div>
+                                            <div class="pdfb-ruler-tick"></div>
+                                            <div class="pdfb-ruler-tick"></div>
                                         </div>
                                         
                                         <!-- Canvas miniature avec couleurs réelles -->
-                                        <div class="mini-canvas-preview" style="width: <?php echo $previewWidth; ?>px; height: <?php echo $previewHeight; ?>px; background-color: <?php echo esc_attr($bgColor); ?>; border-color: <?php echo esc_attr($borderColor); ?>;">
+                                        <div class="pdfb-mini-canvas-preview" style="width: <?php echo $previewWidth; ?>px; height: <?php echo $previewHeight; ?>px; background-color: <?php echo esc_attr($bgColor); ?>; border-color: <?php echo esc_attr($borderColor); ?>;">
                                             <!-- Badge du format -->
-                                            <div class="format-badge"><?php echo esc_html($format); ?></div>
+                                            <div class="pdfb-format-badge"><?php echo esc_html($format); ?></div>
                                             
                                             <!-- Éléments de démonstration -->
-                                            <div class="demo-elements">
-                                                <div class="demo-element text-sample" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);"></div>
-                                                <div class="demo-element image-sample" style="background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);"></div>
-                                                <div class="demo-element shape-sample" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);"></div>
+                                            <div class="pdfb-demo-elements">
+                                                <div class="pdfb-demo-element text-sample" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);"></div>
+                                                <div class="pdfb-demo-element image-sample" style="background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);"></div>
+                                                <div class="pdfb-demo-element shape-sample" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);"></div>
                                             </div>
                                             
                                             <!-- Indicateurs de coins -->
-                                            <div class="corner-indicator top-left"></div>
-                                            <div class="corner-indicator top-right"></div>
-                                            <div class="corner-indicator bottom-left"></div>
-                                            <div class="corner-indicator bottom-right"></div>
+                                            <div class="pdfb-corner-indicator top-left"></div>
+                                            <div class="pdfb-corner-indicator top-right"></div>
+                                            <div class="pdfb-corner-indicator bottom-left"></div>
+                                            <div class="pdfb-corner-indicator bottom-right"></div>
                                         </div>
                                         
                                         <!-- Indicateurs de dimensions -->
-                                        <div class="dimension-indicator width-indicator">
+                                        <div class="pdfb-dimension-indicator width-indicator">
                                             <span><?php echo $width; ?>px</span>
                                         </div>
-                                        <div class="dimension-indicator height-indicator">
+                                        <div class="pdfb-dimension-indicator height-indicator">
                                             <span><?php echo $height; ?>px</span>
                                         </div>
                                     </div>
                                     
                                     <!-- Informations détaillées -->
-                                    <div class="preview-details">
-                                        <div class="detail-item">
-                                            <span class="detail-label">DPI</span>
-                                            <span class="detail-value"><?php echo $dpi; ?></span>
+                                    <div class="pdfb-preview-details">
+                                        <div class="pdfb-detail-item">
+                                            <span class="pdfb-detail-label">DPI</span>
+                                            <span class="pdfb-detail-value"><?php echo $dpi; ?></span>
                                         </div>
-                                        <div class="detail-item">
-                                            <span class="detail-label">Taille réelle</span>
-                                            <span class="detail-value"><?php echo $widthMM; ?>×<?php echo $heightMM; ?>mm</span>
+                                        <div class="pdfb-detail-item">
+                                            <span class="pdfb-detail-label">Taille réelle</span>
+                                            <span class="pdfb-detail-value"><?php echo $widthMM; ?>×<?php echo $heightMM; ?>mm</span>
                                         </div>
-                                        <div class="detail-item">
-                                            <span class="detail-label">Ratio</span>
-                                            <span class="detail-value"><?php echo round($ratio, 2); ?></span>
+                                        <div class="pdfb-detail-item">
+                                            <span class="pdfb-detail-label">Ratio</span>
+                                            <span class="pdfb-detail-value"><?php echo round($ratio, 2); ?></span>
                                         </div>
                                     </div>
                                     
                                     <!-- Palette de couleurs -->
-                                    <div class="color-palette">
-                                        <div class="color-swatch" title="Couleur de fond">
-                                            <div class="swatch" style="background-color: <?php echo esc_attr($bgColor); ?>;"></div>
-                                            <span class="color-label">Fond</span>
+                                    <div class="pdfb-color-palette">
+                                        <div class="pdfb-color-swatch" title="Couleur de fond">
+                                            <div class="pdfb-swatch" style="background-color: <?php echo esc_attr($bgColor); ?>;"></div>
+                                            <span class="pdfb-color-label">Fond</span>
                                         </div>
-                                        <div class="color-swatch" title="Couleur de bordure">
-                                            <div class="swatch" style="background-color: <?php echo esc_attr($borderColor); ?>;"></div>
-                                            <span class="color-label">Bordure</span>
+                                        <div class="pdfb-color-swatch" title="Couleur de bordure">
+                                            <div class="pdfb-swatch" style="background-color: <?php echo esc_attr($borderColor); ?>;"></div>
+                                            <span class="pdfb-color-label">Bordure</span>
                                         </div>
                                     </div>
                                 </div>
@@ -315,51 +315,51 @@
                             <main class="pdfb-canvas-card-content">
                                 <p>Configurez la grille, les guides, le zoom et les options de navigation du canvas.</p>
                                 <div class="pdfb-canvas-card-features">
-                                    <span class="feature-tag active">📐 Grille</span>
-                                    <span class="feature-tag active">📏 Guides</span>
-                                    <span class="feature-tag active">🔍 Zoom</span>
-                                    <span class="feature-tag active">🔗 Snap</span>
+                                    <span class="pdfb-feature-tag active">📐 Grille</span>
+                                    <span class="pdfb-feature-tag active">📏 Guides</span>
+                                    <span class="pdfb-feature-tag active">🔍 Zoom</span>
+                                    <span class="pdfb-feature-tag active">🔗 Snap</span>
                                 </div>
                             </main>
                             <aside class="pdfb-canvas-card-preview">
-                                <div id="card-grid-preview" class="grid-preview-container">
-                                    <div class="grid-canvas">
+                                <div id="card-grid-preview" class="pdfb-grid-preview-container">
+                                    <div class="pdfb-grid-canvas">
                                         <!-- Quadrillage principal -->
-                                        <div class="grid-lines">
-                                            <div class="grid-line horizontal"></div>
-                                            <div class="grid-line horizontal"></div>
-                                            <div class="grid-line horizontal"></div>
-                                            <div class="grid-line vertical"></div>
-                                            <div class="grid-line vertical"></div>
-                                            <div class="grid-line vertical"></div>
+                                        <div class="pdfb-grid-lines">
+                                            <div class="pdfb-grid-line horizontal"></div>
+                                            <div class="pdfb-grid-line horizontal"></div>
+                                            <div class="pdfb-grid-line horizontal"></div>
+                                            <div class="pdfb-grid-line vertical"></div>
+                                            <div class="pdfb-grid-line vertical"></div>
+                                            <div class="pdfb-grid-line vertical"></div>
                                         </div>
                                         <!-- Points d'intersection -->
-                                        <div class="grid-dots">
-                                            <div class="grid-dot"></div>
-                                            <div class="grid-dot"></div>
-                                            <div class="grid-dot"></div>
-                                            <div class="grid-dot"></div>
-                                            <div class="grid-dot"></div>
-                                            <div class="grid-dot"></div>
-                                            <div class="grid-dot"></div>
-                                            <div class="grid-dot"></div>
-                                            <div class="grid-dot"></div>
+                                        <div class="pdfb-grid-dots">
+                                            <div class="pdfb-grid-dot"></div>
+                                            <div class="pdfb-grid-dot"></div>
+                                            <div class="pdfb-grid-dot"></div>
+                                            <div class="pdfb-grid-dot"></div>
+                                            <div class="pdfb-grid-dot"></div>
+                                            <div class="pdfb-grid-dot"></div>
+                                            <div class="pdfb-grid-dot"></div>
+                                            <div class="pdfb-grid-dot"></div>
+                                            <div class="pdfb-grid-dot"></div>
                                         </div>
                                         <!-- Guides d'alignement -->
-                                        <div class="guide-lines">
-                                            <div class="guide-line horizontal active"></div>
-                                            <div class="guide-line vertical active"></div>
+                                        <div class="pdfb-guide-lines">
+                                            <div class="pdfb-guide-line horizontal active"></div>
+                                            <div class="pdfb-guide-line vertical active"></div>
                                         </div>
                                         <!-- Élément d'exemple -->
-                                        <div class="preview-element">
-                                            <div class="element-box"></div>
+                                        <div class="pdfb-preview-element">
+                                            <div class="pdfb-element-box"></div>
                                         </div>
                                     </div>
-                                    <div class="grid-legend">
-                                        <span class="legend-item">📐 Grille</span>
-                                        <span class="legend-item">📏 Guides</span>
-                                        <span class="legend-item">📦 Élément</span>
-                                        <span class="snap-indicator">🔗 Snap activé</span>
+                                    <div class="pdfb-grid-legend">
+                                        <span class="pdfb-legend-item">📐 Grille</span>
+                                        <span class="pdfb-legend-item">📏 Guides</span>
+                                        <span class="pdfb-legend-item">📦 Élément</span>
+                                        <span class="pdfb-snap-indicator">🔗 Snap activé</span>
                                     </div>
                                 </div>
                             </aside>
@@ -382,75 +382,75 @@
                             <main class="pdfb-canvas-card-content">
                                 <p>Configurez les interactions, la sélection, les raccourcis et les options d'export du canvas.</p>
                                 <div class="pdfb-canvas-card-features">
-                                    <span class="feature-tag active">👆 Sélection</span>
-                                    <span class="feature-tag active">⌨️ Raccourcis</span>
-                                    <span class="feature-tag">🖱️ Glisser-déposer</span>
-                                    <span class="feature-tag">📤 Export</span>
+                                    <span class="pdfb-feature-tag active">👆 Sélection</span>
+                                    <span class="pdfb-feature-tag active">⌨️ Raccourcis</span>
+                                    <span class="pdfb-feature-tag">🖱️ Glisser-déposer</span>
+                                    <span class="pdfb-feature-tag">📤 Export</span>
                                 </div>
                             </main>
                             <aside class="pdfb-canvas-card-preview">
-                                <div class="interactions-preview-container">
+                                <div class="pdfb-interactions-preview-container">
                                     <!-- Canvas miniature avec éléments -->
-                                    <div class="mini-canvas">
+                                    <div class="pdfb-mini-canvas">
                                         <!-- Grille de fond -->
-                                        <div class="mini-canvas-grid"></div>
+                                        <div class="pdfb-mini-canvas-grid"></div>
 
                                         <!-- Éléments sur le canvas -->
-                                        <div class="mini-element text-element" style="top: 15px; left: 20px; width: 35px; height: 18px;" title="Élément texte - Double-clic pour éditer">
-                                            <div class="mini-element-content">T</div>
+                                        <div class="pdfb-mini-element text-element" style="top: 15px; left: 20px; width: 35px; height: 18px;" title="Élément texte - Double-clic pour éditer">
+                                            <div class="pdfb-mini-element-content">T</div>
                                         </div>
-                                        <div class="mini-element shape-element selected" style="top: 40px; left: 15px; width: 32px; height: 22px;" title="Élément sélectionné - Glisser pour déplacer">
-                                            <div class="mini-element-content">□</div>
+                                        <div class="pdfb-mini-element shape-element selected" style="top: 40px; left: 15px; width: 32px; height: 22px;" title="Élément sélectionné - Glisser pour déplacer">
+                                            <div class="pdfb-mini-element-content">□</div>
                                             <!-- Poignées de sélection -->
-                                            <div class="mini-handle nw" title="Redimensionner (coin supérieur gauche)"></div>
-                                            <div class="mini-handle ne" title="Redimensionner (coin supérieur droit)"></div>
-                                            <div class="mini-handle sw" title="Redimensionner (coin inférieur gauche)"></div>
-                                            <div class="mini-handle se" title="Redimensionner (coin inférieur droit)"></div>
-                                            <div class="mini-handle rotation" style="top: -6px; left: 50%; transform: translateX(-50%);" title="Rotation - Maintenir Maj pour angles précis"></div>
+                                            <div class="pdfb-mini-handle nw" title="Redimensionner (coin supérieur gauche)"></div>
+                                            <div class="pdfb-mini-handle ne" title="Redimensionner (coin supérieur droit)"></div>
+                                            <div class="pdfb-mini-handle sw" title="Redimensionner (coin inférieur gauche)"></div>
+                                            <div class="pdfb-mini-handle se" title="Redimensionner (coin inférieur droit)"></div>
+                                            <div class="pdfb-mini-handle rotation" style="top: -6px; left: 50%; transform: translateX(-50%);" title="Rotation - Maintenir Maj pour angles précis"></div>
                                         </div>
-                                        <div class="mini-element image-element" style="top: 18px; left: 75px; width: 28px; height: 28px;" title="Élément image - Clic droit pour options">
-                                            <div class="mini-element-content">🖼</div>
+                                        <div class="pdfb-mini-element image-element" style="top: 18px; left: 75px; width: 28px; height: 28px;" title="Élément image - Clic droit pour options">
+                                            <div class="pdfb-mini-element-content">🖼</div>
                                         </div>
 
                                         <!-- Sélection rectangle en cours -->
-                                        <div class="selection-rectangle" style="top: 10px; left: 10px; width: 55px; height: 35px;" title="Sélection multiple - Relâcher pour sélectionner"></div>
+                                        <div class="pdfb-selection-rectangle" style="top: 10px; left: 10px; width: 55px; height: 35px;" title="Sélection multiple - Relâcher pour sélectionner"></div>
 
                                         <!-- Curseur de souris -->
-                                        <div class="mouse-cursor" style="top: 50px; left: 95px;">
-                                            <div class="cursor-icon">👆</div>
+                                        <div class="pdfb-mouse-cursor" style="top: 50px; left: 95px;">
+                                            <div class="pdfb-cursor-icon">👆</div>
                                         </div>
 
                                         <!-- Indicateur de zoom -->
-                                        <div class="zoom-indicator" title="Niveau de zoom actuel - Ctrl+molette pour zoomer">
-                                            <span class="zoom-level">100%</span>
+                                        <div class="pdfb-zoom-indicator" title="Niveau de zoom actuel - Ctrl+molette pour zoomer">
+                                            <span class="pdfb-zoom-level">100%</span>
                                         </div>
 
                                         <!-- Indicateur de performance -->
-                                        <div class="performance-indicator" title="Performance canvas - 60 FPS">
-                                            <div class="performance-bar">
-                                                <div class="performance-fill" style="width: 85%"></div>
+                                        <div class="pdfb-performance-indicator" title="Performance canvas - 60 FPS">
+                                            <div class="pdfb-performance-bar">
+                                                <div class="pdfb-performance-fill" style="width: 85%"></div>
                                             </div>
-                                            <span class="performance-text">85%</span>
+                                            <span class="pdfb-performance-text">85%</span>
                                         </div>
                                     </div>
 
                                     <!-- Contrôles en bas -->
-                                    <div class="interactions-controls">
-                                        <div class="selection-mode-indicator">
-                                            <span class="mode-icon active" title="Sélection rectangle (R) - Pour sélectionner plusieurs éléments" data-mode="rectangle">▭</span>
-                                            <span class="mode-icon" title="Sélection lasso (L) - Pour sélection libre" data-mode="lasso">🪢</span>
-                                            <span class="mode-icon" title="Sélection par clic (C) - Pour sélection simple" data-mode="click">👆</span>
+                                    <div class="pdfb-interactions-controls">
+                                        <div class="pdfb-selection-mode-indicator">
+                                            <span class="pdfb-mode-icon active" title="Sélection rectangle (R) - Pour sélectionner plusieurs éléments" data-mode="rectangle">▭</span>
+                                            <span class="pdfb-mode-icon" title="Sélection lasso (L) - Pour sélection libre" data-mode="lasso">🪢</span>
+                                            <span class="pdfb-mode-icon" title="Sélection par clic (C) - Pour sélection simple" data-mode="click">👆</span>
                                         </div>
-                                        <div class="interaction-status">
-                                            <span class="status-indicator selecting">Sélection active</span>
-                                            <div class="keyboard-status" title="Raccourcis clavier activés">
-                                                <span class="keyboard-icon">⌨️</span>
+                                        <div class="pdfb-interaction-status">
+                                            <span class="pdfb-status-indicator selecting">Sélection active</span>
+                                            <div class="pdfb-keyboard-status" title="Raccourcis clavier activés">
+                                                <span class="pdfb-keyboard-icon">⌨️</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     <!-- Barre de progression des interactions -->
-                                    <div class="interaction-progress">
+                                    <div class="pdfb-interaction-progress">
                                         <div class="progress-label">Fluidité</div>
                                         <div class="progress-bar">
                                             <div class="progress-fill" style="width: 92%"></div>
@@ -478,10 +478,10 @@
                             <main class="pdfb-canvas-card-content">
                                 <p>Optimisez les performances, la mémoire et configurez les options de debug et monitoring.</p>
                                 <div class="pdfb-canvas-card-features">
-                                    <span class="feature-tag active">⚡ FPS</span>
-                                    <span class="feature-tag active">💾 RAM</span>
-                                    <span class="feature-tag active">🔄 Lazy Load</span>
-                                    <span class="feature-tag">🐛 Debug</span>
+                                    <span class="pdfb-feature-tag active">⚡ FPS</span>
+                                    <span class="pdfb-feature-tag active">💾 RAM</span>
+                                    <span class="pdfb-feature-tag active">🔄 Lazy Load</span>
+                                    <span class="pdfb-feature-tag">🐛 Debug</span>
                                 </div>
                             </main>
                             <aside class="pdfb-canvas-card-preview">
@@ -501,7 +501,7 @@
                                         </div>
                                     </div>
                                     <div class="performance-status">
-                                        <div class="status-indicator">
+                                        <div class="pdfb-status-indicator">
                                             <span class="status-dot"></span>
                                             <span class="status-text">Lazy Loading</span>
                                         </div>
