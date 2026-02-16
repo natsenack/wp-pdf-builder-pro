@@ -359,7 +359,7 @@
                                     <label class="toggle-switch">
                                         <input type="hidden" name="pdf_builder_puppeteer_fallback" value="0">
                                         <input type="checkbox" id="pdf_builder_puppeteer_fallback" name="pdf_builder_puppeteer_fallback" 
-                                               value="1" <?php checked(get_option('pdf_builder_puppeteer_fallback', true), '1'); ?>>
+                                               value="1" <?php checked(get_option('pdf_builder_puppeteer_fallback', 1), 1); ?>>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <p class="description">

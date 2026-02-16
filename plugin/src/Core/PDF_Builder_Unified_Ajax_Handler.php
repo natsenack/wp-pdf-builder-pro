@@ -63,6 +63,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Actions de sauvegarde
         add_action('wp_ajax_pdf_builder_create_backup', [$this, 'handle_create_backup']);
         // add_action('wp_ajax_pdf_builder_list_backups', [$this, 'handle_list_backups']); // Commented out - using main implementation
+        add_action('wp_ajax_pdf_builder_list_backups', [$this, 'handle_list_backups']);
         add_action('wp_ajax_pdf_builder_restore_backup', [$this, 'handle_restore_backup']);
         add_action('wp_ajax_pdf_builder_delete_backup', [$this, 'handle_delete_backup']);
         add_action('wp_ajax_pdf_builder_download_backup', [$this, 'handle_download_backup']);
@@ -1036,11 +1037,18 @@ class PDF_Builder_Unified_Ajax_Handler {
         foreach ($pdf_engine_keys as $engine_key) {
             if (isset($settings[$engine_key])) {
                 // Sauvegarder dans une ligne séparée avec update_option
-                update_option($engine_key, $settings[$engine_key]);
-                error_log("[PDF Builder AJAX] Saved PDF engine setting to separate row: {$engine_key} = " . $settings[$engine_key]);
+                $saved_value = $settings[$engine_key];
+                $result = update_option($engine_key, $saved_value);
+                error_log("[PDF Builder AJAX] Saved PDF engine setting: {$engine_key} = {$saved_value} (Result: " . ($result ? 'SUCCESS' : 'FAILED') . ")");
+                
+                // Vérifier que la valeur a bien été sauvegardée
+                $retrieved_value = get_option($engine_key);
+                error_log("[PDF Builder AJAX] Verification for {$engine_key}: Saved='{$saved_value}', Retrieved='{$retrieved_value}'");
                 
                 // Supprimer du tableau unifié pour éviter la duplication
                 unset($settings[$engine_key]);
+            } else {
+                error_log("[PDF Builder AJAX] PDF engine key not found in settings: {$engine_key}");
             }
         }
 
