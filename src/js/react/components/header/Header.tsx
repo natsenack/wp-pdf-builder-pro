@@ -159,7 +159,7 @@ export const Header = memo(function Header({
   // Ouvrir le HTML avec boutons Télécharger et Imprimer
   const openDebugHTML = async () => {
     if (!previewOrderId || previewOrderId.trim() === "") {
-      alert("Veuillez entrer un numéro de commande");
+      alert("Veuillez sélectionner une commande");
       return;
     }
 
@@ -375,7 +375,7 @@ export const Header = memo(function Header({
   // Générer un PDF via AJAX
   const generatePDF = async () => {
     if (!previewOrderId || previewOrderId.trim() === "") {
-      alert("Veuillez entrer un numéro de commande");
+      alert("Veuillez sélectionner une commande");
       return;
     }
 
@@ -433,7 +433,7 @@ export const Header = memo(function Header({
     }
 
     if (!previewOrderId || previewOrderId.trim() === "") {
-      alert("Veuillez entrer un numéro de commande");
+      alert("Veuillez sélectionner une commande");
       return;
     }
 
@@ -3635,7 +3635,7 @@ export const Header = memo(function Header({
                       !isPremium
                         ? "Fonctionnalité premium - Activez votre licence"
                         : !previewOrderId.trim()
-                          ? "Veuillez entrer un numéro de commande"
+                          ? "Veuillez sélectionner une commande"
                           : "Générer en PNG avec les données de la commande"
                     }
                     style={{
@@ -3687,7 +3687,7 @@ export const Header = memo(function Header({
                       !isPremium
                         ? "Fonctionnalité premium - Activez votre licence"
                         : !previewOrderId.trim()
-                          ? "Veuillez entrer un numéro de commande"
+                          ? "Veuillez sélectionner une commande"
                           : "Générer en JPG avec les données de la commande"
                     }
                     style={{
