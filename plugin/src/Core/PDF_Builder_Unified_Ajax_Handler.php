@@ -3262,6 +3262,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             case 'line':
                 $rendered = $this->render_line($element, $styles);
                 break;
+            case 'rectangle':
+                $rendered = $this->render_rectangle($element, $styles);
+                break;
+            case 'circle':
+                $rendered = $this->render_circle($element, $styles);
+                break;
             case 'document_type':
                 $rendered = $this->render_document_type($element, $styles);
                 break;
@@ -4218,6 +4224,58 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         return '<div class="element" style="' . $line_styles . '"><div style="' . $inner_style . '"></div></div>';
+    }
+    
+    /**
+     * Rendu d'un rectangle
+     */
+    private function render_rectangle($element, $base_styles) {
+        // Couleur de fond (fillColor ou backgroundColor)
+        $backgroundColor = $element['fillColor'] ?? $element['backgroundColor'] ?? 'transparent';
+        
+        // Bordure (strokeColor/strokeWidth ou borderColor/borderWidth)
+        $borderColor = $element['strokeColor'] ?? $element['borderColor'] ?? '#000000';
+        $borderWidth = $element['strokeWidth'] ?? $element['borderWidth'] ?? 0;
+        
+        // Border radius
+        $borderRadius = $element['borderRadius'] ?? 0;
+        
+        $rect_styles = $base_styles . ' background-color: ' . $backgroundColor . ';';
+        
+        if ($borderWidth > 0) {
+            $rect_styles .= ' border: ' . $borderWidth . 'px solid ' . $borderColor . ';';
+        }
+        
+        if ($borderRadius > 0) {
+            $rect_styles .= ' border-radius: ' . $borderRadius . 'px;';
+        }
+        
+        $rect_styles .= ' box-sizing: border-box;';
+        
+        return '<div class="element pdf-rectangle" style="' . $rect_styles . '"></div>';
+    }
+    
+    /**
+     * Rendu d'un cercle
+     */
+    private function render_circle($element, $base_styles) {
+        // Couleur de fond (fillColor ou backgroundColor)
+        $backgroundColor = $element['fillColor'] ?? $element['backgroundColor'] ?? 'transparent';
+        
+        // Bordure (strokeColor/strokeWidth ou borderColor/borderWidth)
+        $borderColor = $element['strokeColor'] ?? $element['borderColor'] ?? '#000000';
+        $borderWidth = $element['strokeWidth'] ?? $element['borderWidth'] ?? 0;
+        
+        $circle_styles = $base_styles . ' background-color: ' . $backgroundColor . ';';
+        $circle_styles .= ' border-radius: 50%;'; // Clé pour faire un cercle
+        
+        if ($borderWidth > 0) {
+            $circle_styles .= ' border: ' . $borderWidth . 'px solid ' . $borderColor . ';';
+        }
+        
+        $circle_styles .= ' box-sizing: border-box;';
+        
+        return '<div class="element pdf-circle" style="' . $circle_styles . '"></div>';
     }
     
     /**

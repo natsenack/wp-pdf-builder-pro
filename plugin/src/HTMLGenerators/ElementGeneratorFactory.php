@@ -58,14 +58,9 @@ class ElementGeneratorFactory
         }
 
         foreach ($elements as $element) {
-            $type = $element['type'] ?? 'unknown';
-            error_log('ElementGeneratorFactory: Processing element type: ' . $type);
-            
             try {
                 $generator = self::createGenerator($element, $orderData, $companyData);
-                $generatedHtml = $generator->generateHTML();
-                $html .= $generatedHtml;
-                error_log('ElementGeneratorFactory: Generated HTML length: ' . strlen($generatedHtml));
+                $html .= $generator->generateHTML();
             } catch (\Exception $e) {
                 error_log('ElementGeneratorFactory error: ' . $e->getMessage());
                 continue;
