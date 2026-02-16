@@ -702,11 +702,11 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
 }
 
 /* Styles spécifiques pour la modale des paramètres de template */
-#template-settings-modal .canvas-modal-container {
+#template-settings-modal .pdfb-canvas-modal-container {
     min-height: 500px; /* S'assurer qu'il y a assez d'espace pour le contenu et le footer */
 }
 
-#template-settings-modal .canvas-modal-footer {
+#template-settings-modal .pdfb-canvas-modal-footer {
     visibility: visible !important;
     opacity: 1 !important;
     display: flex !important;
@@ -1344,8 +1344,8 @@ function displayTemplateSettings(template) {
                 </div>
             </div>
             <div class="pdfb-template-settings-footer-actions" style="display: flex; gap: 12px; flex-shrink: 0;">
-                <button onclick="closeTemplateSettingsModal()" class="canvas-modal-btn canvas-modal-btn-secondary" style="padding: 12px 24px; border-radius: 8px; font-weight: 500; font-size: 14px; border: none; cursor: pointer; min-width: 100px; background: #6c757d; color: #ffffff;">Annuler</button>
-                <button onclick="saveTemplateSettings()" class="canvas-modal-btn canvas-modal-btn-primary" style="padding: 12px 24px; border-radius: 8px; font-weight: 500; font-size: 14px; border: none; cursor: pointer; min-width: 100px; background: #007cba; color: #ffffff;">💾 Enregistrer</button>
+                <button onclick="closeTemplateSettingsModal()" class="pdfb-canvas-modal-btn canvas-modal-btn-secondary" style="padding: 12px 24px; border-radius: 8px; font-weight: 500; font-size: 14px; border: none; cursor: pointer; min-width: 100px; background: #6c757d; color: #ffffff;">Annuler</button>
+                <button onclick="saveTemplateSettings()" class="pdfb-canvas-modal-btn canvas-modal-btn-primary" style="padding: 12px 24px; border-radius: 8px; font-weight: 500; font-size: 14px; border: none; cursor: pointer; min-width: 100px; background: #007cba; color: #ffffff;">💾 Enregistrer</button>
             </div>
         </div>
     `;
@@ -1675,7 +1675,7 @@ function saveTemplateSettings() {
     formData.append('canvas_dpi', document.getElementById('template-dpi').value);
     
     // Désactiver le bouton de sauvegarde
-    var saveButton = document.querySelector('#template-settings-modal .canvas-modal-btn-primary');
+    var saveButton = document.querySelector('#template-settings-modal .pdfb-canvas-modal-btn-primary');
     if (!saveButton) {
         // Fallback pour les autres types de boutons
         saveButton = document.querySelector('#template-settings-modal .button-primary');

@@ -85,9 +85,9 @@ function get_canvas_modal_value($key, $default = '') {
 ?>
 
 <!-- MODAL AFFICHAGE -->
-<div id="canvas-affichage-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-    <div class="canvas-modal-container">
-        <div class="canvas-modal-header">
+<div id="canvas-affichage-modal-overlay" class="pdfb-canvas-modal-overlay" style="display: none;">
+    <div class="pdfb-canvas-modal-container">
+        <div class="pdfb-canvas-modal-header">
             <div style="flex: 1; display: flex; align-items: center; gap: 15px;">
                 <h3 style="margin: 0;"><span style="font-size: 24px;">📐</span> Paramètres d'Affichage</h3>
                 <?php if (!\PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium()): ?>
@@ -97,9 +97,9 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
                 <?php endif; ?>
             </div>
-            <button type="button" class="canvas-modal-close">&times;</button>
+            <button type="button" class="pdfb-canvas-modal-close">&times;</button>
         </div>
-        <div class="canvas-modal-body">
+        <div class="pdfb-canvas-modal-body">
             <div class="modal-settings-grid">
                 <div class="setting-group" style="grid-column: span 2;">
                     <label><span style="font-size: 16px;">📏</span> Dimensions du Canvas <span class="info-tooltip" title="Définit la taille par défaut du canvas en pixels">ℹ️</span></label>
@@ -330,7 +330,7 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
             </div>
         </div>
-        <div class="canvas-modal-footer">
+        <div class="pdfb-canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
             <button type="button" class="button button-primary canvas-modal-apply" data-category="affichage">✅ Appliquer</button>
         </div>
@@ -338,13 +338,13 @@ function get_canvas_modal_value($key, $default = '') {
 </div>
 
 <!-- MODAL NAVIGATION -->
-<div id="canvas-navigation-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-    <div class="canvas-modal-container">
-        <div class="canvas-modal-header">
+<div id="canvas-navigation-modal-overlay" class="pdfb-canvas-modal-overlay" style="display: none;">
+    <div class="pdfb-canvas-modal-container">
+        <div class="pdfb-canvas-modal-header">
             <h3><span style="font-size: 24px;">🧭</span> Paramètres de Navigation</h3>
-            <button type="button" class="canvas-modal-close">&times;</button>
+            <button type="button" class="pdfb-canvas-modal-close">&times;</button>
         </div>
-        <div class="canvas-modal-body">
+        <div class="pdfb-canvas-modal-body">
             <div class="modal-settings-grid">
                 <?php $can_use_grid_navigation = \PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('grid_navigation'); ?>
                 <div class="setting-group">
@@ -404,7 +404,7 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
             </div>
         </div>
-        <div class="canvas-modal-footer">
+        <div class="pdfb-canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
             <button type="button" class="button button-primary canvas-modal-apply" data-category="navigation">✅ Appliquer</button>
         </div>
@@ -412,13 +412,13 @@ function get_canvas_modal_value($key, $default = '') {
 </div>
 
 <!-- MODAL COMPORTEMENT -->
-<div id="canvas-comportement-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-    <div class="canvas-modal-container">
-        <div class="canvas-modal-header">
+<div id="canvas-comportement-modal-overlay" class="pdfb-canvas-modal-overlay" style="display: none;">
+    <div class="pdfb-canvas-modal-container">
+        <div class="pdfb-canvas-modal-header">
             <h3><span style="font-size: 24px;">🎯</span> Paramètres de Comportement</h3>
-            <button type="button" class="canvas-modal-close">&times;</button>
+            <button type="button" class="pdfb-canvas-modal-close">&times;</button>
         </div>
-        <div class="canvas-modal-body">
+        <div class="pdfb-canvas-modal-body">
             <div class="modal-settings-grid">
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">✋</span> Glisser activé <span class="info-tooltip" title="Permet de déplacer les éléments sur le canvas">ℹ️</span></label>
@@ -486,7 +486,7 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
             </div>
         </div>
-        <div class="canvas-modal-footer">
+        <div class="pdfb-canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
             <button type="button" class="button button-primary canvas-modal-apply" data-category="comportement">✅ Appliquer</button>
         </div>
@@ -494,13 +494,13 @@ function get_canvas_modal_value($key, $default = '') {
 </div>
 
 <!-- MODAL SYSTEME -->
-<div id="canvas-systeme-modal-overlay" class="canvas-modal-overlay" style="display: none;">
-    <div class="canvas-modal-container">
-        <div class="canvas-modal-header">
+<div id="canvas-systeme-modal-overlay" class="pdfb-canvas-modal-overlay" style="display: none;">
+    <div class="pdfb-canvas-modal-container">
+        <div class="pdfb-canvas-modal-header">
             <h3><span style="font-size: 24px;">⚙️</span> Paramètres Système</h3>
-            <button type="button" class="canvas-modal-close">&times;</button>
+            <button type="button" class="pdfb-canvas-modal-close">&times;</button>
         </div>
-        <div class="canvas-modal-body">
+        <div class="pdfb-canvas-modal-body">
             <div class="modal-settings-grid">
                 <div class="setting-group">
                     <label><span style="font-size: 16px;">🎮</span> FPS cible <span class="info-tooltip" title="Images par seconde visées pour les animations">ℹ️</span></label>
@@ -543,7 +543,7 @@ function get_canvas_modal_value($key, $default = '') {
                 </div>
             </div>
         </div>
-        <div class="canvas-modal-footer">
+        <div class="pdfb-canvas-modal-footer">
             <button type="button" class="button canvas-modal-cancel">❌ Annuler</button>
             <button type="button" class="button button-primary canvas-modal-apply" data-category="systeme">✅ Appliquer</button>
         </div>
@@ -554,7 +554,7 @@ function get_canvas_modal_value($key, $default = '') {
 /* ===== STYLES SOBRES ET PROFESSIONNELS ===== */
 
 /* Styles de base des modals */
-.canvas-modal-overlay {
+.pdfb-canvas-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -569,7 +569,7 @@ function get_canvas_modal_value($key, $default = '') {
     animation: modalFadeIn 0.2s ease-out;
 }
 
-.canvas-modal-container {
+.pdfb-canvas-modal-container {
     background: #ffffff;
     border-radius: 16px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
@@ -602,7 +602,7 @@ function get_canvas_modal_value($key, $default = '') {
 }
 
 /* Header du modal */
-.canvas-modal-header {
+.pdfb-canvas-modal-header {
     background: #f8f9fa;
     color: #2c3e50;
     padding: 24px 32px;
@@ -613,7 +613,7 @@ function get_canvas_modal_value($key, $default = '') {
     margin-bottom: 0px;
 }
 
-.canvas-modal-header h3 {
+.pdfb-canvas-modal-header h3 {
     margin: 0;
     font-size: 20px;
     font-weight: 600;
@@ -622,7 +622,7 @@ function get_canvas_modal_value($key, $default = '') {
     gap: 12px;
 }
 
-.canvas-modal-close {
+.pdfb-canvas-modal-close {
     background: #e9ecef;
     border: none;
     color: #6c757d;
@@ -637,13 +637,13 @@ function get_canvas_modal_value($key, $default = '') {
     transition: all 0.2s ease;
 }
 
-.canvas-modal-close:hover {
+.pdfb-canvas-modal-close:hover {
     background: #dee2e6;
     color: #495057;
 }
 
 /* Corps du modal */
-.canvas-modal-body {
+.pdfb-canvas-modal-body {
     padding: 15px;
     flex: 1;
     overflow-y: auto;
@@ -771,7 +771,7 @@ function get_canvas_modal_value($key, $default = '') {
 }
 
 /* Footer du modal */
-.canvas-modal-footer {
+.pdfb-canvas-modal-footer {
     background: #f8f9fa;
     padding: 24px 32px;
     border-top: 1px solid #e1e5e9;
@@ -782,7 +782,7 @@ function get_canvas_modal_value($key, $default = '') {
     min-height: 80px;
 }
 
-.canvas-modal-footer .button {
+.pdfb-canvas-modal-footer .button {
     padding: 12px 24px;
     border-radius: 8px;
     font-weight: 500;
@@ -793,7 +793,7 @@ function get_canvas_modal_value($key, $default = '') {
     min-width: 100px;
 }
 
-.canvas-modal-btn {
+.pdfb-canvas-modal-btn {
     padding: 12px 24px;
     border-radius: 8px;
     font-weight: 500;
@@ -804,41 +804,41 @@ function get_canvas_modal_value($key, $default = '') {
     min-width: 100px;
 }
 
-.canvas-modal-btn-secondary {
+.pdfb-canvas-modal-btn-secondary {
     background: #6c757d;
     color: #ffffff;
 }
 
-.canvas-modal-btn-secondary:hover {
+.pdfb-canvas-modal-btn-secondary:hover {
     background: #5a6268;
     color: #ffffff;
 }
 
-.canvas-modal-btn-primary {
+.pdfb-canvas-modal-btn-primary {
     background: #007cba;
     color: #ffffff;
 }
 
-.canvas-modal-btn-primary:hover {
+.pdfb-canvas-modal-btn-primary:hover {
     background: #005a87;
     color: #ffffff;
 }
 
-.canvas-modal-cancel {
+.pdfb-canvas-modal-cancel {
     background: #6c757d;
     color: white;
 }
 
-.canvas-modal-cancel:hover {
+.pdfb-canvas-modal-cancel:hover {
     background: #5a6268;
 }
 
-.canvas-modal-apply {
+.pdfb-canvas-modal-apply {
     background: #6c757d;
     color: white;
 }
 
-.canvas-modal-apply:hover {
+.pdfb-canvas-modal-apply:hover {
     background: #5a6268;
 }
 
@@ -894,14 +894,14 @@ function get_canvas_modal_value($key, $default = '') {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .canvas-modal-container {
+    .pdfb-canvas-modal-container {
         width: 95vw;
         margin: 20px;
     }
 
-    .canvas-modal-header,
-    .canvas-modal-body,
-    .canvas-modal-footer {
+    .pdfb-canvas-modal-header,
+    .pdfb-canvas-modal-body,
+    .pdfb-canvas-modal-footer {
         padding: 20px;
     }
 
@@ -994,13 +994,13 @@ function showUpgradeModal(feature) {
     // Créer le modal de mise à niveau s'il n'existe pas
     if (!document.getElementById('upgrade-modal-overlay')) {
         var modalHTML = `
-            <div id="upgrade-modal-overlay" class="canvas-modal-overlay" style="display: flex; z-index: 10002;">
-                <div class="canvas-modal-container" style="max-width: 500px;">
-                    <div class="canvas-modal-header">
+            <div id="upgrade-modal-overlay" class="pdfb-canvas-modal-overlay" style="display: flex; z-index: 10002;">
+                <div class="pdfb-canvas-modal-container" style="max-width: 500px;">
+                    <div class="pdfb-canvas-modal-header">
                         <h3>🔒 Fonctionnalité Premium</h3>
-                        <button type="button" class="canvas-modal-close" onclick="closeUpgradeModal()">&times;</button>
+                        <button type="button" class="pdfb-canvas-modal-close" onclick="closeUpgradeModal()">&times;</button>
                     </div>
-                    <div class="canvas-modal-body" style="text-align: center; padding: 30px;">
+                    <div class="pdfb-canvas-modal-body" style="text-align: center; padding: 30px;">
                         <div style="font-size: 48px; margin-bottom: 20px;">⭐</div>
                         <h4 style="margin-bottom: 15px; color: #23282d;">Débloquez cette fonctionnalité Premium</h4>
                         <p style="margin-bottom: 20px; color: #666; line-height: 1.5;">

@@ -95,7 +95,7 @@
    ============================================================================ */
 
 /* Styles de base des modals */
-.canvas-modal-overlay {
+.pdfb-canvas-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -112,7 +112,7 @@
 
 /* Retirer le sélecteur conditionnel qui ne sert plus */
 
-.canvas-modal-container {
+.pdfb-canvas-modal-container {
   background: #ffffff;
   border-radius: 20px;
   box-shadow:
@@ -150,7 +150,7 @@
 }
 
 /* Header du modal - Style premium */
-.canvas-modal-header {
+.pdfb-canvas-modal-header {
   background: #1e293b;
   color: #ffffff;
   padding: 28px 32px;
@@ -163,7 +163,7 @@
   overflow: hidden;
 }
 
-.canvas-modal-header h3 {
+.pdfb-canvas-modal-header h3 {
   margin: 0;
   font-size: 20px;
   font-weight: 700;
@@ -176,7 +176,7 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.canvas-modal-header h3 span {
+.pdfb-canvas-modal-header h3 span {
   font-size: 28px;
   animation: iconBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 1;
 }
@@ -191,7 +191,7 @@
   }
 }
 
-.canvas-modal-close {
+.pdfb-canvas-modal-close {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -209,19 +209,19 @@
   z-index: 2;
 }
 
-.canvas-modal-close:hover {
+.pdfb-canvas-modal-close:hover {
   background: rgba(255, 255, 255, 0.25);
   border-color: rgba(255, 255, 255, 0.4);
   color: #ffffff;
   transform: rotate(90deg) scale(1.1);
 }
 
-.canvas-modal-close:active {
+.pdfb-canvas-modal-close:active {
   transform: rotate(90deg) scale(0.95);
 }
 
 /* Corps du modal */
-.canvas-modal-body {
+.pdfb-canvas-modal-body {
   padding: 28px 32px;
   max-height: 60vh;
   overflow-y: auto;
@@ -230,21 +230,21 @@
 }
 
 /* Scrollbar personnalisée */
-.canvas-modal-body::-webkit-scrollbar {
+.pdfb-canvas-modal-body::-webkit-scrollbar {
   width: 8px;
 }
 
-.canvas-modal-body::-webkit-scrollbar-track {
+.pdfb-canvas-modal-body::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.canvas-modal-body::-webkit-scrollbar-thumb {
+.pdfb-canvas-modal-body::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.15);
   border-radius: 4px;
   transition: background 0.2s ease;
 }
 
-.canvas-modal-body::-webkit-scrollbar-thumb:hover {
+.pdfb-canvas-modal-body::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.25);
 }
 
@@ -481,7 +481,7 @@
 }
 
 /* Footer du modal */
-.canvas-modal-footer {
+.pdfb-canvas-modal-footer {
   background: #f8fafc;
   padding: 20px 32px;
   border-top: 1px solid #e2e8f0;
@@ -491,7 +491,7 @@
   align-items: center;
 }
 
-.canvas-modal-btn {
+.pdfb-canvas-modal-btn {
   padding: 11px 24px;
   border-radius: 8px;
   font-weight: 600;
@@ -505,7 +505,7 @@
   overflow: hidden;
 }
 
-.canvas-modal-btn::before {
+.pdfb-canvas-modal-btn::before {
   content: "";
   position: absolute;
   top: 50%;
@@ -521,42 +521,42 @@
   z-index: -1;
 }
 
-.canvas-modal-btn:hover::before {
+.pdfb-canvas-modal-btn:hover::before {
   width: 300px;
   height: 300px;
 }
 
-.canvas-modal-btn-secondary {
+.pdfb-canvas-modal-btn-secondary {
   background: #e2e8f0;
   color: #0f172a;
   border: 1px solid #cbd5e1;
 }
 
-.canvas-modal-btn-secondary:hover {
+.pdfb-canvas-modal-btn-secondary:hover {
   background: #cbd5e1;
   color: #0f172a;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
 
-.canvas-modal-btn-secondary:active {
+.pdfb-canvas-modal-btn-secondary:active {
   transform: translateY(0);
 }
 
-.canvas-modal-btn-primary {
+.pdfb-canvas-modal-btn-primary {
   background: #3b82f6;
   color: white;
   border: none;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-.canvas-modal-btn-primary:hover {
+.pdfb-canvas-modal-btn-primary:hover {
   background: #2563eb;
   box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
   transform: translateY(-2px);
 }
 
-.canvas-modal-btn-primary:active {
+.pdfb-canvas-modal-btn-primary:active {
   transform: translateY(0);
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
@@ -565,14 +565,14 @@
    CANVAS SETTINGS CARDS - For Settings Page Canvas Tab
    ============================================================================ */
 
-.canvas-settings-grid {
+.pdfb-canvas-settings-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: 24px;
   margin: 30px 0;
 }
 
-.canvas-card {
+.pdfb-canvas-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
@@ -583,13 +583,13 @@
   flex-direction: column;
 }
 
-.canvas-card:hover {
+.pdfb-canvas-card:hover {
   border-color: #cbd5e1;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   transform: translateY(-4px);
 }
 
-.canvas-card-header {
+.pdfb-canvas-card-header {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   padding: 20px 24px;
   border-bottom: 1px solid #e2e8f0;
@@ -598,17 +598,17 @@
   gap: 12px;
 }
 
-.canvas-card-header-left {
+.pdfb-canvas-card-header-left {
   display: flex;
   align-items: center;
 }
 
-.canvas-card-icon {
+.pdfb-canvas-card-icon {
   font-size: 28px;
   line-height: 1;
 }
 
-.canvas-card-header h4 {
+.pdfb-canvas-card-header h4 {
   margin: 0;
   font-size: 16px;
   font-weight: 700;
@@ -616,18 +616,18 @@
   letter-spacing: -0.2px;
 }
 
-.canvas-card-content {
+.pdfb-canvas-card-content {
   padding: 20px 24px;
 }
 
-.canvas-card-content p {
+.pdfb-canvas-card-content p {
   margin: 0;
   font-size: 14px;
   color: #64748b;
   line-height: 1.6;
 }
 
-.canvas-card-preview {
+.pdfb-canvas-card-preview {
   padding: 16px 24px;
   background: #f8fafc;
   border-top: 1px solid #e2e8f0;
@@ -640,7 +640,7 @@
   gap: 14px;
 }
 
-.canvas-preview-wrapper {
+.pdfb-canvas-preview-wrapper {
   position: relative;
   display: flex;
   align-items: center;
@@ -959,14 +959,14 @@
   color: #64748b;
 }
 
-.canvas-card-actions {
+.pdfb-canvas-card-actions {
   padding: 16px 24px;
   border-top: 1px solid #e2e8f0;
   background: #ffffff;
   margin-top: auto;
 }
 
-.canvas-configure-btn {
+.pdfb-canvas-configure-btn {
   width: 100%;
   padding: 12px 20px;
   background: #3b82f6;
@@ -983,17 +983,17 @@
   gap: 8px;
 }
 
-.canvas-configure-btn:hover {
+.pdfb-canvas-configure-btn:hover {
   background: #2563eb;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
   transform: translateY(-2px);
 }
 
-.canvas-configure-btn:active {
+.pdfb-canvas-configure-btn:active {
   transform: translateY(0);
 }
 
-.canvas-configure-btn span {
+.pdfb-canvas-configure-btn span {
   font-size: 16px;
 }
 
@@ -1595,11 +1595,11 @@
 }
 
 /* Enhanced Cards with Badges */
-.canvas-card-header {
+.pdfb-canvas-card-header {
   position: relative;
 }
 
-.canvas-card-badge {
+.pdfb-canvas-card-badge {
   position: absolute;
   top: 12px;
   right: 16px;
@@ -1614,19 +1614,19 @@
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
-.canvas-card-badge.new {
+.pdfb-canvas-card-badge.new {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
 
-.canvas-card-badge.pro {
+.pdfb-canvas-card-badge.pro {
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
 
-.canvas-card-content {
+.pdfb-canvas-card-content {
   position: relative;
 }
 
-.canvas-card-features {
+.pdfb-canvas-card-features {
   margin-top: 12px;
   display: flex;
   flex-wrap: wrap;

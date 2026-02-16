@@ -8,12 +8,12 @@
     $(document).ready(function() {
 
         // Handle modal apply buttons
-        $('.canvas-modal-apply').on('click', function(e) {
+        $('.pdfb-canvas-modal-apply').on('click', function(e) {
             e.preventDefault();
 
             var $button = $(this);
             var category = $button.data('category');
-            var $modal = $button.closest('.canvas-modal-overlay');
+            var $modal = $button.closest('.pdfb-canvas-modal-overlay');
             var $form = $modal.find('form');
 
             // If no form, create one from modal inputs
@@ -90,21 +90,21 @@
         });
 
         // Handle modal cancel buttons
-        $('.canvas-modal-cancel').on('click', function(e) {
+        $('.pdfb-canvas-modal-cancel').on('click', function(e) {
             e.preventDefault();
-            var $modal = $(this).closest('.canvas-modal-overlay');
+            var $modal = $(this).closest('.pdfb-canvas-modal-overlay');
             $modal.hide();
         });
 
         // Handle modal close buttons
-        $('.canvas-modal-close').on('click', function(e) {
+        $('.pdfb-canvas-modal-close').on('click', function(e) {
             e.preventDefault();
-            var $modal = $(this).closest('.canvas-modal-overlay');
+            var $modal = $(this).closest('.pdfb-canvas-modal-overlay');
             $modal.hide();
         });
 
         // Close modal when clicking outside
-        $('.canvas-modal-overlay').on('click', function(e) {
+        $('.pdfb-canvas-modal-overlay').on('click', function(e) {
             if (e.target === this) {
                 $(this).hide();
             }

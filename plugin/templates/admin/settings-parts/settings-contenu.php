@@ -181,26 +181,26 @@
                     <?php error_log("[PDF Builder] HIDDEN_FIELDS - Hidden fields rendered successfully"); ?>
 
                     <!-- Grille de cartes Canvas -->
-                    <div class="canvas-settings-grid">
+                    <div class="pdfb-canvas-settings-grid">
                         <!-- Carte Affichage (fusion Dimensions + Apparence) -->
-                        <article class="canvas-card" data-category="affichage">
-                            <header class="canvas-card-header">
-                                <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">🎨</span>
+                        <article class="pdfb-canvas-card" data-category="affichage">
+                            <header class="pdfb-canvas-card-header">
+                                <div class="pdfb-canvas-card-header-left">
+                                    <span class="pdfb-canvas-card-icon">🎨</span>
                                 </div>
                                 <h4>Affichage & Dimensions</h4>
-                                <span class="canvas-card-badge">Essentiel</span>
+                                <span class="pdfb-canvas-card-badge">Essentiel</span>
                             </header>
-                            <main class="canvas-card-content">
+                            <main class="pdfb-canvas-card-content">
                                 <p>Configurez les dimensions, le format, les couleurs et l'apparence générale du canvas.</p>
-                                <div class="canvas-card-features">
+                                <div class="pdfb-canvas-card-features">
                                     <span class="feature-tag active">📐 Dimensions</span>
                                     <span class="feature-tag active">🎨 Couleurs</span>
                                     <span class="feature-tag active">📄 Format</span>
                                     <span class="feature-tag">🖼️ Bordures</span>
                                 </div>
                             </main>
-                            <aside class="canvas-card-preview">
+                            <aside class="pdfb-canvas-card-preview">
                                 <div class="dimensions-preview-container">
                                     <?php
                                     $width = intval(get_canvas_option_contenu('canvas_width', '794'));
@@ -222,7 +222,7 @@
                                     ?>
                                     
                                     <!-- Canvas miniature -->
-                                    <div class="canvas-preview-wrapper">
+                                    <div class="pdfb-canvas-preview-wrapper">
                                         <!-- Règles de mesure -->
                                         <div class="ruler ruler-horizontal">
                                             <div class="ruler-tick"></div>
@@ -296,32 +296,32 @@
                                     </div>
                                 </div>
                             </aside>
-                            <footer class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
+                            <footer class="pdfb-canvas-card-actions">
+                                <button type="button" class="pdfb-canvas-configure-btn">
                                     <span>⚙️</span> Configurer
                                 </button>
                             </footer>
                         </article>
 
                         <!-- Carte Navigation (fusion Grille + Zoom) -->
-                        <article class="canvas-card" data-category="navigation">
-                            <header class="canvas-card-header">
-                                <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">🧭</span>
+                        <article class="pdfb-canvas-card" data-category="navigation">
+                            <header class="pdfb-canvas-card-header">
+                                <div class="pdfb-canvas-card-header-left">
+                                    <span class="pdfb-canvas-card-icon">🧭</span>
                                 </div>
                                 <h4>Navigation & Zoom</h4>
-                                <span class="canvas-card-badge new">Amélioré</span>
+                                <span class="pdfb-canvas-card-badge new">Amélioré</span>
                             </header>
-                            <main class="canvas-card-content">
+                            <main class="pdfb-canvas-card-content">
                                 <p>Configurez la grille, les guides, le zoom et les options de navigation du canvas.</p>
-                                <div class="canvas-card-features">
+                                <div class="pdfb-canvas-card-features">
                                     <span class="feature-tag active">📐 Grille</span>
                                     <span class="feature-tag active">📏 Guides</span>
                                     <span class="feature-tag active">🔍 Zoom</span>
                                     <span class="feature-tag active">🔗 Snap</span>
                                 </div>
                             </main>
-                            <aside class="canvas-card-preview">
+                            <aside class="pdfb-canvas-card-preview">
                                 <div id="card-grid-preview" class="grid-preview-container">
                                     <div class="grid-canvas">
                                         <!-- Quadrillage principal -->
@@ -363,32 +363,32 @@
                                     </div>
                                 </div>
                             </aside>
-                            <footer class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
+                            <footer class="pdfb-canvas-card-actions">
+                                <button type="button" class="pdfb-canvas-configure-btn">
                                     <span>📏</span> Configurer
                                 </button>
                             </footer>
                         </article>
 
                         <!-- Carte Comportement (fusion Interactions + Export) -->
-                        <article class="canvas-card" data-category="comportement">
-                            <header class="canvas-card-header">
-                                <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">🎯</span>
+                        <article class="pdfb-canvas-card" data-category="comportement">
+                            <header class="pdfb-canvas-card-header">
+                                <div class="pdfb-canvas-card-header-left">
+                                    <span class="pdfb-canvas-card-icon">🎯</span>
                                 </div>
                                 <h4>Comportement & Export</h4>
-                                <span class="canvas-card-badge pro">Avancé</span>
+                                <span class="pdfb-canvas-card-badge pro">Avancé</span>
                             </header>
-                            <main class="canvas-card-content">
+                            <main class="pdfb-canvas-card-content">
                                 <p>Configurez les interactions, la sélection, les raccourcis et les options d'export du canvas.</p>
-                                <div class="canvas-card-features">
+                                <div class="pdfb-canvas-card-features">
                                     <span class="feature-tag active">👆 Sélection</span>
                                     <span class="feature-tag active">⌨️ Raccourcis</span>
                                     <span class="feature-tag">🖱️ Glisser-déposer</span>
                                     <span class="feature-tag">📤 Export</span>
                                 </div>
                             </main>
-                            <aside class="canvas-card-preview">
+                            <aside class="pdfb-canvas-card-preview">
                                 <div class="interactions-preview-container">
                                     <!-- Canvas miniature avec éléments -->
                                     <div class="mini-canvas">
@@ -459,32 +459,32 @@
                                     </div>
                                 </div>
                             </aside>
-                            <footer class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
+                            <footer class="pdfb-canvas-card-actions">
+                                <button type="button" class="pdfb-canvas-configure-btn">
                                     <span>🎯</span> Configurer
                                 </button>
                             </footer>
                         </article>
 
                         <!-- Carte Système (fusion Performance + Debug) -->
-                        <article class="canvas-card" data-category="systeme">
-                            <header class="canvas-card-header">
-                                <div class="canvas-card-header-left">
-                                    <span class="canvas-card-icon">⚙️</span>
+                        <article class="pdfb-canvas-card" data-category="systeme">
+                            <header class="pdfb-canvas-card-header">
+                                <div class="pdfb-canvas-card-header-left">
+                                    <span class="pdfb-canvas-card-icon">⚙️</span>
                                 </div>
                                 <h4>Performance & Système</h4>
-                                <span class="canvas-card-badge new">Optimisé</span>
+                                <span class="pdfb-canvas-card-badge new">Optimisé</span>
                             </header>
-                            <main class="canvas-card-content">
+                            <main class="pdfb-canvas-card-content">
                                 <p>Optimisez les performances, la mémoire et configurez les options de debug et monitoring.</p>
-                                <div class="canvas-card-features">
+                                <div class="pdfb-canvas-card-features">
                                     <span class="feature-tag active">⚡ FPS</span>
                                     <span class="feature-tag active">💾 RAM</span>
                                     <span class="feature-tag active">🔄 Lazy Load</span>
                                     <span class="feature-tag">🐛 Debug</span>
                                 </div>
                             </main>
-                            <aside class="canvas-card-preview">
+                            <aside class="pdfb-canvas-card-preview">
                                 <div class="performance-preview-container">
                                     <div class="performance-metrics">
                                         <div class="metric-item">
@@ -508,8 +508,8 @@
                                     </div>
                                 </div>
                             </aside>
-                            <footer class="canvas-card-actions">
-                                <button type="button" class="canvas-configure-btn">
+                            <footer class="pdfb-canvas-card-actions">
+                                <button type="button" class="pdfb-canvas-configure-btn">
                                     <span>⚡</span> Configurer
                                 </button>
                             </footer>
@@ -989,7 +989,7 @@
                         // Touche Échap
                         document.addEventListener('keydown', function(e) {
                             if (e.key === 'Escape') {
-                                var openModals = document.querySelectorAll('.canvas-modal-overlay[style*="display: flex"]');
+                                var openModals = document.querySelectorAll('.pdfb-canvas-modal-overlay[style*="display: flex"]');
                                 openModals.forEach(function(modal) {
                                     closeModal(modal);
                                 });
@@ -1003,7 +1003,7 @@
                     if (document.readyState === 'loading') {
                         document.addEventListener('DOMContentLoaded', function() {
                             // S'assurer que tous les modals sont cachés au chargement
-                            var allModals = document.querySelectorAll('.canvas-modal-overlay');
+                            var allModals = document.querySelectorAll('.pdfb-canvas-modal-overlay');
                             allModals.forEach(function(modal) {
                                 modal.style.display = 'none';
                             });
@@ -1011,7 +1011,7 @@
                         });
                     } else {
                         // S'assurer que tous les modals sont cachés au chargement
-                        var allModals = document.querySelectorAll('.canvas-modal-overlay');
+                        var allModals = document.querySelectorAll('.pdfb-canvas-modal-overlay');
                         allModals.forEach(function(modal) {
                             modal.style.display = 'none';
                         });

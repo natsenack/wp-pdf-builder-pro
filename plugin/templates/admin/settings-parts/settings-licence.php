@@ -1067,13 +1067,13 @@
                         function showDeactivateModal() {
                             if (!document.getElementById('deactivate-modal-overlay')) {
                                 var modalHTML = `
-                                    <div id="deactivate-modal-overlay" class="canvas-modal-overlay" style="display: flex; z-index: 10002;">
-                                        <div class="canvas-modal-container" style="max-width: 450px;">
-                                            <div class="canvas-modal-header">
+                                    <div id="deactivate-modal-overlay" class="pdfb-canvas-modal-overlay" style="display: flex; z-index: 10002;">
+                                        <div class="pdfb-canvas-modal-container" style="max-width: 450px;">
+                                            <div class="pdfb-canvas-modal-header">
                                                 <h3>⚠️ Confirmer la désactivation</h3>
-                                                <button type="button" class="canvas-modal-close" onclick="closeDeactivateModal()">&times;</button>
+                                                <button type="button" class="pdfb-canvas-modal-close" onclick="closeDeactivateModal()">&times;</button>
                                             </div>
-                                            <div class="canvas-modal-body" style="text-align: center; padding: 30px;">
+                                            <div class="pdfb-canvas-modal-body" style="text-align: center; padding: 30px;">
                                                 <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
                                                 <h4 style="margin-bottom: 15px; color: #23282d;">Êtes-vous sûr de vouloir désactiver la licence ?</h4>
                                                 <p style="margin-bottom: 20px; color: #666; line-height: 1.5;">
