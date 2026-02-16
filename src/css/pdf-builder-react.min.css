@@ -634,7 +634,7 @@
 }
 
 /* Dimensions Preview - Visual Canvas Representation */
-.dimensions-preview-container {
+.pdfb-dimensions-preview-container {
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -651,14 +651,14 @@
   border: 1px solid #cbd5e1;
 }
 
-.ruler {
+.pdfb-ruler {
   position: absolute;
   background: #94a3b8;
   display: flex;
   z-index: 1;
 }
 
-.ruler-horizontal {
+.pdfb-ruler-horizontal {
   top: 8px;
   left: 30px;
   right: 30px;
@@ -668,7 +668,7 @@
   padding: 0 2px;
 }
 
-.ruler-vertical {
+.pdfb-ruler-vertical {
   left: 8px;
   top: 30px;
   bottom: 30px;
@@ -679,24 +679,24 @@
   padding: 2px 0;
 }
 
-.ruler-tick {
+.pdfb-ruler-tick {
   background: #ffffff;
   opacity: 0.7;
 }
 
-.ruler-horizontal .ruler-tick {
+.pdfb-ruler-horizontal .pdfb-ruler-tick {
   width: 1px;
   height: 6px;
   margin: auto 0;
 }
 
-.ruler-vertical .ruler-tick {
+.pdfb-ruler-vertical .pdfb-ruler-tick {
   height: 1px;
   width: 6px;
   margin: 0 auto;
 }
 
-.mini-canvas-preview {
+.pdfb-mini-canvas-preview {
   position: relative;
   background: #ffffff;
   border: 2px solid #cbd5e1;
@@ -723,7 +723,7 @@
   }
 }
 
-.format-badge {
+.pdfb-format-badge {
   position: absolute;
   top: 8px;
   right: 8px;
@@ -750,7 +750,7 @@
   }
 }
 
-.demo-elements {
+.pdfb-demo-elements {
   position: absolute;
   inset: 0;
   display: flex;
@@ -759,7 +759,7 @@
   align-items: flex-start;
 }
 
-.demo-element {
+.pdfb-demo-element {
   width: 14px;
   height: 14px;
   border-radius: 3px;
@@ -789,7 +789,7 @@
   }
 }
 
-.corner-indicator {
+.pdfb-corner-indicator {
   position: absolute;
   width: 8px;
   height: 8px;
@@ -829,7 +829,7 @@
   border-radius: 0 0 2px 0;
 }
 
-.dimension-indicator {
+.pdfb-dimension-indicator {
   position: absolute;
   display: flex;
   align-items: center;
@@ -845,19 +845,19 @@
   z-index: 10;
 }
 
-.width-indicator {
+.pdfb-width-indicator {
   bottom: -24px;
   left: 50%;
   transform: translateX(-50%);
 }
 
-.height-indicator {
+.pdfb-height-indicator {
   right: -38px;
   top: 50%;
   transform: translateY(-50%);
 }
 
-.preview-details {
+.pdfb-preview-details {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
@@ -867,7 +867,7 @@
   border-radius: 6px;
 }
 
-.detail-item {
+.pdfb-detail-item {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -878,12 +878,12 @@
   transition: all 0.2s ease;
 }
 
-.detail-item:hover {
+.pdfb-detail-item:hover {
   background: #eff6ff;
   transform: translateY(-2px);
 }
 
-.detail-label {
+.pdfb-detail-label {
   font-size: 10px;
   color: #64748b;
   font-weight: 600;
@@ -891,13 +891,13 @@
   letter-spacing: 0.3px;
 }
 
-.detail-value {
+.pdfb-detail-value {
   font-size: 13px;
   color: #1e293b;
   font-weight: 700;
 }
 
-.color-palette {
+.pdfb-color-palette {
   display: flex;
   gap: 12px;
   padding: 10px 12px;
@@ -906,7 +906,7 @@
   border-radius: 6px;
 }
 
-.color-swatch {
+.pdfb-color-swatch {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -915,11 +915,11 @@
   transition: all 0.2s ease;
 }
 
-.color-swatch:hover {
+.pdfb-color-swatch:hover {
   transform: scale(1.05);
 }
 
-.swatch {
+.pdfb-swatch {
   width: 32px;
   height: 32px;
   border-radius: 6px;
@@ -928,12 +928,12 @@
   transition: all 0.2s ease;
 }
 
-.color-swatch:hover .swatch {
+.pdfb-color-swatch:hover .pdfb-swatch {
   border-color: #3b82f6;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-.color-label {
+.pdfb-color-label {
   font-size: 11px;
   color: #64748b;
   font-weight: 600;
@@ -998,7 +998,7 @@
 }
 
 /* Canvas Card Preview - Grid & Navigation */
-.grid-preview-container {
+.pdfb-grid-preview-container {
   position: relative;
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -1007,7 +1007,7 @@
   min-height: 180px;
 }
 
-.grid-canvas {
+.pdfb-grid-canvas {
   position: relative;
   width: 100%;
   height: 160px;
@@ -1015,7 +1015,7 @@
   overflow: hidden;
 }
 
-.grid-lines {
+.pdfb-grid-lines {
   position: absolute;
   inset: 0;
   display: grid;
@@ -1023,7 +1023,7 @@
   grid-template-rows: repeat(4, 1fr);
 }
 
-.grid-line {
+.pdfb-grid-line {
   border: 0.5px dashed #cbd5e1;
   opacity: 0.6;
 }
@@ -1036,7 +1036,7 @@
   border-right: 1px dashed #cbd5e1;
 }
 
-.grid-dots {
+.pdfb-grid-dots {
   position: absolute;
   inset: 0;
   display: grid;
@@ -1044,7 +1044,7 @@
   grid-template-rows: repeat(3, 1fr);
 }
 
-.grid-dot {
+.pdfb-grid-dot {
   width: 4px;
   height: 4px;
   background: #3b82f6;
@@ -1066,13 +1066,13 @@
   }
 }
 
-.guide-lines {
+.pdfb-guide-lines {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
-.guide-line {
+.pdfb-guide-line {
   position: absolute;
   background: #ef4444;
   opacity: 0.7;
@@ -1107,14 +1107,14 @@
   }
 }
 
-.preview-element {
+.pdfb-preview-element {
   position: absolute;
   top: 25%;
   left: 35%;
   z-index: 5;
 }
 
-.element-box {
+.pdfb-element-box {
   width: 60px;
   height: 40px;
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
@@ -1134,7 +1134,7 @@
   }
 }
 
-.grid-legend {
+.pdfb-grid-legend {
   display: flex;
   gap: 12px;
   padding: 10px 12px;
@@ -1144,21 +1144,21 @@
   flex-wrap: wrap;
 }
 
-.legend-item {
+.pdfb-legend-item {
   color: #64748b;
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.snap-indicator {
+.pdfb-snap-indicator {
   color: #10b981;
   font-weight: 600;
   margin-left: auto;
 }
 
 /* Canvas Card Preview - Interactions & Behavior */
-.interactions-preview-container {
+.pdfb-interactions-preview-container {
   position: relative;
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -1166,7 +1166,7 @@
   overflow: hidden;
 }
 
-.mini-canvas {
+.pdfb-mini-canvas {
   position: relative;
   width: 100%;
   height: 140px;
@@ -1174,7 +1174,7 @@
   overflow: hidden;
 }
 
-.mini-canvas-grid {
+.pdfb-mini-canvas-grid {
   position: absolute;
   inset: 0;
   background-image:
@@ -1183,7 +1183,7 @@
   background-size: 20px 20px;
 }
 
-.mini-element {
+.pdfb-mini-element {
   position: absolute;
   background: #ffffff;
   border: 2px solid #cbd5e1;
@@ -1197,7 +1197,7 @@
   cursor: move;
 }
 
-.mini-element:hover {
+.pdfb-mini-element:hover {
   border-color: #3b82f6;
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
   transform: scale(1.05);
@@ -1240,7 +1240,7 @@
   }
 }
 
-.mini-handle {
+.pdfb-mini-handle {
   position: absolute;
   width: 8px;
   height: 8px;
@@ -1276,7 +1276,7 @@
   cursor: grab;
 }
 
-.selection-rectangle {
+.pdfb-selection-rectangle {
   position: absolute;
   border: 2px dashed #3b82f6;
   background: rgba(59, 130, 246, 0.1);
@@ -1296,7 +1296,7 @@
   }
 }
 
-.mouse-cursor {
+.pdfb-mouse-cursor {
   position: absolute;
   z-index: 20;
   animation: cursor-move 3s ease-in-out infinite;
@@ -1318,12 +1318,12 @@
   }
 }
 
-.cursor-icon {
+.pdfb-cursor-icon {
   font-size: 20px;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
-.zoom-indicator {
+.pdfb-zoom-indicator {
   position: absolute;
   top: 8px;
   right: 8px;
@@ -1336,7 +1336,7 @@
   z-index: 15;
 }
 
-.performance-indicator {
+.pdfb-performance-indicator {
   position: absolute;
   bottom: 8px;
   right: 8px;
@@ -1350,7 +1350,7 @@
   z-index: 15;
 }
 
-.performance-bar {
+.pdfb-performance-bar {
   width: 40px;
   height: 6px;
   background: #e2e8f0;
@@ -1358,19 +1358,19 @@
   overflow: hidden;
 }
 
-.performance-fill {
+.pdfb-performance-fill {
   height: 100%;
   background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
   transition: width 0.5s ease;
 }
 
-.performance-text {
+.pdfb-performance-text {
   font-size: 10px;
   font-weight: 600;
   color: #10b981;
 }
 
-.interactions-controls {
+.pdfb-interactions-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1379,12 +1379,12 @@
   border-top: 1px solid #e2e8f0;
 }
 
-.selection-mode-indicator {
+.pdfb-selection-mode-indicator {
   display: flex;
   gap: 8px;
 }
 
-.mode-icon {
+.pdfb-mode-icon {
   width: 28px;
   height: 28px;
   display: flex;
@@ -1398,7 +1398,7 @@
   font-size: 14px;
 }
 
-.mode-icon:hover {
+.pdfb-mode-icon:hover {
   border-color: #3b82f6;
   background: #eff6ff;
 }
@@ -1410,13 +1410,13 @@
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
-.interaction-status {
+.pdfb-interaction-status {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.status-indicator {
+.pdfb-status-indicator {
   font-size: 11px;
   padding: 4px 8px;
   border-radius: 4px;
@@ -1428,16 +1428,16 @@
   color: #1e40af;
 }
 
-.keyboard-status {
+.pdfb-keyboard-status {
   display: flex;
   align-items: center;
 }
 
-.keyboard-icon {
+.pdfb-keyboard-icon {
   font-size: 14px;
 }
 
-.interaction-progress {
+.pdfb-interaction-progress {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1557,7 +1557,7 @@
   flex-wrap: wrap;
 }
 
-.status-indicator {
+.pdfb-status-indicator {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1633,7 +1633,7 @@
   gap: 6px;
 }
 
-.feature-tag {
+.pdfb-feature-tag {
   font-size: 10px;
   padding: 3px 8px;
   background: #f1f5f9;
