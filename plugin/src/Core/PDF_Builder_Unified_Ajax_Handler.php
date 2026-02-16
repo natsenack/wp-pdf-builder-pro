@@ -1185,6 +1185,9 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Sauvegarde des paramètres système
      */
     private function save_system_settings() {
+        $saved_count = 0;
+        
+        // Paramètres cache/performance/maintenance
         $settings = [
             'cache_enabled' => $_POST['cache_enabled'] ?? '0',
             'cache_compression' => $_POST['cache_compression'] ?? '0',
@@ -1197,9 +1200,28 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         foreach ($settings as $key => $value) {
             pdf_builder_update_option('pdf_builder_' . $key, $value);
+            $saved_count++;
         }
 
-        return count($settings);
+        // Paramètres Puppeteer (top-level POST)
+        $puppeteer_settings = [
+            'pdf_builder_engine' => sanitize_text_field($_POST['pdf_builder_engine'] ?? 'puppeteer'),
+            'pdf_builder_puppeteer_url' => esc_url_raw($_POST['pdf_builder_puppeteer_url'] ?? ''),
+            'pdf_builder_puppeteer_token' => sanitize_text_field($_POST['pdf_builder_puppeteer_token'] ?? ''),
+            'pdf_builder_puppeteer_timeout' => intval($_POST['pdf_builder_puppeteer_timeout'] ?? 30),
+            'pdf_builder_puppeteer_fallback' => isset($_POST['pdf_builder_puppeteer_fallback']) ? '1' : '0',
+        ];
+
+        foreach ($puppeteer_settings as $key => $value) {
+            $result = pdf_builder_update_option($key, $value);
+            error_log("[UNIFIED AJAX] Saved Puppeteer setting: {$key} = {$value} (Result: " . ($result ? 'SUCCESS' : 'FAILED') . ")");
+            if ($result) {
+                $saved_count++;
+            }
+        }
+
+        error_log("[UNIFIED AJAX] save_system_settings completed - Total saved: {$saved_count}");
+        return $saved_count;
     }
 
     /**
