@@ -404,11 +404,8 @@ export function deserializeCanvasData(
           ...((normalizedElement as any).metadata || {}),
           customerData: resolvedValue,
         };
-      } else if (
-        normalizedElement.type === "company_info" ||
-        normalizedElement.type === "order_number"
-      ) {
-        // Pour company_info et order_number, mettre à jour content/text
+      } else if (normalizedElement.type === "company_info") {
+        // Pour company_info, mettre à jour content/text
         (normalizedElement as any).content = String(
           resolvedValue || normalizedElement.defaultTestValue || "",
         );

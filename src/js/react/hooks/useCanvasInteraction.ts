@@ -1327,20 +1327,6 @@ export const useCanvasInteraction = ({
             };
           }
 
-          case "order_number": {
-            const orderEl = el as any;
-            const fontSize = orderEl.fontSize || 12;
-            const format = orderEl.format || "CMD-{order_number}";
-            const estimatedWidth = Math.ceil(
-              format.length * fontSize * 0.5 + 16,
-            );
-            const minHeight = orderEl.showLabel ? fontSize * 2.5 : fontSize + 8;
-            return {
-              minWidth: Math.max(estimatedWidth, 60),
-              minHeight: Math.max(minHeight, 24),
-            };
-          }
-
           case "document_type": {
             const docEl = el as any;
             const fontSize = docEl.fontSize || 18;

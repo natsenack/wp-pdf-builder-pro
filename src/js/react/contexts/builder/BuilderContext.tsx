@@ -292,10 +292,6 @@ function builderReducer(
   switch (action.type) {
     case "ADD_ELEMENT": {
       const element = action.payload;
-      // Ajouter les propriétés obligatoires si manquantes
-      if (element.type === "order_number" && !element.format) {
-        element.format = "CMD-{order_number}";
-      }
       return {
         ...state,
         elements: [...state.elements, element],

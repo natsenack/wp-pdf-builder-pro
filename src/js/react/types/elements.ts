@@ -105,60 +105,6 @@ export interface BaseElementProperties {
   strokeWidth?: number;
 }
 
-export interface OrderNumberElement extends BaseElement {
-  type: "order_number";
-  // Propriétés d'affichage
-  showHeaders?: boolean;
-  showBorders?: boolean;
-  showBackground?: boolean;
-  showLabel?: boolean;
-  showDate?: boolean;
-  // Propriétés de mise en page
-  contentAlign?: "left" | "center" | "right";
-  verticalAlign?: "top" | "middle" | "bottom";
-  labelPosition?: "above" | "left" | "right" | "below";
-  labelText?: string;
-  // Propriétés de police générales
-  fontFamily?: string;
-  fontSize?: number;
-  fontWeight?: string;
-  fontStyle?: string;
-  textAlign?: string;
-  // Propriétés de police pour les en-têtes (label)
-  headerFontSize?: number;
-  headerFontFamily?: string;
-  headerFontWeight?: string;
-  headerFontStyle?: string;
-  // Propriétés de police pour le corps (numéro et date)
-  bodyFontSize?: number;
-  bodyFontFamily?: string;
-  bodyFontWeight?: string;
-  bodyFontStyle?: string;
-  // Propriétés de police pour le numéro
-  numberFontSize?: number;
-  numberFontFamily?: string;
-  numberFontWeight?: string;
-  numberFontStyle?: string;
-  // Propriétés de police pour la date
-  dateFontSize?: number;
-  dateFontFamily?: string;
-  dateFontWeight?: string;
-  dateFontStyle?: string;
-  // Propriétés de couleur
-  headerTextColor?: string;
-  textColor?: string;
-  color?: string; // Alias pour textColor pour compatibilité
-  backgroundColor?: string;
-  borderColor?: string;
-  // Propriétés de style
-  theme?: string;
-  // Propriétés spécifiques à l'ordre
-  prefix?: string;
-  suffix?: string;
-  showOrderDate?: boolean;
-  dateFormat?: string;
-}
-
 export interface WoocommerceOrderDateElement extends BaseElement {
   type: "woocommerce_order_date";
   verticalAlign?: "top" | "middle" | "bottom";
@@ -797,52 +743,6 @@ export interface ImageElement extends BaseElement {
   maintainAspectRatio?: boolean;
 }
 
-export interface OrderNumberElementProperties extends BaseElementProperties {
-  // Propriétés d'affichage
-  showHeaders?: boolean;
-  showBorders?: boolean;
-  backgroundColor?: string;
-  borderColor?: string;
-  borderWidth?: number;
-  showLabel?: boolean;
-  showDate?: boolean;
-  // Propriétés de mise en page
-  contentAlign?: "left" | "center" | "right";
-  labelPosition?: "above" | "left" | "right" | "below";
-  labelText?: string;
-  // Propriétés de police pour les en-têtes (label)
-  headerFontSize?: number;
-  headerFontFamily?: string;
-  headerFontWeight?: string;
-  headerFontStyle?: string;
-  // Propriétés de police pour le corps (numéro et date)
-  bodyFontSize?: number;
-  bodyFontFamily?: string;
-  bodyFontWeight?: string;
-  bodyFontStyle?: string;
-  // Propriétés de police pour le numéro
-  numberFontSize?: number;
-  numberFontFamily?: string;
-  numberFontWeight?: string;
-  numberFontStyle?: string;
-  // Propriétés de police pour la date
-  dateFontSize?: number;
-  dateFontFamily?: string;
-  dateFontWeight?: string;
-  dateFontStyle?: string;
-  // Propriétés de couleur
-  headerTextColor?: string;
-  textColor?: string;
-  color?: string; // Alias pour textColor pour compatibilité
-  // Propriétés de style
-  theme?: string;
-  // Propriétés spécifiques à l'ordre
-  prefix?: string;
-  suffix?: string;
-  showOrderDate?: boolean;
-  dateFormat?: string;
-}
-
 // Interface spécifique pour les éléments CompanyInfo
 export interface CompanyInfoElement extends BaseElement {
   type: "company_info";
@@ -998,7 +898,6 @@ export type MentionsElementProperties = BaseElementProperties;
 
 // Type union pour tous les éléments supportés
 export type Element =
-  | OrderNumberElement
   | WoocommerceOrderDateElement
   | WoocommerceInvoiceNumberElement
   | DynamicTextElement

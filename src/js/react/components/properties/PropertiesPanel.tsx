@@ -7,7 +7,6 @@ import { ProductTableProperties } from "./ProductTableProperties";
 import { CustomerInfoProperties } from "./CustomerInfoProperties";
 import { CompanyInfoProperties } from "./CompanyInfoProperties";
 import { CompanyLogoProperties } from "./CompanyLogoProperties";
-import { OrderNumberProperties } from "./OrderNumberProperties";
 import { WoocommerceOrderDateProperties } from "./WoocommerceOrderDateProperties";
 import { WoocommerceInvoiceNumberProperties } from "./WoocommerceInvoiceNumberProperties";
 import { DynamicTextProperties } from "./DynamicTextProperties";
@@ -29,7 +28,6 @@ const ELEMENTS_WITH_CUSTOM_PROPERTIES = new Set([
   "customer_info",
   "company_info",
   "company_logo",
-  "order_number",
   "woocommerce_order_date",
   "woocommerce_invoice_number",
   "document_type",
@@ -60,7 +58,6 @@ const ELEMENT_PROPERTY_COMPONENTS: Record<
   customer_info: CustomerInfoProperties,
   company_info: CompanyInfoProperties,
   company_logo: CompanyLogoProperties,
-  order_number: OrderNumberProperties,
   woocommerce_order_date: WoocommerceOrderDateProperties,
   woocommerce_invoice_number: WoocommerceInvoiceNumberProperties,
   document_type: DocumentTypeProperties,

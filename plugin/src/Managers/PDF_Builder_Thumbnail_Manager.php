@@ -168,9 +168,6 @@ class PDF_Builder_Thumbnail_Manager
                         case 'company_logo':
                             $element_text = '[Logo]';
                             break;
-                        case 'order_number':
-                            $element_text = 'N° Commande: 12345';
-                            break;
                         case 'invoice_number':
                             $element_text = 'Facture N° 001';
                             break;

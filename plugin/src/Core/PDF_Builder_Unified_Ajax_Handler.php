@@ -3271,9 +3271,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             case 'document_type':
                 $rendered = $this->render_document_type($element, $styles);
                 break;
-            case 'order_number':
-                $rendered = $this->render_order_number($element, $order_data, $styles);
-                break;
             case 'woocommerce_order_date':
                 $rendered = $this->render_order_date($element, $order_data, $styles);
                 break;
@@ -4287,17 +4284,6 @@ class PDF_Builder_Unified_Ajax_Handler {
                '<strong>' . esc_html($title) . '</strong></div>';
     }
     
-    /**
-     * Rendu du numéro de commande
-     */
-    private function render_order_number($element, $order_data, $base_styles) {
-        $number = $order_data['order']['order_number'];
-        $show_label = $element['showLabel'] ?? false;
-        $label = $element['labelText'] ?? 'N° ';
-        
-        $content = $show_label ? $label . $number : 'N° ' . $number;
-        return '<div class="element" style="' . $base_styles . '">' . esc_html($content) . '</div>';
-    }
     
     /**
      * Rendu de la date de commande

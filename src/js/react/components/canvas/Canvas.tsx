@@ -26,7 +26,6 @@ import {
   CustomerInfoElementProperties,
   CompanyInfoElementProperties,
   ImageElementProperties,
-  OrderNumberElementProperties,
   MentionsElementProperties,
   DocumentTypeElementProperties,
   DynamicTextElement,
@@ -39,7 +38,6 @@ import {
   ProductTableElement,
   CustomerInfoElement,
   CompanyInfoElement,
-  OrderNumberElement,
   WoocommerceOrderDateElement,
   WoocommerceInvoiceNumberElement,
   CompanyLogoElement,
@@ -371,18 +369,6 @@ const calculateMinDimensions = (
       return {
         minWidth: Math.max(estimatedWidth, 40),
         minHeight: Math.max(estimatedHeight, 20),
-      };
-    }
-
-    case "order_number": {
-      const orderEl = element as OrderNumberElement;
-      const fontSize = orderEl.fontSize || 12;
-      const format = orderEl.format || "CMD-{order_number}";
-      const estimatedWidth = Math.ceil(format.length * fontSize * 0.5 + 16);
-      const minHeight = orderEl.showLabel ? fontSize * 2.5 : fontSize + 8;
-      return {
-        minWidth: Math.max(estimatedWidth, 60),
-        minHeight: Math.max(minHeight, 24),
       };
     }
 
@@ -2133,258 +2119,6 @@ const drawCompanyInfo = (
   });
 };
 
-const drawOrderNumber = (
-  ctx: CanvasRenderingContext2D,
-  element: Element,
-  state: BuilderState,
-) => {
-  const props = element as OrderNumberElement;
-
-  const fontSize = props.fontSize || 14;
-  const fontFamily = props.fontFamily || "Arial";
-  const fontWeight = props.fontWeight || "normal";
-  const fontStyle = props.fontStyle || "normal";
-  // Propriétés de police pour le label
-  const labelFontSize = props.headerFontSize || fontSize;
-  const labelFontFamily = props.headerFontFamily || fontFamily;
-  const labelFontWeight = props.headerFontWeight || "bold";
-  const labelFontStyle = props.headerFontStyle || fontStyle;
-  // Propriétés de police pour le numéro
-  const numberFontSize = props.numberFontSize || fontSize;
-  const numberFontFamily = props.numberFontFamily || fontFamily;
-  const numberFontWeight = props.numberFontWeight || fontWeight;
-  const numberFontStyle = props.numberFontStyle || fontStyle;
-  // Propriétés de police pour la date
-  const dateFontSize = props.dateFontSize || fontSize - 2;
-  const dateFontFamily = props.dateFontFamily || fontFamily;
-  const dateFontWeight = props.dateFontWeight || fontWeight;
-  const dateFontStyle = props.dateFontStyle || fontStyle;
-  // const textAlign = props.textAlign || 'left'; // left, center, right
-  // Propriétés d'alignement spécifiques
-  // const labelTextAlign = props.labelTextAlign || textAlign;
-  // const numberTextAlign = props.numberTextAlign || textAlign;
-  // const dateTextAlign = props.dateTextAlign || textAlign;
-  const contentAlign = props.contentAlign || "left"; // Alignement général du contenu dans l'élément
-  const showLabel = props.showLabel !== false; // Par défaut true
-  const showDate = props.showDate !== false; // Par défaut true
-  const labelPosition = props.labelPosition || "above"; // above, left, right, below
-  const labelText = props.labelText || "N° de commande:"; // Texte personnalisable du libellé
-
-  // Fonction helper pour calculer la position X selon l'alignement général du contenu
-  // const calculateContentX = (align: string) => {
-  //   if (align === 'left') {
-  //     return 10;
-  //   } else if (align === 'center') {
-  //     return element.width / 2;
-  //   } else { // right
-  //     return element.width - 10;
-  //   }
-  // };
-
-  // Fonction helper pour calculer la position X selon l'alignement du texte
-  // const calculateX = (align: string) => {
-  //   if (align === 'left') {
-  //     return 10;
-  //   } else if (align === 'center') {
-  //     return element.width / 2;
-  //   } else { // right
-  //     return element.width - 10;
-  //   }
-  // };
-
-  // Appliquer le fond seulement si showBackground est activé
-  if (props.showBackground !== false) {
-    ctx.fillStyle = normalizeColor(props.backgroundColor || "#e5e7eb");
-    ctx.fillRect(0, 0, element.width, element.height);
-  }
-
-  ctx.fillStyle = normalizeColor("#000000");
-
-  // Numéro de commande et date fictifs ou réels selon le mode
-  let orderNumber: string;
-  let orderDate: string;
-
-  if (state.previewMode === "command") {
-    orderNumber = wooCommerceManager.getOrderNumber();
-    orderDate = wooCommerceManager.getOrderDate();
-  } else {
-    // Utiliser les données WooCommerce si disponibles, sinon valeurs par défaut
-    orderNumber = wooCommerceManager.getOrderNumber() || "CMD-2024-01234";
-    orderDate = wooCommerceManager.getOrderDate() || "27/10/2024";
-  }
-
-  // Calculer la position Y initiale selon l'alignement vertical
-  let y = calculateTextY(element, props.verticalAlign, fontSize, 10);
-
-  // Calculer la largeur totale du contenu pour l'alignement général
-  let totalContentWidth = 0;
-  if (showLabel) {
-    if (labelPosition === "above" || labelPosition === "below") {
-      // Pour les positions verticales, prendre la largeur maximale
-      ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-      const labelWidth = ctx.measureText(labelText).width;
-      ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-      const numberWidth = ctx.measureText(orderNumber).width;
-      totalContentWidth = Math.max(labelWidth, numberWidth);
-    } else {
-      // Pour les positions latérales, calculer la largeur combinée
-      ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-      const labelWidth = ctx.measureText(labelText).width;
-      ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-      const numberWidth = ctx.measureText(orderNumber).width;
-      totalContentWidth = labelWidth + numberWidth + 15; // 15px d'espace
-    }
-  } else {
-    // Juste le numéro
-    ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-    totalContentWidth = ctx.measureText(orderNumber).width;
-  }
-
-  // Calculer le décalage pour l'alignement général du contenu
-  let contentOffsetX = 0;
-  if (contentAlign === "center") {
-    contentOffsetX = (element.width - totalContentWidth) / 2 - 10; // -10 car on commence à 10
-  } else if (contentAlign === "right") {
-    contentOffsetX = element.width - totalContentWidth - 20; // -20 pour les marges
-  }
-
-  if (showLabel) {
-    if (labelPosition === "above") {
-      // Libellé au-dessus, numéro en-dessous - utiliser l'alignement général du contenu
-      ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-      ctx.textAlign = contentAlign as CanvasTextAlign;
-      // Appliquer textBaseline selon verticalAlign
-      ctx.textBaseline =
-        props.verticalAlign === "middle"
-          ? "middle"
-          : props.verticalAlign === "bottom"
-            ? "bottom"
-            : "top";
-      const labelX =
-        contentAlign === "left"
-          ? 10 + contentOffsetX
-          : contentAlign === "center"
-            ? element.width / 2
-            : element.width - 10;
-      ctx.fillText(labelText, labelX, y);
-      y += 18;
-      ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-      ctx.textAlign = contentAlign as CanvasTextAlign;
-      const numberX =
-        contentAlign === "left"
-          ? 10 + contentOffsetX
-          : contentAlign === "center"
-            ? element.width / 2
-            : element.width - 10;
-      ctx.fillText(orderNumber, numberX, y);
-    } else if (labelPosition === "below") {
-      // Numéro au-dessus, libellé en-dessous - utiliser l'alignement général du contenu
-      ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-      ctx.textAlign = contentAlign as CanvasTextAlign;
-      ctx.textBaseline =
-        props.verticalAlign === "middle"
-          ? "middle"
-          : props.verticalAlign === "bottom"
-            ? "bottom"
-            : "top";
-      const numberX =
-        contentAlign === "left"
-          ? 10 + contentOffsetX
-          : contentAlign === "center"
-            ? element.width / 2
-            : element.width - 10;
-      ctx.fillText(orderNumber, numberX, y);
-      y += 18;
-      ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-      ctx.textAlign = contentAlign as CanvasTextAlign;
-      const labelX =
-        contentAlign === "left"
-          ? 10 + contentOffsetX
-          : contentAlign === "center"
-            ? element.width / 2
-            : element.width - 10;
-      ctx.fillText(labelText, labelX, y);
-    } else if (labelPosition === "left") {
-      // Libellé à gauche, numéro à droite - avec espacement optimal et alignement général
-      ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-      ctx.textAlign = "left" as CanvasTextAlign;
-      ctx.textBaseline =
-        props.verticalAlign === "middle"
-          ? "middle"
-          : props.verticalAlign === "bottom"
-            ? "bottom"
-            : "top";
-      const labelX = 10 + contentOffsetX;
-      ctx.fillText(labelText, labelX, y);
-
-      // Calculer l'espace disponible pour centrer le numéro ou l'aligner intelligemment
-      const labelWidth = ctx.measureText(labelText).width;
-      const numberX = labelX + labelWidth + 15; // 15px d'espace après le libellé
-
-      ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-      ctx.textAlign = "left" as CanvasTextAlign;
-      ctx.fillText(orderNumber, numberX, y);
-    } else if (labelPosition === "right") {
-      // Numéro à gauche, libellé à droite - avec espacement optimal et alignement général
-      ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-      ctx.textAlign = "left" as CanvasTextAlign;
-      ctx.textBaseline =
-        props.verticalAlign === "middle"
-          ? "middle"
-          : props.verticalAlign === "bottom"
-            ? "bottom"
-            : "top";
-      const numberX = 10 + contentOffsetX;
-      ctx.fillText(orderNumber, numberX, y);
-
-      // Calculer la position du libellé après le numéro
-      const numberWidth = ctx.measureText(orderNumber).width;
-      const labelX = numberX + numberWidth + 15; // 15px d'espace après le numéro
-
-      ctx.font = `${labelFontStyle} ${labelFontWeight} ${labelFontSize}px ${labelFontFamily}`;
-      ctx.textAlign = "left" as CanvasTextAlign;
-      ctx.fillText(labelText, labelX, y);
-    }
-  } else {
-    // Pas de libellé, juste le numéro avec alignement général du contenu
-    ctx.font = `${numberFontStyle} ${numberFontWeight} ${numberFontSize}px ${numberFontFamily}`;
-    ctx.textAlign = contentAlign as CanvasTextAlign;
-    ctx.textBaseline =
-      props.verticalAlign === "middle"
-        ? "middle"
-        : props.verticalAlign === "bottom"
-          ? "bottom"
-          : "top";
-    // Pour le cas sans libellé, utiliser directement calculateContentX sans contentOffsetX
-    // car contentOffsetX est calculé pour centrer le contenu total, mais ici on n'a que le numéro
-    if (contentAlign === "left") {
-      ctx.fillText(orderNumber, 10, y);
-    } else if (contentAlign === "center") {
-      ctx.fillText(orderNumber, element.width / 2, y);
-    } else {
-      // right
-      ctx.fillText(orderNumber, element.width - 10, y);
-    }
-  }
-
-  // Afficher la date sur une nouvelle ligne avec le même alignement général
-  if (showDate) {
-    ctx.font = `${dateFontStyle} ${dateFontWeight} ${dateFontSize}px ${dateFontFamily}`;
-    ctx.textAlign = contentAlign as CanvasTextAlign;
-    ctx.textBaseline = "top"; // Garder top pour la date
-    // Pour la date, utiliser directement calculateContentX sans contentOffsetX
-    // car contentOffsetX est calculé pour centrer le contenu total
-    if (contentAlign === "left") {
-      ctx.fillText(`Date: ${orderDate}`, 10, y + 20);
-    } else if (contentAlign === "center") {
-      ctx.fillText(`Date: ${orderDate}`, element.width / 2, y + 20);
-    } else {
-      // right
-      ctx.fillText(`Date: ${orderDate}`, element.width - 10, y + 20);
-    }
-  }
-};
-
 const drawWoocommerceOrderDate = (
   ctx: CanvasRenderingContext2D,
   element: Element,
@@ -3852,10 +3586,6 @@ export const Canvas = function Canvas({
           debugLog(`[Canvas] Rendering company logo element: ${element.id}`);
           drawCompanyLogo(ctx, element);
           break;
-        case "order_number":
-          debugLog(`[Canvas] Rendering order number element: ${element.id}`);
-          drawOrderNumber(ctx, element, currentState);
-          break;
         case "woocommerce_order_date":
           debugLog(
             `[Canvas] Rendering woocommerce order date element: ${element.id}`,
@@ -4238,7 +3968,6 @@ export const Canvas = function Canvas({
               customer_info: { width: 300, height: 80 },
               company_info: { width: 300, height: 120 },
               company_logo: { width: 150, height: 80 },
-              order_number: { width: 200, height: 40 },
               document_type: { width: 150, height: 30 },
               dynamic_text: { width: 200, height: 60 },
               mentions: { width: 400, height: 80 },

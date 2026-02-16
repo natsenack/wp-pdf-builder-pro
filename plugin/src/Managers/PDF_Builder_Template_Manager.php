@@ -264,20 +264,10 @@ class PDF_Builder_Template_Manager
                     $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
                     // file_put_contents($log_file, date('Y-m-d H:i:s') . ' ELEMENTS COUNT: ' . count($elements_data) . "\n", FILE_APPEND);
 
-                    // Log order_number elements specifically BEFORE saving
-                    foreach ($elements_data as $el) {
-                        if (isset($el['type']) && $el['type'] === 'order_number') {
-                            // file_put_contents($log_file, date('Y-m-d H:i:s') . ' ORDER ELEMENT BEFORE SAVE: ' . json_encode($el) . "\n", FILE_APPEND);
-                        }
-                    }
-
                     // ✅ CRITICAL: Log TOUTES les propriétés de tous les éléments avant de créer template_structure
                     // file_put_contents($log_file, date('Y-m-d H:i:s') . ' ===== COMPLETE ELEMENTS BEFORE STRUCTURE =====' . "\n", FILE_APPEND);
                     foreach ($elements_data as $idx => $el) {
                         // file_put_contents($log_file, date('Y-m-d H:i:s') . " Element[$idx] " . ($el['type'] ?? 'unknown') . " keys: " . implode(',', array_keys($el)) . "\n", FILE_APPEND);
-                        if (isset($el['type']) && $el['type'] === 'order_number') {
-                            // file_put_contents($log_file, date('Y-m-d H:i:s') . " >>> ORDER_NUMBER DETAILS: " . json_encode($el, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
-                        }
                     }
                 }
 
@@ -293,12 +283,6 @@ class PDF_Builder_Template_Manager
                                     $el['src'] = $logo_url;
                                 }
                             }
-                        }
-                    }
-                    // 🔢 Assurer que les éléments order_number ont une propriété format
-                    if (isset($el['type']) && $el['type'] === 'order_number') {
-                        if (empty($el['format'])) {
-                            $el['format'] = 'CMD-{order_number}';
                         }
                     }
                 }
@@ -460,7 +444,7 @@ class PDF_Builder_Template_Manager
                         $thumbnail_manager->updateTemplateThumbnail($template_id, $thumbnail_url);
                     }
                     
-                    // ✅ CRITICAL: Log what was actually saved - especially order_number elements (only in debug mode)
+                    // ✅ CRITICAL: Log what was actually saved (only in debug mode)
                     if (self::isDebugMode()) {
                         $upload_dir = wp_upload_dir();
                         $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
@@ -469,13 +453,6 @@ class PDF_Builder_Template_Manager
                         // Re-check what was saved
                         if (isset($saved_decoded['elements'])) {
                             // file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED ELEMENTS COUNT: ' . count($saved_decoded['elements']) . "\n", FILE_APPEND);
-                            
-                            // Find order_number in saved data
-                            foreach ($saved_decoded['elements'] as $el) {
-                                if (isset($el['type']) && $el['type'] === 'order_number') {
-                                    // file_put_contents($log_file, date('Y-m-d H:i:s') . ' >>> SAVED ORDER_NUMBER: ' . json_encode($el, JSON_PRETTY_PRINT) . "\n", FILE_APPEND);
-                                }
-                            }
                         }
                     }
                 } else {
@@ -1079,16 +1056,6 @@ class PDF_Builder_Template_Manager
                     $errors[] = "Élément $index ($element_id): '$prop' valeur invalide '" .
                                $element[$prop] . "' (valeurs: " . implode(', ', $valid_values[$prop]) . ')';
                 }
-            }
-        }
-
-        // Validation spécifique pour les éléments spéciaux
-        if ($element_type === 'order_number') {
-            // Les éléments order_number doivent avoir une propriété 'format'
-            if (!isset($element['format'])) {
-                $errors[] = "Élément $index ($element_id): propriété 'format' obligatoire manquante pour les éléments order_number";
-            } elseif (!is_string($element['format'])) {
-                $errors[] = "Élément $index ($element_id): propriété 'format' doit être une chaîne de caractères";
             }
         }
 

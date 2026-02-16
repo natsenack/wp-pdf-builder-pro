@@ -181,10 +181,6 @@ export function useTemplate() {
 
         // 🔍 Tracer les éléments reçus du serveur
         if (templateData.elements) {
-          // 🔍 Vérifier spécifiquement les éléments order_number
-          const orderNumberElements = templateData.elements.filter(
-            (el: any) => el.type === "order_number",
-          );
         }
 
         // ✅ UTILISER LA COUCHE UNIFIÉE POUR LE FALLBACK AUSSI

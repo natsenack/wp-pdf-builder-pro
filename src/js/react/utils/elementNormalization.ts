@@ -152,13 +152,6 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
         }
         break;
 
-      case "order_number":
-        // Requiert: format
-        if (!normalized.format) {
-          (normalized as any).format = "CMD-{order_number}";
-        }
-        break;
-
       case "barcode":
       case "qrcode":
       case "qrcode_dynamic":
@@ -320,70 +313,6 @@ export function normalizeElementsAfterLoad(elements: unknown[]): Element[] {
         }
         break;
 
-      case "order_number":
-        // Propriétés pour numéro de commande
-        if (!normalized.showHeaders) {
-          (normalized as any).showHeaders = true;
-        }
-        if (!normalized.showBackground) {
-          (normalized as any).showBackground = false;
-        }
-        if (!normalized.showBorders) {
-          (normalized as any).showBorders = false;
-        }
-        if (!normalized.showLabel) {
-          (normalized as any).showLabel = true;
-        }
-        if (!normalized.showDate) {
-          (normalized as any).showDate = false;
-        }
-        if (!normalized.labelText) {
-          (normalized as any).labelText = "Commande #";
-        }
-        if (!normalized.labelPosition) {
-          (normalized as any).labelPosition = "before";
-        }
-        if (!normalized.dateFormat) {
-          (normalized as any).dateFormat = "DD/MM/YYYY";
-        }
-        // Styles entête
-        if (!normalized.headerFontSize) {
-          (normalized as any).headerFontSize = 12;
-        }
-        if (!normalized.headerFontFamily) {
-          (normalized as any).headerFontFamily = "Arial";
-        }
-        if (!normalized.headerFontWeight) {
-          (normalized as any).headerFontWeight = "bold";
-        }
-        if (!normalized.headerFontStyle) {
-          (normalized as any).headerFontStyle = "normal";
-        }
-        if (!normalized.headerTextColor) {
-          (normalized as any).headerTextColor = "#111827";
-        }
-        // Styles numéro et date
-        if (!normalized.numberFontSize) {
-          (normalized as any).numberFontSize = 14;
-        }
-        if (!normalized.dateFontSize) {
-          (normalized as any).dateFontSize = 12;
-        }
-        // Styles corps
-        if (!normalized.bodyFontFamily) {
-          (normalized as any).bodyFontFamily = "Arial";
-        }
-        if (!normalized.bodyFontWeight) {
-          (normalized as any).bodyFontWeight = "normal";
-        }
-        if (!normalized.bodyFontStyle) {
-          (normalized as any).bodyFontStyle = "normal";
-        }
-        if (!normalized.contentAlign) {
-          (normalized as any).contentAlign = "left";
-        }
-        break;
-
       case "mentions":
       case "note":
         // Propriétés pour les mentions légales
@@ -500,10 +429,6 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
     if (typeof normalized.y !== "number") normalized.y = 0;
     if (typeof normalized.width !== "number") normalized.width = 100;
     if (typeof normalized.height !== "number") normalized.height = 100;
-
-    // CRITICAL: Log les propriétés order_number avant sauvegarde
-    if (normalized.type === "order_number") {
-    }
 
     // Filtrer les propriétés non sérialisables (Date, Function, etc)
     const serializable: Record<string, unknown> = {};
@@ -624,17 +549,6 @@ export function normalizeElementsBeforeSave(elements: Element[]): Element[] {
       "bodyFontWeight",
       "bodyFontStyle",
 
-      // ===== PROPRIÉTÉS ORDER_NUMBER =====
-      "showLabel",
-      "showDate",
-      "labelText",
-      "labelPosition",
-      "dateFormat",
-      "numberFontSize",
-      "dateFontSize",
-      "contentAlign",
-      "format",
-
       // ===== PROPRIÉTÉS IMAGES =====
       "objectFit",
       "fit",
@@ -736,15 +650,6 @@ export function validateElementIntegrity(
     if (missing.length > 0) {
       debugError(`❌ [VALIDATE] Element ${idx} missing: ${missing.join(", ")}`);
       allValid = false;
-    }
-
-    if (elementType === "order_number") {
-      const hasContentAlign = "contentAlign" in el;
-      const hasLabelPosition = "labelPosition" in el;
-
-      if (!hasContentAlign || !hasLabelPosition) {
-        allValid = false;
-      }
     }
   });
 

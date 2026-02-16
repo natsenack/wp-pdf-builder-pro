@@ -4,7 +4,6 @@
  * Initialise et configure les éléments qui utilisent des données réelles WooCommerce
  * 
  * Liste des éléments RealData:
- * - order_number: numéro de commande (test: "N° 001")
  * - woocommerce_order_date: date de la commande (test: date actuelle)
  * - customer_info: infos client (test: données fictives)
  * - product_table: tableau des produits (test: produits fictifs)
@@ -15,7 +14,6 @@
  */
 
 import type { 
-  OrderNumberElement, 
   CustomerInfoElement, 
   ProductTableElement, 
   CompanyInfoElement,
@@ -28,7 +26,6 @@ import type {
  * Types d'éléments qui récupèrent des données réelles
  */
 const REAL_DATA_ELEMENT_TYPES = [
-  'order_number',
   'woocommerce_order_date',
   'customer_info',
   'product_table',
@@ -39,7 +36,6 @@ const REAL_DATA_ELEMENT_TYPES = [
  * Valeurs fictives par défaut pour chaque type d'élément RealData
  */
 const DEFAULT_TEST_VALUES: Record<string, unknown> = {
-  order_number: 'N° 001',
   woocommerce_order_date: new Date().toLocaleDateString('fr-FR'),
   customer_info: {
     name: 'Jean Dupont',
@@ -61,7 +57,6 @@ const DEFAULT_TEST_VALUES: Record<string, unknown> = {
  * Mapping des clés réelles WooCommerce pour chaque élément RealData
  */
 const REAL_DATA_KEYS: Record<string, string> = {
-  order_number: 'orderNumber',
   woocommerce_order_date: 'orderDate',
   customer_info: 'customerName', // Récupère tout le customer_info via fallback
   product_table: 'products',
@@ -142,7 +137,6 @@ export function configureRealDataElements(elements: Element[]): Element[] {
  */
 export function getRealDataElementLabel(type: string): string {
   const labels: Record<string, string> = {
-    order_number: '📦 Numéro de commande',
     woocommerce_order_date: '📅 Date de commande',
     customer_info: '👤 Informations client',
     product_table: '📊 Tableau des produits',
@@ -165,7 +159,6 @@ export function filterRealDataElements(elements: Element[]): Element[] {
  */
 export function getRealDataElementDescription(type: string): string {
   const descriptions: Record<string, string> = {
-    order_number: 'Récupère le numéro de commande depuis WooCommerce',
     woocommerce_order_date: 'Récupère la date de commande depuis WooCommerce',
     customer_info: 'Affiche les infos client (nom, email, adresse, etc.)',
     product_table: 'Affiche le tableau des produits commandés',
