@@ -4118,11 +4118,10 @@ export const Canvas = function Canvas({
       switch (action) {
         case "bring-to-front": {
           debugLog(`[Canvas] Bringing element ${elementId} to front`);
-          // Déplacer l'élément à la fin du tableau (devant tous les autres)
           const elementIndex = state.elements.findIndex(
             (el) => el.id === elementId,
           );
-          if (elementIndex !== -1) {
+          if (elementIndex !== -1 && elementIndex < state.elements.length - 1) {
             const element = state.elements[elementIndex];
             const newElements = [
               ...state.elements.slice(0, elementIndex),
@@ -4131,15 +4130,15 @@ export const Canvas = function Canvas({
             ];
             dispatch({ type: "SET_ELEMENTS", payload: newElements });
           }
+          hideContextMenu();
           break;
         }
         case "send-to-back": {
           debugLog(`[Canvas] Sending element ${elementId} to back`);
-          // Déplacer l'élément au début du tableau (derrière tous les autres)
           const elementIndex = state.elements.findIndex(
             (el) => el.id === elementId,
           );
-          if (elementIndex !== -1) {
+          if (elementIndex !== -1 && elementIndex > 0) {
             const element = state.elements[elementIndex];
             const newElements = [
               element,
@@ -4148,38 +4147,41 @@ export const Canvas = function Canvas({
             ];
             dispatch({ type: "SET_ELEMENTS", payload: newElements });
           }
+          hideContextMenu();
           break;
         }
         case "bring-forward": {
           debugLog(`[Canvas] Bringing element ${elementId} forward`);
-          // Déplacer l'élément d'une position vers l'avant
           const elementIndex = state.elements.findIndex(
             (el) => el.id === elementId,
           );
           if (elementIndex !== -1 && elementIndex < state.elements.length - 1) {
             const newElements = [...state.elements];
+            // Échanger avec l'élément suivant (index + 1)
             [newElements[elementIndex], newElements[elementIndex + 1]] = [
               newElements[elementIndex + 1],
               newElements[elementIndex],
             ];
             dispatch({ type: "SET_ELEMENTS", payload: newElements });
           }
+          hideContextMenu();
           break;
         }
         case "send-backward": {
           debugLog(`[Canvas] Sending element ${elementId} backward`);
-          // Déplacer l'élément d'une position vers l'arrière
           const elementIndex = state.elements.findIndex(
             (el) => el.id === elementId,
           );
           if (elementIndex > 0) {
             const newElements = [...state.elements];
+            // Échanger avec l'élément précédent (index - 1)
             [newElements[elementIndex], newElements[elementIndex - 1]] = [
               newElements[elementIndex - 1],
               newElements[elementIndex],
             ];
             dispatch({ type: "SET_ELEMENTS", payload: newElements });
           }
+          hideContextMenu();
           break;
         }
         case "duplicate": {
