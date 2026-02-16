@@ -198,7 +198,7 @@ class AdminScriptLoader
             }
 
             // Charger les styles canvas-modal pour les pages templates et settings
-            if (strpos($hook, 'templates') !== false || strpos($hook, 'settings') !== false) {
+            if ($current_page === 'pdf-builder-settings' || $current_page === 'pdf-builder-templates') {
                 \wp_enqueue_style(
                     'pdf-builder-react',
                     PDF_BUILDER_PLUGIN_URL . 'assets/css/pdf-builder-react.min.css',
@@ -207,7 +207,7 @@ class AdminScriptLoader
                 );
                 
                 // Charger le CSS de l'onglet Système (si on est sur la page settings)
-                if (strpos($hook, 'settings') !== false) {
+                if ($current_page === 'pdf-builder-settings') {
                     \wp_enqueue_style(
                         'pdf-builder-settings-systeme',
                         PDF_BUILDER_PLUGIN_URL . 'assets/css/settings-systeme-css.min.css',
