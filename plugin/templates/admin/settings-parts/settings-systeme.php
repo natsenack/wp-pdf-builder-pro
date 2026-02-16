@@ -155,6 +155,88 @@
                     padding: 10px 15px;
                     margin: 0;
                 }
+                
+                /* Section Configuration moteur */
+                .pdfb-system-engine-config-section {
+                    background: white;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    margin-bottom: 25px;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+                    overflow: hidden;
+                }
+                
+                .pdfb-system-engine-config-section header {
+                    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecef 100%);
+                    padding: 15px 20px;
+                    border-bottom: 1px solid #ddd;
+                }
+                
+                .pdfb-system-engine-config-section header h3 {
+                    margin: 0;
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #1d2327;
+                }
+                
+                .pdfb-system-engine-config-section .pdfb-system-section-content {
+                    padding: 20px;
+                }
+                
+                .pdfb-system-engine-config-section .form-table th {
+                    width: 200px;
+                    font-weight: 600;
+                }
+                
+                .pdfb-system-engine-config-section .toggle-switch {
+                    position: relative;
+                    display: inline-block;
+                    width: 50px;
+                    height: 24px;
+                    vertical-align: middle;
+                }
+                
+                .pdfb-system-engine-config-section .toggle-switch input {
+                    opacity: 0;
+                    width: 0;
+                    height: 0;
+                }
+                
+                .pdfb-system-engine-config-section .toggle-slider {
+                    position: absolute;
+                    cursor: pointer;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: #ccc;
+                    transition: .3s;
+                    border-radius: 24px;
+                }
+                
+                .pdfb-system-engine-config-section .toggle-slider:before {
+                    position: absolute;
+                    content: "";
+                    height: 18px;
+                    width: 18px;
+                    left: 3px;
+                    bottom: 3px;
+                    background-color: white;
+                    transition: .3s;
+                    border-radius: 50%;
+                }
+                
+                .pdfb-system-engine-config-section input:checked + .toggle-slider {
+                    background-color: #2271b1;
+                }
+                
+                .pdfb-system-engine-config-section input:checked + .toggle-slider:before {
+                    transform: translateX(26px);
+                }
+                
+                .puppeteer-config-row {
+                    transition: opacity 0.3s ease, height 0.3s ease;
+                }
             </style>
             
             <h3 style="display: flex; justify-content: flex-start; align-items: center;">
@@ -187,7 +269,7 @@
                                     <h4 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: white;">Service Puppeteer Hébergé & Maintenu</h4>
                                     <p style="margin: 0 0 12px 0; font-size: 14px; line-height: 1.6; opacity: 0.95;">
                                         Pas de serveur Puppeteer ? Pas de problème ! Accédez à notre infrastructure optimisée à partir de <strong>1,99€/mois</strong>.
-                                        <br>✨ Token unique sécurisé • 🌐 IP/URL dédiée • ⚡ Maintenance incluse • 🔒 99.9% uptime
+                                        <br>✨ Token unique sécurisé • 🌐 IP/URL partagée • ⚡ Maintenance incluse • 🔒 99.9% uptime
                                     </p>
                                     <a href="#" id="puppeteer-commercial-link" class="button button-secondary" style="background: white; color: #667eea; border: none; padding: 8px 20px; font-weight: 600; text-decoration: none; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: transform 0.2s; display: inline-block; margin-top: 5px;">
                                         📦 Découvrir nos offres (dès 1,99€/mois)
@@ -196,7 +278,7 @@
                                     jQuery(document).ready(function($) {
                                         $('#puppeteer-commercial-link').on('click', function(e) {
                                             e.preventDefault();
-                                            alert('🚀 Service Puppeteer\n\nLe lien commercial sera bientôt disponible.\nRestez connecté pour plus d\'informations !\n\n� Plusieurs offres disponibles dès 1,99€/mois\n✅ Token unique fourni\n✅ IP/URL dédiée\n✅ Maintenance incluse');
+                                            alert('🚀 Service Puppeteer\n\nLe lien commercial sera bientôt disponible.\nRestez connecté pour plus d\'informations !\n\n💰 Plusieurs offres disponibles dès 1,99€/mois\n✅ Token unique fourni\n✅ IP/URL partagée\n✅ Maintenance incluse');
                                         });
                                     });
                                     </script>
@@ -204,9 +286,18 @@
                             </div>
                         </div>
                         
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><label for="pdf_builder_engine">Moteur de génération</label></th>
+                        <!-- Section Configuration du moteur -->
+                        <section class="pdfb-system-engine-config-section">
+                            <header>
+                                <h3>
+                                    <span>⚙️ Configuration du moteur PDF</span>
+                                </h3>
+                            </header>
+                            
+                            <div class="pdfb-system-section-content">
+                                <table class="form-table">
+                                    <tr>
+                                        <th scope="row"><label for="pdf_builder_engine">Moteur de génération</label></th>
                                 <td>
                                     <select id="pdf_builder_engine" name="pdf_builder_engine" class="regular-text">
                                         <option value="puppeteer" <?php selected($current_engine, 'puppeteer'); ?>>
@@ -226,7 +317,7 @@
                                     </p>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="puppeteer-config-row">
                                 <th scope="row"><label for="pdf_builder_puppeteer_url">API Puppeteer - URL</label></th>
                                 <td>
                                     <input type="url" id="pdf_builder_puppeteer_url" name="pdf_builder_puppeteer_url" 
@@ -238,7 +329,7 @@
                                     </p>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="puppeteer-config-row">
                                 <th scope="row"><label for="pdf_builder_puppeteer_token">API Puppeteer - Token</label></th>
                                 <td>
                                     <input type="password" id="pdf_builder_puppeteer_token" name="pdf_builder_puppeteer_token" 
@@ -253,7 +344,7 @@
                                     </p>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="puppeteer-config-row">
                                 <th scope="row"><label for="pdf_builder_puppeteer_timeout">Timeout (secondes)</label></th>
                                 <td>
                                     <input type="number" id="pdf_builder_puppeteer_timeout" name="pdf_builder_puppeteer_timeout" 
@@ -262,7 +353,7 @@
                                     <p class="description">Durée maximale d'attente pour la génération PDF (5-120s)</p>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="puppeteer-config-row">
                                 <th scope="row"><label for="pdf_builder_puppeteer_fallback">Fallback automatique</label></th>
                                 <td>
                                     <label class="toggle-switch">
@@ -276,7 +367,7 @@
                                     </p>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="puppeteer-config-row">
                                 <th scope="row">Test de connexion</th>
                                 <td>
                                     <button type="button" class="button button-secondary" id="test-puppeteer-connection">
@@ -360,6 +451,43 @@
                             </tr>
                         </table>
                     </div>
+                    
+                    <script>
+                    jQuery(document).ready(function($) {
+                        console.log('[PDF Engine] Script de gestion de visibilité chargé');
+                        
+                        // Gestion de la visibilité des options Puppeteer
+                        function togglePuppeteerConfig() {
+                            var selectedEngine = $('#pdf_builder_engine').val();
+                            console.log('[PDF Engine] Moteur sélectionné:', selectedEngine);
+                            console.log('[PDF Engine] Nombre de lignes Puppeteer trouvées:', $('.puppeteer-config-row').length);
+                            
+                            if (selectedEngine === 'dompdf') {
+                                console.log('[PDF Engine] Masquage des options Puppeteer');
+                                $('.puppeteer-config-row').fadeOut(300);
+                            } else {
+                                console.log('[PDF Engine] Affichage des options Puppeteer');
+                                $('.puppeteer-config-row').fadeIn(300);
+                            }
+                            
+                            // Mettre à jour le statut
+                            var statusText = selectedEngine === 'puppeteer' ? 'Puppeteer ACTIF' : 
+                                           (selectedEngine === 'dompdf' ? 'DomPDF (Fallback)' : 'Mode Auto');
+                            $('#pdf-engine-status').text(statusText);
+                            console.log('[PDF Engine] Statut mis à jour:', statusText);
+                        }
+                        
+                        // Déclencher au chargement
+                        console.log('[PDF Engine] Déclenchement initial');
+                        togglePuppeteerConfig();
+                        
+                        // Déclencher au changement
+                        $('#pdf_builder_engine').on('change', function() {
+                            console.log('[PDF Engine] Changement détecté');
+                            togglePuppeteerConfig();
+                        });
+                    });
+                    </script>
                 </section>
 
                 <!-- Section Cache et Performance -->

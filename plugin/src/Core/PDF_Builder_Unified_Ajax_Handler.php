@@ -796,14 +796,18 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'pdf_builder_last_maintenance', 'pdf_builder_next_maintenance', 'pdf_builder_last_backup', 'pdf_builder_cache_last_cleanup',
                 // Canvas text fields
                 'pdf_builder_canvas_bg_color', 'pdf_builder_canvas_border_color', 'pdf_builder_canvas_container_bg_color', 'pdf_builder_canvas_selection_mode', 'pdf_builder_canvas_export_format',
-                'pdf_builder_default_canvas_format', 'pdf_builder_default_canvas_orientation', 'pdf_builder_canvas_unit', 'pdf_builder_canvas_format'
+                'pdf_builder_default_canvas_format', 'pdf_builder_default_canvas_orientation', 'pdf_builder_canvas_unit', 'pdf_builder_canvas_format',
+                // PDF Engine text fields
+                'pdf_builder_engine', 'pdf_builder_puppeteer_url', 'pdf_builder_puppeteer_token'
             ],
             'int_fields' => [
                 'pdf_builder_cache_max_size', 'pdf_builder_cache_ttl',
                 // Canvas int fields
                 'pdf_builder_zoom_min', 'pdf_builder_zoom_max', 'pdf_builder_zoom_default', 'pdf_builder_zoom_step', 'pdf_builder_canvas_grid_size', 'pdf_builder_canvas_export_quality',
                 'pdf_builder_canvas_fps_target', 'pdf_builder_canvas_memory_limit_js', 'pdf_builder_canvas_memory_limit_php', 'pdf_builder_canvas_dpi',
-                'pdf_builder_canvas_width', 'pdf_builder_canvas_height', 'pdf_builder_canvas_border_width', 'pdf_builder_canvas_max_size', 'pdf_builder_canvas_quality'
+                'pdf_builder_canvas_width', 'pdf_builder_canvas_height', 'pdf_builder_canvas_border_width', 'pdf_builder_canvas_max_size', 'pdf_builder_canvas_quality',
+                // PDF Engine int fields
+                'pdf_builder_puppeteer_timeout'
             ],
             'bool_fields' => [
                 'pdf_builder_cache_enabled', 'pdf_builder_cache_compression', 'pdf_builder_cache_auto_cleanup', 'pdf_builder_performance_auto_optimization',
@@ -824,7 +828,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'pdf_builder_license_test_mode_enabled', 'pdf_builder_force_https', 'pdf_builder_performance_monitoring',
                 'pdf_builder_enable_logging', 'pdf_builder_gdpr_enabled', 'pdf_builder_gdpr_consent_required', 'pdf_builder_gdpr_audit_enabled', 'pdf_builder_gdpr_encryption_enabled',
                 'pdf_builder_gdpr_consent_analytics', 'pdf_builder_gdpr_consent_templates', 'pdf_builder_gdpr_consent_marketing',
-                'pdf_builder_pdf_metadata_enabled', 'pdf_builder_pdf_print_optimized'
+                'pdf_builder_pdf_metadata_enabled', 'pdf_builder_pdf_print_optimized',
+                // PDF Engine bool fields
+                'pdf_builder_puppeteer_fallback'
             ],
             'array_fields' => ['order_status_templates'],
             'license_bool_fields' => [
@@ -1017,6 +1023,30 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $saved_count++;
             }
         }
+
+        // EXTRACTION ET SAUVEGARDE DES PARAMÈTRES MOTEUR PDF DANS DES LIGNES SÉPARÉES
+        $pdf_engine_keys = [
+            'pdf_builder_engine',
+            'pdf_builder_puppeteer_url',
+            'pdf_builder_puppeteer_token',
+            'pdf_builder_puppeteer_timeout',
+            'pdf_builder_puppeteer_fallback'
+        ];
+
+        foreach ($pdf_engine_keys as $engine_key) {
+            if (isset($settings[$engine_key])) {
+                // Sauvegarder dans une ligne séparée avec update_option
+                update_option($engine_key, $settings[$engine_key]);
+                error_log("[PDF Builder AJAX] Saved PDF engine setting to separate row: {$engine_key} = " . $settings[$engine_key]);
+                
+                // Supprimer du tableau unifié pour éviter la duplication
+                unset($settings[$engine_key]);
+            }
+        }
+
+        // Sauvegarder le tableau unifié des settings
+        pdf_builder_update_option('pdf_builder_settings', $settings);
+        error_log('[PDF Builder AJAX] Saved unified settings array with ' . count($settings) . ' items');
 
         return $saved_count;
     }
