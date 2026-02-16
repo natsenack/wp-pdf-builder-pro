@@ -143,14 +143,26 @@ export const Header = memo(function Header({
         },
       );
 
+      console.log("[Preview Modal] Response status:", response.status);
+      
       if (response.ok) {
         const data = await response.json();
+        console.log("[Preview Modal] Response data:", data);
+        
         if (data.success && data.data) {
+          console.log("[Preview Modal] Orders loaded:", data.data.length);
           setAvailableOrders(data.data);
+        } else {
+          console.error("[Preview Modal] Success=false or no data:", data);
+          alert("Erreur lors du chargement des commandes: " + (data.data?.message || "Erreur inconnue"));
         }
+      } else {
+        console.error("[Preview Modal] Response not OK:", response.status);
+        alert("Erreur réseau lors du chargement des commandes");
       }
     } catch (error) {
       console.error("Erreur lors du chargement des commandes:", error);
+      alert("Erreur: " + error.message);
     } finally {
       setIsLoadingOrders(false);
     }
