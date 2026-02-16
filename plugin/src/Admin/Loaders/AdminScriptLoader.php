@@ -199,11 +199,12 @@ class AdminScriptLoader
 
             // Charger les styles canvas-modal pour les pages templates et settings
             if ($current_page === 'pdf-builder-settings' || $current_page === 'pdf-builder-templates') {
+                error_log('[AdminScriptLoader] Loading pdf-builder-react.min.css for page: ' . $current_page);
                 \wp_enqueue_style(
                     'pdf-builder-react',
                     PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.min.css',
                     [],
-                    PDF_BUILDER_PRO_VERSION
+                    PDF_BUILDER_PRO_VERSION . '-' . time()
                 );
                 
                 // Charger le CSS de l'onglet Système (si on est sur la page settings)
@@ -212,9 +213,11 @@ class AdminScriptLoader
                         'pdf-builder-settings-systeme',
                         PDF_BUILDER_PRO_ASSETS_URL . 'css/settings-systeme-css.min.css',
                         [],
-                        PDF_BUILDER_PRO_VERSION
+                        PDF_BUILDER_PRO_VERSION . '-' . time()
                     );
                 }
+            } else {
+                error_log('[AdminScriptLoader] NOT loading pdf-builder-react.min.css - current_page: ' . $current_page);
             }
 
             // Définir les paramètres de debug JavaScript UNIQUEMENT pour les notifications
