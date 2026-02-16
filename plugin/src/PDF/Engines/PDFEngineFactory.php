@@ -128,86 +128,17 @@ class PDFEngineFactory {
     /**
      * Teste tous les moteurs disponibles
      * 
-     * @return array Résultats des tests par moteur
-     */
-    public static function test_all_engines() {
-        $results = [];
-        
-        // Test Puppeteer
-        try {
-            $puppeteer = new PuppeteerEngine();
-            if ($puppeteer->is_available()) {
-                $test_result = $puppeteer->test_connection();
-                $results['puppeteer'] = $test_result;
-            } else {
-                $results['puppeteer'] = [
-                    'success' => false,
-                    'message' => 'Configuration incomplète',
-                    'details' => []
-                ];
-            }
-        } catch (\Exception $e) {
-            $results['puppeteer'] = [
-                'success' => false,
-                'message' => $e->getMessage(),
-                'details' => []
-            ];
-        }
-        
-        // Test DomPDF
-        try {
-            $dompdf = new DomPDFEngine();
-            $test_html = '<html><body><h1>Test</h1></body></html>';
-            $pdf = $dompdf->generate($test_html, ['width' => 794, 'height' => 300]);
-            
-            $results['dompdf'] = [
-                'success' => $pdf !== false,
-                'message' => $pdf !== false ? 'Fonctionnel' : 'Échec',
-                'details' => [
-                    'available' => $dompdf->is_available(),
-                    'pdf_size' => $pdf !== false ? strlen($pdf) . ' bytes' : 'N/A'
-                ]
-            ];
-        } catch (\Exception $e) {
-            $results['dompdf'] = [
-                'success' => false,
-                'message' => $e->getMessage(),
-                'details' => []
-            ];
-        }
-        
-        return $results;
-    }
-    
-    /**
-     * Retourne le moteur recommandé en fonction de la configuration
-     * 
-     * @return string Nom du moteur recommandé
-     */
-    public static function get_recommended_engine() {
-        $puppeteer = new PuppeteerEngine();
-        
-        if ($puppeteer->is_available()) {
-            return 'puppeteer';
-        }
-        
-        return 'dompdf';
-    }
-    
-    /**
-     * Teste tous les moteurs disponibles
-     * 
      * @return array Résultats des tests pour chaque moteur
      */
     public static function test_all_engines() {
         $results = [];
         
         try {
-            // Test Puppeteer
+            // Test Puppeteer - charger la configuration depuis wp_pdf_builder_settings
             $puppeteer_config = [
-                'api_url' => get_option('pdf_builder_puppeteer_url', ''),
-                'api_token' => get_option('pdf_builder_puppeteer_token', ''),
-                'timeout' => get_option('pdf_builder_puppeteer_timeout', 30),
+                'api_url' => pdf_builder_get_option('pdf_builder_puppeteer_url', ''),
+                'api_token' => pdf_builder_get_option('pdf_builder_puppeteer_token', ''),
+                'timeout' => pdf_builder_get_option('pdf_builder_puppeteer_timeout', 30),
                 'fallback_enabled' => false,
             ];
             
@@ -231,9 +162,17 @@ class PDFEngineFactory {
             // Test DomPDF
             $dompdf = new DomPDFEngine();
             if ($dompdf->is_available()) {
+                // Test de génération réel
+                $test_html = '<html><body><h1>Test</h1></body></html>';
+                $pdf = $dompdf->generate($test_html, ['width' => 794, 'height' => 300]);
+                
                 $results['dompdf'] = [
-                    'success' => true,
-                    'message' => 'DomPDF disponible et fonctionnel'
+                    'success' => $pdf !== false,
+                    'message' => $pdf !== false ? 'Fonctionnel' : 'Échec',
+                    'details' => [
+                        'available' => true,
+                        'pdf_size' => $pdf !== false ? strlen($pdf) . ' bytes' : 'N/A'
+                    ]
                 ];
             } else {
                 $results['dompdf'] = [
@@ -249,6 +188,29 @@ class PDFEngineFactory {
         }
         
         return $results;
+    }
+    
+    /**
+     * Retourne le moteur recommandé en fonction de la configuration
+     * 
+     * @return string Nom du moteur recommandé
+     */
+    public static function get_recommended_engine() {
+        $puppeteer_url = pdf_builder_get_option('pdf_builder_puppeteer_url', '');
+        
+        if (!empty($puppeteer_url)) {
+            $puppeteer = new PuppeteerEngine([
+                'api_url' => $puppeteer_url,
+                'api_token' => pdf_builder_get_option('pdf_builder_puppeteer_token', ''),
+                'timeout' => pdf_builder_get_option('pdf_builder_puppeteer_timeout', 30),
+            ]);
+            
+            if ($puppeteer->is_available()) {
+                return 'puppeteer';
+            }
+        }
+        
+        return 'dompdf';
     }
     
     /**
