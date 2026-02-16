@@ -298,87 +298,87 @@
                                 <table class="form-table">
                                     <tr>
                                         <th scope="row"><label for="pdf_builder_engine">Moteur de génération</label></th>
-                                <td>
-                                    <select id="pdf_builder_engine" name="pdf_builder_engine" class="regular-text">
-                                        <option value="puppeteer" <?php selected($current_engine, 'puppeteer'); ?>>
-                                            Puppeteer (Recommandé) - Qualité supérieure + CSS moderne
-                                        </option>
-                                        <option value="dompdf" <?php selected($current_engine, 'dompdf'); ?>>
-                                            DomPDF - Fallback PHP intégré
-                                        </option>
-                                        <option value="auto" <?php selected($current_engine, 'auto'); ?>>
-                                            Auto - Tenter Puppeteer puis fallback DomPDF
-                                        </option>
-                                    </select>
-                                    <p class="description">
-                                        <strong>Puppeteer :</strong> Moteur moderne basé sur Chrome, excellent rendu CSS<br>
-                                        <strong>DomPDF :</strong> Moteur PHP intégré, support CSS limité mais sans dépendances externes<br>
-                                        <strong>Auto :</strong> Essaie Puppeteer puis bascule sur DomPDF si indisponible
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr class="puppeteer-config-row">
-                                <th scope="row"><label for="pdf_builder_puppeteer_url">API Puppeteer - URL</label></th>
-                                <td>
+                                        <td>
+                                            <select id="pdf_builder_engine" name="pdf_builder_engine" class="regular-text">
+                                                <option value="puppeteer" <?php selected($current_engine, 'puppeteer'); ?>>
+                                                    Puppeteer (Recommandé) - Qualité supérieure + CSS moderne
+                                                </option>
+                                                <option value="dompdf" <?php selected($current_engine, 'dompdf'); ?>>
+                                                    DomPDF - Fallback PHP intégré
+                                                </option>
+                                                <option value="auto" <?php selected($current_engine, 'auto'); ?>>
+                                                    Auto - Tenter Puppeteer puis fallback DomPDF
+                                                </option>
+                                            </select>
+                                            <p class="description">
+                                                <strong>Puppeteer :</strong> Moteur moderne basé sur Chrome, excellent rendu CSS<br>
+                                                <strong>DomPDF :</strong> Moteur PHP intégré, support CSS limité mais sans dépendances externes<br>
+                                                <strong>Auto :</strong> Essaie Puppeteer puis bascule sur DomPDF si indisponible
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr class="puppeteer-config-row">
+                                        <th scope="row"><label for="pdf_builder_puppeteer_url">API Puppeteer - URL</label></th>
+                                        <td>
                                     <input type="url" id="pdf_builder_puppeteer_url" name="pdf_builder_puppeteer_url" 
                                            value="<?php echo esc_attr($puppeteer_url); ?>" 
                                            class="regular-text" 
                                            placeholder="https://your-server.com/api/pdf">
-                                    <p class="description">
-                                        URL de votre serveur Puppeteer (ex: http://localhost:3000/api/pdf)
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr class="puppeteer-config-row">
-                                <th scope="row"><label for="pdf_builder_puppeteer_token">API Puppeteer - Token</label></th>
-                                <td>
+                                            <p class="description">
+                                                URL de votre serveur Puppeteer (ex: http://localhost:3000/api/pdf)
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr class="puppeteer-config-row">
+                                        <th scope="row"><label for="pdf_builder_puppeteer_token">API Puppeteer - Token</label></th>
+                                        <td>
                                     <input type="password" id="pdf_builder_puppeteer_token" name="pdf_builder_puppeteer_token" 
                                            value="<?php echo esc_attr(get_option('pdf_builder_puppeteer_token', '')); ?>" 
                                            class="regular-text" 
                                            placeholder="your-secret-token">
-                                    <button type="button" class="button" onclick="document.getElementById('pdf_builder_puppeteer_token').type = document.getElementById('pdf_builder_puppeteer_token').type === 'password' ? 'text' : 'password';">
-                                        👁️ Afficher/Masquer
-                                    </button>
-                                    <p class="description">
-                                        Token d'authentification pour sécuriser l'API
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr class="puppeteer-config-row">
-                                <th scope="row"><label for="pdf_builder_puppeteer_timeout">Timeout (secondes)</label></th>
-                                <td>
-                                    <input type="number" id="pdf_builder_puppeteer_timeout" name="pdf_builder_puppeteer_timeout" 
-                                           value="<?php echo esc_attr(get_option('pdf_builder_puppeteer_timeout', 30)); ?>" 
-                                           min="5" max="120" step="5" />
-                                    <p class="description">Durée maximale d'attente pour la génération PDF (5-120s)</p>
-                                </td>
-                            </tr>
-                            <tr class="puppeteer-config-row">
-                                <th scope="row"><label for="pdf_builder_puppeteer_fallback">Fallback automatique</label></th>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="hidden" name="pdf_builder_puppeteer_fallback" value="0">
-                                        <input type="checkbox" id="pdf_builder_puppeteer_fallback" name="pdf_builder_puppeteer_fallback" 
-                                               value="1" <?php checked(get_option('pdf_builder_puppeteer_fallback', 1), 1); ?>>
-                                        <span class="toggle-slider"></span>
-                                    </label>
-                                    <p class="description">
-                                        En cas d'échec Puppeteer, basculer automatiquement sur DomPDF
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr class="puppeteer-config-row">
-                                <th scope="row">Test de connexion</th>
-                                <td>
-                                    <button type="button" class="button button-secondary" id="test-puppeteer-connection">
-                                        🧪 Tester Puppeteer
-                                    </button>
-                                    <button type="button" class="button button-secondary" id="test-all-engines" style="margin-left:10px;">
-                                        🔍 Tester tous les moteurs
-                                    </button>
-                                    <div id="engine-test-result" style="margin-top: 10px;"></div>
-                                    
-                                    <script>
+                                            <button type="button" class="button" onclick="document.getElementById('pdf_builder_puppeteer_token').type = document.getElementById('pdf_builder_puppeteer_token').type === 'password' ? 'text' : 'password';">
+                                                👁️ Afficher/Masquer
+                                            </button>
+                                            <p class="description">
+                                                Token d'authentification pour sécuriser l'API
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr class="puppeteer-config-row">
+                                        <th scope="row"><label for="pdf_builder_puppeteer_timeout">Timeout (secondes)</label></th>
+                                        <td>
+                                            <input type="number" id="pdf_builder_puppeteer_timeout" name="pdf_builder_puppeteer_timeout" 
+                                                   value="<?php echo esc_attr(get_option('pdf_builder_puppeteer_timeout', 30)); ?>" 
+                                                   min="5" max="120" step="5" />
+                                            <p class="description">Durée maximale d'attente pour la génération PDF (5-120s)</p>
+                                        </td>
+                                    </tr>
+                                    <tr class="puppeteer-config-row">
+                                        <th scope="row"><label for="pdf_builder_puppeteer_fallback">Fallback automatique</label></th>
+                                        <td>
+                                            <label class="toggle-switch">
+                                                <input type="hidden" name="pdf_builder_puppeteer_fallback" value="0">
+                                                <input type="checkbox" id="pdf_builder_puppeteer_fallback" name="pdf_builder_puppeteer_fallback" 
+                                                       value="1" <?php checked(get_option('pdf_builder_puppeteer_fallback', 1), 1); ?>>
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                            <p class="description">
+                                                En cas d'échec Puppeteer, basculer automatiquement sur DomPDF
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr class="puppeteer-config-row">
+                                        <th scope="row">Test de connexion</th>
+                                        <td>
+                                            <button type="button" class="button button-secondary" id="test-puppeteer-connection">
+                                                🧪 Tester Puppeteer
+                                            </button>
+                                            <button type="button" class="button button-secondary" id="test-all-engines" style="margin-left:10px;">
+                                                🔍 Tester tous les moteurs
+                                            </button>
+                                            <div id="engine-test-result" style="margin-top: 10px;"></div>
+                                            
+                                            <script>
                                     jQuery(document).ready(function($) {
                                         $('#test-puppeteer-connection').on('click', function() {
                                             var $btn = $(this);
@@ -444,13 +444,14 @@
                                                     $btn.prop('disabled', false).text('🔍 Tester tous les moteurs');
                                                 }
                                             });
-                                        });
-                                    });
-                                    </script>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
+                                                });
+                                            });
+                                            </script>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </section>
                     
                     <script>
                     jQuery(document).ready(function($) {
