@@ -554,12 +554,6 @@
                     </table>
             </section>
 
-
-
-            <!-- CSS pour les modales Canvas - DÉJÀ INCLUS dans pdf-builder-unified.css -->
-            <style>
-            </style>
-
             <script>
                 var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
                 (function() {

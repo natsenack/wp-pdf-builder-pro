@@ -80,12 +80,6 @@ class AdminScriptLoader
                 PDF_BUILDER_PRO_VERSION . '-' . time()
             );
         }
-        
-        // Charger le CSS unifié qui contient les styles pour le bouton flottant
-        $unified_css = PDF_BUILDER_PRO_ASSETS_PATH . 'css/pdf-builder-unified.css';
-        if (file_exists($unified_css)) {
-            \wp_enqueue_style('pdf-builder-unified', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-unified.css', [], PDF_BUILDER_PRO_VERSION);
-        }
 
         // Charger SETTINGS CSS et JS pour les pages settings
         // Simplifier la condition - charger pour toutes les pages admin contenant pdf-builder
