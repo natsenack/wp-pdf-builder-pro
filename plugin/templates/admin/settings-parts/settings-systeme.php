@@ -250,8 +250,8 @@
                             <span>
                                 🚀 Moteur de génération PDF
                                 <?php
-                                $current_engine = get_option('pdf_builder_engine', 'puppeteer');
-                                $puppeteer_url = get_option('pdf_builder_puppeteer_url', '');
+                                $current_engine = pdf_builder_get_option('pdf_builder_engine', 'puppeteer');
+                                $puppeteer_url = pdf_builder_get_option('pdf_builder_puppeteer_url', '');
                                 $puppeteer_available = !empty($puppeteer_url);
                                 $engine_status = $current_engine === 'puppeteer' && $puppeteer_available ? 'Puppeteer ACTIF' : 'DomPDF (Fallback)';
                                 ?>
@@ -333,7 +333,7 @@
                                         <th scope="row"><label for="pdf_builder_puppeteer_token">API Puppeteer - Token</label></th>
                                         <td>
                                     <input type="password" id="pdf_builder_puppeteer_token" name="pdf_builder_puppeteer_token" 
-                                           value="<?php echo esc_attr(get_option('pdf_builder_puppeteer_token', '')); ?>" 
+                                           value="<?php echo esc_attr(pdf_builder_get_option('pdf_builder_puppeteer_token', '')); ?>" 
                                            class="regular-text" 
                                            placeholder="your-secret-token">
                                             <button type="button" class="button" onclick="document.getElementById('pdf_builder_puppeteer_token').type = document.getElementById('pdf_builder_puppeteer_token').type === 'password' ? 'text' : 'password';">
@@ -348,7 +348,7 @@
                                         <th scope="row"><label for="pdf_builder_puppeteer_timeout">Timeout (secondes)</label></th>
                                         <td>
                                             <input type="number" id="pdf_builder_puppeteer_timeout" name="pdf_builder_puppeteer_timeout" 
-                                                   value="<?php echo esc_attr(get_option('pdf_builder_puppeteer_timeout', 30)); ?>" 
+                                                   value="<?php echo esc_attr(pdf_builder_get_option('pdf_builder_puppeteer_timeout', 30)); ?>" 
                                                    min="5" max="120" step="5" />
                                             <p class="description">Durée maximale d'attente pour la génération PDF (5-120s)</p>
                                         </td>
@@ -359,7 +359,7 @@
                                             <label class="toggle-switch">
                                                 <input type="hidden" name="pdf_builder_puppeteer_fallback" value="0">
                                                 <input type="checkbox" id="pdf_builder_puppeteer_fallback" name="pdf_builder_puppeteer_fallback" 
-                                                       value="1" <?php checked(get_option('pdf_builder_puppeteer_fallback', 1), 1); ?>>
+                                                       value="1" <?php checked(pdf_builder_get_option('pdf_builder_puppeteer_fallback', 1), 1); ?>>
                                                 <span class="toggle-slider"></span>
                                             </label>
                                             <p class="description">

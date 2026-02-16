@@ -1036,13 +1036,13 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         foreach ($pdf_engine_keys as $engine_key) {
             if (isset($settings[$engine_key])) {
-                // Sauvegarder dans une ligne séparée avec update_option
+                // Sauvegarder dans la table personnalisée wp_pdf_builder_settings
                 $saved_value = $settings[$engine_key];
-                $result = update_option($engine_key, $saved_value);
-                error_log("[PDF Builder AJAX] Saved PDF engine setting: {$engine_key} = {$saved_value} (Result: " . ($result ? 'SUCCESS' : 'FAILED') . ")");
+                $result = pdf_builder_update_option($engine_key, $saved_value);
+                error_log("[PDF Builder AJAX] Saved PDF engine setting to wp_pdf_builder_settings: {$engine_key} = {$saved_value} (Result: " . ($result ? 'SUCCESS' : 'FAILED') . ")");
                 
                 // Vérifier que la valeur a bien été sauvegardée
-                $retrieved_value = get_option($engine_key);
+                $retrieved_value = pdf_builder_get_option($engine_key);
                 error_log("[PDF Builder AJAX] Verification for {$engine_key}: Saved='{$saved_value}', Retrieved='{$retrieved_value}'");
                 
                 // Supprimer du tableau unifié pour éviter la duplication
@@ -5014,11 +5014,11 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Charger la factory
             require_once PDF_BUILDER_PATH . 'src/PDF/Engines/PDFEngineFactory.php';
 
-            // Récupérer la configuration actuelle
+            // Récupérer la configuration actuelle depuis wp_pdf_builder_settings
             $config = [
-                'api_url' => get_option('pdf_builder_puppeteer_url', ''),
-                'api_token' => get_option('pdf_builder_puppeteer_token', ''),
-                'timeout' => get_option('pdf_builder_puppeteer_timeout', 30),
+                'api_url' => pdf_builder_get_option('pdf_builder_puppeteer_url', ''),
+                'api_token' => pdf_builder_get_option('pdf_builder_puppeteer_token', ''),
+                'timeout' => pdf_builder_get_option('pdf_builder_puppeteer_timeout', 30),
                 'fallback_enabled' => false, // Désactiver le fallback pour ce test
             ];
 
