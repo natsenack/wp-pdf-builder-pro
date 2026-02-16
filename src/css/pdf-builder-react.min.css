@@ -1,4 +1,4 @@
-.context-menu {
+.pdfb-{
   position: fixed !important;
   background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%) !important;
   border: 1px solid #e2e8f0 !important;
@@ -26,7 +26,7 @@
   }
 }
 
-.context-menu-item {
+.pdfb-{
   display: flex;
   align-items: center;
   padding: 8px 16px;
@@ -39,31 +39,31 @@
   background: transparent;
 }
 
-.context-menu-item:hover:not(.disabled) {
+.pdfb-hover:not(.disabled) {
   background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
   transform: translateX(2px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-.context-menu-item:active:not(.disabled) {
+.pdfb-active:not(.disabled) {
   background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
   transform: translateX(1px);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
-.context-menu-item.disabled {
+.pdfb-disabled {
   color: #94a3b8;
   cursor: not-allowed;
   opacity: 0.6;
 }
 
-.context-menu-item.disabled:hover {
+.pdfb-disabled:hover {
   background-color: transparent;
   transform: none;
   box-shadow: none;
 }
 
-.context-menu-icon {
+.pdfb-{
   margin-right: 12px;
   width: 18px;
   text-align: center;
@@ -71,13 +71,13 @@
   opacity: 0.8;
 }
 
-.context-menu-label {
+.pdfb-{
   flex: 1;
   font-weight: 500;
   color: #334155;
 }
 
-.context-menu-separator {
+.pdfb-{
   height: 1px;
   background: linear-gradient(
     90deg,
@@ -95,7 +95,7 @@
    ============================================================================ */
 
 /* Styles de base des modals */
-.pdfb-canvas-modal-overlay {
+.pdfb-{
   position: fixed;
   top: 0;
   left: 0;
@@ -112,7 +112,7 @@
 
 /* Retirer le sélecteur conditionnel qui ne sert plus */
 
-.pdfb-canvas-modal-container {
+.pdfb-{
   background: #ffffff;
   border-radius: 20px;
   box-shadow:
@@ -150,7 +150,7 @@
 }
 
 /* Header du modal - Style premium */
-.pdfb-canvas-modal-header {
+.pdfb-{
   background: #1e293b;
   color: #ffffff;
   padding: 28px 32px;
@@ -163,7 +163,7 @@
   overflow: hidden;
 }
 
-.pdfb-canvas-modal-header h3 {
+.pdfb-h3 {
   margin: 0;
   font-size: 20px;
   font-weight: 700;
@@ -176,7 +176,7 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.pdfb-canvas-modal-header h3 span {
+.pdfb-h3 span {
   font-size: 28px;
   animation: iconBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 1;
 }
@@ -191,7 +191,7 @@
   }
 }
 
-.pdfb-canvas-modal-close {
+.pdfb-{
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -209,19 +209,19 @@
   z-index: 2;
 }
 
-.pdfb-canvas-modal-close:hover {
+.pdfb-hover {
   background: rgba(255, 255, 255, 0.25);
   border-color: rgba(255, 255, 255, 0.4);
   color: #ffffff;
   transform: rotate(90deg) scale(1.1);
 }
 
-.pdfb-canvas-modal-close:active {
+.pdfb-active {
   transform: rotate(90deg) scale(0.95);
 }
 
 /* Corps du modal */
-.pdfb-canvas-modal-body {
+.pdfb-{
   padding: 28px 32px;
   max-height: 60vh;
   overflow-y: auto;
@@ -230,26 +230,26 @@
 }
 
 /* Scrollbar personnalisée */
-.pdfb-canvas-modal-body::-webkit-scrollbar {
+.pdfb-:-webkit-scrollbar {
   width: 8px;
 }
 
-.pdfb-canvas-modal-body::-webkit-scrollbar-track {
+.pdfb-:-webkit-scrollbar-track {
   background: transparent;
 }
 
-.pdfb-canvas-modal-body::-webkit-scrollbar-thumb {
+.pdfb-:-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.15);
   border-radius: 4px;
   transition: background 0.2s ease;
 }
 
-.pdfb-canvas-modal-body::-webkit-scrollbar-thumb:hover {
+.pdfb-:-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.25);
 }
 
 /* Groupes de paramètres */
-.setting-group {
+.pdfb-{
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
@@ -259,14 +259,14 @@
   position: relative;
 }
 
-.setting-group:hover {
+.pdfb-hover {
   border-color: #cbd5e1;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   background: #ffffff;
   transform: translateY(-2px);
 }
 
-.setting-label {
+.pdfb-{
   display: block;
   font-weight: 700;
   color: #1e293b;
@@ -279,7 +279,7 @@
 /* Styles pour les inputs */
 .setting-input,
 .setting-textarea,
-.setting-select {
+.pdfb-{
   width: 100%;
   padding: 10px 14px;
   border: 1px solid #e2e8f0;
@@ -291,14 +291,14 @@
   font-family: inherit;
 }
 
-.setting-input::placeholder,
-.setting-textarea::placeholder {
+.pdfb-:placeholder,
+.pdfb-:placeholder {
   color: #cbd5e1;
 }
 
-.setting-select {
+.pdfb-{
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23334155' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.pdfb-org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23334155' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 18px;
@@ -306,24 +306,24 @@
 }
 
 /* Désactivation forcée de l'autocomplete du navigateur */
-.setting-input:-webkit-autofill,
-.setting-input:-webkit-autofill:hover,
-.setting-input:-webkit-autofill:focus,
-.setting-input:-webkit-autofill:active {
+.pdfb--webkit-autofill,
+.pdfb--webkit-autofill:hover,
+.pdfb--webkit-autofill:focus,
+.pdfb--webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px white inset !important;
   box-shadow: 0 0 0 30px white inset !important;
   -webkit-text-fill-color: #334155 !important;
   transition: background-color 5000s ease-in-out 0s;
 }
 
-.setting-input:-webkit-autofill::first-line {
+.pdfb--webkit-autofill::first-line {
   font-family: inherit;
   color: #334155;
 }
 
 /* Style pour masquer les suggestions autocomplete du navigateur */
-.setting-input::-webkit-credentials-auto-fill-button,
-.setting-input::-webkit-contacts-auto-fill-button {
+.pdfb-:-webkit-credentials-auto-fill-button,
+.pdfb-:-webkit-contacts-auto-fill-button {
   visibility: hidden;
   display: none !important;
   pointer-events: none;
@@ -332,52 +332,52 @@
   margin: 0;
 }
 
-.setting-input:focus,
-.setting-textarea:focus,
-.setting-select:focus {
+.pdfb-focus,
+.pdfb-focus,
+.pdfb-focus {
   outline: none;
   border-color: #3b82f6;
   background: #ffffff;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.setting-textarea {
+.pdfb-{
   resize: vertical;
   min-height: 80px;
   padding: 12px 14px;
 }
 
-.setting-input-group {
+.pdfb-{
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.setting-input-separator {
+.pdfb-{
   color: #94a3b8;
   font-weight: bold;
   font-size: 16px;
 }
 
-.setting-unit {
+.pdfb-{
   color: #666;
   font-size: 12px;
 }
 
-.setting-input-disabled {
+.pdfb-{
   background-color: #f5f5f5;
   color: #999;
   cursor: not-allowed;
 }
 
 /* Checkboxes */
-.setting-checkbox-group {
+.pdfb-{
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.setting-checkbox-label {
+.pdfb-{
   display: flex;
   align-items: center;
   gap: 10px;
@@ -390,11 +390,11 @@
   user-select: none;
 }
 
-.setting-checkbox-label:hover {
+.pdfb-hover {
   background: rgba(59, 130, 246, 0.05);
 }
 
-.setting-checkbox {
+.pdfb-{
   width: 18px;
   height: 18px;
   accent-color: #3b82f6;
@@ -402,22 +402,22 @@
   transition: all 0.2s ease;
 }
 
-.setting-checkbox:hover {
+.pdfb-hover {
   transform: scale(1.15);
 }
 
-.setting-checkbox:checked {
+.pdfb-checked {
   accent-color: #2563eb;
 }
 
 /* Status tags */
-.setting-status-tags {
+.pdfb-{
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.status-tag {
+.pdfb-{
   padding: 6px 12px;
   border-radius: 14px;
   font-size: 12px;
@@ -428,26 +428,26 @@
   border: 1px solid;
 }
 
-.status-new {
+.pdfb-{
   background: #e0f2fe;
   color: #0369a1;
   border-color: rgba(3, 105, 161, 0.2);
 }
 
-.status-modified {
+.pdfb-{
   background: #fef3c7;
   color: #b45309;
   border-color: rgba(180, 83, 9, 0.2);
 }
 
-.status-editing {
+.pdfb-{
   background: #f3e8ff;
   color: #7e22ce;
   border-color: rgba(126, 34, 206, 0.2);
 }
 
 /* Info text */
-.setting-info {
+.pdfb-{
   font-size: 13px;
   color: #475569;
   line-height: 1.8;
@@ -457,19 +457,19 @@
   border-left: 3px solid #3b82f6;
 }
 
-.setting-info div {
+.pdfb-div {
   margin-bottom: 6px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.setting-info div:last-child {
+.pdfb-div:last-child {
   margin-bottom: 0;
 }
 
 /* Hints */
-.setting-hint {
+.pdfb-{
   font-size: 12px;
   color: #64748b;
   font-style: italic;
@@ -481,7 +481,7 @@
 }
 
 /* Footer du modal */
-.pdfb-canvas-modal-footer {
+.pdfb-{
   background: #f8fafc;
   padding: 20px 32px;
   border-top: 1px solid #e2e8f0;
@@ -491,7 +491,7 @@
   align-items: center;
 }
 
-.pdfb-canvas-modal-btn {
+.pdfb-{
   padding: 11px 24px;
   border-radius: 8px;
   font-weight: 600;
@@ -505,7 +505,7 @@
   overflow: hidden;
 }
 
-.pdfb-canvas-modal-btn::before {
+.pdfb-:before {
   content: "";
   position: absolute;
   top: 50%;
@@ -521,42 +521,42 @@
   z-index: -1;
 }
 
-.pdfb-canvas-modal-btn:hover::before {
+.pdfb-hover::before {
   width: 300px;
   height: 300px;
 }
 
-.pdfb-canvas-modal-btn-secondary {
+.pdfb-{
   background: #e2e8f0;
   color: #0f172a;
   border: 1px solid #cbd5e1;
 }
 
-.pdfb-canvas-modal-btn-secondary:hover {
+.pdfb-hover {
   background: #cbd5e1;
   color: #0f172a;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
 
-.pdfb-canvas-modal-btn-secondary:active {
+.pdfb-active {
   transform: translateY(0);
 }
 
-.pdfb-canvas-modal-btn-primary {
+.pdfb-{
   background: #3b82f6;
   color: white;
   border: none;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-.pdfb-canvas-modal-btn-primary:hover {
+.pdfb-hover {
   background: #2563eb;
   box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
   transform: translateY(-2px);
 }
 
-.pdfb-canvas-modal-btn-primary:active {
+.pdfb-active {
   transform: translateY(0);
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
@@ -565,14 +565,14 @@
    CANVAS SETTINGS CARDS - For Settings Page Canvas Tab
    ============================================================================ */
 
-.pdfb-canvas-settings-grid {
+.pdfb-{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: 24px;
   margin: 30px 0;
 }
 
-.pdfb-canvas-card {
+.pdfb-{
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
@@ -583,13 +583,13 @@
   flex-direction: column;
 }
 
-.pdfb-canvas-card:hover {
+.pdfb-hover {
   border-color: #cbd5e1;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   transform: translateY(-4px);
 }
 
-.pdfb-canvas-card-header {
+.pdfb-{
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   padding: 20px 24px;
   border-bottom: 1px solid #e2e8f0;
@@ -598,17 +598,17 @@
   gap: 12px;
 }
 
-.pdfb-canvas-card-header-left {
+.pdfb-{
   display: flex;
   align-items: center;
 }
 
-.pdfb-canvas-card-icon {
+.pdfb-{
   font-size: 28px;
   line-height: 1;
 }
 
-.pdfb-canvas-card-header h4 {
+.pdfb-h4 {
   margin: 0;
   font-size: 16px;
   font-weight: 700;
@@ -616,31 +616,31 @@
   letter-spacing: -0.2px;
 }
 
-.pdfb-canvas-card-content {
+.pdfb-{
   padding: 20px 24px;
 }
 
-.pdfb-canvas-card-content p {
+.pdfb-p {
   margin: 0;
   font-size: 14px;
   color: #64748b;
   line-height: 1.6;
 }
 
-.pdfb-canvas-card-preview {
+.pdfb-{
   padding: 16px 24px;
   background: #f8fafc;
   border-top: 1px solid #e2e8f0;
 }
 
 /* Dimensions Preview - Visual Canvas Representation */
-.dimensions-preview-container {
+.pdfb-{
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-.pdfb-canvas-preview-wrapper {
+.pdfb-{
   position: relative;
   display: flex;
   align-items: center;
@@ -651,14 +651,14 @@
   border: 1px solid #cbd5e1;
 }
 
-.ruler {
+.pdfb-{
   position: absolute;
   background: #94a3b8;
   display: flex;
   z-index: 1;
 }
 
-.ruler-horizontal {
+.pdfb-{
   top: 8px;
   left: 30px;
   right: 30px;
@@ -668,7 +668,7 @@
   padding: 0 2px;
 }
 
-.ruler-vertical {
+.pdfb-{
   left: 8px;
   top: 30px;
   bottom: 30px;
@@ -679,24 +679,24 @@
   padding: 2px 0;
 }
 
-.ruler-tick {
+.pdfb-{
   background: #ffffff;
   opacity: 0.7;
 }
 
-.ruler-horizontal .ruler-tick {
+.pdfb-.pdfb-{
   width: 1px;
   height: 6px;
   margin: auto 0;
 }
 
-.ruler-vertical .ruler-tick {
+.pdfb-.pdfb-{
   height: 1px;
   width: 6px;
   margin: 0 auto;
 }
 
-.mini-canvas-preview {
+.pdfb-{
   position: relative;
   background: #ffffff;
   border: 2px solid #cbd5e1;
@@ -723,7 +723,7 @@
   }
 }
 
-.format-badge {
+.pdfb-{
   position: absolute;
   top: 8px;
   right: 8px;
@@ -750,7 +750,7 @@
   }
 }
 
-.demo-elements {
+.pdfb-{
   position: absolute;
   inset: 0;
   display: flex;
@@ -759,7 +759,7 @@
   align-items: flex-start;
 }
 
-.demo-element {
+.pdfb-{
   width: 14px;
   height: 14px;
   border-radius: 3px;
@@ -767,15 +767,15 @@
   animation: element-bounce 2s ease-in-out infinite;
 }
 
-.demo-element.text-sample {
+.pdfb-text-sample {
   animation-delay: 0s;
 }
 
-.demo-element.image-sample {
+.pdfb-image-sample {
   animation-delay: 0.3s;
 }
 
-.demo-element.shape-sample {
+.pdfb-shape-sample {
   animation-delay: 0.6s;
 }
 
@@ -789,7 +789,7 @@
   }
 }
 
-.corner-indicator {
+.pdfb-{
   position: absolute;
   width: 8px;
   height: 8px;
@@ -797,7 +797,7 @@
   opacity: 0.6;
 }
 
-.corner-indicator.top-left {
+.pdfb-top-left {
   top: -1px;
   left: -1px;
   border-right: none;
@@ -805,7 +805,7 @@
   border-radius: 2px 0 0 0;
 }
 
-.corner-indicator.top-right {
+.pdfb-top-right {
   top: -1px;
   right: -1px;
   border-left: none;
@@ -813,7 +813,7 @@
   border-radius: 0 2px 0 0;
 }
 
-.corner-indicator.bottom-left {
+.pdfb-bottom-left {
   bottom: -1px;
   left: -1px;
   border-right: none;
@@ -821,7 +821,7 @@
   border-radius: 0 0 0 2px;
 }
 
-.corner-indicator.bottom-right {
+.pdfb-bottom-right {
   bottom: -1px;
   right: -1px;
   border-left: none;
@@ -829,7 +829,7 @@
   border-radius: 0 0 2px 0;
 }
 
-.dimension-indicator {
+.pdfb-{
   position: absolute;
   display: flex;
   align-items: center;
@@ -845,19 +845,19 @@
   z-index: 10;
 }
 
-.width-indicator {
+.pdfb-{
   bottom: -24px;
   left: 50%;
   transform: translateX(-50%);
 }
 
-.height-indicator {
+.pdfb-{
   right: -38px;
   top: 50%;
   transform: translateY(-50%);
 }
 
-.preview-details {
+.pdfb-{
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
@@ -867,7 +867,7 @@
   border-radius: 6px;
 }
 
-.detail-item {
+.pdfb-{
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -878,12 +878,12 @@
   transition: all 0.2s ease;
 }
 
-.detail-item:hover {
+.pdfb-hover {
   background: #eff6ff;
   transform: translateY(-2px);
 }
 
-.detail-label {
+.pdfb-{
   font-size: 10px;
   color: #64748b;
   font-weight: 600;
@@ -891,13 +891,13 @@
   letter-spacing: 0.3px;
 }
 
-.detail-value {
+.pdfb-{
   font-size: 13px;
   color: #1e293b;
   font-weight: 700;
 }
 
-.color-palette {
+.pdfb-{
   display: flex;
   gap: 12px;
   padding: 10px 12px;
@@ -906,7 +906,7 @@
   border-radius: 6px;
 }
 
-.color-swatch {
+.pdfb-{
   display: flex;
   align-items: center;
   gap: 8px;
@@ -915,11 +915,11 @@
   transition: all 0.2s ease;
 }
 
-.color-swatch:hover {
+.pdfb-hover {
   transform: scale(1.05);
 }
 
-.swatch {
+.pdfb-{
   width: 32px;
   height: 32px;
   border-radius: 6px;
@@ -928,19 +928,19 @@
   transition: all 0.2s ease;
 }
 
-.color-swatch:hover .swatch {
+.pdfb-hover .pdfb-{
   border-color: #3b82f6;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-.color-label {
+.pdfb-{
   font-size: 11px;
   color: #64748b;
   font-weight: 600;
 }
 
 /* Legacy preview styles (kept for backward compatibility) */
-.preview-format {
+.pdfb-{
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -948,25 +948,25 @@
   color: #475569;
 }
 
-.preview-format > div {
+.pdfb-> div {
   font-weight: 600;
   color: #1e293b;
   font-size: 14px;
 }
 
-.preview-size {
+.pdfb-{
   font-size: 12px;
   color: #64748b;
 }
 
-.pdfb-canvas-card-actions {
+.pdfb-{
   padding: 16px 24px;
   border-top: 1px solid #e2e8f0;
   background: #ffffff;
   margin-top: auto;
 }
 
-.pdfb-canvas-configure-btn {
+.pdfb-{
   width: 100%;
   padding: 12px 20px;
   background: #3b82f6;
@@ -983,22 +983,22 @@
   gap: 8px;
 }
 
-.pdfb-canvas-configure-btn:hover {
+.pdfb-hover {
   background: #2563eb;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
   transform: translateY(-2px);
 }
 
-.pdfb-canvas-configure-btn:active {
+.pdfb-active {
   transform: translateY(0);
 }
 
-.pdfb-canvas-configure-btn span {
+.pdfb-span {
   font-size: 16px;
 }
 
 /* Canvas Card Preview - Grid & Navigation */
-.grid-preview-container {
+.pdfb-{
   position: relative;
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -1007,7 +1007,7 @@
   min-height: 180px;
 }
 
-.grid-canvas {
+.pdfb-{
   position: relative;
   width: 100%;
   height: 160px;
@@ -1015,7 +1015,7 @@
   overflow: hidden;
 }
 
-.grid-lines {
+.pdfb-{
   position: absolute;
   inset: 0;
   display: grid;
@@ -1023,20 +1023,20 @@
   grid-template-rows: repeat(4, 1fr);
 }
 
-.grid-line {
+.pdfb-{
   border: 0.5px dashed #cbd5e1;
   opacity: 0.6;
 }
 
-.grid-line.horizontal {
+.pdfb-horizontal {
   border-bottom: 1px dashed #cbd5e1;
 }
 
-.grid-line.vertical {
+.pdfb-vertical {
   border-right: 1px dashed #cbd5e1;
 }
 
-.grid-dots {
+.pdfb-{
   position: absolute;
   inset: 0;
   display: grid;
@@ -1044,7 +1044,7 @@
   grid-template-rows: repeat(3, 1fr);
 }
 
-.grid-dot {
+.pdfb-{
   width: 4px;
   height: 4px;
   background: #3b82f6;
@@ -1066,34 +1066,34 @@
   }
 }
 
-.guide-lines {
+.pdfb-{
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
-.guide-line {
+.pdfb-{
   position: absolute;
   background: #ef4444;
   opacity: 0.7;
   z-index: 10;
 }
 
-.guide-line.horizontal {
+.pdfb-horizontal {
   width: 100%;
   height: 2px;
   top: 30%;
   box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
 }
 
-.guide-line.vertical {
+.pdfb-vertical {
   width: 2px;
   height: 100%;
   left: 40%;
   box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
 }
 
-.guide-line.active {
+.pdfb-active {
   animation: guide-pulse 1.5s ease-in-out infinite;
 }
 
@@ -1107,14 +1107,14 @@
   }
 }
 
-.preview-element {
+.pdfb-{
   position: absolute;
   top: 25%;
   left: 35%;
   z-index: 5;
 }
 
-.element-box {
+.pdfb-{
   width: 60px;
   height: 40px;
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
@@ -1134,7 +1134,7 @@
   }
 }
 
-.grid-legend {
+.pdfb-{
   display: flex;
   gap: 12px;
   padding: 10px 12px;
@@ -1144,21 +1144,21 @@
   flex-wrap: wrap;
 }
 
-.legend-item {
+.pdfb-{
   color: #64748b;
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.snap-indicator {
+.pdfb-{
   color: #10b981;
   font-weight: 600;
   margin-left: auto;
 }
 
 /* Canvas Card Preview - Interactions & Behavior */
-.interactions-preview-container {
+.pdfb-{
   position: relative;
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -1166,7 +1166,7 @@
   overflow: hidden;
 }
 
-.mini-canvas {
+.pdfb-{
   position: relative;
   width: 100%;
   height: 140px;
@@ -1174,7 +1174,7 @@
   overflow: hidden;
 }
 
-.mini-canvas-grid {
+.pdfb-{
   position: absolute;
   inset: 0;
   background-image:
@@ -1183,7 +1183,7 @@
   background-size: 20px 20px;
 }
 
-.mini-element {
+.pdfb-{
   position: absolute;
   background: #ffffff;
   border: 2px solid #cbd5e1;
@@ -1197,28 +1197,28 @@
   cursor: move;
 }
 
-.mini-element:hover {
+.pdfb-hover {
   border-color: #3b82f6;
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
   transform: scale(1.05);
 }
 
-.mini-element.text-element {
+.pdfb-text-element {
   background: #dbeafe;
   border-color: #3b82f6;
 }
 
-.mini-element.shape-element {
+.pdfb-shape-element {
   background: #fef3c7;
   border-color: #f59e0b;
 }
 
-.mini-element.image-element {
+.pdfb-image-element {
   background: #fce7f3;
   border-color: #ec4899;
 }
 
-.mini-element.selected {
+.pdfb-selected {
   border: 2px solid #3b82f6;
   box-shadow:
     0 0 0 3px rgba(59, 130, 246, 0.2),
@@ -1240,7 +1240,7 @@
   }
 }
 
-.mini-handle {
+.pdfb-{
   position: absolute;
   width: 8px;
   height: 8px;
@@ -1250,33 +1250,33 @@
   z-index: 10;
 }
 
-.mini-handle.nw {
+.pdfb-nw {
   top: -4px;
   left: -4px;
   cursor: nw-resize;
 }
-.mini-handle.ne {
+.pdfb-ne {
   top: -4px;
   right: -4px;
   cursor: ne-resize;
 }
-.mini-handle.sw {
+.pdfb-sw {
   bottom: -4px;
   left: -4px;
   cursor: sw-resize;
 }
-.mini-handle.se {
+.pdfb-se {
   bottom: -4px;
   right: -4px;
   cursor: se-resize;
 }
-.mini-handle.rotation {
+.pdfb-rotation {
   background: #10b981;
   border-color: #059669;
   cursor: grab;
 }
 
-.selection-rectangle {
+.pdfb-{
   position: absolute;
   border: 2px dashed #3b82f6;
   background: rgba(59, 130, 246, 0.1);
@@ -1296,7 +1296,7 @@
   }
 }
 
-.mouse-cursor {
+.pdfb-{
   position: absolute;
   z-index: 20;
   animation: cursor-move 3s ease-in-out infinite;
@@ -1318,12 +1318,12 @@
   }
 }
 
-.cursor-icon {
+.pdfb-{
   font-size: 20px;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
-.zoom-indicator {
+.pdfb-{
   position: absolute;
   top: 8px;
   right: 8px;
@@ -1336,7 +1336,7 @@
   z-index: 15;
 }
 
-.performance-indicator {
+.pdfb-{
   position: absolute;
   bottom: 8px;
   right: 8px;
@@ -1350,7 +1350,7 @@
   z-index: 15;
 }
 
-.performance-bar {
+.pdfb-{
   width: 40px;
   height: 6px;
   background: #e2e8f0;
@@ -1358,19 +1358,19 @@
   overflow: hidden;
 }
 
-.performance-fill {
+.pdfb-{
   height: 100%;
   background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
   transition: width 0.5s ease;
 }
 
-.performance-text {
+.pdfb-{
   font-size: 10px;
   font-weight: 600;
   color: #10b981;
 }
 
-.interactions-controls {
+.pdfb-{
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1379,12 +1379,12 @@
   border-top: 1px solid #e2e8f0;
 }
 
-.selection-mode-indicator {
+.pdfb-{
   display: flex;
   gap: 8px;
 }
 
-.mode-icon {
+.pdfb-{
   width: 28px;
   height: 28px;
   display: flex;
@@ -1398,46 +1398,46 @@
   font-size: 14px;
 }
 
-.mode-icon:hover {
+.pdfb-hover {
   border-color: #3b82f6;
   background: #eff6ff;
 }
 
-.mode-icon.active {
+.pdfb-active {
   background: #3b82f6;
   border-color: #2563eb;
   color: #ffffff;
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
-.interaction-status {
+.pdfb-{
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.status-indicator {
+.pdfb-{
   font-size: 11px;
   padding: 4px 8px;
   border-radius: 4px;
   font-weight: 600;
 }
 
-.status-indicator.selecting {
+.pdfb-selecting {
   background: #dbeafe;
   color: #1e40af;
 }
 
-.keyboard-status {
+.pdfb-{
   display: flex;
   align-items: center;
 }
 
-.keyboard-icon {
+.pdfb-{
   font-size: 14px;
 }
 
-.interaction-progress {
+.pdfb-{
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1447,13 +1447,13 @@
   font-size: 11px;
 }
 
-.progress-label {
+.pdfb-{
   color: #64748b;
   font-weight: 600;
   min-width: 50px;
 }
 
-.progress-bar {
+.pdfb-{
   flex: 1;
   height: 8px;
   background: #e2e8f0;
@@ -1461,7 +1461,7 @@
   overflow: hidden;
 }
 
-.progress-fill {
+.pdfb-{
   height: 100%;
   background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
   transition: width 0.5s ease;
@@ -1478,7 +1478,7 @@
   }
 }
 
-.progress-value {
+.pdfb-{
   color: #3b82f6;
   font-weight: 700;
   min-width: 35px;
@@ -1486,21 +1486,21 @@
 }
 
 /* Canvas Card Preview - Performance & System */
-.performance-preview-container {
+.pdfb-{
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   overflow: hidden;
 }
 
-.performance-metrics {
+.pdfb-{
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1px;
   background: #e2e8f0;
 }
 
-.metric-item {
+.pdfb-{
   background: #ffffff;
   padding: 16px 12px;
   display: flex;
@@ -1510,12 +1510,12 @@
   transition: all 0.3s ease;
 }
 
-.metric-item:hover {
+.pdfb-hover {
   background: #f8fafc;
   transform: scale(1.05);
 }
 
-.metric-label {
+.pdfb-{
   font-size: 11px;
   color: #64748b;
   font-weight: 600;
@@ -1523,32 +1523,32 @@
   letter-spacing: 0.5px;
 }
 
-.metric-value {
+.pdfb-{
   font-size: 20px;
   font-weight: 700;
   color: #1e293b;
   line-height: 1;
 }
 
-.metric-value.fps-value {
+.pdfb-fps-value {
   color: #10b981;
 }
 
-.metric-value.ram-value {
+.pdfb-ram-value {
   color: #3b82f6;
 }
 
-.metric-value.php-value {
+.pdfb-php-value {
   color: #f59e0b;
 }
 
-.metric-unit {
+.pdfb-{
   font-size: 11px;
   color: #94a3b8;
   font-weight: 500;
 }
 
-.performance-status {
+.pdfb-{
   padding: 12px;
   background: #f8fafc;
   border-top: 1px solid #e2e8f0;
@@ -1557,7 +1557,7 @@
   flex-wrap: wrap;
 }
 
-.status-indicator {
+.pdfb-{
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1570,7 +1570,7 @@
   color: #64748b;
 }
 
-.status-dot {
+.pdfb-{
   width: 8px;
   height: 8px;
   background: #10b981;
@@ -1590,16 +1590,16 @@
   }
 }
 
-.status-text {
+.pdfb-{
   color: #10b981;
 }
 
 /* Enhanced Cards with Badges */
-.pdfb-canvas-card-header {
+.pdfb-{
   position: relative;
 }
 
-.pdfb-canvas-card-badge {
+.pdfb-{
   position: absolute;
   top: 12px;
   right: 16px;
@@ -1614,26 +1614,26 @@
   box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
-.pdfb-canvas-card-badge.new {
+.pdfb-new {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 }
 
-.pdfb-canvas-card-badge.pro {
+.pdfb-pro {
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
 }
 
-.pdfb-canvas-card-content {
+.pdfb-{
   position: relative;
 }
 
-.pdfb-canvas-card-features {
+.pdfb-{
   margin-top: 12px;
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
-.feature-tag {
+.pdfb-{
   font-size: 10px;
   padding: 3px 8px;
   background: #f1f5f9;
@@ -1642,7 +1642,7 @@
   font-weight: 600;
 }
 
-.feature-tag.active {
+.pdfb-active {
   background: #dbeafe;
   color: #1e40af;
 }
@@ -1651,14 +1651,14 @@
    TEMPLATE STATUS CARDS - For Settings Page Templates Tab
    ============================================================================ */
 
-.templates-status-grid {
+.pdfb-{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 20px;
   margin: 20px 0;
 }
 
-.template-status-card {
+.pdfb-{
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
@@ -1667,37 +1667,37 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.template-status-card:hover {
+.pdfb-hover {
   border-color: #cbd5e1;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
 
-.template-status-card.premium-card {
+.pdfb-premium-card {
   border-color: #fbbf24;
   background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
 }
 
-.template-status-card.custom-status-card {
+.pdfb-custom-status-card {
   border-color: #a78bfa;
   background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
 }
 
-.template-status-card header {
+.pdfb-header {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   padding: 16px 20px;
   border-bottom: 1px solid #e2e8f0;
 }
 
-.template-status-card.premium-card header {
+.pdfb-premium-card header {
   background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
 }
 
-.template-status-card.custom-status-card header {
+.pdfb-custom-status-card header {
   background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
 }
 
-.template-status-card header h4 {
+.pdfb-header h4 {
   margin: 0;
   font-size: 15px;
   font-weight: 700;
@@ -1707,7 +1707,7 @@
   gap: 8px;
 }
 
-.premium-badge {
+.pdfb-{
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -1721,16 +1721,16 @@
   letter-spacing: 0.5px;
 }
 
-.custom-status-indicator {
+.pdfb-{
   cursor: help;
   font-size: 14px;
 }
 
-.template-selector {
+.pdfb-{
   padding: 16px 20px;
 }
 
-.template-selector label {
+.pdfb-label {
   display: block;
   font-size: 13px;
   font-weight: 600;
@@ -1738,7 +1738,7 @@
   margin-bottom: 8px;
 }
 
-.template-select {
+.pdfb-{
   width: 100%;
   padding: 10px 12px;
   border: 1px solid #cbd5e1;
@@ -1749,25 +1749,25 @@
   transition: all 0.2s ease;
 }
 
-.template-select:focus {
+.pdfb-focus {
   outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.template-select:disabled {
+.pdfb-disabled {
   background: #f1f5f9;
   color: #94a3b8;
   cursor: not-allowed;
 }
 
-.template-preview {
+.pdfb-{
   padding: 12px 20px;
   background: #f8fafc;
   border-top: 1px solid #e2e8f0;
 }
 
-.template-preview .current-template {
+.pdfb-.pdfb-{
   margin: 0;
   padding: 8px 12px;
   background: #dbeafe;
@@ -1778,7 +1778,7 @@
   font-weight: 500;
 }
 
-.template-preview .no-template {
+.pdfb-.pdfb-{
   margin: 0;
   padding: 8px 12px;
   background: #f1f5f9;
