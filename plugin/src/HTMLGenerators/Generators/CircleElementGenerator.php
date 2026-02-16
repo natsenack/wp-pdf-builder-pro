@@ -11,31 +11,35 @@ class CircleElementGenerator extends ElementGeneratorBase
 {
     public function generateHTML()
     {
-        $styles = $this->getElementStyles();
-        
-        // Circle needs border-radius 50%
-        $styles['border-radius'] = '50%';
+        $x = $this->getProperty('x', 0);
+        $y = $this->getProperty('y', 0);
+        $width = $this->getProperty('width', 100);
+        $height = $this->getProperty('height', 100);
         
         // Background color (fillColor or backgroundColor)
         $backgroundColor = $this->getProperty('fillColor', $this->getProperty('backgroundColor', 'transparent'));
-        if ($backgroundColor !== 'transparent') {
-            $styles['background-color'] = $this->normalizeColor($backgroundColor);
-        }
+        $backgroundColor = $this->normalizeColor($backgroundColor);
         
         // Border
         $borderColor = $this->getProperty('strokeColor', $this->getProperty('borderColor', '#000000'));
-        $borderWidth = $this->getProperty('strokeWidth', $this->getProperty('borderWidth', 1));
+        $borderColor = $this->normalizeColor($borderColor);
+        $borderWidth = $this->getProperty('strokeWidth', $this->getProperty('borderWidth', 0));
+        
+        $html = '<div class="pdf-element pdf-circle" ';
+        $html .= 'style="position: absolute; ';
+        $html .= 'left: ' . $x . 'px; ';
+        $html .= 'top: ' . $y . 'px; ';
+        $html .= 'width: ' . $width . 'px; ';
+        $html .= 'height: ' . $height . 'px; ';
+        $html .= 'background-color: ' . $backgroundColor . '; ';
+        $html .= 'border-radius: 50%; ';
         
         if ($borderWidth > 0) {
-            $styles['border'] = $borderWidth . 'px solid ' . $this->normalizeColor($borderColor);
+            $html .= 'border: ' . $borderWidth . 'px solid ' . $borderColor . '; ';
         }
         
-        // Box sizing
-        $styles['box-sizing'] = 'border-box';
-        
-        $styleAttr = $this->createStyleString($styles);
-
-        $html = '<div class="pdf-element pdf-circle" ' . $styleAttr . '></div>';
+        $html .= 'box-sizing: border-box;">';
+        $html .= '</div>';
 
         return $html;
     }

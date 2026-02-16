@@ -11,34 +11,41 @@ class RectangleElementGenerator extends ElementGeneratorBase
 {
     public function generateHTML()
     {
-        $styles = $this->getElementStyles();
+        $x = $this->getProperty('x', 0);
+        $y = $this->getProperty('y', 0);
+        $width = $this->getProperty('width', 100);
+        $height = $this->getProperty('height', 100);
         
         // Background color (fillColor or backgroundColor)
         $backgroundColor = $this->getProperty('fillColor', $this->getProperty('backgroundColor', 'transparent'));
-        if ($backgroundColor !== 'transparent') {
-            $styles['background-color'] = $this->normalizeColor($backgroundColor);
-        }
+        $backgroundColor = $this->normalizeColor($backgroundColor);
         
         // Border
         $borderColor = $this->getProperty('strokeColor', $this->getProperty('borderColor', '#000000'));
-        $borderWidth = $this->getProperty('strokeWidth', $this->getProperty('borderWidth', 1));
-        
-        if ($borderWidth > 0) {
-            $styles['border'] = $borderWidth . 'px solid ' . $this->normalizeColor($borderColor);
-        }
+        $borderColor = $this->normalizeColor($borderColor);
+        $borderWidth = $this->getProperty('strokeWidth', $this->getProperty('borderWidth', 0));
         
         // Border radius
         $borderRadius = $this->getProperty('borderRadius', 0);
-        if ($borderRadius > 0) {
-            $styles['border-radius'] = $borderRadius . 'px';
+        
+        $html = '<div class="pdf-element pdf-rectangle" ';
+        $html .= 'style="position: absolute; ';
+        $html .= 'left: ' . $x . 'px; ';
+        $html .= 'top: ' . $y . 'px; ';
+        $html .= 'width: ' . $width . 'px; ';
+        $html .= 'height: ' . $height . 'px; ';
+        $html .= 'background-color: ' . $backgroundColor . '; ';
+        
+        if ($borderWidth > 0) {
+            $html .= 'border: ' . $borderWidth . 'px solid ' . $borderColor . '; ';
         }
         
-        // Box sizing
-        $styles['box-sizing'] = 'border-box';
+        if ($borderRadius > 0) {
+            $html .= 'border-radius: ' . $borderRadius . 'px; ';
+        }
         
-        $styleAttr = $this->createStyleString($styles);
-
-        $html = '<div class="pdf-element pdf-rectangle" ' . $styleAttr . '></div>';
+        $html .= 'box-sizing: border-box;">';
+        $html .= '</div>';
 
         return $html;
     }
