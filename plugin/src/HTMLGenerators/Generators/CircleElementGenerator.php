@@ -1,17 +1,20 @@
 <?php
 /**
- * Rectangle element generator
+ * Circle element generator
  */
 
 namespace PDF_Builder\HTMLGenerators\Generators;
 
 use PDF_Builder\HTMLGenerators\ElementGeneratorBase;
 
-class RectangleElementGenerator extends ElementGeneratorBase
+class CircleElementGenerator extends ElementGeneratorBase
 {
     public function generateHTML()
     {
         $styles = $this->getElementStyles();
+        
+        // Circle needs border-radius 50%
+        $styles['border-radius'] = '50%';
         
         // Background color (fillColor or backgroundColor)
         $backgroundColor = $this->getProperty('fillColor', $this->getProperty('backgroundColor', 'transparent'));
@@ -27,18 +30,12 @@ class RectangleElementGenerator extends ElementGeneratorBase
             $styles['border'] = $borderWidth . 'px solid ' . $this->normalizeColor($borderColor);
         }
         
-        // Border radius
-        $borderRadius = $this->getProperty('borderRadius', 0);
-        if ($borderRadius > 0) {
-            $styles['border-radius'] = $borderRadius . 'px';
-        }
-        
         // Box sizing
         $styles['box-sizing'] = 'border-box';
         
         $styleAttr = $this->createStyleString($styles);
 
-        $html = '<div class="pdf-element pdf-rectangle" ' . $styleAttr . '></div>';
+        $html = '<div class="pdf-element pdf-circle" ' . $styleAttr . '></div>';
 
         return $html;
     }

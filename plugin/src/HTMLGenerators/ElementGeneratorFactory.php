@@ -25,6 +25,9 @@ class ElementGeneratorFactory
             case 'rectangle':
                 return new Generators\RectangleElementGenerator($element, $orderData, $companyData);
             
+            case 'circle':
+                return new Generators\CircleElementGenerator($element, $orderData, $companyData);
+            
             case 'image':
                 return new Generators\ImageElementGenerator($element, $orderData, $companyData);
             
