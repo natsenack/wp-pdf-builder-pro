@@ -201,7 +201,7 @@ class AdminScriptLoader
             if ($current_page === 'pdf-builder-settings' || $current_page === 'pdf-builder-templates') {
                 \wp_enqueue_style(
                     'pdf-builder-react',
-                    PDF_BUILDER_PLUGIN_URL . 'assets/css/pdf-builder-react.min.css',
+                    PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.min.css',
                     [],
                     PDF_BUILDER_PRO_VERSION
                 );
@@ -210,7 +210,7 @@ class AdminScriptLoader
                 if ($current_page === 'pdf-builder-settings') {
                     \wp_enqueue_style(
                         'pdf-builder-settings-systeme',
-                        PDF_BUILDER_PLUGIN_URL . 'assets/css/settings-systeme-css.min.css',
+                        PDF_BUILDER_PRO_ASSETS_URL . 'css/settings-systeme-css.min.css',
                         [],
                         PDF_BUILDER_PRO_VERSION
                     );
