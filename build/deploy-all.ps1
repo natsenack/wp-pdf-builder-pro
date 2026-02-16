@@ -1487,6 +1487,11 @@ try {
     }
 
     Write-Host "📤 Poussée des commits sur la branche..." -ForegroundColor Yellow
+    
+    # Pull avant push pour éviter les rejets
+    Write-Host "  🔄 Synchronisation avec la branche distante..." -ForegroundColor White
+    & git pull --rebase origin dev 2>$null
+    
     & git push origin dev 2>$null
 
     if ($LASTEXITCODE -eq 0) {

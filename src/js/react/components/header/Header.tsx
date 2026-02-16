@@ -142,14 +142,17 @@ export const Header = memo(function Header({
           }),
         },
       );
-      
+
       if (response.ok) {
         const data = await response.json();
-        
+
         if (data.success && data.data) {
           setAvailableOrders(data.data);
         } else {
-          alert("Erreur lors du chargement des commandes: " + (data.data?.message || "Erreur inconnue"));
+          alert(
+            "Erreur lors du chargement des commandes: " +
+              (data.data?.message || "Erreur inconnue"),
+          );
         }
       } else {
         alert("Erreur réseau lors du chargement des commandes");

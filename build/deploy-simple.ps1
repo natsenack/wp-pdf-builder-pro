@@ -782,6 +782,11 @@ if (!$DryRun) {
             if ($All) { $message += " (complet)" }
             & git commit -m $message
             $currentBranch = & git branch --show-current
+            
+            # Pull avant push pour éviter les rejets
+            Write-Log "Synchronisation avec la branche distante..." "INFO"
+            & git pull --rebase origin $currentBranch
+            
             & git push origin $currentBranch
             Write-Log "Commit et push Git réussis" "SUCCESS"
         } else {

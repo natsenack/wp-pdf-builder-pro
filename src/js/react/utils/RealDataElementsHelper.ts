@@ -1,55 +1,55 @@
 /**
  * Real Data Elements Helper
- * 
+ *
  * Initialise et configure les éléments qui utilisent des données réelles WooCommerce
- * 
+ *
  * Liste des éléments RealData:
  * - woocommerce_order_date: date de la commande (test: date actuelle)
  * - customer_info: infos client (test: données fictives)
  * - product_table: tableau des produits (test: produits fictifs)
  * - company_info: infos entreprise (EXCEPTION: toujours vraies)
- * 
+ *
  * @module utils/RealDataElementsHelper
  * @version 1.0.0
  */
 
-import type { 
-  CustomerInfoElement, 
-  ProductTableElement, 
+import type {
+  CustomerInfoElement,
+  ProductTableElement,
   CompanyInfoElement,
   WoocommerceOrderDateElement,
   BaseElement,
-  Element 
-} from '../types/elements';
+  Element,
+} from "../types/elements";
 
 /**
  * Types d'éléments qui récupèrent des données réelles
  */
 const REAL_DATA_ELEMENT_TYPES = [
-  'woocommerce_order_date',
-  'customer_info',
-  'product_table',
-  'company_info',
+  "woocommerce_order_date",
+  "customer_info",
+  "product_table",
+  "company_info",
 ];
 
 /**
  * Valeurs fictives par défaut pour chaque type d'élément RealData
  */
 const DEFAULT_TEST_VALUES: Record<string, unknown> = {
-  woocommerce_order_date: new Date().toLocaleDateString('fr-FR'),
+  woocommerce_order_date: new Date().toLocaleDateString("fr-FR"),
   customer_info: {
-    name: 'Jean Dupont',
-    email: 'jean@example.com',
-    phone: '+33 1 23 45 67 89',
+    name: "Jean Dupont",
+    email: "jean@example.com",
+    phone: "+33 1 23 45 67 89",
   },
   product_table: [
-    { name: 'Produit 1', sku: 'SKU-001', quantity: 2, price: 29.99 },
-    { name: 'Produit 2', sku: 'SKU-002', quantity: 1, price: 49.99 },
+    { name: "Produit 1", sku: "SKU-001", quantity: 2, price: 29.99 },
+    { name: "Produit 2", sku: "SKU-002", quantity: 1, price: 49.99 },
   ],
   company_info: {
-    name: 'Ma Société SAS',
-    address: '456 Avenue du Commerce',
-    phone: '+33 2 34 56 78 90',
+    name: "Ma Société SAS",
+    address: "456 Avenue du Commerce",
+    phone: "+33 2 34 56 78 90",
   },
 };
 
@@ -57,10 +57,10 @@ const DEFAULT_TEST_VALUES: Record<string, unknown> = {
  * Mapping des clés réelles WooCommerce pour chaque élément RealData
  */
 const REAL_DATA_KEYS: Record<string, string> = {
-  woocommerce_order_date: 'orderDate',
-  customer_info: 'customerName', // Récupère tout le customer_info via fallback
-  product_table: 'products',
-  company_info: 'companyName', // Récupère tout le company_info via fallback
+  woocommerce_order_date: "orderDate",
+  customer_info: "customerName", // Récupère tout le customer_info via fallback
+  product_table: "products",
+  company_info: "companyName", // Récupère tout le company_info via fallback
 };
 
 /**
@@ -72,7 +72,7 @@ export function isRealDataElementType(type: string): boolean {
 
 /**
  * Configure un élément pour qu'il soit un RealDataElement
- * 
+ *
  * Ajoute les propriétés nécessaires:
  * - isRealDataElement: true
  * - defaultTestValue: valeur fictive par défaut
@@ -80,7 +80,7 @@ export function isRealDataElementType(type: string): boolean {
  */
 export function configureRealDataElement<T extends Element>(
   element: T,
-  type: string = element.type
+  type: string = element.type,
 ): T {
   if (!isRealDataElementType(type)) {
     return element;
@@ -88,12 +88,12 @@ export function configureRealDataElement<T extends Element>(
 
   // ✅ Better approach: create new object keeping all properties
   const configured = { ...element } as T;
-  
+
   // Add RealData properties
   (configured as any).isRealDataElement = true;
   (configured as any).defaultTestValue = DEFAULT_TEST_VALUES[type];
   (configured as any).realDataKey = REAL_DATA_KEYS[type];
-  
+
   return configured;
 }
 
@@ -102,7 +102,7 @@ export function configureRealDataElement<T extends Element>(
  */
 export function createRealDataElement(
   type: string,
-  baseElement: Partial<BaseElement>
+  baseElement: Partial<BaseElement>,
 ): Element {
   const element: Element = {
     id: baseElement.id || `element-${Date.now()}`,
@@ -124,7 +124,7 @@ export function createRealDataElement(
  * Configure tous les éléments RealData dans une liste
  */
 export function configureRealDataElements(elements: Element[]): Element[] {
-  return elements.map(el => {
+  return elements.map((el) => {
     if (isRealDataElementType(el.type) && !el.isRealDataElement) {
       return configureRealDataElement(el);
     }
@@ -137,12 +137,12 @@ export function configureRealDataElements(elements: Element[]): Element[] {
  */
 export function getRealDataElementLabel(type: string): string {
   const labels: Record<string, string> = {
-    woocommerce_order_date: '📅 Date de commande',
-    customer_info: '👤 Informations client',
-    product_table: '📊 Tableau des produits',
-    company_info: '🏢 Informations société',
+    woocommerce_order_date: "📅 Date de commande",
+    customer_info: "👤 Informations client",
+    product_table: "📊 Tableau des produits",
+    company_info: "🏢 Informations société",
   };
-  
+
   return labels[type] || type;
 }
 
@@ -151,7 +151,7 @@ export function getRealDataElementLabel(type: string): string {
  * vs éléments de l'éditeur
  */
 export function filterRealDataElements(elements: Element[]): Element[] {
-  return elements.filter(el => isRealDataElementType(el.type));
+  return elements.filter((el) => isRealDataElementType(el.type));
 }
 
 /**
@@ -159,11 +159,11 @@ export function filterRealDataElements(elements: Element[]): Element[] {
  */
 export function getRealDataElementDescription(type: string): string {
   const descriptions: Record<string, string> = {
-    woocommerce_order_date: 'Récupère la date de commande depuis WooCommerce',
-    customer_info: 'Affiche les infos client (nom, email, adresse, etc.)',
-    product_table: 'Affiche le tableau des produits commandés',
-    company_info: 'EXCEPTION: Affiche toujours les vraies infos société',
+    woocommerce_order_date: "Récupère la date de commande depuis WooCommerce",
+    customer_info: "Affiche les infos client (nom, email, adresse, etc.)",
+    product_table: "Affiche le tableau des produits commandés",
+    company_info: "EXCEPTION: Affiche toujours les vraies infos société",
   };
-  
-  return descriptions[type] || '';
+
+  return descriptions[type] || "";
 }

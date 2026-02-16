@@ -2682,13 +2682,13 @@ export const Canvas = function Canvas({
       return state.elements; // Tous les éléments si lazy loading désactivé
     }
 
-    // Toujours inclure les 5 premiers éléments pour éviter les sauts visuels
-    const alwaysVisible = state.elements.slice(0, 5);
-    const potentiallyVisible = state.elements
-      .slice(5)
-      .filter((element) => isElementVisible(element, viewportBounds));
-
-    return [...alwaysVisible, ...potentiallyVisible];
+    // Filtrer les éléments visibles tout en préservant l'ordre
+    return state.elements.filter((element, index) => {
+      // Toujours inclure les 5 premiers éléments pour éviter les sauts visuels
+      if (index < 5) return true;
+      // Vérifier la visibilité pour les autres
+      return isElementVisible(element, viewportBounds);
+    });
   }, [state.elements, lazyLoadingEnabled, viewportBounds, isElementVisible]);
 
   // Cache pour les images chargées avec métadonnées de mémoire
@@ -3859,6 +3859,7 @@ export const Canvas = function Canvas({
               element,
             ];
             dispatch({ type: "SET_ELEMENTS", payload: newElements });
+            dispatch({ type: "SET_TEMPLATE_MODIFIED", payload: true });
           }
           hideContextMenu();
           break;
@@ -3876,6 +3877,7 @@ export const Canvas = function Canvas({
               ...state.elements.slice(elementIndex + 1),
             ];
             dispatch({ type: "SET_ELEMENTS", payload: newElements });
+            dispatch({ type: "SET_TEMPLATE_MODIFIED", payload: true });
           }
           hideContextMenu();
           break;
@@ -3893,6 +3895,7 @@ export const Canvas = function Canvas({
               newElements[elementIndex],
             ];
             dispatch({ type: "SET_ELEMENTS", payload: newElements });
+            dispatch({ type: "SET_TEMPLATE_MODIFIED", payload: true });
           }
           hideContextMenu();
           break;
@@ -3910,6 +3913,7 @@ export const Canvas = function Canvas({
               newElements[elementIndex],
             ];
             dispatch({ type: "SET_ELEMENTS", payload: newElements });
+            dispatch({ type: "SET_TEMPLATE_MODIFIED", payload: true });
           }
           hideContextMenu();
           break;
