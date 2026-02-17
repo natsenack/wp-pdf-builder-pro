@@ -3630,7 +3630,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $total_font_style = $element['totalFontStyle'] ?? 'normal';
         
         // Flags de colonnes (comme dans React)
-        $show_image = $element['showImage'] ?? false;
+        $show_image = $element['showImage'] ?? true; // Par défaut TRUE
         $show_name = true; // Toujours afficher
         $show_sku = $element['showSku'] ?? false;
         $show_description = $element['showDescription'] ?? false;
@@ -3638,8 +3638,15 @@ class PDF_Builder_Unified_Ajax_Handler {
         $show_price = $element['showPrice'] ?? true;
         $show_total = $element['showTotal'] ?? true;
         
-        // Style de bordure pour les cellules
-        $cell_border_style = $show_borders ? "border: {$border_width}px solid {$border_color};" : 'border: none;';
+        // Style de bordure pour les cellules - IMPORTANT: appliquer la bordure sur chaque côté séparément
+        // pour compatibilité avec border-collapse
+        $cell_border_style = '';
+        if ($show_borders) {
+            $cell_border_style = "border-top: {$border_width}px solid {$border_color}; " .
+                                "border-bottom: {$border_width}px solid {$border_color}; " .
+                                "border-left: {$border_width}px solid {$border_color}; " .
+                                "border-right: {$border_width}px solid {$border_color};";
+        }
         
         $html .= '<table style="width:100%; border-collapse: collapse; background-color: ' . $bg_color . ';">';
         
@@ -3742,12 +3749,12 @@ class PDF_Builder_Unified_Ajax_Handler {
         $html .= '<table style="width: 50%; margin-left: auto; border-collapse: collapse;">';
         $html .= '<tbody>';
         
-        // Style pour les lignes de summary (sous-total, remise, livraison, TVA)
-        $summary_style = "text-align: right; padding: 6px 8px; " .
+        // Style pour les lignes de summary (sous-total, remise, livraison, TVA) - avec bordures
+        $summary_style = $cell_border_style . " text-align: right; padding: 6px 8px; " .
                         "font-size: {$row_font_size}px; font-family: {$row_font_family}; " .
                         "font-weight: {$row_font_weight}; color: {$row_color};";
         
-        $summary_label_style = "text-align: left; padding: 6px 8px; " .
+        $summary_label_style = $cell_border_style . " text-align: left; padding: 6px 8px; " .
                                "font-size: {$row_font_size}px; font-family: {$row_font_family}; " .
                                "font-weight: {$row_font_weight}; color: {$row_color};";
         
@@ -3799,16 +3806,20 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html .= '</tr>';
         }
         
-        // Total final avec séparateur
-        $total_style = "text-align: right; padding: 10px 8px 6px 8px; " .
+        // Total final avec séparateur et bordures
+        $total_border = $show_borders ? 
+            "border-top: 2px solid #333; border-bottom: {$border_width}px solid {$border_color}; border-left: {$border_width}px solid {$border_color}; border-right: {$border_width}px solid {$border_color};" : 
+            "border-top: 2px solid #333;";
+        
+        $total_style = $total_border . " text-align: right; padding: 10px 8px 6px 8px; " .
                       "font-size: {$total_font_size}px; font-family: {$total_font_family}; " .
                       "font-weight: {$total_font_weight}; font-style: {$total_font_style}; " .
-                      "color: {$total_color}; border-top: 2px solid #333;";
+                      "color: {$total_color};";
         
-        $total_label_style = "text-align: left; padding: 10px 8px 6px 8px; " .
+        $total_label_style = $total_border . " text-align: left; padding: 10px 8px 6px 8px; " .
                             "font-size: {$total_font_size}px; font-family: {$total_font_family}; " .
                             "font-weight: {$total_font_weight}; font-style: {$total_font_style}; " .
-                            "color: {$total_color}; border-top: 2px solid #333;";
+                            "color: {$total_color};";
         
         $html .= '<tr>';
         $html .= '<td style="' . $total_label_style . '">TOTAL:</td>';
