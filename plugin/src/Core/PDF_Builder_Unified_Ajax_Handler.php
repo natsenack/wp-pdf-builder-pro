@@ -3425,7 +3425,11 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Font family avec guillemets (pour supporter les polices avec espaces comme "Courier New")
         if (isset($element['fontFamily'])) {
-            $css .= 'font-family: "' . $element['fontFamily'] . '"; ';
+            // Ajouter !important pour les types qui ont du flexbox custom (sinon la déclaration du span est ignorée)
+            $type = $element['type'] ?? '';
+            $is_custom_flex = in_array($type, ['woocommerce_order_date', 'woocommerce_invoice_number']);
+            $important = $is_custom_flex ? ' !important' : '';
+            $css .= 'font-family: "' . $element['fontFamily'] . '"' . $important . '; ';
         }
         
         // Word spacing (ignorer 'normal')
