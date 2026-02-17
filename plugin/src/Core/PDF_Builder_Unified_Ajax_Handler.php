@@ -4525,24 +4525,29 @@ class PDF_Builder_Unified_Ajax_Handler {
         $padding_left = $element['padding']['left'] ?? $element['paddingLeft'] ?? 0;
 
         if ($show_label) {
-            // Avec label : utiliser flexbox pour positionner label + date
-            $container_styles = $base_styles . ' display: flex;';
+            // Structure à deux niveaux pour cohérence avec React Canvas :
+            // - Conteneur externe avec padding + alignement du groupe
+            // - Groupe interne avec label+date
             
-            // Appliquer le padding pour cohérence avec React Canvas
+            $container_styles = $base_styles . ' display: flex;';
             $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px; box-sizing: border-box;";
             
             // Styles pour le label et la date
-            $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color};";
-            $date_styles = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color};";
+            $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color}; line-height: 1; margin: 0; padding: 0;";
+            $date_styles = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color}; line-height: 1; margin: 0; padding: 0;";
 
-            // Layout selon la position du label
+            // Styles du groupe interne selon labelPosition
+            $group_styles = "display: flex;";
+            
+            // Conteneur principal : aligner le groupe selon verticalAlign et textAlign
             switch ($label_position) {
                 case 'top':
                 case 'bottom':
-                    // Direction verticale (colonne)
+                    // Groupe empilé verticalement
                     $container_styles .= ' flex-direction: column;';
+                    $group_styles .= ' flex-direction: column;';
                     
-                    // justify-content contrôle l'axe vertical (principal)
+                    // Alignement vertical du groupe dans le conteneur
                     if ($vertical_align === 'middle') {
                         $container_styles .= ' justify-content: center;';
                     } elseif ($vertical_align === 'bottom') {
@@ -4551,7 +4556,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                         $container_styles .= ' justify-content: flex-start;';
                     }
                     
-                    // align-items contrôle l'axe horizontal (transversal)
+                    // Alignement horizontal du groupe dans le conteneur
                     if ($text_align === 'center') {
                         $container_styles .= ' align-items: center;';
                     } elseif ($text_align === 'right') {
@@ -4562,22 +4567,27 @@ class PDF_Builder_Unified_Ajax_Handler {
                     
                     if ($label_position === 'top') {
                         $html = '<div class="element" style="' . $container_styles . '">';
-                        $html .= '<span style="' . $label_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
-                        $html .= '<span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span>';
+                        $html .= '<div style="' . $group_styles . '">';
+                        $html .= '<span style="' . $label_styles . ' display: block; margin-bottom: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
+                        $html .= '<span style="' . $date_styles . ' display: block;">' . esc_html($formatted_date) . '</span>';
+                        $html .= '</div>';
                     } else {
                         $html = '<div class="element" style="' . $container_styles . '">';
-                        $html .= '<span style="' . $date_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($formatted_date) . '</span>';
-                        $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
+                        $html .= '<div style="' . $group_styles . '">';
+                        $html .= '<span style="' . $date_styles . ' display: block; margin-bottom: ' . $label_spacing . 'px;">' . esc_html($formatted_date) . '</span>';
+                        $html .= '<span style="' . $label_styles . ' display: block;">' . esc_html($label_text) . '</span>';
+                        $html .= '</div>';
                     }
                     break;
 
                 case 'right':
                 case 'left':
                 default:
-                    // Direction horizontale (ligne)
+                    // Groupe côte à côte horizontalement
                     $container_styles .= ' flex-direction: row;';
+                    $group_styles .= ' flex-direction: row; align-items: baseline;';
                     
-                    // justify-content contrôle l'axe horizontal (principal)
+                    // Alignement horizontal du groupe dans le conteneur
                     if ($text_align === 'center') {
                         $container_styles .= ' justify-content: center;';
                     } elseif ($text_align === 'right') {
@@ -4586,7 +4596,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                         $container_styles .= ' justify-content: flex-start;';
                     }
                     
-                    // align-items contrôle l'axe vertical (transversal)
+                    // Alignement vertical du groupe dans le conteneur
                     if ($vertical_align === 'middle') {
                         $container_styles .= ' align-items: center;';
                     } elseif ($vertical_align === 'bottom') {
@@ -4597,26 +4607,31 @@ class PDF_Builder_Unified_Ajax_Handler {
                     
                     if ($label_position === 'right') {
                         $html = '<div class="element" style="' . $container_styles . '">';
+                        $html .= '<div style="' . $group_styles . '">';
                         $html .= '<span style="' . $date_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($formatted_date) . '</span>';
                         $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
+                        $html .= '</div>';
                     } else {
                         $html = '<div class="element" style="' . $container_styles . '">';
+                        $html .= '<div style="' . $group_styles . '">';
                         $html .= '<span style="' . $label_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
                         $html .= '<span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span>';
+                        $html .= '</div>';
                     }
                     break;
             }
             
-            $html .= '</div>';
+            $html .= '</div></div>';
             return $html;
         } else {
-            // Sans label : affichage simple de la date avec textAlign et verticalAlign
+            // Sans label : structure simple avec padding et alignement
             $container_styles = $base_styles . ' display: flex;';
-            
-            // Appliquer le padding pour cohérence avec React Canvas
             $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px; box-sizing: border-box;";
             
-            // Alignement vertical (justify-content car on va probablement utiliser column)
+            // Utiliser flex-direction: column pour cohérence avec React Canvas
+            $container_styles .= ' flex-direction: column;';
+            
+            // Alignement vertical (justify-content car direction column)
             if ($vertical_align === 'middle') {
                 $container_styles .= ' justify-content: center;';
             } elseif ($vertical_align === 'bottom') {
@@ -4625,7 +4640,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $container_styles .= ' justify-content: flex-start;';
             }
             
-            // Alignement horizontal (align-items pour column)
+            // Alignement horizontal (align-items car direction column)
             if ($text_align === 'center') {
                 $container_styles .= ' align-items: center;';
             } elseif ($text_align === 'right') {
@@ -4634,10 +4649,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 $container_styles .= ' align-items: flex-start;';
             }
             
-            // Utiliser column pour que justify-content contrôle le vertical
-            $container_styles .= ' flex-direction: column;';
-            
-            $date_styles = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color};";
+            $date_styles = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color}; line-height: 1; margin: 0; padding: 0;";
             return '<div class="element" style="' . $container_styles . '"><span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span></div>';
         }
     }
