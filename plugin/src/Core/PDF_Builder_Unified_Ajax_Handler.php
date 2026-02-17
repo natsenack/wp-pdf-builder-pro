@@ -4522,24 +4522,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Avec label : utiliser flexbox pour positionner label + date
             $container_styles = $base_styles . ' display: flex;';
             
-            // Alignement vertical
-            if ($vertical_align === 'middle') {
-                $container_styles .= ' align-items: center;';
-            } elseif ($vertical_align === 'bottom') {
-                $container_styles .= ' align-items: flex-end;';
-            } else {
-                $container_styles .= ' align-items: flex-start;';
-            }
-            
-            // Alignement horizontal basé sur textAlign
-            if ($text_align === 'center') {
-                $container_styles .= ' justify-content: center;';
-            } elseif ($text_align === 'right') {
-                $container_styles .= ' justify-content: flex-end;';
-            } else {
-                $container_styles .= ' justify-content: flex-start;';
-            }
-            
             // Styles pour le label et la date
             $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color};";
             $date_styles = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color};";
@@ -4547,57 +4529,101 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Layout selon la position du label
             switch ($label_position) {
                 case 'top':
-                    $container_styles .= ' flex-direction: column;';
-                    $html = '<div class="element" style="' . $container_styles . '">';
-                    $html .= '<span style="' . $label_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
-                    $html .= '<span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span>';
-                    break;
-
                 case 'bottom':
+                    // Direction verticale (colonne)
                     $container_styles .= ' flex-direction: column;';
-                    $html = '<div class="element" style="' . $container_styles . '">';
-                    $html .= '<span style="' . $date_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($formatted_date) . '</span>';
-                    $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
+                    
+                    // justify-content contrôle l'axe vertical (principal)
+                    if ($vertical_align === 'middle') {
+                        $container_styles .= ' justify-content: center;';
+                    } elseif ($vertical_align === 'bottom') {
+                        $container_styles .= ' justify-content: flex-end;';
+                    } else {
+                        $container_styles .= ' justify-content: flex-start;';
+                    }
+                    
+                    // align-items contrôle l'axe horizontal (transversal)
+                    if ($text_align === 'center') {
+                        $container_styles .= ' align-items: center;';
+                    } elseif ($text_align === 'right') {
+                        $container_styles .= ' align-items: flex-end;';
+                    } else {
+                        $container_styles .= ' align-items: flex-start;';
+                    }
+                    
+                    if ($label_position === 'top') {
+                        $html = '<div class="element" style="' . $container_styles . '">';
+                        $html .= '<span style="' . $label_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
+                        $html .= '<span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span>';
+                    } else {
+                        $html = '<div class="element" style="' . $container_styles . '">';
+                        $html .= '<span style="' . $date_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($formatted_date) . '</span>';
+                        $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
+                    }
                     break;
 
                 case 'right':
-                    $container_styles .= ' flex-direction: row;';
-                    $html = '<div class="element" style="' . $container_styles . '">';
-                    $html .= '<span style="' . $date_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($formatted_date) . '</span>';
-                    $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
-                    break;
-
                 case 'left':
                 default:
+                    // Direction horizontale (ligne)
                     $container_styles .= ' flex-direction: row;';
-                    $html = '<div class="element" style="' . $container_styles . '">';
-                    $html .= '<span style="' . $label_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
-                    $html .= '<span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span>';
+                    
+                    // justify-content contrôle l'axe horizontal (principal)
+                    if ($text_align === 'center') {
+                        $container_styles .= ' justify-content: center;';
+                    } elseif ($text_align === 'right') {
+                        $container_styles .= ' justify-content: flex-end;';
+                    } else {
+                        $container_styles .= ' justify-content: flex-start;';
+                    }
+                    
+                    // align-items contrôle l'axe vertical (transversal)
+                    if ($vertical_align === 'middle') {
+                        $container_styles .= ' align-items: center;';
+                    } elseif ($vertical_align === 'bottom') {
+                        $container_styles .= ' align-items: flex-end;';
+                    } else {
+                        $container_styles .= ' align-items: flex-start;';
+                    }
+                    
+                    if ($label_position === 'right') {
+                        $html = '<div class="element" style="' . $container_styles . '">';
+                        $html .= '<span style="' . $date_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($formatted_date) . '</span>';
+                        $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
+                    } else {
+                        $html = '<div class="element" style="' . $container_styles . '">';
+                        $html .= '<span style="' . $label_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
+                        $html .= '<span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span>';
+                    }
+                    break;
             }
             
             $html .= '</div>';
             return $html;
         } else {
-            // Sans label : affichage simple de la date avec textAlign
+            // Sans label : affichage simple de la date avec textAlign et verticalAlign
             $container_styles = $base_styles . ' display: flex;';
             
-            // Alignement vertical
+            // Alignement vertical (justify-content car on va probablement utiliser column)
             if ($vertical_align === 'middle') {
-                $container_styles .= ' align-items: center;';
+                $container_styles .= ' justify-content: center;';
             } elseif ($vertical_align === 'bottom') {
+                $container_styles .= ' justify-content: flex-end;';
+            } else {
+                $container_styles .= ' justify-content: flex-start;';
+            }
+            
+            // Alignement horizontal (align-items pour column)
+            if ($text_align === 'center') {
+                $container_styles .= ' align-items: center;';
+            } elseif ($text_align === 'right') {
                 $container_styles .= ' align-items: flex-end;';
             } else {
                 $container_styles .= ' align-items: flex-start;';
             }
             
-            // Alignement horizontal basé sur textAlign
-            if ($text_align === 'center') {
-                $container_styles .= ' justify-content: center;';
-            } elseif ($text_align === 'right') {
-                $container_styles .= ' justify-content: flex-end;';
-            } else {
-                $container_styles .= ' justify-content: flex-start;';
-            }
+            // Utiliser column pour que justify-content contrôle le vertical
+            $container_styles .= ' flex-direction: column;';
             
             $date_styles = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color};";
             return '<div class="element" style="' . $container_styles . '"><span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span></div>';
