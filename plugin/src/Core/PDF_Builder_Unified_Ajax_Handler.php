@@ -4314,6 +4314,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         $top_offset = ($element_height - $width) / 2;
         
         // Styles pour la div interne (la vraie ligne)
+        // IMPORTANT: Utiliser border au lieu de background-color pour compatibilité impression
+        // (les navigateurs désactivent background-color par défaut lors de l'impression)
         $inner_style = "position: relative; top: {$top_offset}px; width: 100%;";
         
         if ($style === 'dashed') {
@@ -4321,8 +4323,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         } elseif ($style === 'dotted') {
             $inner_style .= " border-bottom: {$width}px dotted {$color};";
         } else {
-            // Solid : background-color + height fixe
-            $inner_style .= " background-color: {$color}; height: {$width}px;";
+            // Solid : utiliser border solid au lieu de background-color
+            $inner_style .= " border-bottom: {$width}px solid {$color}; height: 0;";
         }
         
         return '<div class="element" style="' . $line_styles . '"><div style="' . $inner_style . '"></div></div>';
