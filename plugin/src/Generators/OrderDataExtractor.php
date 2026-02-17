@@ -95,10 +95,19 @@ class OrderDataExtractor
             
             $unit_price = $item->get_quantity() > 0 ? $item->get_total() / $item->get_quantity() : 0;
             
+            // Récupérer l'image du produit
+            $image_id = $product->get_image_id();
+            $image_url = $image_id ? wp_get_attachment_image_url($image_id, 'thumbnail') : '';
+            
+            // Récupérer la description
+            $description = $product->get_short_description() ?: $product->get_description();
+            
             $products[] = [
                 'id' => $product->get_id(),
                 'sku' => $product->get_sku(),
                 'name' => $item->get_name(),
+                'description' => wp_strip_all_tags($description),
+                'image' => $image_url,
                 'quantity' => $item->get_quantity(),
                 'price' => wc_price($unit_price),
                 'price_raw' => (float) $unit_price,

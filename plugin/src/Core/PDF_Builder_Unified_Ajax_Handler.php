@@ -3315,7 +3315,6 @@ class PDF_Builder_Unified_Ajax_Handler {
                 break;
             case 'company_info':
                 $rendered = $this->render_company_info_element($element, $order_data, $styles, $is_premium, $format);
-                error_log("[PDF Builder] company_info case: HTML rendu (longueur: " . strlen($rendered) . ")");
                 break;
             case 'company_logo':
                 $rendered = $this->render_company_logo($element, $styles);
@@ -3598,10 +3597,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         $html = '<div class="element" style="' . $base_styles . '">';
         
         // Récupérer tous les styles depuis le JSON de l'élément
-        $show_borders = $element['showBorders'] ?? false;
+        $show_borders = $element['showBorders'] ?? true;
         $border_color = $element['borderColor'] ?? '#e5e7eb';
         $border_width = $element['borderWidth'] ?? 1;
-        $border_style = $show_borders ? "border: {$border_width}px solid {$border_color};" : 'border: none;';
         
         // Couleurs de fond
         $header_bg = $element['headerBackgroundColor'] ?? '#f9fafb';
@@ -3631,37 +3629,89 @@ class PDF_Builder_Unified_Ajax_Handler {
         $total_font_weight = $element['totalFontWeight'] ?? 'bold';
         $total_font_style = $element['totalFontStyle'] ?? 'normal';
         
+        // Flags de colonnes (comme dans React)
+        $show_image = $element['showImage'] ?? false;
+        $show_name = true; // Toujours afficher
+        $show_sku = $element['showSku'] ?? false;
+        $show_description = $element['showDescription'] ?? false;
+        $show_quantity = $element['showQuantity'] ?? true;
+        $show_price = $element['showPrice'] ?? true;
+        $show_total = $element['showTotal'] ?? true;
+        
+        // Style de bordure pour les cellules
+        $cell_border_style = $show_borders ? "border: {$border_width}px solid {$border_color};" : 'border: none;';
+        
         $html .= '<table style="width:100%; border-collapse: collapse; background-color: ' . $bg_color . ';">';
         
         // En-têtes
         if ($element['showHeaders'] ?? true) {
-            $header_style = $border_style . " padding: 8px; background: {$header_bg}; color: {$header_color}; " .
+            $header_style = $cell_border_style . " padding: 8px; background: {$header_bg}; color: {$header_color}; " .
                            "font-size: {$header_font_size}px; font-family: {$header_font_family}; " .
                            "font-weight: {$header_font_weight}; font-style: {$header_font_style};";
             
             $html .= '<thead><tr>';
-            $html .= '<th style="' . $header_style . '">Produit</th>';
-            $html .= '<th style="' . $header_style . ' text-align: center;">Qté</th>';
-            $html .= '<th style="' . $header_style . ' text-align: right;">Prix</th>';
-            $html .= '<th style="' . $header_style . ' text-align: right;">Total</th>';
+            if ($show_image) $html .= '<th style="' . $header_style . ' text-align: center; width: 60px;">Img</th>';
+            if ($show_name) $html .= '<th style="' . $header_style . '">Produit</th>';
+            if ($show_sku) $html .= '<th style="' . $header_style . '">SKU</th>';
+            if ($show_description) $html .= '<th style="' . $header_style . '">Description</th>';
+            if ($show_quantity) $html .= '<th style="' . $header_style . ' text-align: center;">Qté</th>';
+            if ($show_price) $html .= '<th style="' . $header_style . ' text-align: right;">Prix</th>';
+            if ($show_total) $html .= '<th style="' . $header_style . ' text-align: right;">Total</th>';
             $html .= '</tr></thead>';
         }
         
         $html .= '<tbody>';
         $row_index = 0;
         
-        $row_style_base = $border_style . " padding: 8px; color: {$row_color}; " .
+        $row_style_base = $cell_border_style . " padding: 8px; color: {$row_color}; " .
                          "font-size: {$row_font_size}px; font-family: {$row_font_family}; " .
                          "font-weight: {$row_font_weight}; font-style: {$row_font_style};";
         
         // Produits
         foreach ($order_data['products'] as $product) {
-            $bg = ($element['showAlternatingRows'] ?? true) && ($row_index % 2 === 1) ? $alt_bg : 'transparent';
-            $html .= '<tr style="background: ' . $bg . ';">';
-            $html .= '<td style="' . $row_style_base . '">' . esc_html($product['name']) . '</td>';
-            $html .= '<td style="' . $row_style_base . ' text-align: center;">' . esc_html($product['quantity']) . '</td>';
-            $html .= '<td style="' . $row_style_base . ' text-align: right;">' . $product['price'] . '</td>';
-            $html .= '<td style="' . $row_style_base . ' text-align: right;">' . $product['total'] . '</td>';
+            // ✅ FIX: Utiliser $bg_color au lieu de transparent pour les lignes paires
+            $row_bg = ($element['showAlternatingRows'] ?? true) && ($row_index % 2 === 1) ? $alt_bg : $bg_color;
+            $html .= '<tr style="background: ' . $row_bg . ';">';
+            
+            // Colonne Image
+            if ($show_image) {
+                $img_url = $product['image'] ?? '';
+                $img_html = $img_url ? '<img src="' . esc_url($img_url) . '" style="max-width: 50px; max-height: 50px;" />' : '';
+                $html .= '<td style="' . $row_style_base . ' text-align: center;">' . $img_html . '</td>';
+            }
+            
+            // Colonne Produit
+            if ($show_name) {
+                $html .= '<td style="' . $row_style_base . '">' . esc_html($product['name']) . '</td>';
+            }
+            
+            // Colonne SKU
+            if ($show_sku) {
+                $sku = $product['sku'] ?? 'N/A';
+                $html .= '<td style="' . $row_style_base . '">' . esc_html($sku) . '</td>';
+            }
+            
+            // Colonne Description
+            if ($show_description) {
+                $description = $product['description'] ?? '';
+                $html .= '<td style="' . $row_style_base . '">' . esc_html($description) . '</td>';
+            }
+            
+            // Colonne Quantité
+            if ($show_quantity) {
+                $html .= '<td style="' . $row_style_base . ' text-align: center;">' . esc_html($product['quantity']) . '</td>';
+            }
+            
+            // Colonne Prix
+            if ($show_price) {
+                $html .= '<td style="' . $row_style_base . ' text-align: right;">' . $product['price'] . '</td>';
+            }
+            
+            // Colonne Total
+            if ($show_total) {
+                $html .= '<td style="' . $row_style_base . ' text-align: right;">' . $product['total'] . '</td>';
+            }
+            
             $html .= '</tr>';
             $row_index++;
         }
@@ -3669,12 +3719,17 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Frais de service (fees) - ajoutés comme lignes de produits
         if (isset($order_data['fees']) && !empty($order_data['fees'])) {
             foreach ($order_data['fees'] as $fee) {
-                $bg = ($element['showAlternatingRows'] ?? true) && ($row_index % 2 === 1) ? $alt_bg : 'transparent';
-                $html .= '<tr style="background: ' . $bg . ';">';
-                $html .= '<td style="' . $row_style_base . '">' . esc_html($fee['name']) . '</td>';
-                $html .= '<td style="' . $row_style_base . ' text-align: center;">1</td>';
-                $html .= '<td style="' . $row_style_base . ' text-align: right;">' . $fee['total'] . '</td>';
-                $html .= '<td style="' . $row_style_base . ' text-align: right;">' . $fee['total'] . '</td>';
+                $row_bg = ($element['showAlternatingRows'] ?? true) && ($row_index % 2 === 1) ? $alt_bg : $bg_color;
+                $html .= '<tr style="background: ' . $row_bg . ';">';
+                
+                if ($show_image) $html .= '<td style="' . $row_style_base . '"></td>';
+                if ($show_name) $html .= '<td style="' . $row_style_base . '">' . esc_html($fee['name']) . '</td>';
+                if ($show_sku) $html .= '<td style="' . $row_style_base . '">FEE</td>';
+                if ($show_description) $html .= '<td style="' . $row_style_base . '"></td>';
+                if ($show_quantity) $html .= '<td style="' . $row_style_base . ' text-align: center;">1</td>';
+                if ($show_price) $html .= '<td style="' . $row_style_base . ' text-align: right;">' . $fee['total'] . '</td>';
+                if ($show_total) $html .= '<td style="' . $row_style_base . ' text-align: right;">' . $fee['total'] . '</td>';
+                
                 $html .= '</tr>';
                 $row_index++;
             }
@@ -3913,9 +3968,6 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Rendu des informations entreprise
      */
     private function render_company_info_element($element, $order_data, $base_styles, $is_premium = false, $format = 'html') {
-        error_log("[PDF Builder] render_company_info_element APPELÉE - Element ID: " . ($element['id'] ?? 'AUCUN_ID'));
-        error_log("[PDF Builder] company_info element data: " . print_r($element, true));
-        
         // Extraction des propriétés via helpers
         $padding = $this->extract_padding($element);
         $layout_props = $this->extract_layout_props($element);
@@ -4094,9 +4146,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html .= '<div style="' . $line_style . '">' . $line . '</div>';
         }
         $html .= '</div>'; // Fermer element container
-        
-        error_log("[PDF Builder] company_info Lines count: " . count($processedLines));
-        error_log("[PDF Builder] company_info HTML généré (longueur: " . strlen($html) . "): " . substr($html, 0, 500));
         
         return $html;
     }
