@@ -3685,7 +3685,15 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Colonne Image
             if ($show_image) {
                 $img_url = $product['image'] ?? '';
-                $img_html = $img_url ? '<img src="' . esc_url($img_url) . '" style="max-width: 50px; max-height: 50px;" />' : '';
+                $img_html = '';
+                if ($img_url) {
+                    // Les images sont déjà en base64, pas besoin d'esc_url
+                    if (strpos($img_url, 'data:') === 0) {
+                        $img_html = '<img src="' . $img_url . '" style="max-width: 50px; max-height: 50px; object-fit: contain;" />';
+                    } else {
+                        $img_html = '<img src="' . esc_url($img_url) . '" style="max-width: 50px; max-height: 50px; object-fit: contain;" />';
+                    }
+                }
                 $html .= '<td style="' . $row_style_base . ' text-align: center;">' . $img_html . '</td>';
             }
             

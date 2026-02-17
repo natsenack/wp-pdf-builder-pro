@@ -95,9 +95,17 @@ class OrderDataExtractor
             
             $unit_price = $item->get_quantity() > 0 ? $item->get_total() / $item->get_quantity() : 0;
             
-            // Récupérer l'image du produit
+            // Récupérer l'image du produit en base64 pour PDF
             $image_id = $product->get_image_id();
-            $image_url = $image_id ? wp_get_attachment_image_url($image_id, 'thumbnail') : '';
+            $image_base64 = '';
+            if ($image_id) {
+                $image_path = get_attached_file($image_id);
+                if ($image_path && file_exists($image_path)) {
+                    $image_data = file_get_contents($image_path);
+                    $image_type = wp_check_filetype($image_path);
+                    $image_base64 = 'data:' . $image_type['type'] . ';base64,' . base64_encode($image_data);
+                }
+            }
             
             // Récupérer la description
             $description = $product->get_short_description() ?: $product->get_description();
@@ -107,7 +115,7 @@ class OrderDataExtractor
                 'sku' => $product->get_sku(),
                 'name' => $item->get_name(),
                 'description' => wp_strip_all_tags($description),
-                'image' => $image_url,
+                'image' => $image_base64,
                 'quantity' => $item->get_quantity(),
                 'price' => wc_price($unit_price),
                 'price_raw' => (float) $unit_price,
