@@ -4518,9 +4518,18 @@ class PDF_Builder_Unified_Ajax_Handler {
         $text_align = $element['textAlign'] ?? 'left';
         $vertical_align = $element['verticalAlign'] ?? 'top';
 
+        // Récupérer le padding (cohérence avec React Canvas)
+        $padding_top = $element['padding']['top'] ?? $element['paddingTop'] ?? 0;
+        $padding_right = $element['padding']['right'] ?? $element['paddingRight'] ?? 0;
+        $padding_bottom = $element['padding']['bottom'] ?? $element['paddingBottom'] ?? 0;
+        $padding_left = $element['padding']['left'] ?? $element['paddingLeft'] ?? 0;
+
         if ($show_label) {
             // Avec label : utiliser flexbox pour positionner label + date
             $container_styles = $base_styles . ' display: flex;';
+            
+            // Appliquer le padding pour cohérence avec React Canvas
+            $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px; box-sizing: border-box;";
             
             // Styles pour le label et la date
             $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color};";
@@ -4603,6 +4612,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         } else {
             // Sans label : affichage simple de la date avec textAlign et verticalAlign
             $container_styles = $base_styles . ' display: flex;';
+            
+            // Appliquer le padding pour cohérence avec React Canvas
+            $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px; box-sizing: border-box;";
             
             // Alignement vertical (justify-content car on va probablement utiliser column)
             if ($vertical_align === 'middle') {
