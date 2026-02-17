@@ -135,10 +135,10 @@ class PuppeteerEngine implements PDFEngineInterface {
      * Envoie une requête à l'API Puppeteer
      * 
      * @param array $payload Données à envoyer
-     * @param string $endpoint Endpoint de l'API ('renderer' ou 'screenshot')
+     * @param string $endpoint Endpoint de l'API ('render' ou 'screenshot')
      * @return string|false Réponse binaire ou false
      */
-    private function send_api_request($payload, $endpoint = 'renderer') {
+    private function send_api_request($payload, $endpoint = 'render') {
         $url = rtrim($this->api_url, '/') . '/' . $endpoint;
         
         $this->debug_log("Envoi requête vers: {$url}");
