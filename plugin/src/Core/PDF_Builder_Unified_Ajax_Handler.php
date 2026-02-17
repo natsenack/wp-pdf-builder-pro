@@ -4880,15 +4880,22 @@ class PDF_Builder_Unified_Ajax_Handler {
             $text = $element['text'] ?? 'Conditions générales de vente disponibles sur demande.';
         }
         
+        // Convertir les balises <br> en sauts de ligne
+        $text = preg_replace('/<br\s*\/?>/i', "\n", $text);
+        
         // Nettoyer TOUS les padding ET line-height pour DOMPDF (comme customer_info)
         $base_styles_clean = preg_replace('/padding(-top|-bottom|-left|-right)?:\s*[^;]+;/i', '', $base_styles);
         $base_styles_clean = preg_replace('/line-height:\s*[^;]+;/', '', $base_styles_clean);
         // Retirer aussi les !important de position qui causent des conflits DOMPDF
         $base_styles_clean = str_replace('!important', '', $base_styles_clean);
         
-        // Utiliser un espacement fixe: 1.2 * fontSize (lineHeight system removed)
+        // Espacement entre lignes : line-height 1.1 (comme React Canvas ligne 3518)
         $font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 10;
-        $margin_bottom = round($font_size * 0.1); // équivalent à line-height: 1.1
+        $line_height_multiplier = 1.1;
+        
+        // Détecter le moteur PDF utilisé
+        $pdf_engine = pdf_builder_get_option('pdf_builder_engine', 'puppeteer');
+        $is_puppeteer = ($pdf_engine === 'puppeteer' || $pdf_engine === 'browsershot');
         
         // Extraire les propriétés de positionnement (pour le conteneur) et de texte (pour le contenu)
         // On garde UNIQUEMENT position, left, top, width, height sur le conteneur
@@ -4933,9 +4940,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             $separator_color = $element['separatorColor'] ?? '#e5e7eb';
             $separator_width = isset($element['separatorWidth']) && $element['separatorWidth'] > 0 ? $element['separatorWidth'] : 1;
             
-            // 10px d'espacement après le séparateur (comme dans Canvas.tsx ligne 3467)
+            // 10px d'espacement après le séparateur (comme dans Canvas.tsx ligne 3467: y += 10)
             $hr_style = sprintf(
-                'border: none; border-top: %dpx %s %s; margin: 0 0 7px 0; padding: 0; line-height: 0; height: %dpx; display: block;',
+                'border: none; border-top: %dpx %s %s; margin: 0 0 10px 0; padding: 0; line-height: 0; height: %dpx; display: block;',
                 $separator_width,
                 $separator_style,
                 $separator_color,
@@ -4945,14 +4952,28 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html .= '<hr style="' . $hr_style . '" />';
         }
         
-        // Le div intérieur contient le texte avec TOUTES les propriétés de texte
-        // Traiter le texte ligne par ligne pour appliquer le margin-bottom (gère le line-height pour DOMPDF)
+        // Splitter le texte par lignes
         $lines = explode("\n", $text);
-        $inner_style = 'margin: 0 0 ' . $margin_bottom . 'px 0; padding: 0; display: block; box-sizing: border-box;' . $text_styles;
         
-        foreach ($lines as $line) {
-            $html .= '<div style="' . $inner_style . '">' . esc_html($line) . '</div>';
+        // Générer HTML selon le moteur PDF
+        if ($is_puppeteer) {
+            // PUPPETEER: Utiliser line-height pour l'espacement (comme React Canvas ligne 3518)
+            foreach ($lines as $line) {
+                $content = trim($line) === '' ? '&nbsp;' : esc_html($line);
+                $html .= '<div style="margin: 0; padding: 0; font-size: ' . $font_size . 'px; line-height: ' . $line_height_multiplier . '; ' . $text_styles . '">' . $content . '</div>';
+            }
+        } else {
+            // DOMPDF: Utiliser margin-bottom pour l'espacement
+            $margin_bottom = round($font_size * ($line_height_multiplier - 1)); // 10% du fontSize
+            $total_lines = count($lines);
+            foreach ($lines as $index => $line) {
+                $is_last = ($index === $total_lines - 1);
+                $line_margin = $is_last ? '' : " margin-bottom: {$margin_bottom}px;";
+                $content = trim($line) === '' ? '&nbsp;' : esc_html($line);
+                $html .= '<div style="margin: 0; padding: 0; font-size: ' . $font_size . 'px; line-height: 1;' . $line_margin . ' ' . $text_styles . '">' . $content . '</div>';
+            }
         }
+        
         $html .= '</div>';
         
         return $html;
