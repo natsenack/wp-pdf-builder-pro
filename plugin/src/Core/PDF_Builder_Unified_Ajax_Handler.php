@@ -3238,6 +3238,34 @@ class PDF_Builder_Unified_Ajax_Handler {
             background-color: #f5f5f5;
             font-weight: bold;
         }
+        
+        /* Règles spécifiques pour l\'impression */
+        @media print {
+            @page {
+                margin: 0;
+                size: ' . $width . 'px ' . $height . 'px;
+            }
+            body, html {
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+            }
+            .pdf-canvas {
+                position: relative !important;
+                width: ' . $width . 'px !important;
+                height: ' . $height . 'px !important;
+                overflow: visible !important;
+                page-break-after: avoid !important;
+                page-break-before: avoid !important;
+            }
+            .element {
+                position: absolute !important;
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                page-break-inside: avoid !important;
+            }
+        }
     </style>
 </head>
 <body>
