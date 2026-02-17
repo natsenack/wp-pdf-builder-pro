@@ -4531,9 +4531,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Appliquer le padding pour cohérence avec React Canvas
             $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px; box-sizing: border-box;";
             
-            // Styles pour le label et la date (display: block pour éliminer tout espacement inline)
-            $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color}; line-height: 1; display: block;";
-            $date_styles = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color}; line-height: 1; display: block;";
+            // Styles pour le label et la date
+            $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color}; line-height: 1;";
+            $date_styles = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color}; line-height: 1;";
 
             // Layout selon la position du label
             switch ($label_position) {
@@ -4637,7 +4637,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Utiliser column pour que justify-content contrôle le vertical
             $container_styles .= ' flex-direction: column;';
             
-            $date_styles = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color}; line-height: 1; display: block;";
+            $date_styles = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color}; line-height: 1;";
             return '<div class="element" style="' . $container_styles . '"><span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span></div>';;
         }
     }
@@ -4740,9 +4740,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Appliquer le padding pour cohérence avec React Canvas
             $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px; box-sizing: border-box;";
             
-            // Styles pour le label et le numéro (display: block pour éliminer tout espacement inline)
-            $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color}; line-height: 1; display: block;";
-            $number_styles = "font-family: {$number_font_family}; font-size: {$number_font_size}px; font-weight: {$number_font_weight}; font-style: {$number_font_style}; color: {$number_color}; line-height: 1; display: block;";
+            // Styles pour le label et le numéro
+            $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color}; line-height: 1;";
+            $number_styles = "font-family: {$number_font_family}; font-size: {$number_font_size}px; font-weight: {$number_font_weight}; font-style: {$number_font_style}; color: {$number_color}; line-height: 1;";
 
             // Layout selon la position du label
             switch ($label_position) {
@@ -4846,7 +4846,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Utiliser column pour que justify-content contrôle le vertical
             $container_styles .= ' flex-direction: column;';
             
-            $number_styles = "font-family: {$number_font_family}; font-size: {$number_font_size}px; font-weight: {$number_font_weight}; font-style: {$number_font_style}; color: {$number_color}; line-height: 1; display: block;";
+            $number_styles = "font-family: {$number_font_family}; font-size: {$number_font_size}px; font-weight: {$number_font_weight}; font-style: {$number_font_style}; color: {$number_color}; line-height: 1;";
             return '<div class="element" style="' . $container_styles . '"><span style="' . $number_styles . '">' . esc_html($display_number) . '</span></div>';
         }
     }
