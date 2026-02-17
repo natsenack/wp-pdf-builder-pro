@@ -4798,16 +4798,21 @@ class PDF_Builder_Unified_Ajax_Handler {
                       ($text_transform_match[0] ?? '') . ' ' .
                       ($letter_spacing_match[0] ?? '');
         
-        // Splitter le texte par les sauts de ligne (SOLUTION DOMPDF)
+        // Convertir les balises <br> en sauts de ligne avant de splitter
+        $text = preg_replace('/<br\s*\/?>/i', "\n", $text);
+        
+        // Splitter le texte par les sauts de ligne
         $lines = preg_split('/\r\n|\n|\r/', $text);
         
-        // Générer HTML avec margin-bottom (= gap React) entre les lignes + line-height:1 pour hauteur stricte
+        // Générer HTML avec margin-bottom entre les lignes
         $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
         $total_lines = count($lines);
         foreach ($lines as $index => $line) {
             $is_last = ($index === $total_lines - 1);
             $line_margin = $is_last ? '' : " margin-bottom: {$gap}px;";
-            $html .= '<div style="margin: 0; padding: 0; font-size: ' . $font_size . 'px; line-height: 1;' . $line_margin . ' ' . $text_styles . '">' . esc_html($line) . '</div>';
+            // Utiliser un espace insécable pour les lignes vides afin qu'elles prennent de la hauteur
+            $content = trim($line) === '' ? '&nbsp;' : esc_html($line);
+            $html .= '<div style="margin: 0; padding: 0; font-size: ' . $font_size . 'px; line-height: 1;' . $line_margin . ' ' . $text_styles . '">' . $content . '</div>';
         }
         $html .= '</div>';
         
