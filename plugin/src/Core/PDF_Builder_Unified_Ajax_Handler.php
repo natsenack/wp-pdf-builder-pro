@@ -3203,8 +3203,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             margin: 0;
             padding: 0;
             border: 0;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
             font-size: 16px;
+            max-height: 100vh;
         }
         .pdf-canvas {
             position: relative;
@@ -3212,10 +3214,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             width: ' . $width . 'px;
             height: ' . $height . 'px;
             background: #ffffff;
-            margin: 0 !important;
+            margin: 0 auto;
             padding: 0 !important;
             border: 0 !important;
-            overflow: hidden;
+            overflow: visible;
             /* CRITICAL: Assurer aucun offset */
             transform: translate(0, 0);
         }
