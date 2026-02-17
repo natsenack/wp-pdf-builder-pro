@@ -2215,21 +2215,46 @@ const drawWoocommerceOrderDate = (
     const dateWidth = dateMetrics.width;
     const dateHeight = fontConfig.size;
 
-    let labelX = padding.left;
-    let labelY = padding.top;
-    let dateX = padding.left;
-    let dateY = padding.top;
+    // ===== ALIGNEMENT VERTICAL PROPRE =====
+    // 1. Calculer la hauteur totale du contenu selon labelPosition
+    let totalContentHeight = 0;
+    if (labelPosition === "top" || labelPosition === "bottom") {
+      // Empilage vertical : label + spacing + date
+      totalContentHeight = labelHeight + labelSpacing + dateHeight;
+    } else {
+      // Côte à côte (left/right) : prendre le max des deux
+      totalContentHeight = Math.max(labelHeight, dateHeight);
+    }
 
-    // Calculer les positions selon labelPosition
+    // 2. Calculer le Y de départ du groupe selon verticalAlign
+    let groupStartY = padding.top;
+    const availableHeight = element.height - padding.top - padding.bottom;
+    
+    switch (props.verticalAlign) {
+      case "middle":
+        groupStartY = padding.top + (availableHeight - totalContentHeight) / 2;
+        break;
+      case "bottom":
+        groupStartY = element.height - padding.bottom - totalContentHeight;
+        break;
+      default: // top
+        groupStartY = padding.top;
+        break;
+    }
+
+    // 3. Positionner les éléments relativement au groupStartY
+    let labelX = padding.left;
+    let labelY = groupStartY;
+    let dateX = padding.left;
+    let dateY = groupStartY;
+
     switch (labelPosition) {
       case "top":
         // Label au-dessus de la date
-        // Hauteur totale du groupe (label + spacing + date)
-        const totalHeightTop = labelHeight + labelSpacing + dateHeight;
         labelX = calculateTextX(element, props.textAlign, padding);
-        labelY = calculateTextYWithPadding(element, props.verticalAlign, padding, totalHeightTop);
+        labelY = groupStartY;
         dateX = calculateTextX(element, props.textAlign, padding);
-        dateY = labelY + labelHeight + labelSpacing;
+        dateY = groupStartY + labelHeight + labelSpacing;
         break;
 
       case "left":
@@ -2242,14 +2267,9 @@ const drawWoocommerceOrderDate = (
         } else {
           labelX = padding.left;
         }
-        // Pour left/right, ne pas ajuster avec fontSize car sur la même ligne
-        labelY = calculateTextYWithPadding(
-          element,
-          props.verticalAlign,
-          padding,
-        );
+        labelY = groupStartY;
         dateX = labelX + labelWidth + labelSpacing;
-        dateY = labelY;
+        dateY = groupStartY;
         break;
 
       case "right":
@@ -2262,24 +2282,17 @@ const drawWoocommerceOrderDate = (
         } else {
           dateX = padding.left;
         }
-        // Pour left/right, ne pas ajuster avec fontSize car sur la même ligne
-        dateY = calculateTextYWithPadding(
-          element,
-          props.verticalAlign,
-          padding,
-        );
+        dateY = groupStartY;
         labelX = dateX + dateWidth + labelSpacing;
-        labelY = dateY;
+        labelY = groupStartY;
         break;
 
       case "bottom":
         // Label en-dessous de la date
-        // Hauteur totale du groupe (date + spacing + label)
-        const totalHeightBottom = dateHeight + labelSpacing + labelHeight;
         dateX = calculateTextX(element, props.textAlign, padding);
-        dateY = calculateTextYWithPadding(element, props.verticalAlign, padding, totalHeightBottom);
+        dateY = groupStartY;
         labelX = calculateTextX(element, props.textAlign, padding);
-        labelY = dateY + dateHeight + labelSpacing;
+        labelY = groupStartY + dateHeight + labelSpacing;
         break;
     }
 
