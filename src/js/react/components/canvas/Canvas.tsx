@@ -1583,23 +1583,28 @@ const drawCustomerInfo = (
 
   // Calculer la hauteur du contenu basé sur les vraies tailles de police
   const lineHeightRatio = props.lineHeight || 1.1; // Utiliser le lineHeight configuré
+  const lineSpacing = props.lineSpacing || 0; // Espacement supplémentaire entre les lignes (défaut 0)
+  // customer_info utilise padding automatique (pas customizable via UI)
+  const paddingVerticalTop = 12; // Fixed value matching extract_padding() default
+  const paddingVerticalBottom = 12; // Fixed value matching extract_padding() default
   const headerLineHeight = headerFontSize * lineHeightRatio + 4; // fontSize + margin-bottom
-  const bodyLineHeight = bodyFontSize * lineHeightRatio;
+  const bodyLineHeight = bodyFontSize * lineHeightRatio; // ligne sans espacement additionnel pour customer_info
   const headerHeight = showHeaders ? headerLineHeight : 0;
-  const contentHeight = lines.length * bodyLineHeight;
+  const contentHeight = lines.length * bodyLineHeight; // Chaque ligne = bodyFont * lineHeightRatio
   const totalContentHeight = headerHeight + contentHeight;
+  const availableHeight = element.height - paddingVerticalTop - paddingVerticalBottom;
 
   // Calculer l'offset Y selon l'alignement vertical
   let startY: number;
   switch (verticalAlign) {
     case "middle":
-      startY = Math.max(12, (element.height - totalContentHeight) / 2);
+      startY = paddingVerticalTop + Math.max(0, (availableHeight - totalContentHeight) / 2);
       break;
     case "bottom":
-      startY = Math.max(12, element.height - totalContentHeight - 12);
+      startY = paddingVerticalTop + Math.max(0, availableHeight - totalContentHeight);
       break;
     default: // top
-      startY = 12;
+      startY = paddingVerticalTop;
   }
 
   let y = startY;
@@ -1632,8 +1637,8 @@ const drawCustomerInfo = (
   lines.forEach((lineText) => {
     ctx.fillText(lineText, textX, y);
 
-    // Appliquer le line-height basé sur bodyLineHeight (cohérence avec calcul de hauteur)
-    y += bodyLineHeight;
+    // Appliquer le line-height basé sur bodyFontSize * lineHeightRatio
+    y += bodyFontSize * lineHeightRatio;
   });
 };
 
@@ -2067,6 +2072,10 @@ const drawCompanyInfo = (
 
   // Calculer la hauteur totale pour l'alignement vertical avec le lineHeight configuré
   const lineHeightRatio = props.lineHeight || 1.4; // Utiliser le lineHeight configuré (défaut 1.4 pour company_info)
+  const lineSpacing = props.lineSpacing || 2; // Espacement par défaut: 2px entre les lignes (match PDF: margin-bottom sur divs)
+  const paddingTopComp = props.paddingTop || 8; // Utiliser paddingTop personnalisable (défaut 8)
+  const paddingHorizontal = props.paddingHorizontal || 12; // paddingHorizontal (défaut 12)
+  const paddingBottomComp = props.paddingBottom || 12; // paddingBottom personnalisable (défaut 12)
   let totalHeight = 0;
   lines.forEach((lineData) => {
     const config = lineData.isHeader
@@ -2082,24 +2091,28 @@ const drawCompanyInfo = (
           style: fontConfig.bodyStyle,
           family: fontConfig.bodyFamily,
         };
-    totalHeight += config.size * lineHeightRatio; // Utiliser lineHeightRatio au lieu de 1.1
+    // totalHeight = (fontSize * lineHeightRatio) + espacement supplémentaire
+    totalHeight += config.size * lineHeightRatio;
   });
+  // Ajouter espacement entre les lignes (lineSpacing * (nombre de lignes - 1))
+  if (lines.length > 1) {
+    totalHeight += lineSpacing * (lines.length - 1);
+  }
 
   // Ajuster la position Y selon l'alignement vertical
   const verticalAlign = props.verticalAlign || "top";
-  const paddingTop = props.paddingTop || 8; // Utiliser paddingTop personnalisable
-  const paddingBottom = 22;
-  const availableHeight = element.height - paddingTop - paddingBottom;
+  const availableHeightComp = element.height - paddingTopComp - paddingBottomComp;
 
   if (verticalAlign === "middle") {
-    y = paddingTop + Math.max(0, (availableHeight - totalHeight) / 2);
+    y = paddingTopComp + Math.max(0, (availableHeightComp - totalHeight) / 2);
   } else if (verticalAlign === "bottom") {
-    y = paddingTop + Math.max(0, availableHeight - totalHeight);
+    y = paddingTopComp + Math.max(0, availableHeightComp - totalHeight);
+  } else {
+    y = paddingTopComp;
   }
-  // Pour "top", y reste à paddingTop
 
   // Dessiner toutes les lignes
-  lines.forEach((lineData) => {
+  lines.forEach((lineData, index) => {
     const config = lineData.isHeader
       ? {
           size: fontConfig.headerSize,
@@ -2116,9 +2129,13 @@ const drawCompanyInfo = (
 
     ctx.font = `${config.style} ${config.weight} ${config.size}px ${config.family}`;
     if (lineData.isHeader) ctx.fillStyle = colors.headerText;
-    // Utiliser lineHeightRatio pour le spacing des lignes
+    // Dessiner la ligne - drawCompanyLine ajoute (fontSize * lineHeightRatio) à y
     y = drawCompanyLine(ctx, lineData.text, x, y, config.size, lineHeightRatio);
     if (lineData.isHeader) ctx.fillStyle = colors.text;
+    // Ajouter espacement supplémentaire entre les lignes (sauf après la dernière)
+    if (index < lines.length - 1 && lineSpacing > 0) {
+      y += lineSpacing;
+    }
   });
 };
 
