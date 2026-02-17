@@ -27,7 +27,7 @@ class PDFEngineFactory {
     public static function create($engine_name = null, $config = []) {
         // Utiliser le moteur configuré dans les options si non spécifié
         if ($engine_name === null) {
-            $engine_name = get_option('pdf_builder_engine', 'puppeteer');
+            $engine_name = pdf_builder_get_option('pdf_builder_engine', 'puppeteer');
         }
         
         // Mode auto : tester Puppeteer puis fallback sur DomPDF
@@ -220,7 +220,7 @@ class PDFEngineFactory {
      * @param string $reason Raison de la sélection
      */
     private static function log_engine_selection($engine, $reason) {
-        $debug_enabled = get_option('pdf_builder_debug_enabled', false);
+        $debug_enabled = pdf_builder_get_option('pdf_builder_debug_enabled', false);
         
         if ($debug_enabled || (defined('WP_DEBUG') && WP_DEBUG)) {
             error_log("[PDF Engine Factory] Moteur sélectionné: {$engine} (raison: {$reason})");

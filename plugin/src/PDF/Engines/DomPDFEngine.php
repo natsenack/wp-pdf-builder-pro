@@ -20,7 +20,7 @@ class DomPDFEngine implements PDFEngineInterface {
      * Constructeur
      */
     public function __construct() {
-        $this->debug_enabled = get_option('pdf_builder_debug_enabled', false);
+        $this->debug_enabled = pdf_builder_get_option('pdf_builder_debug_enabled', false);
     }
     
     /**

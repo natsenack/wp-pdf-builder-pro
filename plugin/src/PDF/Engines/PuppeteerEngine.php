@@ -30,11 +30,11 @@ class PuppeteerEngine implements PDFEngineInterface {
      * @param array $config Configuration [api_url, api_token, timeout, fallback_to_dompdf]
      */
     public function __construct($config = []) {
-        $this->api_url = $config['api_url'] ?? get_option('pdf_builder_puppeteer_url', '');
-        $this->api_token = $config['api_token'] ?? get_option('pdf_builder_puppeteer_token', '');
-        $this->timeout = $config['timeout'] ?? get_option('pdf_builder_puppeteer_timeout', 30);
-        $this->fallback_engine = $config['fallback_to_dompdf'] ?? get_option('pdf_builder_puppeteer_fallback', true);
-        $this->debug_enabled = get_option('pdf_builder_debug_enabled', false);
+        $this->api_url = $config['api_url'] ?? pdf_builder_get_option('pdf_builder_puppeteer_url', '');
+        $this->api_token = $config['api_token'] ?? pdf_builder_get_option('pdf_builder_puppeteer_token', '');
+        $this->timeout = $config['timeout'] ?? pdf_builder_get_option('pdf_builder_puppeteer_timeout', 30);
+        $this->fallback_engine = $config['fallback_to_dompdf'] ?? pdf_builder_get_option('pdf_builder_puppeteer_fallback', true);
+        $this->debug_enabled = pdf_builder_get_option('pdf_builder_debug_enabled', false);
     }
     
     /**
