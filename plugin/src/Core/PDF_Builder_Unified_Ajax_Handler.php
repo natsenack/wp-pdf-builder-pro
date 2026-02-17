@@ -4587,13 +4587,13 @@ class PDF_Builder_Unified_Ajax_Handler {
                     }
                     
                     if ($label_position === 'top') {
-                        $html = '<div class="element" style="' . $container_styles . '">';
-                        $html .= '<span style="' . $label_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
-                        $html .= '<span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span>';
+                        $html = '<div class="element" style=\'' . $container_styles . '\'>';
+                        $html .= '<span style=\'' . $label_styles . ' margin-bottom: ' . $label_spacing . 'px;\'>' . esc_html($label_text) . '</span>';
+                        $html .= '<span style=\'' . $date_styles . '\'>' . esc_html($formatted_date) . '</span>';
                     } else {
-                        $html = '<div class="element" style="' . $container_styles . '">';
-                        $html .= '<span style="' . $date_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($formatted_date) . '</span>';
-                        $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
+                        $html = '<div class="element" style=\'' . $container_styles . '\'>';
+                        $html .= '<span style=\'' . $date_styles . ' margin-bottom: ' . $label_spacing . 'px;\'>' . esc_html($formatted_date) . '</span>';
+                        $html .= '<span style=\'' . $label_styles . '\'>' . esc_html($label_text) . '</span>';
                     }
                     break;
 
@@ -4622,13 +4622,13 @@ class PDF_Builder_Unified_Ajax_Handler {
                     }
                     
                     if ($label_position === 'right') {
-                        $html = '<div class="element" style="' . $container_styles . '">';
-                        $html .= '<span style="' . $date_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($formatted_date) . '</span>';
-                        $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
+                        $html = '<div class="element" style=\'' . $container_styles . '\'>';
+                        $html .= '<span style=\'' . $date_styles . ' margin-right: ' . $label_spacing . 'px;\'>' . esc_html($formatted_date) . '</span>';
+                        $html .= '<span style=\'' . $label_styles . '\'>' . esc_html($label_text) . '</span>';
                     } else {
-                        $html = '<div class="element" style="' . $container_styles . '">';
-                        $html .= '<span style="' . $label_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
-                        $html .= '<span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span>';
+                        $html = '<div class="element" style=\'' . $container_styles . '\'>';
+                        $html .= '<span style=\'' . $label_styles . ' margin-right: ' . $label_spacing . 'px;\'>' . esc_html($label_text) . '</span>';
+                        $html .= '<span style=\'' . $date_styles . '\'>' . esc_html($formatted_date) . '</span>';
                     }
                     break;
             }
@@ -4686,7 +4686,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
             
             error_log("Date styles (no label): " . $date_styles);
-            $html = '<div class="element" style="' . $container_styles . '"><span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span></div>';
+            $html = '<div class="element" style=\'' . $container_styles . '\'><span style=\'' . $date_styles . '\'>' . esc_html($formatted_date) . '</span></div>';
             error_log("=== END ORDER_DATE DEBUG ===");
             
             return $html;
@@ -4837,13 +4837,13 @@ class PDF_Builder_Unified_Ajax_Handler {
                     }
                     
                     if ($label_position === 'top') {
-                        $html = '<div class="element" style="' . $container_styles . '">';
-                        $html .= '<span style="' . $label_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
-                        $html .= '<span style="' . $number_styles . '">' . esc_html($display_number) . '</span>';
+                        $html = '<div class="element" style=\'' . $container_styles . '\'>';
+                        $html .= '<span style=\'' . $label_styles . ' margin-bottom: ' . $label_spacing . 'px;\'>' . esc_html($label_text) . '</span>';
+                        $html .= '<span style=\'' . $number_styles . '\'>' . esc_html($display_number) . '</span>';
                     } else {
-                        $html = '<div class="element" style="' . $container_styles . '">';
-                        $html .= '<span style="' . $number_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($display_number) . '</span>';
-                        $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
+                        $html = '<div class="element" style=\'' . $container_styles . '\'>';
+                        $html .= '<span style=\'' . $number_styles . ' margin-bottom: ' . $label_spacing . 'px;\'>' . esc_html($display_number) . '</span>';
+                        $html .= '<span style=\'' . $label_styles . '\'>' . esc_html($label_text) . '</span>';
                     }
                     break;
 
@@ -4872,13 +4872,13 @@ class PDF_Builder_Unified_Ajax_Handler {
                     }
                     
                     if ($label_position === 'right') {
-                        $html = '<div class="element" style="' . $container_styles . '">';
-                        $html .= '<span style="' . $number_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($display_number) . '</span>';
-                        $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
+                        $html = '<div class="element" style=\'' . $container_styles . '\'>';
+                        $html .= '<span style=\'' . $number_styles . ' margin-right: ' . $label_spacing . 'px;\'>' . esc_html($display_number) . '</span>';
+                        $html .= '<span style=\'' . $label_styles . '\'>' . esc_html($label_text) . '</span>';
                     } else {
-                        $html = '<div class="element" style="' . $container_styles . '">';
-                        $html .= '<span style="' . $label_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
-                        $html .= '<span style="' . $number_styles . '">' . esc_html($display_number) . '</span>';
+                        $html = '<div class="element" style=\'' . $container_styles . '\'>';
+                        $html .= '<span style=\'' . $label_styles . ' margin-right: ' . $label_spacing . 'px;\'>' . esc_html($label_text) . '</span>';
+                        $html .= '<span style=\'' . $number_styles . '\'>' . esc_html($display_number) . '</span>';
                     }
                     break;
             }
@@ -4936,7 +4936,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
             
             error_log("Number styles (no label): " . $number_styles);
-            $html = '<div class="element" style="' . $container_styles . '"><span style="' . $number_styles . '">' . esc_html($display_number) . '</span></div>';
+            $html = '<div class="element" style=\'' . $container_styles . '\'><span style=\'' . $number_styles . '\'>' . esc_html($display_number) . '</span></div>';
             error_log("=== END INVOICE_NUMBER DEBUG ===");
             
             return $html;
