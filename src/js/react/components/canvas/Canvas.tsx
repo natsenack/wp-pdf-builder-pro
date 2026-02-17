@@ -1582,8 +1582,9 @@ const drawCustomerInfo = (
   }
 
   // Calculer la hauteur du contenu basé sur les vraies tailles de police
-  const headerLineHeight = headerFontSize * 1.1 + 4; // fontSize + margin-bottom
-  const bodyLineHeight = bodyFontSize * 1.1;
+  const lineHeightRatio = props.lineHeight || 1.1; // Utiliser le lineHeight configuré
+  const headerLineHeight = headerFontSize * lineHeightRatio + 4; // fontSize + margin-bottom
+  const bodyLineHeight = bodyFontSize * lineHeightRatio;
   const headerHeight = showHeaders ? headerLineHeight : 0;
   const contentHeight = lines.length * bodyLineHeight;
   const totalContentHeight = headerHeight + contentHeight;
@@ -1787,9 +1788,10 @@ const drawCompanyLine = (
   x: number,
   y: number,
   fontSize: number,
+  lineHeightRatio: number = 1.1,
 ) => {
   ctx.fillText(text, x, y);
-  return y + fontSize * 1.1;
+  return y + fontSize * lineHeightRatio;
 };
 
 const drawCompanyInfo = (
@@ -2063,7 +2065,8 @@ const drawCompanyInfo = (
   // Appliquer la police du corps par défaut
   ctx.font = `${fontConfig.bodyStyle} ${fontConfig.bodyWeight} ${fontConfig.bodySize}px ${fontConfig.bodyFamily}`;
 
-  // Calculer la hauteur totale pour l'alignement vertical
+  // Calculer la hauteur totale pour l'alignement vertical avec le lineHeight configuré
+  const lineHeightRatio = props.lineHeight || 1.4; // Utiliser le lineHeight configuré (défaut 1.4 pour company_info)
   let totalHeight = 0;
   lines.forEach((lineData) => {
     const config = lineData.isHeader
@@ -2079,7 +2082,7 @@ const drawCompanyInfo = (
           style: fontConfig.bodyStyle,
           family: fontConfig.bodyFamily,
         };
-    totalHeight += config.size * 1.1; // Même calcul que drawCompanyLine
+    totalHeight += config.size * lineHeightRatio; // Utiliser lineHeightRatio au lieu de 1.1
   });
 
   // Ajuster la position Y selon l'alignement vertical
@@ -2113,8 +2116,8 @@ const drawCompanyInfo = (
 
     ctx.font = `${config.style} ${config.weight} ${config.size}px ${config.family}`;
     if (lineData.isHeader) ctx.fillStyle = colors.headerText;
-    // Line height fixe: 1.2
-    y = drawCompanyLine(ctx, lineData.text, x, y, config.size);
+    // Utiliser lineHeightRatio pour le spacing des lignes
+    y = drawCompanyLine(ctx, lineData.text, x, y, config.size, lineHeightRatio);
     if (lineData.isHeader) ctx.fillStyle = colors.text;
   });
 };
