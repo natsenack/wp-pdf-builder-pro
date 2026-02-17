@@ -3230,12 +3230,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             width: 100%;
         }
         th, td {
-            border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
         th {
-            background-color: #f5f5f5;
             font-weight: bold;
         }
         
@@ -3644,8 +3642,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             $table_border_style = "border: {$border_width}px solid {$border_color};";
         }
         
-        // Les cellules n'ont pas de bordures individuelles
-        $cell_border_style = '';
+        // FORCER l'absence de bordures sur les cellules individuelles
+        $cell_border_style = 'border: none;';
         
         $html .= '<table style="width:100%; border-collapse: collapse; background-color: ' . $bg_color . '; ' . $table_border_style . '">';
         
@@ -3756,11 +3754,11 @@ class PDF_Builder_Unified_Ajax_Handler {
         $html .= '<tbody>';
         
         // Style pour les lignes de summary (sous-total, remise, livraison, TVA) - SANS bordures de cellules
-        $summary_style = "text-align: right; padding: 6px 8px; " .
+        $summary_style = "border: none; text-align: right; padding: 6px 8px; " .
                         "font-size: {$row_font_size}px; font-family: {$row_font_family}; " .
                         "font-weight: {$row_font_weight}; color: {$row_color};";
         
-        $summary_label_style = "text-align: left; padding: 6px 8px; " .
+        $summary_label_style = "border: none; text-align: left; padding: 6px 8px; " .
                                "font-size: {$row_font_size}px; font-family: {$row_font_family}; " .
                                "font-weight: {$row_font_weight}; color: {$row_color};";
         
@@ -3813,12 +3811,13 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Total final avec séparateur (ligne de séparation avec border-top uniquement)
-        $total_style = "border-top: 2px solid #333; text-align: right; padding: 10px 8px 6px 8px; " .
+        // IMPORTANT: border-left/right/bottom = none pour éviter les bordures de cellules
+        $total_style = "border-top: 2px solid #333; border-left: none; border-right: none; border-bottom: none; text-align: right; padding: 10px 8px 6px 8px; " .
                       "font-size: {$total_font_size}px; font-family: {$total_font_family}; " .
                       "font-weight: {$total_font_weight}; font-style: {$total_font_style}; " .
                       "color: {$total_color};";
         
-        $total_label_style = "border-top: 2px solid #333; text-align: left; padding: 10px 8px 6px 8px; " .
+        $total_label_style = "border-top: 2px solid #333; border-left: none; border-right: none; border-bottom: none; text-align: left; padding: 10px 8px 6px 8px; " .
                             "font-size: {$total_font_size}px; font-family: {$total_font_family}; " .
                             "font-weight: {$total_font_weight}; font-style: {$total_font_style}; " .
                             "color: {$total_color};";
