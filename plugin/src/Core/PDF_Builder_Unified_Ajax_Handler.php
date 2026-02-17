@@ -3760,7 +3760,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $html .= '<div style="margin-top: 20px; width: 100%; display: table;">';
         
         // Le tableau des totaux n'a JAMAIS de bordure
-        $html .= '<table style="width: 50%; margin-left: auto; border-collapse: collapse;">';
+        $html .= '<table style="width: 25%; margin-left: auto; border-collapse: collapse;">';
         $html .= '<tbody>';
         
         // Ligne de séparation avant les totaux (comme dans React Canvas ligne 1327-1332)
