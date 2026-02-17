@@ -3852,8 +3852,16 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Style header
         $header_style = "color: {$colors['header']}; font-family: {$header_font['family']}; font-size: {$header_font['size']}px; font-weight: {$header_font['weight']}; font-style: {$header_font['style']}; margin-bottom: 4px;";
         
-        // Styles pour chaque ligne de body - espacement fixe: 4px
+        // Styles pour chaque ligne de body
         $line_style_base = "font-size: {$body_font['size']}px; font-family: {$body_font['family']}; font-weight: {$body_font['weight']}; font-style: {$body_font['style']}; color: {$colors['text']}; margin: 0; padding: 0;";
+        
+        // Line-height : activer pour Puppeteer, désactiver pour DomPDF
+        if ($this->current_engine_name === 'puppeteer' && isset($element['lineHeight']) && $element['lineHeight'] !== '' && $element['lineHeight'] !== 'normal') {
+            $line_style_base .= " line-height: {$element['lineHeight']};";
+            error_log("[PDF Builder] customer_info: Puppeteer détecté, line-height activé: {$element['lineHeight']}");
+        } else {
+            error_log("[PDF Builder] customer_info: Moteur " . $this->current_engine_name . ", line-height désactivé");
+        }
         
         // Génération HTML - margin-bottom comme gap React pour compatibilité DOMPDF
         $html = '<div class="element" style="' . $container_styles . '">';
@@ -4035,11 +4043,22 @@ class PDF_Builder_Unified_Ajax_Handler {
             return preg_replace('/<strong>/', '<strong style="' . $strong_style . '">', $line);
         }, $lines);
         
+        // Style de base pour chaque ligne
+        $line_style = "margin: 0; padding: 0;";
+        
+        // Line-height : activer pour Puppeteer, désactiver pour DomPDF
+        if ($this->current_engine_name === 'puppeteer' && isset($element['lineHeight']) && $element['lineHeight'] !== '' && $element['lineHeight'] !== 'normal') {
+            $line_style .= " line-height: {$element['lineHeight']};";
+            error_log("[PDF Builder] company_info: Puppeteer détecté, line-height activé: {$element['lineHeight']}");
+        } else {
+            error_log("[PDF Builder] company_info: Moteur " . $this->current_engine_name . ", line-height désactivé");
+        }
+        
         // Génération HTML - sans espacement entre les lignes
         $html = '<div class="element" style="' . $container_styles . '">';
-        // Chaque ligne sans margin-bottom
+        // Chaque ligne avec line-height si Puppeteer
         foreach ($processedLines as $line) {
-            $html .= '<div style="margin: 0; padding: 0;">' . $line . '</div>';
+            $html .= '<div style="' . $line_style . '">' . $line . '</div>';
         }
         $html .= '</div>'; // Fermer element container
         return $html;
