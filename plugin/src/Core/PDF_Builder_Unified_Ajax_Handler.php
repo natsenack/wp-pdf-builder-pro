@@ -3409,7 +3409,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Styles de texte avec mapping direct
         static $text_styles = [
             'fontSize' => 'font-size: %spx;',
-            'fontFamily' => 'font-family: %s;',
+            'fontFamily' => 'font-family: "%s";',
             'fontWeight' => 'font-weight: %s;',
             'fontStyle' => 'font-style: %s;',
             'textDecoration' => 'text-decoration: %s;',
