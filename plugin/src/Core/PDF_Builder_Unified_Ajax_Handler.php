@@ -4305,18 +4305,24 @@ class PDF_Builder_Unified_Ajax_Handler {
         $width = $element['strokeWidth'] ?? 1;
         $style = $element['borderStyle'] ?? $element['style'] ?? 'solid';
         
-        // Créer une div interne pour la vraie ligne avec centrage compatible DOMPDF
-        $line_styles = $base_styles . ' display: flex; align-items: center;';
+        // Version simplifiée sans flex pour meilleure compatibilité impression
+        // Créer une div interne centrée verticalement avec position relative
+        $line_styles = $base_styles . ' overflow: hidden;';
         
-        // Styles pour la div interne (la vraie ligne) - margin: auto 0 pour compatibilité PDF
-        $inner_style = '';
+        // Calculer la position verticale pour centrer la ligne dans le conteneur
+        $element_height = $element['height'] ?? 20;
+        $top_offset = ($element_height - $width) / 2;
+        
+        // Styles pour la div interne (la vraie ligne)
+        $inner_style = "position: relative; top: {$top_offset}px; width: 100%;";
+        
         if ($style === 'dashed') {
-            $inner_style = 'border-bottom: ' . $width . 'px dashed ' . $color . '; width: 100%; margin: auto 0;';
+            $inner_style .= " border-bottom: {$width}px dashed {$color};";
         } elseif ($style === 'dotted') {
-            $inner_style = 'border-bottom: ' . $width . 'px dotted ' . $color . '; width: 100%; margin: auto 0;';
+            $inner_style .= " border-bottom: {$width}px dotted {$color};";
         } else {
             // Solid : background-color + height fixe
-            $inner_style = 'background-color: ' . $color . '; height: ' . $width . 'px; width: 100%; margin: auto 0;';
+            $inner_style .= " background-color: {$color}; height: {$width}px;";
         }
         
         return '<div class="element" style="' . $line_styles . '"><div style="' . $inner_style . '"></div></div>';
