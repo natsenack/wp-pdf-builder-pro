@@ -3638,17 +3638,16 @@ class PDF_Builder_Unified_Ajax_Handler {
         $show_price = $element['showPrice'] ?? true;
         $show_total = $element['showTotal'] ?? true;
         
-        // Style de bordure pour les cellules - IMPORTANT: appliquer la bordure sur chaque côté séparément
-        // pour compatibilité avec border-collapse
-        $cell_border_style = '';
+        // Style de bordure pour le TABLEAU (pas les cellules)
+        $table_border_style = '';
         if ($show_borders) {
-            $cell_border_style = "border-top: {$border_width}px solid {$border_color}; " .
-                                "border-bottom: {$border_width}px solid {$border_color}; " .
-                                "border-left: {$border_width}px solid {$border_color}; " .
-                                "border-right: {$border_width}px solid {$border_color};";
+            $table_border_style = "border: {$border_width}px solid {$border_color};";
         }
         
-        $html .= '<table style="width:100%; border-collapse: collapse; background-color: ' . $bg_color . ';">';
+        // Les cellules n'ont pas de bordures individuelles
+        $cell_border_style = '';
+        
+        $html .= '<table style="width:100%; border-collapse: collapse; background-color: ' . $bg_color . '; ' . $table_border_style . '">';
         
         // En-têtes
         if ($element['showHeaders'] ?? true) {
@@ -3746,15 +3745,22 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Tableau des totaux séparé - aligné à droite
         $html .= '<div style="margin-top: 20px; width: 100%; display: table;">';
-        $html .= '<table style="width: 50%; margin-left: auto; border-collapse: collapse;">';
+        
+        // Appliquer la même bordure de tableau si showBorders est actif
+        $totals_table_style = 'width: 50%; margin-left: auto; border-collapse: collapse;';
+        if ($show_borders) {
+            $totals_table_style .= " border: {$border_width}px solid {$border_color};";
+        }
+        
+        $html .= '<table style="' . $totals_table_style . '">';
         $html .= '<tbody>';
         
-        // Style pour les lignes de summary (sous-total, remise, livraison, TVA) - avec bordures
-        $summary_style = $cell_border_style . " text-align: right; padding: 6px 8px; " .
+        // Style pour les lignes de summary (sous-total, remise, livraison, TVA) - SANS bordures de cellules
+        $summary_style = "text-align: right; padding: 6px 8px; " .
                         "font-size: {$row_font_size}px; font-family: {$row_font_family}; " .
                         "font-weight: {$row_font_weight}; color: {$row_color};";
         
-        $summary_label_style = $cell_border_style . " text-align: left; padding: 6px 8px; " .
+        $summary_label_style = "text-align: left; padding: 6px 8px; " .
                                "font-size: {$row_font_size}px; font-family: {$row_font_family}; " .
                                "font-weight: {$row_font_weight}; color: {$row_color};";
         
@@ -3806,17 +3812,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html .= '</tr>';
         }
         
-        // Total final avec séparateur et bordures
-        $total_border = $show_borders ? 
-            "border-top: 2px solid #333; border-bottom: {$border_width}px solid {$border_color}; border-left: {$border_width}px solid {$border_color}; border-right: {$border_width}px solid {$border_color};" : 
-            "border-top: 2px solid #333;";
-        
-        $total_style = $total_border . " text-align: right; padding: 10px 8px 6px 8px; " .
+        // Total final avec séparateur (ligne de séparation avec border-top uniquement)
+        $total_style = "border-top: 2px solid #333; text-align: right; padding: 10px 8px 6px 8px; " .
                       "font-size: {$total_font_size}px; font-family: {$total_font_family}; " .
                       "font-weight: {$total_font_weight}; font-style: {$total_font_style}; " .
                       "color: {$total_color};";
         
-        $total_label_style = $total_border . " text-align: left; padding: 10px 8px 6px 8px; " .
+        $total_label_style = "border-top: 2px solid #333; text-align: left; padding: 10px 8px 6px 8px; " .
                             "font-size: {$total_font_size}px; font-family: {$total_font_family}; " .
                             "font-weight: {$total_font_weight}; font-style: {$total_font_style}; " .
                             "color: {$total_color};";
