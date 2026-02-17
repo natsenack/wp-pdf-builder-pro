@@ -1904,19 +1904,23 @@ const drawCompanyInfo = (
   ctx.textBaseline = "top";
 
   // Position de départ avec padding dynamique
+  const paddingTopComp = props.paddingTop || 8; // Utiliser paddingTop personnalisable (défaut 8)
+  const paddingHorizontal = props.paddingHorizontal || 12; // paddingHorizontal (défaut 12)
+  const paddingBottomComp = props.paddingBottom || 12; // paddingBottom personnalisable (défaut 12)
+  
   const getTextX = () => {
     switch (textAlign) {
       case "center":
         return element.width / 2;
       case "right":
-        return element.width - 12;
+        return element.width - paddingHorizontal;
       default: // left
-        return 12;
+        return paddingHorizontal;
     }
   };
 
   let x = getTextX();
-  let y = props.paddingTop || 8; // Utiliser paddingTop personnalisable, défaut à 8px
+  let y = paddingTopComp; // Utiliser paddingTop défini plus haut
 
   // Récupération des données d'entreprise
   const companyData = getCompanyData();
@@ -2072,12 +2076,12 @@ const drawCompanyInfo = (
 
   // Calculer la hauteur totale pour l'alignement vertical avec le lineHeight configuré
   const lineHeightRatio = props.lineHeight || 1.4; // Utiliser le lineHeight configuré (défaut 1.4 pour company_info)
-  const lineSpacing = props.lineSpacing || 2; // Espacement par défaut: 2px entre les lignes (match PDF: margin-bottom sur divs)
-  const paddingTopComp = props.paddingTop || 8; // Utiliser paddingTop personnalisable (défaut 8)
-  const paddingHorizontal = props.paddingHorizontal || 12; // paddingHorizontal (défaut 12)
-  const paddingBottomComp = props.paddingBottom || 12; // paddingBottom personnalisable (défaut 12)
   let totalHeight = 0;
-  lines.forEach((lineData) => {
+  
+  // Calculer la hauteur totale:
+  // Chaque ligne a une hauteur = fontSize * lineHeightRatio (qui inclut déjà l'espacement vertical CSS)
+  // Plus margin-bottom: 4px pour les headers (séparation avec le contenu suivant)
+  lines.forEach((lineData, index) => {
     const config = lineData.isHeader
       ? {
           size: fontConfig.headerSize,
@@ -2091,13 +2095,15 @@ const drawCompanyInfo = (
           style: fontConfig.bodyStyle,
           family: fontConfig.bodyFamily,
         };
-    // totalHeight = (fontSize * lineHeightRatio) + espacement supplémentaire
+    // Hauteur de la ligne = fontSize * lineHeightRatio (inclut l'espacement CSS)
     totalHeight += config.size * lineHeightRatio;
+    
+    // Ajouter margin-bottom: 4px pour les headers (séparation avec le contenu suivant)
+    // C'est le margin-bottom défini dans le style HTML des headers avec <strong>
+    if (lineData.isHeader && index < lines.length - 1) {
+      totalHeight += 4;
+    }
   });
-  // Ajouter espacement entre les lignes (lineSpacing * (nombre de lignes - 1))
-  if (lines.length > 1) {
-    totalHeight += lineSpacing * (lines.length - 1);
-  }
 
   // Ajuster la position Y selon l'alignement vertical
   const verticalAlign = props.verticalAlign || "top";
@@ -2112,6 +2118,8 @@ const drawCompanyInfo = (
   }
 
   // Dessiner toutes les lignes
+  // L'espacement entre les lignes vient UNIQUEMENT du CSS line-height
+  // Pas d'espacement supplémentaire additionné (comme lineSpacing)
   lines.forEach((lineData, index) => {
     const config = lineData.isHeader
       ? {
@@ -2132,10 +2140,12 @@ const drawCompanyInfo = (
     // Dessiner la ligne - drawCompanyLine ajoute (fontSize * lineHeightRatio) à y
     y = drawCompanyLine(ctx, lineData.text, x, y, config.size, lineHeightRatio);
     if (lineData.isHeader) ctx.fillStyle = colors.text;
-    // Ajouter espacement supplémentaire entre les lignes (sauf après la dernière)
-    if (index < lines.length - 1 && lineSpacing > 0) {
-      y += lineSpacing;
+    
+    // Ajouter margin-bottom: 4px après les headers (séparation avec le contenu suivant)
+    if (lineData.isHeader && index < lines.length - 1) {
+      y += 4;
     }
+    // Pour les autres lignes, l'espacement est déjà inclus dans le lineHeightRatio (CSS line-height)
   });
 };
 
