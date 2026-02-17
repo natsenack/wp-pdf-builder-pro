@@ -9,6 +9,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
     private static $instance = null;
     private $nonce_manager;
+    private $current_engine_name = 'dompdf'; // Moteur utilisé pour la génération en cours
 
     /**
      * Singleton pattern
@@ -2766,8 +2767,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             $this->debug_log("Template '{$template_id}' trouvé: " . ($template['name'] ?? 'sans nom'));
 
-            // Générer l'HTML avec les vraies données
-            $this->debug_log("Début génération HTML pour PDF");
+            // === NOUVEAU : DÉTERMINER LE MOTEUR PDF AVANT GÉNÉRATION HTML ===
+            $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
+            $this->current_engine_name = strtolower($engine->get_name());
+            $this->debug_log("Moteur PDF sélectionné: " . $engine->get_name());
+            
+            // Générer l'HTML avec les vraies données (avec styles optimisés pour le moteur)
+            $this->debug_log("Début génération HTML pour PDF (moteur: {$this->current_engine_name})");
             $html = $this->generate_template_html($template, $order, 'pdf');
             $this->debug_log("HTML généré - Longueur: " . strlen($html) . " caractères");
 
@@ -2779,9 +2785,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $width = $template_data['canvasWidth'] ?? 794;
             $height = $template_data['canvasHeight'] ?? 1123;
             
-            // === NOUVEAU : UTILISER LE MOTEUR PDF (FACTORY) ===
-            $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
-            $this->debug_log("Moteur PDF utilisé: " . $engine->get_name());
+            $this->debug_log("Génération PDF avec moteur: " . $engine->get_name());
             
             // Générer le PDF avec le moteur sélectionné
             $pdf_content = $engine->generate($html, [
@@ -2874,8 +2878,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             $this->debug_log("Template '{$template_id}' trouvé");
 
-            // Générer l'HTML avec les vraies données
-            $this->debug_log("Début génération HTML pour image");
+            // === DÉTERMINER LE MOTEUR PDF AVANT GÉNÉRATION HTML ===
+            $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
+            $this->current_engine_name = strtolower($engine->get_name());
+            $this->debug_log("Moteur sélectionné pour image: " . $engine->get_name());
+            
+            // Générer l'HTML avec les vraies données (avec styles optimisés pour le moteur)
+            $this->debug_log("Début génération HTML pour image (moteur: {$this->current_engine_name})");
             $html = $this->generate_template_html($template, $order);
             
             // Optimiser le HTML
@@ -2887,10 +2896,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $height = $template_data['canvasHeight'] ?? 1123;
             
             $this->debug_log("Dimensions image: {$width}x{$height}px, format: {$format}");
-            
-            // === NOUVEAU : UTILISER LE MOTEUR PDF (FACTORY) ===
-            $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
-            $this->debug_log("Moteur utilisé pour génération image: " . $engine->get_name());
+            $this->debug_log("Génération image avec moteur: " . $engine->get_name());
             
             // Générer l'image avec le moteur sélectionné
             $image_content = $engine->generate_image($html, [
@@ -3383,9 +3389,21 @@ class PDF_Builder_Unified_Ajax_Handler {
             $css .= 'word-spacing: ' . $element['wordSpacing'] . '; ';
         }
         
-        // Line height - DOMPDF a des problèmes avec line-height direct
-        // Donc on ne l'ajoute pas ici, chaque élément spécifique le gère si besoin
-        // Ne pas ajouter: $css .= 'line-height: ' . floatval($element['lineHeight']) . '; ';
+        // Line height - Support complet avec Puppeteer, désactivé pour DomPDF
+        if (isset($element['lineHeight']) && $element['lineHeight'] !== '' && $element['lineHeight'] !== 'normal') {
+            // Puppeteer supporte pleinement line-height CSS moderne
+            if ($this->current_engine_name === 'puppeteer') {
+                $lineHeight = $element['lineHeight'];
+                // Si c'est un nombre, utiliser comme multiplicateur (ex: 1.5)
+                // Si c'est avec unité (px, em, etc.), utiliser tel quel
+                if (is_numeric($lineHeight)) {
+                    $css .= "line-height: {$lineHeight}; ";
+                } else {
+                    $css .= "line-height: {$lineHeight}; ";
+                }
+            }
+            // DomPDF: ignorer line-height car support CSS incomplet
+        }
         
         // === ARRIÈRE-PLAN ET BORDURES ===
         // Background (respecter showBackground)
