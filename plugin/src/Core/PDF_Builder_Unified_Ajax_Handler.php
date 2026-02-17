@@ -5034,7 +5034,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             error_log("[PDF Engine Test] Test Puppeteer demandé");
 
             // Charger la factory
-            require_once PDF_BUILDER_PATH . 'src/PDF/Engines/PDFEngineFactory.php';
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/PDF/Engines/PDFEngineFactory.php';
 
             // Récupérer la configuration actuelle depuis wp_pdf_builder_settings
             $config = [
@@ -5118,7 +5118,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             error_log("[PDF Engine Test] Test de tous les moteurs demandé");
 
             // Charger la factory
-            require_once PDF_BUILDER_PATH . 'src/PDF/Engines/PDFEngineFactory.php';
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/PDF/Engines/PDFEngineFactory.php';
 
             // Tester tous les moteurs
             $results = \PDF_Builder\PDF\Engines\PDFEngineFactory::test_all_engines();
