@@ -3763,6 +3763,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         $html .= '<table style="width: 50%; margin-left: auto; border-collapse: collapse;">';
         $html .= '<tbody>';
         
+        // Ligne de séparation avant les totaux (comme dans React Canvas ligne 1327-1332)
+        $html .= '<tr><td colspan="2" style="border-bottom: 1px solid #d1d5db; padding: 0; line-height: 0; height: 1px;"></td></tr>';
+        $html .= '<tr><td colspan="2" style="padding: 10px 0 0 0;"></td></tr>'; // Espacement après la ligne
+        
         // Style pour les lignes de summary (sous-total, remise, livraison, TVA) - SANS bordures de cellules
         $summary_style = "border: none; text-align: right; padding: 6px 8px; " .
                         "font-size: {$row_font_size}px; font-family: {$row_font_family}; " .
