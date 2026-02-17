@@ -117,15 +117,53 @@ export const Header = memo(function Header({
     }>
   >([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
+  const [activeEngine, setActiveEngine] = useState<{
+    name: string;
+    icon: string;
+  } | null>(null);
 
   // Vérifier le statut premium depuis pdfBuilderData
   const isPremium = (window as any).pdfBuilderData?.license?.isPremium || false;
+
+  // Charger le moteur PDF actif
+  const loadActiveEngine = async () => {
+    try {
+      const response = await fetch(
+        (window as any).pdfBuilderData?.ajaxUrl || "",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            action: "pdf_builder_get_active_engine",
+            nonce: (window as any).pdfBuilderNonce || "",
+          }),
+        },
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.data) {
+          setActiveEngine({
+            name: data.data.display_name,
+            icon: data.data.icon,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Erreur lors du chargement du moteur PDF:", error);
+    }
+  };
 
   // Ouvrir la modale d'aperçu
   const handlePreview = async () => {
     setShowPreviewModal(true);
     setPreviewOrderId("");
     setIsLoadingOrders(true);
+
+    // Charger le moteur actif en parallèle
+    loadActiveEngine();
 
     try {
       // Récupérer la liste des commandes WooCommerce
@@ -3472,6 +3510,21 @@ export const Header = memo(function Header({
             <div className="pdfb-canvas-modal-header">
               <h3>
                 <span style={{ fontSize: "24px" }}>👁️</span> Générer un aperçu
+                {activeEngine && (
+                  <span
+                    style={{
+                      marginLeft: "12px",
+                      fontSize: "14px",
+                      color: "#059669",
+                      backgroundColor: "#d1fae5",
+                      padding: "4px 10px",
+                      borderRadius: "4px",
+                      fontWeight: "500",
+                    }}
+                  >
+                    {activeEngine.icon} {activeEngine.name}
+                  </span>
+                )}
               </h3>
               <button
                 type="button"

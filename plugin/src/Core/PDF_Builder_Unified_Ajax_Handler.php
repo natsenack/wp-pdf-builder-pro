@@ -104,6 +104,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Actions de test moteur PDF
         add_action('wp_ajax_pdf_builder_test_puppeteer', [$this, 'handle_test_puppeteer']);
         add_action('wp_ajax_pdf_builder_test_all_engines', [$this, 'handle_test_all_engines']);
+        add_action('wp_ajax_pdf_builder_get_active_engine', [$this, 'handle_get_active_engine']);
         
         add_action('wp_ajax_pdf_builder_debug_html', [$this, 'handle_debug_html']);
         error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_debug_html");
@@ -5163,6 +5164,46 @@ class PDF_Builder_Unified_Ajax_Handler {
             error_log("[PDF Engine Test] Exception: " . $e->getMessage());
             wp_send_json_error([
                 'message' => 'Erreur lors des tests: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Retourne le moteur PDF actuellement actif
+     * Utilisé pour afficher l'indicateur dans l'interface
+     */
+    public function handle_get_active_engine() {
+        try {
+            // Récupérer le moteur configuré
+            $engine_name = pdf_builder_get_option('pdf_builder_engine', 'puppeteer');
+            
+            // Tester si Puppeteer est disponible
+            $is_puppeteer_available = false;
+            $puppeteer_url = pdf_builder_get_option('pdf_builder_puppeteer_url', '');
+            
+            if ($engine_name === 'puppeteer' && !empty($puppeteer_url)) {
+                require_once PDF_BUILDER_PLUGIN_DIR . 'src/PDF/Engines/PuppeteerEngine.php';
+                $puppeteer = new \PDF_Builder\PDF\Engines\PuppeteerEngine();
+                $is_puppeteer_available = $puppeteer->is_available();
+            }
+            
+            // Déterminer le moteur effectif
+            $effective_engine = $engine_name;
+            if ($engine_name === 'puppeteer' && !$is_puppeteer_available) {
+                $effective_engine = 'dompdf'; // Fallback
+            }
+            
+            wp_send_json_success([
+                'configured' => $engine_name,
+                'effective' => $effective_engine,
+                'available' => $is_puppeteer_available,
+                'display_name' => $effective_engine === 'puppeteer' ? 'Puppeteer' : 'DomPDF',
+                'icon' => $effective_engine === 'puppeteer' ? '🚀' : '📄'
+            ]);
+            
+        } catch (Exception $e) {
+            wp_send_json_error([
+                'message' => 'Erreur: ' . $e->getMessage()
             ]);
         }
     }
