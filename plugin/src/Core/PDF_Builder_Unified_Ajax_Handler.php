@@ -4762,10 +4762,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         $base_styles_clean = str_replace('!important', '', $base_styles_clean);
         
         // Récupérer fontSize DIRECTEMENT DU JSON
-        $font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 14;
+        $font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
         
-        // Calculer le gap comme dans React Canvas: fontSize + 4px d'espacement entre les lignes
-        $gap = $font_size + 4;
+        // Calculer le gap comme dans React Canvas: 4px d'espacement entre les lignes
+        $gap = 4;
         
         // Extraire les propriétés de positionnement
         preg_match('/left:\s*[^;]+;/', $base_styles_clean, $left_match);
@@ -4804,8 +4804,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Splitter le texte par les sauts de ligne
         $lines = preg_split('/\r\n|\n|\r/', $text);
         
-        // Générer HTML avec padding-top: 25px, padding-left/right: 10px (comme React Canvas y=25, x=10)
-        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 25px 10px 0 10px; box-sizing: border-box; overflow: hidden;">';
+        // Générer HTML avec margin-bottom entre les lignes
+        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
         $total_lines = count($lines);
         foreach ($lines as $index => $line) {
             $is_last = ($index === $total_lines - 1);
@@ -4868,9 +4868,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Retirer aussi les !important de position qui causent des conflits DOMPDF
         $base_styles_clean = str_replace('!important', '', $base_styles_clean);
         
-        // Line height comme dans React Canvas : fontSize * 1.1
+        // Utiliser un espacement fixe: 1.2 * fontSize (lineHeight system removed)
         $font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 10;
-        $line_height = $font_size * 1.1;
+        $margin_bottom = round($font_size * 0.1); // équivalent à line-height: 1.1
         
         // Extraire les propriétés de positionnement (pour le conteneur) et de texte (pour le contenu)
         // On garde UNIQUEMENT position, left, top, width, height sur le conteneur
@@ -4906,8 +4906,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                       ($text_transform_match[0] ?? '') . ' ' .
                       ($letter_spacing_match[0] ?? '');
         
-        // Le div extérieur avec padding-top: 15px et padding-left/right: 10px (React Canvas y=15, marge=10px)
-        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 15px 10px 0 10px; box-sizing: border-box; overflow: hidden;">';
+        // Le div extérieur est UNIQUEMENT un conteneur positionné
+        $html = '<div class="element" style="' . $position_styles . ' margin: 0; padding: 0; box-sizing: border-box; overflow: hidden;">';
         
         // Ajouter le séparateur horizontal si activé
         if ($element['showSeparator'] ?? true) {
@@ -4915,9 +4915,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             $separator_color = $element['separatorColor'] ?? '#e5e7eb';
             $separator_width = isset($element['separatorWidth']) && $element['separatorWidth'] > 0 ? $element['separatorWidth'] : 1;
             
-            // Séparateur à y-5 (donc 10px du haut), puis 10px d'espacement après (total 20px avant texte)
+            // 10px d'espacement après le séparateur (comme dans Canvas.tsx ligne 3467)
             $hr_style = sprintf(
-                'border: none; border-top: %dpx %s %s; margin: -5px 0 10px 0; padding: 0; line-height: 0; height: %dpx; display: block;',
+                'border: none; border-top: %dpx %s %s; margin: 0 0 7px 0; padding: 0; line-height: 0; height: %dpx; display: block;',
                 $separator_width,
                 $separator_style,
                 $separator_color,
@@ -4927,9 +4927,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html .= '<hr style="' . $hr_style . '" />';
         }
         
-        // Le div intérieur contient le texte avec line-height: fontSize * 1.1
+        // Le div intérieur contient le texte avec TOUTES les propriétés de texte
+        // Traiter le texte ligne par ligne pour appliquer le margin-bottom (gère le line-height pour DOMPDF)
         $lines = explode("\n", $text);
-        $inner_style = 'margin: 0; padding: 0; display: block; box-sizing: border-box; line-height: ' . $line_height . 'px; ' . $text_styles;
+        $inner_style = 'margin: 0 0 ' . $margin_bottom . 'px 0; padding: 0; display: block; box-sizing: border-box;' . $text_styles;
         
         foreach ($lines as $line) {
             $html .= '<div style="' . $inner_style . '">' . esc_html($line) . '</div>';
