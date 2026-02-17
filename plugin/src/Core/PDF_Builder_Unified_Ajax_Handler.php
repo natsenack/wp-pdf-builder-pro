@@ -3409,7 +3409,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Styles de texte avec mapping direct
         static $text_styles = [
             'fontSize' => 'font-size: %spx;',
-            'fontFamily' => 'font-family: %s;',
             'fontWeight' => 'font-weight: %s;',
             'fontStyle' => 'font-style: %s;',
             'textDecoration' => 'text-decoration: %s;',
@@ -3422,6 +3421,11 @@ class PDF_Builder_Unified_Ajax_Handler {
             if (isset($element[$prop])) {
                 $css .= sprintf($format, $element[$prop]) . ' ';
             }
+        }
+        
+        // Font family avec guillemets (pour supporter les polices avec espaces comme "Courier New")
+        if (isset($element['fontFamily'])) {
+            $css .= 'font-family: "' . $element['fontFamily'] . '"; ';
         }
         
         // Word spacing (ignorer 'normal')
