@@ -1078,6 +1078,45 @@ export function CustomerInfoProperties({
               </select>
             </div>
 
+            <div style={{ marginBottom: "8px" }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "11px",
+                  fontWeight: "bold",
+                  marginBottom: "4px",
+                }}
+              >
+                Hauteur de ligne (line-height)
+              </label>
+              <input
+                type="number"
+                value={element.lineHeight || 1.1}
+                onChange={(e) =>
+                  onChange(element.id, "lineHeight", parseFloat(e.target.value) || 1)
+                }
+                min="0.5"
+                max="3"
+                step="0.1"
+                style={{
+                  width: "100%",
+                  padding: "4px 8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "3px",
+                  fontSize: "12px",
+                }}
+              />
+              <div
+                style={{
+                  fontSize: "10px",
+                  color: "#666",
+                  marginTop: "4px",
+                }}
+              >
+                Actuel: {(element.lineHeight || 1.1).toFixed(1)} (Puppeteer uniquement)
+              </div>
+            </div>
+
             <div style={{ marginBottom: "0" }}>
               <ColorPropertyInput
                 label="Couleur de police"
