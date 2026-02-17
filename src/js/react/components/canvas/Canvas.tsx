@@ -1923,7 +1923,7 @@ const drawCompanyInfo = (
   let y = paddingTopComp; // Utiliser paddingTop défini plus haut
 
   // Récupération des données d'entreprise
-  const companyData = getCompanyData(props);
+  const companyData = getCompanyData();  // ✅ Utilise la fonction locale (sans paramètre)
 
   // Récupérer le layout
   const layout = props.layout || "vertical";
