@@ -3665,9 +3665,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             if ($show_name) $html .= '<th style="' . $header_style . '">Produit</th>';
             if ($show_sku) $html .= '<th style="' . $header_style . '">SKU</th>';
             if ($show_description) $html .= '<th style="' . $header_style . '">Description</th>';
-            if ($show_quantity) $html .= '<th style="' . $header_style . ' text-align: center; width: 50px; max-width: 50px;">Qté</th>';
-            if ($show_price) $html .= '<th style="' . $header_style . ' text-align: right; width: 50px; max-width: 50px;">Prix</th>';
-            if ($show_total) $html .= '<th style="' . $header_style . ' text-align: right; width: 50px; max-width: 50px;">Total</th>';
+            if ($show_quantity) $html .= '<th style="' . $header_style . ' text-align: center; width: 80px; max-width: 80px;">Qté</th>';
+            if ($show_price) $html .= '<th style="' . $header_style . ' text-align: right; width: 80px; max-width: 80px;">Prix</th>';
+            if ($show_total) $html .= '<th style="' . $header_style . ' text-align: right; width: 80px; max-width: 80px;">Total</th>';
             $html .= '</tr></thead>';
         }
         
@@ -3718,17 +3718,17 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             // Colonne Quantité
             if ($show_quantity) {
-                $html .= '<td style="' . $row_style_base . ' text-align: center; width: 50px; max-width: 50px;">' . esc_html($product['quantity']) . '</td>';
+                $html .= '<td style="' . $row_style_base . ' text-align: center; width: 80px; max-width: 80px;">' . esc_html($product['quantity']) . '</td>';
             }
             
             // Colonne Prix
             if ($show_price) {
-                $html .= '<td style="' . $row_style_base . ' text-align: right; width: 50px; max-width: 50px;">' . $product['price'] . '</td>';
+                $html .= '<td style="' . $row_style_base . ' text-align: right; width: 80px; max-width: 80px;">' . $product['price'] . '</td>';
             }
             
             // Colonne Total
             if ($show_total) {
-                $html .= '<td style="' . $row_style_base . ' text-align: right; width: 50px; max-width: 50px;">' . $product['total'] . '</td>';
+                $html .= '<td style="' . $row_style_base . ' text-align: right; width: 80px; max-width: 80px;">' . $product['total'] . '</td>';
             }
             
             $html .= '</tr>';
@@ -3745,9 +3745,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                 if ($show_name) $html .= '<td style="' . $row_style_base . '">' . esc_html($fee['name']) . '</td>';
                 if ($show_sku) $html .= '<td style="' . $row_style_base . '">FEE</td>';
                 if ($show_description) $html .= '<td style="' . $row_style_base . '"></td>';
-                if ($show_quantity) $html .= '<td style="' . $row_style_base . ' text-align: center; width: 50px; max-width: 50px;">1</td>';
-                if ($show_price) $html .= '<td style="' . $row_style_base . ' text-align: right; width: 50px; max-width: 50px;">' . $fee['total'] . '</td>';
-                if ($show_total) $html .= '<td style="' . $row_style_base . ' text-align: right; width: 50px; max-width: 50px;">' . $fee['total'] . '</td>';
+                if ($show_quantity) $html .= '<td style="' . $row_style_base . ' text-align: center; width: 80px; max-width: 80px;">1</td>';
+                if ($show_price) $html .= '<td style="' . $row_style_base . ' text-align: right; width: 80px; max-width: 80px;">' . $fee['total'] . '</td>';
+                if ($show_total) $html .= '<td style="' . $row_style_base . ' text-align: right; width: 80px; max-width: 80px;">' . $fee['total'] . '</td>';
                 
                 $html .= '</tr>';
                 $row_index++;
