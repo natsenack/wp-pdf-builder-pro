@@ -4518,6 +4518,16 @@ class PDF_Builder_Unified_Ajax_Handler {
         $text_align = $element['textAlign'] ?? 'left';
         $vertical_align = $element['verticalAlign'] ?? 'top';
 
+        // LOG: Propriétés de police extraites
+        error_log("=== ORDER_DATE RENDER DEBUG ===");
+        error_log("Date font_family: {$date_font_family}");
+        error_log("Date font_size: {$date_font_size}");
+        error_log("Date font_weight: {$date_font_weight}");
+        error_log("Date font_style: {$date_font_style}");
+        error_log("Date color: {$date_color}");
+        error_log("Label font_family: {$label_font_family}");
+        error_log("Show label: " . ($show_label ? 'true' : 'false'));
+
         // Récupérer le padding (cohérence avec React Canvas)
         $padding_top = $element['padding']['top'] ?? $element['paddingTop'] ?? 0;
         $padding_right = $element['padding']['right'] ?? $element['paddingRight'] ?? 0;
@@ -4608,6 +4618,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
             
             $html .= '</div>';
+            
+            // LOG: Styles et HTML générés (avec label)
+            error_log("Container styles: " . substr($container_styles, 0, 200) . "...");
+            error_log("Date styles: " . $date_styles);
+            error_log("HTML generated (with label): " . substr($html, 0, 300) . "...");
+            error_log("=== END ORDER_DATE DEBUG ===");
+            
             return $html;
         } else {
             // Sans label : affichage simple de la date avec textAlign et verticalAlign
@@ -4638,7 +4655,15 @@ class PDF_Builder_Unified_Ajax_Handler {
             $container_styles .= ' flex-direction: column !important;';
             
             $date_styles = "font-family: \"{$date_font_family}\" !important; font-size: {$date_font_size}px !important; font-weight: {$date_font_weight} !important; font-style: {$date_font_style} !important; color: {$date_color} !important; line-height: 1 !important; margin: 0 !important;";
-            return '<div class="element" style="' . $container_styles . '"><span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span></div>';;
+            
+            // LOG: Styles et HTML générés (sans label)
+            error_log("Container styles (no label): " . substr($container_styles, 0, 200) . "...");
+            error_log("Date styles (no label): " . $date_styles);
+            $html = '<div class="element" style="' . $container_styles . '"><span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span></div>';
+            error_log("HTML generated (no label): " . $html);
+            error_log("=== END ORDER_DATE DEBUG ===");
+            
+            return $html;
         }
     }
 
@@ -4726,6 +4751,16 @@ class PDF_Builder_Unified_Ajax_Handler {
         $number_color = $element['textColor'] ?? ($element['color'] ?? '#000000');
         $text_align = $element['textAlign'] ?? 'left';
         $vertical_align = $element['verticalAlign'] ?? 'top';
+
+        // LOG: Propriétés de police extraites
+        error_log("=== INVOICE_NUMBER RENDER DEBUG ===");
+        error_log("Number font_family: {$number_font_family}");
+        error_log("Number font_size: {$number_font_size}");
+        error_log("Number font_weight: {$number_font_weight}");
+        error_log("Number font_style: {$number_font_style}");
+        error_log("Number color: {$number_color}");
+        error_log("Label font_family: {$label_font_family}");
+        error_log("Show label: " . ($show_label ? 'true' : 'false'));
 
         // Récupérer le padding (cohérence avec React Canvas)
         $padding_top = $element['padding']['top'] ?? $element['paddingTop'] ?? 0;
@@ -4817,6 +4852,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
             
             $html .= '</div>';
+            
+            // LOG: Styles et HTML générés (avec label)
+            error_log("Container styles: " . substr($container_styles, 0, 200) . "...");
+            error_log("Number styles: " . $number_styles);
+            error_log("HTML generated (with label): " . substr($html, 0, 300) . "...");
+            error_log("=== END INVOICE_NUMBER DEBUG ===");
+            
             return $html;
         } else {
             // Sans label : affichage simple du numéro avec textAlign et verticalAlign
@@ -4847,7 +4889,15 @@ class PDF_Builder_Unified_Ajax_Handler {
             $container_styles .= ' flex-direction: column !important;';
             
             $number_styles = "font-family: \"{$number_font_family}\" !important; font-size: {$number_font_size}px !important; font-weight: {$number_font_weight} !important; font-style: {$number_font_style} !important; color: {$number_color} !important; line-height: 1 !important; margin: 0 !important;";
-            return '<div class="element" style="' . $container_styles . '"><span style="' . $number_styles . '">' . esc_html($display_number) . '</span></div>';
+            
+            // LOG: Styles et HTML générés (sans label)
+            error_log("Container styles (no label): " . substr($container_styles, 0, 200) . "...");
+            error_log("Number styles (no label): " . $number_styles);
+            $html = '<div class="element" style="' . $container_styles . '"><span style="' . $number_styles . '">' . esc_html($display_number) . '</span></div>';
+            error_log("HTML generated (no label): " . $html);
+            error_log("=== END INVOICE_NUMBER DEBUG ===");
+            
+            return $html;
         }
     }
     
