@@ -4507,22 +4507,47 @@ class PDF_Builder_Unified_Ajax_Handler {
         $label_font_size = $element['labelFontSize'] ?? ($element['fontSize'] ?? 12);
         $label_font_weight = $element['labelFontWeight'] ?? 'normal';
         $label_font_style = $element['labelFontStyle'] ?? 'normal';
-        $label_color = $element['labelColor'] ?? ($element['color'] ?? '#000000');
+        $label_color = $element['labelColor'] ?? ($element['textColor'] ?? ($element['color'] ?? '#000000'));
 
-        // Propriétés de la date
+        // Propriétés de la date (priorité: textColor > color)
         $date_font_family = $element['fontFamily'] ?? 'DejaVu Sans';
         $date_font_size = $element['fontSize'] ?? 12;
         $date_font_weight = $element['fontWeight'] ?? 'normal';
         $date_font_style = $element['fontStyle'] ?? 'normal';
-        $date_color = $element['color'] ?? '#000000';
+        $date_color = $element['textColor'] ?? ($element['color'] ?? '#000000');
         $text_align = $element['textAlign'] ?? 'left';
         $vertical_align = $element['verticalAlign'] ?? 'top';
+        
+        // Propriétés additionnelles de style
+        $text_decoration = $element['textDecoration'] ?? 'none';
+        $text_transform = $element['textTransform'] ?? 'none';
+        
+        // Propriétés de fond (appliquées au conteneur)
+        $background_color = $element['backgroundColor'] ?? 'transparent';
+        $show_background = $element['showBackground'] ?? false;
+        
+        // Propriétés de padding
+        $padding = $element['padding'] ?? [];
+        $padding_top = $padding['top'] ?? 0;
+        $padding_right = $padding['right'] ?? 0;
+        $padding_bottom = $padding['bottom'] ?? 0;
+        $padding_left = $padding['left'] ?? 0;
 
         if ($show_label) {
             // Construire les styles pour le conteneur avec alignement vertical
             // ✅ Enlever la largeur fixe pour permettre au conteneur de s'adapter au contenu
             $container_styles = $base_styles;
             $container_styles = preg_replace('/width:\s*\d+px\s*!important;/', 'width: auto !important; min-width: max-content;', $container_styles);
+            
+            // Ajouter le padding personnalisé
+            if ($padding_top > 0 || $padding_right > 0 || $padding_bottom > 0 || $padding_left > 0) {
+                $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px;";
+            }
+            
+            // Ajouter le fond si activé
+            if ($show_background && $background_color !== 'transparent') {
+                $container_styles .= " background-color: {$background_color};";
+            }
             
             // Ajouter l'alignement vertical via flexbox
             $container_styles .= ' display: flex;';
@@ -4536,9 +4561,21 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             // Styles pour le label
             $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color}; white-space: nowrap;";
+            if ($text_decoration !== 'none') {
+                $label_styles .= " text-decoration: {$text_decoration};";
+            }
+            if ($text_transform !== 'none') {
+                $label_styles .= " text-transform: {$text_transform};";
+            }
             
             // Styles pour la date
             $date_styles = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color}; white-space: nowrap;";
+            if ($text_decoration !== 'none') {
+                $date_styles .= " text-decoration: {$text_decoration};";
+            }
+            if ($text_transform !== 'none') {
+                $date_styles .= " text-transform: {$text_transform};";
+            }
 
             // Layout selon la position du label - Mapper text_align à justify-content flexbox
             $justify_content = $this->map_text_align_to_justify_content($text_align);
@@ -4581,6 +4618,16 @@ class PDF_Builder_Unified_Ajax_Handler {
             $container_styles_no_label = $base_styles;
             $container_styles_no_label = preg_replace('/width:\s*\d+px\s*!important;/', 'width: auto !important; min-width: max-content;', $container_styles_no_label);
             
+            // Ajouter le padding personnalisé
+            if ($padding_top > 0 || $padding_right > 0 || $padding_bottom > 0 || $padding_left > 0) {
+                $container_styles_no_label .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px;";
+            }
+            
+            // Ajouter le fond si activé
+            if ($show_background && $background_color !== 'transparent') {
+                $container_styles_no_label .= " background-color: {$background_color};";
+            }
+            
             $vertical_align = $element['verticalAlign'] ?? 'top';
             $align_styles = ' display: flex; align-items: ';
             if ($vertical_align === 'middle') {
@@ -4592,6 +4639,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
             $align_styles .= ' justify-content: ' . $text_align . '; flex-wrap: nowrap;';
             $date_styles_no_label = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color}; white-space: nowrap;";
+            if ($text_decoration !== 'none') {
+                $date_styles_no_label .= " text-decoration: {$text_decoration};";
+            }
+            if ($text_transform !== 'none') {
+                $date_styles_no_label .= " text-transform: {$text_transform};";
+            }
             return '<div class="element" style="' . $container_styles_no_label . $align_styles . '"><span style="' . $date_styles_no_label . '">' . esc_html($formatted_date) . '</span></div>';
         }
     }
