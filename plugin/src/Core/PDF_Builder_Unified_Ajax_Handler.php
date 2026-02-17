@@ -4715,85 +4715,139 @@ class PDF_Builder_Unified_Ajax_Handler {
         $label_font_family = $element['labelFontFamily'] ?? ($element['fontFamily'] ?? 'DejaVu Sans');
         $label_font_size = $element['labelFontSize'] ?? ($element['fontSize'] ?? 12);
         $label_font_weight = $element['labelFontWeight'] ?? 'normal';
-        $vertical_align = $element['verticalAlign'] ?? 'top';
+        $label_font_style = $element['labelFontStyle'] ?? 'normal';
+        $label_color = $element['labelColor'] ?? ($element['textColor'] ?? ($element['color'] ?? '#000000'));
 
-        // Propriétés du numéro
+        // Propriétés du numéro (priorité: textColor > color)
         $number_font_family = $element['fontFamily'] ?? 'DejaVu Sans';
         $number_font_size = $element['fontSize'] ?? 12;
         $number_font_weight = $element['fontWeight'] ?? 'normal';
         $number_font_style = $element['fontStyle'] ?? 'normal';
-        $number_color = $element['color'] ?? '#000000';
+        $number_color = $element['textColor'] ?? ($element['color'] ?? '#000000');
         $text_align = $element['textAlign'] ?? 'left';
+        $vertical_align = $element['verticalAlign'] ?? 'top';
+
+        // Récupérer le padding (cohérence avec React Canvas)
+        $padding_top = $element['padding']['top'] ?? $element['paddingTop'] ?? 0;
+        $padding_right = $element['padding']['right'] ?? $element['paddingRight'] ?? 0;
+        $padding_bottom = $element['padding']['bottom'] ?? $element['paddingBottom'] ?? 0;
+        $padding_left = $element['padding']['left'] ?? $element['paddingLeft'] ?? 0;
 
         if ($show_label) {
-            // Construire les styles pour le conteneur avec alignement vertical
-            $container_styles = $base_styles;
+            // Avec label : utiliser flexbox pour positionner label + numéro
+            $container_styles = $base_styles . ' display: flex;';
             
-            // Ajouter l'alignement vertical via flexbox
-            $container_styles .= ' display: flex;';
-            if ($vertical_align === 'middle') {
-                $container_styles .= ' align-items: center;';
-            } elseif ($vertical_align === 'bottom') {
-                $container_styles .= ' align-items: flex-end;';
-            } else {
-                $container_styles .= ' align-items: flex-start;';
-            }
+            // Appliquer le padding pour cohérence avec React Canvas
+            $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px; box-sizing: border-box;";
             
-            // Styles pour le label
+            // Styles pour le label et le numéro
             $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color};";
-            
-            // Styles pour le numéro
             $number_styles = "font-family: {$number_font_family}; font-size: {$number_font_size}px; font-weight: {$number_font_weight}; font-style: {$number_font_style}; color: {$number_color};";
 
-            // Layout selon la position du label - Mapper text_align à justify-content flexbox
-            $justify_content = $this->map_text_align_to_justify_content($text_align);
-            $align_items_h = ($text_align === 'center' ? 'center' : ($text_align === 'right' ? 'flex-end' : 'flex-start'));
-            $html = '<div class="element" style="' . $container_styles . ' display: flex; align-items: center; justify-content: ' . $justify_content . ';">';
-            
+            // Layout selon la position du label
             switch ($label_position) {
                 case 'top':
-                    $html = '<div class="element" style="' . $container_styles . ' display: flex; flex-direction: column; align-items: ' . $align_items_h . ';">';
-                    $html .= '<span style="' . $label_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
-                    $html .= '<span style="' . $number_styles . '">' . esc_html($display_number) . '</span>';
-                    break;
-
-                case 'left':
-                    $html .= '<span style="' . $label_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
-                    $html .= '<span style="' . $number_styles . '">' . esc_html($display_number) . '</span>';
+                case 'bottom':
+                    // Direction verticale (colonne)
+                    $container_styles .= ' flex-direction: column;';
+                    
+                    // justify-content contrôle l'axe vertical (principal)
+                    if ($vertical_align === 'middle') {
+                        $container_styles .= ' justify-content: center;';
+                    } elseif ($vertical_align === 'bottom') {
+                        $container_styles .= ' justify-content: flex-end;';
+                    } else {
+                        $container_styles .= ' justify-content: flex-start;';
+                    }
+                    
+                    // align-items contrôle l'axe horizontal (transversal)
+                    if ($text_align === 'center') {
+                        $container_styles .= ' align-items: center;';
+                    } elseif ($text_align === 'right') {
+                        $container_styles .= ' align-items: flex-end;';
+                    } else {
+                        $container_styles .= ' align-items: flex-start;';
+                    }
+                    
+                    if ($label_position === 'top') {
+                        $html = '<div class="element" style="' . $container_styles . '">';
+                        $html .= '<span style="' . $label_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
+                        $html .= '<span style="' . $number_styles . '">' . esc_html($display_number) . '</span>';
+                    } else {
+                        $html = '<div class="element" style="' . $container_styles . '">';
+                        $html .= '<span style="' . $number_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($display_number) . '</span>';
+                        $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
+                    }
                     break;
 
                 case 'right':
-                    $html .= '<span style="' . $number_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($display_number) . '</span>';
-                    $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
-                    break;
-
-                case 'bottom':
-                    $html = '<div class="element" style="' . $container_styles . ' display: flex; flex-direction: column; align-items: ' . ($text_align === 'center' ? 'center' : ($text_align === 'right' ? 'flex-end' : 'flex-start')) . ';">';
-                    $html .= '<span style="' . $number_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($display_number) . '</span>';
-                    $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
-                    break;
-
+                case 'left':
                 default:
-                    $html .= '<span style="' . $label_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
-                    $html .= '<span style="' . $number_styles . '">' . esc_html($display_number) . '</span>';
+                    // Direction horizontale (ligne)
+                    $container_styles .= ' flex-direction: row;';
+                    
+                    // justify-content contrôle l'axe horizontal (principal)
+                    if ($text_align === 'center') {
+                        $container_styles .= ' justify-content: center;';
+                    } elseif ($text_align === 'right') {
+                        $container_styles .= ' justify-content: flex-end;';
+                    } else {
+                        $container_styles .= ' justify-content: flex-start;';
+                    }
+                    
+                    // align-items contrôle l'axe vertical (transversal)
+                    if ($vertical_align === 'middle') {
+                        $container_styles .= ' align-items: center;';
+                    } elseif ($vertical_align === 'bottom') {
+                        $container_styles .= ' align-items: flex-end;';
+                    } else {
+                        $container_styles .= ' align-items: flex-start;';
+                    }
+                    
+                    if ($label_position === 'right') {
+                        $html = '<div class="element" style="' . $container_styles . '">';
+                        $html .= '<span style="' . $number_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($display_number) . '</span>';
+                        $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
+                    } else {
+                        $html = '<div class="element" style="' . $container_styles . '">';
+                        $html .= '<span style="' . $label_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
+                        $html .= '<span style="' . $number_styles . '">' . esc_html($display_number) . '</span>';
+                    }
+                    break;
             }
             
             $html .= '</div>';
             return $html;
         } else {
-            // Sans label, affichage simple avec alignement vertical
-            $vertical_align = $element['verticalAlign'] ?? 'top';
-            $justify_content = $this->map_text_align_to_justify_content($text_align);
-            $align_styles = ' display: flex; align-items: ';
+            // Sans label : affichage simple du numéro avec textAlign et verticalAlign
+            $container_styles = $base_styles . ' display: flex;';
+            
+            // Appliquer le padding pour cohérence avec React Canvas
+            $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px; box-sizing: border-box;";
+            
+            // Alignement vertical (justify-content car on va probablement utiliser column)
             if ($vertical_align === 'middle') {
-                $align_styles .= 'center;';
+                $container_styles .= ' justify-content: center;';
             } elseif ($vertical_align === 'bottom') {
-                $align_styles .= 'flex-end;';
+                $container_styles .= ' justify-content: flex-end;';
             } else {
-                $align_styles .= 'flex-start;';
+                $container_styles .= ' justify-content: flex-start;';
             }
-            $align_styles .= ' justify-content: ' . $justify_content . ';';
-            return '<div class="element" style="' . $base_styles . $align_styles . '">' . esc_html($display_number) . '</div>';
+            
+            // Alignement horizontal (align-items pour column)
+            if ($text_align === 'center') {
+                $container_styles .= ' align-items: center;';
+            } elseif ($text_align === 'right') {
+                $container_styles .= ' align-items: flex-end;';
+            } else {
+                $container_styles .= ' align-items: flex-start;';
+            }
+            
+            // Utiliser column pour que justify-content contrôle le vertical
+            $container_styles .= ' flex-direction: column;';
+            
+            $number_styles = "font-family: {$number_font_family}; font-size: {$number_font_size}px; font-weight: {$number_font_weight}; font-style: {$number_font_style}; color: {$number_color};";
+            return '<div class="element" style="' . $container_styles . '"><span style="' . $number_styles . '">' . esc_html($display_number) . '</span></div>';
         }
     }
     

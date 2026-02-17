@@ -2479,20 +2479,46 @@ const drawWoocommerceInvoiceNumber = (
     const numberWidth = numberMetrics.width;
     const numberHeight = fontConfig.size;
 
-    let labelX = padding.left;
-    let labelY = padding.top;
-    let numberX = padding.left;
-    let numberY = padding.top;
+    // ===== ALIGNEMENT VERTICAL PROPRE =====
+    // 1. Calculer la hauteur totale du contenu selon labelPosition
+    let totalContentHeight = 0;
+    if (labelPosition === "top" || labelPosition === "bottom") {
+      // Empilage vertical : label + spacing + number
+      totalContentHeight = labelHeight + labelSpacing + numberHeight;
+    } else {
+      // Côte à côte (left/right) : prendre le max des deux
+      totalContentHeight = Math.max(labelHeight, numberHeight);
+    }
 
-    // Calculer les positions selon labelPosition
+    // 2. Calculer le Y de départ du groupe selon verticalAlign
+    let groupStartY = padding.top;
+    const availableHeight = element.height - padding.top - padding.bottom;
+    
+    switch (props.verticalAlign) {
+      case "middle":
+        groupStartY = padding.top + (availableHeight - totalContentHeight) / 2;
+        break;
+      case "bottom":
+        groupStartY = element.height - padding.bottom - totalContentHeight;
+        break;
+      default: // top
+        groupStartY = padding.top;
+        break;
+    }
+
+    // 3. Positionner les éléments relativement au groupStartY
+    let labelX = padding.left;
+    let labelY = groupStartY;
+    let numberX = padding.left;
+    let numberY = groupStartY;
+
     switch (labelPosition) {
       case "top":
         // Label au-dessus du numéro
-        const totalHeightTopInvoice = labelHeight + labelSpacing + numberHeight;
         labelX = calculateTextX(element, props.textAlign, padding);
-        labelY = calculateTextYWithPadding(element, props.verticalAlign, padding, totalHeightTopInvoice);
+        labelY = groupStartY;
         numberX = calculateTextX(element, props.textAlign, padding);
-        numberY = labelY + labelHeight + labelSpacing;
+        numberY = groupStartY + labelHeight + labelSpacing;
         break;
 
       case "left":
@@ -2505,14 +2531,9 @@ const drawWoocommerceInvoiceNumber = (
         } else {
           labelX = padding.left;
         }
-        // Pour left/right, ne pas ajuster avec fontSize car sur la même ligne
-        labelY = calculateTextYWithPadding(
-          element,
-          props.verticalAlign,
-          padding,
-        );
+        labelY = groupStartY;
         numberX = labelX + labelWidth + labelSpacing;
-        numberY = labelY;
+        numberY = groupStartY;
         break;
 
       case "right":
@@ -2525,23 +2546,17 @@ const drawWoocommerceInvoiceNumber = (
         } else {
           numberX = padding.left;
         }
-        // Pour left/right, ne pas ajuster avec fontSize car sur la même ligne
-        numberY = calculateTextYWithPadding(
-          element,
-          props.verticalAlign,
-          padding,
-        );
+        numberY = groupStartY;
         labelX = numberX + numberWidth + labelSpacing;
-        labelY = numberY;
+        labelY = groupStartY;
         break;
 
       case "bottom":
         // Label en-dessous du numéro
-        const totalHeightBottomInvoice = numberHeight + labelSpacing + labelHeight;
         numberX = calculateTextX(element, props.textAlign, padding);
-        numberY = calculateTextYWithPadding(element, props.verticalAlign, padding, totalHeightBottomInvoice);
+        numberY = groupStartY;
         labelX = calculateTextX(element, props.textAlign, padding);
-        labelY = numberY + numberHeight + labelSpacing;
+        labelY = groupStartY + numberHeight + labelSpacing;
         break;
     }
 
