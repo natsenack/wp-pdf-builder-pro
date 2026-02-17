@@ -4915,8 +4915,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             $separator_color = $element['separatorColor'] ?? '#e5e7eb';
             $separator_width = isset($element['separatorWidth']) && $element['separatorWidth'] > 0 ? $element['separatorWidth'] : 1;
             
+            // 10px d'espacement après le séparateur (comme dans Canvas.tsx ligne 3467)
             $hr_style = sprintf(
-                'border: none; border-top: %dpx %s %s; margin: 0 0 0 0; padding: 0; line-height: 0; height: %dpx; display: block;',
+                'border: none; border-top: %dpx %s %s; margin: 0 0 10px 0; padding: 0; line-height: 0; height: %dpx; display: block;',
                 $separator_width,
                 $separator_style,
                 $separator_color,

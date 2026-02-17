@@ -1093,7 +1093,11 @@ export function CustomerInfoProperties({
                 type="number"
                 value={element.lineHeight || 1.1}
                 onChange={(e) =>
-                  onChange(element.id, "lineHeight", parseFloat(e.target.value) || 1)
+                  onChange(
+                    element.id,
+                    "lineHeight",
+                    parseFloat(e.target.value) || 1,
+                  )
                 }
                 min="0.5"
                 max="3"
@@ -1113,7 +1117,8 @@ export function CustomerInfoProperties({
                   marginTop: "4px",
                 }}
               >
-                Actuel: {(element.lineHeight || 1.1).toFixed(1)} (Puppeteer uniquement)
+                Actuel: {(element.lineHeight || 1.1).toFixed(1)} (Puppeteer
+                uniquement)
               </div>
             </div>
 

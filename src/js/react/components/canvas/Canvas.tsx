@@ -1592,16 +1592,20 @@ const drawCustomerInfo = (
   const headerHeight = showHeaders ? headerLineHeight : 0;
   const contentHeight = lines.length * bodyLineHeight; // Chaque ligne = bodyFont * lineHeightRatio
   const totalContentHeight = headerHeight + contentHeight;
-  const availableHeight = element.height - paddingVerticalTop - paddingVerticalBottom;
+  const availableHeight =
+    element.height - paddingVerticalTop - paddingVerticalBottom;
 
   // Calculer l'offset Y selon l'alignement vertical
   let startY: number;
   switch (verticalAlign) {
     case "middle":
-      startY = paddingVerticalTop + Math.max(0, (availableHeight - totalContentHeight) / 2);
+      startY =
+        paddingVerticalTop +
+        Math.max(0, (availableHeight - totalContentHeight) / 2);
       break;
     case "bottom":
-      startY = paddingVerticalTop + Math.max(0, availableHeight - totalContentHeight);
+      startY =
+        paddingVerticalTop + Math.max(0, availableHeight - totalContentHeight);
       break;
     default: // top
       startY = paddingVerticalTop;
@@ -1907,7 +1911,7 @@ const drawCompanyInfo = (
   const paddingTopComp = props.paddingTop || 8; // Utiliser paddingTop personnalisable (défaut 8)
   const paddingHorizontal = props.paddingHorizontal || 12; // paddingHorizontal (défaut 12)
   const paddingBottomComp = props.paddingBottom || 12; // paddingBottom personnalisable (défaut 12)
-  
+
   const getTextX = () => {
     switch (textAlign) {
       case "center":
@@ -1923,7 +1927,7 @@ const drawCompanyInfo = (
   let y = paddingTopComp; // Utiliser paddingTop défini plus haut
 
   // Récupération des données d'entreprise
-  const companyData = getCompanyData();  // ✅ Utilise la fonction locale (sans paramètre)
+  const companyData = getCompanyData(); // ✅ Utilise la fonction locale (sans paramètre)
 
   // Récupérer le layout
   const layout = props.layout || "vertical";
@@ -2077,7 +2081,7 @@ const drawCompanyInfo = (
   // Calculer la hauteur totale pour l'alignement vertical avec le lineHeight configuré
   const lineHeightRatio = props.lineHeight || 1.4; // Utiliser le lineHeight configuré (défaut 1.4 pour company_info)
   let totalHeight = 0;
-  
+
   // Calculer la hauteur totale:
   // Chaque ligne a une hauteur = fontSize * lineHeightRatio (qui inclut déjà l'espacement vertical CSS)
   // Plus margin-bottom: 4px pour les headers (séparation avec le contenu suivant)
@@ -2097,7 +2101,7 @@ const drawCompanyInfo = (
         };
     // Hauteur de la ligne = fontSize * lineHeightRatio (inclut l'espacement CSS)
     totalHeight += config.size * lineHeightRatio;
-    
+
     // Ajouter margin-bottom: 4px pour les headers (séparation avec le contenu suivant)
     // C'est le margin-bottom défini dans le style HTML des headers avec <strong>
     if (lineData.isHeader && index < lines.length - 1) {
@@ -2107,7 +2111,8 @@ const drawCompanyInfo = (
 
   // Ajuster la position Y selon l'alignement vertical
   const verticalAlign = props.verticalAlign || "top";
-  const availableHeightComp = element.height - paddingTopComp - paddingBottomComp;
+  const availableHeightComp =
+    element.height - paddingTopComp - paddingBottomComp;
 
   if (verticalAlign === "middle") {
     y = paddingTopComp + Math.max(0, (availableHeightComp - totalHeight) / 2);
@@ -2140,7 +2145,7 @@ const drawCompanyInfo = (
     // Dessiner la ligne - drawCompanyLine ajoute (fontSize * lineHeightRatio) à y
     y = drawCompanyLine(ctx, lineData.text, x, y, config.size, lineHeightRatio);
     if (lineData.isHeader) ctx.fillStyle = colors.text;
-    
+
     // Ajouter margin-bottom: 4px après les headers (séparation avec le contenu suivant)
     if (lineData.isHeader && index < lines.length - 1) {
       y += 4;
