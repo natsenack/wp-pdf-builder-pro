@@ -2211,9 +2211,9 @@ const drawWoocommerceOrderDate = (
       case "top":
         // Label au-dessus de la date
         labelX = calculateTextX(element, props.textAlign, padding);
-        labelY = padding.top;
+        labelY = calculateTextYWithPadding(element, props.verticalAlign, padding);
         dateX = calculateTextX(element, props.textAlign, padding);
-        dateY = padding.top + labelHeight + labelSpacing;
+        dateY = labelY + labelHeight + labelSpacing;
         break;
 
       case "left":
@@ -2257,9 +2257,9 @@ const drawWoocommerceOrderDate = (
       case "bottom":
         // Label en-dessous de la date
         dateX = calculateTextX(element, props.textAlign, padding);
-        dateY = padding.top;
+        dateY = calculateTextYWithPadding(element, props.verticalAlign, padding);
         labelX = calculateTextX(element, props.textAlign, padding);
-        labelY = padding.top + dateHeight + labelSpacing;
+        labelY = dateY + dateHeight + labelSpacing;
         break;
     }
 
