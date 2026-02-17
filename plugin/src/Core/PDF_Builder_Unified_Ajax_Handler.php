@@ -4526,10 +4526,10 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         if ($show_label) {
             // Avec label : utiliser flexbox pour positionner label + date
-            $container_styles = $base_styles . ' display: flex; line-height: 1;';
+            $container_styles = $base_styles . ' display: flex !important; line-height: 1 !important;';
             
             // Appliquer le padding pour cohérence avec React Canvas
-            $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px; box-sizing: border-box;";
+            $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px !important; box-sizing: border-box !important;";
             
             // Styles pour le label et la date
             $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color}; line-height: 1; margin: 0;";
@@ -4540,24 +4540,24 @@ class PDF_Builder_Unified_Ajax_Handler {
                 case 'top':
                 case 'bottom':
                     // Direction verticale (colonne)
-                    $container_styles .= ' flex-direction: column;';
+                    $container_styles .= ' flex-direction: column !important;';
                     
                     // justify-content contrôle l'axe vertical (principal)
                     if ($vertical_align === 'middle') {
-                        $container_styles .= ' justify-content: center;';
+                        $container_styles .= ' justify-content: center !important;';
                     } elseif ($vertical_align === 'bottom') {
-                        $container_styles .= ' justify-content: flex-end;';
+                        $container_styles .= ' justify-content: flex-end !important;';
                     } else {
-                        $container_styles .= ' justify-content: flex-start;';
+                        $container_styles .= ' justify-content: flex-start !important;';
                     }
                     
                     // align-items contrôle l'axe horizontal (transversal)
                     if ($text_align === 'center') {
-                        $container_styles .= ' align-items: center;';
+                        $container_styles .= ' align-items: center !important;';
                     } elseif ($text_align === 'right') {
-                        $container_styles .= ' align-items: flex-end;';
+                        $container_styles .= ' align-items: flex-end !important;';
                     } else {
-                        $container_styles .= ' align-items: flex-start;';
+                        $container_styles .= ' align-items: flex-start !important;';
                     }
                     
                     if ($label_position === 'top') {
@@ -4575,24 +4575,24 @@ class PDF_Builder_Unified_Ajax_Handler {
                 case 'left':
                 default:
                     // Direction horizontale (ligne)
-                    $container_styles .= ' flex-direction: row;';
+                    $container_styles .= ' flex-direction: row !important;';
                     
                     // justify-content contrôle l'axe horizontal (principal)
                     if ($text_align === 'center') {
-                        $container_styles .= ' justify-content: center;';
+                        $container_styles .= ' justify-content: center !important;';
                     } elseif ($text_align === 'right') {
-                        $container_styles .= ' justify-content: flex-end;';
+                        $container_styles .= ' justify-content: flex-end !important;';
                     } else {
-                        $container_styles .= ' justify-content: flex-start;';
+                        $container_styles .= ' justify-content: flex-start !important;';
                     }
                     
                     // align-items contrôle l'axe vertical (transversal)
                     if ($vertical_align === 'middle') {
-                        $container_styles .= ' align-items: center;';
+                        $container_styles .= ' align-items: center !important;';
                     } elseif ($vertical_align === 'bottom') {
-                        $container_styles .= ' align-items: flex-end;';
+                        $container_styles .= ' align-items: flex-end !important;';
                     } else {
-                        $container_styles .= ' align-items: flex-start;';
+                        $container_styles .= ' align-items: flex-start !important;';
                     }
                     
                     if ($label_position === 'right') {
@@ -4611,31 +4611,31 @@ class PDF_Builder_Unified_Ajax_Handler {
             return $html;
         } else {
             // Sans label : affichage simple de la date avec textAlign et verticalAlign
-            $container_styles = $base_styles . ' display: flex; line-height: 1;';
+            $container_styles = $base_styles . ' display: flex !important; line-height: 1 !important;';
             
             // Appliquer le padding pour cohérence avec React Canvas
-            $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px; box-sizing: border-box;";
+            $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px !important; box-sizing: border-box !important;";
             
             // Alignement vertical (justify-content car on va probablement utiliser column)
             if ($vertical_align === 'middle') {
-                $container_styles .= ' justify-content: center;';
+                $container_styles .= ' justify-content: center !important;';
             } elseif ($vertical_align === 'bottom') {
-                $container_styles .= ' justify-content: flex-end;';
+                $container_styles .= ' justify-content: flex-end !important;';
             } else {
-                $container_styles .= ' justify-content: flex-start;';
+                $container_styles .= ' justify-content: flex-start !important;';
             }
             
             // Alignement horizontal (align-items pour column)
             if ($text_align === 'center') {
-                $container_styles .= ' align-items: center;';
+                $container_styles .= ' align-items: center !important;';
             } elseif ($text_align === 'right') {
-                $container_styles .= ' align-items: flex-end;';
+                $container_styles .= ' align-items: flex-end !important;';
             } else {
-                $container_styles .= ' align-items: flex-start;';
+                $container_styles .= ' align-items: flex-start !important;';
             }
             
             // Utiliser column pour que justify-content contrôle le vertical
-            $container_styles .= ' flex-direction: column;';
+            $container_styles .= ' flex-direction: column !important;';
             
             $date_styles = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color}; line-height: 1; margin: 0;";
             return '<div class="element" style="' . $container_styles . '"><span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span></div>';;
@@ -4735,10 +4735,10 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         if ($show_label) {
             // Avec label : utiliser flexbox pour positionner label + numéro
-            $container_styles = $base_styles . ' display: flex; line-height: 1;';
+            $container_styles = $base_styles . ' display: flex !important; line-height: 1 !important;';
             
             // Appliquer le padding pour cohérence avec React Canvas
-            $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px; box-sizing: border-box;";
+            $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px !important; box-sizing: border-box !important;";
             
             // Styles pour le label et le numéro
             $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color}; line-height: 1; margin: 0;";
@@ -4749,24 +4749,24 @@ class PDF_Builder_Unified_Ajax_Handler {
                 case 'top':
                 case 'bottom':
                     // Direction verticale (colonne)
-                    $container_styles .= ' flex-direction: column;';
+                    $container_styles .= ' flex-direction: column !important;';
                     
                     // justify-content contrôle l'axe vertical (principal)
                     if ($vertical_align === 'middle') {
-                        $container_styles .= ' justify-content: center;';
+                        $container_styles .= ' justify-content: center !important;';
                     } elseif ($vertical_align === 'bottom') {
-                        $container_styles .= ' justify-content: flex-end;';
+                        $container_styles .= ' justify-content: flex-end !important;';
                     } else {
-                        $container_styles .= ' justify-content: flex-start;';
+                        $container_styles .= ' justify-content: flex-start !important;';
                     }
                     
                     // align-items contrôle l'axe horizontal (transversal)
                     if ($text_align === 'center') {
-                        $container_styles .= ' align-items: center;';
+                        $container_styles .= ' align-items: center !important;';
                     } elseif ($text_align === 'right') {
-                        $container_styles .= ' align-items: flex-end;';
+                        $container_styles .= ' align-items: flex-end !important;';
                     } else {
-                        $container_styles .= ' align-items: flex-start;';
+                        $container_styles .= ' align-items: flex-start !important;';
                     }
                     
                     if ($label_position === 'top') {
@@ -4784,24 +4784,24 @@ class PDF_Builder_Unified_Ajax_Handler {
                 case 'left':
                 default:
                     // Direction horizontale (ligne)
-                    $container_styles .= ' flex-direction: row;';
+                    $container_styles .= ' flex-direction: row !important;';
                     
                     // justify-content contrôle l'axe horizontal (principal)
                     if ($text_align === 'center') {
-                        $container_styles .= ' justify-content: center;';
+                        $container_styles .= ' justify-content: center !important;';
                     } elseif ($text_align === 'right') {
-                        $container_styles .= ' justify-content: flex-end;';
+                        $container_styles .= ' justify-content: flex-end !important;';
                     } else {
-                        $container_styles .= ' justify-content: flex-start;';
+                        $container_styles .= ' justify-content: flex-start !important;';
                     }
                     
                     // align-items contrôle l'axe vertical (transversal)
                     if ($vertical_align === 'middle') {
-                        $container_styles .= ' align-items: center;';
+                        $container_styles .= ' align-items: center !important;';
                     } elseif ($vertical_align === 'bottom') {
-                        $container_styles .= ' align-items: flex-end;';
+                        $container_styles .= ' align-items: flex-end !important;';
                     } else {
-                        $container_styles .= ' align-items: flex-start;';
+                        $container_styles .= ' align-items: flex-start !important;';
                     }
                     
                     if ($label_position === 'right') {
@@ -4820,31 +4820,31 @@ class PDF_Builder_Unified_Ajax_Handler {
             return $html;
         } else {
             // Sans label : affichage simple du numéro avec textAlign et verticalAlign
-            $container_styles = $base_styles . ' display: flex; line-height: 1;';
+            $container_styles = $base_styles . ' display: flex !important; line-height: 1 !important;';
             
             // Appliquer le padding pour cohérence avec React Canvas
-            $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px; box-sizing: border-box;";
+            $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px !important; box-sizing: border-box !important;";
             
             // Alignement vertical (justify-content car on va probablement utiliser column)
             if ($vertical_align === 'middle') {
-                $container_styles .= ' justify-content: center;';
+                $container_styles .= ' justify-content: center !important;';
             } elseif ($vertical_align === 'bottom') {
-                $container_styles .= ' justify-content: flex-end;';
+                $container_styles .= ' justify-content: flex-end !important;';
             } else {
-                $container_styles .= ' justify-content: flex-start;';
+                $container_styles .= ' justify-content: flex-start !important;';
             }
             
             // Alignement horizontal (align-items pour column)
             if ($text_align === 'center') {
-                $container_styles .= ' align-items: center;';
+                $container_styles .= ' align-items: center !important;';
             } elseif ($text_align === 'right') {
-                $container_styles .= ' align-items: flex-end;';
+                $container_styles .= ' align-items: flex-end !important;';
             } else {
-                $container_styles .= ' align-items: flex-start;';
+                $container_styles .= ' align-items: flex-start !important;';
             }
             
             // Utiliser column pour que justify-content contrôle le vertical
-            $container_styles .= ' flex-direction: column;';
+            $container_styles .= ' flex-direction: column !important;';
             
             $number_styles = "font-family: {$number_font_family}; font-size: {$number_font_size}px; font-weight: {$number_font_weight}; font-style: {$number_font_style}; color: {$number_color}; line-height: 1; margin: 0;";
             return '<div class="element" style="' . $container_styles . '"><span style="' . $number_styles . '">' . esc_html($display_number) . '</span></div>';
