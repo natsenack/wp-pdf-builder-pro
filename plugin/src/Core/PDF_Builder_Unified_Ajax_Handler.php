@@ -3741,16 +3741,11 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         $html .= '</tbody></table>'; // Fermer le tableau des produits
         
-        // Tableau des totaux séparé - aligné à droite
+        // Tableau des totaux séparé - aligné à droite (SANS bordure)
         $html .= '<div style="margin-top: 20px; width: 100%; display: table;">';
         
-        // Appliquer la même bordure de tableau si showBorders est actif
-        $totals_table_style = 'width: 50%; margin-left: auto; border-collapse: collapse;';
-        if ($show_borders) {
-            $totals_table_style .= " border: {$border_width}px solid {$border_color};";
-        }
-        
-        $html .= '<table style="' . $totals_table_style . '">';
+        // Le tableau des totaux n'a JAMAIS de bordure
+        $html .= '<table style="width: 50%; margin-left: auto; border-collapse: collapse;">';
         $html .= '<tbody>';
         
         // Style pour les lignes de summary (sous-total, remise, livraison, TVA) - SANS bordures de cellules
