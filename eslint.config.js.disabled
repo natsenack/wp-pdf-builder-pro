@@ -1,3 +1,6 @@
+import tseslint from "@typescript-eslint/eslint-plugin";
+import tsparser from "@typescript-eslint/parser";
+
 export default [
   {
     ignores: [
@@ -17,6 +20,7 @@ export default [
   {
     files: ["src/**/*.{js,jsx,ts,tsx}"],
     languageOptions: {
+      parser: tsparser,
       ecmaVersion: 2021,
       sourceType: "module",
       parserOptions: {
@@ -32,11 +36,17 @@ export default [
         HTMLImageElement: "readonly",
         HTMLElement: "readonly",
         fetch: "readonly",
-        performance: "readonly"
+        performance: "readonly",
+        React: "readonly"
       }
     },
+    plugins: {
+      "@typescript-eslint": tseslint
+    },
     rules: {
-      "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-explicit-any": "warn",
       "no-console": ["warn", { allow: ["warn", "error", "info"] }]
     }
   }

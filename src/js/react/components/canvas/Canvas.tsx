@@ -48,15 +48,6 @@ import { wooCommerceManager } from "../../utils/WooCommerceElementsManager";
 import { elementChangeTracker } from "../../utils/ElementChangeTracker";
 import { debugWarn, debugError, debugLog } from "../../utils/debug";
 
-// Déclaration pour l'API Performance
-declare const performance: {
-  memory?: {
-    usedJSHeapSize: number;
-    totalJSHeapSize: number;
-    jsHeapSizeLimit: number;
-  };
-};
-
 // Fonctions utilitaires pour la gestion mémoire des images
 const estimateImageMemorySize = (img: HTMLImageElement): number => {
   // Estimation basée sur les dimensions et le nombre de canaux (RGBA = 4 octets par pixel)
@@ -375,7 +366,7 @@ const calculateMinDimensions = (
     case "document_type": {
       const docEl = element as DocumentTypeElement;
       const fontSize = docEl.fontSize || 18;
-      const text = docEl.title || docEl.text || "DOCUMENT";
+      const text = docEl.documentType || "DOCUMENT";
       const estimatedWidth = Math.ceil(text.length * fontSize * 0.5 + 20);
       return {
         minWidth: Math.max(estimatedWidth, 80),
@@ -393,7 +384,6 @@ const calculateMinDimensions = (
 
     // Lignes -> largeur minimale importante, hauteur faible
     case "line":
-    case "separator":
       return {
         minWidth: 50,
         minHeight: 2,
@@ -2794,7 +2784,7 @@ export const Canvas = function Canvas({
 
     // Vérifier aussi la mémoire globale du navigateur si disponible
     if ("memory" in performance) {
-      const perfMemory = performance.memory!;
+      const perfMemory = (performance as any).memory;
       const browserMemoryUsage = perfMemory.usedJSHeapSize / (1024 * 1024); // MB
       const browserLimit = perfMemory.jsHeapSizeLimit / (1024 * 1024); // MB
 

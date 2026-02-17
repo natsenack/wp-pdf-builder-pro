@@ -789,6 +789,9 @@ export interface CompanyInfoElement extends BaseElement {
   companyPhone?: string;
   // Propriétés de padding
   padding?: number; // Backward compatibility
+  paddingTop?: number;
+  paddingHorizontal?: number;
+  paddingBottom?: number;
   // Propriétés de border
   borderColor?: string;
   borderWidth?: number;
@@ -843,6 +846,7 @@ export interface CustomerInfoElement extends BaseElement {
   backgroundColor?: string;
   // Propriétés d'espacement
   lineHeight?: number;
+  lineSpacing?: number;
 }
 
 // Interface spécifique pour les éléments DocumentType

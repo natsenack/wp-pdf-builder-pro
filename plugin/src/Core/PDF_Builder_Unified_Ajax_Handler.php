@@ -4533,42 +4533,42 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
             
             // Styles pour le label
-            $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color};";
+            $label_styles = "font-family: {$label_font_family}; font-size: {$label_font_size}px; font-weight: {$label_font_weight}; font-style: {$label_font_style}; color: {$label_color}; white-space: nowrap;";
             
             // Styles pour la date
-            $date_styles = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color};";
+            $date_styles = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color}; white-space: nowrap;";
 
             // Layout selon la position du label - Mapper text_align à justify-content flexbox
             $justify_content = $this->map_text_align_to_justify_content($text_align);
             $align_items_h = ($text_align === 'center' ? 'center' : ($text_align === 'right' ? 'flex-end' : 'flex-start'));
-            $html = '<div class="element" style="' . $container_styles . ' display: flex; align-items: center; justify-content: ' . $justify_content . ';">';
+            $html = '<div class="element" style="' . $container_styles . ' display: flex; align-items: center; justify-content: ' . $justify_content . '; flex-wrap: nowrap;">';
             
             switch ($label_position) {
                 case 'top':
-                    $html = '<div class="element" style="' . $container_styles . ' display: flex; flex-direction: column; align-items: ' . $align_items_h . ';">';
+                    $html = '<div class="element" style="' . $container_styles . ' display: flex; flex-direction: column; align-items: ' . $align_items_h . '; flex-wrap: nowrap;">';
                     $html .= '<span style="' . $label_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
                     $html .= '<span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span>';
                     break;
 
                 case 'left':
-                    $html .= '<span style="' . $label_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
-                    $html .= '<span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span>';
+                    $html .= '<span style="' . $label_styles . ' margin-right: ' . $label_spacing . 'px; flex-shrink: 0;">' . esc_html($label_text) . '</span>';
+                    $html .= '<span style="' . $date_styles . ' flex-shrink: 0;">' . esc_html($formatted_date) . '</span>';
                     break;
 
                 case 'right':
-                    $html .= '<span style="' . $date_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($formatted_date) . '</span>';
-                    $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
+                    $html .= '<span style="' . $date_styles . ' margin-right: ' . $label_spacing . 'px; flex-shrink: 0;">' . esc_html($formatted_date) . '</span>';
+                    $html .= '<span style="' . $label_styles . ' flex-shrink: 0;">' . esc_html($label_text) . '</span>';
                     break;
 
                 case 'bottom':
-                    $html = '<div class="element" style="' . $container_styles . ' display: flex; flex-direction: column; align-items: ' . ($text_align === 'center' ? 'center' : ($text_align === 'right' ? 'flex-end' : 'flex-start')) . ';">';
+                    $html = '<div class="element" style="' . $container_styles . ' display: flex; flex-direction: column; align-items: ' . ($text_align === 'center' ? 'center' : ($text_align === 'right' ? 'flex-end' : 'flex-start')) . '; flex-wrap: nowrap;">';
                     $html .= '<span style="' . $date_styles . ' margin-bottom: ' . $label_spacing . 'px;">' . esc_html($formatted_date) . '</span>';
                     $html .= '<span style="' . $label_styles . '">' . esc_html($label_text) . '</span>';
                     break;
 
                 default:
-                    $html .= '<span style="' . $label_styles . ' margin-right: ' . $label_spacing . 'px;">' . esc_html($label_text) . '</span>';
-                    $html .= '<span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span>';
+                    $html .= '<span style="' . $label_styles . ' margin-right: ' . $label_spacing . 'px; flex-shrink: 0;">' . esc_html($label_text) . '</span>';
+                    $html .= '<span style="' . $date_styles . ' flex-shrink: 0;">' . esc_html($formatted_date) . '</span>';
             }
             
             $html .= '</div>';
@@ -4584,8 +4584,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             } else {
                 $align_styles .= 'flex-start;';
             }
-            $align_styles .= ' justify-content: ' . $text_align . ';';
-            return '<div class="element" style="' . $base_styles . $align_styles . '">' . esc_html($formatted_date) . '</div>';
+            $align_styles .= ' justify-content: ' . $text_align . '; flex-wrap: nowrap;';
+            $date_styles_no_label = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color}; white-space: nowrap;";
+            return '<div class="element" style="' . $base_styles . $align_styles . '"><span style="' . $date_styles_no_label . '">' . esc_html($formatted_date) . '</span></div>';
         }
     }
 
