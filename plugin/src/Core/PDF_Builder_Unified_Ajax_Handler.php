@@ -3511,8 +3511,8 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function extract_font_props($element, $prefix = '', $defaults = []) {
         // Récupérer la police par défaut pour le prefix
-        // Pour 'header', utiliser fontFamily de l'élément si headerFontFamily n'existe pas
-        $default_family = $element['fontFamily'] ?? 'DejaVu Sans';
+        // ✅ FIX: Utiliser 'Arial' au lieu de 'DejaVu Sans' pour matcher React/Canvas defaults
+        $default_family = $element['fontFamily'] ?? 'Arial';
         $default_size = $defaults['size'] ?? 12;
         $default_weight = $defaults['weight'] ?? 'normal';
         $default_style = $defaults['style'] ?? 'normal';
