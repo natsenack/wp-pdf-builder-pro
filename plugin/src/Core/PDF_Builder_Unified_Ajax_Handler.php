@@ -3287,6 +3287,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 break;
             case 'company_info':
                 $rendered = $this->render_company_info_element($element, $order_data, $styles, $is_premium, $format);
+                error_log("[PDF Builder] company_info case: HTML rendu (longueur: " . strlen($rendered) . ")");
                 break;
             case 'company_logo':
                 $rendered = $this->render_company_logo($element, $styles);
@@ -3884,6 +3885,9 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Rendu des informations entreprise
      */
     private function render_company_info_element($element, $order_data, $base_styles, $is_premium = false, $format = 'html') {
+        error_log("[PDF Builder] render_company_info_element APPELÉE - Element ID: " . ($element['id'] ?? 'AUCUN_ID'));
+        error_log("[PDF Builder] company_info element data: " . print_r($element, true));
+        
         // Extraction des propriétés via helpers
         $padding = $this->extract_padding($element);
         $layout_props = $this->extract_layout_props($element);
@@ -4062,6 +4066,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html .= '<div style="' . $line_style . '">' . $line . '</div>';
         }
         $html .= '</div>'; // Fermer element container
+        
+        error_log("[PDF Builder] company_info Lines count: " . count($processedLines));
+        error_log("[PDF Builder] company_info HTML généré (longueur: " . strlen($html) . "): " . substr($html, 0, 500));
+        
         return $html;
     }
     
