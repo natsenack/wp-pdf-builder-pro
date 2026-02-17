@@ -4520,7 +4520,9 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         if ($show_label) {
             // Construire les styles pour le conteneur avec alignement vertical
+            // ✅ Enlever la largeur fixe pour permettre au conteneur de s'adapter au contenu
             $container_styles = $base_styles;
+            $container_styles = preg_replace('/width:\s*\d+px\s*!important;/', 'width: auto !important; min-width: max-content;', $container_styles);
             
             // Ajouter l'alignement vertical via flexbox
             $container_styles .= ' display: flex;';
@@ -4575,6 +4577,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             return $html;
         } else {
             // Sans label, affichage simple avec alignement vertical
+            // ✅ Enlever la largeur fixe pour permettre au conteneur de s'adapter au contenu
+            $container_styles_no_label = $base_styles;
+            $container_styles_no_label = preg_replace('/width:\s*\d+px\s*!important;/', 'width: auto !important; min-width: max-content;', $container_styles_no_label);
+            
             $vertical_align = $element['verticalAlign'] ?? 'top';
             $align_styles = ' display: flex; align-items: ';
             if ($vertical_align === 'middle') {
@@ -4586,7 +4592,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
             $align_styles .= ' justify-content: ' . $text_align . '; flex-wrap: nowrap;';
             $date_styles_no_label = "font-family: {$date_font_family}; font-size: {$date_font_size}px; font-weight: {$date_font_weight}; font-style: {$date_font_style}; color: {$date_color}; white-space: nowrap;";
-            return '<div class="element" style="' . $base_styles . $align_styles . '"><span style="' . $date_styles_no_label . '">' . esc_html($formatted_date) . '</span></div>';
+            return '<div class="element" style="' . $container_styles_no_label . $align_styles . '"><span style="' . $date_styles_no_label . '">' . esc_html($formatted_date) . '</span></div>';
         }
     }
 
