@@ -3169,6 +3169,8 @@ class PDF_Builder_Unified_Ajax_Handler {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>' . esc_html($template['name'] ?? 'Document') . '</title>
+    <!-- Google Fonts pour Puppeteer (garantit disponibilité des polices) -->
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&family=Lora:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* 
          * IMPORTANT: box-sizing: border-box est utilisé pour tous les éléments.
@@ -5609,23 +5611,25 @@ class PDF_Builder_Unified_Ajax_Handler {
     
     /**
      * Ajoute des polices de secours (fallbacks) pour meilleure compatibilité Puppeteer
-     * Exemple: "Courier New" -> "Courier New", Courier, monospace
-     * Cela garantit que même si la police principale n'existe pas, une alternative sera utilisée
+     * Utilise Google Fonts comme polices principales (garantit disponibilité sur tous serveurs)
+     * Exemple: "Courier New" -> "Courier Prime", Courier, monospace
      */
     private function add_font_fallbacks($font_name) {
-        // Mapping des polices courantes avec leurs fallbacks
+        // Mapping des polices système vers Google Fonts équivalentes avec fallbacks
         $fallback_map = [
-            'Courier New' => '"Courier New", Courier, monospace',
-            'Times New Roman' => '"Times New Roman", Times, Georgia, serif',
-            'Arial' => 'Arial, Helvetica, sans-serif',
-            'Helvetica' => 'Helvetica, Arial, sans-serif',
-            'Verdana' => 'Verdana, Geneva, sans-serif',
-            'Georgia' => 'Georgia, "Times New Roman", serif',
-            'Comic Sans MS' => '"Comic Sans MS", cursive',
-            'Trebuchet MS' => '"Trebuchet MS", sans-serif',
+            'Courier New' => '"Courier Prime", Courier, monospace',
+            'Times New Roman' => 'Lora, "Times New Roman", serif',
+            'Arial' => 'Roboto, Arial, sans-serif',
+            'Helvetica' => '"Open Sans", Helvetica, sans-serif',
+            'Verdana' => '"Open Sans", Verdana, sans-serif',
+            'Georgia' => 'Lora, Georgia, serif',
+            'Comic Sans MS' => 'cursive',
+            'Trebuchet MS' => '"Open Sans", sans-serif',
+            'Impact' => 'sans-serif',
+            'Tahoma' => 'sans-serif',
         ];
         
-        // Utiliser le mapping si disponible, sinon utiliser la police avec guillemets par défaut
+        // Utiliser le mapping si disponible
         if (isset($fallback_map[$font_name])) {
             return $fallback_map[$font_name];
         }
@@ -5633,7 +5637,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Par défaut: ajouter guillemets et fallback générique
         if (strpos($font_name, ' ') !== false) {
             // Police avec espaces: serif ou sans-serif?
-            if (stripos($font_name, 'times') !== false || stripos($font_name, 'georgia') !== false) {
+            if (stripos($font_name, 'times') !== false || stripos($font_name, 'georgia') !== false || stripos($font_name, 'merriweather') !== false) {
                 return "\"{$font_name}\", serif";
             } elseif (stripos($font_name, 'courier') !== false || stripos($font_name, 'mono') !== false) {
                 return "\"{$font_name}\", monospace";
