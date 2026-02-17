@@ -3228,16 +3228,20 @@ class PDF_Builder_Unified_Ajax_Handler {
         table {
             border-collapse: collapse;
             width: 100%;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
         th, td {
             padding: 8px;
             text-align: left;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
         th {
             font-weight: bold;
         }
         
-        /* Règles spécifiques pour l\'impression */
+        /* Règles spécifiques pour l'impression */
         @media print {
             @page {
                 margin: 0;
@@ -3247,6 +3251,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                 margin: 0 !important;
                 padding: 0 !important;
                 overflow: visible !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             .pdf-canvas {
                 position: relative !important;
@@ -3262,6 +3268,11 @@ class PDF_Builder_Unified_Ajax_Handler {
                 visibility: visible !important;
                 opacity: 1 !important;
                 page-break-inside: avoid !important;
+            }
+            /* Forcer l\'impression des couleurs de fond */
+            table, th, td, tr {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
         }
     </style>
