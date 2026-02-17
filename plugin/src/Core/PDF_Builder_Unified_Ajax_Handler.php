@@ -3636,16 +3636,10 @@ class PDF_Builder_Unified_Ajax_Handler {
         $show_price = $element['showPrice'] ?? true;
         $show_total = $element['showTotal'] ?? true;
         
-        // Style de bordure pour le TABLEAU (pas les cellules)
-        $table_border_style = '';
-        if ($show_borders) {
-            $table_border_style = "border: {$border_width}px solid {$border_color};";
-        }
-        
-        // FORCER l'absence de bordures sur les cellules individuelles
+        // AUCUNE bordure sur les tableaux ni les cellules
         $cell_border_style = 'border: none;';
         
-        $html .= '<table style="width:100%; border-collapse: collapse; background-color: ' . $bg_color . '; ' . $table_border_style . '">';
+        $html .= '<table style="width:100%; border-collapse: collapse; background-color: ' . $bg_color . ';">';
         
         // En-têtes
         if ($element['showHeaders'] ?? true) {
