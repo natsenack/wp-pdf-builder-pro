@@ -3265,6 +3265,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             return '';
         }
         
+        $element_id = $element['id'] ?? uniqid('element_');
         $type = $element['type'] ?? 'text';
         $x = $element['x'] ?? 0;
         $y = $element['y'] ?? 0;
