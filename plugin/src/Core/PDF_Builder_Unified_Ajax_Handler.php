@@ -4532,8 +4532,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px !important; box-sizing: border-box !important;";
             
             // Styles pour le label et la date
-            $label_styles = "font-family: {$label_font_family} !important; font-size: {$label_font_size}px !important; font-weight: {$label_font_weight} !important; font-style: {$label_font_style} !important; color: {$label_color} !important; line-height: 1 !important; margin: 0 !important;";
-            $date_styles = "font-family: {$date_font_family} !important; font-size: {$date_font_size}px !important; font-weight: {$date_font_weight} !important; font-style: {$date_font_style} !important; color: {$date_color} !important; line-height: 1 !important; margin: 0 !important;";
+            $label_styles = "font-family: \"{$label_font_family}\" !important; font-size: {$label_font_size}px !important; font-weight: {$label_font_weight} !important; font-style: {$label_font_style} !important; color: {$label_color} !important; line-height: 1 !important; margin: 0 !important;";
+            $date_styles = "font-family: \"{$date_font_family}\" !important; font-size: {$date_font_size}px !important; font-weight: {$date_font_weight} !important; font-style: {$date_font_style} !important; color: {$date_color} !important; line-height: 1 !important; margin: 0 !important;";
 
             // Layout selon la position du label
             switch ($label_position) {
@@ -4637,7 +4637,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Utiliser column pour que justify-content contrôle le vertical
             $container_styles .= ' flex-direction: column !important;';
             
-            $date_styles = "font-family: {$date_font_family} !important; font-size: {$date_font_size}px !important; font-weight: {$date_font_weight} !important; font-style: {$date_font_style} !important; color: {$date_color} !important; line-height: 1 !important; margin: 0 !important;";
+            $date_styles = "font-family: \"{$date_font_family}\" !important; font-size: {$date_font_size}px !important; font-weight: {$date_font_weight} !important; font-style: {$date_font_style} !important; color: {$date_color} !important; line-height: 1 !important; margin: 0 !important;";
             return '<div class="element" style="' . $container_styles . '"><span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span></div>';;
         }
     }
@@ -4741,8 +4741,8 @@ class PDF_Builder_Unified_Ajax_Handler {
             $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px !important; box-sizing: border-box !important;";
             
             // Styles pour le label et le numéro
-            $label_styles = "font-family: {$label_font_family} !important; font-size: {$label_font_size}px !important; font-weight: {$label_font_weight} !important; font-style: {$label_font_style} !important; color: {$label_color} !important; line-height: 1 !important; margin: 0 !important;";
-            $number_styles = "font-family: {$number_font_family} !important; font-size: {$number_font_size}px !important; font-weight: {$number_font_weight} !important; font-style: {$number_font_style} !important; color: {$number_color} !important; line-height: 1 !important; margin: 0 !important;";
+            $label_styles = "font-family: \"{$label_font_family}\" !important; font-size: {$label_font_size}px !important; font-weight: {$label_font_weight} !important; font-style: {$label_font_style} !important; color: {$label_color} !important; line-height: 1 !important; margin: 0 !important;";
+            $number_styles = "font-family: \"{$number_font_family}\" !important; font-size: {$number_font_size}px !important; font-weight: {$number_font_weight} !important; font-style: {$number_font_style} !important; color: {$number_color} !important; line-height: 1 !important; margin: 0 !important;";
 
             // Layout selon la position du label
             switch ($label_position) {
@@ -4846,7 +4846,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Utiliser column pour que justify-content contrôle le vertical
             $container_styles .= ' flex-direction: column !important;';
             
-            $number_styles = "font-family: {$number_font_family} !important; font-size: {$number_font_size}px !important; font-weight: {$number_font_weight} !important; font-style: {$number_font_style} !important; color: {$number_color} !important; line-height: 1 !important; margin: 0 !important;";
+            $number_styles = "font-family: \"{$number_font_family}\" !important; font-size: {$number_font_size}px !important; font-weight: {$number_font_weight} !important; font-style: {$number_font_style} !important; color: {$number_color} !important; line-height: 1 !important; margin: 0 !important;";
             return '<div class="element" style="' . $container_styles . '"><span style="' . $number_styles . '">' . esc_html($display_number) . '</span></div>';
         }
     }
