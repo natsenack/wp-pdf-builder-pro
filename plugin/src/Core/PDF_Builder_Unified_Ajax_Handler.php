@@ -4624,9 +4624,14 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html .= '</div>';
             
             // LOG: Styles et HTML générés (avec label)
-            error_log("Container styles: " . substr($container_styles, 0, 200) . "...");
+            error_log("Container styles (first 400 chars): " . substr($container_styles, 0, 400));
+            
+            // Extraire spécifiquement la propriété font-family du container
+            if (preg_match('/font-family:\s*([^;]+);/', $container_styles, $matches)) {
+                error_log("Container font-family extracted: " . $matches[1]);
+            }
+            
             error_log("Date styles: " . $date_styles);
-            error_log("HTML generated (with label): " . substr($html, 0, 300) . "...");
             error_log("=== END ORDER_DATE DEBUG ===");
             
             return $html;
@@ -4661,10 +4666,15 @@ class PDF_Builder_Unified_Ajax_Handler {
             $date_styles = "font-family: \"{$date_font_family}\" !important; font-size: {$date_font_size}px !important; font-weight: {$date_font_weight} !important; font-style: {$date_font_style} !important; color: {$date_color} !important; line-height: 1 !important; margin: 0 !important;";
             
             // LOG: Styles et HTML générés (sans label)
-            error_log("Container styles (no label): " . substr($container_styles, 0, 200) . "...");
+            error_log("Container styles (no label, first 400 chars): " . substr($container_styles, 0, 400));
+            
+            // Extraire spécifiquement la propriété font-family du container
+            if (preg_match('/font-family:\s*([^;]+);/', $container_styles, $matches)) {
+                error_log("Container font-family extracted (no label): " . $matches[1]);
+            }
+            
             error_log("Date styles (no label): " . $date_styles);
             $html = '<div class="element" style="' . $container_styles . '"><span style="' . $date_styles . '">' . esc_html($formatted_date) . '</span></div>';
-            error_log("HTML generated (no label): " . $html);
             error_log("=== END ORDER_DATE DEBUG ===");
             
             return $html;
@@ -4858,9 +4868,14 @@ class PDF_Builder_Unified_Ajax_Handler {
             $html .= '</div>';
             
             // LOG: Styles et HTML générés (avec label)
-            error_log("Container styles: " . substr($container_styles, 0, 200) . "...");
+            error_log("Container styles (first 400 chars): " . substr($container_styles, 0, 400));
+            
+            // Extraire spécifiquement la propriété font-family du container
+            if (preg_match('/font-family:\s*([^;]+);/', $container_styles, $matches)) {
+                error_log("Container font-family extracted: " . $matches[1]);
+            }
+            
             error_log("Number styles: " . $number_styles);
-            error_log("HTML generated (with label): " . substr($html, 0, 300) . "...");
             error_log("=== END INVOICE_NUMBER DEBUG ===");
             
             return $html;
@@ -4895,10 +4910,15 @@ class PDF_Builder_Unified_Ajax_Handler {
             $number_styles = "font-family: \"{$number_font_family}\" !important; font-size: {$number_font_size}px !important; font-weight: {$number_font_weight} !important; font-style: {$number_font_style} !important; color: {$number_color} !important; line-height: 1 !important; margin: 0 !important;";
             
             // LOG: Styles et HTML générés (sans label)
-            error_log("Container styles (no label): " . substr($container_styles, 0, 200) . "...");
+            error_log("Container styles (no label, first 400 chars): " . substr($container_styles, 0, 400));
+            
+            // Extraire spécifiquement la propriété font-family du container
+            if (preg_match('/font-family:\s*([^;]+);/', $container_styles, $matches)) {
+                error_log("Container font-family extracted (no label): " . $matches[1]);
+            }
+            
             error_log("Number styles (no label): " . $number_styles);
             $html = '<div class="element" style="' . $container_styles . '"><span style="' . $number_styles . '">' . esc_html($display_number) . '</span></div>';
-            error_log("HTML generated (no label): " . $html);
             error_log("=== END INVOICE_NUMBER DEBUG ===");
             
             return $html;
