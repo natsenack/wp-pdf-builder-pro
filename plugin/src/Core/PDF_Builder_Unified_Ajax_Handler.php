@@ -4526,7 +4526,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         if ($show_label) {
             // Avec label : utiliser flexbox pour positionner label + date
-            $container_styles = $base_styles . ' display: flex; line-height: 0;';
+            $container_styles = $base_styles . ' display: flex;';
             
             // Appliquer le padding pour cohérence avec React Canvas
             $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px; box-sizing: border-box;";
@@ -4611,7 +4611,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             return $html;
         } else {
             // Sans label : affichage simple de la date avec textAlign et verticalAlign
-            $container_styles = $base_styles . ' display: flex; line-height: 0;';
+            $container_styles = $base_styles . ' display: flex;';
             
             // Appliquer le padding pour cohérence avec React Canvas
             $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px; box-sizing: border-box;";
@@ -4735,7 +4735,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         if ($show_label) {
             // Avec label : utiliser flexbox pour positionner label + numéro
-            $container_styles = $base_styles . ' display: flex; line-height: 0;';
+            $container_styles = $base_styles . ' display: flex;';
             
             // Appliquer le padding pour cohérence avec React Canvas
             $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px; box-sizing: border-box;";
@@ -4820,7 +4820,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             return $html;
         } else {
             // Sans label : affichage simple du numéro avec textAlign et verticalAlign
-            $container_styles = $base_styles . ' display: flex; line-height: 0;';
+            $container_styles = $base_styles . ' display: flex;';
             
             // Appliquer le padding pour cohérence avec React Canvas
             $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px; box-sizing: border-box;";
