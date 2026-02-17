@@ -4009,8 +4009,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Styles - nettoyer TOUS les padding pour DOMPDF (comme customer_info)
         $base_styles_clean = preg_replace('/padding(-top|-bottom|-left|-right)?:\s*[^;]+;/i', '', $base_styles);
-        // Retirer aussi les !important de position qui causent des conflits DOMPDF
-        $base_styles_clean = str_replace('!important', '', $base_styles_clean);
+        // NE PAS retirer les !important car ils sont nécessaires pour le positionnement
+        // Le str_replace('!important', '') causait un mauvais positionnement des éléments
         
         $letter_spacing = $layout_props['letterSpacing'] ? " letter-spacing: {$layout_props['letterSpacing']}px;" : '';
         $container_styles = $base_styles_clean . 
