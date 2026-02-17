@@ -4761,11 +4761,11 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Retirer aussi les !important de position qui causent des conflits DOMPDF
         $base_styles_clean = str_replace('!important', '', $base_styles_clean);
         
-        // Récupérer fontSize DIRECTEMENT DU JSON (lineHeight system removed - using fixed 1.2 spacing)
+        // Récupérer fontSize DIRECTEMENT DU JSON
         $font_size = isset($element['fontSize']) ? floatval($element['fontSize']) : 12;
         
-        // Calculer le gap avec espacement fixe: 1.2 * fontSize (ligne-height = 1.2)
-        $gap = round($font_size * 0.1);
+        // Calculer le gap comme dans React Canvas: 4px d'espacement entre les lignes
+        $gap = 4;
         
         // Extraire les propriétés de positionnement
         preg_match('/left:\s*[^;]+;/', $base_styles_clean, $left_match);
