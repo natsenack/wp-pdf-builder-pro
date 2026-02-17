@@ -3241,7 +3241,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             font-weight: bold;
         }
         
-        /* Règles spécifiques pour l'impression */
+        /* Règles spécifiques pour l\'impression */
         @media print {
             @page {
                 margin: 0;
@@ -3269,7 +3269,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                 opacity: 1 !important;
                 page-break-inside: avoid !important;
             }
-            /* Forcer l\'impression des couleurs de fond */
+            /* Forcer impression des couleurs de fond */
             table, th, td, tr {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
