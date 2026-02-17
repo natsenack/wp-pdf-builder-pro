@@ -315,14 +315,19 @@ const calculateTextYWithPadding = (
   element: Element,
   verticalAlign: string = "top",
   paddingConfig: ReturnType<typeof getPadding>,
+  fontSize: number = 0,
 ) => {
   const centerY = element.height / 2;
 
   switch (verticalAlign) {
     case "middle":
-      return centerY;
+      // Centrer le texte en tenant compte de sa hauteur
+      return fontSize > 0 ? centerY - fontSize / 2 : centerY;
     case "bottom":
-      return element.height - paddingConfig.bottom;
+      // Positionner le bas du texte (textBaseline: "top" donc soustraire fontSize)
+      return fontSize > 0 
+        ? element.height - paddingConfig.bottom - fontSize
+        : element.height - paddingConfig.bottom;
     default: // top
       return paddingConfig.top || 10;
   }
@@ -2210,8 +2215,10 @@ const drawWoocommerceOrderDate = (
     switch (labelPosition) {
       case "top":
         // Label au-dessus de la date
+        // Hauteur totale du groupe (label + spacing + date)
+        const totalHeightTop = labelHeight + labelSpacing + dateHeight;
         labelX = calculateTextX(element, props.textAlign, padding);
-        labelY = calculateTextYWithPadding(element, props.verticalAlign, padding);
+        labelY = calculateTextYWithPadding(element, props.verticalAlign, padding, totalHeightTop);
         dateX = calculateTextX(element, props.textAlign, padding);
         dateY = labelY + labelHeight + labelSpacing;
         break;
@@ -2226,10 +2233,12 @@ const drawWoocommerceOrderDate = (
         } else {
           labelX = padding.left;
         }
+        const maxHeightLeft = Math.max(labelHeight, dateHeight);
         labelY = calculateTextYWithPadding(
           element,
           props.verticalAlign,
           padding,
+          maxHeightLeft,
         );
         dateX = labelX + labelWidth + labelSpacing;
         dateY = labelY;
@@ -2249,6 +2258,7 @@ const drawWoocommerceOrderDate = (
           element,
           props.verticalAlign,
           padding,
+          Math.max(labelHeight, dateHeight),
         );
         labelX = dateX + dateWidth + labelSpacing;
         labelY = dateY;
@@ -2256,8 +2266,10 @@ const drawWoocommerceOrderDate = (
 
       case "bottom":
         // Label en-dessous de la date
+        // Hauteur totale du groupe (date + spacing + label)
+        const totalHeightBottom = dateHeight + labelSpacing + labelHeight;
         dateX = calculateTextX(element, props.textAlign, padding);
-        dateY = calculateTextYWithPadding(element, props.verticalAlign, padding);
+        dateY = calculateTextYWithPadding(element, props.verticalAlign, padding, totalHeightBottom);
         labelX = calculateTextX(element, props.textAlign, padding);
         labelY = dateY + dateHeight + labelSpacing;
         break;
@@ -2292,7 +2304,7 @@ const drawWoocommerceOrderDate = (
       props.verticalAlign,
     );
     const x = calculateTextX(element, props.textAlign, padding);
-    const y = calculateTextYWithPadding(element, props.verticalAlign, padding);
+    const y = calculateTextYWithPadding(element, props.verticalAlign, padding, fontConfig.size);
     ctx.fillText(displayDate, x, y);
   }
 };
@@ -2455,10 +2467,11 @@ const drawWoocommerceInvoiceNumber = (
     switch (labelPosition) {
       case "top":
         // Label au-dessus du numéro
+        const totalHeightTopInvoice = labelHeight + labelSpacing + numberHeight;
         labelX = calculateTextX(element, props.textAlign, padding);
-        labelY = padding.top;
+        labelY = calculateTextYWithPadding(element, props.verticalAlign, padding, totalHeightTopInvoice);
         numberX = calculateTextX(element, props.textAlign, padding);
-        numberY = padding.top + labelHeight + labelSpacing;
+        numberY = labelY + labelHeight + labelSpacing;
         break;
 
       case "left":
@@ -2471,10 +2484,12 @@ const drawWoocommerceInvoiceNumber = (
         } else {
           labelX = padding.left;
         }
+        const maxHeightLeftInvoice = Math.max(labelHeight, numberHeight);
         labelY = calculateTextYWithPadding(
           element,
           props.verticalAlign,
           padding,
+          maxHeightLeftInvoice,
         );
         numberX = labelX + labelWidth + labelSpacing;
         numberY = labelY;
@@ -2490,10 +2505,12 @@ const drawWoocommerceInvoiceNumber = (
         } else {
           numberX = padding.left;
         }
+        const maxHeightRightInvoice = Math.max(labelHeight, numberHeight);
         numberY = calculateTextYWithPadding(
           element,
           props.verticalAlign,
           padding,
+          maxHeightRightInvoice,
         );
         labelX = numberX + numberWidth + labelSpacing;
         labelY = numberY;
@@ -2501,10 +2518,11 @@ const drawWoocommerceInvoiceNumber = (
 
       case "bottom":
         // Label en-dessous du numéro
+        const totalHeightBottomInvoice = numberHeight + labelSpacing + labelHeight;
         numberX = calculateTextX(element, props.textAlign, padding);
-        numberY = padding.top;
+        numberY = calculateTextYWithPadding(element, props.verticalAlign, padding, totalHeightBottomInvoice);
         labelX = calculateTextX(element, props.textAlign, padding);
-        labelY = padding.top + numberHeight + labelSpacing;
+        labelY = numberY + numberHeight + labelSpacing;
         break;
     }
 
@@ -2537,7 +2555,7 @@ const drawWoocommerceInvoiceNumber = (
       props.verticalAlign,
     );
     const x = calculateTextX(element, props.textAlign, padding);
-    const y = calculateTextYWithPadding(element, props.verticalAlign, padding);
+    const y = calculateTextYWithPadding(element, props.verticalAlign, padding, fontConfig.size);
     ctx.fillText(displayText, x, y);
   }
 };
