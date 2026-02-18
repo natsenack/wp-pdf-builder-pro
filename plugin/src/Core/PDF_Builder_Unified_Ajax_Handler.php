@@ -3549,18 +3549,25 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // === ARRIÈRE-PLAN ET BORDURES ===
         // Background (respecter showBackground)
-        if (($element['backgroundColor'] ?? 'transparent') !== 'transparent') {
-            if ($element['showBackground'] ?? true) {
-                $css .= 'background-color: ' . $element['backgroundColor'] . '; ';
+        $showBackground = $element['showBackground'] ?? true;
+        if ($showBackground !== false) {
+            $bgColor = $element['backgroundColor'] ?? '';
+            if ($bgColor && $bgColor !== 'transparent') {
+                $css .= 'background-color: ' . $bgColor . '; ';
             }
         }
         
         // Bordures (respecter showBorders)
-        $borderWidth = $element['borderWidth'] ?? 0;
-        if ($borderWidth > 0 && ($element['showBorders'] ?? true)) {
-            $borderColor = $element['borderColor'] ?? '#000000';
-            $borderStyle = $element['borderStyle'] ?? 'solid';
-            $css .= "border: {$borderWidth}px {$borderStyle} {$borderColor}; ";
+        // Note: showBorders doit être explicitement true pour afficher une bordure
+        $showBorders = isset($element['showBorders']) ? (bool)$element['showBorders'] : false;
+        if ($showBorders) {
+            // Canvas React défault à borderWidth=1, on fait pareil côté PHP
+            $borderWidth = isset($element['borderWidth']) ? (float)$element['borderWidth'] : 1;
+            $borderColor  = $element['borderColor']  ?? '#000000';
+            $borderStyle  = $element['borderStyle']  ?? 'solid';
+            if ($borderWidth > 0) {
+                $css .= "border: {$borderWidth}px {$borderStyle} {$borderColor}; ";
+            }
         }
         
         // Border radius
@@ -3751,14 +3758,16 @@ class PDF_Builder_Unified_Ajax_Handler {
         $show_price = $element['showPrice'] ?? true;
         $show_total = $element['showTotal'] ?? true;
         
-        // AUCUNE bordure sur les tableaux ni les cellules
-        $cell_border_style = 'border: none;';
+        // AUCUNE bordure sur les cellules du tableau — sauf si showBorders activé
+        $cell_sep_style = $show_borders
+            ? "border-bottom: {$border_width}px solid {$border_color};"
+            : 'border: none;';
         
         $html .= '<table style="width:100%; border-collapse: collapse; background-color: ' . $bg_color . ';">';
         
         // En-têtes
         if ($element['showHeaders'] ?? true) {
-            $header_style = $cell_border_style . " padding: 8px; background: {$header_bg}; color: {$header_color}; " .
+            $header_style = $cell_sep_style . " padding: 8px; background: {$header_bg}; color: {$header_color}; " .
                            "font-size: {$header_font_size}px; font-family: {$header_font_family}; " .
                            "font-weight: {$header_font_weight}; font-style: {$header_font_style};";
             
@@ -3776,7 +3785,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $html .= '<tbody>';
         $row_index = 0;
         
-        $row_style_base = $cell_border_style . " padding: 8px; color: {$row_color}; " .
+        $row_style_base = $cell_sep_style . " padding: 8px; color: {$row_color}; " .
                          "font-size: {$row_font_size}px; font-family: {$row_font_family}; " .
                          "font-weight: {$row_font_weight}; font-style: {$row_font_style};";
         
@@ -4052,6 +4061,19 @@ class PDF_Builder_Unified_Ajax_Handler {
             " box-sizing: border-box;" .
             $letter_spacing;
         
+        // Appliquer le fond (background-color)
+        $showBackground = $element['showBackground'] ?? true;
+        if ($showBackground !== false && $colors['background'] && $colors['background'] !== 'transparent') {
+            $container_styles .= ' background-color: ' . $colors['background'] . ';';
+        }
+        
+        // Appliquer les bordures
+        $showBorders = isset($element['showBorders']) ? (bool)$element['showBorders'] : false;
+        if ($showBorders) {
+            $bw = isset($element['borderWidth']) ? (float)$element['borderWidth'] : 1;
+            $container_styles .= ' border: ' . $bw . 'px solid ' . $colors['border'] . ';';
+        }
+        
         // Alignement vertical via flexbox
         $container_styles .= ' display: flex; flex-direction: column;';
         if ($layout_props['verticalAlign'] === 'middle') {
@@ -4231,6 +4253,19 @@ class PDF_Builder_Unified_Ajax_Handler {
             " box-sizing: border-box;" .
             $letter_spacing .
             ' width: 100%; height: 100%;';
+        
+        // Appliquer le fond (couleur du thème ou couleur explicite)
+        $showBackground = $element['showBackground'] ?? true;
+        if ($showBackground !== false && $colors['background'] && $colors['background'] !== 'transparent') {
+            $container_styles .= ' background-color: ' . $colors['background'] . ';';
+        }
+        
+        // Appliquer les bordures (couleur du thème ou couleur explicite)
+        $showBorders = isset($element['showBorders']) ? (bool)$element['showBorders'] : false;
+        if ($showBorders) {
+            $bw = isset($element['borderWidth']) ? (float)$element['borderWidth'] : 1;
+            $container_styles .= ' border: ' . $bw . 'px solid ' . $colors['border'] . ';';
+        }
         
         // Utiliser les propriétés de padding personnalisables depuis l'élément
         $padding_top = isset($element['paddingTop']) ? intval($element['paddingTop']) : 8;
