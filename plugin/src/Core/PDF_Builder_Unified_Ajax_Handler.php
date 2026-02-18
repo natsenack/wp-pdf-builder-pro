@@ -3558,8 +3558,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
         
         // Bordures (respecter showBorders)
-        // Note: showBorders doit être explicitement true pour afficher une bordure
-        $showBorders = isset($element['showBorders']) ? (bool)$element['showBorders'] : false;
+        // Règle: même comportement que React Canvas (à droite !== false = true par défaut)
+        $showBorders = ($element['showBorders'] ?? true) !== false;
         if ($showBorders) {
             // Canvas React défault à borderWidth=1, on fait pareil côté PHP
             $borderWidth = isset($element['borderWidth']) ? (float)$element['borderWidth'] : 1;
@@ -4062,13 +4062,14 @@ class PDF_Builder_Unified_Ajax_Handler {
             $letter_spacing;
         
         // Appliquer le fond (background-color)
-        $showBackground = $element['showBackground'] ?? true;
-        if ($showBackground !== false && $colors['background'] && $colors['background'] !== 'transparent') {
+        $showBackground = ($element['showBackground'] ?? true) !== false;
+        if ($showBackground && $colors['background'] && $colors['background'] !== 'transparent') {
             $container_styles .= ' background-color: ' . $colors['background'] . ';';
         }
         
         // Appliquer les bordures
-        $showBorders = isset($element['showBorders']) ? (bool)$element['showBorders'] : false;
+        // Règle: même que React Canvas — showBorders !== false = true par défaut
+        $showBorders = ($element['showBorders'] ?? true) !== false;
         if ($showBorders) {
             $bw = isset($element['borderWidth']) ? (float)$element['borderWidth'] : 1;
             $container_styles .= ' border: ' . $bw . 'px solid ' . $colors['border'] . ';';
@@ -4255,13 +4256,14 @@ class PDF_Builder_Unified_Ajax_Handler {
             ' width: 100%; height: 100%;';
         
         // Appliquer le fond (couleur du thème ou couleur explicite)
-        $showBackground = $element['showBackground'] ?? true;
-        if ($showBackground !== false && $colors['background'] && $colors['background'] !== 'transparent') {
+        $showBackground = ($element['showBackground'] ?? true) !== false;
+        if ($showBackground && $colors['background'] && $colors['background'] !== 'transparent') {
             $container_styles .= ' background-color: ' . $colors['background'] . ';';
         }
         
         // Appliquer les bordures (couleur du thème ou couleur explicite)
-        $showBorders = isset($element['showBorders']) ? (bool)$element['showBorders'] : false;
+        // Règle: même que React Canvas — showBorders !== false = true par défaut
+        $showBorders = ($element['showBorders'] ?? true) !== false;
         if ($showBorders) {
             $bw = isset($element['borderWidth']) ? (float)$element['borderWidth'] : 1;
             $container_styles .= ' border: ' . $bw . 'px solid ' . $colors['border'] . ';';
