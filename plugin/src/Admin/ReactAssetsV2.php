@@ -300,20 +300,20 @@ class ReactAssets {
         );
         \wp_enqueue_script('pdf-preview-api-client');
         
-        // Vendors (React, ReactDOM)
+        // Vendors partagés (node_modules extraits par webpack splitChunks)
         \wp_enqueue_script(
-            'pdf-builder-react-vendors-v2',
-            $plugin_url . 'assets/js/react-vendor.min.js',
-            ['wp-util'],
+            'pdf-builder-vendors-v2',
+            $plugin_url . 'assets/js/vendors.min.js',
+            [],
             $version,
             true
         );
         
-        // App principal - AVEC pdf-preview-api-client COMME DÉPENDANCE
+        // App principal - React est bundlé directement dans pdf-builder-react.min.js
         \wp_enqueue_script(
             'pdf-builder-react-app-v2',
             $plugin_url . 'assets/js/pdf-builder-react.min.js',
-            ['pdf-builder-react-vendors-v2', 'wp-util', 'pdf-preview-api-client'],
+            ['pdf-builder-vendors-v2', 'wp-util', 'pdf-preview-api-client'],
             $version,
             true
         );

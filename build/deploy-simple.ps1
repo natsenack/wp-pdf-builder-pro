@@ -332,7 +332,7 @@ if ($All) {
 $criticalCompiledFiles = @(
     "plugin/assets/js/pdf-builder-react-wrapper.min.js"
     "plugin/assets/js/pdf-builder-react.min.js"
-    "plugin/assets/js/react-vendor.min.js"
+    # react-vendor.min.js supprimé — React est bundlé dans pdf-builder-react.min.js
     "plugin/assets/js/canvas-settings.min.js"
     "plugin/assets/js/pdf-builder-react-init.min.js"
     "plugin/assets/js/ajax-throttle.min.js"

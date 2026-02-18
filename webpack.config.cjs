@@ -33,6 +33,7 @@ module.exports = {
   output: {
     path: outputPath,
     filename: "[name].min.js",
+    chunkFilename: "[name].min.js",
     globalObject: 'typeof window !== "undefined" ? window : global',
     clean: false,
     assetModuleFilename: "../assets/[name][ext]",
@@ -156,7 +157,7 @@ module.exports = {
     runtimeChunk: false,
     splitChunks: {
       chunks: (chunk) => {
-        // Don't split the pdf-builder-react entry - it needs to execute immediately
+        // Don't split the pdf-builder-react entry - React + all deps bundled inline
         return chunk.name !== "pdf-builder-react" && chunk.name !== "runtime";
       },
       cacheGroups: {
@@ -165,16 +166,14 @@ module.exports = {
           name: "vendors",
           priority: 10,
           reuseExistingChunk: true,
-        },
-        react: {
-          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-          name: "react-vendor",
-          priority: 20,
+          minChunks: 1,
         },
         common: {
+          name: "common",
           minChunks: 2,
           priority: 5,
           reuseExistingChunk: true,
+          minSize: 10000,
         },
       },
     },
