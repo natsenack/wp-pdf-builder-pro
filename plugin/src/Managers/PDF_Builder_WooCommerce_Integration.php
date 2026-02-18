@@ -174,7 +174,7 @@ class PDF_Builder_WooCommerce_Integration
     public function registerAjaxHooks()
     {
         // AJAX handlers pour WooCommerce - gérés par le manager
-        // PDF generation removed - system disabled
+        add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajaxGenerateOrderPdf'], 1);
         add_action('wp_ajax_pdf_builder_save_order_canvas', [$this, 'ajax_save_order_canvas'], 1);
         add_action('wp_ajax_pdf_builder_load_order_canvas', [$this, 'ajax_load_order_canvas'], 1);
         add_action('wp_ajax_pdf_builder_get_canvas_elements', [$this, 'ajax_get_canvas_elements'], 1);
@@ -484,19 +484,20 @@ class PDF_Builder_WooCommerce_Integration
             return;
         }
 
-        // 3. Validation du nonce
-        $nonce = isset($_POST['nonce']) ? \sanitize_text_field($_POST['nonce']) : '';
+        // 3. Validation du nonce (POST pour génération, GET pour aperçu)
+        $nonce = isset($_POST['nonce']) ? \sanitize_text_field($_POST['nonce'])
+                : (isset($_GET['nonce']) ? \sanitize_text_field($_GET['nonce']) : '');
         if (!PDF_Builder_Security_Validator::validateNonce($nonce, 'pdf_builder_order_actions')) {
             \wp_send_json_error(['message' => 'Sécurité: Nonce invalide', 'code' => 'invalid_nonce']);
             return;
         }
 
         // 4. Validation et sanitisation des paramètres d'entrée
-        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
-        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
-        $custom_content = isset($_POST['content']) ? $_POST['content'] : '';
-        $image_path = isset($_POST['image_path']) ? $_POST['image_path'] : '';
-        $is_preview = isset($_POST['preview']) && $_POST['preview'] === 'true';
+        $order_id    = intval($_POST['order_id'] ?? $_GET['order_id'] ?? 0);
+        $template_id = intval($_POST['template_id'] ?? $_GET['template_id'] ?? 0);
+        $custom_content = $_POST['content'] ?? '';
+        $image_path     = $_POST['image_path'] ?? '';
+        $is_preview     = isset($_POST['preview']) || isset($_GET['preview']);
 
         // Validation de l'order_id
         if (!$order_id || $order_id <= 0) {
