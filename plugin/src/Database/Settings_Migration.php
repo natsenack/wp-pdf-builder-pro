@@ -7,14 +7,14 @@
 namespace PDF_Builder\Database;
 
 class Settings_Migration {
-    
+
     /**
      * Migrer les données existantes de wp_options vers wp_pdf_builder_settings
      * Appelé lors de l'activation du plugin
      */
     public static function migrate_from_wp_options() {
         global $wpdb;
-        
+
         // Liste des options PDF Builder à migrer
         $options_to_migrate = [
             'pdf_builder_settings',
@@ -57,14 +57,14 @@ class Settings_Migration {
             'pdf_builder_license_test_key',
             'pdf_builder_license_test_key_expires',
         ];
-        
+
         // Paramètres de licence à migrer
         for ($i = 1; $i <= 10; $i++) {
             $options_to_migrate[] = "pdf_builder_license_{$i}";
             $options_to_migrate[] = "pdf_builder_license_{$i}_status";
             $options_to_migrate[] = "pdf_builder_license_{$i}_expiration";
         }
-        
+
         // Migrer les templates individuels
         $template_ids = range(1, 50);
         foreach ($template_ids as $id) {
@@ -75,14 +75,14 @@ class Settings_Migration {
                 $options_to_migrate[] = $option_key;
             }
         }
-        
+
         $migrated_count = 0;
         $errors = [];
-        
+
         foreach ($options_to_migrate as $option_name) {
             // Récupérer la valeur depuis wp_options
             $value = \get_option($option_name);
-            
+
             if ($value !== false) {
                 // Vérifier si l'option existe déjà dans wp_pdf_builder_settings
                 $existing = $wpdb->get_var(
@@ -91,7 +91,7 @@ class Settings_Migration {
                         $option_name
                     )
                 );
-                
+
                 // Migrer uniquement si elle n'existe pas en BDD
                 if (!$existing) {
                     $result = Settings_Table_Manager::update_option($option_name, $value);
@@ -105,25 +105,25 @@ class Settings_Migration {
                 }
             }
         }
-        
+
         // Enregistrer le résultat de la migration
         \update_option('pdf_builder_migration_completed', true);
         \update_option('pdf_builder_migration_date', date('Y-m-d H:i:s'));
         \update_option('pdf_builder_migration_count', $migrated_count);
-        
+
         if ($errors) {
             \update_option('pdf_builder_migration_errors', $errors);
         }
-        
+
         error_log("[PDF Builder Migration] Completed: {$migrated_count} options migrated");
-        
+
         return [
             'success' => true,
             'migrated' => $migrated_count,
             'errors' => $errors
         ];
     }
-    
+
     /**
      * Vérifier et afficher le statut de la migration
      */
@@ -135,7 +135,7 @@ class Settings_Migration {
             'errors' => \get_option('pdf_builder_migration_errors', [])
         ];
     }
-    
+
     /**
      * Nettoyer les anciennes options WordPress après migration réussie
      * À appeler avec prudence!
@@ -144,7 +144,7 @@ class Settings_Migration {
         if (!\current_user_can('manage_options')) {
             return false;
         }
-        
+
         // Options PDF Builder qui peuvent être supprimées de wp_options
         $options_to_clean = [
             'pdf_builder_settings',
@@ -163,17 +163,17 @@ class Settings_Migration {
             'pdf_builder_onboarding',
             'pdf_builder_gdpr',
         ];
-        
+
         $cleaned_count = 0;
         foreach ($options_to_clean as $option_name) {
             if (\delete_option($option_name)) {
                 $cleaned_count++;
             }
         }
-        
+
         error_log("[PDF Builder Cleanup] Removed {$cleaned_count} old options from wp_options");
         \update_option('pdf_builder_cleanup_completed', true);
-        
+
         return $cleaned_count;
     }
 }
