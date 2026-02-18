@@ -280,7 +280,14 @@ class PDF_Builder_Predefined_Templates_Manager
             return;
         }
 
-        $templates = $this->getPredefinedTemplates();
+        try {
+            $templates = $this->getPredefinedTemplates();
+            error_log('[PDF Builder Galerie] renderAdminPage OK — ' . count($templates) . ' templates trouvés');
+        } catch (\Throwable $e) {
+            error_log('[PDF Builder Galerie] ERREUR getPredefinedTemplates: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            echo '<div class="wrap"><div class="notice notice-error"><p>Erreur : ' . esc_html($e->getMessage()) . '</p></div></div>';
+            return;
+        }
         ?>
         <style>
         /* Styles de base inline pour la page des modèles prédéfinis */
