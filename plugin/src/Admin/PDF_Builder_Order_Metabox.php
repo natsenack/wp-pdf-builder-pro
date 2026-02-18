@@ -12,6 +12,8 @@ class PDF_Builder_Order_Metabox
     public static function register(): void
     {
         add_action('add_meta_boxes', [self::class, 'add_metabox']);
+        // Support HPOS WooCommerce 7.1+
+        add_action('add_meta_boxes_woocommerce_page_wc-orders', [self::class, 'add_metabox']);
         add_action('wp_ajax_pdf_builder_preview_order_pdf', [self::class, 'handle_preview_ajax']);
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [self::class, 'handle_generate_pdf_ajax']);
     }
@@ -25,22 +27,40 @@ class PDF_Builder_Order_Metabox
             return;
         }
 
-        add_meta_box(
-            'pdf_builder_order_preview',
-            '📄 Générateur PDF',
-            [self::class, 'render_metabox'],
-            'shop_order',
-            'normal',
-            'high'
-        );
+        $screens = ['shop_order', 'woocommerce_page_wc-orders'];
+        foreach ($screens as $screen) {
+            add_meta_box(
+                'pdf_builder_order_preview',
+                '📄 Générateur PDF',
+                [self::class, 'render_metabox'],
+                $screen,
+                'normal',
+                'high'
+            );
+        }
     }
 
     /**
      * Affiche la metabox
      */
-    public static function render_metabox(WC_Order $post): void
+    public static function render_metabox($post_or_order): void
     {
-        $order_id = $post->get_id();
+        // Compatibilité legacy (WP_Post) et HPOS (WC_Order)
+        if ($post_or_order instanceof WC_Order) {
+            $order = $post_or_order;
+            $order_id = $order->get_id();
+        } elseif (is_a($post_or_order, 'WP_Post')) {
+            $order_id = $post_or_order->ID;
+            $order = function_exists('wc_get_order') ? wc_get_order($order_id) : null;
+        } else {
+            $order_id = isset($_GET['id']) ? absint($_GET['id']) : 0;
+            $order = function_exists('wc_get_order') ? wc_get_order($order_id) : null;
+        }
+
+        if (!$order_id) {
+            echo '<p style="color:#dc3545;">❌ Commande introuvable.</p>';
+            return;
+        }
         
         // Récupérer tous les templates disponibles
         $templates = self::get_available_templates();
@@ -296,16 +316,14 @@ class PDF_Builder_Order_Metabox
      */
     private static function get_available_templates(): array
     {
-        $templates_option = get_option('pdf_builder_templates', '{}');
-        $templates_data = json_decode($templates_option, true);
+        global $wpdb;
+        $table = $wpdb->prefix . 'pdf_builder_templates';
+        $rows = $wpdb->get_results("SELECT id, name FROM {$table} ORDER BY name ASC", ARRAY_A);
 
         $templates = [];
-        
-        if (is_array($templates_data)) {
-            foreach ($templates_data as $template) {
-                if (isset($template['id'], $template['name'])) {
-                    $templates[$template['id']] = $template['name'];
-                }
+        if (is_array($rows)) {
+            foreach ($rows as $row) {
+                $templates[$row['id']] = $row['name'];
             }
         }
 
@@ -317,18 +335,18 @@ class PDF_Builder_Order_Metabox
      */
     private static function get_template(string $template_id)
     {
-        $templates_option = get_option('pdf_builder_templates', '{}');
-        $templates_data = json_decode($templates_option, true);
+        global $wpdb;
+        $table = $wpdb->prefix . 'pdf_builder_templates';
+        $row = $wpdb->get_row(
+            $wpdb->prepare("SELECT * FROM {$table} WHERE id = %d", intval($template_id)),
+            ARRAY_A
+        );
 
-        if (is_array($templates_data)) {
-            foreach ($templates_data as $template) {
-                if (($template['id'] ?? '') === $template_id) {
-                    return $template;
-                }
-            }
+        if ($row && !empty($row['template_data'])) {
+            $row['data'] = json_decode($row['template_data'], true);
         }
 
-        return null;
+        return $row ?: null;
     }
 
     /**
