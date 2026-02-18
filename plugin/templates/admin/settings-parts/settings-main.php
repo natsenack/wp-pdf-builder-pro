@@ -14,7 +14,15 @@ if (!is_user_logged_in() || !current_user_can('manage_options')) {
 // Récupération des paramètres
 $settings = pdf_builder_get_option('pdf_builder_settings', array());
 $current_tab = sanitize_text_field($_GET['tab'] ?? 'general');
-$valid_tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'developpeur'];
+
+// Accès développeur : uniquement si le token secret est défini et valide dans wp-config.php
+// define('PDF_BUILDER_DEV_TOKEN', '<votre_token_secret>');
+$is_dev_access = function_exists('pdf_builder_is_dev_access') && pdf_builder_is_dev_access();
+
+$valid_tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates'];
+if ($is_dev_access) {
+    $valid_tabs[] = 'developpeur';
+}
 if (!in_array($current_tab, $valid_tabs)) {
     $current_tab = 'general';
 }
@@ -106,10 +114,12 @@ if (isset($_GET['updated']) && $_GET['updated'] === '1') {
                     <span class="tab-icon">📋</span>
                     <span class="tab-text"><?php _e('Templates', 'pdf-builder-pro'); ?></span>
                 </a>
+                <?php if ($is_dev_access) : ?>
                 <a href="?page=pdf-builder-settings&tab=developpeur" class="nav-tab<?php echo $current_tab === 'developpeur' ? ' nav-tab-active' : ''; ?>">
                     <span class="tab-icon">👨‍💻</span>
                     <span class="tab-text"><?php _e('Développeur', 'pdf-builder-pro'); ?></span>
                 </a>
+                <?php endif; ?>
             </div>
         </h2>
 
@@ -138,6 +148,7 @@ if (isset($_GET['updated']) && $_GET['updated'] === '1') {
                     include __DIR__ . '/settings-templates.php';
                     break;
                 case 'developpeur':
+                    if (!$is_dev_access) { wp_die('Accès refusé.', 403); }
                     include __DIR__ . '/settings-developpeur.php';
                     break;
                 default:

@@ -178,6 +178,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $saved_options = $this->get_saved_options_for_tab('contenu');
                     break;
                 case 'developpeur':
+                    if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access()) {
+                        wp_send_json_error(['message' => 'Accès refusé.'], 403);
+                    }
                     if (defined('WP_DEBUG') && WP_DEBUG) {
                         // error_log('PDF Builder: Processing developer tab save');
                         // error_log('PDF Builder: Developer enabled POST: ' . ($_POST['pdf_builder_developer_enabled'] ?? 'not set'));
@@ -539,6 +542,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                 break;
 
             case 'developpeur':
+                if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access()) {
+                    wp_send_json_error(['message' => 'Accès refusé.'], 403);
+                }
                 $saved_options = [
                     'pdf_builder_developer_enabled' => pdf_builder_get_option('pdf_builder_developer_enabled', '0'),
                     'pdf_builder_developer_password' => pdf_builder_get_option('pdf_builder_developer_password', ''),

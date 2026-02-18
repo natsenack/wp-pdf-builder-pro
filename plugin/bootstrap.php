@@ -146,6 +146,26 @@ add_action('plugins_loaded', function() {
 // ============================================================================
 
 /**
+ * Vérifier l'accès mode développeur via token sécurisé.
+ * Dans wp-config.php : define('PDF_BUILDER_DEV_TOKEN', '<votre_token>');
+ * Le token brut n'est jamais stocké dans le code — seul son hash SHA-256 est présent ici.
+ */
+if (!function_exists('pdf_builder_is_dev_access')) {
+    function pdf_builder_is_dev_access(): bool {
+        // Hash SHA-256 du token secret (généré le 2026-02-18)
+        // Ne pas modifier cette valeur — recalculer si vous changez de token
+        $expected_hash = '04abca0b6fb5a01f8854daecd90fdfe709df2e6c446cf328986b5d952a0ac27e';
+
+        if (!defined('PDF_BUILDER_DEV_TOKEN')) {
+            return false;
+        }
+
+        $provided_hash = hash('sha256', PDF_BUILDER_DEV_TOKEN);
+        return hash_equals($expected_hash, $provided_hash);
+    }
+}
+
+/**
  * Récupérer une option depuis la table personnalisée wp_pdf_builder_settings
  * Fallback vers wp_options si la table n'existe pas
  */
