@@ -555,7 +555,7 @@ class PDF_Builder_WooCommerce_Integration
                         nonce:       nonce
                     });
                 } else {
-                    // PNG / JPG : aperçu via Blob URL (même rendu que l'éditeur PDF)
+                    // PNG / JPG : aperçu via Blob URL avec toolbar identique à l'éditeur PDF
                     btn.prop('disabled', true).html('⏳');
 
                     $.post(ajaxUrl, {
@@ -571,16 +571,67 @@ class PDF_Builder_WooCommerce_Integration
                             return;
                         }
 
-                        var html = response.data.html;
+                        var html        = response.data.html;
+                        var orderNum    = response.data.order_number || orderId;
 
-                        // Ouvrir comme Blob URL — rendu 100% fidèle à l'éditeur
-                        var blob    = new Blob([html], { type: 'text/html; charset=utf-8' });
+                        // Extraire <head> et <body> comme l'éditeur
+                        var stylesMatch = html.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
+                        var bodyMatch   = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+                        var originalStyles = stylesMatch ? stylesMatch[1] : '';
+                        var bodyContent    = bodyMatch   ? bodyMatch[1]   : html;
+
+                        // Construire la page avec toolbar identique à l'éditeur
+                        var htmlPage = '<!DOCTYPE html>\n' +
+                            '<html>\n<head>\n' +
+                            '    <meta charset="UTF-8">\n' +
+                            '    <title>Facture ' + orderNum + '</title>\n' +
+                            originalStyles +
+                            '    <style>\n' +
+                            '        body { margin:0; padding:0; background:#f5f5f5; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }\n' +
+                            '        .toolbar { position:fixed; top:20px; right:20px; display:flex; gap:12px; z-index:1000; }\n' +
+                            '        .btn { padding:12px 24px; border:none; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; transition:all 0.2s; box-shadow:0 2px 8px rgba(0,0,0,0.15); }\n' +
+                            '        .btn-download { background:#2271b1; color:white; }\n' +
+                            '        .btn-download:hover { background:#135e96; transform:translateY(-1px); box-shadow:0 4px 12px rgba(34,113,177,0.3); }\n' +
+                            '        .btn-print { background:#10b981; color:white; }\n' +
+                            '        .btn-print:hover { background:#059669; transform:translateY(-1px); box-shadow:0 4px 12px rgba(16,185,129,0.3); }\n' +
+                            '        .btn-zoom { background:#6b7280; color:white; padding:12px 16px; }\n' +
+                            '        .btn-zoom:hover { background:#4b5563; transform:translateY(-1px); box-shadow:0 4px 12px rgba(107,114,128,0.3); }\n' +
+                            '        .zoom-level { background:#f3f4f6; color:#374151; padding:12px 16px; font-weight:bold; border-radius:6px; min-width:70px; text-align:center; }\n' +
+                            '        .content-wrapper { padding:20px; min-height:100vh; display:flex; justify-content:center; align-items:flex-start; transition:transform 0.2s; transform-origin:center top; }\n' +
+                            '        @media print { body { background:white; padding:0; } .toolbar { display:none !important; } .content-wrapper { padding:0; } }\n' +
+                            '    </style>\n' +
+                            '</head>\n<body>\n' +
+                            '    <div class="toolbar">\n' +
+                            '        <button class="btn btn-zoom" onclick="zoomOut()" title="Zoom arrière"><span>🔍➖</span></button>\n' +
+                            '        <div class="zoom-level" id="zoomLevel">100%</div>\n' +
+                            '        <button class="btn btn-zoom" onclick="zoomIn()" title="Zoom avant"><span>🔍➕</span></button>\n' +
+                            '        <button class="btn btn-download" onclick="downloadHTML()"><span>📥</span><span>Télécharger HTML</span></button>\n' +
+                            '        <button class="btn btn-print" onclick="window.print()"><span>🖨️</span><span>Imprimer</span></button>\n' +
+                            '    </div>\n' +
+                            '    <div class="content-wrapper" id="contentWrapper">' + bodyContent + '</div>\n' +
+                            '    <script>\n' +
+                            '        var zoomScale = 1.0;\n' +
+                            '        var wrapper = document.getElementById("contentWrapper");\n' +
+                            '        var zoomLevelDisplay = document.getElementById("zoomLevel");\n' +
+                            '        function updateZoom() { wrapper.style.transform = "scale(" + zoomScale + ")"; zoomLevelDisplay.textContent = Math.round(zoomScale * 100) + "%"; }\n' +
+                            '        function zoomIn()  { if (zoomScale < 3.0)  { zoomScale += 0.25; updateZoom(); } }\n' +
+                            '        function zoomOut() { if (zoomScale > 0.25) { zoomScale -= 0.25; updateZoom(); } }\n' +
+                            '        function downloadHTML() {\n' +
+                            '            var blob = new Blob([document.documentElement.outerHTML], { type: "text/html" });\n' +
+                            '            var link = document.createElement("a");\n' +
+                            '            link.href = URL.createObjectURL(blob);\n' +
+                            '            link.download = "facture-' + orderNum + '.html";\n' +
+                            '            document.body.appendChild(link); link.click(); document.body.removeChild(link);\n' +
+                            '            URL.revokeObjectURL(link.href);\n' +
+                            '        }\n' +
+                            '    <\/script>\n' +
+                            '</body>\n</html>';
+
+                        var blob    = new Blob([htmlPage], { type: 'text/html; charset=utf-8' });
                         var blobUrl = URL.createObjectURL(blob);
                         var win     = window.open(blobUrl, '_blank');
                         if (win) {
-                            win.addEventListener('unload', function() {
-                                URL.revokeObjectURL(blobUrl);
-                            });
+                            setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 2000);
                         }
                     }).fail(function() {
                         btn.prop('disabled', false).html(orig);
