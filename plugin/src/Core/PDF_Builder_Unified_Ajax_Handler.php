@@ -3560,9 +3560,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Bordures (respecter showBorders)
         // Règle: même comportement que React Canvas (showBorders !== false = true par défaut)
         // Exception: line, rectangle, circle gèrent leurs propres bordures dans leurs renderers
-        // Exception: company_info, customer_info, product_table utilisent un overlay div (overflow:hidden clippe les borders CSS)
         $type = $element['type'] ?? '';
-        $noBorderTypes = ['line', 'rectangle', 'circle', 'image', 'company_info', 'customer_info', 'product_table'];
+        $noBorderTypes = ['line', 'rectangle', 'circle', 'image'];
         $showBorders = !in_array($type, $noBorderTypes) && ($element['showBorders'] ?? true) !== false;
         if ($showBorders) {
             // Canvas React défault à borderWidth=1, on fait pareil côté PHP
@@ -4075,11 +4074,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             $container_styles .= ' background-color: ' . $colors['background'] . ';';
         }
         
-        // NE PAS ajouter border au container_styles : overflow:hidden sur .element clippe les borders CSS.
-        // On utilisera un overlay div à la place (voir fin de la fonction).
-        $showBorders = ($element['showBorders'] ?? true) !== false;
-        $borderWidth_val = isset($element['borderWidth']) ? (float)$element['borderWidth'] : 1;
-        
         // Alignement vertical via flexbox
         $container_styles .= ' display: flex; flex-direction: column;';
         if ($layout_props['verticalAlign'] === 'middle') {
@@ -4114,10 +4108,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         foreach ($lines as $index => $line) {
             $is_last = ($index === $total_lines - 1);
             $html .= '<div style="' . $line_style_base . '">' . $line . '</div>';
-        }
-        // Overlay div pour la bordure — jamais clippe par overflow:hidden car interne au conteneur
-        if ($showBorders && $borderWidth_val > 0) {
-            $html .= '<div style="position:absolute;top:0;left:0;width:100%;height:100%;border:' . $borderWidth_val . 'px solid ' . $colors['border'] . ';box-sizing:border-box;pointer-events:none;z-index:10;"></div>';
         }
         $html .= '</div>';
         
@@ -4270,11 +4260,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             $container_styles .= ' background-color: ' . $colors['background'] . ';';
         }
         
-        // NE PAS ajouter border au container_styles : overflow:hidden sur .element clippe les borders CSS.
-        // On utilisera un overlay div à la place (voir fin de la fonction).
-        $showBorders = ($element['showBorders'] ?? true) !== false;
-        $borderWidth_val = isset($element['borderWidth']) ? (float)$element['borderWidth'] : 1;
-        
         // Utiliser les propriétés de padding personnalisables depuis l'élément
         $padding_top = isset($element['paddingTop']) ? intval($element['paddingTop']) : 8;
         $padding_horizontal = isset($element['paddingHorizontal']) ? intval($element['paddingHorizontal']) : 12;
@@ -4315,10 +4300,6 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Chaque ligne avec line-height si Puppeteer
         foreach ($processedLines as $line) {
             $html .= '<div style="' . $line_style . '">' . $line . '</div>';
-        }
-        // Overlay div pour la bordure — jamais clippe par overflow:hidden car interne au conteneur
-        if ($showBorders && $borderWidth_val > 0) {
-            $html .= '<div style="position:absolute;top:0;left:0;width:100%;height:100%;border:' . $borderWidth_val . 'px solid ' . $colors['border'] . ';box-sizing:border-box;pointer-events:none;z-index:10;"></div>';
         }
         $html .= '</div>'; // Fermer element container
         
