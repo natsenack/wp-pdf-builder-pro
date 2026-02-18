@@ -1364,11 +1364,11 @@ function displayTemplateSettings(template) {
     };
 
     // Maintenant traiter les données et remplacer le contenu
-    var content = modalContent.querySelector('.template-modal-body');
+    var content = modalContent.querySelector('.pdfb-template-modal-body');
     
     // Vérifier que content existe
     if (!content) {
-        console.error('[DEBUG] Element .template-modal-body not found in modal');
+        console.error('[DEBUG] Element .pdfb-template-modal-body not found in modal');
         return; // Sortir si le contenu modal n'existe pas
     }
 
@@ -1473,6 +1473,9 @@ function displayTemplateSettings(template) {
     // Créer le formulaire HTML
     content.innerHTML = `
         <form id="template-settings-form">
+            <!-- Champ caché pour le template ID -->
+            <input type="hidden" id="settings-template-id" value="${currentTemplateId}">
+            
             <!-- Nom du template -->
             <div class="settings-field" style="margin-bottom: 20px;">
                 <label for="template-name" style="display: block; font-weight: bold; margin-bottom: 8px; color: #23282d;">📝 Nom du template</label>
@@ -1711,9 +1714,9 @@ function saveTemplateSettings() {
     
     if (!templateNameEl || !templateDescriptionEl || !templateCategoryEl || 
         !templateFormatEl || !templateOrientationEl || !templateDpiEl) {
-        console.error('[DEBUG] Un ou plusieurs éléments du formulaire sind manquants');
+        console.error('[DEBUG] Un ou plusieurs éléments du formulaire sont manquants');
         if (typeof window.showErrorNotification !== 'undefined') {
-            window.showErrorNotification('Erreur: Formulaire incomplète');
+            window.showErrorNotification('Erreur: Formulaire incomplet');
         }
         return;
     }

@@ -2229,7 +2229,7 @@ const drawWoocommerceOrderDate = (
     // 2. Calculer le Y de départ du groupe selon verticalAlign
     let groupStartY = padding.top;
     const availableHeight = element.height - padding.top - padding.bottom;
-    
+
     switch (props.verticalAlign) {
       case "middle":
         groupStartY = padding.top + (availableHeight - totalContentHeight) / 2;
@@ -2325,7 +2325,12 @@ const drawWoocommerceOrderDate = (
       props.verticalAlign,
     );
     const x = calculateTextX(element, props.textAlign, padding);
-    const y = calculateTextYWithPadding(element, props.verticalAlign, padding, fontConfig.size);
+    const y = calculateTextYWithPadding(
+      element,
+      props.verticalAlign,
+      padding,
+      fontConfig.size,
+    );
     ctx.fillText(displayDate, x, y);
   }
 };
@@ -2493,7 +2498,7 @@ const drawWoocommerceInvoiceNumber = (
     // 2. Calculer le Y de départ du groupe selon verticalAlign
     let groupStartY = padding.top;
     const availableHeight = element.height - padding.top - padding.bottom;
-    
+
     switch (props.verticalAlign) {
       case "middle":
         groupStartY = padding.top + (availableHeight - totalContentHeight) / 2;
@@ -2589,7 +2594,12 @@ const drawWoocommerceInvoiceNumber = (
       props.verticalAlign,
     );
     const x = calculateTextX(element, props.textAlign, padding);
-    const y = calculateTextYWithPadding(element, props.verticalAlign, padding, fontConfig.size);
+    const y = calculateTextYWithPadding(
+      element,
+      props.verticalAlign,
+      padding,
+      fontConfig.size,
+    );
     ctx.fillText(displayText, x, y);
   }
 };
