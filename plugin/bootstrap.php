@@ -971,11 +971,7 @@ function pdf_builder_load_admin_components()
                 error_log('[BOOTSTRAP] Error instantiating PdfBuilderAdminNew: ' . $e->getMessage());
             }
         }
-
-        // Activer la metabox PDF Builder sur les pages de commandes WooCommerce
-        if (class_exists('WooCommerce') && class_exists('PDF_Builder\Admin\PDF_Builder_Order_Metabox')) {
-            \PDF_Builder\Admin\PDF_Builder_Order_Metabox::register();
-        }
+        // Ne pas enregistrer de menu de fallback dans les autres cas
     }
 }
 
