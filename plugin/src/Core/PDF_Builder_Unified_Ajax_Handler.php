@@ -3682,8 +3682,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             $specific_family = $element['fontFamily'] ?? $defaults['family'] ?? $default_family;
         }
         
+        // Remplacer les guillemets doubles par des guillemets simples pour éviter de casser l'attribut style="..."
+        $family_raw = $specific_family ?? $default_family;
+        $family_safe = str_replace('"', "'", $family_raw);
+
         return [
-            'family' => $specific_family ?? $default_family,
+            'family' => $family_safe,
             'size' => $element[$size_key] ?? $defaults['size'] ?? $default_size,
             'weight' => $element[$weight_key] ?? $defaults['weight'] ?? $default_weight,
             'style' => $element[$style_key] ?? $defaults['style'] ?? $default_style
