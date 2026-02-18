@@ -922,11 +922,11 @@
                             
 
                             // Ouvrir modal
-                            var configBtn = e.target.closest('.canvas-configure-btn');
+                            var configBtn = e.target.closest('.pdfb-canvas-configure-btn');
                             if (configBtn) {
                                 
                                 e.preventDefault();
-                                var card = configBtn.closest('.canvas-card');
+                                var card = configBtn.closest('.pdfb-canvas-card');
                                 if (card) {
                                     var category = card.getAttribute('data-category');
                                     
