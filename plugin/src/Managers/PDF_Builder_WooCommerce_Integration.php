@@ -355,37 +355,114 @@ class PDF_Builder_WooCommerce_Integration
             }
         }
 
-        wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
-
         // Récupérer le label du statut WooCommerce
         $order_statuses = function_exists('wc_get_order_statuses') ? \wc_get_order_statuses() : [];
         $status_label = isset($order_statuses['wc-' . $order_status]) ? $order_statuses['wc-' . $order_status] : ucfirst($order_status);
 
+        $nonce = wp_create_nonce('pdf_builder_order_actions');
+        $ajax_url = admin_url('admin-ajax.php');
         ?>
-        <div class="pdf-meta-box">
-            <div class="pdf-template-section">
-                <div class="pdf-template-title">
-                    📄 <?php echo __('Template:', 'pdf-builder-pro'); ?> <?php echo esc_html($selected_template ? $selected_template['name'] : __('Aucun template disponible', 'pdf-builder-pro')); ?>
-                </div>
-                <div style="color: #6c757d; font-size: 14px; margin-bottom: 15px;">
-                    <?php echo __('Statut:', 'pdf-builder-pro'); ?> <strong><?php echo esc_html($status_label); ?></strong>
-                </div>
-                <div style="padding: 10px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; color: #856404;">
-                    <strong>⚠️ <?php echo __('PDF Generation System Has Been Disabled', 'pdf-builder-pro'); ?></strong><br>
-                    <small><?php echo __('The PDF generation system has been removed. The editor is now available for template design only.', 'pdf-builder-pro'); ?></small>
-                </div>
+        <div class="pdf-builder-meta-box" style="font-size:13px;">
+
+            <!-- Template sélectionné -->
+            <div style="margin-bottom:12px;">
+                <strong><?php _e('Template:', 'pdf-builder-pro'); ?></strong><br>
+                <select id="pdf-builder-template-select" style="width:100%;margin-top:4px;">
+                    <?php if (empty($all_templates)): ?>
+                        <option value=""><?php _e('— Aucun template disponible —', 'pdf-builder-pro'); ?></option>
+                    <?php else: ?>
+                        <?php foreach ($all_templates as $tpl): ?>
+                            <option value="<?php echo esc_attr($tpl['id']); ?>"
+                                <?php selected($selected_template && $selected_template['id'] == $tpl['id']); ?>>
+                                <?php echo esc_html($tpl['name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
             </div>
+
+            <!-- Statut -->
+            <div style="color:#6c757d;margin-bottom:12px;">
+                <?php _e('Statut:', 'pdf-builder-pro'); ?> <strong><?php echo esc_html($status_label); ?></strong>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <button type="button" id="pdf-builder-generate-btn"
+                        class="button button-primary"
+                        data-order-id="<?php echo esc_attr($order_id); ?>"
+                        data-nonce="<?php echo esc_attr($nonce); ?>"
+                        data-ajax="<?php echo esc_attr($ajax_url); ?>"
+                        <?php echo empty($all_templates) ? 'disabled' : ''; ?>>
+                    📥 <?php _e('Générer et Télécharger PDF', 'pdf-builder-pro'); ?>
+                </button>
+                <button type="button" id="pdf-builder-preview-btn"
+                        class="button button-secondary"
+                        data-order-id="<?php echo esc_attr($order_id); ?>"
+                        data-nonce="<?php echo esc_attr($nonce); ?>"
+                        data-ajax="<?php echo esc_attr($ajax_url); ?>"
+                        <?php echo empty($all_templates) ? 'disabled' : ''; ?>>
+                    👁️ <?php _e('Aperçu HTML', 'pdf-builder-pro'); ?>
+                </button>
+            </div>
+
+            <!-- Message de statut -->
+            <div id="pdf-builder-meta-status" style="display:none;margin-top:10px;padding:8px;border-radius:4px;font-size:12px;"></div>
         </div>
-                        document.body.removeChild(link);
-                    } else {
-                        alert('Erreur: ' + response.data);
-                    }
-                },
-                error: function() {
-                    alert('Erreur lors de la génération du PDF');
+
+        <script type="text/javascript">
+        (function($) {
+            $('#pdf-builder-generate-btn').on('click', function() {
+                var btn = $(this);
+                var templateId = $('#pdf-builder-template-select').val();
+                var orderId = btn.data('order-id');
+                var nonce = btn.data('nonce');
+                var ajaxUrl = btn.data('ajax');
+                var status = $('#pdf-builder-meta-status');
+
+                if (!templateId) {
+                    status.css({background:'#f8d7da',color:'#721c24',border:'1px solid #f5c6cb',display:'block'})
+                          .text('<?php echo esc_js(__('Veuillez sélectionner un template.', 'pdf-builder-pro')); ?>');
+                    return;
                 }
+
+                btn.prop('disabled', true).text('⏳ <?php echo esc_js(__('Génération...', 'pdf-builder-pro')); ?>');
+                status.hide();
+
+                $.post(ajaxUrl, {
+                    action: 'pdf_builder_generate_order_pdf',
+                    order_id: orderId,
+                    template_id: templateId,
+                    nonce: nonce
+                }, function(response) {
+                    btn.prop('disabled', false).text('📥 <?php echo esc_js(__('Générer et Télécharger PDF', 'pdf-builder-pro')); ?>');
+                    if (response.success && response.data && response.data.pdf_url) {
+                        window.open(response.data.pdf_url, '_blank');
+                        status.css({background:'#d4edda',color:'#155724',border:'1px solid #c3e6cb',display:'block'})
+                              .text('<?php echo esc_js(__('PDF généré avec succès !', 'pdf-builder-pro')); ?>');
+                    } else {
+                        var msg = (response.data && response.data.message) ? response.data.message : '<?php echo esc_js(__('Erreur lors de la génération.', 'pdf-builder-pro')); ?>';
+                        status.css({background:'#f8d7da',color:'#721c24',border:'1px solid #f5c6cb',display:'block'}).text(msg);
+                    }
+                }).fail(function() {
+                    btn.prop('disabled', false).text('📥 <?php echo esc_js(__('Générer et Télécharger PDF', 'pdf-builder-pro')); ?>');
+                    status.css({background:'#f8d7da',color:'#721c24',border:'1px solid #f5c6cb',display:'block'})
+                          .text('<?php echo esc_js(__('Erreur réseau.', 'pdf-builder-pro')); ?>');
+                });
             });
-        }
+
+            $('#pdf-builder-preview-btn').on('click', function() {
+                var templateId = $('#pdf-builder-template-select').val();
+                var orderId = $(this).data('order-id');
+                var nonce = $(this).data('nonce');
+                var ajaxUrl = $(this).data('ajax');
+
+                if (!templateId) { return; }
+
+                var url = ajaxUrl + '?action=pdf_builder_generate_order_pdf&order_id=' + orderId + '&template_id=' + templateId + '&nonce=' + nonce + '&preview=1';
+                window.open(url, '_blank', 'width=800,height=1000');
+            });
+        })(jQuery);
         </script>
         <?php
     }
