@@ -485,12 +485,6 @@ class PdfBuilderCore
             require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
         }
         \PDF_Builder\Database\Settings_Table_Manager::create_table();
-        
-        // Migrer les données anciennes de wp_options vers wp_pdf_builder_settings
-        if (!class_exists('PDF_Builder\Database\Settings_Migration')) {
-            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Migration.php';
-        }
-        \PDF_Builder\Database\Settings_Migration::migrate_from_wp_options();
 
         // Créer les tables de base de données si nécessaire
         $this->createDatabaseTables();
