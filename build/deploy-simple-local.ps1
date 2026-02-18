@@ -203,16 +203,24 @@ if ($All) {
 $criticalCompiledFiles = @(
     "plugin/assets/js/pdf-builder-react-wrapper.min.js"
     "plugin/assets/js/pdf-builder-react.min.js"
+    "plugin/assets/js/vendors.min.js"
     "plugin/assets/js/react-vendor.min.js"
     "plugin/assets/js/canvas-settings.min.js"
     "plugin/assets/js/pdf-builder-react-init.min.js"
+    "plugin/assets/js/pdf-builder-react-executor.min.js"
     "plugin/assets/js/ajax-throttle.min.js"
     "plugin/assets/js/notifications.min.js"
     "plugin/assets/js/pdf-builder-wrap.min.js"
     "plugin/assets/js/pdf-builder-init.min.js"
     "plugin/assets/js/predefined-templates.js"
+    "plugin/assets/js/settings-main.min.js"
+    "plugin/assets/js/settings-tabs.min.js"
     "plugin/assets/css/pdf-builder-react.min.css"
     "plugin/assets/css/notifications.min.css"
+    "plugin/assets/css/notifications-css.min.css"
+    "plugin/assets/css/dashboard-css.min.css"
+    "plugin/assets/css/templates-page-css.min.css"
+    "plugin/assets/css/settings-systeme-css.min.css"
 )
 foreach ($criticalCompiledFile in $criticalCompiledFiles) {
     $criticalCompiledPath = Join-Path $WorkingDir $criticalCompiledFile
