@@ -1118,63 +1118,10 @@ function duplicateTemplate(templateId, templateName) {
 
 // Fonction pour charger dynamiquement l'aperçu du template
 function loadTemplatePreview(templateId) {
-    const previewContainer = document.getElementById('preview-' + templateId);
+    var previewContainer = document.getElementById('preview-' + templateId);
     if (!previewContainer) return;
-    
-    // Récupérer la première commande pour générer un aperçu de démo
-    // Sinon, on va juste afficher un placeholder stylisé
-    jQuery.ajax({
-        url: ajaxurl,
-        type: 'GET',
-        data: {
-            action: 'woocommerce_order_search',
-            term: '',
-            _wpnonce: jQuery('input[name="_wpnonce"]').val()
-        },
-        success: function(response) {
-            // Si on a une commande, générer un aperçu
-            if (response && response.length > 0) {
-                const firstOrder = response[0];
-                generateTemplatePreview(templateId, firstOrder.id, previewContainer);
-            } else {
-                // Sinon, afficher juste la couleur du type
-                showTemplateIconPreview(templateId, previewContainer);
-            }
-        },
-        error: function() {
-            // En cas d'erreur, afficher le placeholder
-            showTemplateIconPreview(templateId, previewContainer);
-        }
-    });
-}
-
-// Générer un aperçu visuel du template avec les données d'une commande
-function generateTemplatePreview(templateId, orderId, container) {
-    // Créer une iframe pour afficher l'aperçu HTML
-    const iframeId = 'preview-iframe-' + templateId;
-    
-    // Charger l'aperçu HTML via AJAX
-    jQuery.ajax({
-        url: ajaxurl,
-        type: 'POST',
-        data: {
-            action: 'pdf_builder_get_preview_html',
-            template_id: templateId,
-            order_id: orderId,
-            nonce: pdfBuilderTemplatesNonce
-        },
-        success: function(response) {
-            if (response && response.success && response.data && response.data.html) {
-                // Convertir HTML en image (canvas) ou afficher dans iframe
-                container.innerHTML = '<iframe id="' + iframeId + '" style="width: 100%; height: 100%; border: none; border-radius: 4px;" srcdoc="' + encodeURIComponent(response.data.html) + '"></iframe>';
-            } else {
-                showTemplateIconPreview(templateId, container);
-            }
-        },
-        error: function() {
-            showTemplateIconPreview(templateId, container);
-        }
-    });
+    // Afficher directement le preview stylisé (pas de AJAX nécessaire)
+    showTemplateIconPreview(templateId, previewContainer);
 }
 
 // Afficher un simple aperçu avec icône et couleur du type
