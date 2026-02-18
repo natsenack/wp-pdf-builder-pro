@@ -476,19 +476,13 @@ class PDF_Builder_WooCommerce_Integration
 
         // Déléguer au handler unifié qui contient toute la logique
         // Puppeteer (si configuré) → fallback DomPDF
-        // On injecte les params dans $_POST tels qu'attendus par handle_generate_pdf()
+        // La classe est sans namespace : class PDF_Builder_Unified_Ajax_Handler
+        // Elle est chargée par le bootstrap, pas besoin de require_once
         $_POST['template_id'] = $template_id;
         $_POST['order_id']    = $order_id;
 
-        if (!class_exists('PDF_Builder\Core\PDF_Builder_Unified_Ajax_Handler')) {
-            $handler_path = PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Unified_Ajax_Handler.php';
-            if (file_exists($handler_path)) {
-                require_once $handler_path;
-            }
-        }
-
-        if (class_exists('PDF_Builder\Core\PDF_Builder_Unified_Ajax_Handler')) {
-            $handler = \PDF_Builder\Core\PDF_Builder_Unified_Ajax_Handler::get_instance();
+        if (class_exists('PDF_Builder_Unified_Ajax_Handler')) {
+            $handler = \PDF_Builder_Unified_Ajax_Handler::get_instance();
             $handler->handle_generate_pdf(); // Streame le PDF et appelle exit()
         }
 
