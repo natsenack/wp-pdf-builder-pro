@@ -598,12 +598,11 @@ class PDF_Builder_WooCommerce_Integration
                         }).then(function(canvas) {
                             $c.remove();
                             btn.prop('disabled', false).html(orig);
-                            var dataUrl  = canvas.toDataURL(mimeType, 0.95);
-                            var filename = 'facture-' + orderNum + '.' + type;
-                            var $a = $('<a>', {href: dataUrl, download: filename, style: 'display:none'});
-                            $('body').append($a);
-                            $a[0].click();
-                            $a.remove();
+                            var dataUrl = canvas.toDataURL(mimeType, 0.95);
+                            var win = window.open('', '_blank');
+                            win.document.write('<img src="' + dataUrl + '" style="max-width:100%;display:block;margin:auto;">');
+                            win.document.title = 'facture-' + orderNum + '.' + type;
+                            win.document.close();
                         }).catch(function(err) {
                             $c.remove();
                             btn.prop('disabled', false).html(orig);
