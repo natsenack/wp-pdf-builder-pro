@@ -409,49 +409,38 @@ class PDF_Builder_WooCommerce_Integration
 
         <script type="text/javascript">
         (function($) {
-            $('#pdf-builder-generate-btn').on('click', function() {
-                var btn = $(this);
+            // Ouvre un formulaire POST dans un nouvel onglet pour streamer le PDF
+            function openPdfForm(orderId, templateId, nonce, ajaxUrl) {
+                var form = $('<form>', {
+                    method: 'POST',
+                    action: ajaxUrl,
+                    target: '_blank',
+                    style: 'display:none'
+                });
+                form.append($('<input>', {type:'hidden', name:'action',      value:'pdf_builder_generate_order_pdf'}));
+                form.append($('<input>', {type:'hidden', name:'order_id',    value:orderId}));
+                form.append($('<input>', {type:'hidden', name:'template_id', value:templateId}));
+                form.append($('<input>', {type:'hidden', name:'nonce',       value:nonce}));
+                $('body').append(form);
+                form.submit();
+                form.remove();
+            }
+
+            $('#pdf-builder-generate-btn, #pdf-builder-preview-btn').on('click', function() {
+                var btn        = $(this);
                 var orderId    = btn.data('order-id');
                 var templateId = btn.data('template-id');
                 var nonce      = btn.data('nonce');
                 var ajaxUrl    = btn.data('ajax');
                 var status     = $('#pdf-builder-meta-status');
 
-                btn.prop('disabled', true).text('⏳ <?php echo esc_js(__('Génération...', 'pdf-builder-pro')); ?>');
                 status.hide();
+                openPdfForm(orderId, templateId, nonce, ajaxUrl);
 
-                $.post(ajaxUrl, {
-                    action: 'pdf_builder_generate_order_pdf',
-                    order_id: orderId,
-                    template_id: templateId,
-                    nonce: nonce
-                }, function(response) {
-                    btn.prop('disabled', false).text('📥 <?php echo esc_js(__('Générer PDF', 'pdf-builder-pro')); ?>');
-                    if (response.success && response.data && response.data.pdf_url) {
-                        window.open(response.data.pdf_url, '_blank');
-                        status.css({background:'#d4edda',color:'#155724',border:'1px solid #c3e6cb',display:'block'})
-                              .text('<?php echo esc_js(__('PDF généré avec succès !', 'pdf-builder-pro')); ?>');
-                    } else {
-                        var msg = (response.data && response.data.message)
-                            ? response.data.message
-                            : '<?php echo esc_js(__('Erreur lors de la génération.', 'pdf-builder-pro')); ?>';
-                        status.css({background:'#f8d7da',color:'#721c24',border:'1px solid #f5c6cb',display:'block'}).text(msg);
-                    }
-                }).fail(function() {
-                    btn.prop('disabled', false).text('📥 <?php echo esc_js(__('Générer PDF', 'pdf-builder-pro')); ?>');
-                    status.css({background:'#f8d7da',color:'#721c24',border:'1px solid #f5c6cb',display:'block'})
-                          .text('<?php echo esc_js(__('Erreur réseau.', 'pdf-builder-pro')); ?>');
-                });
-            });
-
-            $('#pdf-builder-preview-btn').on('click', function() {
-                var orderId    = $(this).data('order-id');
-                var templateId = $(this).data('template-id');
-                var nonce      = $(this).data('nonce');
-                var ajaxUrl    = $(this).data('ajax');
-                var url = ajaxUrl + '?action=pdf_builder_generate_order_pdf&order_id=' + orderId
-                    + '&template_id=' + templateId + '&nonce=' + nonce + '&preview=1';
-                window.open(url, '_blank', 'width=800,height=1000');
+                // Feedback visuel temporaire
+                var orig = btn.text();
+                btn.prop('disabled', true).text('⏳ <?php echo esc_js(__('Génération...', 'pdf-builder-pro')); ?>');
+                setTimeout(function() { btn.prop('disabled', false).text(orig); }, 3000);
             });
         })(jQuery);
         </script>
@@ -463,207 +452,47 @@ class PDF_Builder_WooCommerce_Integration
      */
     public function ajaxGenerateOrderPdf()
     {
-        // === SÉCURITÉ PHASE 5.8 - Vérifications de sécurité ===
-
-        // 1. Vérification des permissions utilisateur
-        if (!PDF_Builder_Security_Validator::checkPermissions('manage_woocommerce')) {
-            \wp_send_json_error(['message' => 'Permissions insuffisantes', 'code' => 'insufficient_permissions']);
+        // Vérification des permissions
+        if (!current_user_can('manage_options') && !current_user_can('edit_shop_orders')) {
+            \wp_send_json_error(['message' => 'Permissions insuffisantes']);
             return;
         }
 
-        // 2. Vérification du rate limiting
-        if (!PDF_Builder_Rate_Limiter::check_rate_limit('pdf_generation')) {
-            $remaining_time = PDF_Builder_Rate_Limiter::get_reset_time('pdf_generation');
-            \wp_send_json_error(
-                [
-                'message' => 'Trop de requêtes. Veuillez réessayer dans ' . ceil($remaining_time / 60) . ' minutes.',
-                'code' => 'rate_limit_exceeded',
-                'reset_in' => $remaining_time
-                ]
-            );
+        // Validation du nonce (POST pour génération, GET pour aperçu)
+        $nonce = \sanitize_text_field($_POST['nonce'] ?? $_GET['nonce'] ?? '');
+        if (!\wp_verify_nonce($nonce, 'pdf_builder_order_actions')) {
+            \wp_send_json_error(['message' => 'Nonce invalide']);
             return;
         }
 
-        // 3. Validation du nonce (POST pour génération, GET pour aperçu)
-        $nonce = isset($_POST['nonce']) ? \sanitize_text_field($_POST['nonce'])
-                : (isset($_GET['nonce']) ? \sanitize_text_field($_GET['nonce']) : '');
-        if (!PDF_Builder_Security_Validator::validateNonce($nonce, 'pdf_builder_order_actions')) {
-            \wp_send_json_error(['message' => 'Sécurité: Nonce invalide', 'code' => 'invalid_nonce']);
-            return;
-        }
-
-        // 4. Validation et sanitisation des paramètres d'entrée
+        // Paramètres
         $order_id    = intval($_POST['order_id'] ?? $_GET['order_id'] ?? 0);
-        $template_id = intval($_POST['template_id'] ?? $_GET['template_id'] ?? 0);
-        $custom_content = $_POST['content'] ?? '';
-        $image_path     = $_POST['image_path'] ?? '';
-        $is_preview     = isset($_POST['preview']) || isset($_GET['preview']);
+        $template_id = sanitize_text_field($_POST['template_id'] ?? $_GET['template_id'] ?? '');
 
-        // Validation de l'order_id
-        if (!$order_id || $order_id <= 0) {
-            \wp_send_json_error(['message' => 'ID commande invalide', 'code' => 'invalid_order_id']);
+        if (!$order_id || !$template_id) {
+            \wp_send_json_error(['message' => 'Paramètres manquants']);
             return;
         }
 
-        // Sanitisation du contenu HTML personnalisé
-        if (!empty($custom_content)) {
-            $custom_content = PDF_Builder_Security_Validator::sanitizeHtmlContent($custom_content);
-            if (empty($custom_content)) {
-                \wp_send_json_error(['message' => 'Contenu HTML invalide', 'code' => 'invalid_html_content']);
-                return;
+        // Déléguer au handler unifié qui contient toute la logique
+        // Puppeteer (si configuré) → fallback DomPDF
+        // On injecte les params dans $_POST tels qu'attendus par handle_generate_pdf()
+        $_POST['template_id'] = $template_id;
+        $_POST['order_id']    = $order_id;
+
+        if (!class_exists('PDF_Builder\Core\PDF_Builder_Unified_Ajax_Handler')) {
+            $handler_path = PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Unified_Ajax_Handler.php';
+            if (file_exists($handler_path)) {
+                require_once $handler_path;
             }
         }
 
-        // Validation du chemin d'image si fourni
-        if (!empty($image_path)) {
-            if (!PDF_Builder_Path_Validator::validate_file_path($image_path)) {
-                \wp_send_json_error(['message' => 'Chemin de fichier invalide', 'code' => 'invalid_file_path']);
-                return;
-            }
+        if (class_exists('PDF_Builder\Core\PDF_Builder_Unified_Ajax_Handler')) {
+            $handler = \PDF_Builder\Core\PDF_Builder_Unified_Ajax_Handler::get_instance();
+            $handler->handle_generate_pdf(); // Streame le PDF et appelle exit()
         }
 
-        try {
-            // Charger la commande WooCommerce
-            $order = function_exists('wc_get_order') ? \wc_get_order($order_id) : null;
-            if (!$order) {
-                \wp_send_json_error('Commande introuvable');
-                return;
-            }
-
-            // LOGGING DÉTAILLÉ pour debug
-            $current_status = $order->get_status();
-            $valid_statuses = function_exists('wc_get_order_statuses') ? array_keys(\wc_get_order_statuses()) : [];
-            $status_with_prefix = 'wc-' . $current_status;
-            $status_without_prefix = str_replace('wc-', '', $current_status);
-
-            // LOGGING DÉTAILLÉ pour debug - AFFICHAGE DANS LA RÉPONSE AJAX
-            $debug_info = [
-                'order_id' => $order_id,
-                'current_status' => $current_status,
-                'status_with_prefix' => $status_with_prefix,
-                'status_without_prefix' => $status_without_prefix,
-                'valid_statuses' => $valid_statuses,
-                'validation_checks' => [
-                    'current_in_valid' => in_array($current_status, $valid_statuses),
-                    'prefix_in_valid' => in_array($status_with_prefix, $valid_statuses),
-                    'without_prefix_in_valid' => in_array($status_without_prefix, $valid_statuses)
-                ]
-            ];
-
-
-
-            // Validation du statut de commande - gérer les statuts avec/sans préfixe wc-
-            $current_status = $order->get_status();
-
-            // Normaliser les statuts pour la comparaison
-            $normalized_current = $current_status;
-            if (strpos($current_status, 'wc-') !== 0) {
-                // Si pas de préfixe, l'ajouter
-                $normalized_current = 'wc-' . $current_status;
-            }
-
-            $valid_statuses = function_exists('wc_get_order_statuses') ? array_keys(\wc_get_order_statuses()) : [];
-
-            // Ajouter les statuts configurés dans les mappings du plugin (même s'ils ne sont pas encore détectés par WooCommerce)
-            $settings = pdf_builder_get_option('pdf_builder_settings', array());
-            $status_templates = $settings['pdf_builder_order_status_templates'] ?? [];
-            $configured_statuses = array_keys($status_templates);
-            $valid_statuses = array_merge($valid_statuses, $configured_statuses);
-
-            if (!in_array($normalized_current, $valid_statuses) && !in_array($current_status, $valid_statuses)) {
-                \wp_send_json_error(['message' => 'Statut de commande non valide pour le traitement', 'code' => 'invalid_order_status']);
-                return;
-            }
-
-
-
-            // Charger le template
-            if ($template_id > 0) {
-                $templates = pdf_builder_get_option('pdf_builder_templates', []);
-                $template_data = isset($templates[$template_id]) ? $templates[$template_id] : null;
-            } else {
-                // Détecter automatiquement le template basé sur le statut de la commande
-                $order_status = $order->get_status();
-                $status_templates = pdf_builder_get_option('pdf_builder_order_status_templates', []);
-                $status_key = 'wc-' . $order_status;
-
-                if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
-                    $mapped_template_id = $status_templates[$status_key];
-                    $templates = pdf_builder_get_option('pdf_builder_templates', []);
-                    $template_data = isset($templates[$mapped_template_id]) ? $templates[$mapped_template_id] : null;
-                } else {
-                    // Template par défaut - prendre le premier template disponible
-                    $templates = pdf_builder_get_option('pdf_builder_templates', []);
-                    $template_data = !empty($templates) ? reset($templates) : null;
-                }
-            }
-
-            if (!$template_data) {
-                \wp_send_json_error('Template non trouvé');
-            }
-
-            // Extraire les éléments du template
-            $elements = [];
-            if (isset($template_data['pages']) && is_array($template_data['pages']) && !empty($template_data['pages'])) {
-                $elements = $template_data['pages'][0]['elements'] ?? [];
-            } elseif (isset($template_data['elements'])) {
-                $elements = $template_data['elements'];
-            }
-
-            // Générer le PDF SANS TCPDF - utiliser la nouvelle approche HTML
-
-            // Générer le HTML depuis les éléments du template
-            $generator = new PdfBuilderProGenerator();
-
-            $html_content = $generator->generate($elements, ['order' => $order]);
-
-            // Créer un fichier HTML temporaire pour le téléchargement
-            $upload_dir = wp_upload_dir();
-            $temp_dir = $upload_dir['basedir'] . '/pdf-builder-temp';
-
-            // Créer le dossier temporaire s'il n'existe pas
-            if (!file_exists($temp_dir)) {
-                \wp_mkdir_p($temp_dir);
-            }
-
-            // Générer un nom de fichier unique
-            $filename = 'pdf-document-' . $order_id . '-' . time() . '.html';
-            $file_path = $temp_dir . '/' . $filename;
-
-            // Sauvegarder le HTML dans le fichier
-            if (file_put_contents($file_path, $html_content) === false) {
-                \wp_send_json_error('Erreur lors de la création du fichier HTML');
-            }
-
-            // Créer l'URL de téléchargement
-            $download_url = $upload_dir['baseurl'] . '/pdf-builder-temp/' . $filename;
-
-            if ($is_preview) {
-                // Mode aperçu - retourner l'URL pour affichage dans le navigateur
-                wp_send_json_success([
-                    'message' => 'Aperçu généré avec succès',
-                    'preview_url' => $download_url,
-                    'download_url' => $download_url,
-                    'filename' => $filename
-                ]);
-            } else {
-                // Mode téléchargement normal
-                wp_send_json_success([
-                    'message' => 'HTML généré avec succès - TCPDF supprimé complètement',
-                    'url' => $download_url,
-                    'html_url' => $download_url,
-                    'pdf_url' => null,
-                    'download_url' => $download_url,
-                    'filename' => $filename
-                ]);
-            }
-        } catch (\Exception $e) {
-            \wp_send_json_error('Erreur Exception: ' . $e->getMessage());
-        } catch (\Error $e) {
-            \wp_send_json_error('Erreur PHP: ' . $e->getMessage());
-        } catch (\Throwable $e) {
-            \wp_send_json_error('Erreur Throwable: ' . $e->getMessage());
-        }
+        \wp_send_json_error(['message' => 'Handler PDF indisponible']);
     }
 
     /**
