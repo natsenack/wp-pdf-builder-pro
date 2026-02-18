@@ -2682,15 +2682,22 @@ export const Header = memo(function Header({
       >
         <button
           onClick={() => {
+            console.log('[PDF Builder] Bouton Nouveau cliqué, isPremium:', isPremium);
             if (!isPremium) {
+              // Essayer le modal PHP partagé d'abord
               if (typeof (window as any).showUpgradeModal === 'function') {
                 (window as any).showUpgradeModal('template');
+              } else {
+                // Fallback : redirection vers la page d'achat
+                window.open('https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/', '_blank');
               }
               return;
             }
-            // Naviguer vers l'éditeur sans template_id pour créer un nouveau template
+            // Utilisateur premium : naviguer vers éditeur vierge
             const ajaxUrl: string = (window as any).pdfBuilderData?.ajaxUrl || '';
-            const adminBase = ajaxUrl.replace('admin-ajax.php', 'admin.php') || (window.location.href.split('?')[0]);
+            const adminBase = ajaxUrl
+              ? ajaxUrl.replace('admin-ajax.php', 'admin.php')
+              : window.location.href.split('?')[0];
             const newUrl = adminBase + '?page=pdf-builder-pro';
             if (window.confirm('Créer un nouveau template ? Les modifications non sauvegardées seront perdues.')) {
               window.location.href = newUrl;
@@ -2700,8 +2707,9 @@ export const Header = memo(function Header({
           onMouseLeave={() => setHoveredButton(null)}
           style={{
             ...secondaryButtonStyles,
-            opacity: isSaving ? 0.6 : 1,
-            pointerEvents: isSaving ? "none" : "auto",
+            opacity: isSaving && isPremium ? 0.6 : (!isPremium ? 0.7 : 1),
+            // Non-premium : toujours cliquable pour afficher le modal d'upgrade
+            pointerEvents: (isSaving && isPremium) ? "none" : "auto",
             ...(!isPremium && {
               border: "1px solid #d1d5db",
               color: "#9ca3af",
