@@ -4557,9 +4557,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Appliquer le padding pour cohérence avec React Canvas
             $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px !important; box-sizing: border-box !important;";
             
-            // Styles pour le label et la date
-            $label_styles = "font-family: {$label_font_with_fallback} !important; font-size: {$label_font_size}px !important; font-weight: {$label_font_weight} !important; font-style: {$label_font_style} !important; color: {$label_color} !important; line-height: 1 !important; margin: 0 !important;";
-            $date_styles = "font-family: {$date_font_with_fallback} !important; font-size: {$date_font_size}px !important; font-weight: {$date_font_weight} !important; font-style: {$date_font_style} !important; color: {$date_color} !important; line-height: 1 !important; margin: 0 !important;";
+            // Calculer la hauteur commune pour l'alignement vertical parfait
+            $max_font_size = max($label_font_size, $date_font_size);
+            $span_height = $max_font_size + 2; // +2 pour du padding
+            
+            // Styles pour le label et la date - avec inline-flex pour alignement vertical parfait
+            $label_styles = "display: inline-flex !important; align-items: center !important; height: {$span_height}px !important; font-family: {$label_font_with_fallback} !important; font-size: {$label_font_size}px !important; font-weight: {$label_font_weight} !important; font-style: {$label_font_style} !important; color: {$label_color} !important; line-height: 1 !important; margin: 0 !important;";
+            $date_styles = "display: inline-flex !important; align-items: center !important; height: {$span_height}px !important; font-family: {$date_font_with_fallback} !important; font-size: {$date_font_size}px !important; font-weight: {$date_font_weight} !important; font-style: {$date_font_style} !important; color: {$date_color} !important; line-height: 1 !important; margin: 0 !important;";
 
             // Layout selon la position du label
             switch ($label_position) {
@@ -4681,7 +4685,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Utiliser column pour que justify-content contrôle le vertical
             $container_styles .= ' flex-direction: column !important;';
             
-            $date_styles = "font-family: {$date_font_with_fallback} !important; font-size: {$date_font_size}px !important; font-weight: {$date_font_weight} !important; font-style: {$date_font_style} !important; color: {$date_color} !important; line-height: 1 !important; margin: 0 !important;";
+            $date_styles = "display: inline-flex !important; align-items: center !important; font-family: {$date_font_with_fallback} !important; font-size: {$date_font_size}px !important; font-weight: {$date_font_weight} !important; font-style: {$date_font_style} !important; color: {$date_color} !important; line-height: 1 !important; margin: 0 !important;";
             
             // LOG: Styles et HTML générés (sans label)
             error_log("Container styles (no label, first 400 chars): " . substr($container_styles, 0, 400));
@@ -4799,6 +4803,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $label_font_with_fallback = $this->add_font_fallbacks($label_font_family);
         error_log("Number font with fallbacks: {$number_font_with_fallback}");
         error_log("Label font with fallbacks: {$label_font_with_fallback}");
+        error_log("Label font with fallbacks: {$label_font_with_fallback}");
 
         // Récupérer le padding (cohérence avec React Canvas)
         $padding_top = $element['padding']['top'] ?? $element['paddingTop'] ?? 0;
@@ -4813,9 +4818,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Appliquer le padding pour cohérence avec React Canvas
             $container_styles .= " padding: {$padding_top}px {$padding_right}px {$padding_bottom}px {$padding_left}px !important; box-sizing: border-box !important;";
             
-            // Styles pour le label et le numéro
-            $label_styles = "font-family: {$label_font_with_fallback} !important; font-size: {$label_font_size}px !important; font-weight: {$label_font_weight} !important; font-style: {$label_font_style} !important; color: {$label_color} !important; line-height: 1 !important; margin: 0 !important;";
-            $number_styles = "font-family: {$number_font_with_fallback} !important; font-size: {$number_font_size}px !important; font-weight: {$number_font_weight} !important; font-style: {$number_font_style} !important; color: {$number_color} !important; line-height: 1 !important; margin: 0 !important;";
+            // Calculer la hauteur commune pour l'alignement vertical parfait
+            $max_font_size = max($label_font_size, $number_font_size);
+            $span_height = $max_font_size + 2; // +2 pour du padding
+            
+            // Styles pour le label et le numéro - avec inline-flex pour alignement vertical parfait
+            $label_styles = "display: inline-flex !important; align-items: center !important; height: {$span_height}px !important; font-family: {$label_font_with_fallback} !important; font-size: {$label_font_size}px !important; font-weight: {$label_font_weight} !important; font-style: {$label_font_style} !important; color: {$label_color} !important; line-height: 1 !important; margin: 0 !important;";
+            $number_styles = "display: inline-flex !important; align-items: center !important; height: {$span_height}px !important; font-family: {$number_font_with_fallback} !important; font-size: {$number_font_size}px !important; font-weight: {$number_font_weight} !important; font-style: {$number_font_style} !important; color: {$number_color} !important; line-height: 1 !important; margin: 0 !important;";
 
             // Layout selon la position du label
             switch ($label_position) {
@@ -4937,7 +4946,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Utiliser column pour que justify-content contrôle le vertical
             $container_styles .= ' flex-direction: column !important;';
             
-            $number_styles = "font-family: {$number_font_with_fallback} !important; font-size: {$number_font_size}px !important; font-weight: {$number_font_weight} !important; font-style: {$number_font_style} !important; color: {$number_color} !important; line-height: 1 !important; margin: 0 !important;";
+            $number_styles = "display: inline-flex !important; align-items: center !important; font-family: {$number_font_with_fallback} !important; font-size: {$number_font_size}px !important; font-weight: {$number_font_weight} !important; font-style: {$number_font_style} !important; color: {$number_color} !important; line-height: 1 !important; margin: 0 !important;";
             
             // LOG: Styles et HTML générés (sans label)
             error_log("Container styles (no label, first 400 chars): " . substr($container_styles, 0, 400));
