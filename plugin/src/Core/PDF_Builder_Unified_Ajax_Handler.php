@@ -3767,10 +3767,8 @@ class PDF_Builder_Unified_Ajax_Handler {
         $show_price = $element['showPrice'] ?? true;
         $show_total = $element['showTotal'] ?? true;
         
-        // AUCUNE bordure sur les cellules du tableau — sauf si showBorders activé
-        $cell_sep_style = $show_borders
-            ? "border-bottom: {$border_width}px solid {$border_color};"
-            : 'border: none;';
+        // Aucune bordure sur les cellules du tableau
+        $cell_sep_style = 'border: none;';
         
         $html .= '<table style="width:100%; border-collapse: collapse; background-color: ' . $bg_color . ';">';
         
