@@ -779,9 +779,8 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
 }
 </style>
 
-<?php require_once __DIR__ . '/partials/upgrade-modals.php'; ?>
 
-<!-- Modaux premium chargés via partials/upgrade-modals.php -->
+<!-- Modaux premium injectés via AdminScriptLoader::renderUpgradeModals() dans admin_footer -->
 
 <!-- JavaScript pour la gestion des templates -->
 <script>

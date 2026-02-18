@@ -2682,15 +2682,9 @@ export const Header = memo(function Header({
       >
         <button
           onClick={() => {
-            console.log('[PDF Builder] Bouton Nouveau cliqué, isPremium:', isPremium);
             if (!isPremium) {
-              // Essayer le modal PHP partagé d'abord
-              if (typeof (window as any).showUpgradeModal === 'function') {
-                (window as any).showUpgradeModal('template');
-              } else {
-                // Fallback : redirection vers la page d'achat
-                window.open('https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/', '_blank');
-              }
+              // Appel du modal PHP partagé injecté via admin_footer
+              (window as any).showUpgradeModal?.('template');
               return;
             }
             // Utilisateur premium : naviguer vers éditeur vierge

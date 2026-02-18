@@ -38,6 +38,28 @@ class AdminScriptLoader
 
         // Enregistrer le hook pour charger les scripts admin
         \add_action('admin_enqueue_scripts', [$this, 'loadAdminScripts'], 20);
+
+        // Injecter les modaux upgrade dans le footer de toutes les pages du plugin
+        \add_action('admin_footer', [$this, 'renderUpgradeModals']);
+    }
+
+    /**
+     * Injecte les modaux d'upgrade premium dans le footer admin
+     * Disponible sur toutes les pages du plugin
+     */
+    public function renderUpgradeModals(): void
+    {
+        $plugin_pages = ['pdf-builder-pro', 'pdf-builder-templates', 'pdf-builder-settings', 'pdf-builder-system-check'];
+        $current_page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+        
+        if (!in_array($current_page, $plugin_pages) && strpos($current_page, 'pdf-builder') === false) {
+            return;
+        }
+
+        $partial = PDF_BUILDER_PLUGIN_DIR . 'templates/admin/partials/upgrade-modals.php';
+        if (file_exists($partial)) {
+            require_once $partial;
+        }
     }
 
     /**
