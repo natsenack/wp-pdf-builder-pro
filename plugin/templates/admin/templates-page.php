@@ -330,8 +330,8 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                     }
 
                     echo '<div style="text-align: center; margin-bottom: 15px; margin-top: 40px;">';
-                    // Vérifier que la thumbnail_url est valide avant de l'afficher
-                    if (!empty($thumbnail_url) && filter_var($thumbnail_url, FILTER_VALIDATE_URL) && strpos($thumbnail_url, 'http://0.0.0.1') === false) {
+                    // Vérifier que la thumbnail_url est valide (non vide et ne contient pas 0.0.0.1)
+                    if (!empty($thumbnail_url) && strpos($thumbnail_url, 'http://0.0.0.1') === false && strpos($thumbnail_url, '0.0.0.1') === false) {
                         echo '<div style="width: 120px; height: 80px; margin: 0 auto 10px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; background: #f8f9fa;">';
                         echo '<img src="' . esc_url($thumbnail_url) . '" alt="' . esc_attr($template_name) . '" style="width: 100%; height: 100%; object-fit: cover;" />';
                         echo '</div>';
