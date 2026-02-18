@@ -245,10 +245,6 @@ class PdfBuilderCore
     }
 
     /**
-        } catch (\Exception $e) {
-            
-        }
-    /**
      * Enregistrer les paramètres
      */
     public function registerSettings()
