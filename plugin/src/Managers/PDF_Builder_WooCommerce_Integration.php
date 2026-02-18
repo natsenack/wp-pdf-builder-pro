@@ -265,166 +265,157 @@ class PDF_Builder_WooCommerce_Integration
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
-        // Handle both legacy (WP_Post) and HPOS (WC_Order) cases
-        if (function_exists('pdf_builder_is_woocommerce_active') && pdf_builder_is_woocommerce_active() && function_exists('is_a') && is_a($post_or_order, 'WC_Order')) {
-            $order = $post_or_order;
+        // --- Résolution de la commande (legacy WP_Post ou HPOS WC_Order) ---
+        if (is_a($post_or_order, 'WC_Order')) {
+            $order    = $post_or_order;
             $order_id = $order->get_id();
         } elseif (is_a($post_or_order, 'WP_Post')) {
             $order_id = $post_or_order->ID;
-            $order = function_exists('wc_get_order') ? \wc_get_order($order_id) : null;
+            $order    = function_exists('wc_get_order') ? \wc_get_order($order_id) : null;
         } else {
-            // Try to get order ID from URL for HPOS
             $order_id = isset($_GET['id']) ? absint($_GET['id']) : 0;
-            $order = function_exists('wc_get_order') ? \wc_get_order($order_id) : null;
+            $order    = function_exists('wc_get_order') ? \wc_get_order($order_id) : null;
         }
 
         if (!$order) {
-            echo '<div style="padding: 20px; text-align: center; color: #dc3545; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px;">
-                    <div style="font-size: 48px; margin-bottom: 10px;">❌</div>
-                    <strong>' . __('Commande invalide', 'pdf-builder-pro') . '</strong><br>
-                    <small>' . __('ID commande:', 'pdf-builder-pro') . ' ' . esc_html($order_id) . '</small>
-                  </div>';
+            echo '<p style="color:#dc3545;">❌ ' . __('Commande introuvable.', 'pdf-builder-pro') . '</p>';
             return;
         }
 
-        // Détecter automatiquement le type de document basé sur le statut de la commande
-        $order_status = $order->get_status();
-        $document_type = $this->detectDocumentType($order_status);
-        $document_type_label = $this->getDocumentTypeLabel($document_type);
+        // --- Licence ---
+        $is_premium = false;
+        if (class_exists('PDF_Builder\Managers\PDF_Builder_License_Manager')) {
+            $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+            $is_premium = $license_manager->isPremium();
+        }
 
-        // Récupérer tous les templates disponibles
-        $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name ASC", ARRAY_A);
+        // --- Statut de la commande ---
+        $order_status = $order->get_status(); // sans préfixe wc-
+        $status_key   = 'wc-' . $order_status;
 
-        // Vérifier d'abord s'il y a un mapping spécifique pour ce statut de commande
-        $settings = pdf_builder_get_option('pdf_builder_settings', array());
+        $order_statuses = function_exists('wc_get_order_statuses') ? \wc_get_order_statuses() : [];
+        $status_label   = $order_statuses[$status_key] ?? ucfirst($order_status);
+
+        // --- Mode GRATUIT : uniquement les commandes terminées ---
+        if (!$is_premium && $order_status !== 'completed') {
+            ?>
+            <div style="font-size:13px;">
+                <div style="margin-bottom:8px;">
+                    <?php _e('Statut:', 'pdf-builder-pro'); ?> <strong><?php echo esc_html($status_label); ?></strong>
+                </div>
+                <div style="padding:10px;background:#fff3cd;border:1px solid #ffc107;border-radius:4px;color:#856404;font-size:12px;">
+                    🔒 <?php _e('La génération PDF automatique par statut est disponible en version Premium. En version gratuite, seules les commandes <strong>Terminées</strong> sont supportées.', 'pdf-builder-pro'); ?>
+                </div>
+            </div>
+            <?php
+            return;
+        }
+
+        // --- Résolution du template ---
+        // Paramètres enregistrés dans l'onglet "Template" des paramètres
+        $settings         = pdf_builder_get_option('pdf_builder_settings', []);
         $status_templates = $settings['pdf_builder_order_status_templates'] ?? [];
-        $status_key = 'wc-' . $order_status;
+
         $selected_template = null;
 
-        // Utiliser le filtre du StatusManager pour appliquer le fallback
-        $mapped_template_id = apply_filters('pdf_builder_get_template_for_status', null, $status_key);
-
-        if ($mapped_template_id) {
-            // Il y a un mapping spécifique pour ce statut (ou fallback appliqué)
-            $selected_template = $wpdb->get_row(
-                $wpdb->prepare(
-                    "SELECT id, name FROM $table_templates WHERE id = %d",
-                    $mapped_template_id
-                ),
-                ARRAY_A
-            );
-        } elseif (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
-            // Fallback vers l'ancienne logique si le filtre ne retourne rien
-            $selected_template = $wpdb->get_row(
-                $wpdb->prepare(
-                    "SELECT id, name FROM $table_templates WHERE id = %d",
-                    $status_templates[$status_key]
-                ),
-                ARRAY_A
-            );
-        }
-
-        // Si pas de mapping spécifique, utiliser la logique de détection automatique
-        if (!$selected_template && !empty($all_templates)) {
-            // Chercher un template dont le nom contient le type de document détecté
-            foreach ($all_templates as $template) {
-                if (stripos($template['name'], $document_type_label) !== false) {
-                    $selected_template = $template;
-                    break;
-                }
+        if ($is_premium) {
+            // Premium : chercher le template mappé au statut courant
+            if (!empty($status_templates[$status_key])) {
+                $selected_template = $wpdb->get_row(
+                    $wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $status_templates[$status_key]),
+                    ARRAY_A
+                );
             }
-
-            // Fallback: prendre le premier template disponible
-            if (!$selected_template) {
-                $selected_template = $all_templates[0];
+        } else {
+            // Gratuit : utiliser le template assigné à wc-completed
+            if (!empty($status_templates['wc-completed'])) {
+                $selected_template = $wpdb->get_row(
+                    $wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $status_templates['wc-completed']),
+                    ARRAY_A
+                );
             }
         }
 
-        // Vérifier que le template sélectionné existe vraiment
-        if ($selected_template) {
-            $existing_template = $wpdb->get_var(
-                $wpdb->prepare(
-                    "SELECT id FROM $table_templates WHERE id = %d",
-                    $selected_template['id']
-                )
-            );
-
-            if (!$existing_template) {
-                // Le template sélectionné n'existe pas, utiliser le premier disponible
-                $selected_template = !empty($all_templates) ? $all_templates[0] : null;
+        // Fallback : filtre StatusManager puis premier template disponible
+        if (!$selected_template) {
+            $mapped_id = apply_filters('pdf_builder_get_template_for_status', null, $status_key);
+            if ($mapped_id) {
+                $selected_template = $wpdb->get_row(
+                    $wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $mapped_id),
+                    ARRAY_A
+                );
             }
         }
 
-        // Récupérer le label du statut WooCommerce
-        $order_statuses = function_exists('wc_get_order_statuses') ? \wc_get_order_statuses() : [];
-        $status_label = isset($order_statuses['wc-' . $order_status]) ? $order_statuses['wc-' . $order_status] : ucfirst($order_status);
+        if (!$selected_template) {
+            $selected_template = $wpdb->get_row("SELECT id, name FROM $table_templates ORDER BY id ASC LIMIT 1", ARRAY_A);
+        }
 
-        $nonce = wp_create_nonce('pdf_builder_order_actions');
+        // --- Affichage ---
+        $nonce    = wp_create_nonce('pdf_builder_order_actions');
         $ajax_url = admin_url('admin-ajax.php');
         ?>
-        <div class="pdf-builder-meta-box" style="font-size:13px;">
+        <div style="font-size:13px;">
 
-            <!-- Template sélectionné -->
-            <div style="margin-bottom:12px;">
-                <strong><?php _e('Template:', 'pdf-builder-pro'); ?></strong><br>
-                <select id="pdf-builder-template-select" style="width:100%;margin-top:4px;">
-                    <?php if (empty($all_templates)): ?>
-                        <option value=""><?php _e('— Aucun template disponible —', 'pdf-builder-pro'); ?></option>
+            <!-- Template résolu -->
+            <div style="margin-bottom:10px;">
+                <div style="color:#6c757d;margin-bottom:4px;">
+                    <?php _e('Statut:', 'pdf-builder-pro'); ?> <strong><?php echo esc_html($status_label); ?></strong>
+                    <?php if (!$is_premium): ?>
+                        <span style="margin-left:6px;background:#e9ecef;color:#495057;border-radius:3px;padding:1px 5px;font-size:11px;">Gratuit</span>
                     <?php else: ?>
-                        <?php foreach ($all_templates as $tpl): ?>
-                            <option value="<?php echo esc_attr($tpl['id']); ?>"
-                                <?php selected($selected_template && $selected_template['id'] == $tpl['id']); ?>>
-                                <?php echo esc_html($tpl['name']); ?>
-                            </option>
-                        <?php endforeach; ?>
+                        <span style="margin-left:6px;background:#d4edda;color:#155724;border-radius:3px;padding:1px 5px;font-size:11px;">Premium</span>
                     <?php endif; ?>
-                </select>
-            </div>
-
-            <!-- Statut -->
-            <div style="color:#6c757d;margin-bottom:12px;">
-                <?php _e('Statut:', 'pdf-builder-pro'); ?> <strong><?php echo esc_html($status_label); ?></strong>
+                </div>
+                <div style="padding:8px 10px;background:#f8f9fa;border:1px solid #dee2e6;border-radius:4px;">
+                    📄 <?php if ($selected_template): ?>
+                        <strong><?php echo esc_html($selected_template['name']); ?></strong>
+                    <?php else: ?>
+                        <em style="color:#dc3545;"><?php _e('Aucun template assigné pour ce statut.', 'pdf-builder-pro'); ?></em>
+                        <br><small style="color:#6c757d;">
+                            <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings&tab=templates'); ?>">
+                                <?php _e('Configurer dans les paramètres →', 'pdf-builder-pro'); ?>
+                            </a>
+                        </small>
+                    <?php endif; ?>
+                </div>
             </div>
 
             <!-- Boutons d'action -->
+            <?php if ($selected_template): ?>
             <div style="display:flex;flex-direction:column;gap:6px;">
                 <button type="button" id="pdf-builder-generate-btn"
                         class="button button-primary"
                         data-order-id="<?php echo esc_attr($order_id); ?>"
+                        data-template-id="<?php echo esc_attr($selected_template['id']); ?>"
                         data-nonce="<?php echo esc_attr($nonce); ?>"
-                        data-ajax="<?php echo esc_attr($ajax_url); ?>"
-                        <?php echo empty($all_templates) ? 'disabled' : ''; ?>>
-                    📥 <?php _e('Générer et Télécharger PDF', 'pdf-builder-pro'); ?>
+                        data-ajax="<?php echo esc_attr($ajax_url); ?>">
+                    📥 <?php _e('Générer PDF', 'pdf-builder-pro'); ?>
                 </button>
                 <button type="button" id="pdf-builder-preview-btn"
                         class="button button-secondary"
                         data-order-id="<?php echo esc_attr($order_id); ?>"
+                        data-template-id="<?php echo esc_attr($selected_template['id']); ?>"
                         data-nonce="<?php echo esc_attr($nonce); ?>"
-                        data-ajax="<?php echo esc_attr($ajax_url); ?>"
-                        <?php echo empty($all_templates) ? 'disabled' : ''; ?>>
+                        data-ajax="<?php echo esc_attr($ajax_url); ?>">
                     👁️ <?php _e('Aperçu HTML', 'pdf-builder-pro'); ?>
                 </button>
             </div>
 
-            <!-- Message de statut -->
-            <div id="pdf-builder-meta-status" style="display:none;margin-top:10px;padding:8px;border-radius:4px;font-size:12px;"></div>
+            <!-- Message de retour -->
+            <div id="pdf-builder-meta-status" style="display:none;margin-top:8px;padding:8px;border-radius:4px;font-size:12px;"></div>
+            <?php endif; ?>
         </div>
 
         <script type="text/javascript">
         (function($) {
             $('#pdf-builder-generate-btn').on('click', function() {
                 var btn = $(this);
-                var templateId = $('#pdf-builder-template-select').val();
-                var orderId = btn.data('order-id');
-                var nonce = btn.data('nonce');
-                var ajaxUrl = btn.data('ajax');
-                var status = $('#pdf-builder-meta-status');
-
-                if (!templateId) {
-                    status.css({background:'#f8d7da',color:'#721c24',border:'1px solid #f5c6cb',display:'block'})
-                          .text('<?php echo esc_js(__('Veuillez sélectionner un template.', 'pdf-builder-pro')); ?>');
-                    return;
-                }
+                var orderId    = btn.data('order-id');
+                var templateId = btn.data('template-id');
+                var nonce      = btn.data('nonce');
+                var ajaxUrl    = btn.data('ajax');
+                var status     = $('#pdf-builder-meta-status');
 
                 btn.prop('disabled', true).text('⏳ <?php echo esc_js(__('Génération...', 'pdf-builder-pro')); ?>');
                 status.hide();
@@ -435,31 +426,31 @@ class PDF_Builder_WooCommerce_Integration
                     template_id: templateId,
                     nonce: nonce
                 }, function(response) {
-                    btn.prop('disabled', false).text('📥 <?php echo esc_js(__('Générer et Télécharger PDF', 'pdf-builder-pro')); ?>');
+                    btn.prop('disabled', false).text('📥 <?php echo esc_js(__('Générer PDF', 'pdf-builder-pro')); ?>');
                     if (response.success && response.data && response.data.pdf_url) {
                         window.open(response.data.pdf_url, '_blank');
                         status.css({background:'#d4edda',color:'#155724',border:'1px solid #c3e6cb',display:'block'})
                               .text('<?php echo esc_js(__('PDF généré avec succès !', 'pdf-builder-pro')); ?>');
                     } else {
-                        var msg = (response.data && response.data.message) ? response.data.message : '<?php echo esc_js(__('Erreur lors de la génération.', 'pdf-builder-pro')); ?>';
+                        var msg = (response.data && response.data.message)
+                            ? response.data.message
+                            : '<?php echo esc_js(__('Erreur lors de la génération.', 'pdf-builder-pro')); ?>';
                         status.css({background:'#f8d7da',color:'#721c24',border:'1px solid #f5c6cb',display:'block'}).text(msg);
                     }
                 }).fail(function() {
-                    btn.prop('disabled', false).text('📥 <?php echo esc_js(__('Générer et Télécharger PDF', 'pdf-builder-pro')); ?>');
+                    btn.prop('disabled', false).text('📥 <?php echo esc_js(__('Générer PDF', 'pdf-builder-pro')); ?>');
                     status.css({background:'#f8d7da',color:'#721c24',border:'1px solid #f5c6cb',display:'block'})
                           .text('<?php echo esc_js(__('Erreur réseau.', 'pdf-builder-pro')); ?>');
                 });
             });
 
             $('#pdf-builder-preview-btn').on('click', function() {
-                var templateId = $('#pdf-builder-template-select').val();
-                var orderId = $(this).data('order-id');
-                var nonce = $(this).data('nonce');
-                var ajaxUrl = $(this).data('ajax');
-
-                if (!templateId) { return; }
-
-                var url = ajaxUrl + '?action=pdf_builder_generate_order_pdf&order_id=' + orderId + '&template_id=' + templateId + '&nonce=' + nonce + '&preview=1';
+                var orderId    = $(this).data('order-id');
+                var templateId = $(this).data('template-id');
+                var nonce      = $(this).data('nonce');
+                var ajaxUrl    = $(this).data('ajax');
+                var url = ajaxUrl + '?action=pdf_builder_generate_order_pdf&order_id=' + orderId
+                    + '&template_id=' + templateId + '&nonce=' + nonce + '&preview=1';
                 window.open(url, '_blank', 'width=800,height=1000');
             });
         })(jQuery);
