@@ -943,10 +943,10 @@
                             }
 
                             // Fermer modal
-                            var closeBtn = e.target.closest('.canvas-modal-close, .canvas-modal-cancel');
+                            var closeBtn = e.target.closest('.pdfb-canvas-modal-close, .pdfb-canvas-modal-cancel');
                             if (closeBtn) {
                                 e.preventDefault();
-                                var modal = closeBtn.closest('.canvas-modal-overlay');
+                                var modal = closeBtn.closest('.pdfb-canvas-modal-overlay');
                                 if (modal) {
                                     closeModal(modal);
                                 }
@@ -954,7 +954,7 @@
                             }
 
                             // Appliquer paramètres
-                            var applyBtn = e.target.closest('.canvas-modal-apply');
+                            var applyBtn = e.target.closest('.pdfb-canvas-modal-apply');
                             if (applyBtn) {
                                 e.preventDefault();
                                 var category = applyBtn.getAttribute('data-category');
@@ -965,7 +965,7 @@
                             }
 
                             // Clic sur overlay
-                            if (e.target.classList.contains('canvas-modal-overlay')) {
+                            if (e.target.classList.contains('pdfb-canvas-modal-overlay')) {
                                 closeModal(e.target);
                                 return;
                             }
@@ -974,7 +974,7 @@
                         // Synchronisation agressive : mettre à jour les hidden fields en temps réel lors des changements dans les modales
                         document.addEventListener('change', function(e) {
                             var input = e.target;
-                            if (input.type === 'checkbox' && input.closest('.canvas-modal-overlay')) {
+                            if (input.type === 'checkbox' && input.closest('.pdfb-canvas-modal-overlay')) {
                                 var inputName = input.name;
                                 if (inputName) {
                                     var hiddenField = document.querySelector('input[name="pdf_builder_settings[' + inputName + ']"]');
