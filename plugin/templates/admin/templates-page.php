@@ -1210,15 +1210,6 @@ function showTemplateIconPreview(templateId, container) {
         '<div style="font-size: 10px; font-weight: 600; text-transform: uppercase;">' + templateType + '</div>' +
         '</div></div>';
 }
-                alert('Erreur lors de la duplication: ' + (data.message || 'Erreur inconnue'));
-            }
-        })
-        .catch(error => {
-            
-            alert('Erreur lors de la duplication du template');
-        });
-    }
-}
 
 function handleDeleteClick(templateId, templateName) {
     console.log('[DEBUG] handleDeleteClick appelée avec:', templateId, templateName);
