@@ -484,6 +484,12 @@ class PdfBuilderCore
      */
     public function activate()
     {
+        // Créer la table personnalisée wp_pdf_builder_settings
+        if (!class_exists('PDF_Builder\Database\Settings_Table_Manager')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Database/Settings_Table_Manager.php';
+        }
+        \PDF_Builder\Database\Settings_Table_Manager::create_table();
+
         // Créer les tables de base de données si nécessaire
         $this->createDatabaseTables();
 

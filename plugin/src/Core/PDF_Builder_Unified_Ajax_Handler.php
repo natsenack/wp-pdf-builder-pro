@@ -1348,7 +1348,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $sanitized_value = sanitize_text_field($value);
                 }
 
-                update_option($key, $sanitized_value);
+                pdf_builder_update_option($key, $sanitized_value);
                 \wp_cache_delete('alloptions', 'options'); // Invalider le cache des options
                 $saved_count++;
 
@@ -1459,7 +1459,7 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function save_license_settings() {
         // Notifications removed from the license settings — ensure any old option is deleted
-        \delete_option('pdf_builder_license_enable_notifications');
+        pdf_builder_delete_option('pdf_builder_license_enable_notifications');
 
         // Paramètres de rappel par email - maintenant gérés par WordPress standard
         // Ces paramètres sont sauvegardés automatiquement via le formulaire WordPress
@@ -1735,12 +1735,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             ];
 
             foreach ($default_templates as $template_id => $template_name) {
-                $template_option = get_option("pdf_builder_template_{$template_id}", '');
+                $template_option = pdf_builder_get_option("pdf_builder_template_{$template_id}", '');
 
                 if (empty($template_option)) {
                     // Template manquant, le recréer avec des valeurs par défaut
                     $default_content = $this->get_default_template_content($template_id);
-                    update_option("pdf_builder_template_{$template_id}", $default_content);
+                    pdf_builder_update_option("pdf_builder_template_{$template_id}", $default_content);
                     $repaired_templates++;
                 }
             }
@@ -2699,7 +2699,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
              $reset_count = 0;
              foreach ($dev_options as $option) {
-                 if (delete_option($option)) {
+                 if (pdf_builder_delete_option($option)) {
                      $reset_count++;
                  }
              }
@@ -4075,10 +4075,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             'city' => $to_string($element['companyCity'] ?? get_option('woocommerce_store_city', '')),
             'email' => $to_string($element['companyEmail'] ?? get_option('admin_email', '')),
             'phone' => $format_phone($to_string($element['companyPhone'] ?? get_option('woocommerce_store_phone', ''))),
-            'siret' => $to_string($element['companySiret'] ?? get_option('pdf_builder_company_siret', '')),
-            'rcs' => $to_string($element['companyRcs'] ?? get_option('pdf_builder_company_rcs', '')),
+            'siret' => $to_string($element['companySiret'] ?? pdf_builder_get_option('pdf_builder_company_siret', '')),
+            'rcs' => $to_string($element['companyRcs'] ?? pdf_builder_get_option('pdf_builder_company_rcs', '')),
             'tva' => $to_string($element['companyTva'] ?? pdf_builder_get_option('pdf_builder_company_vat', '')),
-            'capital' => $to_string($element['companyCapital'] ?? get_option('pdf_builder_company_capital', ''))
+            'capital' => $to_string($element['companyCapital'] ?? pdf_builder_get_option('pdf_builder_company_capital', ''))
         ];
         
         // Ajouter € au capital si absent
@@ -5318,8 +5318,8 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function debug_log($message, $level = 'INFO') {
         // Vérifier si les logs debug sont activés
-        $debug_enabled = get_option('pdf_builder_debug_enabled', false);
-        $debug_php_errors = get_option('pdf_builder_developer_enabled', false);
+        $debug_enabled = pdf_builder_get_option('pdf_builder_debug_enabled', false);
+        $debug_php_errors = pdf_builder_get_option('pdf_builder_developer_enabled', false);
         
         // Logger uniquement si debug activé OU en mode développement WordPress
         if ($debug_enabled || $debug_php_errors || (defined('WP_DEBUG') && WP_DEBUG)) {
