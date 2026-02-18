@@ -342,15 +342,14 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                     }
 
                     echo '<div style="text-align: center; margin-bottom: 15px; margin-top: 40px;">';
-                    // Afficher le preview si disponible (déjà nettoyé en PHP)
-                    if (!empty($thumbnail_url)) {
-                        echo '<div style="width: 120px; height: 80px; margin: 0 auto 10px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; background: #f8f9fa;">';
-                        echo '<img src="' . esc_url($thumbnail_url) . '" alt="' . esc_attr($template_name) . '" style="width: 100%; height: 100%; object-fit: cover;" />';
-                        echo '</div>';
-                    } else {
-                        // Afficher l'icône si pas de thumbnail valide
-                        echo '<div style="font-size: 3rem; margin-bottom: 10px;">' . $icon . '</div>';
-                    }
+                    // Créer un conteneur pour le preview qui sera chargé dynamiquement
+                    echo '<div id="preview-' . $template_id . '" class="template-preview-container" style="width: 120px; height: 80px; margin: 0 auto 10px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">';
+                    echo '<div style="text-align: center; color: #999;">';
+                    echo '<div style="font-size: 2rem; margin-bottom: 5px;">📄</div>';
+                    echo '<div style="font-size: 11px;">Aperçu</div>';
+                    echo '</div>';
+                    echo '</div>';
+                    echo '<script>loadTemplatePreview(' . intval($template_id) . ');</script>';
                     echo '<h3 style="margin: 0; color: #23282d;">' . $template_name . '</h3>';
                     echo '<p style="color: #666; margin: 5px 0;">' . $description . '</p>';
                     echo '</div>';
@@ -1099,6 +1098,118 @@ function duplicateTemplate(templateId, templateName) {
                 alert('Template dupliqué avec succès !');
                 location.reload();
             } else {
+                alert('Erreur lors de la duplication: ' + (data.message || 'Erreur inconnue'));
+            }
+        })
+        .catch(error => {
+            
+            alert('Erreur lors de la duplication du template');
+        });
+    }
+}
+
+// Fonction pour charger dynamiquement l'aperçu du template
+function loadTemplatePreview(templateId) {
+    const previewContainer = document.getElementById('preview-' + templateId);
+    if (!previewContainer) return;
+    
+    // Récupérer la première commande pour générer un aperçu de démo
+    // Sinon, on va juste afficher un placeholder stylisé
+    jQuery.ajax({
+        url: ajaxurl,
+        type: 'GET',
+        data: {
+            action: 'woocommerce_order_search',
+            term: '',
+            _wpnonce: jQuery('input[name="_wpnonce"]').val()
+        },
+        success: function(response) {
+            // Si on a une commande, générer un aperçu
+            if (response && response.length > 0) {
+                const firstOrder = response[0];
+                generateTemplatePreview(templateId, firstOrder.id, previewContainer);
+            } else {
+                // Sinon, afficher juste la couleur du type
+                showTemplateIconPreview(templateId, previewContainer);
+            }
+        },
+        error: function() {
+            // En cas d'erreur, afficher le placeholder
+            showTemplateIconPreview(templateId, previewContainer);
+        }
+    });
+}
+
+// Générer un aperçu visuel du template avec les données d'une commande
+function generateTemplatePreview(templateId, orderId, container) {
+    // Créer une iframe pour afficher l'aperçu HTML
+    const iframeId = 'preview-iframe-' + templateId;
+    
+    // Charger l'aperçu HTML via AJAX
+    jQuery.ajax({
+        url: ajaxurl,
+        type: 'POST',
+        data: {
+            action: 'pdf_builder_get_preview_html',
+            template_id: templateId,
+            order_id: orderId,
+            nonce: pdfBuilderTemplatesNonce
+        },
+        success: function(response) {
+            if (response && response.success && response.data && response.data.html) {
+                // Convertir HTML en image (canvas) ou afficher dans iframe
+                container.innerHTML = '<iframe id="' + iframeId + '" style="width: 100%; height: 100%; border: none; border-radius: 4px;" srcdoc="' + encodeURIComponent(response.data.html) + '"></iframe>';
+            } else {
+                showTemplateIconPreview(templateId, container);
+            }
+        },
+        error: function() {
+            showTemplateIconPreview(templateId, container);
+        }
+    });
+}
+
+// Afficher un simple aperçu avec icône et couleur du type
+function showTemplateIconPreview(templateId, container) {
+    const card = container.closest('.pdfb-template-card');
+    if (!card) return;
+    
+    // Déterminer le type de template depuis les classes CSS
+    let templateType = 'autre';
+    const classes = card.className;
+    if (classes.includes('template-type-facture')) templateType = 'facture';
+    else if (classes.includes('template-type-devis')) templateType = 'devis';
+    else if (classes.includes('template-type-commande')) templateType = 'commande';
+    else if (classes.includes('template-type-contrat')) templateType = 'contrat';
+    else if (classes.includes('template-type-newsletter')) templateType = 'newsletter';
+    
+    // Déterminer la couleur du type
+    const colors = {
+        'facture': '#007cba',
+        'devis': '#28a745',
+        'commande': '#ffc107',
+        'contrat': '#dc3545',
+        'newsletter': '#6f42c1',
+        'autre': '#6c757d'
+    };
+    const color = colors[templateType] || colors['autre'];
+    const icons = {
+        'facture': '🧾',
+        'devis': '📋',
+        'commande': '📦',
+        'contrat': '📑',
+        'newsletter': '📰',
+        'autre': '📄'
+    };
+    const icon = icons[templateType] || icons['autre'];
+    
+    // Afficher un aperçu stylisé
+    container.innerHTML = '<div style="width: 100%; height: 100%; background: linear-gradient(135deg, ' + color + '20 0%, ' + color + '10 100%); display: flex; align-items: center; justify-content: center; border-radius: 4px; border: 2px solid ' + color + ';">' +
+        '<div style="text-align: center; color: ' + color + ';">' +
+        '<div style="font-size: 2rem; margin-bottom: 4px;">' + icon + '</div>' +
+        '<div style="font-size: 10px; font-weight: 600; text-transform: uppercase;">' + templateType + '</div>' +
+        '</div></div>';
+}
                 alert('Erreur lors de la duplication: ' + (data.message || 'Erreur inconnue'));
             }
         })
