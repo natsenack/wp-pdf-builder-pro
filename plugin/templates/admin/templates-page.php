@@ -243,6 +243,18 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                     $template_id = $template['id'];
                     $template_name = esc_html($template['name']);
                     $thumbnail_url = isset($template['thumbnail_url']) ? $template['thumbnail_url'] : '';
+                    
+                    // Nettoyer la thumbnail_url - rejeter les URLs invalides (0.0.0.1, localhost, etc.)
+                    if (!empty($thumbnail_url)) {
+                        // Rejeter si contient 0.0.0.1 ou localhost ou vide
+                        if (strpos($thumbnail_url, '0.0.0.1') !== false || 
+                            strpos($thumbnail_url, 'localhost') !== false ||
+                            strpos($thumbnail_url, '127.0.0.1') !== false ||
+                            strlen(trim($thumbnail_url)) === 0) {
+                            $thumbnail_url = '';
+                        }
+                    }
+                    
                     $created_at = isset($template['created_at']) ? $template['created_at'] : null;
                     $updated_at = isset($template['updated_at']) ? $template['updated_at'] : null;
                     $is_default = isset($template['is_default']) ? (bool)$template['is_default'] : false;
@@ -330,8 +342,8 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                     }
 
                     echo '<div style="text-align: center; margin-bottom: 15px; margin-top: 40px;">';
-                    // Vérifier que la thumbnail_url est valide (non vide et ne contient pas 0.0.0.1)
-                    if (!empty($thumbnail_url) && strpos($thumbnail_url, 'http://0.0.0.1') === false && strpos($thumbnail_url, '0.0.0.1') === false) {
+                    // Afficher le preview si disponible (déjà nettoyé en PHP)
+                    if (!empty($thumbnail_url)) {
                         echo '<div style="width: 120px; height: 80px; margin: 0 auto 10px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; background: #f8f9fa;">';
                         echo '<img src="' . esc_url($thumbnail_url) . '" alt="' . esc_attr($template_name) . '" style="width: 100%; height: 100%; object-fit: cover;" />';
                         echo '</div>';
