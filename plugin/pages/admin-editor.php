@@ -38,6 +38,8 @@ require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/ReactAssetsV2.php';
     </div>
 </div>
 
+<?php require_once PDF_BUILDER_PLUGIN_DIR . 'templates/admin/partials/upgrade-modals.php'; ?>
+
 <style>
 .pdf-builder-admin-container {
     margin: 0 -20px -20px -20px;
