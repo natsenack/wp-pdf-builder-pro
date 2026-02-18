@@ -4164,11 +4164,11 @@ export const Header = memo(function Header({
                 padding: "25px", borderRadius: "8px", color: "white",
               }}>
                 <div style={{ fontSize: "36px", fontWeight: "bold", marginBottom: "10px" }}>
-                  69€ <span style={{ fontSize: "16px", fontWeight: "normal" }}>à vie</span>
+                  89.99€ <span style={{ fontSize: "16px", fontWeight: "normal" }}>à vie</span>
                 </div>
                 <p style={{ margin: "10px 0 20px 0", opacity: 0.9 }}>Paiement unique, pas d'abonnement</p>
                 <a
-                  href="https://threeaxe.fr/contact/?subject=Upgrade%20PDF%20Builder%20Pro"
+                  href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/"
                   target="_blank"
                   rel="noreferrer"
                   style={{

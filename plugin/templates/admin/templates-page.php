@@ -185,7 +185,7 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                 </p>
                 <a href="#" onclick="showUpgradeModal('gallery')" class="button button-primary">
                     <span class="dashicons dashicons-star-filled"></span>
-                    <?php _e('Passer en Premium - 69€ à vie', 'pdf-builder-pro'); ?>
+                    <?php _e('Passer en Premium - 89.99€ à vie', 'pdf-builder-pro'); ?>
                 </a>
             </div>
         <?php endif; ?>
@@ -801,9 +801,9 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                 </ul>
             </div>
             <div class="pricing" style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 8px; color: white;">
-                <div class="price" style="font-size: 36px; font-weight: bold; margin-bottom: 10px;">69€ <span style="font-size: 16px; font-weight: normal;">à vie</span></div>
+                <div class="price" style="font-size: 36px; font-weight: bold; margin-bottom: 10px;">89.99€ <span style="font-size: 16px; font-weight: normal;">à vie</span></div>
                 <p style="margin: 10px 0 20px 0; opacity: 0.9;">Paiement unique, pas d'abonnement</p>
-                <a href="https://threeaxe.fr/contact/?subject=Upgrade%20PDF%20Builder%20Pro" class="button button-primary" style="background: white; color: #667eea; border: none; padding: 12px 30px; font-size: 16px; font-weight: bold; text-decoration: none; display: inline-block; border-radius: 6px;">
+                <a href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/" class="button button-primary" style="background: white; color: #667eea; border: none; padding: 12px 30px; font-size: 16px; font-weight: bold; text-decoration: none; display: inline-block; border-radius: 6px;">
                     <span class="dashicons dashicons-cart" style="margin-right: 5px;"></span>
                     Commander Maintenant
                 </a>
@@ -835,9 +835,9 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                 </ul>
             </div>
             <div class="pricing" style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 8px; color: white;">
-                <div class="price" style="font-size: 36px; font-weight: bold; margin-bottom: 10px;">69€ <span style="font-size: 16px; font-weight: normal;">à vie</span></div>
+                <div class="price" style="font-size: 36px; font-weight: bold; margin-bottom: 10px;">89.99€ <span style="font-size: 16px; font-weight: normal;">à vie</span></div>
                 <p style="margin: 10px 0 20px 0; opacity: 0.9;">Paiement unique, pas d'abonnement</p>
-                <a href="https://threeaxe.fr/contact/?subject=Upgrade%20PDF%20Builder%20Pro" class="button button-primary" style="background: white; color: #667eea; border: none; padding: 12px 30px; font-size: 16px; font-weight: bold; text-decoration: none; display: inline-block; border-radius: 6px;">
+                <a href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/" class="button button-primary" style="background: white; color: #667eea; border: none; padding: 12px 30px; font-size: 16px; font-weight: bold; text-decoration: none; display: inline-block; border-radius: 6px;">
                     <span class="dashicons dashicons-cart" style="margin-right: 5px;"></span>
                     Commander Maintenant
                 </a>

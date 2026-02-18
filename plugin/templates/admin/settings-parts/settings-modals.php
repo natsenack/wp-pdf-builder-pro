@@ -1017,11 +1017,11 @@ function showUpgradeModal(feature) {
                             </ul>
                         </div>
                         <div style="background: #e8f5e8; border: 2px solid #28a745; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                            <strong style="color: #155724; font-size: 18px;">69€ à vie</strong>
+                            <strong style="color: #155724; font-size: 18px;">89.99€ à vie</strong>
                             <br><small style="color: #155724;">Paiement unique, pas d'abonnement</small>
                         </div>
-                        <a href="https://pdf-builder-pro.com/premium" target="_blank" class="button button-primary" style="background: #28a745; border-color: #28a745; padding: 12px 24px; font-size: 16px;">
-                            🚀 Passer en Premium - 69€
+                        <a href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/" target="_blank" class="button button-primary" style="background: #28a745; border-color: #28a745; padding: 12px 24px; font-size: 16px;">
+                            🚀 Passer en Premium - 89.99€
                         </a>
                     </div>
                 </div>
