@@ -191,7 +191,13 @@ class PdfBuilderAdminNew
         // $this->dashboard_data_provider = lazy loaded via getDashboardDataProvider()
         // $this->woocommerce_integration = lazy loaded via getWooCommerceIntegration()
 
-        // Initialiser seulement le manager de templates prédéfinis s'il existe
+        // Initialiser seulement le manager de templates prédéfinis s'il existe (réservé aux développeurs)
+        if (function_exists('pdf_builder_is_dev_access') && pdf_builder_is_dev_access()) {
+            $predefined_manager_file = PDF_BUILDER_PLUGIN_DIR . 'templates/admin/predefined-templates-manager.php';
+            if (file_exists($predefined_manager_file)) {
+                require_once $predefined_manager_file;
+            }
+        }
         if (class_exists('PDF_Builder\Admin\PDF_Builder_Predefined_Templates_Manager')) {
             $this->predefined_templates_manager = new \PDF_Builder\Admin\PDF_Builder_Predefined_Templates_Manager();
         }
