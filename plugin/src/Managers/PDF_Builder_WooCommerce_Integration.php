@@ -823,7 +823,12 @@ class PDF_Builder_WooCommerce_Integration
 
         // Envoi e-mail
         $filename    = 'document-commande-' . $order->get_order_number() . '.pdf';
-        $headers     = ['Content-Type: text/html; charset=UTF-8'];
+        $from_name   = get_bloginfo('name');
+        $from_email  = get_option('admin_email');
+        $headers     = [
+            'Content-Type: text/html; charset=UTF-8',
+            'From: ' . $from_name . ' <' . $from_email . '>',
+        ];
         $body        = $message ? nl2br(\esc_html($message)) : '';
         $attachments = [$tmp_file];
 
