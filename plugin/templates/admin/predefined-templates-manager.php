@@ -45,8 +45,8 @@ class PDF_Builder_Predefined_Templates_Manager
         // Vérifier si le Mode Développeur est activé
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
         
-        // N'ajouter le menu que si le Mode Développeur est activé
-        if (!empty($settings['pdf_builder_developer_enabled'])) {
+        // N'ajouter le menu que si le Mode Développeur est actif (token + BDD)
+        if (function_exists('pdf_builder_is_developer_mode_active') && pdf_builder_is_developer_mode_active()) {
             // Menu maintenant géré par PDF_Builder_Admin.php
             /*
             add_submenu_page(
@@ -132,8 +132,8 @@ class PDF_Builder_Predefined_Templates_Manager
      */
     private function isDeveloperAuthenticated()
     {
-        $settings = pdf_builder_get_option('pdf_builder_settings', array());
-        if (empty($settings['pdf_builder_developer_enabled'])) {
+        // Double condition : token valide ET toggle actif en BDD
+        if (!function_exists('pdf_builder_is_developer_mode_active') || !pdf_builder_is_developer_mode_active()) {
             return false;
         }
         // Vérifier l'authentification développeur stockée en option
@@ -183,7 +183,7 @@ class PDF_Builder_Predefined_Templates_Manager
             $settings = pdf_builder_get_option('pdf_builder_settings', array());
             
             
-            if (empty($settings['pdf_builder_developer_enabled'])) {
+            if (!function_exists('pdf_builder_is_developer_mode_active') || !pdf_builder_is_developer_mode_active()) {
 
                 wp_send_json_error('Mode développeur désactivé');
             }
@@ -269,7 +269,7 @@ class PDF_Builder_Predefined_Templates_Manager
         }
         // Vérifier l'authentification développeur
         $settings = pdf_builder_get_option('pdf_builder_settings', array());
-        if (empty($settings['pdf_builder_developer_enabled'])) {
+        if (!function_exists('pdf_builder_is_developer_mode_active') || !pdf_builder_is_developer_mode_active()) {
             ?>
             <div class="wrap">
                 <h1><?php _e('🔒 Accès Restreint', 'pdf-builder-pro'); ?></h1>

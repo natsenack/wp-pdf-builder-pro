@@ -71,6 +71,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         // Actions de licence
         add_action('wp_ajax_pdf_builder_test_license', [$this, 'handle_test_license']);
+        add_action('wp_ajax_pdf_builder_validate_dev_token', [$this, 'handle_validate_dev_token']);
         add_action('wp_ajax_pdf_builder_toggle_test_mode', [$this, 'handle_toggle_test_mode']);
         add_action('wp_ajax_pdf_builder_generate_test_license_key', [$this, 'handle_generate_test_license_key']);
         add_action('wp_ajax_pdf_builder_delete_test_license_key', [$this, 'handle_delete_test_license_key']);
@@ -1841,6 +1842,27 @@ class PDF_Builder_Unified_Ajax_Handler {
     /**
      * Handler pour tester la licence
      */
+    /**
+     * Valide le token développeur (hash SHA-256) — protège la section Test de Licence.
+     */
+    public function handle_validate_dev_token(): void {
+        check_ajax_referer('pdf_builder_ajax', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Accès refusé.'], 403);
+        }
+        $token = sanitize_text_field($_POST['token'] ?? '');
+        if (empty($token)) {
+            wp_send_json_error(['message' => 'Token vide.']);
+        }
+        // Hash SHA-256 du token secret (généré le 2026-02-18)
+        $expected_hash = '04abca0b6fb5a01f8854daecd90fdfe709df2e6c446cf328986b5d952a0ac27e';
+        if (hash_equals($expected_hash, hash('sha256', $token))) {
+            wp_send_json_success(['message' => 'Token valide.']);
+        } else {
+            wp_send_json_error(['message' => 'Token invalide.']);
+        }
+    }
+
     public function handle_test_license() {
         if (!$this->nonce_manager->validate_ajax_request('test_license')) {
             return;
@@ -2641,7 +2663,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                  'plugin' => [
                      'version' => pdf_builder_get_option('pdf_builder_version', 'Unknown'),
                      'cache_enabled' => pdf_builder_get_option('pdf_builder_cache_enabled', '0') === '1',
-                     'developer_mode' => pdf_builder_get_option('pdf_builder_developer_enabled', '0') === '1',
+                     'developer_mode' => function_exists('pdf_builder_is_developer_mode_active') && pdf_builder_is_developer_mode_active(),
                      'license_status' => pdf_builder_get_option('pdf_builder_license_status', 'inactive')
                  ]
              ];

@@ -33,8 +33,8 @@ class PDF_Builder_Template_Manager
             return true;
         }
         
-        // Fallback: vérifier si le mode développeur est activé avec un niveau de log suffisant
-        $developer_mode = isset($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] && $settings['pdf_builder_developer_enabled'] !== '0';
+        // Fallback: vérifier si le mode développeur est actif (token + BDD)
+        $developer_mode = function_exists('pdf_builder_is_developer_mode_active') && pdf_builder_is_developer_mode_active();
         if ($developer_mode) {
             $log_level = isset($settings['pdf_builder_log_level']) ? \intval($settings['pdf_builder_log_level']) : 0;
             // Les logs de template nécessitent au minimum le niveau 3 (Info complète)

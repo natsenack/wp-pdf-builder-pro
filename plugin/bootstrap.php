@@ -166,6 +166,27 @@ if (!function_exists('pdf_builder_is_dev_access')) {
 }
 
 /**
+ * Vérifie si le Mode Développeur est VRAIMENT actif.
+ * Exige TOUJOURS les deux conditions : token valide EN wp-config.php ET toggle activé en BDD.
+ * Une modification directe de la BDD sans le token ne suffit jamais.
+ */
+if (!function_exists('pdf_builder_is_developer_mode_active')) {
+    function pdf_builder_is_developer_mode_active(): bool {
+        // Sans token valide dans wp-config.php : toujours false, quoi que contienne la BDD
+        if (!pdf_builder_is_dev_access()) {
+            return false;
+        }
+        if (!function_exists('pdf_builder_get_option')) {
+            return false;
+        }
+        $settings = pdf_builder_get_option('pdf_builder_settings', []);
+        return is_array($settings)
+            && !empty($settings['pdf_builder_developer_enabled'])
+            && $settings['pdf_builder_developer_enabled'] !== '0';
+    }
+}
+
+/**
  * Récupérer une option depuis la table personnalisée wp_pdf_builder_settings
  * Fallback vers wp_options si la table n'existe pas
  */
@@ -473,6 +494,20 @@ if (function_exists('add_action')) {
             }
         }
     }, 1);
+    // Auto-désactiver le Mode Développeur en BDD si le token n'est pas défini
+    add_action('admin_init', function() {
+        if (defined('DOING_AJAX') && DOING_AJAX) return;
+        if (function_exists('pdf_builder_is_dev_access') && !pdf_builder_is_dev_access()) {
+            if (function_exists('pdf_builder_get_option') && function_exists('pdf_builder_update_option')) {
+                $settings = pdf_builder_get_option('pdf_builder_settings', []);
+                if (is_array($settings) && !empty($settings['pdf_builder_developer_enabled']) && $settings['pdf_builder_developer_enabled'] !== '0') {
+                    $settings['pdf_builder_developer_enabled'] = '0';
+                    pdf_builder_update_option('pdf_builder_settings', $settings);
+                }
+            }
+        }
+    }, 5);
+
     // Also enforce HTTPS for the administration pages if configured
     add_action('admin_init', function() {
         // Skip CLI, AJAX and REST calls

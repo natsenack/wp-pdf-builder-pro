@@ -62,7 +62,30 @@ if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access(
                 </tr>
              </table>
 
-            <section id="dev-license-section" class="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'developer-section-hidden' : ''; ?>">
+            <section id="dev-license-section" style="position: relative;" class="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'developer-section-hidden' : ''; ?>">
+
+                <!-- Overlay de verrouillage secondaire — token requis même à l'intérieur de l'onglet dev -->
+                <div id="dev-license-lock" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.8);backdrop-filter:blur(4px);border-radius:8px;z-index:100;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;">
+                    <span style="font-size:48px;">🔐</span>
+                    <p style="color:white;font-size:16px;font-weight:600;margin:0;">Section protégée</p>
+                    <p style="color:#94a3b8;font-size:13px;margin:0;text-align:center;padding:0 20px;">Entrez votre token développeur pour accéder aux outils de licence</p>
+                    <button type="button" id="unlock-license-section-btn" style="background:#3b82f6;color:white;border:none;padding:10px 24px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;">🔑 Déverrouiller</button>
+                </div>
+
+                <!-- Modal de saisie du token -->
+                <div id="dev-token-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.65);z-index:999999;justify-content:center;align-items:center;">
+                    <div style="background:white;border-radius:12px;padding:32px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+                        <h3 style="margin:0 0 8px;color:#1e293b;">🔐 Token Développeur</h3>
+                        <p style="color:#64748b;margin:0 0 20px;font-size:14px;">Entrez votre token secret pour déverrouiller les outils de licence.</p>
+                        <input type="password" id="dev-token-input" placeholder="Token secret..." autocomplete="off" style="width:100%;padding:10px 12px;border:2px solid #e2e8f0;border-radius:6px;font-size:14px;box-sizing:border-box;margin-bottom:8px;" />
+                        <div id="dev-token-error" style="color:#ef4444;font-size:13px;margin-bottom:12px;display:none;">❌ Token invalide. Réessayez.</div>
+                        <div style="display:flex;gap:10px;justify-content:flex-end;">
+                            <button type="button" id="dev-token-cancel" style="background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;padding:10px 18px;border-radius:6px;cursor:pointer;">Annuler</button>
+                            <button type="button" id="dev-token-submit" style="background:#3b82f6;color:white;border:none;padding:10px 18px;border-radius:6px;font-weight:600;cursor:pointer;">✅ Valider</button>
+                        </div>
+                        <input type="hidden" id="dev-token-validate-nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
+                    </div>
+                </div>
                 <h3 class="pdfb-section-title">🔐 Test de Licence</h3>
 
                 <table class="pdfb-form-table">
@@ -618,6 +641,73 @@ if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access(
 
     $(document).ready(function() {
         console.log('🔧 [Mode Développeur] Document ready, initialisation du gestionnaire toggle');
+
+        // === Déverrouillage section Test de Licence via token ===
+        (function initLicenseSectionLock() {
+            var SESSION_KEY = 'pdfb_dev_license_unlocked';
+            var overlay = document.getElementById('dev-license-lock');
+            var modal   = document.getElementById('dev-token-modal');
+            if (!overlay || !modal) return;
+
+            // Déjà déverrouillé dans cette session → masquer l'overlay directement
+            if (sessionStorage.getItem(SESSION_KEY) === '1') {
+                overlay.style.display = 'none';
+                return;
+            }
+
+            // Bouton Déverrouiller → ouvre le modal
+            document.getElementById('unlock-license-section-btn').addEventListener('click', function() {
+                modal.style.display = 'flex';
+                setTimeout(function() { document.getElementById('dev-token-input').focus(); }, 50);
+            });
+
+            // Annuler
+            document.getElementById('dev-token-cancel').addEventListener('click', function() {
+                modal.style.display = 'none';
+                document.getElementById('dev-token-input').value = '';
+                document.getElementById('dev-token-error').style.display = 'none';
+            });
+
+            // Valider via AJAX
+            document.getElementById('dev-token-submit').addEventListener('click', function() {
+                var token = document.getElementById('dev-token-input').value.trim();
+                var nonce = document.getElementById('dev-token-validate-nonce').value;
+                var btn   = this;
+                var errorEl = document.getElementById('dev-token-error');
+                if (!token) return;
+                btn.disabled = true;
+                btn.textContent = '⏳ Vérification...';
+                errorEl.style.display = 'none';
+                $.ajax({
+                    url: ajaxurl,
+                    method: 'POST',
+                    data: { action: 'pdf_builder_validate_dev_token', token: token, nonce: nonce },
+                    success: function(response) {
+                        if (response.success) {
+                            sessionStorage.setItem(SESSION_KEY, '1');
+                            modal.style.display = 'none';
+                            overlay.style.display = 'none';
+                            document.getElementById('dev-token-input').value = '';
+                        } else {
+                            errorEl.style.display = 'block';
+                            btn.disabled = false;
+                            btn.textContent = '✅ Valider';
+                        }
+                    },
+                    error: function() {
+                        errorEl.style.display = 'block';
+                        btn.disabled = false;
+                        btn.textContent = '✅ Valider';
+                    }
+                });
+            });
+
+            // Touche Entrée dans le champ
+            document.getElementById('dev-token-input').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') document.getElementById('dev-token-submit').click();
+            });
+        })();
+        // === Fin déverrouillage ===
         
         // Initialiser l'état du toggle au chargement
         const $developerToggle = $('#developer_enabled');

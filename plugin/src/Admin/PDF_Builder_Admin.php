@@ -1123,8 +1123,8 @@ class PdfBuilderAdminNew
         // Paramètres et configuration
         \add_submenu_page('pdf-builder-pro',            \__('Paramètres - PDF Builder Pro', 'pdf-builder-pro'),            \__('⚙️ Paramètres', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-settings', [$this, 'settings_page']);
 
-        // Galerie de modèles (mode développeur uniquement)
-        if (!empty(pdf_builder_get_option('pdf_builder_settings')['pdf_builder_developer_enabled'])) {
+        // Galerie de modèles (mode développeur uniquement — token + BDD requis)
+        if (function_exists('pdf_builder_is_developer_mode_active') && pdf_builder_is_developer_mode_active()) {
             \add_submenu_page(
                 'pdf-builder-pro',
             \__('Galerie de Modèles - PDF Builder Pro', 'pdf-builder-pro'),
