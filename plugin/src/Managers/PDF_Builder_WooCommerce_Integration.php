@@ -555,59 +555,33 @@ class PDF_Builder_WooCommerce_Integration
                         nonce:       nonce
                     });
                 } else {
-                    // PNG / JPG : rendu côté client via html2canvas
-                    if (typeof window.html2canvas !== 'function') {
-                        alert('html2canvas non chargé. Rechargez la page.');
-                        btn.prop('disabled', false).html(orig);
-                        return;
-                    }
-
+                    // PNG / JPG : aperçu via Blob URL (même rendu que l'éditeur PDF)
                     btn.prop('disabled', true).html('⏳');
 
-                    // 1. Récupérer le HTML rendu avec les données de la commande
                     $.post(ajaxUrl, {
                         action:      'pdf_builder_get_preview_html',
                         order_id:    orderId,
                         template_id: templateId,
                         nonce:       nonce
                     }, function(response) {
+                        btn.prop('disabled', false).html(orig);
+
                         if (!response.success || !response.data || !response.data.html) {
-                            btn.prop('disabled', false).html(orig);
                             alert('Erreur HTML : ' + ((response.data && response.data.message) || 'Inconnue'));
                             return;
                         }
 
-                        var html     = response.data.html;
-                        var width    = response.data.width  || 794;
-                        var height   = response.data.height || 1123;
-                        var orderNum = response.data.order_number || orderId;
-                        var mimeType = (type === 'jpg') ? 'image/jpeg' : 'image/png';
+                        var html = response.data.html;
 
-                        // 2. Injecter dans un div hors-écran
-                        var $c = $('<div>').css({
-                            position: 'absolute', left: '-9999px', top: '0',
-                            width: width + 'px', height: height + 'px'
-                        }).html(html);
-                        $('body').append($c);
-
-                        // 3. html2canvas → canvas → download
-                        window.html2canvas($c[0], {
-                            width: width, height: height,
-                            scale: 2, useCORS: true,
-                            allowTaint: true, backgroundColor: '#ffffff'
-                        }).then(function(canvas) {
-                            $c.remove();
-                            btn.prop('disabled', false).html(orig);
-                            var dataUrl = canvas.toDataURL(mimeType, 0.95);
-                            var win = window.open('', '_blank');
-                            win.document.write('<img src="' + dataUrl + '" style="max-width:100%;display:block;margin:auto;">');
-                            win.document.title = 'facture-' + orderNum + '.' + type;
-                            win.document.close();
-                        }).catch(function(err) {
-                            $c.remove();
-                            btn.prop('disabled', false).html(orig);
-                            alert('Erreur html2canvas : ' + err);
-                        });
+                        // Ouvrir comme Blob URL — rendu 100% fidèle à l'éditeur
+                        var blob    = new Blob([html], { type: 'text/html; charset=utf-8' });
+                        var blobUrl = URL.createObjectURL(blob);
+                        var win     = window.open(blobUrl, '_blank');
+                        if (win) {
+                            win.addEventListener('unload', function() {
+                                URL.revokeObjectURL(blobUrl);
+                            });
+                        }
                     }).fail(function() {
                         btn.prop('disabled', false).html(orig);
                         alert('Erreur réseau.');
