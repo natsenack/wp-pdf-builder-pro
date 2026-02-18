@@ -2939,13 +2939,14 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             $this->debug_log("Template '{$template_id}' trouvé");
 
-            // === DÉTERMINER LE MOTEUR PDF AVANT GÉNÉRATION HTML ===
-            $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
-            $this->current_engine_name = strtolower($engine->get_name());
-            $this->debug_log("Moteur sélectionné pour image: " . $engine->get_name());
-            
-            // Générer l'HTML avec les vraies données (avec styles optimisés pour le moteur)
-            $this->debug_log("Début génération HTML pour image (moteur: {$this->current_engine_name})");
+            // Pour les images, on utilise toujours DomPDF + Imagick
+            // (Puppeteer n'a pas encore d'endpoint screenshot stable)
+            $engine = new \PDF_Builder\PDF\Engines\DomPDFEngine();
+            $this->current_engine_name = 'dompdf';
+            $this->debug_log("Moteur image forcé: DomPDF + Imagick");
+
+            // Générer l'HTML avec les vraies données
+            $this->debug_log("Début génération HTML pour image");
             $html = $this->generate_template_html($template, $order);
             
             // Optimiser le HTML
