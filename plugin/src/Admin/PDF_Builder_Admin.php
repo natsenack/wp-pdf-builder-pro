@@ -883,6 +883,17 @@ class PdfBuilderAdminNew
      */
     private function registerWooCommerceHooks()
     {
+        // AJAX handlers WooCommerce — enregistrés tôt pour être disponibles même hors page admin
+        // On lazy-load l'intégration uniquement quand la requête AJAX arrive
+        \add_action('wp_ajax_pdf_builder_generate_order_pdf', function() {
+            $integration = $this->getWooCommerceIntegration();
+            if ($integration) {
+                $integration->ajaxGenerateOrderPdf();
+            } else {
+                \wp_send_json_error(['message' => 'WooCommerce integration unavailable']);
+            }
+        }, 1);
+
         // Enregistrer directement pour le hook shop_order (version legacy)
         \add_action('add_meta_boxes_shop_order', function() {
             // Vérifier que WooCommerce est activé
