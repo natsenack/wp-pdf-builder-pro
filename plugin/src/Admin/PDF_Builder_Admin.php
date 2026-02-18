@@ -885,6 +885,27 @@ class PdfBuilderAdminNew
     {
         // AJAX handlers WooCommerce — enregistrés tôt pour être disponibles même hors page admin
         // On lazy-load l'intégration uniquement quand la requête AJAX arrive
+        // html2canvas sur les pages commandes (pour export PNG/JPG côté client dans la metabox)
+        \add_action('admin_enqueue_scripts', function($hook) {
+            $is_order = false;
+            if ($hook === 'post.php' && isset($_GET['post'])) {
+                $is_order = get_post_type(intval($_GET['post'])) === 'shop_order';
+            }
+            if (!$is_order && (
+                strpos($hook, 'wc-orders') !== false ||
+                (isset($_GET['page']) && $_GET['page'] === 'wc-orders' && isset($_GET['id']))
+            )) {
+                $is_order = true;
+            }
+            if (!$is_order) return;
+
+            wp_enqueue_script(
+                'html2canvas',
+                'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+                [], '1.4.1', true
+            );
+        });
+
         \add_action('wp_ajax_pdf_builder_generate_order_pdf', function() {
             $integration = $this->getWooCommerceIntegration();
             if ($integration) {

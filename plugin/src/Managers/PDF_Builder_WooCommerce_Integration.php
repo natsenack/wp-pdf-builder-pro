@@ -166,6 +166,42 @@ class PDF_Builder_WooCommerce_Integration
     {
         // Enregistrer les hooks AJAX via l'action init pour s'assurer qu'ils sont disponibles tôt
         add_action('init', [$this, 'registerAjaxHooks']);
+        // Enqueue html2canvas sur les pages de commandes WooCommerce (pour export PNG/JPG)
+        add_action('admin_enqueue_scripts', [$this, 'enqueueOrderPageScripts']);
+    }
+
+    /**
+     * Charge html2canvas uniquement sur les pages de commandes WooCommerce
+     */
+    public function enqueueOrderPageScripts($hook)
+    {
+        $is_order_page = false;
+
+        // Mode classique (CPT shop_order)
+        if ($hook === 'post.php' && isset($_GET['post'])) {
+            $is_order_page = get_post_type(intval($_GET['post'])) === 'shop_order';
+        }
+
+        // Mode HPOS (WC 7.1+) : woocommerce_page_wc-orders ou page=wc-orders avec id
+        if (!$is_order_page && (
+            strpos($hook, 'wc-orders') !== false ||
+            (isset($_GET['page']) && $_GET['page'] === 'wc-orders' && isset($_GET['id']))
+        )) {
+            $is_order_page = true;
+        }
+
+        if (!$is_order_page) {
+            return;
+        }
+
+        // html2canvas standalone (requis pour export PNG/JPG côté client)
+        wp_enqueue_script(
+            'html2canvas',
+            'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+            [],
+            '1.4.1',
+            true
+        );
     }
 
     /**
@@ -519,12 +555,63 @@ class PDF_Builder_WooCommerce_Integration
                         nonce:       nonce
                     });
                 } else {
-                    openExportForm(ajaxUrl, {
-                        action:      'pdf_builder_generate_image',
+                    // PNG / JPG : rendu côté client via html2canvas
+                    if (typeof window.html2canvas !== 'function') {
+                        alert('html2canvas non chargé. Rechargez la page.');
+                        btn.prop('disabled', false).html(orig);
+                        return;
+                    }
+
+                    btn.prop('disabled', true).html('⏳');
+
+                    // 1. Récupérer le HTML rendu avec les données de la commande
+                    $.post(ajaxUrl, {
+                        action:      'pdf_builder_get_preview_html',
                         order_id:    orderId,
                         template_id: templateId,
-                        format:      type,
                         nonce:       nonce
+                    }, function(response) {
+                        if (!response.success || !response.data || !response.data.html) {
+                            btn.prop('disabled', false).html(orig);
+                            alert('Erreur HTML : ' + ((response.data && response.data.message) || 'Inconnue'));
+                            return;
+                        }
+
+                        var html     = response.data.html;
+                        var width    = response.data.width  || 794;
+                        var height   = response.data.height || 1123;
+                        var orderNum = response.data.order_number || orderId;
+                        var mimeType = (type === 'jpg') ? 'image/jpeg' : 'image/png';
+
+                        // 2. Injecter dans un div hors-écran
+                        var $c = $('<div>').css({
+                            position: 'absolute', left: '-9999px', top: '0',
+                            width: width + 'px', height: height + 'px'
+                        }).html(html);
+                        $('body').append($c);
+
+                        // 3. html2canvas → canvas → download
+                        window.html2canvas($c[0], {
+                            width: width, height: height,
+                            scale: 2, useCORS: true,
+                            allowTaint: true, backgroundColor: '#ffffff'
+                        }).then(function(canvas) {
+                            $c.remove();
+                            btn.prop('disabled', false).html(orig);
+                            var dataUrl  = canvas.toDataURL(mimeType, 0.95);
+                            var filename = 'facture-' + orderNum + '.' + type;
+                            var $a = $('<a>', {href: dataUrl, download: filename, style: 'display:none'});
+                            $('body').append($a);
+                            $a[0].click();
+                            $a.remove();
+                        }).catch(function(err) {
+                            $c.remove();
+                            btn.prop('disabled', false).html(orig);
+                            alert('Erreur html2canvas : ' + err);
+                        });
+                    }).fail(function() {
+                        btn.prop('disabled', false).html(orig);
+                        alert('Erreur réseau.');
                     });
                 }
             });

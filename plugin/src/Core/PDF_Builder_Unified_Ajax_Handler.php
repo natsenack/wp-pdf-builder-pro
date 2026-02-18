@@ -2939,45 +2939,75 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             $this->debug_log("Template '{$template_id}' trouvé");
 
-            // Pour les images, on utilise toujours DomPDF + Imagick
-            // (Puppeteer n'a pas encore d'endpoint screenshot stable)
-            $engine = new \PDF_Builder\PDF\Engines\DomPDFEngine();
-            $this->current_engine_name = 'dompdf';
-            $this->debug_log("Moteur image forcé: DomPDF + Imagick");
-
-            // Générer l'HTML avec les vraies données
+            // Générer l'HTML commun aux deux moteurs
             $this->debug_log("Début génération HTML pour image");
             $html = $this->generate_template_html($template, $order);
-            
-            // Optimiser le HTML
             $html = $this->optimize_html($html);
-            
-            // Récupérer les dimensions du template
+
             $template_data = json_decode($template['template_data'], true);
-            $width = $template_data['canvasWidth'] ?? 794;
+            $width  = $template_data['canvasWidth']  ?? 794;
             $height = $template_data['canvasHeight'] ?? 1123;
-            
+
             $this->debug_log("Dimensions image: {$width}x{$height}px, format: {$format}");
-            $this->debug_log("Génération image avec moteur: " . $engine->get_name());
-            
-            // Générer l'image avec le moteur sélectionné
-            $image_content = $engine->generate_image($html, [
-                'format' => $format,
-                'width' => $width,
-                'height' => $height,
-                'quality' => 90
-            ]);
-            
+
+            $image_options = [
+                'format'  => $format,
+                'width'   => $width,
+                'height'  => $height,
+                'quality' => 90,
+            ];
+
+            // --- Sélection du moteur image ---
+            // Priorité 1 : Puppeteer (si configuré et disponible) - endpoint /screenshot
+            // Priorité 2 : DomPDF + Imagick + Ghostscript
+            $image_content = false;
+            $engine_used   = '';
+
+            $puppeteer = new \PDF_Builder\PDF\Engines\PuppeteerEngine();
+            if ($puppeteer->is_available()) {
+                $this->debug_log("Moteur image : Puppeteer (screenshot)");
+                $engine_used   = 'Puppeteer';
+                $this->current_engine_name = 'puppeteer';
+                $image_content = $puppeteer->generate_image($html, $image_options);
+            }
+
+            // Priorité 2 : DomPDF + Imagick (nécessite Ghostscript pour lire les PDF)
             if ($image_content === false) {
-                $this->debug_log("Échec génération image", "ERROR");
-                
-                // Message d'erreur détaillé
+                if (!extension_loaded('imagick')) {
+                    $this->debug_log("Imagick non disponible", "ERROR");
+                    wp_send_json_error([
+                        'message' => "Génération d'image impossible",
+                        'details' => "Ni Puppeteer ni Imagick ne sont disponibles. Installez Ghostscript + Imagick sur le serveur, ou configurez Puppeteer dans les paramètres du plugin.",
+                        'code'    => 'NO_IMAGE_ENGINE',
+                    ], 500);
+                }
+
+                // Vérifier que Ghostscript est accessible à Imagick (PDF policy)
+                $gs_ok = false;
+                try {
+                    $test = new \Imagick();
+                    // Si la politique ImageMagick bloque PDF, readImage lèvera une exception
+                    $gs_ok = true; // on tentera et on catchera en bas
+                } catch (\Exception $e) {
+                    $gs_ok = false;
+                }
+
+                $this->debug_log("Moteur image : DomPDF + Imagick");
+                $engine_used   = 'DomPDF+Imagick';
+                $this->current_engine_name = 'dompdf';
+                $dompdf_engine = new \PDF_Builder\PDF\Engines\DomPDFEngine();
+                $image_content = $dompdf_engine->generate_image($html, $image_options);
+            }
+
+            if ($image_content === false) {
+                $this->debug_log("Échec génération image (moteur: {$engine_used})", "ERROR");
                 wp_send_json_error([
                     'message' => "Génération d'image échouée",
-                    'details' => "Le moteur " . $engine->get_name() . " n'a pas pu générer l'image. " .
-                                "Si vous utilisez Puppeteer, vérifiez la configuration. " .
-                                "Sinon, installez l'extension PHP Imagick.",
-                    'code' => 'IMAGE_GENERATION_FAILED'
+                    'details' => "Le moteur {$engine_used} n'a pas pu générer l'image. " .
+                                 "Si vous utilisez DomPDF+Imagick, vérifiez que Ghostscript est installé sur le serveur " .
+                                 "(requis pour la conversion PDF→image). " .
+                                 "Sinon, configurez Puppeteer dans les paramètres du plugin.",
+                    'code'    => 'IMAGE_GENERATION_FAILED',
                 ], 500);
             }
             
