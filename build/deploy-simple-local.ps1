@@ -210,6 +210,7 @@ $criticalCompiledFiles = @(
     "plugin/assets/js/notifications.min.js"
     "plugin/assets/js/pdf-builder-wrap.min.js"
     "plugin/assets/js/pdf-builder-init.min.js"
+    "plugin/assets/js/predefined-templates.js"
     "plugin/assets/css/pdf-builder-react.min.css"
     "plugin/assets/css/notifications.min.css"
 )
@@ -307,15 +308,16 @@ try {
         }
     }
 
-    $criticalCompiledFiles = @(
+    $criticalSystemFiles = @(
         "plugin/assets/js/pdf-builder-react-wrapper.min.js"
         "plugin/assets/js/ajax-throttle.min.js"
         "plugin/assets/js/notifications.min.js"
         "plugin/assets/js/pdf-builder-wrap.min.js"
         "plugin/assets/js/pdf-builder-init.min.js"
+        "plugin/assets/js/predefined-templates.js"
         "plugin/assets/css/notifications.min.css"
     )
-    foreach ($criticalFile in $criticalCompiledFiles) {
+    foreach ($criticalFile in $criticalSystemFiles) {
         if (Test-Path $criticalFile) {
             & git add $criticalFile 2>$null
             Write-Log "Fichier critique ajouté à Git: $criticalFile" "INFO"

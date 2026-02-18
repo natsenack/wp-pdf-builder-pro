@@ -34,7 +34,7 @@ module.exports = {
     path: outputPath,
     filename: "[name].min.js",
     globalObject: 'typeof window !== "undefined" ? window : global',
-    clean: true,
+    clean: false,
     assetModuleFilename: "../assets/[name][ext]",
   },
   devtool: isDev ? "eval-source-map" : false,
@@ -106,7 +106,6 @@ module.exports = {
     },
   },
   plugins: [
-    new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: "../css/[name].min.css",
       chunkFilename: "../css/[name].chunk.css",
