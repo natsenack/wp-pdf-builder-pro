@@ -921,51 +921,6 @@ function loadTemplateSettings(templateId) {
     });
 }
 
-function saveTemplateSettings() {
-    const templateId = document.getElementById('settings-template-id').value;
-    const templateName = document.getElementById('template-name').value;
-    const templateDescription = document.getElementById('template-description').value;
-    const templateCategory = document.getElementById('template-category').value;
-    const isDefault = document.getElementById('template-is-default').checked ? 1 : 0;
-
-    // Validation de base
-    if (!templateName.trim()) {
-        alert('Veuillez entrer un nom pour le template.');
-        return;
-    }
-
-    // Faire une requête AJAX pour sauvegarder les paramètres
-    fetch(ajaxurl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            'action': 'pdf_builder_save_template_settings',
-            'template_id': templateId,
-            'template_name': templateName,
-            'template_description': templateDescription,
-            'template_category': templateCategory,
-            'is_default': isDefault,
-            'nonce': pdfBuilderTemplatesNonce
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Paramètres du template sauvegardés avec succès !');
-            closeTemplateSettingsModal();
-            location.reload(); // Recharger la page pour voir les changements
-        } else {
-            alert('Erreur lors de la sauvegarde: ' + (data.message || 'Erreur inconnue'));
-        }
-    })
-    .catch(error => {
-        
-        alert('Erreur lors de la sauvegarde des paramètres du template');
-    });
-}
-
 // Gestion de la notification de limite de templates
 function dismissTemplateLimitNotice() {
     const notice = document.getElementById('template-limit-notice');
@@ -1806,20 +1761,25 @@ function saveTemplateSettings() {
     formData.append('canvas_dpi', templateDpiEl.value);
     
     // Désactiver le bouton de sauvegarde
-    var saveButton = document.querySelector('#template-settings-modal .pdfb-canvas-modal-btn-primary');
+    var saveButton = document.querySelector('#template-settings-modal .canvas-modal-btn-primary');
     if (!saveButton) {
-        // Fallback pour les autres types de boutons
+        saveButton = document.querySelector('#template-settings-modal .pdfb-canvas-modal-btn-primary');
+    }
+    if (!saveButton) {
         saveButton = document.querySelector('#template-settings-modal .button-primary');
     }
     if (!saveButton) {
-        console.error('[DEBUG] Bouton de sauvegarde non trouvé');
-        return;
+        // Fallback : trouver n'importe quel bouton dans le modal
+        saveButton = document.querySelector('#template-settings-modal button[onclick*="saveTemplateSettings"]');
     }
+    // Si toujours pas trouvé, continuer quand même sans désactiver le bouton
+    var originalText = saveButton ? saveButton.innerHTML : null;
     
-    // Sauvegarder le texte original et désactiver le bouton
-    var originalText = saveButton.innerHTML;
-    saveButton.innerHTML = 'Sauvegarde en cours...';
-    saveButton.disabled = true;
+    // Désactiver le bouton pendant la sauvegarde
+    if (saveButton) {
+        saveButton.innerHTML = 'Sauvegarde en cours...';
+        saveButton.disabled = true;
+    }
     
     // Faire la requête AJAX
     fetch(ajaxurl, {
@@ -1868,8 +1828,10 @@ function saveTemplateSettings() {
     })
     .finally(function() {
         // Réactiver le bouton
-        saveButton.innerHTML = originalText;
-        saveButton.disabled = false;
+        if (saveButton && originalText !== null) {
+            saveButton.innerHTML = originalText;
+            saveButton.disabled = false;
+        }
     });
 }
 
