@@ -266,23 +266,20 @@ class PDF_Builder_Predefined_Templates_Manager
         if (!current_user_can('manage_options')) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
         }
-        // Vérifier l'authentification développeur
-        $settings = pdf_builder_get_option('pdf_builder_settings', array());
+
+        // Vérifier que le mode développeur est actif (token wp-config + BDD)
         if (!function_exists('pdf_builder_is_developer_mode_active') || !pdf_builder_is_developer_mode_active()) {
             ?>
             <div class="wrap">
                 <h1><?php _e('🔒 Accès Restreint', 'pdf-builder-pro'); ?></h1>
                 <div class="notice notice-warning">
-                    <p><?php _e('Le mode développeur n\'est pas activé. Allez dans <strong>PDF Builder → ⚙️ Paramètres → Mode Développeur</strong> pour l\'activer.', 'pdf-builder-pro'); ?></p>
+                    <p><?php _e('Le mode développeur n\'est pas activé.', 'pdf-builder-pro'); ?></p>
                 </div>
             </div>
             <?php
             return;
         }
-        if (!$this->isDeveloperAuthenticated()) {
-            $this->renderDeveloperLoginForm();
-            return;
-        }
+
         $templates = $this->getPredefinedTemplates();
         ?>
         <style>
