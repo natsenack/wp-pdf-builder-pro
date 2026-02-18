@@ -104,7 +104,7 @@ class AnalyticsTracker implements AnalyticsInterface
      */
     private function isDeveloperMode(): bool
     {
-        return pdf_builder_get_option('pdf_builder_developer_enabled', false) === true;
+        return function_exists('pdf_builder_is_developer_mode_active') && pdf_builder_is_developer_mode_active();
     }
 
     /**

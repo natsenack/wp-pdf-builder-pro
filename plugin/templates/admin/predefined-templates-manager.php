@@ -193,11 +193,10 @@ class PDF_Builder_Predefined_Templates_Manager
             $password = isset($_POST['password']) ? sanitize_text_field($_POST['password']) : '';
             $stored_password = isset($settings['pdf_builder_developer_password']) ? $settings['pdf_builder_developer_password'] : '';
 
-            // Fallback: si aucun mot de passe n'est stocké, utiliser une clé par défaut
+            // Si aucun mot de passe n'est configuré, refuser (ne jamais utiliser de fallback hardcodé)
             if (empty($stored_password)) {
-                $default_password = '03T17h#20X!20@02_@31/?';
-                
-                $stored_password = $default_password;
+                wp_send_json_error('Aucun mot de passe développeur configuré. Définissez-en un dans Paramètres → Développeur.');
+                return;
             }
 
             // Debug: log DÉTAILLÉ pour troubleshooting
