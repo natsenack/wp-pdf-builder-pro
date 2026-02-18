@@ -3562,8 +3562,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         // Bordures (respecter showBorders)
         // Règle: même comportement que React Canvas (showBorders !== false = true par défaut)
         // Exception: line, rectangle, circle gèrent leurs propres bordures dans leurs renderers
+        // Exception: company_info gère lui-même sa bordure (couleur thématisée)
         $type = $element['type'] ?? '';
-        $noBorderTypes = ['line', 'rectangle', 'circle', 'image'];
+        $noBorderTypes = ['line', 'rectangle', 'circle', 'image', 'company_info'];
         $showBorders = !in_array($type, $noBorderTypes) && ($element['showBorders'] ?? true) !== false;
         if ($showBorders) {
             // Canvas React défault à borderWidth=1, on fait pareil côté PHP
@@ -4258,6 +4259,16 @@ class PDF_Builder_Unified_Ajax_Handler {
         $showBackground = ($element['showBackground'] ?? true) !== false;
         if ($showBackground && $colors['background'] && $colors['background'] !== 'transparent') {
             $container_styles .= ' background-color: ' . $colors['background'] . ';';
+        }
+        
+        // Appliquer la bordure avec la couleur thématisée et l'épaisseur de l'élément
+        $showBorders   = ($element['showBorders'] ?? true) !== false;
+        $borderWidth_v = isset($element['borderWidth']) ? (float)$element['borderWidth'] : 1;
+        $borderStyle_v = $element['borderStyle'] ?? 'solid';
+        if ($showBorders && $borderWidth_v > 0) {
+            $container_styles .= ' border: ' . $borderWidth_v . 'px ' . $borderStyle_v . ' ' . $colors['border'] . ';';
+        } else {
+            $container_styles .= ' border: none;';
         }
         
         // Utiliser les propriétés de padding personnalisables depuis l'élément
