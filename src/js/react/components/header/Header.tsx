@@ -125,6 +125,9 @@ export const Header = memo(function Header({
   // Vérifier le statut premium depuis pdfBuilderData
   const isPremium = (window as any).pdfBuilderData?.license?.isPremium || false;
 
+  // Modal upgrade premium
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
   // Charger le moteur PDF actif
   const loadActiveEngine = async () => {
     try {
@@ -2681,18 +2684,38 @@ export const Header = memo(function Header({
         }}
       >
         <button
-          onClick={onNewTemplate}
+          onClick={() => {
+            if (!isPremium) {
+              setShowUpgradeModal(true);
+              return;
+            }
+            onNewTemplate();
+          }}
           onMouseEnter={() => setHoveredButton("new")}
           onMouseLeave={() => setHoveredButton(null)}
           style={{
             ...secondaryButtonStyles,
             opacity: isSaving ? 0.6 : 1,
             pointerEvents: isSaving ? "none" : "auto",
+            ...(!isPremium && {
+              border: "1px solid #d1d5db",
+              color: "#9ca3af",
+              cursor: "not-allowed",
+            }),
           }}
-          title="Créer un nouveau template"
+          title={
+            !isPremium
+              ? "Fonctionnalité premium - Activez votre licence"
+              : "Créer un nouveau template"
+          }
         >
           <span>➕</span>
           <span>Nouveau</span>
+          {!isPremium && (
+            <span style={{ fontSize: "10px", color: "#d97706", marginLeft: "4px" }}>
+              🔒
+            </span>
+          )}
         </button>
 
         <div style={{ position: "relative" }} data-predefined-dropdown>
@@ -4072,6 +4095,91 @@ export const Header = memo(function Header({
               >
                 Fermer
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal upgrade premium - Nouveau template */}
+      {showUpgradeModal && (
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) setShowUpgradeModal(false); }}
+          style={{
+            position: "fixed", top: 0, left: 0, width: "100%", height: "100%",
+            background: "rgba(0,0,0,0.7)", zIndex: 99999,
+            display: "flex", justifyContent: "center", alignItems: "center",
+          }}
+        >
+          <div style={{
+            background: "white", borderRadius: "12px", maxWidth: "500px", width: "90%",
+            maxHeight: "85vh", overflowY: "auto",
+            boxShadow: "0 10px 40px rgba(0,0,0,0.3)",
+          }}>
+            {/* Header */}
+            <div style={{
+              padding: "20px 30px", borderBottom: "1px solid #dee2e6",
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+            }}>
+              <h3 style={{ margin: 0, color: "#23282d", fontSize: "22px" }}>
+                🚀 Débloquer la Création de Templates
+              </h3>
+              <button
+                onClick={() => setShowUpgradeModal(false)}
+                style={{ background: "none", border: "none", fontSize: "24px", cursor: "pointer", color: "#6c757d", lineHeight: 1 }}
+              >
+                &times;
+              </button>
+            </div>
+            {/* Body */}
+            <div style={{ padding: "30px" }}>
+              <div style={{ textAlign: "center", marginBottom: "30px" }}>
+                <div style={{ fontSize: "64px", marginBottom: "20px" }}>🎨</div>
+                <h4 style={{ color: "#23282d", fontSize: "20px", marginBottom: "15px" }}>
+                  Templates Illimités &amp; Personnalisés
+                </h4>
+                <p style={{ color: "#666", marginBottom: "20px", lineHeight: 1.6 }}>
+                  Créez autant de templates PDF que vous voulez avec votre propre design et branding.
+                </p>
+                <ul style={{
+                  textAlign: "left", background: "#f8f9fa", padding: "20px",
+                  borderRadius: "8px", listStyle: "none", margin: 0,
+                }}>
+                  {[
+                    "Templates personnalisés illimités",
+                    "Import/Export de templates",
+                    "Thèmes CSS avancés",
+                    "Variables dynamiques premium",
+                    "Support prioritaire",
+                  ].map((item) => (
+                    <li key={item} style={{ margin: "8px 0", color: "#23282d" }}>
+                      ✅ <strong>{item}</strong>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              {/* Pricing */}
+              <div style={{
+                textAlign: "center",
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                padding: "25px", borderRadius: "8px", color: "white",
+              }}>
+                <div style={{ fontSize: "36px", fontWeight: "bold", marginBottom: "10px" }}>
+                  69€ <span style={{ fontSize: "16px", fontWeight: "normal" }}>à vie</span>
+                </div>
+                <p style={{ margin: "10px 0 20px 0", opacity: 0.9 }}>Paiement unique, pas d'abonnement</p>
+                <a
+                  href="https://threeaxe.fr/contact/?subject=Upgrade%20PDF%20Builder%20Pro"
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    background: "white", color: "#667eea", border: "none",
+                    padding: "12px 30px", fontSize: "16px", fontWeight: "bold",
+                    textDecoration: "none", display: "inline-block", borderRadius: "6px",
+                  }}
+                >
+                  🛒 Commander Maintenant
+                </a>
+              </div>
             </div>
           </div>
         </div>
