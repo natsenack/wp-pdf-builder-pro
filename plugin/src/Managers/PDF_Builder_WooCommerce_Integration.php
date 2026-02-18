@@ -174,8 +174,9 @@ class PDF_Builder_WooCommerce_Integration
     public function registerAjaxHooks()
     {
         // AJAX handlers pour WooCommerce - gérés par le manager
-        add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajaxGenerateOrderPdf'], 1);
-        add_action('wp_ajax_pdf_builder_save_order_canvas', [$this, 'ajax_save_order_canvas'], 1);
+        add_action('wp_ajax_pdf_builder_generate_order_pdf',  [$this, 'ajaxGenerateOrderPdf'],  1);
+        add_action('wp_ajax_pdf_builder_send_order_email',     [$this, 'ajaxSendOrderEmail'],     1);
+        add_action('wp_ajax_pdf_builder_save_order_canvas',    [$this, 'ajax_save_order_canvas'], 1);
         add_action('wp_ajax_pdf_builder_load_order_canvas', [$this, 'ajax_load_order_canvas'], 1);
         add_action('wp_ajax_pdf_builder_get_canvas_elements', [$this, 'ajax_get_canvas_elements'], 1);
         add_action('wp_ajax_pdf_builder_get_order_data', [$this, 'ajax_get_order_data'], 1);
@@ -383,65 +384,219 @@ class PDF_Builder_WooCommerce_Integration
 
             <!-- Boutons d'action -->
             <?php if ($selected_template): ?>
-            <div style="display:flex;flex-direction:column;gap:6px;">
-                <button type="button" id="pdf-builder-generate-btn"
-                        class="button button-primary"
-                        data-order-id="<?php echo esc_attr($order_id); ?>"
-                        data-template-id="<?php echo esc_attr($selected_template['id']); ?>"
-                        data-nonce="<?php echo esc_attr($nonce); ?>"
-                        data-ajax="<?php echo esc_attr($ajax_url); ?>">
-                    📥 <?php _e('Générer PDF', 'pdf-builder-pro'); ?>
-                </button>
-                <button type="button" id="pdf-builder-preview-btn"
-                        class="button button-secondary"
-                        data-order-id="<?php echo esc_attr($order_id); ?>"
-                        data-template-id="<?php echo esc_attr($selected_template['id']); ?>"
-                        data-nonce="<?php echo esc_attr($nonce); ?>"
-                        data-ajax="<?php echo esc_attr($ajax_url); ?>">
-                    👁️ <?php _e('Aperçu HTML', 'pdf-builder-pro'); ?>
-                </button>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-top:2px;">
+
+                <!-- Ligne 1 : PDF + Mail -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                    <button type="button"
+                            class="button button-primary pdf-builder-action-btn"
+                            data-action-type="pdf"
+                            data-order-id="<?php echo esc_attr($order_id); ?>"
+                            data-template-id="<?php echo esc_attr($selected_template['id']); ?>"
+                            data-nonce="<?php echo esc_attr($nonce); ?>"
+                            data-ajax="<?php echo esc_attr($ajax_url); ?>"
+                            style="font-size:12px;padding:5px 8px;">
+                        📥 <?php _e('PDF', 'pdf-builder-pro'); ?>
+                    </button>
+                    <button type="button"
+                            id="pdf-builder-mail-btn"
+                            class="button button-secondary"
+                            data-order-id="<?php echo esc_attr($order_id); ?>"
+                            data-template-id="<?php echo esc_attr($selected_template['id']); ?>"
+                            data-nonce="<?php echo esc_attr($nonce); ?>"
+                            data-ajax="<?php echo esc_attr($ajax_url); ?>"
+                            data-order-email="<?php echo esc_attr($order->get_billing_email()); ?>"
+                            data-order-number="<?php echo esc_attr($order->get_order_number()); ?>"
+                            style="font-size:12px;padding:5px 8px;">
+                        ✉️ <?php _e('Mail', 'pdf-builder-pro'); ?>
+                    </button>
+                </div>
+
+                <?php if ($is_premium): ?>
+                <!-- Ligne 2 : PNG + JPG (premium seulement) -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                    <button type="button"
+                            class="button button-secondary pdf-builder-action-btn"
+                            data-action-type="png"
+                            data-order-id="<?php echo esc_attr($order_id); ?>"
+                            data-template-id="<?php echo esc_attr($selected_template['id']); ?>"
+                            data-nonce="<?php echo esc_attr($nonce); ?>"
+                            data-ajax="<?php echo esc_attr($ajax_url); ?>"
+                            style="font-size:12px;padding:5px 8px;">
+                        🖼️ PNG
+                    </button>
+                    <button type="button"
+                            class="button button-secondary pdf-builder-action-btn"
+                            data-action-type="jpg"
+                            data-order-id="<?php echo esc_attr($order_id); ?>"
+                            data-template-id="<?php echo esc_attr($selected_template['id']); ?>"
+                            data-nonce="<?php echo esc_attr($nonce); ?>"
+                            data-ajax="<?php echo esc_attr($ajax_url); ?>"
+                            style="font-size:12px;padding:5px 8px;">
+                        🖼️ JPG
+                    </button>
+                </div>
+                <?php endif; ?>
+
             </div>
 
             <!-- Message de retour -->
             <div id="pdf-builder-meta-status" style="display:none;margin-top:8px;padding:8px;border-radius:4px;font-size:12px;"></div>
+
+            <!-- Modal Mail -->
+            <div id="pdf-builder-mail-modal" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.55);" role="dialog" aria-modal="true">
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:8px;width:400px;max-width:95vw;box-shadow:0 10px 40px rgba(0,0,0,.35);">
+                    <div style="padding:14px 18px;border-bottom:1px solid #dee2e6;display:flex;justify-content:space-between;align-items:center;background:#f8f9fa;border-radius:8px 8px 0 0;">
+                        <strong style="font-size:13px;">✉️ <?php _e('Envoyer par e-mail', 'pdf-builder-pro'); ?></strong>
+                        <button type="button" id="pdf-builder-mail-close" style="background:none;border:none;font-size:20px;cursor:pointer;color:#6c757d;line-height:1;padding:0 4px;" aria-label="Fermer">&times;</button>
+                    </div>
+                    <div style="padding:18px;">
+                        <div style="margin-bottom:12px;">
+                            <label style="display:block;margin-bottom:4px;font-size:12px;font-weight:600;color:#495057;">
+                                <?php _e('Destinataire', 'pdf-builder-pro'); ?> <span style="color:#dc3545;">*</span>
+                            </label>
+                            <input type="email" id="pdf-builder-mail-to" class="widefat" style="font-size:13px;" placeholder="email@exemple.com">
+                        </div>
+                        <div style="margin-bottom:12px;">
+                            <label style="display:block;margin-bottom:4px;font-size:12px;font-weight:600;color:#495057;">
+                                <?php _e('Sujet', 'pdf-builder-pro'); ?> <span style="color:#dc3545;">*</span>
+                            </label>
+                            <input type="text" id="pdf-builder-mail-subject" class="widefat" style="font-size:13px;">
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <label style="display:block;margin-bottom:4px;font-size:12px;font-weight:600;color:#495057;">
+                                <?php _e('Message', 'pdf-builder-pro'); ?>
+                            </label>
+                            <textarea id="pdf-builder-mail-message" class="widefat" rows="4" style="font-size:13px;resize:vertical;"></textarea>
+                        </div>
+                        <div id="pdf-builder-mail-status" style="display:none;margin-bottom:12px;padding:8px 10px;border-radius:4px;font-size:12px;"></div>
+                        <div style="display:flex;gap:8px;justify-content:flex-end;">
+                            <button type="button" id="pdf-builder-mail-cancel" class="button button-secondary">
+                                <?php _e('Annuler', 'pdf-builder-pro'); ?>
+                            </button>
+                            <button type="button" id="pdf-builder-mail-send" class="button button-primary">
+                                ✉️ <?php _e('Envoyer', 'pdf-builder-pro'); ?>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <?php endif; ?>
         </div>
 
         <script type="text/javascript">
         (function($) {
-            // Ouvre un formulaire POST dans un nouvel onglet pour streamer le PDF
-            function openPdfForm(orderId, templateId, nonce, ajaxUrl) {
-                var form = $('<form>', {
-                    method: 'POST',
-                    action: ajaxUrl,
-                    target: '_blank',
-                    style: 'display:none'
+
+            // --- Export PDF / PNG / JPG via form POST (nouvel onglet) ---
+            function openExportForm(ajaxUrl, params) {
+                var form = $('<form>', {method:'POST', action:ajaxUrl, target:'_blank', style:'display:none'});
+                $.each(params, function(k, v) {
+                    form.append($('<input>', {type:'hidden', name:k, value:v}));
                 });
-                form.append($('<input>', {type:'hidden', name:'action',      value:'pdf_builder_generate_order_pdf'}));
-                form.append($('<input>', {type:'hidden', name:'order_id',    value:orderId}));
-                form.append($('<input>', {type:'hidden', name:'template_id', value:templateId}));
-                form.append($('<input>', {type:'hidden', name:'nonce',       value:nonce}));
                 $('body').append(form);
                 form.submit();
                 form.remove();
             }
 
-            $('#pdf-builder-generate-btn, #pdf-builder-preview-btn').on('click', function() {
+            $('.pdf-builder-action-btn').on('click', function() {
                 var btn        = $(this);
+                var type       = btn.data('action-type'); // pdf | png | jpg
                 var orderId    = btn.data('order-id');
                 var templateId = btn.data('template-id');
                 var nonce      = btn.data('nonce');
                 var ajaxUrl    = btn.data('ajax');
-                var status     = $('#pdf-builder-meta-status');
+                var orig       = btn.html();
 
-                status.hide();
-                openPdfForm(orderId, templateId, nonce, ajaxUrl);
+                btn.prop('disabled', true).html('⏳');
+                setTimeout(function() { btn.prop('disabled', false).html(orig); }, 4000);
 
-                // Feedback visuel temporaire
-                var orig = btn.text();
-                btn.prop('disabled', true).text('⏳ <?php echo esc_js(__('Génération...', 'pdf-builder-pro')); ?>');
-                setTimeout(function() { btn.prop('disabled', false).text(orig); }, 3000);
+                if (type === 'pdf') {
+                    openExportForm(ajaxUrl, {
+                        action:      'pdf_builder_generate_order_pdf',
+                        order_id:    orderId,
+                        template_id: templateId,
+                        nonce:       nonce
+                    });
+                } else {
+                    openExportForm(ajaxUrl, {
+                        action:      'pdf_builder_generate_image',
+                        order_id:    orderId,
+                        template_id: templateId,
+                        format:      type,
+                        nonce:       nonce
+                    });
+                }
             });
+
+            // --- Modal Mail ---
+            var $modal  = $('#pdf-builder-mail-modal');
+            var $mstatus = $('#pdf-builder-mail-status');
+
+            $('#pdf-builder-mail-btn').on('click', function() {
+                var btn   = $(this);
+                var num   = btn.data('order-number');
+                var email = btn.data('order-email');
+                $('#pdf-builder-mail-to').val(email);
+                $('#pdf-builder-mail-subject').val('<?php echo esc_js(__('Votre document - Commande', 'pdf-builder-pro')); ?> #' + num);
+                $('#pdf-builder-mail-message').val('<?php echo esc_js(__('Bonjour,\n\nVeuillez trouver ci-joint votre document relatif à la commande #', 'pdf-builder-pro')); ?>' + num + '.\n\n<?php echo esc_js(__('Cordialement.', 'pdf-builder-pro')); ?>');
+                $mstatus.hide();
+                $modal.fadeIn(200);
+            });
+
+            function closeModal() { $modal.fadeOut(150); }
+            $('#pdf-builder-mail-close, #pdf-builder-mail-cancel').on('click', closeModal);
+            $modal.on('click', function(e) { if ($(e.target).is($modal)) closeModal(); });
+            $(document).on('keydown.pdfBuilderMail', function(e) { if (e.key === 'Escape') closeModal(); });
+
+            $('#pdf-builder-mail-send').on('click', function() {
+                var sendBtn    = $(this);
+                var mailBtn    = $('#pdf-builder-mail-btn');
+                var to         = $('#pdf-builder-mail-to').val().trim();
+                var subject    = $('#pdf-builder-mail-subject').val().trim();
+                var message    = $('#pdf-builder-mail-message').val().trim();
+                var orderId    = mailBtn.data('order-id');
+                var templateId = mailBtn.data('template-id');
+                var nonce      = mailBtn.data('nonce');
+                var ajaxUrl    = mailBtn.data('ajax');
+
+                if (!to || !subject) {
+                    $mstatus.css({display:'block', background:'#f8d7da', color:'#721c24', border:'1px solid #f5c6cb'})
+                            .text('<?php echo esc_js(__('Le destinataire et le sujet sont obligatoires.', 'pdf-builder-pro')); ?>');
+                    return;
+                }
+
+                $mstatus.css({display:'block', background:'#d1ecf1', color:'#0c5460', border:'1px solid #bee5eb'})
+                        .text('⏳ <?php echo esc_js(__('Génération du PDF et envoi en cours…', 'pdf-builder-pro')); ?>');
+                sendBtn.prop('disabled', true).text('⏳');
+
+                $.post(ajaxUrl, {
+                    action:      'pdf_builder_send_order_email',
+                    order_id:    orderId,
+                    template_id: templateId,
+                    nonce:       nonce,
+                    to:          to,
+                    subject:     subject,
+                    message:     message
+                }, function(response) {
+                    sendBtn.prop('disabled', false).html('✉️ <?php echo esc_js(__('Envoyer', 'pdf-builder-pro')); ?>');
+                    if (response.success) {
+                        $mstatus.css({background:'#d4edda', color:'#155724', border:'1px solid #c3e6cb'})
+                                .text('✅ ' + (response.data.message || '<?php echo esc_js(__('E-mail envoyé !', 'pdf-builder-pro')); ?>'));
+                        setTimeout(closeModal, 2500);
+                    } else {
+                        var msg = (response.data && response.data.message)
+                            ? response.data.message
+                            : '<?php echo esc_js(__('Erreur lors de l\'envoi.', 'pdf-builder-pro')); ?>';
+                        $mstatus.css({background:'#f8d7da', color:'#721c24', border:'1px solid #f5c6cb'}).text('❌ ' + msg);
+                    }
+                }).fail(function() {
+                    sendBtn.prop('disabled', false).html('✉️ <?php echo esc_js(__('Envoyer', 'pdf-builder-pro')); ?>');
+                    $mstatus.css({display:'block', background:'#f8d7da', color:'#721c24', border:'1px solid #f5c6cb'})
+                            .text('❌ <?php echo esc_js(__('Erreur réseau.', 'pdf-builder-pro')); ?>');
+                });
+            });
+
         })(jQuery);
         </script>
         <?php
@@ -487,6 +642,90 @@ class PDF_Builder_WooCommerce_Integration
         }
 
         \wp_send_json_error(['message' => 'Handler PDF indisponible']);
+    }
+
+    /**
+     * AJAX handler pour envoyer le PDF d'une commande par e-mail
+     */
+    public function ajaxSendOrderEmail()
+    {
+        if (!current_user_can('manage_options') && !current_user_can('edit_shop_orders')) {
+            \wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+
+        $nonce = \sanitize_text_field($_POST['nonce'] ?? '');
+        if (!\wp_verify_nonce($nonce, 'pdf_builder_order_actions')) {
+            \wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        $order_id    = intval($_POST['order_id'] ?? 0);
+        $template_id = \sanitize_text_field($_POST['template_id'] ?? '');
+        $to          = \sanitize_email($_POST['to'] ?? '');
+        $subject     = \sanitize_text_field($_POST['subject'] ?? '');
+        $message     = \sanitize_textarea_field($_POST['message'] ?? '');
+
+        if (!$order_id || !$template_id || !$to || !$subject) {
+            \wp_send_json_error(['message' => 'Paramètres manquants (order_id, template_id, to, subject)']);
+            return;
+        }
+
+        if (!\is_email($to)) {
+            \wp_send_json_error(['message' => 'Adresse e-mail invalide']);
+            return;
+        }
+
+        if (!function_exists('wc_get_order')) {
+            \wp_send_json_error(['message' => 'WooCommerce non disponible']);
+            return;
+        }
+
+        $order = \wc_get_order($order_id);
+        if (!$order) {
+            \wp_send_json_error(['message' => 'Commande #' . $order_id . ' introuvable']);
+            return;
+        }
+
+        if (!class_exists('PDF_Builder_Unified_Ajax_Handler')) {
+            \wp_send_json_error(['message' => 'Handler PDF indisponible']);
+            return;
+        }
+
+        // Générer le PDF en mémoire
+        $handler     = \PDF_Builder_Unified_Ajax_Handler::get_instance();
+        $pdf_content = $handler->get_pdf_buffer($template_id, $order_id);
+
+        if ($pdf_content === false) {
+            \wp_send_json_error(['message' => 'Erreur lors de la génération du PDF. Vérifiez qu\'un moteur PDF est configuré.']);
+            return;
+        }
+
+        // Sauvegarder dans un fichier temporaire
+        $upload    = \wp_upload_dir();
+        $tmp_dir   = $upload['basedir'] . '/pdf-builder-tmp/';
+        if (!file_exists($tmp_dir)) {
+            \wp_mkdir_p($tmp_dir);
+        }
+        $tmp_file = $tmp_dir . 'order-' . $order_id . '-' . uniqid() . '.pdf';
+        file_put_contents($tmp_file, $pdf_content);
+
+        // Envoi e-mail
+        $filename    = 'document-commande-' . $order->get_order_number() . '.pdf';
+        $headers     = ['Content-Type: text/html; charset=UTF-8'];
+        $body        = $message ? nl2br(\esc_html($message)) : '';
+        $attachments = [$tmp_file];
+
+        $sent = \wp_mail($to, $subject, $body, $headers, $attachments);
+
+        // Supprimer le fichier temporaire
+        @unlink($tmp_file);
+
+        if ($sent) {
+            \wp_send_json_success(['message' => sprintf(__('E-mail envoyé avec succès à %s', 'pdf-builder-pro'), $to)]);
+        } else {
+            \wp_send_json_error(['message' => __('Échec de l\'envoi. Vérifiez la configuration SMTP de WordPress.', 'pdf-builder-pro')]);
+        }
     }
 
     /**

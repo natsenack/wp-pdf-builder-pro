@@ -2846,6 +2846,39 @@ class PDF_Builder_Unified_Ajax_Handler {
     }
 
     /**
+     * Génère le PDF et retourne le contenu binaire (pour pièce jointe email, etc.)
+     * @param string|int $template_id
+     * @param int        $order_id
+     * @return string|false  Contenu binaire du PDF, ou false en cas d'erreur
+     */
+    public function get_pdf_buffer($template_id, $order_id) {
+        try {
+            if (!function_exists('wc_get_order')) return false;
+            $order = wc_get_order($order_id);
+            if (!$order) return false;
+
+            $template = $this->get_template($template_id);
+            if (!$template) return false;
+
+            $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
+            $this->current_engine_name = strtolower($engine->get_name());
+
+            $html = $this->generate_template_html($template, $order, 'pdf');
+            $html = $this->optimize_html($html);
+
+            $template_data = json_decode($template['template_data'], true);
+            $width  = $template_data['canvasWidth']  ?? 794;
+            $height = $template_data['canvasHeight'] ?? 1123;
+
+            $pdf_content = $engine->generate($html, ['width' => $width, 'height' => $height]);
+            return $pdf_content ?: false;
+        } catch (\Exception $e) {
+            $this->debug_log('get_pdf_buffer error: ' . $e->getMessage(), 'ERROR');
+            return false;
+        }
+    }
+
+    /**
      * Génère une image (PNG/JPG) à partir d'un template et d'une commande
      * Fonctionnalité PREMIUM uniquement (VERSION OPTIMISÉE avec Factory)
      */

@@ -894,6 +894,15 @@ class PdfBuilderAdminNew
             }
         }, 1);
 
+        \add_action('wp_ajax_pdf_builder_send_order_email', function() {
+            $integration = $this->getWooCommerceIntegration();
+            if ($integration) {
+                $integration->ajaxSendOrderEmail();
+            } else {
+                \wp_send_json_error(['message' => 'WooCommerce integration unavailable']);
+            }
+        }, 1);
+
         // Enregistrer directement pour le hook shop_order (version legacy)
         \add_action('add_meta_boxes_shop_order', function() {
             // Vérifier que WooCommerce est activé
