@@ -4568,6 +4568,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                     // Direction verticale (colonne)
                     $container_styles .= ' flex-direction: column !important;';
                     
+                    // Espacement entre label et date
+                    $container_styles .= " gap: {$label_spacing}px !important;";
+                    
                     // justify-content contrôle l'axe vertical (principal)
                     if ($vertical_align === 'middle') {
                         $container_styles .= ' justify-content: center !important;';
@@ -4588,11 +4591,11 @@ class PDF_Builder_Unified_Ajax_Handler {
                     
                     if ($label_position === 'top') {
                         $html = '<div class="element" style=\'' . $container_styles . '\'>';
-                        $html .= '<span style=\'' . $label_styles . ' margin-bottom: 0 !important;\'>' . esc_html($label_text) . '</span>';
+                        $html .= '<span style=\'' . $label_styles . '\'>' . esc_html($label_text) . '</span>';
                         $html .= '<span style=\'' . $date_styles . '\'>' . esc_html($formatted_date) . '</span>';
                     } else {
                         $html = '<div class="element" style=\'' . $container_styles . '\'>';
-                        $html .= '<span style=\'' . $date_styles . ' margin-bottom: 0 !important;\'>' . esc_html($formatted_date) . '</span>';
+                        $html .= '<span style=\'' . $date_styles . '\'>' . esc_html($formatted_date) . '</span>';
                         $html .= '<span style=\'' . $label_styles . '\'>' . esc_html($label_text) . '</span>';
                     }
                     break;
@@ -4602,6 +4605,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                 default:
                     // Direction horizontale (ligne)
                     $container_styles .= ' flex-direction: row !important;';
+                    
+                    // Espacement entre label et date
+                    $container_styles .= " gap: {$label_spacing}px !important;";
                     
                     // justify-content contrôle l'axe horizontal (principal)
                     if ($text_align === 'center') {
@@ -4623,11 +4629,11 @@ class PDF_Builder_Unified_Ajax_Handler {
                     
                     if ($label_position === 'right') {
                         $html = '<div class="element" style=\'' . $container_styles . '\'>';
-                        $html .= '<span style=\'' . $date_styles . ' margin-right: 0 !important;\'>' . esc_html($formatted_date) . '</span>';
+                        $html .= '<span style=\'' . $date_styles . '\'>' . esc_html($formatted_date) . '</span>';
                         $html .= '<span style=\'' . $label_styles . '\'>' . esc_html($label_text) . '</span>';
                     } else {
                         $html = '<div class="element" style=\'' . $container_styles . '\'>';
-                        $html .= '<span style=\'' . $label_styles . ' margin-right: 0 !important;\'>' . esc_html($label_text) . '</span>';
+                        $html .= '<span style=\'' . $label_styles . '\'>' . esc_html($label_text) . '</span>';
                         $html .= '<span style=\'' . $date_styles . '\'>' . esc_html($formatted_date) . '</span>';
                     }
                     break;
@@ -4817,8 +4823,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                 case 'bottom':
                     // Direction verticale (colonne)
                     $container_styles .= ' flex-direction: column !important;';
-                    // Ajouter un gap de 5px entre les éléments flex
-                    $container_styles .= ' gap: 5px !important;';
+                    
+                    // Espacement entre label et numéro
+                    $container_styles .= " gap: {$label_spacing}px !important;";
                     
                     // justify-content contrôle l'axe vertical (principal)
                     if ($vertical_align === 'middle') {
@@ -4840,11 +4847,11 @@ class PDF_Builder_Unified_Ajax_Handler {
                     
                     if ($label_position === 'top') {
                         $html = '<div class="element" style=\'' . $container_styles . '\'>';
-                        $html .= '<span style=\'' . $label_styles . ' margin-bottom: ' . $label_spacing . 'px;\'>' . esc_html($label_text) . '</span>';
+                        $html .= '<span style=\'' . $label_styles . '\'>' . esc_html($label_text) . '</span>';
                         $html .= '<span style=\'' . $number_styles . '\'>' . esc_html($display_number) . '</span>';
                     } else {
                         $html = '<div class="element" style=\'' . $container_styles . '\'>';
-                        $html .= '<span style=\'' . $number_styles . ' margin-bottom: ' . $label_spacing . 'px;\'>' . esc_html($display_number) . '</span>';
+                        $html .= '<span style=\'' . $number_styles . '\'>' . esc_html($display_number) . '</span>';
                         $html .= '<span style=\'' . $label_styles . '\'>' . esc_html($label_text) . '</span>';
                     }
                     break;
@@ -4854,6 +4861,9 @@ class PDF_Builder_Unified_Ajax_Handler {
                 default:
                     // Direction horizontale (ligne)
                     $container_styles .= ' flex-direction: row !important;';
+                    
+                    // Espacement entre label et numéro
+                    $container_styles .= " gap: {$label_spacing}px !important;";
                     
                     // justify-content contrôle l'axe horizontal (principal)
                     if ($text_align === 'center') {
@@ -4875,11 +4885,11 @@ class PDF_Builder_Unified_Ajax_Handler {
                     
                     if ($label_position === 'right') {
                         $html = '<div class="element" style=\'' . $container_styles . '\'>';
-                        $html .= '<span style=\'' . $number_styles . ' margin-right: ' . $label_spacing . 'px;\'>' . esc_html($display_number) . '</span>';
+                        $html .= '<span style=\'' . $number_styles . '\'>' . esc_html($display_number) . '</span>';
                         $html .= '<span style=\'' . $label_styles . '\'>' . esc_html($label_text) . '</span>';
                     } else {
                         $html = '<div class="element" style=\'' . $container_styles . '\'>';
-                        $html .= '<span style=\'' . $label_styles . ' margin-right: ' . $label_spacing . 'px;\'>' . esc_html($label_text) . '</span>';
+                        $html .= '<span style=\'' . $label_styles . '\'>' . esc_html($label_text) . '</span>';
                         $html .= '<span style=\'' . $number_styles . '\'>' . esc_html($display_number) . '</span>';
                     }
                     break;
