@@ -2688,7 +2688,13 @@ export const Header = memo(function Header({
               }
               return;
             }
-            onNewTemplate();
+            // Naviguer vers l'éditeur sans template_id pour créer un nouveau template
+            const ajaxUrl: string = (window as any).pdfBuilderData?.ajaxUrl || '';
+            const adminBase = ajaxUrl.replace('admin-ajax.php', 'admin.php') || (window.location.href.split('?')[0]);
+            const newUrl = adminBase + '?page=pdf-builder-pro';
+            if (window.confirm('Créer un nouveau template ? Les modifications non sauvegardées seront perdues.')) {
+              window.location.href = newUrl;
+            }
           }}
           onMouseEnter={() => setHoveredButton("new")}
           onMouseLeave={() => setHoveredButton(null)}
