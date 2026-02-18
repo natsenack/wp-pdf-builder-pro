@@ -1123,15 +1123,19 @@ class PdfBuilderAdminNew
         // Paramètres et configuration
         \add_submenu_page('pdf-builder-pro',            \__('Paramètres - PDF Builder Pro', 'pdf-builder-pro'),            \__('⚙️ Paramètres', 'pdf-builder-pro'), 'manage_options', 'pdf-builder-settings', [$this, 'settings_page']);
 
-        // Galerie de modèles (mode développeur uniquement — token + BDD requis)
-        if (function_exists('pdf_builder_is_developer_mode_active') && pdf_builder_is_developer_mode_active()) {
+        // Galerie de modèles (mode développeur uniquement — token + BDD requis + manager instancié)
+        if (
+            function_exists('pdf_builder_is_developer_mode_active') &&
+            pdf_builder_is_developer_mode_active() &&
+            $this->predefined_templates_manager !== null
+        ) {
             \add_submenu_page(
                 'pdf-builder-pro',
-            \__('Galerie de Modèles - PDF Builder Pro', 'pdf-builder-pro'),
-            \__('🖼️ Galerie', 'pdf-builder-pro'),
+                \__('Galerie de Modèles - PDF Builder Pro', 'pdf-builder-pro'),
+                \__('🖼️ Galerie', 'pdf-builder-pro'),
                 'manage_options',
                 'pdf-builder-predefined-templates',
-                [$this->predefined_templates_manager ?? null, 'renderAdminPage']
+                [$this->predefined_templates_manager, 'renderAdminPage']
             );
         }
 
