@@ -330,11 +330,13 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                     }
 
                     echo '<div style="text-align: center; margin-bottom: 15px; margin-top: 40px;">';
-                    if (!empty($thumbnail_url)) {
+                    // Vérifier que la thumbnail_url est valide avant de l'afficher
+                    if (!empty($thumbnail_url) && filter_var($thumbnail_url, FILTER_VALIDATE_URL) && strpos($thumbnail_url, 'http://0.0.0.1') === false) {
                         echo '<div style="width: 120px; height: 80px; margin: 0 auto 10px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; background: #f8f9fa;">';
                         echo '<img src="' . esc_url($thumbnail_url) . '" alt="' . esc_attr($template_name) . '" style="width: 100%; height: 100%; object-fit: cover;" />';
                         echo '</div>';
                     } else {
+                        // Afficher l'icône si pas de thumbnail valide
                         echo '<div style="font-size: 3rem; margin-bottom: 10px;">' . $icon . '</div>';
                     }
                     echo '<h3 style="margin: 0; color: #23282d;">' . $template_name . '</h3>';
@@ -1363,6 +1365,12 @@ function displayTemplateSettings(template) {
 
     // Maintenant traiter les données et remplacer le contenu
     var content = modalContent.querySelector('.template-modal-body');
+    
+    // Vérifier que content existe
+    if (!content) {
+        console.error('[DEBUG] Element .template-modal-body not found in modal');
+        return; // Sortir si le contenu modal n'existe pas
+    }
 
     // Valeurs par défaut depuis les paramètres du canvas
     var canvasFormat = template.canvas_settings?.default_canvas_format || 'A4';
@@ -1558,6 +1566,12 @@ function displayTemplateSettings(template) {
     var dpiSelect = document.getElementById('template-dpi');
     var dpiWarning = document.getElementById('template-dpi-warning');
     
+    // Vérifier que les éléments existent
+    if (!dpiSelect) {
+        console.error('[DEBUG] Element template-dpi not found, waiting for DOM update');
+        return;
+    }
+    
     if (dpiSelect) {
         dpiSelect.innerHTML = ''; // Vider les options existantes
         
@@ -1573,20 +1587,30 @@ function displayTemplateSettings(template) {
                     dpiSelect.appendChild(option);
                 }
             });
-            dpiWarning.style.display = 'none';
+            if (dpiWarning) {
+                dpiWarning.style.display = 'none';
+            }
         } else {
             // Aucune option disponible
             var option = document.createElement('option');
             option.value = '';
             option.textContent = 'Aucune résolution disponible';
             dpiSelect.appendChild(option);
-            dpiWarning.style.display = 'block';
+            if (dpiWarning) {
+                dpiWarning.style.display = 'block';
+            }
         }
     }
 
     // Remplir le select Format avec les options disponibles
     var formatSelect = document.getElementById('template-format');
     var formatWarning = document.getElementById('template-format-warning');
+    
+    // Vérifier que les éléments existent
+    if (!formatSelect) {
+        console.error('[DEBUG] Element template-format not found');
+        return;
+    }
     
     if (formatSelect) {
         formatSelect.innerHTML = ''; // Vider les options existantes
@@ -1603,20 +1627,30 @@ function displayTemplateSettings(template) {
                     formatSelect.appendChild(option);
                 }
             });
-            formatWarning.style.display = 'none';
+            if (formatWarning) {
+                formatWarning.style.display = 'none';
+            }
         } else {
             // Aucune option disponible
             var option = document.createElement('option');
             option.value = '';
             option.textContent = 'Aucun format disponible';
             formatSelect.appendChild(option);
-            formatWarning.style.display = 'block';
+            if (formatWarning) {
+                formatWarning.style.display = 'block';
+            }
         }
     }
 
     // Remplir le select Orientation avec les options disponibles
     var orientationSelect = document.getElementById('template-orientation');
     var orientationWarning = document.getElementById('template-orientation-warning');
+    
+    // Vérifier que l'élément existe
+    if (!orientationSelect) {
+        console.error('[DEBUG] Element template-orientation not found');
+        return;
+    }
     
     if (orientationSelect) {
         orientationSelect.innerHTML = ''; // Vider les options existantes
@@ -1633,19 +1667,28 @@ function displayTemplateSettings(template) {
                     orientationSelect.appendChild(option);
                 }
             });
-            orientationWarning.style.display = 'none';
+            if (orientationWarning) {
+                orientationWarning.style.display = 'none';
+            }
         } else {
             // Aucune option disponible
             var option = document.createElement('option');
             option.value = '';
             option.textContent = 'Aucune orientation disponible';
             orientationSelect.appendChild(option);
-            orientationWarning.style.display = 'block';
+            if (orientationWarning) {
+                orientationWarning.style.display = 'block';
+            }
         }
     }
 
     // Afficher la modale
-    document.getElementById('template-settings-modal').style.display = 'flex';
+    var settingsModal = document.getElementById('template-settings-modal');
+    if (settingsModal) {
+        settingsModal.style.display = 'flex';
+    } else {
+        console.error('[DEBUG] Modal template-settings-modal not found');
+    }
 }
 
 // Fonction pour sauvegarder les paramètres du template
@@ -1657,22 +1700,38 @@ function saveTemplateSettings() {
         return;
     }
     
+    // Vérifier que tous les éléments existent avant de récupérer les valeurs
+    var templateNameEl = document.getElementById('template-name');
+    var templateDescriptionEl = document.getElementById('template-description');
+    var templateCategoryEl = document.getElementById('template-category');
+    var templateIsDefaultEl = document.getElementById('template-is-default');
+    var templateFormatEl = document.getElementById('template-format');
+    var templateOrientationEl = document.getElementById('template-orientation');
+    var templateDpiEl = document.getElementById('template-dpi');
     
+    if (!templateNameEl || !templateDescriptionEl || !templateCategoryEl || 
+        !templateFormatEl || !templateOrientationEl || !templateDpiEl) {
+        console.error('[DEBUG] Un ou plusieurs éléments du formulaire sind manquants');
+        if (typeof window.showErrorNotification !== 'undefined') {
+            window.showErrorNotification('Erreur: Formulaire incomplète');
+        }
+        return;
+    }
     
     // Récupérer les valeurs du formulaire
     var formData = new FormData();
     formData.append('action', 'pdf_builder_save_template_settings');
     formData.append('template_id', currentTemplateId);
     formData.append('nonce', pdfBuilderTemplatesNonce);
-    formData.append('template_name', document.getElementById('template-name').value);
-    formData.append('template_description', document.getElementById('template-description').value);
-    formData.append('template_category', document.getElementById('template-category').value);
-    formData.append('is_default', document.getElementById('template-is-default').checked ? '1' : '0');
+    formData.append('template_name', templateNameEl.value);
+    formData.append('template_description', templateDescriptionEl.value);
+    formData.append('template_category', templateCategoryEl.value);
+    formData.append('is_default', templateIsDefaultEl && templateIsDefaultEl.checked ? '1' : '0');
     
     // Ajouter les paramètres canvas
-    formData.append('canvas_format', document.getElementById('template-format').value);
-    formData.append('canvas_orientation', document.getElementById('template-orientation').value);
-    formData.append('canvas_dpi', document.getElementById('template-dpi').value);
+    formData.append('canvas_format', templateFormatEl.value);
+    formData.append('canvas_orientation', templateOrientationEl.value);
+    formData.append('canvas_dpi', templateDpiEl.value);
     
     // Désactiver le bouton de sauvegarde
     var saveButton = document.querySelector('#template-settings-modal .pdfb-canvas-modal-btn-primary');
