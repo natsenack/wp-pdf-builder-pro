@@ -3517,13 +3517,15 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
         }
         
-        // Font family avec guillemets (pour supporter les polices avec espaces comme "Courier New")
+        // Font family (guillemets simples pour supporter les polices avec espaces comme 'Courier New')
+        // On supprime les guillemets doubles éventuels stockés dans la valeur (venant du JSON)
         if (isset($element['fontFamily'])) {
             // Ajouter !important pour les types qui ont du flexbox custom (sinon la déclaration du span est ignorée)
             $type = $element['type'] ?? '';
             $is_custom_flex = in_array($type, ['woocommerce_order_date', 'woocommerce_invoice_number']);
             $important = $is_custom_flex ? ' !important' : '';
-            $css .= 'font-family: "' . $element['fontFamily'] . '"' . $important . '; ';
+            $fontFamilyClean = trim(str_replace('"', "'", $element['fontFamily']));
+            $css .= "font-family: {$fontFamilyClean}{$important}; ";
         }
         
         // Word spacing (ignorer 'normal')
@@ -3740,19 +3742,19 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Polices header
         $header_font_size = $element['headerFontSize'] ?? 12;
-        $header_font_family = $element['headerFontFamily'] ?? 'Arial';
+        $header_font_family = trim(str_replace('"', "'", $element['headerFontFamily'] ?? 'Arial'));
         $header_font_weight = $element['headerFontWeight'] ?? 'bold';
         $header_font_style = $element['headerFontStyle'] ?? 'normal';
         
         // Polices lignes
         $row_font_size = $element['rowFontSize'] ?? 11;
-        $row_font_family = $element['rowFontFamily'] ?? 'Arial';
+        $row_font_family = trim(str_replace('"', "'", $element['rowFontFamily'] ?? 'Arial'));
         $row_font_weight = $element['rowFontWeight'] ?? 'normal';
         $row_font_style = $element['rowFontStyle'] ?? 'normal';
         
         // Polices total
         $total_font_size = $element['totalFontSize'] ?? 12;
-        $total_font_family = $element['totalFontFamily'] ?? 'Arial';
+        $total_font_family = trim(str_replace('"', "'", $element['totalFontFamily'] ?? 'Arial'));
         $total_font_weight = $element['totalFontWeight'] ?? 'bold';
         $total_font_style = $element['totalFontStyle'] ?? 'normal';
         
