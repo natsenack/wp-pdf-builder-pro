@@ -612,27 +612,8 @@
                             </div>', 'Activation désactivée', ['response' => 403]);
                     }
 
-                    // Traitement désactivation licence
-                    if (isset($_POST['deactivate_license']) && isset($_POST['pdf_builder_deactivate_nonce'])) {
-                        if (pdf_builder_verify_nonce($_POST['pdf_builder_deactivate_nonce'], 'pdf_builder_deactivate')) {
-                            // Déléguer au License Manager qui efface les bonnes options
-                            $license_manager->deactivateLicense();
-
-                            // Réinitialiser les variables locales de rendu
-                            $is_premium          = false;
-                            $edd_license_key     = '';
-                            $edd_license_id      = '';
-                            $license_key_masked  = '';
-                            $license_status      = 'free';
-                            $license_key         = '';
-                            $license_expires     = '';
-                            $license_activated_at = '';
-                            $test_key            = '';
-                            $test_mode_enabled   = '0';
-
-                            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Licence désactivée.</p></div>';
-                        }
-                    }
+                    // ✅ DÉSACTIVATION VIA AJAX (voir bootstrap.php: wp_ajax_pdf_builder_deactivate_license)
+                    // L'ancien code POST est supprimé - utilisez confirmDeactivateLicense() pour l'AJAX
                 ?>
 
                 <!-- Header avec titre et actions principales -->
@@ -1444,25 +1425,63 @@
                         }
 
                         function confirmDeactivateLicense() {
-                            // Créer et soumettre un formulaire de désactivation
-                            var form = document.createElement('form');
-                            form.method = 'POST';
-                            form.action = '';
-
-                            var nonceField = document.createElement('input');
-                            nonceField.type = 'hidden';
-                            nonceField.name = 'pdf_builder_deactivate_nonce';
-                            nonceField.value = window.pdfBuilderLicense.deactivateNonce;
-                            form.appendChild(nonceField);
-
-                            var actionField = document.createElement('input');
-                            actionField.type = 'hidden';
-                            actionField.name = 'deactivate_license';
-                            actionField.value = '1';
-                            form.appendChild(actionField);
-
-                            document.body.appendChild(form);
-                            form.submit();
+                            // Appel AJAX pour désactiver la licence
+                            var xhr = new XMLHttpRequest();
+                            xhr.open('POST', window.pdfBuilderLicense.ajaxUrl, true);
+                            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                            
+                            var data = 'action=pdf_builder_deactivate_license' +
+                                       '&nonce=' + encodeURIComponent(window.pdfBuilderLicense.deactivateNonce);
+                            
+                            xhr.onload = function() {
+                                closeDeactivateModal();
+                                if (xhr.status === 200) {
+                                    var response = {};
+                                    try {
+                                        response = JSON.parse(xhr.responseText);
+                                    } catch(e) {
+                                        console.error('Réponse AJAX invalide:', xhr.responseText);
+                                    }
+                                    
+                                    if (response.success) {
+                                        // Afficher un message de succès
+                                        var successMsg = document.createElement('div');
+                                        successMsg.className = 'notice notice-success';
+                                        successMsg.style.cssText = 'margin: 20px 0; padding: 12px; border-left: 4px solid #28a745;';
+                                        successMsg.innerHTML = '<p><strong>✓</strong> Licence désactivée avec succès. Rafraîchissement...</p>';
+                                        document.body.insertBefore(successMsg, document.body.firstChild);
+                                        
+                                        // Rafraîchir la page après 1 seconde
+                                        setTimeout(function() {
+                                            window.location.reload();
+                                        }, 1500);
+                                    } else {
+                                        // Erreur
+                                        var errorMsg = document.createElement('div');
+                                        errorMsg.className = 'notice notice-error';
+                                        errorMsg.style.cssText = 'margin: 20px 0; padding: 12px; border-left: 4px solid #dc3545;';
+                                        errorMsg.innerHTML = '<p><strong>✗</strong> ' + (response.message || 'Erreur lors de la désactivation') + '</p>';
+                                        document.body.insertBefore(errorMsg, document.body.firstChild);
+                                    }
+                                } else {
+                                    var errorMsg = document.createElement('div');
+                                    errorMsg.className = 'notice notice-error';
+                                    errorMsg.style.cssText = 'margin: 20px 0; padding: 12px; border-left: 4px solid #dc3545;';
+                                    errorMsg.innerHTML = '<p><strong>✗</strong> Erreur serveur (statut: ' + xhr.status + ')</p>';
+                                    document.body.insertBefore(errorMsg, document.body.firstChild);
+                                }
+                            };
+                            
+                            xhr.onerror = function() {
+                                closeDeactivateModal();
+                                var errorMsg = document.createElement('div');
+                                errorMsg.className = 'notice notice-error';
+                                errorMsg.style.cssText = 'margin: 20px 0; padding: 12px; border-left: 4px solid #dc3545;';
+                                errorMsg.innerHTML = '<p><strong>✗</strong> Erreur de connexion</p>';
+                                document.body.insertBefore(errorMsg, document.body.firstChild);
+                            };
+                            
+                            xhr.send(data);
                         }
 
                         function deactivateTestMode() {

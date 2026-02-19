@@ -409,6 +409,41 @@ if (function_exists('add_action')) {
             $updates_manager->init();
         }
         
+        // ✅ HANDLER AJAX POUR LA DÉSACTIVATION DE LICENCE
+        add_action('wp_ajax_pdf_builder_deactivate_license', function() {
+            // Vérifier le nonce
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_deactivate')) {
+                wp_send_json_error([
+                    'message' => 'Erreur de sécurité: nonce invalide',
+                    'code' => 'nonce_invalid'
+                ], 403);
+            }
+            
+            // Vérifier les permissions
+            if (!current_user_can('manage_options')) {
+                wp_send_json_error([
+                    'message' => 'Permissions insuffisantes',
+                    'code' => 'permission_denied'
+                ], 403);
+            }
+            
+            // Désactiver la licence
+            $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+            $result = $license_manager->deactivateLicense();
+            
+            if ($result['success']) {
+                wp_send_json_success([
+                    'message' => 'Licence désactivée avec succès',
+                    'success' => true
+                ]);
+            } else {
+                wp_send_json_error([
+                    'message' => $result['message'] ?? 'Erreur lors de la désactivation',
+                    'success' => false
+                ]);
+            }
+        });
+        
         // Charger les utilitaires d'urgence si nécessaire
         pdf_builder_load_utilities_emergency();
 
