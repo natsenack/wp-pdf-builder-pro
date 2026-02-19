@@ -575,6 +575,8 @@
                     // Clé en clair (admin uniquement) et ID EDD pour les liens de gestion
                     $edd_license_key = $is_premium ? $license_manager->getLicenseKeyForLinks() : '';
                     $edd_license_id  = $is_premium ? $license_manager->getLicenseId()          : '';
+                    // Données complètes de la licence (expiration, client, activations…)
+                    $license_data = pdf_builder_get_option('pdf_builder_license_data', []);
                     // Clé masquée pour l'affichage dans le champ (5 premiers caractères + points)
                     $license_key_masked = (!empty($edd_license_key))
                         ? substr($edd_license_key, 0, 5) . str_repeat('•', 18)
@@ -919,20 +921,39 @@
                         Informations détaillées
                     </h3>
 
+                    <?php
+                    // Calculs pour les infos de licence
+                    $ld_expires_raw  = $license_data['expires_raw'] ?? '';
+                    $ld_expires_ts   = !empty($license_data['expires']) ? (int)$license_data['expires'] : 0;
+                    $ld_customer     = $license_data['customer'] ?? '';
+                    $ld_email        = $license_data['email'] ?? '';
+                    $ld_activations  = isset($license_data['activations']) ? (int)$license_data['activations'] : null;
+                    $ld_edd_status   = $license_data['edd_status'] ?? '';
+
+                    $expires_display = '';
+                    $days_left       = null;
+                    if ($ld_expires_ts > 0) {
+                        $now = time();
+                        $days_left = (int)ceil(($ld_expires_ts - $now) / 86400);
+                        $expires_display = date_i18n(get_option('date_format', 'd/m/Y'), $ld_expires_ts);
+                    } elseif (strtolower($ld_expires_raw) === 'lifetime') {
+                        $expires_display = 'À vie';
+                    } elseif (!empty($ld_expires_raw)) {
+                        $expires_display = esc_html($ld_expires_raw);
+                    }
+                    ?>
                     <div class="details-grid">
                         <div class="detail-card">
                             <h4>Site actuel</h4>
                             <p class="detail-value"><?php echo esc_html(home_url()); ?></p>
                         </div>
 
-                        <?php if (!empty($license_key)): ?>
+                        <?php if (!empty($edd_license_key)): ?>
                         <div class="detail-card">
                             <h4>Clé Premium</h4>
-                            <p class="detail-value license-key">
-                                <code><?php echo substr($license_key, 0, 8) . '••••••••••••' . substr($license_key, -8); ?></code>
-                                <button type="button" class="copy-btn" onclick="navigator.clipboard.writeText('<?php echo esc_js($license_key); ?>')" title="Copier">
-                                    📋
-                                </button>
+                            <p class="detail-value license-key" style="display:flex;align-items:center;gap:.5rem;">
+                                <code><?php echo esc_html(substr($edd_license_key, 0, 5) . '•••••••••••••••••••'); ?></code>
+                                <button type="button" class="copy-btn" onclick="navigator.clipboard.writeText('<?php echo esc_js($edd_license_key); ?>').then(()=>this.textContent='✅').catch(()=>{})" title="Copier la clé">📋</button>
                             </p>
                         </div>
                         <?php endif; ?>
@@ -959,6 +980,52 @@
                                 <?php endif; ?>
                             </p>
                         </div>
+
+                        <?php if (!empty($expires_display)): ?>
+                        <div class="detail-card">
+                            <h4>Date d'expiration</h4>
+                            <p class="detail-value">
+                                <?php echo esc_html($expires_display); ?>
+                                <?php if ($days_left !== null && strtolower($ld_expires_raw) !== 'lifetime'): ?>
+                                    <?php if ($days_left > 30): ?>
+                                        <span style="display:block;margin-top:4px;font-size:.8rem;color:#2e7d32;font-weight:600;">✅ <?php echo $days_left; ?> jours restants</span>
+                                    <?php elseif ($days_left > 0): ?>
+                                        <span style="display:block;margin-top:4px;font-size:.8rem;color:#e65100;font-weight:600;">⚠️ <?php echo $days_left; ?> jours restants</span>
+                                    <?php else: ?>
+                                        <span style="display:block;margin-top:4px;font-size:.8rem;color:#c62828;font-weight:600;">❌ Expirée</span>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </p>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($license_activated_at)): ?>
+                        <div class="detail-card">
+                            <h4>Date d'activation</h4>
+                            <p class="detail-value"><?php echo esc_html(date_i18n(get_option('date_format', 'd/m/Y'), strtotime($license_activated_at))); ?></p>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($ld_customer)): ?>
+                        <div class="detail-card">
+                            <h4>Titulaire</h4>
+                            <p class="detail-value"><?php echo esc_html($ld_customer); ?></p>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($ld_email)): ?>
+                        <div class="detail-card">
+                            <h4>Email du compte</h4>
+                            <p class="detail-value" style="word-break:break-all;"><?php echo esc_html($ld_email); ?></p>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if ($ld_activations !== null): ?>
+                        <div class="detail-card">
+                            <h4>Activations restantes</h4>
+                            <p class="detail-value"><?php echo $ld_activations > 0 ? $ld_activations : '<span style="color:#c62828;">0 (limite atteinte)</span>'; ?></p>
+                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <?php endif; ?>
