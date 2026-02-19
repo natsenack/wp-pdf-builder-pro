@@ -143,7 +143,7 @@ class PDF_Builder_License_Manager
     const EDD_STORE_URL = 'https://hub.threeaxe.fr';
 
     /** ID du produit WP PDF Builder Pro dans EDD (à ajuster selon l'ID réel) */
-    const EDD_ITEM_ID = 1;
+    const EDD_ITEM_ID = 19;
 
     /** Nom du produit dans EDD (slug affiché dans l'URL) */
     const EDD_ITEM_NAME = 'PDF Builder Pro';
