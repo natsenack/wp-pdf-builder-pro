@@ -598,27 +598,25 @@
                             </div>', 'Activation désactivée', ['response' => 403]);
                     }
 
-                    // Traitement désactivation licence (legacy - devrait être remplacé par AJAX unifié)
+                    // Traitement désactivation licence
                     if (isset($_POST['deactivate_license']) && isset($_POST['pdf_builder_deactivate_nonce'])) {
-
                         if (pdf_builder_verify_nonce($_POST['pdf_builder_deactivate_nonce'], 'pdf_builder_deactivate')) {
-                            // Mise à jour du tableau unifié au lieu d'options séparées
-                            $settings = pdf_builder_get_option('pdf_builder_settings', array());
-                            $settings['pdf_builder_license_key'] = '';
-                            $settings['pdf_builder_license_expires'] = '';
-                            $settings['pdf_builder_license_activated_at'] = '';
-                            $settings['pdf_builder_license_test_key'] = '';
-                            $settings['pdf_builder_license_test_mode_enabled'] = '0';
-                            $settings['pdf_builder_license_status'] = 'free';
-                            pdf_builder_update_option('pdf_builder_settings', $settings);
+                            // Déléguer au License Manager qui efface les bonnes options
+                            $license_manager->deactivateLicense();
 
-                            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Licence désactivée complètement.</p></div>';
-                            $is_premium = false;
-                            $license_key = '';
-                            $license_status = 'free';
+                            // Réinitialiser les variables locales de rendu
+                            $is_premium          = false;
+                            $edd_license_key     = '';
+                            $edd_license_id      = '';
+                            $license_key_masked  = '';
+                            $license_status      = 'free';
+                            $license_key         = '';
+                            $license_expires     = '';
                             $license_activated_at = '';
-                            $test_key = '';
-                            $test_mode_enabled = '0';
+                            $test_key            = '';
+                            $test_mode_enabled   = '0';
+
+                            $notices[] = '<div class="notice notice-success"><p><strong>✓</strong> Licence désactivée.</p></div>';
                         }
                     }
                 ?>
