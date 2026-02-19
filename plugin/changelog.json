@@ -1,0 +1,26 @@
+{
+  "1.0.2.0": {
+    "version": "1.0.2.0",
+    "released": "2026-02-20",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.2.0 - Mises à jour automatiques</h3>\n<ul>\n<li>✨ <strong>Nouveau:</strong> Système de mises à jour automatiques via EDD</li>\n<li>✨ <strong>Nouveau:</strong> Vérification automatique des mises à jour toutes les 12 heures</li>\n<li>✨ <strong>Nouveau:</strong> Intégration complète avec WordPress pour les notifications de mise à jour</li>\n<li>🔧 Table de comparaison Gratuit vs Premium améliorée (25 fonctionnalités listées)</li>\n<li>🔒 Chiffrement AES-256-CBC de la clé de licence en base de données</li>\n<li>🔐 Affichage masqué des clés de licence (5 premiers caractères + points)</li>\n<li>📅 Ajout des informations détaillées d'expiration et calcul des jours restants</li>\n<li>🎯 Boutons \"Renouveler\" et \"Se désabonner\" avec URLs dynamiques sécurisées</li>\n<li>🐛 Corrections mineures et optimisations de performance</li>\n</ul>"
+  },
+  "1.0.1.0": {
+    "version": "1.0.1.0",
+    "released": "2026-01-15",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.1.0 - Corrections et améliorations</h3>\n<ul>\n<li>🔧 Corrections de bugs critiques</li>\n<li>📊 Améliorations des performances</li>\n<li>🎨 Améliorations mineures de l'interface utilisateur</li>\n</ul>"
+  },
+  "1.0.0.0": {
+    "version": "1.0.0.0",
+    "released": "2025-12-01",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.0.0 - Version initiale</h3>\n<ul>\n<li>🎉 Lancement initial du PDF Builder Pro</li>\n<li>📄 Générateur de PDF professionnel</li>\n<li>🎨 Éditeur visuel avancé</li>\n<li>📋 Templates professionnels inclus</li>\n<li>🔐 Gestion des licences EDD intégrée</li>\n</ul>"
+  }
+}

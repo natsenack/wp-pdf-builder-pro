@@ -398,6 +398,17 @@ if (function_exists('add_action')) {
             require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Nonce_Validator.php';
         }
         
+        // ✅ INITIALISER LE SYSTÈME DE MISES À JOUR AUTOMATIQUES
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_License_Manager.php')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_License_Manager.php';
+        }
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Updates_Manager.php')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Updates_Manager.php';
+            // Initialiser les hooks WordPress pour les mises à jour automatiques
+            $updates_manager = new \PDF_Builder\Managers\PDF_Builder_Updates_Manager();
+            $updates_manager->init();
+        }
+        
         // Charger les utilitaires d'urgence si nécessaire
         pdf_builder_load_utilities_emergency();
 
