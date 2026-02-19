@@ -340,47 +340,48 @@
 
                 /* Section détails */
                 .license-details-section {
-                    margin-bottom: 2rem;
+                    margin-bottom: 1.25rem;
                 }
 
                 .section-title {
-                    font-size: 1.5rem;
-                    margin-bottom: 1.5rem;
+                    font-size: 1rem;
+                    margin-bottom: 0.75rem;
                     display: flex;
                     align-items: center;
-                    color: #333;
+                    color: #444;
+                    font-weight: 600;
                 }
 
                 .section-icon {
-                    margin-right: 0.5rem;
+                    margin-right: 0.4rem;
                 }
 
                 .details-grid {
                     display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                    gap: 1rem;
+                    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                    gap: 0.5rem;
                 }
 
                 .detail-card {
                     background: white;
-                    padding: 1.5rem;
-                    border-radius: 8px;
-                    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-                    border: 1px solid #e9ecef;
+                    padding: 0.6rem 0.85rem;
+                    border-radius: 6px;
+                    box-shadow: none;
+                    border: 1px solid #e4e7ea;
                 }
 
                 .detail-card h4 {
-                    margin: 0 0 0.5rem 0;
-                    font-size: 1rem;
-                    color: #666;
+                    margin: 0 0 0.2rem 0;
+                    font-size: 0.7rem;
+                    color: #888;
                     text-transform: uppercase;
                     font-weight: 600;
-                    letter-spacing: 0.5px;
+                    letter-spacing: 0.4px;
                 }
 
                 .detail-value {
                     margin: 0;
-                    font-size: 1.1rem;
+                    font-size: 0.85rem;
                     color: #333;
                     word-break: break-all;
                 }
@@ -388,7 +389,7 @@
                 .license-key, .test-key {
                     font-family: 'Courier New', monospace;
                     background: #f8f9fa;
-                    padding: 0.5rem;
+                    padding: 0.2rem 0.4rem;
                     border-radius: 4px;
                     display: flex;
                     align-items: center;
