@@ -780,47 +780,6 @@
                 <!-- Dashboard de statut principal -->
                 <div class="license-dashboard">
 
-                    <!-- Carte de statut principal -->
-                    <div class="license-status-card <?php echo $is_premium ? 'premium-active' : 'free-mode'; ?>">
-                        <div class="license-status-card-header">
-                            <div class="license-status-icon">
-                                <?php if ($is_premium): ?>
-                                    <span class="license-status-icon-premium">⭐</span>
-                                <?php else: ?>
-                                    <span class="license-status-icon-free">○</span>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-
-                        <div class="license-status-details">
-                            <?php if ($is_premium): ?>
-                                <div class="license-status-metrics">
-                                    <?php if (!empty($license_expires)): ?>
-                                        <div class="license-metric-item">
-                                            <span class="license-metric-label">Expire le</span>
-                                            <span class="license-metric-value"><?php echo date('d/m/Y', strtotime($license_expires)); ?></span>
-                                        </div>
-                                    <?php endif; ?>
-
-                                    <?php if (!empty($license_activated_at)): ?>
-                                        <div class="license-metric-item">
-                                            <span class="license-metric-label">Activée le</span>
-                                            <span class="license-metric-value"><?php echo date('d/m/Y', strtotime($license_activated_at)); ?></span>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endif; ?>
-
-                            <!-- Indicateur de mode test -->
-                            <?php if ($is_test_mode): ?>
-                                <div class="license-test-mode-banner">
-                                    <span class="license-test-icon">🧪</span>
-                                    <span class="license-test-text">Mode Développement Actif</span>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-
                     <!-- Alertes importantes -->
                     <?php if ($is_premium && !empty($license_expires)): ?>
                         <?php
