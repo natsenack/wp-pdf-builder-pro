@@ -775,14 +775,12 @@
                                        style="display:inline-flex;align-items:center;gap:.45rem;padding:.6rem 1.1rem;border-radius:8px;background:#f0f7ff;color:#2271b1;border:1px solid #c3d9f5;font-weight:600;font-size:.9rem;text-decoration:none;">
                                         🔄 Renouveler la licence
                                     </a>
-                                    <?php if (!empty($edd_license_id)): ?>
-                                    <a href="<?php echo esc_url('https://hub.threeaxe.fr?edd_action=license_unsubscribe&license_id=' . urlencode($edd_license_id) . '&license_key=' . urlencode($edd_license_key)); ?>"
+                                    <a href="<?php echo esc_url('https://hub.threeaxe.fr?edd_action=license_unsubscribe' . (!empty($edd_license_id) ? '&license_id=' . urlencode($edd_license_id) : '') . '&license_key=' . urlencode($edd_license_key)); ?>"
                                        target="_blank" rel="noopener noreferrer"
                                        onclick="return confirm('Êtes-vous sûr de vouloir vous désabonner ?')"
                                        style="display:inline-flex;align-items:center;gap:.45rem;padding:.6rem 1.1rem;border-radius:8px;background:#fff5f5;color:#cc1818;border:1px solid #f5c3c3;font-weight:600;font-size:.9rem;text-decoration:none;">
                                         ❌ Se désabonner
                                     </a>
-                                    <?php endif; ?>
                                 </div>
                                 <?php endif; ?>
                             </div>
