@@ -792,7 +792,7 @@
                     </div>
 
                     <!-- Support & Avantages Premium -->
-                    <?php if ($is_test_mode): ?>
+                    <?php if ($is_premium || $is_test_mode): ?>
                     <div class="action-card premium-support" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 12px; box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);">
                         <div class="action-card-header" style="padding: 1rem; text-align: center;">
                             <div style="font-size: 2.5rem; margin-bottom: 0.5rem; animation: supportPulse 2s ease-in-out infinite;">💎</div>
