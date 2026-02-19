@@ -928,11 +928,17 @@
                 <!-- Section informations détaillées -->
                 <?php if ($is_premium || !empty($test_key)): ?>
                 <div class="license-details-section">
-                    <h3 class="section-title">
-                        <span class="section-icon">ℹ️</span>
-                        Informations détaillées
-                    </h3>
+                    <button type="button"
+                            class="pdfb-expand-toggle"
+                            aria-expanded="false"
+                            aria-controls="pdfb-details-body"
+                            onclick="pdfbToggleExpand(this,'pdfb-details-body')"
+                            style="width:100%;display:flex;justify-content:space-between;align-items:center;background:#f0f4ff;border:1px solid #d0d9f5;border-radius:8px;padding:.55rem .9rem;cursor:pointer;font-size:.88rem;font-weight:600;color:#2c3e80;margin-bottom:0;">
+                        <span>ℹ️ Informations détaillées</span>
+                        <span class="pdfb-chevron" style="transition:transform .25s;">&#9660;</span>
+                    </button>
 
+                    <div id="pdfb-details-body" style="display:none;margin-top:.5rem;">
                     <div class="details-grid">
 
                         <!-- Statut -->
@@ -1044,52 +1050,92 @@
                         <?php endif; ?>
 
                     </div>
+                    </div><!-- /#pdfb-details-body -->
                 </div>
                 <?php endif; ?>
 
-                <!-- Section fonctionnalités premium -->
+                <!-- Comparatif Gratuit vs Premium -->
                 <div class="premium-features-section">
-                    <h3 class="section-title">
+                    <h3 class="section-title" style="font-size:1rem;">
                         <span class="section-icon">⭐</span>
-                        Fonctionnalités Premium
+                        Gratuit vs Premium
                     </h3>
 
-                    <div class="features-grid">
-                        <div class="feature-item <?php echo $is_premium ? 'unlocked' : 'locked'; ?>">
-                            <div class="feature-icon"><?php echo $is_premium ? '✅' : '🔒'; ?></div>
-                            <div class="feature-content">
-                                <h4>Templates Avancés</h4>
-                                <p>Accès à tous les templates professionnels</p>
-                            </div>
-                        </div>
+                    <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
+                        <thead>
+                            <tr style="background:#f0f4ff;">
+                                <th style="text-align:left;padding:.5rem .75rem;border:1px solid #dde3f5;font-weight:600;color:#333;">Fonctionnalité</th>
+                                <th style="text-align:center;padding:.5rem .75rem;border:1px solid #dde3f5;color:#6c757d;font-weight:600;">Gratuit</th>
+                                <th style="text-align:center;padding:.5rem .75rem;border:1px solid #dde3f5;color:#2271b1;font-weight:600;">Premium</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pdfb-compare-visible">
+                            <tr>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Création de modèles PDF</td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr style="background:#fafafa;">
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Export PDF standard</td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Export haute résolution (300 DPI)</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr style="background:#fafafa;">
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Templates professionnels avancés</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                        </tbody>
+                        <tbody id="pdfb-compare-hidden" style="display:none;">
+                            <tr>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Exports multi-formats (PNG, JPG…)</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr style="background:#fafafa;">
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Navigation en grille</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Outils de mise en page avancés</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr style="background:#fafafa;">
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Support prioritaire</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Mises à jour automatiques</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr style="background:#fafafa;">
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Gestion multi-sites</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-                        <div class="feature-item <?php echo $is_premium ? 'unlocked' : 'locked'; ?>">
-                            <div class="feature-icon"><?php echo $is_premium ? '✅' : '🔒'; ?></div>
-                            <div class="feature-content">
-                                <h4>Export Haute Résolution</h4>
-                                <p>PDF en qualité supérieure (300 DPI)</p>
-                            </div>
-                        </div>
-
-                        <div class="feature-item <?php echo $is_premium ? 'unlocked' : 'locked'; ?>">
-                            <div class="feature-icon"><?php echo $is_premium ? '✅' : '🔒'; ?></div>
-                            <div class="feature-content">
-                                <h4>Support Prioritaire</h4>
-                                <p>Assistance technique dédiée</p>
-                            </div>
-                        </div>
-
-                        <div class="feature-item <?php echo $is_premium ? 'unlocked' : 'locked'; ?>">
-                            <div class="feature-icon"><?php echo $is_premium ? '✅' : '🔒'; ?></div>
-                            <div class="feature-content">
-                                <h4>Mises à Jour</h4>
-                                <p>Accès aux dernières fonctionnalités</p>
-                            </div>
-                        </div>
-                    </div>
+                    <button type="button"
+                            id="pdfb-compare-btn"
+                            onclick="pdfbToggleExpand(this,'pdfb-compare-hidden')"
+                            aria-expanded="false"
+                            style="margin-top:.6rem;background:none;border:1px solid #d0d9f5;border-radius:6px;padding:.35rem .9rem;font-size:.8rem;color:#2271b1;cursor:pointer;display:flex;align-items:center;gap:.4rem;">
+                        <span>Voir plus de fonctionnalités</span>
+                        <span class="pdfb-chevron" style="transition:transform .25s;">&#9660;</span>
+                    </button>
 
                     <?php if (!$is_premium): ?>
-                    <div class="upgrade-prompt">
+                    <div class="upgrade-prompt" style="margin-top:1rem;">
                         <h4>Prêt à passer au premium ?</h4>
                         <p>Débloquez toutes ces fonctionnalités et bien plus encore</p>
                         <a href="#activate-section" class="btn-primary-large">
@@ -1099,8 +1145,6 @@
                     </div>
                     <?php endif; ?>
                 </div>
-                            <article class="status-card<?php echo $is_premium ? ' premium' : ''; ?>">
-                                <aside class="status-card-label">Statut</aside>
 
             </section>
 
@@ -1169,6 +1213,33 @@
                         window.pdfBuilderLicense.deactivateNonce = '<?php echo wp_create_nonce("pdf_builder_deactivate"); ?>';
                         window.pdfBuilderLicense.ajaxNonce      = '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>';
                         window.pdfBuilderLicense.ajaxUrl         = '<?php echo admin_url("admin-ajax.php"); ?>';
+
+                        // ── Expand / Collapse générique ─────────────────────────────────────
+                        function pdfbToggleExpand(btn, targetId) {
+                            var target   = document.getElementById(targetId);
+                            var chevron  = btn.querySelector('.pdfb-chevron');
+                            var expanded = btn.getAttribute('aria-expanded') === 'true';
+                            if (!target) return;
+
+                            if (expanded) {
+                                target.style.display = 'none';
+                                btn.setAttribute('aria-expanded', 'false');
+                                if (chevron) chevron.style.transform = '';
+                                // Mise à jour du libellé pour le comparatif
+                                var label = btn.querySelector('span:first-child');
+                                if (label && label.textContent.indexOf('Moins') !== -1) {
+                                    label.textContent = 'Voir plus de fonctionnalités';
+                                }
+                            } else {
+                                target.style.display = '';
+                                btn.setAttribute('aria-expanded', 'true');
+                                if (chevron) chevron.style.transform = 'rotate(180deg)';
+                                var label = btn.querySelector('span:first-child');
+                                if (label && label.textContent.indexOf('Voir plus') !== -1) {
+                                    label.textContent = 'Voir moins';
+                                }
+                            }
+                        }
 
                         // ── Validation et activation de licence (EDD) ──────────────────────────
                         (function() {
