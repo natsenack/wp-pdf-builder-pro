@@ -25,6 +25,36 @@
                     font-weight: 600;
                 }
 
+                .license-header-top {
+                    display: flex;
+                    align-items: center;
+                    gap: 1rem;
+                    flex-wrap: wrap;
+                }
+
+                .license-status-badge {
+                    display: inline-flex;
+                    align-items: center;
+                    padding: 0.4rem 0.8rem;
+                    border-radius: 20px;
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    white-space: nowrap;
+                    transition: all 0.2s ease;
+                }
+
+                .license-status-badge.badge-premium {
+                    background: rgba(255, 255, 255, 0.25);
+                    color: white;
+                    border: 1px solid rgba(255, 255, 255, 0.4);
+                }
+
+                .license-status-badge.badge-free {
+                    background: rgba(255, 255, 255, 0.15);
+                    color: rgba(255, 255, 255, 0.9);
+                    border: 1px solid rgba(255, 255, 255, 0.25);
+                }
+
                 .license-subtitle {
                     margin: 0;
                     opacity: 0.9;
@@ -619,10 +649,16 @@
                 <!-- Header avec titre et actions principales -->
                 <div class="license-header">
                     <div class="license-header-content">
-                        <h2 class="license-main-title">
-                            <span class="license-icon">🔐</span>
-                            Gestion de la Licence
-                        </h2>
+                        <div class="license-header-top">
+                            <h2 class="license-main-title">
+                                <span class="license-icon">🔐</span>
+                                Gestion de la Licence
+                            </h2>
+                            <!-- Badge Statut Licence -->
+                            <span class="license-status-badge <?php echo $is_premium ? 'badge-premium' : 'badge-free'; ?>">
+                                <?php echo $is_premium ? '⭐ Premium' : '○ Version Gratuite'; ?>
+                            </span>
+                        </div>
                         <p class="license-subtitle">Gérez votre licence PDF Builder Pro et accédez aux fonctionnalités premium</p>
                     </div>
 
@@ -657,10 +693,10 @@
                             </div>
                             <div class="status-info">
                                 <h3 class="status-title">
-                                    <?php echo $is_premium ? 'Licence Premium Active' : 'Version Gratuite'; ?>
+                                    <?php echo $is_premium ? 'Licence Premium Active' : 'Statut de la Licence'; ?>
                                 </h3>
                                 <p class="status-subtitle">
-                                    <?php echo $is_premium ? 'Toutes les fonctionnalités débloquées' : 'Fonctionnalités limitées'; ?>
+                                    <?php echo $is_premium ? 'Toutes les fonctionnalités débloquées' : 'Fonctionnalités limitées disponibles'; ?>
                                 </p>
                             </div>
                         </div>

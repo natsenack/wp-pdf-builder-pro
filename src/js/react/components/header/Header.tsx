@@ -2684,16 +2684,21 @@ export const Header = memo(function Header({
           onClick={() => {
             if (!isPremium) {
               // Appel du modal PHP partagé injecté via admin_footer
-              (window as any).showUpgradeModal?.('template');
+              (window as any).showUpgradeModal?.("template");
               return;
             }
             // Utilisateur premium : naviguer vers éditeur vierge
-            const ajaxUrl: string = (window as any).pdfBuilderData?.ajaxUrl || '';
+            const ajaxUrl: string =
+              (window as any).pdfBuilderData?.ajaxUrl || "";
             const adminBase = ajaxUrl
-              ? ajaxUrl.replace('admin-ajax.php', 'admin.php')
-              : window.location.href.split('?')[0];
-            const newUrl = adminBase + '?page=pdf-builder-pro';
-            if (window.confirm('Créer un nouveau template ? Les modifications non sauvegardées seront perdues.')) {
+              ? ajaxUrl.replace("admin-ajax.php", "admin.php")
+              : window.location.href.split("?")[0];
+            const newUrl = adminBase + "?page=pdf-builder-pro";
+            if (
+              window.confirm(
+                "Créer un nouveau template ? Les modifications non sauvegardées seront perdues.",
+              )
+            ) {
               window.location.href = newUrl;
             }
           }}
@@ -2701,9 +2706,9 @@ export const Header = memo(function Header({
           onMouseLeave={() => setHoveredButton(null)}
           style={{
             ...secondaryButtonStyles,
-            opacity: isSaving && isPremium ? 0.6 : (!isPremium ? 0.7 : 1),
+            opacity: isSaving && isPremium ? 0.6 : !isPremium ? 0.7 : 1,
             // Non-premium : toujours cliquable pour afficher le modal d'upgrade
-            pointerEvents: (isSaving && isPremium) ? "none" : "auto",
+            pointerEvents: isSaving && isPremium ? "none" : "auto",
             ...(!isPremium && {
               border: "1px solid #d1d5db",
               color: "#9ca3af",
@@ -2719,7 +2724,9 @@ export const Header = memo(function Header({
           <span>➕</span>
           <span>Nouveau</span>
           {!isPremium && (
-            <span style={{ fontSize: "10px", color: "#d97706", marginLeft: "4px" }}>
+            <span
+              style={{ fontSize: "10px", color: "#d97706", marginLeft: "4px" }}
+            >
               🔒
             </span>
           )}
@@ -4106,7 +4113,6 @@ export const Header = memo(function Header({
           </div>
         </div>
       )}
-
     </div>
   );
 });

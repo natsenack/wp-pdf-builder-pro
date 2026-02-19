@@ -7,23 +7,27 @@ Audit complété le **2024-01-XX**. Tous les appels `get_option()`, `update_opti
 ## ✅ Fichiers Modifiés
 
 ### 1. `plugin/src/Core/PDF_Builder_Core.php`
+
 - **Ligne 491-496**: Ajout de l'appel à `Settings_Migration::migrate_from_wp_options()` dans la méthode `activate()`
 - **Impact**: Migration automatique des données lors de l'activation du plugin
 
 ### 2. `plugin/src/Core/PDF_Builder_Unified_Ajax_Handler.php`
+
 **10 remplacements effectués:**
 
-| Ligne | Type | Avant | Après |
-|------|------|-------|-------|
-| 1738-1743 | get_option + update_option | `get_option("pdf_builder_template_{$template_id}")` | `pdf_builder_get_option(...)` |
-| 1462 | delete_option | `delete_option('pdf_builder_license_enable_notifications')` | `pdf_builder_delete_option(...)` |
-| 4078-4081 | get_option (3x) | `get_option('pdf_builder_company_*')` | `pdf_builder_get_option(...)` |
-| 5321-5322 | get_option (2x) | `get_option('pdf_builder_debug_enabled/developer_enabled')` | `pdf_builder_get_option(...)` |
-| 1351 | update_option | `update_option($key)` pour canvas | `pdf_builder_update_option($key)` |
-| 2702 | delete_option (boucle) | `delete_option($option)` | `pdf_builder_delete_option($option)` |
+| Ligne     | Type                       | Avant                                                       | Après                                |
+| --------- | -------------------------- | ----------------------------------------------------------- | ------------------------------------ |
+| 1738-1743 | get_option + update_option | `get_option("pdf_builder_template_{$template_id}")`         | `pdf_builder_get_option(...)`        |
+| 1462      | delete_option              | `delete_option('pdf_builder_license_enable_notifications')` | `pdf_builder_delete_option(...)`     |
+| 4078-4081 | get_option (3x)            | `get_option('pdf_builder_company_*')`                       | `pdf_builder_get_option(...)`        |
+| 5321-5322 | get_option (2x)            | `get_option('pdf_builder_debug_enabled/developer_enabled')` | `pdf_builder_get_option(...)`        |
+| 1351      | update_option              | `update_option($key)` pour canvas                           | `pdf_builder_update_option($key)`    |
+| 2702      | delete_option (boucle)     | `delete_option($option)`                                    | `pdf_builder_delete_option($option)` |
 
 ### 3. `plugin/src/Database/Settings_Migration.php` (CRÉÉ)
+
 **Nouvelles fonctions de migration:**
+
 - `Settings_Migration::migrate_from_wp_options()` - Migre les données existantes
 - `Settings_Migration::get_migration_status()` - Affiche le statut
 - `Settings_Migration::cleanup_old_wp_options()` - Nettoie après migration
@@ -31,6 +35,7 @@ Audit complété le **2024-01-XX**. Tous les appels `get_option()`, `update_opti
 ## 📊 Options Identifiées et Migrées
 
 ### Options à Migrer (40+ options)
+
 ```
 pdf_builder_settings
 pdf_builder_canvas_*
@@ -51,6 +56,7 @@ pdf_builder_woocommerce*
 ```
 
 ### Options à CONSERVER dans wp_options
+
 ```
 ✓ admin_email (WordPress standard)
 ✓ woocommerce_store_* (WooCommerce standard)
@@ -62,6 +68,7 @@ pdf_builder_woocommerce*
 ## 🗄️ Architecture Base de Données
 
 ### Nouvelle Table: `wp_pdf_builder_settings`
+
 ```sql
 CREATE TABLE wp_pdf_builder_settings (
     option_id bigint(20) NOT NULL AUTO_INCREMENT,
@@ -74,6 +81,7 @@ CREATE TABLE wp_pdf_builder_settings (
 ```
 
 ### Tables Existantes (Inchangées)
+
 - `wp_pdf_builder_templates` - Stockage des templates
 - `wp_pdf_builder_order_canvases` - Données canvas par commande
 
@@ -103,6 +111,7 @@ CREATE TABLE wp_pdf_builder_settings (
 ✅ `plugin/src/Integrations/PDF_Builder_Variable_Mapper.php` - Conservé wp_options (intentionnel pour WooCommerce)
 
 **Fichiers à revérifier (LOW PRIORITY):**
+
 - `plugin/src/Admin/PDF_Builder_Admin.php` - À scanner
 - `plugin/src/...` - Autres fichiers si non trouvés dans audit
 
