@@ -790,14 +790,6 @@
                                     <span class="license-status-icon-free">○</span>
                                 <?php endif; ?>
                             </div>
-                            <div class="license-status-info">
-                                <h3 class="license-status-title">
-                                    <?php echo $is_premium ? 'Licence Premium Active' : 'Statut de la Licence'; ?>
-                                </h3>
-                                <p class="license-status-subtitle">
-                                    <?php echo $is_premium ? 'Toutes les fonctionnalités débloquées' : 'Fonctionnalités limitées disponibles'; ?>
-                                </p>
-                            </div>
                         </div>
 
                         <div class="license-status-details">
