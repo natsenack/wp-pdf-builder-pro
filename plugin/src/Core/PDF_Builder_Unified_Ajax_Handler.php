@@ -1464,22 +1464,34 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         $saved_count = 0;
 
-        // Paramètres de rappel par email
+        // Récupérer les paramètres de licence actuels depuis le tableau unifié
+        $license_settings = pdf_builder_get_option('pdf_builder_settings', array());
+
+        // Paramètres de rappel par email - sauvegarder dans le tableau unifié pdf_builder_settings
         if (isset($_POST['pdf_builder_settings']['pdf_builder_license_email_reminders'])) {
             $email_reminders = sanitize_text_field($_POST['pdf_builder_settings']['pdf_builder_license_email_reminders']);
-            if (pdf_builder_update_option('pdf_builder_license_email_reminders', $email_reminders)) {
-                $saved_count++;
-            }
+            $license_settings['pdf_builder_license_email_reminders'] = $email_reminders;
+            $saved_count++;
         }
 
         if (isset($_POST['pdf_builder_settings']['pdf_builder_license_reminder_email'])) {
             $reminder_email = sanitize_email($_POST['pdf_builder_settings']['pdf_builder_license_reminder_email']);
-            if (pdf_builder_update_option('pdf_builder_license_reminder_email', $reminder_email)) {
-                $saved_count++;
+            $license_settings['pdf_builder_license_reminder_email'] = $reminder_email;
+            $saved_count++;
+        }
+
+        // Sauvegarder le tableau unifié
+        if ($saved_count > 0) {
+            if (pdf_builder_update_option('pdf_builder_settings', $license_settings)) {
+                error_log("[PDF Builder] License settings saved successfully");
+                return $saved_count;
+            } else {
+                error_log("[PDF Builder] Failed to save license settings");
+                return 0;
             }
         }
 
-        return $saved_count;
+        return 0;
     }
 
     /**
