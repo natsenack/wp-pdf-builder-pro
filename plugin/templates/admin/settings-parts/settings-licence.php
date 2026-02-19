@@ -581,6 +581,19 @@
                         : '';
                     $is_test_mode = $test_mode_enabled === '1';
 
+                    // Données détaillées EDD (customer, expiration, activations…)
+                    $lic_data        = $is_premium ? pdf_builder_get_option('pdf_builder_license_data', []) : [];
+                    $lic_expires_raw = $lic_data['expires_raw']
+                                        ?? pdf_builder_get_option('pdf_builder_license_expires', $license_expires);
+                    $lic_expires_ts  = !empty($lic_data['expires']) ? (int)$lic_data['expires']
+                                        : (!empty($lic_expires_raw) && $lic_expires_raw !== 'lifetime' ? strtotime($lic_expires_raw) : 0);
+                    $lic_is_lifetime = ($lic_expires_raw === 'lifetime');
+                    $lic_days_left   = (!$lic_is_lifetime && $lic_expires_ts > 0)
+                                        ? max(0, (int)(($lic_expires_ts - time()) / 86400)) : null;
+                    $lic_customer    = $lic_data['customer'] ?? '';
+                    $lic_email       = $lic_data['email']    ?? '';
+                    $lic_activations = isset($lic_data['activations']) ? (int)$lic_data['activations'] : null;
+
                     // Traitement activation licence
                     if (isset($_POST['activate_license']) && isset($_POST['pdf_builder_license_nonce'])) {
                      // Mode DÉMO : Activation de clés réelles désactivée
@@ -920,33 +933,8 @@
                     </h3>
 
                     <div class="details-grid">
-                        <div class="detail-card">
-                            <h4>Site actuel</h4>
-                            <p class="detail-value"><?php echo esc_html(home_url()); ?></p>
-                        </div>
 
-                        <?php if (!empty($license_key)): ?>
-                        <div class="detail-card">
-                            <h4>Clé Premium</h4>
-                            <p class="detail-value license-key">
-                                <code><?php echo substr($license_key, 0, 8) . '••••••••••••' . substr($license_key, -8); ?></code>
-                                <button type="button" class="copy-btn" onclick="navigator.clipboard.writeText('<?php echo esc_js($license_key); ?>')" title="Copier">
-                                    📋
-                                </button>
-                            </p>
-                        </div>
-                        <?php endif; ?>
-
-                        <?php if (!empty($test_key)): ?>
-                        <div class="detail-card">
-                            <h4>Clé de Test</h4>
-                            <p class="detail-value test-key">
-                                <code><?php echo substr($test_key, 0, 8) . '••••••••••••' . substr($test_key, -8); ?></code>
-                                <span class="test-badge">TEST</span>
-                            </p>
-                        </div>
-                        <?php endif; ?>
-
+                        <!-- Statut -->
                         <div class="detail-card">
                             <h4>Statut</h4>
                             <p class="detail-value">
@@ -959,6 +947,101 @@
                                 <?php endif; ?>
                             </p>
                         </div>
+
+                        <!-- Site -->
+                        <div class="detail-card">
+                            <h4>Site actuel</h4>
+                            <p class="detail-value"><?php echo esc_html(home_url()); ?></p>
+                        </div>
+
+                        <!-- Clé Premium (masquée) -->
+                        <?php if (!empty($edd_license_key)): ?>
+                        <div class="detail-card">
+                            <h4>Clé de licence</h4>
+                            <p class="detail-value license-key" style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
+                                <code><?php echo esc_html(substr($edd_license_key, 0, 5) . str_repeat('•', 18)); ?></code>
+                                <button type="button" class="copy-btn"
+                                        onclick="navigator.clipboard.writeText('<?php echo esc_js($edd_license_key); ?>').then(function(){ this.textContent='✅'; }.bind(this))"
+                                        title="Copier la clé">
+                                    📋
+                                </button>
+                            </p>
+                        </div>
+                        <?php endif; ?>
+
+                        <!-- Expiration -->
+                        <?php if ($is_premium): ?>
+                        <div class="detail-card">
+                            <h4>Expiration</h4>
+                            <p class="detail-value">
+                                <?php if ($lic_is_lifetime): ?>
+                                    <span style="color:#00a32a;font-weight:600;">♾️ À vie</span>
+                                <?php elseif ($lic_expires_ts > 0): ?>
+                                    <?php
+                                        $exp_date = wp_date(get_option('date_format', 'd/m/Y'), $lic_expires_ts);
+                                        echo esc_html($exp_date);
+                                    ?>
+                                <?php else: ?>
+                                    <span style="color:#999;">—</span>
+                                <?php endif; ?>
+                            </p>
+                        </div>
+
+                        <!-- Jours restants -->
+                        <div class="detail-card">
+                            <h4>Jours restants</h4>
+                            <p class="detail-value">
+                                <?php if ($lic_is_lifetime): ?>
+                                    <span style="color:#00a32a;font-weight:600;">∞</span>
+                                <?php elseif ($lic_days_left !== null): ?>
+                                    <?php
+                                        $color = $lic_days_left > 60 ? '#00a32a' : ($lic_days_left > 14 ? '#d97c00' : '#cc1818');
+                                        echo '<span style="color:' . $color . ';font-weight:600;font-size:1.1rem;">' . (int)$lic_days_left . ' j</span>';
+                                    ?>
+                                <?php else: ?>
+                                    <span style="color:#999;">—</span>
+                                <?php endif; ?>
+                            </p>
+                        </div>
+                        <?php endif; ?>
+
+                        <!-- Client -->
+                        <?php if (!empty($lic_customer)): ?>
+                        <div class="detail-card">
+                            <h4>Titulaire</h4>
+                            <p class="detail-value"><?php echo esc_html($lic_customer); ?></p>
+                        </div>
+                        <?php endif; ?>
+
+                        <!-- Email -->
+                        <?php if (!empty($lic_email)): ?>
+                        <div class="detail-card">
+                            <h4>Email</h4>
+                            <p class="detail-value"><?php echo esc_html($lic_email); ?></p>
+                        </div>
+                        <?php endif; ?>
+
+                        <!-- Activations restantes -->
+                        <?php if ($is_premium && $lic_activations !== null): ?>
+                        <div class="detail-card">
+                            <h4>Activations restantes</h4>
+                            <p class="detail-value">
+                                <span style="font-weight:600;"><?php echo (int)$lic_activations; ?></span>
+                            </p>
+                        </div>
+                        <?php endif; ?>
+
+                        <!-- Clé de Test -->
+                        <?php if (!empty($test_key)): ?>
+                        <div class="detail-card">
+                            <h4>Clé de Test</h4>
+                            <p class="detail-value test-key">
+                                <code><?php echo esc_html(substr($test_key, 0, 8) . '••••••••••••' . substr($test_key, -8)); ?></code>
+                                <span class="test-badge">TEST</span>
+                            </p>
+                        </div>
+                        <?php endif; ?>
+
                     </div>
                 </div>
                 <?php endif; ?>
