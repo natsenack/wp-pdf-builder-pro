@@ -1,4 +1,4 @@
-<?php // Licence tab content - Updated: AJAX centralized 2025-12-02
+﻿<?php // Licence tab content - Updated: AJAX centralized 2025-12-02
 
 ?>
             <!-- Licence Settings Section (No Form - AJAX Centralized) -->
@@ -70,7 +70,7 @@
                     flex-shrink: 0;
                 }
 
-                .btn-primary-large, .btn-secondary-large {
+                .license-btn-primary-large, .license-btn-secondary-large {
                     display: inline-flex;
                     align-items: center;
                     padding: 0.75rem 1.5rem;
@@ -83,28 +83,28 @@
                     font-size: 0.95rem;
                 }
 
-                .btn-primary-large {
+                .license-btn-primary-large {
                     background: #fff;
                     color: #667eea;
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 }
 
-                .btn-primary-large:hover {
+                .license-btn-primary-large:hover {
                     transform: translateY(-1px);
                     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
                 }
 
-                .btn-secondary-large {
+                .license-btn-secondary-large {
                     background: rgba(255, 255, 255, 0.2);
                     color: white;
                     border: 1px solid rgba(255, 255, 255, 0.3);
                 }
 
-                .btn-secondary-large:hover {
+                .license-btn-secondary-large:hover {
                     background: rgba(255, 255, 255, 0.3);
                 }
 
-                .btn-icon {
+                .license-btn-icon {
                     margin-right: 0.5rem;
                 }
 
@@ -131,59 +131,59 @@
                     border-left-color: #6c757d;
                 }
 
-                .status-card-header {
+                .license-status-card-header {
                     display: flex;
                     align-items: center;
                     margin-bottom: 1.5rem;
                 }
 
-                .status-icon {
+                .license-status-icon {
                     font-size: 3rem;
                     margin-right: 1rem;
                 }
 
-                .status-info h3 {
+                .license-status-info h3 {
                     margin: 0 0 0.25rem 0;
                     font-size: 1.5rem;
                     font-weight: 600;
                     color: #333;
                 }
 
-                .status-subtitle {
+                .license-status-subtitle {
                     margin: 0;
                     color: #666;
                     font-size: 1rem;
                 }
 
-                .status-details {
+                .license-status-details {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
                 }
 
-                .status-metrics {
+                .license-status-metrics {
                     display: flex;
                     gap: 2rem;
                 }
 
-                .metric-item {
+                .license-metric-item {
                     text-align: center;
                 }
 
-                .metric-label {
+                .license-metric-label {
                     display: block;
                     font-size: 0.85rem;
                     color: #666;
                     margin-bottom: 0.25rem;
                 }
 
-                .metric-value {
+                .license-metric-value {
                     display: block;
                     font-weight: 600;
                     color: #333;
                 }
 
-                .test-mode-banner {
+                .license-test-mode-banner {
                     background: #fff3cd;
                     color: #856404;
                     padding: 0.5rem 1rem;
@@ -216,26 +216,26 @@
                     color: #721c24;
                 }
 
-                .alert-icon {
+                .license-alert-icon {
                     font-size: 1.5rem;
                 }
 
-                .alert-content h4 {
+                .license-alert-content h4 {
                     margin: 0 0 0.25rem 0;
                     font-weight: 600;
                 }
 
-                .alert-date {
+                .license-alert-date {
                     margin: 0.25rem 0 0 0;
                     font-size: 0.9rem;
                     opacity: 0.8;
                 }
 
-                .alert-actions {
+                .license-alert-actions {
                     margin-left: auto;
                 }
 
-                .btn-small {
+                .license-btn-small {
                     padding: 0.5rem 1rem;
                     border-radius: 6px;
                     text-decoration: none;
@@ -246,13 +246,112 @@
                     transition: all 0.2s ease;
                 }
 
-                .btn-small.primary {
+                .license-btn-small.primary {
                     background: #007bff;
                     color: white;
                 }
 
-                .btn-small:hover {
+                .license-btn-small:hover {
                     opacity: 0.9;
+                }
+
+                .license-btn-primary {
+                    background: #667eea;
+                    color: white;
+                    padding: 0.6rem 1rem;
+                    border-radius: 6px;
+                    border: none;
+                    cursor: pointer;
+                    font-weight: 600;
+                    font-size: 0.9rem;
+                    transition: all 0.2s ease;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+
+                .license-btn-primary:hover {
+                    background: #5568d3;
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+                }
+
+                .license-btn-text {
+                    /* Placeholder for button text styling */
+                }
+
+                .license-btn-secondary {
+                    background: rgba(255, 255, 255, 0.2);
+                    color: white;
+                    border: none;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+
+                .license-btn-secondary:hover {
+                    background: rgba(255, 255, 255, 0.3);
+                }
+
+                .license-support-actions {
+                    display: flex;
+                    gap: 0.5rem;
+                    justify-content: center;
+                }
+
+                .license-premium-features-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 0.8rem;
+                    margin-bottom: 1rem;
+                }
+
+                .license-premium-support {
+                    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                    border-radius: 12px;
+                    box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+                }
+
+                .license-premium-promo {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+                    border-radius: 12px;
+                    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+                }
+
+                .license-premium-promo-content {
+                    padding: 1rem;
+                    text-align: center;
+                    position: relative;
+                    z-index: 2;
+                }
+
+                .license-premium-cta {
+                    background: linear-gradient(45deg, #ff6b6b, #ffa500);
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 25px;
+                    font-weight: 600;
+                    font-size: 0.9rem;
+                    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+                    transition: all 0.3s ease;
+                    position: relative;
+                    overflow: hidden;
+                    padding: 0.6rem 1.2rem;
+                    display: inline-block;
+                }
+
+                .license-premium-cta:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6) !important;
+                }
+
+                .license-test-key {
+                    font-family: 'Courier New', monospace;
+                    background: #f8f9fa;
+                    padding: 0.2rem 0.4rem;
+                    border-radius: 4px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
                 }
 
                 /* Section d'actions */
@@ -263,7 +362,7 @@
                     margin-bottom: 2rem;
                 }
 
-                .action-card {
+                .license-action-card {
                     background: white;
                     border-radius: 12px;
                     padding: 1.5rem;
@@ -271,24 +370,24 @@
                     border: 1px solid #e9ecef;
                 }
 
-                .action-card.secondary {
+                .license-action-card.secondary {
                     background: #f8f9fa;
                     border-color: #dee2e6;
                 }
 
-                .action-card-header h3 {
+                .license-action-card-header h3 {
                     margin: 0 0 0.5rem 0;
                     font-size: 1.25rem;
                     display: flex;
                     align-items: center;
                 }
 
-                .action-card-header p {
+                .license-action-card-header p {
                     margin: 0;
                     color: #666;
                 }
 
-                .action-icon {
+                .license-action-icon {
                     margin-right: 0.5rem;
                 }
 
@@ -303,7 +402,7 @@
                     color: #333;
                 }
 
-                .input-with-button {
+                .license-input-with-button {
                     display: flex;
                     gap: 0.5rem;
                 }
@@ -322,48 +421,48 @@
                     box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.25);
                 }
 
-                .input-help {
+                .license-input-help {
                     margin: 0.5rem 0 0 0;
                     font-size: 0.9rem;
                     color: #666;
                 }
 
-                .link-primary {
+                .license-link-primary {
                     color: #667eea;
                     text-decoration: none;
                     font-weight: 500;
                 }
 
-                .link-primary:hover {
+                .license-link-primary:hover {
                     text-decoration: underline;
                 }
 
-                .dev-mode-status {
+                .license-dev-mode-status {
                     margin-top: 1rem;
                 }
 
-                .status-active, .status-inactive {
+                .license-status-active, .license-status-inactive {
                     display: flex;
                     align-items: center;
                     gap: 0.5rem;
                     margin-bottom: 1rem;
                 }
 
-                .status-dot {
+                .license-status-dot {
                     width: 8px;
                     height: 8px;
                     border-radius: 50%;
                 }
 
-                .status-dot.active {
+                .license-status-dot.active {
                     background: #28a745;
                 }
 
-                .status-dot.inactive {
+                .license-status-dot.inactive {
                     background: #6c757d;
                 }
 
-                .expiry-info {
+                .license-expiry-info {
                     color: #666;
                     font-size: 0.9rem;
                 }
@@ -373,7 +472,7 @@
                     margin-bottom: 1.25rem;
                 }
 
-                .section-title {
+                .license-section-title {
                     font-size: 1rem;
                     margin-bottom: 0.75rem;
                     display: flex;
@@ -382,17 +481,17 @@
                     font-weight: 600;
                 }
 
-                .section-icon {
+                .license-section-icon {
                     margin-right: 0.4rem;
                 }
 
-                .details-grid {
+                .license-details-grid {
                     display: grid;
                     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
                     gap: 0.5rem;
                 }
 
-                .detail-card {
+                .license-detail-card {
                     background: white;
                     padding: 0.6rem 0.85rem;
                     border-radius: 6px;
@@ -400,7 +499,7 @@
                     border: 1px solid #e4e7ea;
                 }
 
-                .detail-card h4 {
+                .license-detail-card h4 {
                     margin: 0 0 0.2rem 0;
                     font-size: 0.7rem;
                     color: #888;
@@ -409,7 +508,7 @@
                     letter-spacing: 0.4px;
                 }
 
-                .detail-value {
+                .license-detail-value {
                     margin: 0;
                     font-size: 0.85rem;
                     color: #333;
@@ -426,7 +525,7 @@
                     justify-content: space-between;
                 }
 
-                .copy-btn {
+                .license-copy-btn {
                     background: none;
                     border: none;
                     cursor: pointer;
@@ -435,11 +534,11 @@
                     transition: background 0.2s ease;
                 }
 
-                .copy-btn:hover {
+                .license-copy-btn:hover {
                     background: #e9ecef;
                 }
 
-                .test-badge {
+                .license-test-badge {
                     background: #fff3cd;
                     color: #856404;
                     padding: 0.25rem 0.5rem;
@@ -448,44 +547,44 @@
                     font-weight: 500;
                 }
 
-                .status-badge {
+                .license-status-badge {
                     padding: 0.25rem 0.75rem;
                     border-radius: 20px;
                     font-size: 0.85rem;
                     font-weight: 500;
                 }
 
-                .status-badge.active {
+                .license-status-badge.active {
                     background: #d4edda;
                     color: #155724;
                 }
 
-                .status-badge.free {
+                .license-status-badge.free {
                     background: #e2e3e5;
                     color: #383d41;
                 }
 
-                .status-badge.test {
+                .license-status-badge.test {
                     background: #fff3cd;
                     color: #856404;
                 }
 
                 /* Section fonctionnalités premium */
-                .premium-features-section {
+                .license-premium-features-section {
                     background: #f8f9fa;
                     padding: 2rem;
                     border-radius: 12px;
                     margin-bottom: 2rem;
                 }
 
-                .features-grid {
+                .license-features-grid {
                     display: grid;
                     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
                     gap: 1rem;
                     margin-bottom: 2rem;
                 }
 
-                .feature-item {
+                .license-feature-item {
                     display: flex;
                     align-items: flex-start;
                     gap: 1rem;
@@ -496,33 +595,33 @@
                     transition: all 0.2s ease;
                 }
 
-                .feature-item.unlocked {
+                .license-feature-item.unlocked {
                     border-color: #28a745;
                     background: #f8fff8;
                 }
 
-                .feature-item.locked {
+                .license-feature-item.locked {
                     opacity: 0.7;
                 }
 
-                .feature-icon {
+                .license-feature-icon {
                     font-size: 1.5rem;
                     flex-shrink: 0;
                 }
 
-                .feature-content h4 {
+                .license-feature-content h4 {
                     margin: 0 0 0.25rem 0;
                     font-size: 1rem;
                     color: #333;
                 }
 
-                .feature-content p {
+                .license-feature-content p {
                     margin: 0;
                     font-size: 0.9rem;
                     color: #666;
                 }
 
-                .upgrade-prompt {
+                .license-upgrade-prompt {
                     text-align: center;
                     padding: 2rem;
                     background: white;
@@ -530,13 +629,13 @@
                     border: 2px solid #667eea;
                 }
 
-                .upgrade-prompt h4 {
+                .license-upgrade-prompt h4 {
                     margin: 0 0 0.5rem 0;
                     color: #333;
                     font-size: 1.25rem;
                 }
 
-                .upgrade-prompt p {
+                .license-upgrade-prompt p {
                     margin: 0 0 1.5rem 0;
                     color: #666;
                 }
@@ -556,19 +655,19 @@
                         grid-template-columns: 1fr;
                     }
 
-                    .status-details {
+                    .license-status-details {
                         flex-direction: column;
                         align-items: flex-start;
                         gap: 1rem;
                     }
 
-                    .status-metrics {
+                    .license-status-metrics {
                         flex-direction: column;
                         gap: 1rem;
                         align-items: flex-start;
                     }
 
-                    .features-grid, .details-grid {
+                    .features-grid, .license-details-grid {
                         grid-template-columns: 1fr;
                     }
 
@@ -578,7 +677,7 @@
                         gap: 0.5rem;
                     }
 
-                    .alert-actions {
+                    .license-alert-actions {
                         margin-left: 0;
                     }
                 }
@@ -665,13 +764,13 @@
                     <!-- Actions rapides -->
                     <div class="license-quick-actions">
                         <?php if (!$is_premium): ?>
-                            <a href="#activate-section" class="btn-primary-large">
-                                <span class="btn-icon">🚀</span>
+                            <a href="#activate-section" class="license-btn-primary-large">
+                                <span class="license-btn-icon">🚀</span>
                                 Activer Premium
                             </a>
                         <?php else: ?>
-                            <button type="button" class="btn-secondary-large" onclick="showDeactivateModal()">
-                                <span class="btn-icon">🔓</span>
+                            <button type="button" class="license-btn-secondary-large" onclick="showDeactivateModal()">
+                                <span class="license-btn-icon">🔓</span>
                                 Désactiver
                             </button>
                         <?php endif; ?>
@@ -683,38 +782,38 @@
 
                     <!-- Carte de statut principal -->
                     <div class="license-status-card <?php echo $is_premium ? 'premium-active' : 'free-mode'; ?>">
-                        <div class="status-card-header">
-                            <div class="status-icon">
+                        <div class="license-status-card-header">
+                            <div class="license-status-icon">
                                 <?php if ($is_premium): ?>
-                                    <span class="status-icon-premium">⭐</span>
+                                    <span class="license-status-icon-premium">⭐</span>
                                 <?php else: ?>
-                                    <span class="status-icon-free">○</span>
+                                    <span class="license-status-icon-free">○</span>
                                 <?php endif; ?>
                             </div>
-                            <div class="status-info">
-                                <h3 class="status-title">
+                            <div class="license-status-info">
+                                <h3 class="license-status-title">
                                     <?php echo $is_premium ? 'Licence Premium Active' : 'Statut de la Licence'; ?>
                                 </h3>
-                                <p class="status-subtitle">
+                                <p class="license-status-subtitle">
                                     <?php echo $is_premium ? 'Toutes les fonctionnalités débloquées' : 'Fonctionnalités limitées disponibles'; ?>
                                 </p>
                             </div>
                         </div>
 
-                        <div class="status-details">
+                        <div class="license-status-details">
                             <?php if ($is_premium): ?>
-                                <div class="status-metrics">
+                                <div class="license-status-metrics">
                                     <?php if (!empty($license_expires)): ?>
-                                        <div class="metric-item">
-                                            <span class="metric-label">Expire le</span>
-                                            <span class="metric-value"><?php echo date('d/m/Y', strtotime($license_expires)); ?></span>
+                                        <div class="license-metric-item">
+                                            <span class="license-metric-label">Expire le</span>
+                                            <span class="license-metric-value"><?php echo date('d/m/Y', strtotime($license_expires)); ?></span>
                                         </div>
                                     <?php endif; ?>
 
                                     <?php if (!empty($license_activated_at)): ?>
-                                        <div class="metric-item">
-                                            <span class="metric-label">Activée le</span>
-                                            <span class="metric-value"><?php echo date('d/m/Y', strtotime($license_activated_at)); ?></span>
+                                        <div class="license-metric-item">
+                                            <span class="license-metric-label">Activée le</span>
+                                            <span class="license-metric-value"><?php echo date('d/m/Y', strtotime($license_activated_at)); ?></span>
                                         </div>
                                     <?php endif; ?>
                                 </div>
@@ -722,9 +821,9 @@
 
                             <!-- Indicateur de mode test -->
                             <?php if ($is_test_mode): ?>
-                                <div class="test-mode-banner">
-                                    <span class="test-icon">🧪</span>
-                                    <span class="test-text">Mode Développement Actif</span>
+                                <div class="license-test-mode-banner">
+                                    <span class="license-test-icon">🧪</span>
+                                    <span class="license-test-text">Mode Développement Actif</span>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -741,26 +840,26 @@
                         if ($days_left <= 30 && $days_left > 0):
                         ?>
                         <div class="license-alert-card warning">
-                            <div class="alert-icon">⏰</div>
-                            <div class="alert-content">
+                            <div class="license-alert-icon">⏰</div>
+                            <div class="license-alert-content">
                                 <h4>Expiration imminente</h4>
                                 <p>Votre licence expire dans <strong><?php echo $days_left; ?> jour<?php echo $days_left > 1 ? 's' : ''; ?></strong></p>
-                                <p class="alert-date">Le <?php echo date('d/m/Y', strtotime($license_expires)); ?></p>
+                                <p class="license-alert-date">Le <?php echo date('d/m/Y', strtotime($license_expires)); ?></p>
                             </div>
-                            <div class="alert-actions">
-                                <a href="#renewal" class="btn-small">Renouveler</a>
+                            <div class="license-alert-actions">
+                                <a href="#renewal" class="license-btn-small">Renouveler</a>
                             </div>
                         </div>
                         <?php elseif ($diff->invert): ?>
                         <div class="license-alert-card error">
-                            <div class="alert-icon">❌</div>
-                            <div class="alert-content">
+                            <div class="license-alert-icon">❌</div>
+                            <div class="license-alert-content">
                                 <h4>Licence expirée</h4>
                                 <p>Votre licence a expiré il y a <?php echo abs($days_left); ?> jour<?php echo abs($days_left) > 1 ? 's' : ''; ?></p>
-                                <p class="alert-date">Le <?php echo date('d/m/Y', strtotime($license_expires)); ?></p>
+                                <p class="license-alert-date">Le <?php echo date('d/m/Y', strtotime($license_expires)); ?></p>
                             </div>
-                            <div class="alert-actions">
-                                <a href="#renewal" class="btn-small primary">Renouveler maintenant</a>
+                            <div class="license-alert-actions">
+                                <a href="#renewal" class="license-btn-small primary">Renouveler maintenant</a>
                             </div>
                         </div>
                         <?php endif; ?>
@@ -772,31 +871,31 @@
                 <div class="license-actions-section">
 
                     <!-- Activation de licence -->
-                    <div id="activate-section" class="action-card">
-                        <div class="action-card-header">
+                    <div id="activate-section" class="license-action-card">
+                        <div class="license-action-card-header">
                             <h3>
-                                <span class="action-icon">🔑</span>
+                                <span class="license-action-icon">🔑</span>
                                 <?php echo $is_premium ? 'Changer de Licence' : 'Activer une Licence'; ?>
                             </h3>
                             <p><?php echo $is_premium ? 'Remplacer votre licence actuelle' : 'Débloquer toutes les fonctionnalités premium'; ?></p>
                         </div>
 
-                        <div class="action-card-content">
+                        <div class="license-action-card-content">
                             <div class="license-input-group">
                                 <label for="license_key_input">Clé de licence</label>
-                                <div class="input-with-button">
+                                <div class="license-input-with-button">
                                     <input type="text"
                                            id="license_key_input"
                                            placeholder="<?php echo $is_premium && !empty($license_key_masked) ? esc_attr($license_key_masked) : 'Entrez votre clé de licence premium'; ?>"
                                            class="license-input">
-                                    <button type="button" class="btn-primary" id="activate-license-btn">
-                                        <span class="btn-text"><?php echo $is_premium ? 'Changer' : 'Activer'; ?></span>
-                                        <span class="btn-icon">✓</span>
+                                    <button type="button" class="license-btn-primary" id="activate-license-btn">
+                                        <span class="license-btn-text"><?php echo $is_premium ? 'Changer' : 'Activer'; ?></span>
+                                        <span class="license-btn-icon">✓</span>
                                     </button>
                                 </div>
-                                <p class="input-help">
+                                <p class="license-input-help">
                                     <?php if (!$is_premium): ?>
-                                        Vous n'avez pas de clé ? <a href="#get-license" class="link-primary">Obtenir une licence premium</a>
+                                        Vous n'avez pas de clé ? <a href="#get-license" class="license-link-primary">Obtenir une licence premium</a>
                                     <?php else: ?>
                                         Une nouvelle clé remplacera l'actuelle
                                     <?php endif; ?>
@@ -822,8 +921,8 @@
 
                     <!-- Support & Avantages Premium -->
                     <?php if ($is_premium || $is_test_mode): ?>
-                    <div class="action-card premium-support" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 12px; box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);">
-                        <div class="action-card-header" style="padding: 1rem; text-align: center;">
+                    <div class="license-action-card license-premium-support" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 12px; box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);">
+                        <div class="license-action-card-header" style="padding: 1rem; text-align: center;">
                             <div style="font-size: 2.5rem; margin-bottom: 0.5rem; animation: supportPulse 2s ease-in-out infinite;">💎</div>
                             <h3 style="margin: 0 0 0.5rem 0; color: white; font-size: 1.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Support Premium & Avantages</h3>
                             <p style="margin: 0 0 1rem 0; color: rgba(255,255,255,0.9); font-size: 0.9rem; line-height: 1.4;">
@@ -831,31 +930,31 @@
                             </p>
                         </div>
 
-                        <div class="action-card-content" style="padding: 0 1rem 1rem 1rem;">
-                            <div class="premium-features-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem;">
-                                <div class="feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                        <div class="license-action-card-content" style="padding: 0 1rem 1rem 1rem;">
+                            <div class="license-premium-features-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem;">
+                                <div class="license-feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
                                     <div style="font-size: 1.5rem; margin-bottom: 0.3rem;">📊</div>
                                     <div style="font-size: 0.8rem; color: white; font-weight: 500;">Exports Multi-Formats</div>
                                 </div>
-                                <div class="feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                                <div class="license-feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
                                     <div style="font-size: 1.5rem; margin-bottom: 0.3rem;">🎯</div>
                                     <div style="font-size: 0.8rem; color: white; font-weight: 500;">Navigation Grille</div>
                                 </div>
-                                <div class="feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                                <div class="license-feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
                                     <div style="font-size: 1.5rem; margin-bottom: 0.3rem;">⚡</div>
                                     <div style="font-size: 0.8rem; color: white; font-weight: 500;">Résolutions Élevées</div>
                                 </div>
-                                <div class="feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                                <div class="license-feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
                                     <div style="font-size: 1.5rem; margin-bottom: 0.3rem;">🔧</div>
                                     <div style="font-size: 0.8rem; color: white; font-weight: 500;">Outils Avancés</div>
                                 </div>
                             </div>
 
-                            <div class="support-actions" style="display: flex; gap: 0.5rem; justify-content: center;">
-                                <a href="https://wp-pdf-builder.com/support" target="_blank" class="btn-secondary" style="flex: 1; text-align: center; padding: 0.6rem; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-size: 0.8rem; backdrop-filter: blur(10px);">
+                            <div class="license-support-actions" style="display: flex; gap: 0.5rem; justify-content: center;">
+                                <a href="https://wp-pdf-builder.com/support" target="_blank" class="license-btn-secondary" style="flex: 1; text-align: center; padding: 0.6rem; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-size: 0.8rem; backdrop-filter: blur(10px);">
                                     <span style="display: block; font-weight: 500;">📞 Support</span>
                                 </a>
-                                <a href="https://wp-pdf-builder.com/docs" target="_blank" class="btn-secondary" style="flex: 1; text-align: center; padding: 0.6rem; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-size: 0.8rem; backdrop-filter: blur(10px);">
+                                <a href="https://wp-pdf-builder.com/docs" target="_blank" class="license-btn-secondary" style="flex: 1; text-align: center; padding: 0.6rem; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-size: 0.8rem; backdrop-filter: blur(10px);">
                                     <span style="display: block; font-weight: 500;">📚 Docs</span>
                                 </a>
                             </div>
@@ -868,27 +967,27 @@
                         50% { transform: scale(1.1); }
                     }
 
-                    .premium-support:hover {
+                    .license-premium-support:hover {
                         transform: translateY(-2px);
                         box-shadow: 0 12px 35px rgba(79, 172, 254, 0.4) !important;
                         transition: all 0.3s ease;
                     }
 
-                    .feature-item:hover {
+                    .license-feature-item:hover {
                         transform: translateY(-2px);
                         transition: all 0.3s ease;
                     }
                     </style>
                     <?php else: ?>
                     <!-- Section publicité premium -->
-                    <div class="action-card premium-promo" style="max-height: 200px; overflow: hidden; position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); background-size: 200% 200%; animation: gradientShift 3s ease infinite; border-radius: 12px; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);">
-                        <div class="premium-promo-content" style="padding: 1rem; text-align: center; position: relative; z-index: 2;">
+                    <div class="license-action-card license-premium-promo" style="max-height: 200px; overflow: hidden; position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); background-size: 200% 200%; animation: gradientShift 3s ease infinite; border-radius: 12px; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);">
+                        <div class="license-premium-promo-content" style="padding: 1rem; text-align: center; position: relative; z-index: 2;">
                             <div style="font-size: 2.5rem; margin-bottom: 0.5rem; animation: rocketFloat 2s ease-in-out infinite; display: inline-block;">🚀</div>
                             <h3 style="margin: 0 0 0.5rem 0; color: white; font-size: 1.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3); animation: textGlow 2s ease-in-out infinite alternate;">Découvrez la Version Premium</h3>
                             <p style="margin: 0 0 1rem 0; color: rgba(255,255,255,0.9); font-size: 0.9rem; line-height: 1.4; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
                                 Débloquez toutes les fonctionnalités avancées : exports multi-formats, résolutions élevées, navigation grille, et bien plus !
                             </p>
-                            <a href="#" onclick="showUpgradeModal('license_tab')" class="btn-primary premium-cta" style="display: inline-block; padding: 0.6rem 1.2rem; background: linear-gradient(45deg, #ff6b6b, #ffa500); color: white; text-decoration: none; border-radius: 25px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4); transition: all 0.3s ease; position: relative; overflow: hidden;">
+                            <a href="#" onclick="showUpgradeModal('license_tab')" class="license-btn-primary license-premium-cta" style="display: inline-block; padding: 0.6rem 1.2rem; background: linear-gradient(45deg, #ff6b6b, #ffa500); color: white; text-decoration: none; border-radius: 25px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4); transition: all 0.3s ease; position: relative; overflow: hidden;">
                                 <span style="position: relative; z-index: 2;">✨ Passer en Premium</span>
                                 <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s ease; z-index: 1;"></div>
                             </a>
@@ -923,16 +1022,16 @@
                         50% { transform: translateY(-20px) translateX(10px); opacity: 1; }
                     }
 
-                    .premium-cta:hover {
+                    .license-premium-cta:hover {
                         transform: translateY(-2px);
                         box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6) !important;
                     }
 
-                    .premium-cta:hover div {
+                    .license-premium-cta:hover div {
                         left: 100%;
                     }
 
-                    .premium-promo:hover {
+                    .license-premium-promo:hover {
                         transform: translateY(-2px);
                         box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4) !important;
                         transition: all 0.3s ease;
@@ -956,35 +1055,35 @@
                     </button>
 
                     <div id="pdfb-details-body" style="display:none;margin-top:.5rem;">
-                    <div class="details-grid">
+                    <div class="license-details-grid">
 
                         <!-- Statut -->
-                        <div class="detail-card">
+                        <div class="license-detail-card">
                             <h4>Statut</h4>
-                            <p class="detail-value">
+                            <p class="license-detail-value">
                                 <?php if (!empty($test_key)): ?>
-                                    <span class="status-badge test">🧪 Mode Test</span>
+                                    <span class="license-status-badge test">🧪 Mode Test</span>
                                 <?php elseif ($is_premium): ?>
-                                    <span class="status-badge active">✅ Premium</span>
+                                    <span class="license-status-badge active">✅ Premium</span>
                                 <?php else: ?>
-                                    <span class="status-badge free">○ Gratuit</span>
+                                    <span class="license-status-badge free">○ Gratuit</span>
                                 <?php endif; ?>
                             </p>
                         </div>
 
                         <!-- Site -->
-                        <div class="detail-card">
+                        <div class="license-detail-card">
                             <h4>Site actuel</h4>
-                            <p class="detail-value"><?php echo esc_html(home_url()); ?></p>
+                            <p class="license-detail-value"><?php echo esc_html(home_url()); ?></p>
                         </div>
 
                         <!-- Clé Premium (masquée) -->
                         <?php if (!empty($edd_license_key)): ?>
-                        <div class="detail-card">
+                        <div class="license-detail-card">
                             <h4>Clé de licence</h4>
-                            <p class="detail-value license-key" style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
+                            <p class="license-detail-value license-key" style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
                                 <code><?php echo esc_html(substr($edd_license_key, 0, 5) . str_repeat('•', 18)); ?></code>
-                                <button type="button" class="copy-btn"
+                                <button type="button" class="license-copy-btn"
                                         onclick="navigator.clipboard.writeText('<?php echo esc_js($edd_license_key); ?>').then(function(){ this.textContent='✅'; }.bind(this))"
                                         title="Copier la clé">
                                     📋
@@ -995,9 +1094,9 @@
 
                         <!-- Expiration -->
                         <?php if ($is_premium): ?>
-                        <div class="detail-card">
+                        <div class="license-detail-card">
                             <h4>Expiration</h4>
-                            <p class="detail-value">
+                            <p class="license-detail-value">
                                 <?php if ($lic_is_lifetime): ?>
                                     <span style="color:#00a32a;font-weight:600;">♾️ À vie</span>
                                 <?php elseif ($lic_expires_ts > 0): ?>
@@ -1012,9 +1111,9 @@
                         </div>
 
                         <!-- Jours restants -->
-                        <div class="detail-card">
+                        <div class="license-detail-card">
                             <h4>Jours restants</h4>
-                            <p class="detail-value">
+                            <p class="license-detail-value">
                                 <?php if ($lic_is_lifetime): ?>
                                     <span style="color:#00a32a;font-weight:600;">∞</span>
                                 <?php elseif ($lic_days_left !== null): ?>
@@ -1031,25 +1130,25 @@
 
                         <!-- Client -->
                         <?php if (!empty($lic_customer)): ?>
-                        <div class="detail-card">
+                        <div class="license-detail-card">
                             <h4>Titulaire</h4>
-                            <p class="detail-value"><?php echo esc_html($lic_customer); ?></p>
+                            <p class="license-detail-value"><?php echo esc_html($lic_customer); ?></p>
                         </div>
                         <?php endif; ?>
 
                         <!-- Email -->
                         <?php if (!empty($lic_email)): ?>
-                        <div class="detail-card">
+                        <div class="license-detail-card">
                             <h4>Email</h4>
-                            <p class="detail-value"><?php echo esc_html($lic_email); ?></p>
+                            <p class="license-detail-value"><?php echo esc_html($lic_email); ?></p>
                         </div>
                         <?php endif; ?>
 
                         <!-- Activations restantes -->
                         <?php if ($is_premium && $lic_activations !== null): ?>
-                        <div class="detail-card">
+                        <div class="license-detail-card">
                             <h4>Activations restantes</h4>
-                            <p class="detail-value">
+                            <p class="license-detail-value">
                                 <span style="font-weight:600;"><?php echo (int)$lic_activations; ?></span>
                             </p>
                         </div>
@@ -1057,9 +1156,9 @@
 
                         <!-- Clé de Test -->
                         <?php if (!empty($test_key)): ?>
-                        <div class="detail-card">
+                        <div class="license-detail-card">
                             <h4>Clé de Test</h4>
-                            <p class="detail-value test-key">
+                            <p class="license-detail-value license-test-key">
                                 <code><?php echo esc_html(substr($test_key, 0, 8) . '••••••••••••' . substr($test_key, -8)); ?></code>
                                 <span class="test-badge">TEST</span>
                             </p>
@@ -1222,7 +1321,7 @@
                     </button>
 
                     <?php if (!$is_premium): ?>
-                    <div class="upgrade-prompt" style="margin-top:1rem;">
+                    <div class="license-upgrade-prompt" style="margin-top:1rem;">
                         <h4>Prêt à passer au premium ?</h4>
                         <p>Débloquez toutes ces fonctionnalités et bien plus encore</p>
                         <a href="#activate-section" class="btn-primary-large">
@@ -1544,6 +1643,8 @@
                             }
                         }
                     </script>
+
+
 
 
 
