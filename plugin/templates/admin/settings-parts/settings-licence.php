@@ -559,7 +559,8 @@
                     error_log('[PDF Builder] settings-licence.php loaded - license_status: ' . ($settings['pdf_builder_license_status'] ?? 'not set') . ', settings count: ' . count($settings));
 
                     $license_status = $settings['pdf_builder_license_status'] ?? 'free';
-                    $license_key = $settings['pdf_builder_license_key'] ?? '';
+                    // La clé est chiffrée en DB — on ne la lit plus directement
+                    $license_key        = ''; // masquée ; utiliser getLicenseKeyForLinks() pour les URLs
                     $license_expires = $settings['pdf_builder_license_expires'] ?? '';
                     $license_activated_at = $settings['pdf_builder_license_activated_at'] ?? '';
                     $test_mode_enabled = $settings['pdf_builder_license_test_mode_enabled'] ?? '0';
@@ -571,6 +572,9 @@
                     // Utiliser la méthode centralisée du License Manager pour déterminer si premium
                     $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
                     $is_premium = $license_manager->isPremium();
+                    // Clé en clair (admin uniquement) et ID EDD pour les liens de gestion
+                    $edd_license_key = $is_premium ? $license_manager->getLicenseKeyForLinks() : '';
+                    $edd_license_id  = $is_premium ? $license_manager->getLicenseId()          : '';
                     $is_test_mode = $test_mode_enabled === '1';
 
                     // Traitement activation licence
@@ -764,6 +768,23 @@
                                         Une nouvelle clé remplacera l'actuelle
                                     <?php endif; ?>
                                 </p>
+                                <?php if ($is_premium && !empty($edd_license_key)): ?>
+                                <div class="license-management-links" style="display:flex;gap:.75rem;margin-top:1.25rem;flex-wrap:wrap;">
+                                    <a href="<?php echo esc_url('https://hub.threeaxe.fr/index.php/checkout/?edd_license_key=' . urlencode($edd_license_key) . '&download_id=19'); ?>"
+                                       target="_blank" rel="noopener noreferrer"
+                                       style="display:inline-flex;align-items:center;gap:.45rem;padding:.6rem 1.1rem;border-radius:8px;background:#f0f7ff;color:#2271b1;border:1px solid #c3d9f5;font-weight:600;font-size:.9rem;text-decoration:none;">
+                                        🔄 Renouveler la licence
+                                    </a>
+                                    <?php if (!empty($edd_license_id)): ?>
+                                    <a href="<?php echo esc_url('https://hub.threeaxe.fr?edd_action=license_unsubscribe&license_id=' . urlencode($edd_license_id) . '&license_key=' . urlencode($edd_license_key)); ?>"
+                                       target="_blank" rel="noopener noreferrer"
+                                       onclick="return confirm('Êtes-vous sûr de vouloir vous désabonner ?')"
+                                       style="display:inline-flex;align-items:center;gap:.45rem;padding:.6rem 1.1rem;border-radius:8px;background:#fff5f5;color:#cc1818;border:1px solid #f5c3c3;font-weight:600;font-size:.9rem;text-decoration:none;">
+                                        ❌ Se désabonner
+                                    </a>
+                                    <?php endif; ?>
+                                </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
