@@ -1071,54 +1071,124 @@
                         </thead>
                         <tbody id="pdfb-compare-visible">
                             <tr>
-                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Création de modèles PDF</td>
-                                <td style="text-align:center;border:1px solid #eee;">✅</td>
-                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Templates prédéfinis</td>
+                                <td style="text-align:center;border:1px solid #eee;">4</td>
+                                <td style="text-align:center;border:1px solid #eee;">∞</td>
                             </tr>
                             <tr style="background:#fafafa;">
-                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Export PDF standard</td>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Éléments de base (texte, image, formes)</td>
                                 <td style="text-align:center;border:1px solid #eee;">✅</td>
                                 <td style="text-align:center;border:1px solid #eee;">✅</td>
                             </tr>
                             <tr>
-                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Export haute résolution (300 DPI)</td>
-                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
-                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Génération PDF mensuelle</td>
+                                <td style="text-align:center;border:1px solid #eee;">50</td>
+                                <td style="text-align:center;border:1px solid #eee;">∞</td>
                             </tr>
                             <tr style="background:#fafafa;">
-                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Templates professionnels avancés</td>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Qualité d'export (DPI)</td>
+                                <td style="text-align:center;border:1px solid #eee;">72 DPI</td>
+                                <td style="text-align:center;border:1px solid #eee;">300/600 DPI</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Watermark sur PDFs</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#cc1818;">✓</span></td>
                                 <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
-                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr style="background:#fafafa;">
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Support</td>
+                                <td style="text-align:center;border:1px solid #eee;">Communauté</td>
+                                <td style="text-align:center;border:1px solid #eee;">Prioritaire 24/7</td>
                             </tr>
                         </tbody>
                         <tbody id="pdfb-compare-hidden" style="display:none;">
                             <tr>
-                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Exports multi-formats (PNG, JPG…)</td>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Éléments premium (codes-barres, QR, graphiques)</td>
                                 <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
                                 <td style="text-align:center;border:1px solid #eee;">✅</td>
                             </tr>
                             <tr style="background:#fafafa;">
-                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Navigation en grille</td>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Signatures et champs</td>
                                 <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
                                 <td style="text-align:center;border:1px solid #eee;">✅</td>
                             </tr>
                             <tr>
-                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Outils de mise en page avancés</td>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Exports multi-format (PNG, JPG, SVG)</td>
                                 <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
                                 <td style="text-align:center;border:1px solid #eee;">✅</td>
                             </tr>
                             <tr style="background:#fafafa;">
-                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Support prioritaire</td>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Génération en masse (batch)</td>
                                 <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
                                 <td style="text-align:center;border:1px solid #eee;">✅</td>
                             </tr>
                             <tr>
-                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Mises à jour automatiques</td>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Navigation grille et guides magnétiques</td>
                                 <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
                                 <td style="text-align:center;border:1px solid #eee;">✅</td>
                             </tr>
                             <tr style="background:#fafafa;">
-                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Gestion multi-sites</td>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Modes de sélection avancés (multiple, groupe)</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Raccourcis clavier</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr style="background:#fafafa;">
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Formats étendus (A3, Letter, Legal, Étiquettes)</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Couleurs personnalisées avancées</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr style="background:#fafafa;">
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Variables conditionnelles</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Intégration WooCommerce complète</td>
+                                <td style="text-align:center;border:1px solid #eee;">Basique</td>
+                                <td style="text-align:center;border:1px solid #eee;">Complète</td>
+                            </tr>
+                            <tr style="background:#fafafa;">
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">API développeur REST</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Analytics et rapports détaillés</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr style="background:#fafafa;">
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">White-label / Rebranding</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Métadonnées PDF (auteur, sujet...)</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr style="background:#fafafa;">
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Optimisation impression</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Sauvegardes et versioning</td>
+                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">✅</td>
+                            </tr>
+                            <tr style="background:#fafafa;">
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Mises à jour gratuites à vie</td>
                                 <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
                                 <td style="text-align:center;border:1px solid #eee;">✅</td>
                             </tr>
@@ -1129,7 +1199,7 @@
                             id="pdfb-compare-btn"
                             onclick="pdfbToggleExpand(this,'pdfb-compare-hidden')"
                             aria-expanded="false"
-                            style="margin-top:.6rem;background:none;border:1px solid #d0d9f5;border-radius:6px;padding:.35rem .9rem;font-size:.8rem;color:#2271b1;cursor:pointer;display:flex;align-items:center;gap:.4rem;">
+                            style="margin-top:.6rem;background:none;border:1px solid #d0d9f5;border-radius:6px;padding:.35rem .9rem;font-size:.8rem;color:#2271b1;cursor:pointer;display:flex;width:100%;justify-content:center;align-items:center;gap:.4rem;">
                         <span>Voir plus de fonctionnalités</span>
                         <span class="pdfb-chevron" style="transition:transform .25s;">&#9660;</span>
                     </button>
