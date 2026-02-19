@@ -575,6 +575,10 @@
                     // Clé en clair (admin uniquement) et ID EDD pour les liens de gestion
                     $edd_license_key = $is_premium ? $license_manager->getLicenseKeyForLinks() : '';
                     $edd_license_id  = $is_premium ? $license_manager->getLicenseId()          : '';
+                    // Clé masquée pour l'affichage dans le champ (5 premiers caractères + points)
+                    $license_key_masked = (!empty($edd_license_key))
+                        ? substr($edd_license_key, 0, 5) . str_repeat('•', 18)
+                        : '';
                     $is_test_mode = $test_mode_enabled === '1';
 
                     // Traitement activation licence
@@ -754,7 +758,7 @@
                                 <div class="input-with-button">
                                     <input type="text"
                                            id="license_key_input"
-                                           placeholder="Entrez votre clé de licence premium"
+                                           placeholder="<?php echo $is_premium && !empty($license_key_masked) ? esc_attr($license_key_masked) : 'Entrez votre clé de licence premium'; ?>"
                                            class="license-input">
                                     <button type="button" class="btn-primary" id="activate-license-btn">
                                         <span class="btn-text"><?php echo $is_premium ? 'Changer' : 'Activer'; ?></span>
