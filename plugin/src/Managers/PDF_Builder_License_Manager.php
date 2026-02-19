@@ -139,50 +139,90 @@ class PDF_Builder_License_Manager
         return ['success' => true, 'message' => 'Licence désactivée'];
     }
 
+    /** URL de la boutique EDD (Easy Digital Downloads) */
+    const EDD_STORE_URL = 'https://hub.threeaxe.fr';
+
+    /** ID du produit WP PDF Builder Pro dans EDD (à ajuster selon l'ID réel) */
+    const EDD_ITEM_ID = 1;
+
+    /** Nom du produit dans EDD (slug affiché dans l'URL) */
+    const EDD_ITEM_NAME = 'PDF Builder Pro';
+
     /**
-     * Validation de la licence (simulation)
-     * À remplacer par un appel à votre serveur de licences
+     * Validation de la licence via l'API EDD Software Licensing
      */
     private function validateLicense($license_key)
     {
-        // Simulation de validation - REMPLACER PAR VOTRE LOGIQUE RÉELLE
-        $valid_keys = [
-            'PDF-PRO-DEMO-2025' => [
-                'tier' => 'professional',
-                'expires' => strtotime('+1 year'),
-                'features' => ['all']
+        // Appel à l'API EDD Software Licensing
+        $response = wp_remote_post(
+            self::EDD_STORE_URL,
+            [
+                'timeout'   => 15,
+                'sslverify' => true,
+                'body'      => [
+                    'edd_action' => 'activate_license',
+                    'license'    => $license_key,
+                    'item_id'    => self::EDD_ITEM_ID,
+                    'item_name'  => self::EDD_ITEM_NAME,
+                    'url'        => get_site_url(),
+                ],
             ]
-        ];
+        );
 
-        if (isset($valid_keys[$license_key])) {
+        if (is_wp_error($response)) {
             return [
-                'success' => true,
-                'data' => $valid_keys[$license_key]
+                'success' => false,
+                'message' => 'Impossible de contacter le serveur de licences : ' . $response->get_error_message(),
             ];
         }
 
-        // Simulation d'appel API (à implémenter)
-        /*
-        $api_url = 'https://api.pdfbuilderpro.com/validate-license';
-        $response = wp_remote_post($api_url, [
-            'body' => [
-                'license_key' => $license_key,
-                'site_url' => get_site_url(),
-                'plugin_version' => PDF_BUILDER_VERSION
-            ]
-        ]);
+        $license_data = json_decode(wp_remote_retrieve_body($response), true);
 
-        if (is_wp_error($response)) {
-            return ['success' => false, 'message' => 'Erreur de connexion au serveur'];
+        if (!is_array($license_data)) {
+            return ['success' => false, 'message' => 'Réponse invalide du serveur de licences'];
         }
 
-        $body = wp_remote_retrieve_body($response);
-        $data = json_decode($body, true);
+        // EDD renvoie "license" => "valid" | "invalid" | "expired" | "disabled"
+        //                        | "site_inactive" | "item_name_mismatch" | "no_activations_left"
+        $edd_status = $license_data['license'] ?? 'invalid';
 
-        return $data;
-        */
+        if ($edd_status === 'valid') {
+            $expires_ts = (!empty($license_data['expires']) && $license_data['expires'] !== 'lifetime')
+                ? strtotime($license_data['expires'])
+                : strtotime('+100 years');
 
-        return ['success' => false, 'message' => 'Clé de licence invalide'];
+            // Stocker la date d'expiration pour le cron
+            pdf_builder_update_option('pdf_builder_license_expires', $license_data['expires'] ?? '');
+
+            return [
+                'success' => true,
+                'data'    => [
+                    'tier'        => 'professional',
+                    'expires'     => $expires_ts,
+                    'expires_raw' => $license_data['expires'] ?? '',
+                    'features'    => ['all'],
+                    'customer'    => $license_data['customer_name'] ?? '',
+                    'email'       => $license_data['customer_email'] ?? '',
+                    'activations' => $license_data['activations_left'] ?? 0,
+                    'edd_status'  => 'valid',
+                ],
+            ];
+        }
+
+        $error_messages = [
+            'expired'             => 'Votre licence a expiré. Renouvelez-la sur wp-pdf-builder.com.',
+            'disabled'            => 'Cette licence a été désactivée.',
+            'site_inactive'       => 'Cette licence n\'est pas activée pour ce site.',
+            'item_name_mismatch'  => 'Cette clé ne correspond pas à ce plugin.',
+            'no_activations_left' => 'Le nombre maximum d\'activations a été atteint.',
+            'key_mismatch'        => 'Clé de licence invalide.',
+            'invalid'             => 'Clé de licence invalide.',
+        ];
+
+        return [
+            'success' => false,
+            'message' => $error_messages[$edd_status] ?? 'Clé invalide (code EDD : ' . esc_html($edd_status) . ')',
+        ];
     }
 
     /**

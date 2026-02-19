@@ -70,6 +70,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         add_action('wp_ajax_pdf_builder_download_backup', [$this, 'handle_download_backup']);
 
         // Actions de licence
+        add_action('wp_ajax_pdf_builder_activate_license', [$this, 'handle_activate_license']);
         add_action('wp_ajax_pdf_builder_test_license', [$this, 'handle_test_license']);
         add_action('wp_ajax_pdf_builder_validate_dev_token', [$this, 'handle_validate_dev_token']);
         add_action('wp_ajax_pdf_builder_toggle_test_mode', [$this, 'handle_toggle_test_mode']);
@@ -1860,6 +1861,45 @@ class PDF_Builder_Unified_Ajax_Handler {
             wp_send_json_success(['message' => 'Token valide.']);
         } else {
             wp_send_json_error(['message' => 'Token invalide.']);
+        }
+    }
+
+    /**
+     * Handler pour activer une licence via EDD Software Licensing
+     */
+    public function handle_activate_license() {
+        check_ajax_referer('pdf_builder_ajax', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+
+        $license_key = sanitize_text_field($_POST['license_key'] ?? '');
+
+        if (empty($license_key)) {
+            wp_send_json_error(['message' => 'Clé de licence requise']);
+            return;
+        }
+
+        // Validation de format serveur (clé EDD = 32 hex minuscules)
+        if (!preg_match('/^[a-f0-9]{32}$/i', $license_key)) {
+            wp_send_json_error(['message' => 'Format invalide. Une clé EDD comporte 32 caractères hexadécimaux.']);
+            return;
+        }
+
+        if (!class_exists('PDF_Builder\Managers\PDF_Builder_License_Manager')) {
+            wp_send_json_error(['message' => 'Gestionnaire de licences introuvable']);
+            return;
+        }
+
+        $manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+        $result  = $manager->activateLicense($license_key);
+
+        if ($result['success']) {
+            wp_send_json_success(['message' => $result['message'], 'reload' => true]);
+        } else {
+            wp_send_json_error(['message' => $result['message']]);
         }
     }
 

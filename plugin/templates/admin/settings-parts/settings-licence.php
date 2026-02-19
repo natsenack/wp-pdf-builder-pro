@@ -1059,9 +1059,101 @@
 
                     <!-- JavaScript AJAX déplacé vers settings-main.php pour éviter les conflits -->
                     <script type="text/javascript">
-                        // Nonce for license deactivation
+                        // Nonces de licence
                         window.pdfBuilderLicense = window.pdfBuilderLicense || {};
                         window.pdfBuilderLicense.deactivateNonce = '<?php echo wp_create_nonce("pdf_builder_deactivate"); ?>';
+                        window.pdfBuilderLicense.ajaxNonce      = '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>';
+                        window.pdfBuilderLicense.ajaxUrl         = '<?php echo admin_url("admin-ajax.php"); ?>';
+
+                        // ── Validation et activation de licence (EDD) ──────────────────────────
+                        (function() {
+                            var btn   = document.getElementById('activate-license-btn');
+                            var input = document.getElementById('license_key_input');
+                            if (!btn || !input) return;
+
+                            // Format attendu par EDD Software Licensing : 32 hex lowercase
+                            var EDD_REGEX = /^[a-f0-9]{32}$/i;
+
+                            // Zone de notification sous l'input
+                            var notice = document.createElement('p');
+                            notice.id  = 'license-key-notice';
+                            notice.style.cssText = 'margin:6px 0 0; font-size:13px; display:none;';
+                            input.parentNode.parentNode.insertBefore(notice, input.parentNode.nextSibling);
+
+                            function showNotice(msg, type) {
+                                notice.textContent = msg;
+                                notice.style.display  = 'block';
+                                notice.style.color    = type === 'error'   ? '#cc1818' :
+                                                        type === 'success' ? '#1a7e2e' : '#888';
+                                notice.style.fontWeight = type === 'loading' ? 'normal' : '600';
+                            }
+
+                            function hideNotice() {
+                                notice.style.display = 'none';
+                            }
+
+                            // Validation en temps réel pendant la frappe
+                            input.addEventListener('input', function() {
+                                var val = this.value.trim();
+                                if (!val) { hideNotice(); return; }
+                                if (!EDD_REGEX.test(val)) {
+                                    showNotice('⚠ Format invalide — une clé EDD comporte 32 caractères hexadécimaux (0-9, a-f).', 'error');
+                                    btn.disabled = true;
+                                } else {
+                                    showNotice('✓ Format valide.', 'success');
+                                    btn.disabled = false;
+                                }
+                            });
+
+                            // Soumission AJAX
+                            btn.addEventListener('click', function() {
+                                var key = input.value.trim();
+
+                                if (!key) {
+                                    showNotice('⚠ Veuillez saisir votre clé de licence.', 'error');
+                                    input.focus();
+                                    return;
+                                }
+
+                                if (!EDD_REGEX.test(key)) {
+                                    showNotice('⚠ Format invalide — une clé EDD comporte 32 caractères hexadécimaux (0-9, a-f).', 'error');
+                                    input.focus();
+                                    return;
+                                }
+
+                                // État chargement
+                                btn.disabled = true;
+                                btn.querySelector('.btn-text').textContent = 'Activation…';
+                                showNotice('⏳ Vérification auprès du serveur de licences…', 'loading');
+
+                                var formData = new FormData();
+                                formData.append('action',      'pdf_builder_activate_license');
+                                formData.append('nonce',       window.pdfBuilderLicense.ajaxNonce);
+                                formData.append('license_key', key);
+
+                                fetch(window.pdfBuilderLicense.ajaxUrl, {
+                                    method: 'POST',
+                                    body:   formData,
+                                })
+                                .then(function(r) { return r.json(); })
+                                .then(function(data) {
+                                    if (data.success) {
+                                        showNotice('✓ ' + data.data.message, 'success');
+                                        // Recharger la page après un court délai
+                                        setTimeout(function() { window.location.reload(); }, 1500);
+                                    } else {
+                                        showNotice('✗ ' + (data.data && data.data.message ? data.data.message : 'Erreur inconnue'), 'error');
+                                        btn.disabled = false;
+                                        btn.querySelector('.btn-text').textContent = '<?php echo $is_premium ? 'Changer' : 'Activer'; ?>';
+                                    }
+                                })
+                                .catch(function(err) {
+                                    showNotice('✗ Erreur réseau : ' + err.message, 'error');
+                                    btn.disabled = false;
+                                    btn.querySelector('.btn-text').textContent = '<?php echo $is_premium ? 'Changer' : 'Activer'; ?>';
+                                });
+                            });
+                        })();
 
                         // Fonctions JavaScript inline pour les modals de licence
                         function showDeactivateModal() {
