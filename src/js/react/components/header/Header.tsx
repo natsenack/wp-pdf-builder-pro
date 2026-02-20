@@ -1077,7 +1077,7 @@ export const Header = memo(function Header({
       textAlign: string | undefined,
     ): { content: string; containerClass: string } => {
       if (!verticalAlign || verticalAlign === "top") {
-        return { content, containerClass: "element--flex-start" };
+        return { content, containerClass: "pdfb-element-flex-start" };
       }
 
       const justifyValue =
@@ -1102,7 +1102,7 @@ export const Header = memo(function Header({
         };
       }
 
-      return { content, containerClass: "element--flex" };
+      return { content, containerClass: "pdfb-element-flex" };
     };
 
     // Helper functions pour convertir les propriétés en CSS
@@ -1210,14 +1210,14 @@ export const Header = memo(function Header({
       padding: 0;
       font-family: inherit;
     }
-    .element--flex {
+    .pdfb-element-flex {
       display: flex !important;
       align-items: center;
     }
-    .element--flex-start {
+    .pdfb-element-flex-start {
       align-items: flex-start !important;
     }
-    .element--flex-end {
+    .pdfb-element-flex-end {
       align-items: flex-end !important;
     }
     table { 
@@ -3348,7 +3348,7 @@ export const Header = memo(function Header({
                     type="number"
                     value={editedCanvasWidth}
                     disabled={true}
-                    className="pdfb-setting-input setting-input-disabled"
+                    className="pdfb-setting-input pdfb-setting-input-disabled"
                     placeholder="Largeur"
                     style={{
                       flex: 1,
@@ -3370,7 +3370,7 @@ export const Header = memo(function Header({
                     type="number"
                     value={editedCanvasHeight}
                     disabled={true}
-                    className="pdfb-setting-input setting-input-disabled"
+                    className="pdfb-setting-input pdfb-setting-input-disabled"
                     placeholder="Hauteur"
                     style={{
                       flex: 1,
@@ -3413,7 +3413,7 @@ export const Header = memo(function Header({
                 >
                   {isNewTemplate && (
                     <span
-                      className="status-tag status-new"
+                      className="pdfb-status-tag pdfb-status-new"
                       style={{
                         padding: "4px 12px",
                         borderRadius: "12px",
@@ -3429,7 +3429,7 @@ export const Header = memo(function Header({
                   )}
                   {deferredIsModified && (
                     <span
-                      className="status-tag status-modified"
+                      className="pdfb-status-tag pdfb-status-modified"
                       style={{
                         padding: "4px 12px",
                         borderRadius: "12px",
@@ -3445,7 +3445,7 @@ export const Header = memo(function Header({
                   )}
                   {isEditingExistingTemplate && (
                     <span
-                      className="status-tag status-editing"
+                      className="pdfb-status-tag pdfb-status-editing"
                       style={{
                         padding: "4px 12px",
                         borderRadius: "12px",
