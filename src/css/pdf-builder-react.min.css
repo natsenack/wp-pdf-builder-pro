@@ -249,7 +249,7 @@
 }
 
 /* Groupes de paramètres */
-.setting-group {
+.pdfb-setting-group {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
@@ -259,14 +259,14 @@
   position: relative;
 }
 
-.setting-group:hover {
+.pdfb-setting-group:hover {
   border-color: #cbd5e1;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   background: #ffffff;
   transform: translateY(-2px);
 }
 
-.setting-label {
+.pdfb-setting-label {
   display: block;
   font-weight: 700;
   color: #1e293b;
@@ -277,9 +277,9 @@
 }
 
 /* Styles pour les inputs */
-.setting-input,
-.setting-textarea,
-.setting-select {
+.pdfb-setting-input,
+.pdfb-setting-textarea,
+.pdfb-setting-select {
   width: 100%;
   padding: 10px 14px;
   border: 1px solid #e2e8f0;
@@ -291,12 +291,12 @@
   font-family: inherit;
 }
 
-.setting-input::placeholder,
-.setting-textarea::placeholder {
+.pdfb-setting-input::placeholder,
+.pdfb-setting-textarea::placeholder {
   color: #cbd5e1;
 }
 
-.setting-select {
+.pdfb-setting-select {
   appearance: none;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23334155' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
@@ -306,24 +306,24 @@
 }
 
 /* Désactivation forcée de l'autocomplete du navigateur */
-.setting-input:-webkit-autofill,
-.setting-input:-webkit-autofill:hover,
-.setting-input:-webkit-autofill:focus,
-.setting-input:-webkit-autofill:active {
+.pdfb-setting-input:-webkit-autofill,
+.pdfb-setting-input:-webkit-autofill:hover,
+.pdfb-setting-input:-webkit-autofill:focus,
+.pdfb-setting-input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px white inset !important;
   box-shadow: 0 0 0 30px white inset !important;
   -webkit-text-fill-color: #334155 !important;
   transition: background-color 5000s ease-in-out 0s;
 }
 
-.setting-input:-webkit-autofill::first-line {
+.pdfb-setting-input:-webkit-autofill::first-line {
   font-family: inherit;
   color: #334155;
 }
 
 /* Style pour masquer les suggestions autocomplete du navigateur */
-.setting-input::-webkit-credentials-auto-fill-button,
-.setting-input::-webkit-contacts-auto-fill-button {
+.pdfb-setting-input::-webkit-credentials-auto-fill-button,
+.pdfb-setting-input::-webkit-contacts-auto-fill-button {
   visibility: hidden;
   display: none !important;
   pointer-events: none;
@@ -332,52 +332,52 @@
   margin: 0;
 }
 
-.setting-input:focus,
-.setting-textarea:focus,
-.setting-select:focus {
+.pdfb-setting-input:focus,
+.pdfb-setting-textarea:focus,
+.pdfb-setting-select:focus {
   outline: none;
   border-color: #3b82f6;
   background: #ffffff;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.setting-textarea {
+.pdfb-setting-textarea {
   resize: vertical;
   min-height: 80px;
   padding: 12px 14px;
 }
 
-.setting-input-group {
+.pdfb-setting-input-group {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.setting-input-separator {
+.pdfb-setting-input-separator {
   color: #94a3b8;
   font-weight: bold;
   font-size: 16px;
 }
 
-.setting-unit {
+.pdfb-setting-unit {
   color: #666;
   font-size: 12px;
 }
 
-.setting-input-disabled {
+.pdfb-setting-input-disabled {
   background-color: #f5f5f5;
   color: #999;
   cursor: not-allowed;
 }
 
 /* Checkboxes */
-.setting-checkbox-group {
+.pdfb-setting-checkbox-group {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.setting-checkbox-label {
+.pdfb-setting-checkbox-label {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -390,11 +390,11 @@
   user-select: none;
 }
 
-.setting-checkbox-label:hover {
+.pdfb-setting-checkbox-label:hover {
   background: rgba(59, 130, 246, 0.05);
 }
 
-.setting-checkbox {
+.pdfb-setting-checkbox {
   width: 18px;
   height: 18px;
   accent-color: #3b82f6;
@@ -402,16 +402,16 @@
   transition: all 0.2s ease;
 }
 
-.setting-checkbox:hover {
+.pdfb-setting-checkbox:hover {
   transform: scale(1.15);
 }
 
-.setting-checkbox:checked {
+.pdfb-setting-checkbox:checked {
   accent-color: #2563eb;
 }
 
 /* Status tags */
-.setting-status-tags {
+.pdfb-setting-status-tags {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
@@ -447,7 +447,7 @@
 }
 
 /* Info text */
-.setting-info {
+.pdfb-setting-info {
   font-size: 13px;
   color: #475569;
   line-height: 1.8;
@@ -457,19 +457,19 @@
   border-left: 3px solid #3b82f6;
 }
 
-.setting-info div {
+.pdfb-setting-info div {
   margin-bottom: 6px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.setting-info div:last-child {
+.pdfb-setting-info div:last-child {
   margin-bottom: 0;
 }
 
 /* Hints */
-.setting-hint {
+.pdfb-setting-hint {
   font-size: 12px;
   color: #64748b;
   font-style: italic;
