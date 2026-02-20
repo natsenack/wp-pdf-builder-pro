@@ -38,7 +38,7 @@
 
 - 🆕 **Nouveaux éléments dans la liste React** : Ajout de nouveaux types d'éléments disponibles dans le panneau d'insertion
   - [ajouter les fonctions dans le toolbar du menu contextuel] Élément 2 (à définir)
-  - [ ] Élément 3 (à définir)
+  - [ajout de la personnalisation du choix du moteur pdf] Élément 3 (à définir)
 
 ---
 
