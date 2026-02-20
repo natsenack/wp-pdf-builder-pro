@@ -1,4 +1,4 @@
-﻿<?php // Licence tab content - Updated: AJAX centralized 2025-12-02
+<?php // Licence tab content - Updated: AJAX centralized 2025-12-02
 
 ?>
             <!-- Licence Settings Section (No Form - AJAX Centralized) -->
@@ -1123,8 +1123,8 @@
 
                 <!-- Comparatif Gratuit vs Premium -->
                 <div class="premium-features-section">
-                    <h3 class="section-title" style="font-size:1rem;">
-                        <span class="section-icon">⭐</span>
+                    <h3 class="pdfb-section-title" style="font-size:1rem;">
+                        <span class="pdfb-section-icon">⭐</span>
                         Gratuit vs Premium
                     </h3>
 
@@ -1594,6 +1594,9 @@
                             }
                         }
                     </script>
+
+
+
 
 
 

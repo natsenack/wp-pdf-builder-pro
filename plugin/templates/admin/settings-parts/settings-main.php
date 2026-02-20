@@ -434,3 +434,5 @@ jQuery(document).ready(function($) {
 // Inclure les modales canvas à la fin pour éviter les conflits de structure
 require_once __DIR__ . '/settings-modals.php';
 ?>
+
+

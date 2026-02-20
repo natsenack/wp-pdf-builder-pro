@@ -360,7 +360,7 @@ class PDF_Builder_Onboarding_Manager {
                 foreach ($predefined_templates as $template) {
                     $template_cards .= '
                         <div class="template-card" data-template="' . esc_attr($template['id']) . '" data-tooltip="' . esc_attr($template['description']) . '">
-                            <div class="template-preview">
+                            <div class="pdfb-template-preview">
                                 <span class="template-icon">' . esc_html($template['icon']) . '</span>
                             </div>
                             <h4>' . esc_html($template['name']) . '</h4>
@@ -371,7 +371,7 @@ class PDF_Builder_Onboarding_Manager {
                 // Ajouter l'option template vierge
                 $template_cards .= '
                     <div class="template-card" data-template="blank" data-tooltip="Canvas vierge pour créer votre propre design personnalisé">
-                        <div class="template-preview">
+                        <div class="pdfb-template-preview">
                             <span class="template-icon">✨</span>
                         </div>
                         <h4>' . __('Template Vierge', 'pdf-builder-pro') . '</h4>
@@ -493,7 +493,7 @@ class PDF_Builder_Onboarding_Manager {
                             </div>
                             <div class="setup-section">
                                 <h5>' . __('Options d\'intégration', 'pdf-builder-pro') . '</h5>
-                                <p class="section-description">' . __('Configurez comment PDF Builder Pro s\'intègre avec votre boutique WooCommerce.', 'pdf-builder-pro') . '</p>
+                                <p class="pdfb-section-description">' . __('Configurez comment PDF Builder Pro s\'intègre avec votre boutique WooCommerce.', 'pdf-builder-pro') . '</p>
                                 <div class="integration-options">
                                     <div class="option-card" data-tooltip="Les clients recevront automatiquement leurs PDFs (factures, bons de commande...) joints aux emails de confirmation de commande WooCommerce">
                                         <div class="option-header">
@@ -1274,6 +1274,8 @@ class PDF_Builder_Onboarding_Manager {
         return $sanitized;
     }
 }
+
+
 
 
 

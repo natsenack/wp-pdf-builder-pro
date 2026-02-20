@@ -432,3 +432,5 @@ $is_premium = $license_manager->isPremium();
     });
 })(jQuery);
 </script>
+
+

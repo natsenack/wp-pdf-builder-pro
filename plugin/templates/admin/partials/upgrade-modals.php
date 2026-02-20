@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) exit;
         </div>
         <div class="pdfb-modal-body" style="padding: 30px;">
             <div class="upgrade-feature" style="text-align: center; margin-bottom: 30px;">
-                <div class="feature-icon" style="font-size: 64px; margin-bottom: 20px;">🎨</div>
+                <div class="pdfb-feature-icon" style="font-size: 64px; margin-bottom: 20px;">🎨</div>
                 <h4 style="color: #23282d; font-size: 20px; margin-bottom: 15px;">Templates Illimités &amp; Personnalisés</h4>
                 <p style="color: #666; margin-bottom: 20px; line-height: 1.6;">
                     Créez autant de templates PDF que vous voulez avec votre propre design et branding.
@@ -49,7 +49,7 @@ if (!defined('ABSPATH')) exit;
         </div>
         <div class="pdfb-modal-body" style="padding: 30px;">
             <div class="upgrade-feature" style="text-align: center; margin-bottom: 30px;">
-                <div class="feature-icon" style="font-size: 64px; margin-bottom: 20px;">🖼️</div>
+                <div class="pdfb-feature-icon" style="font-size: 64px; margin-bottom: 20px;">🖼️</div>
                 <h4 style="color: #23282d; font-size: 20px; margin-bottom: 15px;">Galerie de Modèles Professionnels</h4>
                 <p style="color: #666; margin-bottom: 20px; line-height: 1.6;">
                     Accédez à notre collection de templates professionnels prédéfinis pour factures, devis et plus encore.
@@ -96,3 +96,5 @@ if (typeof window.showUpgradeModal === 'undefined') {
     });
 }
 </script>
+
+

@@ -167,7 +167,7 @@ if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access(
 
 
             <section id="dev-tools-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
-                <h3 class="section-title">Outils de Développement</h3>
+                <h3 class="pdfb-section-title">Outils de Développement</h3>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                     <button type="button" id="reload_cache_btn" class="button button-secondary">
@@ -192,7 +192,7 @@ if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access(
             </section>
 
             <section id="dev-notifications-test-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
-                <h3 class="section-title">🔔 Test du Système de Notifications</h3>
+                <h3 class="pdfb-section-title">🔔 Test du Système de Notifications</h3>
                 <p style="color: #666; margin-bottom: 15px;">Testez le système de notifications toast avec différents types et logs détaillés en console.</p>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px;">
@@ -243,7 +243,7 @@ if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access(
             </section>
 
             <section id="dev-shortcuts-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
-                <h3 class="section-title">Raccourcis Clavier Développeur</h3>
+                <h3 class="pdfb-section-title">Raccourcis Clavier Développeur</h3>
 
                 <table class="wp-list-table widefat fixed striped">
                     <thead>
@@ -409,7 +409,7 @@ if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access(
                 <div class="pdfb-accordion-item">
                     <button type="button" class="pdfb-accordion-toggle" data-target="#hooks-accordion-content">
                         <span class="pdfb-accordion-icon">▶</span>
-                        <h3 class="section-title" style="display: inline; margin: 0 0 0 10px;">Hooks Disponibles</h3>
+                        <h3 class="pdfb-section-title" style="display: inline; margin: 0 0 0 10px;">Hooks Disponibles</h3>
                     </button>
                     <div id="hooks-accordion-content" class="pdfb-accordion-content" style="display: block;">
                         <table class="wp-list-table widefat fixed striped">
@@ -489,7 +489,7 @@ if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access(
             </section>
 
             <!-- Section Monitoring des Performances -->
-            <h3 class="section-title">📊 Monitoring des Performances</h3>
+            <h3 class="pdfb-section-title">📊 Monitoring des Performances</h3>
             <p style="color: #666; margin-bottom: 15px;">Outils pour mesurer et analyser les performances du système.</p>
 
             <table class="pdfb-form-table">
@@ -574,7 +574,7 @@ if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access(
 
             <!-- Section Gestion Base de Données -->
             <section id="dev-database-section" style="<?php echo !isset($settings['pdf_builder_developer_enabled']) || !$settings['pdf_builder_developer_enabled'] || $settings['pdf_builder_developer_enabled'] === '0' ? 'display: none;' : ''; ?>">
-                <h3 class="section-title">🗄️ Gestion de la Base de Données</h3>
+                <h3 class="pdfb-section-title">🗄️ Gestion de la Base de Données</h3>
                 
                 <div style="background: #e3f2fd; border: 1px solid #2196f3; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
                     <h4 style="color: #0d47a1; margin-top: 0;">📊 Gestion du Stockage Personnalisé</h4>
@@ -1894,3 +1894,6 @@ section[id^="dev-"] h3.pdfb-section-title {
 // Inclure les modales et le bouton flottant à la fin pour éviter les conflits de structure
 require_once __DIR__ . '/settings-modals.php';
 ?>
+
+
+

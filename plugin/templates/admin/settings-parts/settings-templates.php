@@ -416,7 +416,7 @@
     // AFFICHAGE HTML
     // =============================================================================
 ?>
-<section class="templates-status-wrapper">
+<section class="pdfb-templates-status-wrapper">
     <!-- En-tête -->
     <header>
         <h3 style="display: flex; justify-content: flex-start; align-items: center;">
@@ -453,7 +453,7 @@
                 <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
 
                 <!-- Grille des statuts -->
-                <div class="templates-status-grid">
+                <div class="pdfb-templates-status-grid">
                     <?php
                     // Trier les statuts pour les utilisateurs free : disponibles en premier
                     $sorted_statuses = $order_statuses;
@@ -494,18 +494,18 @@
                                         $detected_plugin = isset($status_plugins[$status_key]) ? $status_plugins[$status_key] : 'Plugin inconnu';
                                         $tooltip_text = "Slug personnalisé détecté - ajouté par: {$detected_plugin}";
                                         ?>
-                                        <span class="custom-status-indicator"
+                                        <span class="pdfb-custom-status-indicator"
                                               data-tooltip="<?php echo esc_attr($tooltip_text); ?>"
                                               style="font-family: Arial, sans-serif;">🔍</span>
                                     <?php endif; ?>
                                     <?php if ($is_premium_required): ?>
-                                        <span class="premium-badge">⭐ PREMIUM</span>
+                                        <span class="pdfb-premium-badge">⭐ PREMIUM</span>
                                     <?php endif; ?>
                                 </h4>
                             </header>
 
                             <!-- Sélecteur de template -->
-                            <div class="template-selector">
+                            <div class="pdfb-template-selector">
                                 <label for="template_<?php echo esc_attr($status_key); ?>">
                                     📄 Template par défaut :
                                 </label>
@@ -558,11 +558,11 @@
                             </div>
 
                             <!-- Aperçu du template assigné -->
-                            <div class="template-preview">
+                            <div class="pdfb-template-preview">
                                 <?php if (!empty($current_mappings[$status_key]) && isset($templates[$current_mappings[$status_key]])): ?>
                                     <p class="current-template">Assigné : <?php echo esc_html($templates[$current_mappings[$status_key]]); ?></p>
                                 <?php else: ?>
-                                    <p class="no-template">Aucun template assigné</p>
+                                    <p class="pdfb-no-template">Aucun template assigné</p>
                                 <?php endif; ?>
                             </div>
 
@@ -571,7 +571,7 @@
                 </div>
 
                 <!-- Actions -->
-                <section class="templates-status-actions">
+                <section class="pdfb-templates-status-actions">
                     <button type="button" class="button button-secondary" onclick="PDFBuilderTabsAPI.resetTemplatesStatus()">
                         🔄 Réinitialiser les paramètres
                     </button>
@@ -714,7 +714,7 @@
                         if (assignedTemplateId && templates[assignedTemplateId]) {
                             preview.innerHTML = '<p class="current-template">' + templates[assignedTemplateId] + '</p>';
                         } else {
-                            preview.innerHTML = '<p class="no-template">Aucun template</p>';
+                            preview.innerHTML = '<p class="pdfb-no-template">Aucun template</p>';
                         }
                     }
                 }
@@ -729,6 +729,9 @@
         });
     })();
 </script>
+
+
+
 
 
 

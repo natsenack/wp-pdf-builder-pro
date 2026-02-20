@@ -610,7 +610,7 @@ class PDF_Builder_GDPR_Manager {
     </style>
 </head>
 <body>
-        <div class="container">
+        <div class="pdfb-container">
         <div class="header">
             <h1>Mes Données Personnelles</h1>
             <div class="subtitle">Export RGPD - Document officiel</div>
@@ -715,7 +715,7 @@ class PDF_Builder_GDPR_Manager {
             if (!empty($section_data)) {
                 $html .= '<div class="section">
                     <h2>' . esc_html($section_title) . '</h2>
-                    <div class="section-content">
+                    <div class="pdfb-section-content">
                         <div class="data-grid">
                             ' . $format_data($section_data) . '
                         </div>
@@ -730,10 +730,10 @@ class PDF_Builder_GDPR_Manager {
             <h3>PDF Builder Pro - Protection RGPD</h3>
             <p>Conformément au Règlement UE 2016/679 - Règlement Général sur la Protection des Données</p>
             <p>Pour toute question concernant vos données, contactez l\'administrateur du site</p>
-            <div class="footer-links">
-                <a href="#" class="footer-link">Demander rectification</a>
-                <a href="#" class="footer-link">Demander suppression</a>
-                <a href="#" class="footer-link">Contacter le DPO</a>
+            <div class="pdfb-footer-links">
+                <a href="#" class="pdfb-footer-link">Demander rectification</a>
+                <a href="#" class="pdfb-footer-link">Demander suppression</a>
+                <a href="#" class="pdfb-footer-link">Contacter le DPO</a>
             </div>
         </div>
     </div>
@@ -1465,6 +1465,7 @@ class PDF_Builder_GDPR_Manager {
         return rmdir($dir);
     }
 }
+
 
 
 

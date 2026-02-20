@@ -557,7 +557,7 @@ class PDF_Builder_Predefined_Templates_Manager
                     <div id="templates-list" class="templates-list">
                         <?php if (empty($templates)) :
                             ?>
-                            <div class="no-templates">
+                            <div class="pdfb-no-templates">
                                 <p><?php _e('Aucun modèle prédéfini trouvé.', 'pdf-builder-pro'); ?></p>
                                 <p><?php _e('Cliquez sur "Nouveau Modèle" pour créer votre premier modèle.', 'pdf-builder-pro'); ?></p>
                             </div>
@@ -588,7 +588,7 @@ class PDF_Builder_Predefined_Templates_Manager
                                             <pre><?php echo esc_html(wp_json_encode($template, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)); ?></pre>
                                         </details>
                                     </div>
-                                    <div class="template-preview">
+                                    <div class="pdfb-template-preview">
                                         <?php if (!empty($template['preview_svg'])) :
                                             ?>
                                             <img src="data:image/svg+xml;base64,<?php echo base64_encode($template['preview_svg']); ?>" alt="Aperçu" />
@@ -682,11 +682,11 @@ class PDF_Builder_Predefined_Templates_Manager
         <!-- Modale d'aperçu -->
         <div id="preview-modal" class="pdf-builder-modal" style="display: none;">
             <div class="modal-content preview-modal-content">
-                <div class="modal-header">
+                <div class="pdfb-modal-header">
                     <h3><?php _e('Aperçu du Modèle', 'pdf-builder-pro'); ?></h3>
                     <button class="close-modal">&times;</button>
                 </div>
-                <div class="modal-toolbar">
+                <div class="pdfb-modal-toolbar">
                     <div class="preview-controls">
                         <div class="zoom-controls">
                             <button id="zoom-out" class="control-btn" title="Zoom arrière">🔍-</button>
@@ -706,7 +706,7 @@ class PDF_Builder_Predefined_Templates_Manager
                         </div>
                     </div>
                 </div>
-                <div class="modal-body">
+                <div class="pdfb-modal-body">
                     <div id="preview-container" class="preview-image-container">
                         <div class="preview-loading">
                             <div class="spinner"></div>
@@ -1054,6 +1054,9 @@ class PDF_Builder_Predefined_Templates_Manager
 }
 // Initialisation gérée par PDF_Builder_Admin.php - v2
 // new PDF_Builder_Predefined_Templates_Manager();
+
+
+
 
 
 

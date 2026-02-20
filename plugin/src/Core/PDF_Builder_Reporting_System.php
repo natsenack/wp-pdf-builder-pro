@@ -262,10 +262,10 @@ class PDF_Builder_Reporting_System {
 
             <?php foreach ($report['sections'] as $section_key => $section): ?>
             <div class="section">
-                <div class="section-header">
+                <div class="pdfb-section-header">
                     <h2><?php echo esc_html($section['title']); ?></h2>
                 </div>
-                <div class="section-content">
+                <div class="pdfb-section-content">
                     <?php $this->render_section_content($section, $section_key); ?>
                 </div>
             </div>
@@ -624,6 +624,7 @@ class PDF_Builder_Reporting_System {
     private function format_csv_report($report) { return 'CSV format not implemented yet'; }
     private function format_json_report($report) { return json_encode($report);
 }
+
 
 
 

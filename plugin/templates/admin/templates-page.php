@@ -343,7 +343,7 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
 
                     echo '<div style="text-align: center; margin-bottom: 15px; margin-top: 40px;">';
                     // Créer un conteneur pour le preview qui sera chargé dynamiquement
-                    echo '<div id="preview-' . $template_id . '" class="template-preview-container" data-template-id="' . intval($template_id) . '" style="width: 120px; height: 80px; margin: 0 auto 10px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">';
+                    echo '<div id="preview-' . $template_id . '" class="pdfb-template-preview-container" data-template-id="' . intval($template_id) . '" style="width: 120px; height: 80px; margin: 0 auto 10px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">';
                     echo '<div style="text-align: center; color: #999;">';
                     echo '<div style="font-size: 2rem; margin-bottom: 5px;">📄</div>';
                     echo '<div style="font-size: 11px;">Aperçu</div>';
@@ -1747,4 +1747,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 </script>
+
+
+
 

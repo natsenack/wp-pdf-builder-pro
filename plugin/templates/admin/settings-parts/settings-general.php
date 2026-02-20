@@ -35,12 +35,12 @@
 ?>
 
 <section id="general" class="settings-section general-settings" role="tabpanel" aria-labelledby="tab-general">
-    <header class="section-header">
-        <h2 style="display: flex; justify-content: flex-start; align-items: center;" class="section-title">
+    <header class="pdfb-section-header">
+        <h2 style="display: flex; justify-content: flex-start; align-items: center;" class="pdfb-section-title">
             <span class="dashicons dashicons-admin-home"></span>
             <span>Paramètres Généraux</span>
         </h2>
-        <p class="section-description">
+        <p class="pdfb-section-description">
             Configuration générale et informations entreprise.
         </p>
     </header>
@@ -139,6 +139,9 @@
     .form-actions { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #f0f0f1; text-align: center; }
     @media (max-width: 782px) { .form-grid-compact { grid-template-columns: 1fr; } .card-header, .card-content { padding: 1rem; } }
 </style>
+
+
+
 
 
 
