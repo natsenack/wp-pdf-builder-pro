@@ -86,18 +86,6 @@ function pdf_builder_load_settings_assets($hook) {
         <?php
     }, 1); // Priorité 1 pour s'exécuter très tôt
 
-    // ACTIVATION DU CSS UNIFIÉ ULTIME
-    // Un SEUL fichier CSS contenant TOUT pour une performance maximale
-
-    // Charger le CSS unifié ultime (remplace TOUS les fichiers individuels)
-    wp_enqueue_style(
-        'pdf-builder-unified',
-        PDF_BUILDER_PLUGIN_URL . 'assets/css/pdf-builder-unified.css',
-        array(),
-        PDF_BUILDER_VERSION . '-' . time(),
-        'all'
-    );
-
     // DEBUG: Avant enqueue du script
     error_log('PDF Builder - Avant wp_enqueue_script');
 
