@@ -54,11 +54,9 @@ if (!defined('ABSPATH')) exit;
                     Accédez à notre collection de templates professionnels prédéfinis pour factures, devis et plus encore.
                 </p>
                 <ul style="text-align: left; background: #f8f9fa; padding: 20px; border-radius: 8px; list-style: none; margin: 0;">
-                    <li style="margin: 8px 0; color: #23282d;">� <strong>Templates illimités</strong> — aucune restriction</li>
-                    <li style="margin: 8px 0; color: #23282d;">⚡ <strong>Génération en masse</strong> de PDFs en un clic</li>
+                    <li style="margin: 8px 0; color: #23282d;">📄 <strong>Templates illimités</strong> — aucune restriction</li>
                     <li style="margin: 8px 0; color: #23282d;">🖼️ <strong>Génération PDF, PNG & JPG prioritaire</strong></li>
-                    <li style="margin: 8px 0; color: #23282d;">🎯 <strong>Haute résolution</strong> 300/600 DPI + formats A3, Legal</li>
-                    <li style="margin: 8px 0; color: #23282d;">🛠️ <strong>API REST développeur</strong> — intégration totale</li>
+                    <li style="margin: 8px 0; color: #23282d;">🎯 <strong>Haute résolution</strong> 300/600 DPI</li>
                     <li style="margin: 8px 0; color: #23282d;">💬 <strong>Support prioritaire</strong> avec réponse garantie</li>
                 </ul>
             </div>
