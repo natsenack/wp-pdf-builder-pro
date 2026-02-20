@@ -416,14 +416,7 @@ class PDF_Builder_Template_Manager
                     }
 
                     // ✅ Préserver les champs "settings" existants (category, canvas_format, etc.)
-                    // L'éditeur ne renvoie pas ces champs → ils ne doivent pas être écrasés
-                    $existing_data = json_decode($existing_template['template_data'] ?? '{}', true);
-                    $settings_fields_to_preserve = ['category', 'canvas_format', 'canvas_orientation', 'canvas_dpi', 'description'];
-                    foreach ($settings_fields_to_preserve as $field) {
-                        if (isset($existing_data[$field]) && !isset($parsed[$field])) {
-                            $parsed[$field] = $existing_data[$field];
-                        }
-                    }
+                    \pdf_builder_preserve_template_settings_fields($template_id, $parsed, $wpdb);
                     $template_data = \wp_json_encode($parsed);
 
                     // Mise à jour dans la table personnalisée

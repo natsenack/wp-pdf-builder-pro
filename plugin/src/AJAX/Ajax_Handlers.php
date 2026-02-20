@@ -19,6 +19,31 @@ if (!function_exists('wp_unslash')) {
  * @param mixed $value Valeur brute des rôles
  * @return array Tableau des rôles traités
  */
+/**
+ * Préserve les champs "settings" d'un template stockés en DB lors d'une sauvegarde
+ * partielle (ex: sauvegarde éditeur qui n'envoie pas category, canvas_format, etc.).
+ *
+ * @param int    $template_id  ID du template
+ * @param array  $template_data Données en cours de sauvegarde (modifiées par référence)
+ * @param wpdb   $wpdb          Instance wpdb
+ */
+function pdf_builder_preserve_template_settings_fields(int $template_id, array &$template_data, $wpdb): void {
+    $table = $wpdb->prefix . 'pdf_builder_templates';
+    $existing = $wpdb->get_row(
+        $wpdb->prepare("SELECT template_data FROM $table WHERE id = %d", $template_id),
+        ARRAY_A
+    );
+    if (!$existing) {
+        return;
+    }
+    $existing_data = json_decode($existing['template_data'], true) ?: [];
+    foreach (['category', 'canvas_format', 'canvas_orientation', 'canvas_dpi', 'description'] as $field) {
+        if (isset($existing_data[$field]) && !isset($template_data[$field])) {
+            $template_data[$field] = $existing_data[$field];
+        }
+    }
+}
+
 function pdf_builder_save_allowed_roles($value) {
     // error_log("[PDF_BUILDER_SAVE_ALLOWED_ROLES] Processing value: " . print_r($value, true));
 
@@ -656,19 +681,7 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
         // ✅ Préserver les champs "settings" stockés en DB (category, canvas_format, etc.)
-        // L'éditeur ne renvoie pas ces champs → ils ne doivent pas être écrasés
-        $existing = $wpdb->get_row(
-            $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
-            ARRAY_A
-        );
-        if ($existing) {
-            $existing_data = json_decode($existing['template_data'], true) ?: [];
-            foreach (['category', 'canvas_format', 'canvas_orientation', 'canvas_dpi', 'description'] as $field) {
-                if (isset($existing_data[$field]) && !isset($template_data[$field])) {
-                    $template_data[$field] = $existing_data[$field];
-                }
-            }
-        }
+        pdf_builder_preserve_template_settings_fields($template_id, $template_data, $wpdb);
 
         $result = $wpdb->update(
             $table_templates,
