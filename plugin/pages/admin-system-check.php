@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Page d'administration - Vérification du système
  * 

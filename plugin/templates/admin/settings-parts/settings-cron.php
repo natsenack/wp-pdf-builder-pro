@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (!defined('ABSPATH')) exit('Direct access not allowed');
 
 // Task Scheduler is already loaded in bootstrap.php

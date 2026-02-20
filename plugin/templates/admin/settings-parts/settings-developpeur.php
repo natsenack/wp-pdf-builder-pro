@@ -1,4 +1,4 @@
-﻿<?php // Developer tab content - Updated: 2025-11-18 20:20:00
+<?php // Developer tab content - Updated: 2025-11-18 20:20:00
 
 // Double-sécurité : bloquer l'accès direct sans le token développeur valide
 if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access()) {

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Direct access not allowed');
