@@ -10,6 +10,13 @@
                 <?php
                     // Récupération des paramètres depuis le tableau unifié
                     $settings = pdf_builder_get_option('pdf_builder_settings', array());
+                    // Fallback : si le statut n'est pas dans le tableau groupé, lire l'option individuelle
+                    if (!isset($settings['pdf_builder_license_status'])) {
+                        $individual_status = pdf_builder_get_option('pdf_builder_license_status', '');
+                        if (!empty($individual_status)) {
+                            $settings['pdf_builder_license_status'] = $individual_status;
+                        }
+                    }
                     error_log('[PDF Builder] settings-licence.php loaded - license_status: ' . ($settings['pdf_builder_license_status'] ?? 'not set') . ', settings count: ' . count($settings));
 
                     $license_status = $settings['pdf_builder_license_status'] ?? 'free';
