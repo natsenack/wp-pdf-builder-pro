@@ -258,29 +258,31 @@ class PdfBuilderTemplatesAjax
 
             // Si description ou category ne sont pas dans template_data, essayer de les deviner
             $description = $template_data['description'] ?? '';
-            $category = $template_data['category'] ?? 'autre';
+            $has_stored_category = isset($template_data['category']) && !empty($template_data['category']);
+            $category = $has_stored_category ? $template_data['category'] : 'autre';
 
             // Si pas de description, en créer une par défaut basée sur le nom
+            // Ne deviner la catégorie que si elle n'est pas déjà stockée
             if (empty($description)) {
                 $template_name_lower = strtolower($template['name']);
                 if (strpos($template_name_lower, 'facture') !== false || strpos($template_name_lower, 'invoice') !== false) {
                     $description = 'Template de facture personnalisé';
-                    $category = 'facture';
+                    if (!$has_stored_category) $category = 'facture';
                 } elseif (strpos($template_name_lower, 'devis') !== false || strpos($template_name_lower, 'quote') !== false) {
                     $description = 'Template de devis personnalisé';
-                    $category = 'devis';
+                    if (!$has_stored_category) $category = 'devis';
                 } elseif (strpos($template_name_lower, 'commande') !== false || strpos($template_name_lower, 'order') !== false) {
                     $description = 'Template de commande personnalisé';
-                    $category = 'commande';
+                    if (!$has_stored_category) $category = 'commande';
                 } elseif (strpos($template_name_lower, 'contrat') !== false || strpos($template_name_lower, 'contract') !== false) {
                     $description = 'Template de contrat personnalisé';
-                    $category = 'contrat';
+                    if (!$has_stored_category) $category = 'contrat';
                 } elseif (strpos($template_name_lower, 'newsletter') !== false) {
                     $description = 'Template de newsletter personnalisé';
-                    $category = 'newsletter';
+                    if (!$has_stored_category) $category = 'newsletter';
                 } else {
                     $description = 'Template personnalisé';
-                    $category = 'autre';
+                    if (!$has_stored_category) $category = 'autre';
                 }
             }
 
