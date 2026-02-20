@@ -54,6 +54,10 @@ export const Header = memo(function Header({
   const deferredIsEditingExistingTemplate = useDeferredValue(
     isEditingExistingTemplate,
   );
+  
+  // Récupérer le flag du mode développeur depuis les données PHP
+  const developerModeActive = (window as any).pdfBuilderData?.developerModeActive || false;
+  
   // Debug logging
   useEffect(() => {}, []);
 
@@ -3761,34 +3765,36 @@ export const Header = memo(function Header({
                     )}
                   </button>
 
-                  <button
-                    onClick={openDebugHTML}
-                    disabled={isGeneratingPreview || !previewOrderId.trim()}
-                    title="Ouvrir le HTML brut pour inspection (debug)"
-                    style={{
-                      padding: "12px 16px",
-                      border: "2px solid #6b7280",
-                      borderRadius: "6px",
-                      backgroundColor: "#f3f4f6",
-                      color: "#374151",
-                      fontSize: "14px",
-                      fontWeight: "600",
-                      cursor:
-                        isGeneratingPreview || !previewOrderId.trim()
-                          ? "not-allowed"
-                          : "pointer",
-                      opacity:
-                        isGeneratingPreview || !previewOrderId.trim() ? 0.5 : 1,
-                      transition: "all 0.2s",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: "4px",
-                    }}
-                  >
-                    <span style={{ fontSize: "24px" }}>🔍</span>
-                    <span>HTML</span>
-                  </button>
+                  {developerModeActive && (
+                    <button
+                      onClick={openDebugHTML}
+                      disabled={isGeneratingPreview || !previewOrderId.trim()}
+                      title="Ouvrir le HTML brut pour inspection (debug)"
+                      style={{
+                        padding: "12px 16px",
+                        border: "2px solid #6b7280",
+                        borderRadius: "6px",
+                        backgroundColor: "#f3f4f6",
+                        color: "#374151",
+                        fontSize: "14px",
+                        fontWeight: "600",
+                        cursor:
+                          isGeneratingPreview || !previewOrderId.trim()
+                            ? "not-allowed"
+                            : "pointer",
+                        opacity:
+                          isGeneratingPreview || !previewOrderId.trim() ? 0.5 : 1,
+                        transition: "all 0.2s",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        gap: "4px",
+                      }}
+                    >
+                      <span style={{ fontSize: "24px" }}>🔍</span>
+                      <span>HTML</span>
+                    </button>
+                  )}
                 </div>
               </div>
 
