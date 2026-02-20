@@ -102,11 +102,14 @@ class Puppeteer_Client {
 
         $this->log( "render() → POST {$path}  (license=" . ( $license_key ? 'yes' : 'no' ) . ", format={$format})" );
 
-        [ $status, $response_body ] = $this->http_post( $path, $body );
+        [ $status, $response_body, $resp_headers ] = $this->http_post( $path, $body );
 
         // ─── Rendu synchrone (Premium) ───────────────────────────────────────────
         if ( $status === 200 ) {
-            $this->log( 'Rendu synchrone OK – ' . strlen( $response_body ) . ' octets' );
+            $tier   = $resp_headers['x-pup-tier']   ?? $resp_headers['X-Pup-Tier']   ?? 'unknown';
+            $job_id = $resp_headers['x-pup-job-id'] ?? $resp_headers['X-Pup-Job-Id'] ?? '';
+            $this->log( 'Rendu synchrone OK – tier=' . $tier . '  job_id=' . $job_id . '  ' . strlen( $response_body ) . ' octets' );
+            error_log( '[Puppeteer_Client] TIER=' . $tier . '  job_id=' . $job_id . '  size=' . strlen( $response_body ) . ' bytes' );
             return $response_body;
         }
 
@@ -116,7 +119,9 @@ class Puppeteer_Client {
             if ( empty( $data['job_id'] ) ) {
                 throw new \RuntimeException( 'Service 202 sans job_id dans la réponse.' );
             }
-            $this->log( "Rendu asynchrone → job_id={$data['job_id']}" );
+            $tier = $data['tier'] ?? 'free';
+            $this->log( "Rendu asynchrone → tier={$tier}  job_id={$data['job_id']}" );
+            error_log( '[Puppeteer_Client] TIER=' . $tier . '  job_id=' . $data['job_id'] . '  (async/free)' );
             return $this->poll_job( (string) $data['job_id'] );
         }
 
@@ -220,7 +225,7 @@ class Puppeteer_Client {
      *
      * @param string $path Chemin de l'endpoint (ex. '/v2/render')
      * @param string $body JSON encodé
-     * @return array{int, string}
+     * @return array{int, string, array}  [http_code, body, headers]
      * @throws \RuntimeException
      */
     private function http_post( string $path, string $body ): array {
@@ -254,12 +259,15 @@ class Puppeteer_Client {
             );
         }
 
-        $code         = (int) wp_remote_retrieve_response_code( $response );
+        $code          = (int) wp_remote_retrieve_response_code( $response );
         $response_body = wp_remote_retrieve_body( $response );
+        $response_headers = wp_remote_retrieve_headers( $response );
+        // Normaliser en tableau simple clé→valeur (WP retourne un objet Requests_Utility_CaseInsensitiveDictionary)
+        $headers_arr = is_array( $response_headers ) ? $response_headers : (array) $response_headers;
 
         $this->log( "← HTTP {$code}  body_len=" . strlen( $response_body ) );
 
-        return [ $code, $response_body ];
+        return [ $code, $response_body, $headers_arr ];
     }
 
     // ─── Signature HMAC ──────────────────────────────────────────────────────────
