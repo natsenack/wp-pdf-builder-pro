@@ -94,30 +94,6 @@
                     </header>
 
                     <div class="pdfb-system-section-content">
-                        <!-- Notice service Puppeteer hébergé -->
-                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <div style="font-size: 48px; line-height: 1;">🚀</div>
-                                <div style="flex: 1;">
-                                    <h4 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: white;">Service Puppeteer Hébergé & Maintenu</h4>
-                                    <p style="margin: 0 0 12px 0; font-size: 14px; line-height: 1.6; opacity: 0.95;">
-                                        Pas de serveur Puppeteer ? Pas de problème ! Accédez à notre infrastructure optimisée à partir de <strong>1,99€/mois</strong>.
-                                        <br>✨ Token unique sécurisé • 🌐 IP/URL partagée • ⚡ Maintenance incluse • 🔒 99.9% uptime
-                                    </p>
-                                    <a href="#" id="puppeteer-commercial-link" class="button button-secondary" style="background: white; color: #667eea; border: none; padding: 8px 20px; font-weight: 600; text-decoration: none; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: transform 0.2s; display: inline-block; margin-top: 5px;">
-                                        📦 Découvrir nos offres (dès 1,99€/mois)
-                                    </a>
-                                    <script>
-                                    jQuery(document).ready(function($) {
-                                        $('#puppeteer-commercial-link').on('click', function(e) {
-                                            e.preventDefault();
-                                            alert('🚀 Service Puppeteer\n\nLe lien commercial sera bientôt disponible.\nRestez connecté pour plus d\'informations !\n\n💰 Plusieurs offres disponibles dès 1,99€/mois\n✅ Token unique fourni\n✅ IP/URL partagée\n✅ Maintenance incluse');
-                                        });
-                                    });
-                                    </script>
-                                </div>
-                            </div>
-                        </div>
                         
 
 
