@@ -136,7 +136,7 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
  */
 // JAMAIS au niveau global - toujours différer jusqu'à plugins_loaded
 add_action('plugins_loaded', function() {
-    if (!class_exists('Dompdf\Dompdf') && file_exists(PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php')) {
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'vendor/autoload.php';
     }
 }, 1);

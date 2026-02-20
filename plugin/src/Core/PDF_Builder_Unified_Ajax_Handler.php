@@ -3023,56 +3023,19 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'quality' => 90,
             ];
 
-            // --- Sélection du moteur image ---
-            // Priorité 1 : Puppeteer (si configuré et disponible) - endpoint /screenshot
-            // Priorité 2 : DomPDF + Imagick + Ghostscript
-            $image_content = false;
-            $engine_used   = '';
+            // --- Génération image via PuppeteerEngine (service threeaxe.fr + Imagick) ---
+            $this->debug_log("Moteur image : PuppeteerEngine v2 (PDF → Imagick)");
+            $this->current_engine_name = 'puppeteer';
 
-            $puppeteer = new \PDF_Builder\PDF\Engines\PuppeteerEngine();
-            if ($puppeteer->is_available()) {
-                $this->debug_log("Moteur image : Puppeteer (screenshot)");
-                $engine_used   = 'Puppeteer';
-                $this->current_engine_name = 'puppeteer';
-                $image_content = $puppeteer->generate_image($html, $image_options);
-            }
-
-            // Priorité 2 : DomPDF + Imagick (nécessite Ghostscript pour lire les PDF)
-            if ($image_content === false) {
-                if (!extension_loaded('imagick')) {
-                    $this->debug_log("Imagick non disponible", "ERROR");
-                    wp_send_json_error([
-                        'message' => "Génération d'image impossible",
-                        'details' => "Ni Puppeteer ni Imagick ne sont disponibles. Installez Ghostscript + Imagick sur le serveur, ou configurez Puppeteer dans les paramètres du plugin.",
-                        'code'    => 'NO_IMAGE_ENGINE',
-                    ], 500);
-                }
-
-                // Vérifier que Ghostscript est accessible à Imagick (PDF policy)
-                $gs_ok = false;
-                try {
-                    $test = new \Imagick();
-                    // Si la politique ImageMagick bloque PDF, readImage lèvera une exception
-                    $gs_ok = true; // on tentera et on catchera en bas
-                } catch (\Exception $e) {
-                    $gs_ok = false;
-                }
-
-                $this->debug_log("Moteur image : DomPDF + Imagick");
-                $engine_used   = 'DomPDF+Imagick';
-                $this->current_engine_name = 'dompdf';
-                $dompdf_engine = new \PDF_Builder\PDF\Engines\DomPDFEngine();
-                $image_content = $dompdf_engine->generate_image($html, $image_options);
-            }
+            $puppeteer     = new \PDF_Builder\PDF\Engines\PuppeteerEngine();
+            $image_content = $puppeteer->generate_image($html, $image_options);
 
             if ($image_content === false) {
-                $this->debug_log("Échec génération image (moteur: {$engine_used})", "ERROR");
+                $this->debug_log("Échec génération image (PuppeteerEngine)", "ERROR");
                 wp_send_json_error([
                     'message' => "Génération d'image échouée",
-                    'details' => "Le moteur {$engine_used} n'a pas pu générer l'image. " .
-                                 "Si vous utilisez DomPDF+Imagick, vérifiez que Ghostscript est installé sur le serveur " .
-                                 "(requis pour la conversion PDF→image). " .
-                                 "Sinon, configurez Puppeteer dans les paramètres du plugin.",
+                    'details' => "Le service Puppeteer n'a pas pu générer l'image. " .
+                                 "Vérifiez la disponibilité du service et qu'Imagick est installé sur le serveur.",
                     'code'    => 'IMAGE_GENERATION_FAILED',
                 ], 500);
             }
@@ -5651,53 +5614,17 @@ class PDF_Builder_Unified_Ajax_Handler {
                 return;
             }
 
-            error_log("[PDF Engine Test] Test Puppeteer demandé");
+            error_log("[PDF Engine Test] Test Puppeteer demandé (service threeaxe.fr)");
 
-            // Charger la factory
-            require_once PDF_BUILDER_PLUGIN_DIR . 'src/PDF/Engines/PDFEngineFactory.php';
-
-            // Récupérer la configuration actuelle depuis wp_pdf_builder_settings
-            $config = [
-                'api_url' => pdf_builder_get_option('pdf_builder_puppeteer_url', ''),
-                'api_token' => pdf_builder_get_option('pdf_builder_puppeteer_token', ''),
-                'timeout' => pdf_builder_get_option('pdf_builder_puppeteer_timeout', 30),
-                'fallback_enabled' => false, // Désactiver le fallback pour ce test
-            ];
-
-            // Valider la configuration
-            if (empty($config['api_url'])) {
-                wp_send_json_error([
-                    'message' => 'URL Puppeteer non configurée. Veuillez renseigner l\'URL de votre serveur Puppeteer.'
-                ]);
-                return;
-            }
-
-            if (empty($config['api_token'])) {
-                wp_send_json_error([
-                    'message' => 'Token Puppeteer non configuré. Veuillez renseigner le token d\'authentification.'
-                ]);
-                return;
-            }
-
-            // Créer une instance du moteur Puppeteer
-            $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create('puppeteer', $config);
-
-            if (!$engine) {
-                wp_send_json_error([
-                    'message' => 'Impossible de créer une instance du moteur Puppeteer'
-                ]);
-                return;
-            }
-
-            // Tester la connexion
+            $engine      = new \PDF_Builder\PDF\Engines\PuppeteerEngine();
             $test_result = $engine->test_connection();
 
             if ($test_result['success']) {
                 error_log("[PDF Engine Test] Puppeteer OK");
                 wp_send_json_success([
                     'message' => sprintf(
-                        'Connexion Puppeteer réussie! 🎉<br>URL: %s<br>Temps de réponse: %dms',
-                        esc_html($config['api_url']),
+                        'Connexion Puppeteer réussie! 🎉<br>Service: %s<br>Temps de réponse: %dms',
+                        esc_html(\PDF_Builder\PDF\Engines\Puppeteer_Client::SERVICE_BASE_URL),
                         isset($test_result['response_time']) ? $test_result['response_time'] : 0
                     )
                 ]);
@@ -5705,8 +5632,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                 error_log("[PDF Engine Test] Puppeteer ERREUR: " . $test_result['message']);
                 wp_send_json_error([
                     'message' => sprintf(
-                        'Échec de connexion Puppeteer ❌<br>URL: %s<br>Erreur: %s<br><br>Vérifiez que:<br>• Le serveur Puppeteer est démarré<br>• L\'URL est correcte<br>• Le token est valide',
-                        esc_html($config['api_url']),
+                        'Échec de connexion Puppeteer ❌<br>Service: %s<br>Erreur: %s',
+                        esc_html(\PDF_Builder\PDF\Engines\Puppeteer_Client::SERVICE_BASE_URL),
                         esc_html($test_result['message'])
                     )
                 ]);

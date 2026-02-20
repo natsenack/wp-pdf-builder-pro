@@ -1,321 +1,197 @@
 <?php
 /**
- * Puppeteer Engine - Génère des PDF via un serveur Puppeteer externe
- * 
+ * PuppeteerEngine — Moteur PDF utilisant Puppeteer_Client (service distant threeaxe.fr)
+ *
+ * Remplace l'ancien moteur basé sur cURL + token simple.
+ * Toute la logique HTTP / HMAC est déléguée à Puppeteer_Client.
+ *
  * @package PDF_Builder_Pro
  * @subpackage PDF\Engines
- * @version 1.0.0
+ * @version 2.0.0
  */
 
 namespace PDF_Builder\PDF\Engines;
 
 class PuppeteerEngine implements PDFEngineInterface {
-    
-    /**
-     * Configuration de l'API Puppeteer
-     */
-    private $api_url;
-    private $api_token;
-    private $timeout;
-    private $fallback_engine;
-    
-    /**
-     * Logs de debug
-     */
+
+    /** @var Puppeteer_Client */
+    private $client;
+
+    /** @var bool */
     private $debug_enabled;
-    
+
+    // ─── Constructeur ────────────────────────────────────────────────────────────
+
     /**
-     * Constructeur
-     * 
-     * @param array $config Configuration [api_url, api_token, timeout, fallback_to_dompdf]
+     * @param array $config  Ignoré (conservé pour compatibilité avec les anciens appels).
      */
-    public function __construct($config = []) {
-        $this->api_url = $config['api_url'] ?? pdf_builder_get_option('pdf_builder_puppeteer_url', '');
-        $this->api_token = $config['api_token'] ?? pdf_builder_get_option('pdf_builder_puppeteer_token', '');
-        $this->timeout = $config['timeout'] ?? pdf_builder_get_option('pdf_builder_puppeteer_timeout', 30);
-        $this->fallback_engine = $config['fallback_to_dompdf'] ?? pdf_builder_get_option('pdf_builder_puppeteer_fallback', true);
-        $this->debug_enabled = pdf_builder_get_option('pdf_builder_debug_enabled', false);
+    public function __construct( $config = [] ) {
+        $this->client        = new Puppeteer_Client();
+        $this->debug_enabled = (bool) pdf_builder_get_option( 'pdf_builder_debug_enabled', false );
     }
-    
+
+    // ─── Interface PDFEngineInterface ────────────────────────────────────────────
+
     /**
-     * Génère un PDF à partir de HTML
-     * 
-     * @param string $html Contenu HTML
-     * @param array $options Options de génération [width, height, orientation, etc.]
-     * @return string|false Contenu PDF binaire ou false en cas d'erreur
+     * Génère un PDF à partir de HTML.
+     *
+     * @param string $html
+     * @param array  $options  [width, height, format, …]
+     * @return string|false    Contenu binaire PDF ou false en cas d'erreur
      */
-    public function generate($html, $options = []) {
-        $this->debug_log("========== GÉNÉRATION PDF PUPPETEER ==========");
-        $this->debug_log("API URL: {$this->api_url}");
-        $this->debug_log("HTML size: " . strlen($html) . " bytes");
-        
-        // Vérifier configuration
-        if (empty($this->api_url) || empty($this->api_token)) {
-            $this->debug_log("Configuration Puppeteer incomplète", "ERROR");
-            return $this->fallback_to_dompdf($html, $options);
-        }
-        
+    public function generate( $html, $options = [] ) {
+
+        $this->log( "========== GÉNÉRATION PDF (PuppeteerEngine v2) ==========" );
+        $this->log( "HTML size : " . strlen( $html ) . " octets" );
+
+        $format      = $this->resolve_format( $options );
+        $license_key = $this->get_license_key();
+        $site_url    = get_site_url();
+
+        $this->log( "format={$format}  license=" . ( $license_key ? 'yes' : 'no' ) );
+
         try {
-            // Préparer les données pour l'API
-            $payload = [
-                'html' => $html,
-                'options' => $this->prepare_options($options)
-            ];
-            
-            $this->debug_log("Options PDF: " . json_encode($payload['options']));
-            
-            // Envoyer requête à l'API Puppeteer
-            $response = $this->send_api_request($payload);
-            
-            if ($response === false) {
-                $this->debug_log("Échec requête API Puppeteer", "ERROR");
-                return $this->fallback_to_dompdf($html, $options);
+            $pdf = $this->client->render( $html, $format, $license_key, $site_url );
+            $this->log( "PDF généré – " . strlen( $pdf ) . " octets" );
+            return $pdf;
+        } catch ( \Exception $e ) {
+            $this->log( "Erreur : " . $e->getMessage(), 'ERROR' );
+            return false;
+        }
+    }
+
+    /**
+     * Génère une image PNG/JPG à partir de HTML.
+     * Génère le PDF via le service puis convertit avec Imagick (si disponible).
+     *
+     * @param string $html
+     * @param array  $options  [format => 'png'|'jpg', width, height, quality]
+     * @return string|false
+     */
+    public function generate_image( $html, $options = [] ) {
+
+        $this->log( "========== GÉNÉRATION IMAGE (PuppeteerEngine v2) ==========" );
+
+        if ( ! extension_loaded( 'imagick' ) ) {
+            $this->log( "Imagick non disponible.", 'ERROR' );
+            return false;
+        }
+
+        $pdf = $this->generate( $html, $options );
+        if ( $pdf === false ) {
+            return false;
+        }
+
+        try {
+            $format  = strtolower( $options['format'] ?? 'png' );
+            $quality = isset( $options['quality'] ) ? (int) $options['quality'] : 90;
+
+            $imagick = new \Imagick();
+            $imagick->setResolution( 150, 150 );
+            $imagick->readImageBlob( $pdf );
+            $imagick->setIteratorIndex( 0 );
+
+            if ( $format === 'jpg' || $format === 'jpeg' ) {
+                $imagick->setImageFormat( 'jpeg' );
+                $imagick->setImageCompressionQuality( $quality );
+            } else {
+                $imagick->setImageFormat( 'png' );
             }
-            
-            $this->debug_log("PDF généré avec succès - Taille: " . strlen($response) . " bytes");
-            return $response;
-            
-        } catch (\Exception $e) {
-            $this->debug_log("Erreur Puppeteer: " . $e->getMessage(), "ERROR");
-            return $this->fallback_to_dompdf($html, $options);
-        }
-    }
-    
-    /**
-     * Génère une image (PNG/JPG) à partir de HTML
-     * 
-     * @param string $html Contenu HTML
-     * @param array $options Options [format => 'png'|'jpg', width, height, quality]
-     * @return string|false Contenu image binaire ou false
-     */
-    public function generate_image($html, $options = []) {
-        $this->debug_log("========== GÉNÉRATION IMAGE PUPPETEER ==========");
-        
-        // Vérifier configuration
-        if (empty($this->api_url) || empty($this->api_token)) {
-            $this->debug_log("Configuration Puppeteer incomplète", "ERROR");
-            return false;
-        }
-        
-        try {
-            $format = $options['format'] ?? 'png';
-            $this->debug_log("Format image: {$format}");
-            
-            // Préparer les données pour l'API
-            $payload = [
-                'html' => $html,
-                'format' => $format,
-                'options' => [
-                    'type' => $format === 'jpg' ? 'jpeg' : 'png',
-                    'fullPage' => false,
-                    'width' => $options['width'] ?? 794,
-                    'height' => $options['height'] ?? 1123,
-                    'quality' => $format === 'jpg' ? ($options['quality'] ?? 90) : null
-                ]
-            ];
-            
-            // Envoyer requête à l'API Puppeteer (endpoint screenshot)
-            $response = $this->send_api_request($payload, 'screenshot');
-            
-            if ($response === false) {
-                $this->debug_log("Échec génération image", "ERROR");
-                return false;
-            }
-            
-            $this->debug_log("Image générée avec succès - Taille: " . strlen($response) . " bytes");
-            return $response;
-            
-        } catch (\Exception $e) {
-            $this->debug_log("Erreur génération image: " . $e->getMessage(), "ERROR");
+
+            $image_data = $imagick->getImageBlob();
+            $imagick->clear();
+            $imagick->destroy();
+
+            $this->log( "Image générée – " . strlen( $image_data ) . " octets (format={$format})" );
+            return $image_data;
+
+        } catch ( \Exception $e ) {
+            $this->log( "Erreur Imagick : " . $e->getMessage(), 'ERROR' );
             return false;
         }
     }
-    
+
     /**
-     * Envoie une requête à l'API Puppeteer
-     * 
-     * @param array $payload Données à envoyer
-     * @param string $endpoint Endpoint de l'API ('render' ou 'screenshot')
-     * @return string|false Réponse binaire ou false
+     * Retourne le nom du moteur.
+     *
+     * @return string
      */
-    private function send_api_request($payload, $endpoint = 'render') {
-        $url = rtrim($this->api_url, '/') . '/' . $endpoint;
-        
-        $this->debug_log("Envoi requête vers: {$url}");
-        
-        // Préparer les headers
-        $headers = [
-            'Content-Type: application/json',
-            'Authorization: Bearer ' . $this->api_token,
-            'X-PDF-Builder-Version: ' . PDF_BUILDER_PRO_VERSION
-        ];
-        
-        // Configuration cURL
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => json_encode($payload),
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_TIMEOUT => $this->timeout,
-            CURLOPT_CONNECTTIMEOUT => 10,
-            CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_SSL_VERIFYHOST => 2
-        ]);
-        
-        $start_time = microtime(true);
-        $response = curl_exec($ch);
-        $duration = round((microtime(true) - $start_time) * 1000, 2);
-        
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $curl_error = curl_error($ch);
-        curl_close($ch);
-        
-        $this->debug_log("Réponse HTTP: {$http_code} - Durée: {$duration}ms");
-        
-        // Vérifier erreurs
-        if ($response === false) {
-            $this->debug_log("Erreur cURL: {$curl_error}", "ERROR");
-            return false;
-        }
-        
-        if ($http_code !== 200) {
-            $this->debug_log("Erreur HTTP {$http_code}: " . substr($response, 0, 200), "ERROR");
-            return false;
-        }
-        
-        return $response;
-    }
-    
-    /**
-     * Prépare les options pour l'API Puppeteer
-     * 
-     * @param array $options Options brutes
-     * @return array Options formatées pour Puppeteer
-     */
-    private function prepare_options($options) {
-        // Dimensions par défaut : A4 @ 96 DPI (794×1123px)
-        $width = $options['width'] ?? 794;
-        $height = $options['height'] ?? 1123;
-        $orientation = ($width > $height) ? 'landscape' : 'portrait';
-        
-        // Convertir pixels en inches pour Puppeteer (96 DPI)
-        $width_in = round($width / 96, 2);
-        $height_in = round($height / 96, 2);
-        
-        return [
-            'format' => $options['format'] ?? null, // null = custom
-            'width' => $width_in . 'in',
-            'height' => $height_in . 'in',
-            'landscape' => $orientation === 'landscape',
-            'printBackground' => true,
-            'preferCSSPageSize' => false,
-            'displayHeaderFooter' => false,
-            'margin' => [
-                'top' => '0',
-                'right' => '0',
-                'bottom' => '0',
-                'left' => '0'
-            ]
-        ];
-    }
-    
-    /**
-     * Fallback vers DomPDF si Puppeteer échoue
-     * 
-     * @param string $html HTML à convertir
-     * @param array $options Options de génération
-     * @return string|false Contenu PDF ou false
-     */
-    private function fallback_to_dompdf($html, $options) {
-        if (!$this->fallback_engine) {
-            $this->debug_log("Fallback DomPDF désactivé", "WARNING");
-            return false;
-        }
-        
-        $this->debug_log("Basculement vers DomPDF", "WARNING");
-        
-        try {
-            $dompdf_engine = new DomPDFEngine();
-            return $dompdf_engine->generate($html, $options);
-        } catch (\Exception $e) {
-            $this->debug_log("Erreur DomPDF fallback: " . $e->getMessage(), "ERROR");
-            return false;
-        }
-    }
-    
-    /**
-     * Teste la connexion à l'API Puppeteer
-     * 
-     * @return array Résultat du test [success => bool, message => string, details => array]
-     */
-    public function test_connection() {
-        if (empty($this->api_url) || empty($this->api_token)) {
-            return [
-                'success' => false,
-                'message' => 'Configuration incomplète',
-                'details' => [
-                    'api_url' => !empty($this->api_url),
-                    'api_token' => !empty($this->api_token)
-                ]
-            ];
-        }
-        
-        $test_html = '<html><body><h1>Test PDF Builder Pro</h1><p>Connexion réussie!</p></body></html>';
-        
-        $start_time = microtime(true);
-        $result = $this->generate($test_html, ['width' => 794, 'height' => 300]);
-        $duration = round((microtime(true) - $start_time) * 1000, 2);
-        
-        if ($result !== false) {
-            return [
-                'success' => true,
-                'message' => 'Connexion réussie',
-                'details' => [
-                    'api_url' => $this->api_url,
-                    'pdf_size' => strlen($result) . ' bytes',
-                    'duration' => $duration . 'ms'
-                ]
-            ];
-        } else {
-            return [
-                'success' => false,
-                'message' => 'Échec de la connexion',
-                'details' => [
-                    'api_url' => $this->api_url,
-                    'duration' => $duration . 'ms'
-                ]
-            ];
-        }
-    }
-    
-    /**
-     * Retourne le nom du moteur
-     * 
-     * @return string Nom du moteur
-     */
-    public function get_name() {
+    public function get_name(): string {
         return 'Puppeteer';
     }
-    
+
     /**
-     * Vérifie si le moteur est disponible
-     * 
-     * @return bool True si disponible
+     * Vérifie si le service distant est joignable.
+     *
+     * @return bool
      */
-    public function is_available() {
-        return !empty($this->api_url) && !empty($this->api_token);
+    public function is_available(): bool {
+        return $this->client->is_available();
     }
-    
+
     /**
-     * Logger conditionnel
-     * 
-     * @param string $message Message
-     * @param string $level Niveau (INFO, WARNING, ERROR)
+     * Teste la connexion au service.
+     *
+     * @return array{success: bool, message: string, response_time?: int}
      */
-    private function debug_log($message, $level = 'INFO') {
-        if ($this->debug_enabled || (defined('WP_DEBUG') && WP_DEBUG)) {
-            error_log("[Puppeteer Engine - {$level}] {$message}");
+    public function test_connection(): array {
+        $start = microtime( true );
+        try {
+            $available = $this->client->is_available();
+            $ms        = (int) round( ( microtime( true ) - $start ) * 1000 );
+            if ( $available ) {
+                return [ 'success' => true, 'message' => 'Service Puppeteer joignable.', 'response_time' => $ms ];
+            }
+            return [ 'success' => false, 'message' => 'Service non disponible.' ];
+        } catch ( \Exception $e ) {
+            return [ 'success' => false, 'message' => $e->getMessage() ];
+        }
+    }
+
+    // ─── Helpers privés ─────────────────────────────────────────────────────────
+
+    /**
+     * Déduit le format papier depuis les options.
+     *
+     * @param array $options
+     * @return string
+     */
+    private function resolve_format( array $options ): string {
+        if ( ! empty( $options['format'] ) && is_string( $options['format'] ) ) {
+            return strtoupper( $options['format'] );
+        }
+        $w = (int) ( $options['width']  ?? 794 );
+        $h = (int) ( $options['height'] ?? 1123 );
+        if ( $w >= 1100 && $h >= 1550 ) {
+            return 'A3';
+        }
+        return 'A4';
+    }
+
+    /**
+     * Récupère la clé de licence EDD active.
+     *
+     * @return string
+     */
+    private function get_license_key(): string {
+        if ( class_exists( '\PDF_Builder\Managers\PDF_Builder_License_Manager' ) ) {
+            $lm = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+            if ( method_exists( $lm, 'get_license_key' ) ) {
+                return (string) $lm->get_license_key();
+            }
+        }
+        return (string) pdf_builder_get_option( 'pdf_builder_license_key', '' );
+    }
+
+    /**
+     * Log interne.
+     *
+     * @param string $message
+     * @param string $level  'INFO' | 'WARNING' | 'ERROR'
+     */
+    private function log( string $message, string $level = 'INFO' ): void {
+        if ( $this->debug_enabled || $level === 'ERROR' ) {
+            error_log( "[PuppeteerEngine][{$level}] {$message}" );
         }
     }
 }
