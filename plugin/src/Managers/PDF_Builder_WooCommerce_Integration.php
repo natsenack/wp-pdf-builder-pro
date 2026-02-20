@@ -166,42 +166,6 @@ class PDF_Builder_WooCommerce_Integration
     {
         // Enregistrer les hooks AJAX via l'action init pour s'assurer qu'ils sont disponibles tôt
         add_action('init', [$this, 'registerAjaxHooks']);
-        // Enqueue html2canvas sur les pages de commandes WooCommerce (pour export PNG/JPG)
-        add_action('admin_enqueue_scripts', [$this, 'enqueueOrderPageScripts']);
-    }
-
-    /**
-     * Charge html2canvas uniquement sur les pages de commandes WooCommerce
-     */
-    public function enqueueOrderPageScripts($hook)
-    {
-        $is_order_page = false;
-
-        // Mode classique (CPT shop_order)
-        if ($hook === 'post.php' && isset($_GET['post'])) {
-            $is_order_page = get_post_type(intval($_GET['post'])) === 'shop_order';
-        }
-
-        // Mode HPOS (WC 7.1+) : woocommerce_page_wc-orders ou page=wc-orders avec id
-        if (!$is_order_page && (
-            strpos($hook, 'wc-orders') !== false ||
-            (isset($_GET['page']) && $_GET['page'] === 'wc-orders' && isset($_GET['id']))
-        )) {
-            $is_order_page = true;
-        }
-
-        if (!$is_order_page) {
-            return;
-        }
-
-        // html2canvas standalone (requis pour export PNG/JPG côté client)
-        wp_enqueue_script(
-            'html2canvas',
-            'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
-            [],
-            '1.4.1',
-            true
-        );
     }
 
     /**
@@ -555,88 +519,80 @@ class PDF_Builder_WooCommerce_Integration
                         nonce:       nonce
                     });
                 } else {
-                    // PNG / JPG : aperçu via Blob URL avec toolbar identique à l'éditeur PDF
+                    // PNG / JPG : génération via Puppeteer (screenshot natif haute qualité)
                     btn.prop('disabled', true).html('⏳');
 
-                    $.post(ajaxUrl, {
-                        action:      'pdf_builder_get_preview_html',
-                        order_id:    orderId,
-                        template_id: templateId,
-                        nonce:       nonce
-                    }, function(response) {
-                        btn.prop('disabled', false).html(orig);
+                    var formData = new FormData();
+                    formData.append('action',      'pdf_builder_generate_image');
+                    formData.append('template_id', templateId);
+                    formData.append('order_id',    orderId);
+                    formData.append('format',      type);
+                    formData.append('nonce',       nonce);
 
-                        if (!response.success || !response.data || !response.data.html) {
-                            alert('Erreur HTML : ' + ((response.data && response.data.message) || 'Inconnue'));
-                            return;
-                        }
+                    fetch(ajaxUrl, { method: 'POST', body: formData })
+                        .then(function(response) {
+                            if (!response.ok) {
+                                return response.json().then(function(err) {
+                                    throw new Error(
+                                        (err.data && (err.data.details || err.data.message)) ||
+                                        ('Erreur ' + response.status)
+                                    );
+                                });
+                            }
+                            return response.blob();
+                        })
+                        .then(function(blob) {
+                            return new Promise(function(resolve, reject) {
+                                var reader = new FileReader();
+                                reader.onload  = function() { resolve(reader.result); };
+                                reader.onerror = reject;
+                                reader.readAsDataURL(blob);
+                            });
+                        })
+                        .then(function(dataUrl) {
+                            btn.prop('disabled', false).html(orig);
 
-                        var html        = response.data.html;
-                        var orderNum    = response.data.order_number || orderId;
+                            var orderNum = orderId;
+                            var fileName = 'facture-' + orderNum + '.' + type;
 
-                        // Extraire <head> et <body> comme l'éditeur
-                        var stylesMatch = html.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
-                        var bodyMatch   = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-                        var originalStyles = stylesMatch ? stylesMatch[1] : '';
-                        var bodyContent    = bodyMatch   ? bodyMatch[1]   : html;
+                            var htmlPage =
+                                '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+                                '<title>Facture ' + orderNum + '</title>' +
+                                '<style>' +
+                                'body{margin:0;padding:20px;background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;align-items:center;}' +
+                                '.toolbar{position:fixed;top:20px;right:20px;display:flex;gap:12px;z-index:1000;}' +
+                                '.btn{padding:12px 24px;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.15);}' +
+                                '.btn-download{background:#2271b1;color:white;}.btn-download:hover{background:#135e96;transform:translateY(-1px);}' +
+                                '.btn-print{background:#10b981;color:white;}.btn-print:hover{background:#059669;transform:translateY(-1px);}' +
+                                '.btn-zoom{background:#6b7280;color:white;padding:12px 16px;}.btn-zoom:hover{background:#4b5563;transform:translateY(-1px);}' +
+                                '.zoom-level{background:#f3f4f6;color:#374151;padding:12px 16px;font-weight:bold;border-radius:6px;min-width:70px;text-align:center;}' +
+                                '.image-container{margin-top:60px;background:white;padding:20px;border-radius:8px;box-shadow:0 2px 16px rgba(0,0,0,0.1);max-width:50%;transition:transform 0.2s;transform-origin:center top;}' +
+                                'img{max-width:100%;height:auto;display:block;}' +
+                                '@media print{body{background:white;padding:0;}.toolbar{display:none!important;}.image-container{margin:0;padding:0;box-shadow:none;}}' +
+                                '</style></head><body>' +
+                                '<div class="toolbar">' +
+                                '<button class="btn btn-zoom" onclick="zoomOut()" title="Zoom arrière"><span>🔍➖</span></button>' +
+                                '<div class="zoom-level" id="zoomLevel">100%</div>' +
+                                '<button class="btn btn-zoom" onclick="zoomIn()" title="Zoom avant"><span>🔍➕</span></button>' +
+                                '<button class="btn btn-download" onclick="downloadImage()"><span>📥</span><span>Télécharger</span></button>' +
+                                '<button class="btn btn-print" onclick="window.print()"><span>🖨️</span><span>Imprimer</span></button>' +
+                                '</div>' +
+                                '<div class="image-container" id="imageContainer"><img src="' + dataUrl + '" alt="Facture ' + orderNum + '" /></div>' +
+                                '<script>' +
+                                'var zoomScale=1.0,container=document.getElementById("imageContainer"),zoomLevelDisplay=document.getElementById("zoomLevel");' +
+                                'function updateZoom(){container.style.transform="scale("+zoomScale+")";zoomLevelDisplay.textContent=Math.round(zoomScale*100)+"%";}' +
+                                'function zoomIn(){if(zoomScale<3.0){zoomScale+=0.25;updateZoom();}}' +
+                                'function zoomOut(){if(zoomScale>0.25){zoomScale-=0.25;updateZoom();}}' +
+                                'function downloadImage(){var l=document.createElement("a");l.href="' + dataUrl + '";l.download="' + fileName + '";document.body.appendChild(l);l.click();document.body.removeChild(l);}' +
+                                '<\/script></body></html>';
 
-                        // Construire la page avec toolbar identique à l'éditeur
-                        var htmlPage = '<!DOCTYPE html>\n' +
-                            '<html>\n<head>\n' +
-                            '    <meta charset="UTF-8">\n' +
-                            '    <title>Facture ' + orderNum + '</title>\n' +
-                            originalStyles +
-                            '    <style>\n' +
-                            '        body { margin:0; padding:0; background:#f5f5f5; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }\n' +
-                            '        .toolbar { position:fixed; top:20px; right:20px; display:flex; gap:12px; z-index:1000; }\n' +
-                            '        .btn { padding:12px 24px; border:none; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; transition:all 0.2s; box-shadow:0 2px 8px rgba(0,0,0,0.15); }\n' +
-                            '        .btn-download { background:#2271b1; color:white; }\n' +
-                            '        .btn-download:hover { background:#135e96; transform:translateY(-1px); box-shadow:0 4px 12px rgba(34,113,177,0.3); }\n' +
-                            '        .btn-print { background:#10b981; color:white; }\n' +
-                            '        .btn-print:hover { background:#059669; transform:translateY(-1px); box-shadow:0 4px 12px rgba(16,185,129,0.3); }\n' +
-                            '        .btn-zoom { background:#6b7280; color:white; padding:12px 16px; }\n' +
-                            '        .btn-zoom:hover { background:#4b5563; transform:translateY(-1px); box-shadow:0 4px 12px rgba(107,114,128,0.3); }\n' +
-                            '        .zoom-level { background:#f3f4f6; color:#374151; padding:12px 16px; font-weight:bold; border-radius:6px; min-width:70px; text-align:center; }\n' +
-                            '        .content-wrapper { padding:20px; min-height:100vh; display:flex; justify-content:center; align-items:flex-start; transition:transform 0.2s; transform-origin:center top; }\n' +
-                            '        @media print { body { background:white; padding:0; } .toolbar { display:none !important; } .content-wrapper { padding:0; } }\n' +
-                            '    </style>\n' +
-                            '</head>\n<body>\n' +
-                            '    <div class="toolbar">\n' +
-                            '        <button class="btn btn-zoom" onclick="zoomOut()" title="Zoom arrière"><span>🔍➖</span></button>\n' +
-                            '        <div class="zoom-level" id="zoomLevel">100%</div>\n' +
-                            '        <button class="btn btn-zoom" onclick="zoomIn()" title="Zoom avant"><span>🔍➕</span></button>\n' +
-                            '        <button class="btn btn-download" onclick="downloadHTML()"><span>📥</span><span>Télécharger HTML</span></button>\n' +
-                            '        <button class="btn btn-print" onclick="window.print()"><span>🖨️</span><span>Imprimer</span></button>\n' +
-                            '    </div>\n' +
-                            '    <div class="content-wrapper" id="contentWrapper">' + bodyContent + '</div>\n' +
-                            '    <script>\n' +
-                            '        var zoomScale = 1.0;\n' +
-                            '        var wrapper = document.getElementById("contentWrapper");\n' +
-                            '        var zoomLevelDisplay = document.getElementById("zoomLevel");\n' +
-                            '        function updateZoom() { wrapper.style.transform = "scale(" + zoomScale + ")"; zoomLevelDisplay.textContent = Math.round(zoomScale * 100) + "%"; }\n' +
-                            '        function zoomIn()  { if (zoomScale < 3.0)  { zoomScale += 0.25; updateZoom(); } }\n' +
-                            '        function zoomOut() { if (zoomScale > 0.25) { zoomScale -= 0.25; updateZoom(); } }\n' +
-                            '        function downloadHTML() {\n' +
-                            '            var blob = new Blob([document.documentElement.outerHTML], { type: "text/html" });\n' +
-                            '            var link = document.createElement("a");\n' +
-                            '            link.href = URL.createObjectURL(blob);\n' +
-                            '            link.download = "facture-' + orderNum + '.html";\n' +
-                            '            document.body.appendChild(link); link.click(); document.body.removeChild(link);\n' +
-                            '            URL.revokeObjectURL(link.href);\n' +
-                            '        }\n' +
-                            '    <\/script>\n' +
-                            '</body>\n</html>';
-
-                        var blob    = new Blob([htmlPage], { type: 'text/html; charset=utf-8' });
-                        var blobUrl = URL.createObjectURL(blob);
-                        var win     = window.open(blobUrl, '_blank');
-                        if (win) {
-                            setTimeout(function() { URL.revokeObjectURL(blobUrl); }, 2000);
-                        }
-                    }).fail(function() {
-                        btn.prop('disabled', false).html(orig);
-                        alert('Erreur réseau.');
-                    });
+                            var pageBlob = new Blob([htmlPage], { type: 'text/html; charset=utf-8' });
+                            window.open(URL.createObjectURL(pageBlob), '_blank');
+                        })
+                        .catch(function(err) {
+                            btn.prop('disabled', false).html(orig);
+                            alert('Erreur lors de la génération ' + type.toUpperCase() + '\n\n' + err.message);
+                        });
                 }
             });
 
