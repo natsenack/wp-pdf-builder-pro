@@ -2818,11 +2818,14 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Optimisé avec fonctions helper pour meilleure performance et maintenabilité
      */
     public function handle_generate_pdf() {
+        error_log("[PDF GENERATE] handle_generate_pdf CALLED - POST: " . json_encode(array_keys($_POST)));
+        set_time_limit(120); // Laisser assez de temps pour le polling Puppeteer (30s)
         $this->debug_log("========== GÉNÉRATION PDF DÉMARRÉE ==========");
         $this->debug_log("POST params: " . json_encode($_POST));
         
         // Vérifier les permissions - doit être connecté et avoir les droits de gestion WooCommerce
         if (!is_user_logged_in() || !current_user_can('edit_shop_orders')) {
+            error_log("[PDF GENERATE] Permission refusée - logged_in=" . (is_user_logged_in()?'yes':'no') . " edit_shop_orders=" . (current_user_can('edit_shop_orders')?'yes':'no'));
             $this->debug_log("Permission refusée", "WARNING");
             wp_die('Permission refusée', '', ['response' => 403]);
         }
@@ -2864,6 +2867,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             // === NOUVEAU : DÉTERMINER LE MOTEUR PDF AVANT GÉNÉRATION HTML ===
             $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
             $this->current_engine_name = strtolower($engine->get_name());
+            error_log("[PDF GENERATE] Engine créé: " . $engine->get_name() . " - is_available=" . ($engine->is_available() ? 'yes' : 'no'));
             $this->debug_log("Moteur PDF sélectionné: " . $engine->get_name());
             
             // Générer l'HTML avec les vraies données (avec styles optimisés pour le moteur)
@@ -2880,12 +2884,15 @@ class PDF_Builder_Unified_Ajax_Handler {
             $height = $template_data['canvasHeight'] ?? 1123;
             
             $this->debug_log("Génération PDF avec moteur: " . $engine->get_name());
+            error_log("[PDF GENERATE] Calling engine->generate() with moteur=" . $engine->get_name() . " width={$width} height={$height}");
             
             // Générer le PDF avec le moteur sélectionné
             $pdf_content = $engine->generate($html, [
                 'width' => $width,
                 'height' => $height
             ]);
+            
+            error_log("[PDF GENERATE] generate() returned: " . ($pdf_content === false ? 'FALSE' : strlen($pdf_content) . ' bytes'));
             
             if ($pdf_content === false) {
                 $this->debug_log("Échec génération PDF", "ERROR");
@@ -2906,6 +2913,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             exit;
             
         } catch (Exception $e) {
+            error_log("[PDF GENERATE] EXCEPTION: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
             $this->debug_log('Erreur génération PDF: ' . $e->getMessage(), "ERROR");
             wp_die('Erreur: ' . $e->getMessage(), '', ['response' => 500]);
         }
