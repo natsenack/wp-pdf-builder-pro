@@ -114,7 +114,13 @@ class Puppeteer_Client {
     }
 
     /**
-     * Vérifie la disponibilité du service (ping /v2/health ou test rapide).
+     * Vérifie la disponibilité du service.
+     *
+     * Logique :
+     *  - WP_Error (timeout, réseau) → indisponible
+     *  - HTTP 5xx (ex: 503 WebGate = VPS éteint) → indisponible
+     *  - Tout autre code (200, 404, 401…) → service joignable = disponible
+     *    (un 404 signifie que le service répond mais n'a pas de route /health)
      *
      * @return bool
      */
@@ -133,7 +139,8 @@ class Puppeteer_Client {
         }
 
         $code = (int) wp_remote_retrieve_response_code( $response );
-        $ok   = $code >= 200 && $code < 300;
+        // 5xx = serveur ou gateway down ; tout le reste = service joignable
+        $ok = $code < 500;
         $this->log( "is_available() → HTTP {$code} → " . ( $ok ? 'OK' : 'KO' ) );
         return $ok;
     }
