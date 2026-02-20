@@ -2830,8 +2830,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             wp_die('Permission refusée', '', ['response' => 403]);
         }
 
-        $template_id = sanitize_text_field($_POST['template_id'] ?? '');
-        $order_id = intval($_POST['order_id'] ?? 0);
+        // Supporte GET et POST (ouverture directe dans onglet ou appel AJAX)
+        $template_id = sanitize_text_field($_REQUEST['template_id'] ?? '');
+        $order_id = intval($_REQUEST['order_id'] ?? 0);
         
         $this->debug_log("Template ID: '{$template_id}', Order ID: {$order_id}");
 
@@ -2907,11 +2908,14 @@ class PDF_Builder_Unified_Ajax_Handler {
             while (ob_get_level() > 0) {
                 ob_end_clean();
             }
+            // Supprimer tous les headers existants pour éviter la corruption
+            header_remove();
             header('Content-Type: application/pdf');
             header('Content-Disposition: inline; filename="facture-' . $order->get_order_number() . '.pdf"');
             header('Content-Length: ' . strlen($pdf_content));
             header('Cache-Control: private, max-age=0, must-revalidate');
             header('Pragma: public');
+            header('X-Content-Type-Options: nosniff');
             
             echo $pdf_content;
             exit;

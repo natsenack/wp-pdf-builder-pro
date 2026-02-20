@@ -486,28 +486,12 @@ export const Header = memo(function Header({
 
     setIsGeneratingPreview(true);
     try {
-      const formData = new FormData();
-      formData.append("action", "pdf_builder_generate_pdf");
-      formData.append("template_id", templateId.toString());
-      formData.append("order_id", previewOrderId.trim());
-      formData.append("nonce", (window as any).pdfBuilderNonce || "");
-
-      const response = await fetch(
-        (window as any).pdfBuilderData?.ajaxUrl || "/wp-admin/admin-ajax.php",
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Erreur lors de la génération du PDF");
-      }
-
-      // Ouvrir le PDF dans un nouvel onglet
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      window.open(url, "_blank");
+      // Ouverture directe en onglet via GET — évite la corruption binaire AJAX
+      const ajaxUrl =
+        (window as any).pdfBuilderData?.ajaxUrl ||
+        "/wp-admin/admin-ajax.php";
+      const pdfUrl = `${ajaxUrl}?action=pdf_builder_generate_pdf&template_id=${templateId}&order_id=${previewOrderId.trim()}`;
+      window.open(pdfUrl, "_blank");
 
       setShowPreviewModal(false);
     } catch (error) {
