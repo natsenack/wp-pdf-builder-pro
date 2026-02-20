@@ -485,7 +485,7 @@
                             $is_premium_required = !$is_custom_status && !$is_default_completed;
                         }
                     ?>
-                        <article class="template-status-card <?php echo $is_custom_status ? 'custom-status-card' : ''; ?> <?php echo $is_premium_required ? 'premium-card' : ''; ?>">
+                        <article class="pdfb-template-status-card <?php echo $is_custom_status ? 'custom-status-card' : ''; ?> <?php echo $is_premium_required ? 'premium-card' : ''; ?>">
                             <header>
                                 <h4>
                                     <?php echo esc_html($status_label); ?>
@@ -511,7 +511,7 @@
                                 </label>
                                 <select name="pdf_builder_settings[pdf_builder_order_status_templates][<?php echo esc_attr($status_key); ?>]"
                                         id="template_<?php echo esc_attr($status_key); ?>"
-                                        class="template-select"
+                                        class="pdfb-template-select"
                                         <?php
                                         if (!$is_premium) {
                                             $is_custom_status = $status_manager->is_custom_status($status_key);
@@ -560,7 +560,7 @@
                             <!-- Aperçu du template assigné -->
                             <div class="pdfb-template-preview">
                                 <?php if (!empty($current_mappings[$status_key]) && isset($templates[$current_mappings[$status_key]])): ?>
-                                    <p class="current-template">Assigné : <?php echo esc_html($templates[$current_mappings[$status_key]]); ?></p>
+                                    <p class="pdfb-current-template">Assigné : <?php echo esc_html($templates[$current_mappings[$status_key]]); ?></p>
                                 <?php else: ?>
                                     <p class="pdfb-no-template">Aucun template assigné</p>
                                 <?php endif; ?>
@@ -582,82 +582,6 @@
         <?php endif; ?>
     </main>
 </section>
-
-<!-- Styles CSS -->
-
-
-<style>
-    .templates-status-actions {
-        margin-top: 20px;
-        padding: 20px;
-        background: #f8f9fa;
-        border-radius: 8px;
-        border: 1px solid #dee2e6;
-    }
-
-    .templates-status-actions .button {
-        margin-right: 10px;
-        margin-bottom: 10px;
-    }
-
-    .templates-status-actions .button-success {
-        background-color: #28a745 !important;
-        border-color: #28a745 !important;
-        color: white !important;
-    }
-
-    .templates-status-actions .button-error {
-        background-color: #dc3545 !important;
-        border-color: #dc3545 !important;
-        color: white !important;
-    }
-
-    /* Styles pour l'affichage des templates assignés */
-    .template-preview .current-template {
-        margin: 8px 0;
-        padding: 8px 12px;
-        background: #e8f5e8;
-        border: 1px solid #c3e6c3;
-        border-radius: 4px;
-        color: #2d5a2d;
-        font-weight: 500;
-    }
-
-    .template-preview .no-template {
-        margin: 8px 0;
-        padding: 8px 12px;
-        background: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 4px;
-        color: #6c757d;
-        font-style: italic;
-    }
-
-    /* Badge Premium */
-    .premium-badge {
-        background: #fff3cd;
-        color: #856404;
-        font-size: 10px;
-        font-weight: bold;
-        padding: 3px 8px;
-        border-radius: 12px;
-        border: 1px solid #ffeaa7;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-left: 8px;
-    }
-
-    .premium-card {
-        position: relative;
-        border: 2px solid #ffeaa7;
-        background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
-    }
-
-    .premium-card header h4 {
-        color: #856404;
-    }
-</style>
-
 
 <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
 

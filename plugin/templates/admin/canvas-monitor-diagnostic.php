@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Outil de diagnostic pour le système de monitoring des cartes canvas
  * Permet de vérifier l'état du système et diagnostiquer les problèmes
@@ -275,44 +275,6 @@ function exportCanvasSettings() {
 }
 </script>
 
-<style>
-.card {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin: 20px 0;
-    padding: 20px;
-}
-
-.card h2 {
-    margin-top: 0;
-    color: #23282d;
-}
-
-.widefat {
-    border: 1px solid #ddd;
-    border-collapse: collapse;
-    width: 100%;
-}
-
-.widefat td {
-    padding: 8px 12px;
-    border-bottom: 1px solid #ddd;
-}
-
-.ul-disc {
-    list-style-type: disc;
-    padding-left: 20px;
-}
-
-.ul-disc li {
-    margin: 5px 0;
-}
-</style>
 <?php</content>
 <parameter name="filePath">i:\pdf-builder-pro\plugin\resources\templates\admin\canvas-monitor-diagnostic.php
-
-
-
-
 

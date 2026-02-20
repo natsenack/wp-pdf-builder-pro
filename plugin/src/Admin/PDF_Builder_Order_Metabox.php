@@ -132,12 +132,7 @@ class PDF_Builder_Order_Metabox
             </div>
         </div>
 
-        <style>
-            @keyframes pulse {
-                0%, 100% { opacity: 0.5; }
-                50% { opacity: 1; }
-            }
-        </style>
+
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {

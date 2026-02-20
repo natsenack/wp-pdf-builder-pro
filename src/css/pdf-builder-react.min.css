@@ -1693,6 +1693,10 @@
   background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
 }
 
+.pdfb-template-status-card.premium-card header h4 {
+  color: #856404;
+}
+
 .pdfb-template-status-card.custom-status-card header {
   background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
 }
@@ -1767,24 +1771,49 @@
   border-top: 1px solid #e2e8f0;
 }
 
-.pdfb-template-preview .current-template {
+.pdfb-template-preview .pdfb-current-template {
   margin: 0;
   padding: 8px 12px;
-  background: #dbeafe;
-  border-left: 3px solid #3b82f6;
+  background: #e8f5e8;
+  border: 1px solid #c3e6c3;
   border-radius: 4px;
-  font-size: 13px;
-  color: #1e40af;
+  color: #2d5a2d;
   font-weight: 500;
 }
 
-.pdfb-template-preview .no-template {
+.pdfb-template-preview .pdfb-no-template {
   margin: 0;
   padding: 8px 12px;
-  background: #f1f5f9;
-  border-left: 3px solid #94a3b8;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
   border-radius: 4px;
-  font-size: 13px;
-  color: #64748b;
+  color: #6c757d;
   font-style: italic;
 }
+
+.pdfb-templates-status-actions {
+  margin-top: 20px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.pdfb-templates-status-actions .button {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.pdfb-templates-status-actions .button-success {
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+  color: white !important;
+}
+
+.pdfb-templates-status-actions .button-error {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: white !important;
+}
+
+

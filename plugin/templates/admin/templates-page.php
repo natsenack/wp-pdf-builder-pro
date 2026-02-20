@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Direct access not allowed');
@@ -330,7 +330,7 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                     ];
                     $type_label = isset($type_labels[$template_type]) ? $type_labels[$template_type] : $type_labels['autre'];
 
-                    echo '<div class="pdfb-template-type-badge" style="position: absolute; top: 10px; left: 10px; background: ' . $type_color . '; color: white; padding: 4px 8px; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
+                    echo '<div class="pdfb-pdfb-template-type-badge" style="position: absolute; top: 10px; left: 10px; background: ' . $type_color . '; color: white; padding: 4px 8px; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
                     echo $type_label;
                     echo '</div>';
 
@@ -387,9 +387,9 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
         </div>
 
         <!-- Modale de la galerie de modèles prédéfinis -->
-        <div id="template-gallery-modal" class="pdfb-template-gallery-modal template-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
-            <div class="pdfb-template-modal-content" style="background: #fff; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; padding: 0; max-width: 1200px; width: 95%; max-height: 90vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); -webkit-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -moz-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -ms-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -o-box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
-                <div class="pdfb-template-modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 25px 30px; border-bottom: 1px solid var(--pdf-border); background: var(--pdf-light); color: var(--pdf-text);">
+        <div id="template-gallery-modal" class="pdfb-template-gallery-modal pdfb-template-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
+            <div class="pdfb-pdfb-pdfb-template-modal-content" style="background: #fff; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; padding: 0; max-width: 1200px; width: 95%; max-height: 90vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); -webkit-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -moz-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -ms-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -o-box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
+                <div class="pdfb-pdfb-template-modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 25px 30px; border-bottom: 1px solid var(--pdf-border); background: var(--pdf-light); color: var(--pdf-text);">
                     <div>
                         <h2 style="margin: 0; font-size: 24px; font-weight: 600;">🎨 Galerie de Modèles Prédéfinis</h2>
                         <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 14px; color: var(--pdf-secondary);">Choisissez un modèle professionnel pour commencer</p>
@@ -402,13 +402,13 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                     <div style="margin-bottom: 30px;">
                         <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">Filtrer par catégorie</h3>
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <button class="pdfb-gallery-filter-btn button button-secondary active" data-filter="all">📄 Tous</button>
-                            <button class="pdfb-gallery-filter-btn button button-secondary facture" data-filter="facture">🧾 Factures</button>
-                            <button class="pdfb-gallery-filter-btn button button-secondary devis" data-filter="devis">📋 Devis</button>
+                            <button class="pdfb-pdfb-gallery-filter-btn button button-secondary active" data-filter="all">📄 Tous</button>
+                            <button class="pdfb-pdfb-gallery-filter-btn button button-secondary facture" data-filter="facture">🧾 Factures</button>
+                            <button class="pdfb-pdfb-gallery-filter-btn button button-secondary devis" data-filter="devis">📋 Devis</button>
                             <!-- Catégories désactivées temporairement -->
-                            <!-- <button class="pdfb-gallery-filter-btn button button-secondary commande" data-filter="commande">📦 Commandes</button> -->
-                            <!-- <button class="pdfb-gallery-filter-btn button button-secondary contrat" data-filter="contrat">📑 Contrats</button> -->
-                            <!-- <button class="pdfb-gallery-filter-btn button button-secondary newsletter" data-filter="newsletter">📰 Newsletters</button> -->
+                            <!-- <button class="pdfb-pdfb-gallery-filter-btn button button-secondary commande" data-filter="commande">📦 Commandes</button> -->
+                            <!-- <button class="pdfb-pdfb-gallery-filter-btn button button-secondary contrat" data-filter="contrat">📑 Contrats</button> -->
+                            <!-- <button class="pdfb-pdfb-gallery-filter-btn button button-secondary newsletter" data-filter="newsletter">📰 Newsletters</button> -->
                         </div>
                     </div>
 
@@ -498,287 +498,6 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
 </div>
 
 <!-- ✅ JavaScript déplacé vers settings-main.php pour éviter les conflits de navigation -->
-
-<style>
-/* Variables CSS pour la cohérence avec le reste du plugin */
-:root {
-    --pdf-primary: #007cba;      /* Bleu WordPress */
-    --pdf-success: #28a745;      /* Vert succès */
-    --pdf-danger: #dc3545;       /* Rouge danger */
-    --pdf-warning: #ffc107;      /* Jaune warning */
-    --pdf-secondary: #6c757d;    /* Gris secondaire */
-    --pdf-light: #f8f9fa;        /* Fond clair */
-    --pdf-border: #dee2e6;       /* Bordure */
-    --pdf-text: #495057;         /* Texte principal */
-}
-
-.template-modal {
-    animation: modalFadeIn 0.3s ease-out;
-}
-
-.template-modal-content {
-    animation: modalSlideIn 0.3s ease-out;
-}
-
-@keyframes modalFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        -webkit-transform: translateY(-50px) scale(0.9);
-        -moz-transform: translateY(-50px) scale(0.9);
-        -ms-transform: translateY(-50px) scale(0.9);
-        -o-transform: translateY(-50px) scale(0.9);
-        transform: translateY(-50px) scale(0.9);
-    }
-    to {
-        opacity: 1;
-        -webkit-transform: translateY(0) scale(1);
-        -moz-transform: translateY(0) scale(1);
-        -ms-transform: translateY(0) scale(1);
-        -o-transform: translateY(0) scale(1);
-        transform: translateY(0) scale(1);
-    }
-}
-
-.template-modal-content input[type="checkbox"] {
-    width: auto;
-    margin: 0;
-    accent-color: var(--pdf-primary);
-}
-
-.template-modal-content select:hover,
-.template-modal-content input:hover,
-.template-modal-content textarea:hover {
-    border-color: var(--pdf-primary);
-}
-
-.template-modal-content select:focus,
-.template-modal-content input:focus,
-.template-modal-content textarea:focus {
-    border-color: var(--pdf-primary);
-    -webkit-box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.25);
-    -moz-box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.25);
-    -ms-box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.25);
-    -o-box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.25);
-    box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.25);
-    outline: none;
-}
-
-.button-danger {
-    background: var(--pdf-danger) !important;
-    border-color: var(--pdf-danger) !important;
-    color: #fff !important;
-}
-
-.button-danger:hover {
-    background: #c82333 !important;
-    border-color: #bd2130 !important;
-}
-
-.button-success {
-    background: var(--pdf-success) !important;
-    border-color: var(--pdf-success) !important;
-    color: #fff !important;
-}
-
-.button-success:hover {
-    background: #218838 !important;
-    border-color: #1e7e34 !important;
-}
-
-.button-warning {
-    background: var(--pdf-warning) !important;
-    border-color: var(--pdf-warning) !important;
-    color: #212529 !important;
-}
-
-.button-warning:hover {
-    background: #e0a800 !important;
-    border-color: #d39e00 !important;
-}
-
-.gallery-filter-btn.active {
-    -webkit-box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.5) !important;
-    -moz-box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.5) !important;
-    -ms-box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.5) !important;
-    -o-box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.5) !important;
-    box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.5) !important;
-    font-weight: bold !important;
-}
-
-/* Styles pour les badges de type de template */
-.template-type-badge {
-    background: var(--pdf-primary) !important;
-}
-
-.template-type-badge.facture { background: #007cba !important; }
-.template-type-badge.devis { background: #28a745 !important; }
-.template-type-badge.commande { background: #ffc107 !important; color: #212529 !important; }
-.template-type-badge.contrat { background: #dc3545 !important; }
-.template-type-badge.newsletter { background: #6f42c1 !important; }
-.template-type-badge.autre { background: var(--pdf-secondary) !important; }
-
-/* Styles pour les boutons de filtre de galerie */
-.gallery-filter-btn {
-    font-size: 12px !important;
-    padding: 8px 16px !important;
-    border-radius: 20px !important;
-    transition: all 0.2s ease !important;
-}
-
-.gallery-filter-btn.facture {
-    background: var(--pdf-primary) !important;
-    border-color: var(--pdf-primary) !important;
-    color: white !important;
-}
-
-.gallery-filter-btn.devis {
-    background: var(--pdf-success) !important;
-    border-color: var(--pdf-success) !important;
-    color: white !important;
-}
-
-.gallery-filter-btn.commande {
-    background: var(--pdf-warning) !important;
-    border-color: var(--pdf-warning) !important;
-    color: #212529 !important;
-}
-
-.gallery-filter-btn.contrat {
-    background: var(--pdf-danger) !important;
-    border-color: var(--pdf-danger) !important;
-    color: white !important;
-}
-
-.gallery-filter-btn.newsletter {
-    background: #6f42c1 !important;
-    border-color: #6f42c1 !important;
-    color: white !important;
-}
-
-/* Styles pour les éléments d'état */
-.template-status-active { color: var(--pdf-success) !important; }
-.template-status-inactive { color: var(--pdf-secondary) !important; }
-.template-status-error { color: var(--pdf-danger) !important; }
-
-/* Styles pour les modals de paramètres */
-.template-settings-section {
-    border: 1px solid var(--pdf-border);
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    background: var(--pdf-light);
-}
-
-.template-settings-section h4 {
-    color: var(--pdf-text);
-    margin-top: 0;
-    margin-bottom: 15px;
-    border-bottom: 2px solid var(--pdf-primary);
-    padding-bottom: 8px;
-}
-
-.template-settings-field {
-    margin-bottom: 15px;
-}
-
-.template-settings-field label {
-    display: block;
-    font-weight: 600;
-    color: var(--pdf-text);
-    margin-bottom: 5px;
-}
-
-.template-settings-field input[type="text"],
-.template-settings-field input[type="number"],
-.template-settings-field textarea,
-.template-settings-field select {
-    width: 100%;
-    padding: 10px 12px;
-    border: 2px solid var(--pdf-border);
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
-}
-
-.template-settings-field input:focus,
-.template-settings-field textarea:focus,
-.template-settings-field select:focus {
-    border-color: var(--pdf-primary);
-    box-shadow: 0 0 0 2px rgba(0, 123, 186, 0.25);
-    outline: none;
-}
-
-/* Styles spécifiques pour la modale des paramètres de template */
-#template-settings-modal .pdfb-canvas-modal-container {
-    min-height: 500px; /* S'assurer qu'il y a assez d'espace pour le contenu et le footer */
-}
-
-#template-settings-modal .pdfb-canvas-modal-footer {
-    visibility: visible !important;
-    opacity: 1 !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    padding: 20px 32px !important;
-    background: #f8f9fa !important;
-    border-top: 1px solid #e1e5e9 !important;
-    flex-shrink: 0 !important;
-    min-height: 80px !important;
-}
-
-.template-settings-footer-content {
-    flex: 1;
-    padding-right: 20px;
-}
-
-.template-settings-footer-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #23282d;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.template-settings-icon {
-    font-size: 18px;
-}
-
-.template-settings-footer-subtitle {
-    font-size: 14px;
-    color: #6c757d;
-    font-style: italic;
-}
-
-.template-settings-footer-actions {
-    display: flex;
-    gap: 12px;
-    flex-shrink: 0;
-}
-
-/* Styles spécifiques pour forcer l'affichage du footer */
-.template-settings-modal-footer {
-    visibility: visible !important;
-    opacity: 1 !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    padding: 20px 32px !important;
-    background: #f8f9fa !important;
-    border-top: 1px solid #e1e5e9 !important;
-    flex-shrink: 0 !important;
-    min-height: 80px !important;
-    position: relative !important;
-    z-index: 10 !important;
-}
-</style>
-
 
 <!-- Modaux premium injectés via AdminScriptLoader::renderUpgradeModals() dans admin_footer -->
 
@@ -1135,7 +854,7 @@ function selectPredefinedTemplate(templateSlug) {
 </script>
 
 <!-- Modal des paramètres du template (dynamique - créée par JavaScript) -->
-<div id="template-settings-modal" class="pdfb-template-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center;">
+<div id="template-settings-modal" class="pdfb-pdfb-template-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center;">
 </div>
 
 <script>
@@ -1172,21 +891,21 @@ function loadTemplateSettings(templateId) {
                 
                 // Créer une modale d'erreur
                 var modalContent = document.createElement('div');
-                modalContent.className = 'template-modal-content';
+                modalContent.className = ' pdfb-template-modal-content ';
                 modalContent.style.cssText = 'background: #fff; border-radius: 12px; padding: 0; max-width: 600px; width: 95%; max-height: 80vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
                 modalContent.innerHTML = `
-                    <div class="pdfb-template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <div class="pdfb-pdfb-template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                         <div>
                             <h2 style="margin: 0; font-size: 24px; font-weight: 600;">⚙️ Erreur de chargement</h2>
                             <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Impossible de charger les paramètres</p>
                         </div>
                         <button onclick="closeTemplateSettingsModal()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
                     </div>
-                    <div class="pdfb-template-modal-body" style="padding: 30px; text-align: center; color: #dc3545;">
+                    <div class="pdfb-pdfb-template-modal-body" style="padding: 30px; text-align: center; color: #dc3545;">
                         <div style="font-size: 2rem; margin-bottom: 20px;">❌</div>
                         <p>${errorMsg}</p>
                     </div>
-                    <div class="pdfb-template-modal-footer" style="display: flex; justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;">
+                    <div class="pdfb-pdfb-template-modal-footer" style="display: flex; justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;">
                         <button onclick="closeTemplateSettingsModal()" class="button button-secondary" style="padding: 10px 20px;">Fermer</button>
                     </div>
                 `;
@@ -1206,21 +925,21 @@ function loadTemplateSettings(templateId) {
             
             // Créer une modale d'erreur
             var modalContent = document.createElement('div');
-            modalContent.className = 'template-modal-content';
+            modalContent.className = ' pdfb-template-modal-content ';
             modalContent.style.cssText = 'background: #fff; border-radius: 12px; padding: 0; max-width: 600px; width: 95%; max-height: 80vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
             modalContent.innerHTML = `
-                <div class="pdfb-template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div class="pdfb-pdfb-template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                     <div>
                         <h2 style="margin: 0; font-size: 24px; font-weight: 600;">⚙️ Erreur de chargement</h2>
                         <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Impossible de charger les paramètres</p>
                     </div>
                     <button onclick="closeTemplateSettingsModal()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
                 </div>
-                <div class="pdfb-template-modal-body" style="padding: 30px; text-align: center; color: #dc3545;">
+                <div class="pdfb-pdfb-template-modal-body" style="padding: 30px; text-align: center; color: #dc3545;">
                     <div style="font-size: 2rem; margin-bottom: 20px;">❌</div>
                     <p>Erreur de communication avec le serveur</p>
                 </div>
-                <div class="pdfb-template-modal-footer" style="display: flex; justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;">
+                <div class="pdfb-pdfb-template-modal-footer" style="display: flex; justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;">
                     <button onclick="closeTemplateSettingsModal()" class="button button-secondary" style="padding: 10px 20px;">Fermer</button>
                 </div>
             `;
@@ -1244,33 +963,33 @@ function displayTemplateSettings(template) {
     // Créer la modale complète avec indicateur de chargement
     var modal = document.getElementById('template-settings-modal');
     var modalContent = document.createElement('div');
-    modalContent.className = 'template-modal-content';
+    modalContent.className = ' pdfb-template-modal-content ';
     modalContent.style.cssText = 'background: #fff; border-radius: 12px; padding: 0; max-width: 600px; width: 95%; max-height: 80vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
     modalContent.innerHTML = `
-        <div class="pdfb-template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <div class="pdfb-pdfb-template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
             <div>
                 <h2 style="margin: 0; font-size: 24px; font-weight: 600;">⚙️ Paramètres du Template</h2>
                 <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Configuration de "${template.name || 'Template'}"</p>
             </div>
             <button onclick="closeTemplateSettingsModal()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
         </div>
-        <div class="pdfb-template-modal-body" style="padding: 30px; max-height: calc(80vh - 200px); overflow-y: auto;">
+        <div class="pdfb-pdfb-template-modal-body" style="padding: 30px; max-height: calc(80vh - 200px); overflow-y: auto;">
             <div style="text-align: center; padding: 40px;">
                 <div style="font-size: 2rem; margin-bottom: 20px;">⏳</div>
                 <p>Chargement des paramètres...</p>
             </div>
         </div>
-        <div class="pdfb-template-modal-footer template-settings-modal-footer" style="padding: 20px 32px; border-top: 1px solid #e1e5e9; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; min-height: 80px;">
-            <div class="pdfb-template-settings-footer-content" style="flex: 1; padding-right: 20px;">
-                <div class="pdfb-template-settings-footer-title" style="font-size: 16px; font-weight: 600; color: #23282d; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
-                    <span class="pdfb-template-settings-icon">⚙️</span>
+        <div class="pdfb-pdfb-template-modal-footer pdfb-template-settings-modal-footer" style="padding: 20px 32px; border-top: 1px solid #e1e5e9; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; min-height: 80px;">
+            <div class="pdfb-pdfb-template-settings-footer-content" style="flex: 1; padding-right: 20px;">
+                <div class="pdfb-pdfb-template-settings-footer-title" style="font-size: 16px; font-weight: 600; color: #23282d; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+                    <span class="pdfb-pdfb-template-settings-icon">⚙️</span>
                     Paramètres du Template
                 </div>
-                <div class="pdfb-template-settings-footer-subtitle" style="font-size: 14px; color: #6c757d; font-style: italic;">
+                <div class="pdfb-pdfb-template-settings-footer-subtitle" style="font-size: 14px; color: #6c757d; font-style: italic;">
                     Configuration de "Template par défaut"
                 </div>
             </div>
-            <div class="pdfb-template-settings-footer-actions" style="display: flex; gap: 12px; flex-shrink: 0;">
+            <div class="pdfb-pdfb-template-settings-footer-actions" style="display: flex; gap: 12px; flex-shrink: 0;">
                 <button onclick="closeTemplateSettingsModal()" class="pdfb-canvas-modal-btn canvas-modal-btn-secondary" style="padding: 12px 24px; border-radius: 8px; font-weight: 500; font-size: 14px; border: none; cursor: pointer; min-width: 100px; background: #6c757d; color: #ffffff;">Annuler</button>
                 <button onclick="saveTemplateSettings()" class="pdfb-canvas-modal-btn canvas-modal-btn-primary" style="padding: 12px 24px; border-radius: 8px; font-weight: 500; font-size: 14px; border: none; cursor: pointer; min-width: 100px; background: #007cba; color: #ffffff;">💾 Enregistrer</button>
             </div>
@@ -1747,7 +1466,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 </script>
-
-
-
 

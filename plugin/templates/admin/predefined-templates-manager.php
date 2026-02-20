@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 namespace PDF_Builder\Admin;
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
@@ -289,252 +289,7 @@ class PDF_Builder_Predefined_Templates_Manager
             return;
         }
         ?>
-        <style>
-        /* Styles de base inline pour la page des modèles prédéfinis */
-        .pdf-builder-predefined-container {
-            display: flex;
-            gap: 30px;
-            margin-top: 20px;
-        }
-        .templates-list-section, .template-editor-section {
-            flex: 1;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            padding: 20px;
-        }
-        .templates-list-section { max-width: 400px; }
-        .template-editor-section { max-width: 600px; }
-        .templates-actions { display: flex; gap: 10px; margin-bottom: 20px; }
-        .templates-list { max-height: 600px; overflow-y: auto; }
-        .template-item {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            background: #fafafa;
-            transition: all 0.3s ease;
-        }
-        .template-item:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transform: translateY(-2px);
-        }
-        .template-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-        .template-header h3 { margin: 0; font-size: 16px; color: #23282d; }
-        .template-actions { display: flex; gap: 5px; }
-        .template-meta { margin-bottom: 10px; }
-        .category {
-            display: inline-block;
-            background: #007cba;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-        .description { display: block; color: #666; font-size: 13px; line-height: 1.4; }
-        .template-preview { text-align: center; margin-top: 10px; }
-        .template-preview img { max-width: 100%; height: auto; border-radius: 4px; }
-        .no-preview {
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 4px;
-            color: #666;
-            font-style: italic;
-        }
-        .form-row { margin-bottom: 20px; }
-        .form-row label { display: block; font-weight: bold; margin-bottom: 5px; color: #23282d; }
-        .form-row input, .form-row select, .form-row textarea {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        .json-editor-container {
-            position: relative;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        .json-editor-container textarea {
-            border: none;
-            border-radius: 0;
-            margin: 0;
-            padding: 12px;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 13px;
-            line-height: 1.4;
-            resize: none;
-            width: 100%;
-            min-height: 300px;
-        }
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-        }
-        .no-templates {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-            font-style: italic;
-        }
-        .pdf-builder-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-content {
-            background: #fff;
-            border-radius: 8px;
-            max-width: 800px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            border-bottom: 1px solid #ddd;
-        }
-        .modal-header h3 { margin: 0; }
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #666;
-        }
-        .modal-body { padding: 20px; }
-
-        /* Styles pour la modal d'aperçu améliorée */
-        .preview-modal-content {
-            max-width: 90vw;
-            max-height: 90vh;
-        }
-        .modal-toolbar {
-            padding: 10px 20px;
-            border-bottom: 1px solid #ddd;
-            background: #f8f9fa;
-        }
-        .preview-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .zoom-controls, .rotation-controls, .download-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .control-btn {
-            padding: 6px 12px;
-            border: 1px solid #ddd;
-            background: #fff;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-        .control-btn:hover {
-            background: #f0f0f0;
-            border-color: #bbb;
-        }
-        .control-btn:active {
-            background: #e0e0e0;
-        }
-        #zoom-level, #rotation-angle {
-            min-width: 50px;
-            text-align: center;
-            font-weight: bold;
-        }
-        .preview-image-container {
-            position: relative;
-            min-height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8f9fa;
-            border-radius: 4px;
-        }
-        .preview-image-container img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            transition: transform 0.3s ease;
-            cursor: move;
-        }
-        .preview-loading {
-            text-align: center;
-            color: #666;
-        }
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg);
-            100% { transform: rotate(360deg);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .preview-modal-content {
-                max-width: 95vw;
-                max-height: 95vh;
-            }
-            .preview-controls {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .zoom-controls, .rotation-controls, .download-controls {
-                justify-content: center;
-            }
-            .modal-toolbar {
-                padding: 8px 15px;
-            }
-            .modal-body {
-                padding: 15px;
-            }
-            .preview-image-container {
-                min-height: 300px;
-            }
-        }
-        @media (max-width: 480px) {
-            .control-btn {
-                padding: 4px 8px;
-                font-size: 12px;
-            }
-            #zoom-level, #rotation-angle {
-                min-width: 40px;
-                font-size: 12px;
-            }
-            .preview-controls {
-                gap: 8px;
-            }
-        }
-        </style>
+        
         <div class="wrap">
             <div style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-pack: justify; -webkit-justify-content: space-between; -moz-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; margin-bottom: 20px;">
                 <h1 style="margin: 0;"><?php _e('📝 Gestion des Modèles Prédéfinis', 'pdf-builder-pro'); ?></h1>
@@ -542,11 +297,11 @@ class PDF_Builder_Predefined_Templates_Manager
                     🚪 <?php _e('Déconnexion Développeur', 'pdf-builder-pro'); ?>
                 </button>
             </div>
-            <div class="pdf-builder-predefined-container">
+            <div class="pdfb-pdf-builder-predefined-container">
                 <!-- Liste des modèles -->
-                <div class="templates-list-section">
+                <div class="pdfb-pdfb-templates-list-section">
                     <h2><?php _e('🎨 Galerie de Modèles Prédéfinis', 'pdf-builder-pro'); ?></h2>
-                    <div class="templates-actions">
+                    <div class="pdfb-templates-actions">
                         <button id="new-template-btn" class="button button-primary">
                             ➕ <?php _e('Nouveau Modèle', 'pdf-builder-pro'); ?>
                         </button>
@@ -554,10 +309,10 @@ class PDF_Builder_Predefined_Templates_Manager
                             🔄 <?php _e('Actualiser', 'pdf-builder-pro'); ?>
                         </button>
                     </div>
-                    <div id="templates-list" class="templates-list">
+                    <div id=" pdfb-templates-list " class="pdfb-templates-list">
                         <?php if (empty($templates)) :
                             ?>
-                            <div class="pdfb-no-templates">
+                            <div class="pdfb-pdfb-no-templates">
                                 <p><?php _e('Aucun modèle prédéfini trouvé.', 'pdf-builder-pro'); ?></p>
                                 <p><?php _e('Cliquez sur "Nouveau Modèle" pour créer votre premier modèle.', 'pdf-builder-pro'); ?></p>
                             </div>
@@ -566,10 +321,10 @@ class PDF_Builder_Predefined_Templates_Manager
                             ?>
                             <?php foreach ($templates as $template) :
                                 ?>
-                                <div class="template-item" data-slug="<?php echo esc_attr($template['slug']); ?>">
-                                    <div class="template-header">
+                                <div class="pdfb-template-item" data-slug="<?php echo esc_attr($template['slug']); ?>">
+                                    <div class="pdfb-template-header">
                                         <h3><?php echo esc_html($template['name']); ?></h3>
-                                        <div class="template-actions">
+                                        <div class="pdfb-template-actions">
                                             <button class="button button-small edit-template" data-slug="<?php echo esc_attr($template['slug']); ?>">
                                                 ✏️ <?php _e('Éditer', 'pdf-builder-pro'); ?>
                                             </button>
@@ -578,7 +333,7 @@ class PDF_Builder_Predefined_Templates_Manager
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="template-meta">
+                                    <div class="pdfb-template-meta">
                                         <span class="category"><?php echo esc_html($template['category']); ?></span>
                                         <span class="description"><?php echo esc_html($template['description']); ?></span>
                                     </div>
@@ -588,7 +343,7 @@ class PDF_Builder_Predefined_Templates_Manager
                                             <pre><?php echo esc_html(wp_json_encode($template, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)); ?></pre>
                                         </details>
                                     </div>
-                                    <div class="pdfb-template-preview">
+                                    <div class="pdfb-pdfb-template-preview">
                                         <?php if (!empty($template['preview_svg'])) :
                                             ?>
                                             <img src="data:image/svg+xml;base64,<?php echo base64_encode($template['preview_svg']); ?>" alt="Aperçu" />
@@ -616,7 +371,7 @@ class PDF_Builder_Predefined_Templates_Manager
                     </div>
                 </div>
                 <!-- Éditeur de modèle -->
-                <div class="template-editor-section">
+                <div class="pdfb-template-editor-section">
                     <h2 id="editor-title"><?php _e('Éditeur de Modèle', 'pdf-builder-pro'); ?></h2>
                     <form id="template-form">
                         <div class="form-row">
@@ -653,7 +408,7 @@ class PDF_Builder_Predefined_Templates_Manager
                         </div>
                         <div class="form-row">
                             <label for="template-json"><?php _e('Configuration JSON', 'pdf-builder-pro'); ?> *</label>
-                            <div class="json-editor-container">
+                            <div class="pdfb-json-editor-container">
                                 <textarea id="template-json" name="json" rows="20" required
                                           placeholder='{
   "elements": [],
@@ -680,36 +435,36 @@ class PDF_Builder_Predefined_Templates_Manager
             </div>
         </div>
         <!-- Modale d'aperçu -->
-        <div id="preview-modal" class="pdf-builder-modal" style="display: none;">
-            <div class="modal-content preview-modal-content">
-                <div class="pdfb-modal-header">
+        <div id="preview-modal" class="pdfb-pdf-builder-modal" style="display: none;">
+            <div class="pdfb-modal-content preview-pdfb-modal-content">
+                <div class="pdfb-pdfb-modal-header">
                     <h3><?php _e('Aperçu du Modèle', 'pdf-builder-pro'); ?></h3>
                     <button class="close-modal">&times;</button>
                 </div>
-                <div class="pdfb-modal-toolbar">
-                    <div class="preview-controls">
-                        <div class="zoom-controls">
-                            <button id="zoom-out" class="control-btn" title="Zoom arrière">🔍-</button>
+                <div class="pdfb-pdfb-modal-toolbar">
+                    <div class="pdfb-preview-controls">
+                        <div class="pdfb-zoom-controls">
+                            <button id="zoom-out" class="pdfb-control-btn" title="Zoom arrière">🔍-</button>
                             <span id="zoom-level">100%</span>
-                            <button id="zoom-in" class="control-btn" title="Zoom avant">🔍+</button>
-                            <button id="zoom-fit" class="control-btn" title="Ajuster à la fenêtre">⛶</button>
+                            <button id="zoom-in" class="pdfb-control-btn" title="Zoom avant">🔍+</button>
+                            <button id="zoom-fit" class="pdfb-control-btn" title="Ajuster à la fenêtre">⛶</button>
                         </div>
-                        <div class="rotation-controls">
-                            <button id="rotate-left" class="control-btn" title="Rotation gauche">↺</button>
+                        <div class="pdfb-rotation-controls">
+                            <button id="rotate-left" class="pdfb-control-btn" title="Rotation gauche">↺</button>
                             <span id="rotation-angle">0°</span>
-                            <button id="rotate-right" class="control-btn" title="Rotation droite">↻</button>
+                            <button id="rotate-right" class="pdfb-control-btn" title="Rotation droite">↻</button>
                         </div>
-                        <div class="download-controls">
-                            <button id="download-pdf" class="control-btn" title="Télécharger PDF">📄 PDF</button>
-                            <button id="download-png" class="control-btn" title="Télécharger PNG">🖼️ PNG</button>
-                            <button id="download-jpg" class="control-btn" title="Télécharger JPG">🖼️ JPG</button>
+                        <div class="pdfb-download-controls">
+                            <button id="download-pdf" class="pdfb-control-btn" title="Télécharger PDF">📄 PDF</button>
+                            <button id="download-png" class="pdfb-control-btn" title="Télécharger PNG">🖼️ PNG</button>
+                            <button id="download-jpg" class="pdfb-control-btn" title="Télécharger JPG">🖼️ JPG</button>
                         </div>
                     </div>
                 </div>
-                <div class="pdfb-modal-body">
-                    <div id="preview-container" class="preview-image-container">
-                        <div class="preview-loading">
-                            <div class="spinner"></div>
+                <div class="pdfb-pdfb-modal-body">
+                    <div id="preview-container" class="pdfb-preview-image-container">
+                        <div class="pdfb-preview-loading">
+                            <div class="pdfb-spinner"></div>
                             <p><?php _e('Génération de l\'aperçu...', 'pdf-builder-pro'); ?></p>
                         </div>
                     </div>
@@ -724,79 +479,14 @@ class PDF_Builder_Predefined_Templates_Manager
     private function renderDeveloperLoginForm()
     {
         ?>
-        <style>
-        .developer-login-container {
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 30px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .developer-login-container h1 {
-            color: #23282d;
-            margin-bottom: 10px;
-        }
-        .developer-login-container .description {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-        .developer-login-form .form-row {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        .developer-login-form label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #23282d;
-        }
-        .developer-login-form input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        .developer-login-form .button {
-            width: 100%;
-            padding: 12px;
-            background: #007cba;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .developer-login-form .button:hover {
-            background: #005a87;
-        }
-        .login-message {
-            margin-top: 15px;
-            padding: 10px;
-            border-radius: 4px;
-            display: none;
-        }
-        .login-message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .login-message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        </style>
+        
         <div class="wrap">
-            <div class="developer-login-container">
+            <div class="pdfb-developer-login-container">
                 <h1><?php _e('🔐 Accès Développeur', 'pdf-builder-pro'); ?></h1>
                 <p class="description">
                     <?php _e('Cette section est réservée aux développeurs. Entrez le mot de passe développeur pour continuer.', 'pdf-builder-pro'); ?>
                 </p>
-                <form id="developer-login-form" class="developer-login-form">
+                <form id=" pdfb-developer-login-form " class="pdfb-developer-login-form">
                     <?php wp_nonce_field('pdf_builder_developer_auth', 'nonce'); ?>
                     <!-- Champ username caché pour l'accessibilité des gestionnaires de mots de passe -->
                     <input type="text" name="username" style="display: none; visibility: hidden;" autocomplete="username" />
@@ -814,7 +504,7 @@ class PDF_Builder_Predefined_Templates_Manager
                         🔓 <?php _e('Se connecter', 'pdf-builder-pro'); ?>
                     </button>
                 </form>
-                <div id="login-message" class="login-message"></div>
+                <div id=" pdfb-login-message " class="pdfb-login-message"></div>
             </div>
         </div>
         <!-- JavaScript déplacé vers settings-main.php pour éviter les conflits -->
@@ -1054,9 +744,4 @@ class PDF_Builder_Predefined_Templates_Manager
 }
 // Initialisation gérée par PDF_Builder_Admin.php - v2
 // new PDF_Builder_Predefined_Templates_Manager();
-
-
-
-
-
 

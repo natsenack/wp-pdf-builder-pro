@@ -1,4 +1,4 @@
-<?php // Systeme tab content - Updated: 2025-12-05 01:15:00
+﻿<?php // Systeme tab content - Updated: 2025-12-05 01:15:00
 
     // Récupération des paramètres depuis le tableau unifié
     $settings = pdf_builder_get_option('pdf_builder_settings', array());
@@ -76,168 +76,7 @@
         $cache_last_cleanup = (function_exists('human_time_diff') ? human_time_diff(strtotime($cache_last_cleanup)) : $cache_last_cleanup) . ' ago';
     }
 ?>
-            <style>
-                .pdfb-engine-status {
-                    display: inline-block;
-                    padding: 4px 12px;
-                    margin-left: 12px;
-                    font-size: 11px;
-                    font-weight: 600;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                    border-radius: 12px;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white;
-                    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
-                    vertical-align: middle;
-                }
-                
-                .pdfb-system-pdf-engine-section .form-table th {
-                    width: 200px;
-                    font-weight: 600;
-                }
-                
-                .pdfb-system-pdf-engine-section .toggle-switch {
-                    position: relative;
-                    display: inline-block;
-                    width: 50px;
-                    height: 24px;
-                    vertical-align: middle;
-                }
-                
-                .pdfb-system-pdf-engine-section .toggle-switch input {
-                    opacity: 0;
-                    width: 0;
-                    height: 0;
-                }
-                
-                .pdfb-system-pdf-engine-section .toggle-slider {
-                    position: absolute;
-                    cursor: pointer;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background-color: #ccc;
-                    transition: .3s;
-                    border-radius: 24px;
-                }
-                
-                .pdfb-system-pdf-engine-section .toggle-slider:before {
-                    position: absolute;
-                    content: "";
-                    height: 18px;
-                    width: 18px;
-                    left: 3px;
-                    bottom: 3px;
-                    background-color: white;
-                    transition: .3s;
-                    border-radius: 50%;
-                }
-                
-                .pdfb-system-pdf-engine-section input:checked + .toggle-slider {
-                    background-color: #2271b1;
-                }
-                
-                .pdfb-system-pdf-engine-section input:checked + .toggle-slider:before {
-                    transform: translateX(26px);
-                }
-                
-                #engine-test-result {
-                    margin-top: 15px;
-                    padding: 12px;
-                    border-radius: 4px;
-                    font-size: 13px;
-                    line-height: 1.6;
-                }
-                
-                #engine-test-result .notice {
-                    padding: 10px 15px;
-                    margin: 0;
-                }
-                
-                /* Section Configuration moteur */
-                .pdfb-system-engine-config-section {
-                    background: white;
-                    border: 1px solid #ddd;
-                    border-radius: 8px;
-                    margin-bottom: 25px;
-                    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-                    overflow: hidden;
-                }
-                
-                .pdfb-system-engine-config-section header {
-                    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecef 100%);
-                    padding: 15px 20px;
-                    border-bottom: 1px solid #ddd;
-                }
-                
-                .pdfb-system-engine-config-section header h3 {
-                    margin: 0;
-                    font-size: 16px;
-                    font-weight: 600;
-                    color: #1d2327;
-                }
-                
-                .pdfb-system-engine-config-section .pdfb-system-section-content {
-                    padding: 20px;
-                }
-                
-                .pdfb-system-engine-config-section .form-table th {
-                    width: 200px;
-                    font-weight: 600;
-                }
-                
-                .pdfb-system-engine-config-section .toggle-switch {
-                    position: relative;
-                    display: inline-block;
-                    width: 50px;
-                    height: 24px;
-                    vertical-align: middle;
-                }
-                
-                .pdfb-system-engine-config-section .toggle-switch input {
-                    opacity: 0;
-                    width: 0;
-                    height: 0;
-                }
-                
-                .pdfb-system-engine-config-section .toggle-slider {
-                    position: absolute;
-                    cursor: pointer;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background-color: #ccc;
-                    transition: .3s;
-                    border-radius: 24px;
-                }
-                
-                .pdfb-system-engine-config-section .toggle-slider:before {
-                    position: absolute;
-                    content: "";
-                    height: 18px;
-                    width: 18px;
-                    left: 3px;
-                    bottom: 3px;
-                    background-color: white;
-                    transition: .3s;
-                    border-radius: 50%;
-                }
-                
-                .pdfb-system-engine-config-section input:checked + .toggle-slider {
-                    background-color: #2271b1;
-                }
-                
-                .pdfb-system-engine-config-section input:checked + .toggle-slider:before {
-                    transform: translateX(26px);
-                }
-                
-                .puppeteer-config-row {
-                    transition: opacity 0.3s ease, height 0.3s ease;
-                }
-            </style>
+            
             
             <h3 style="display: flex; justify-content: flex-start; align-items: center;">
                 <span>⚙️ Système - Performance, Maintenance & Sauvegarde</span>
@@ -317,7 +156,7 @@
                                             </p>
                                         </td>
                                     </tr>
-                                    <tr class="puppeteer-config-row">
+                                    <tr class="pdfb-puppeteer-config-row">
                                         <th scope="row"><label for="pdf_builder_puppeteer_url">API Puppeteer - URL</label></th>
                                         <td>
                                     <input type="url" id="pdf_builder_puppeteer_url" name="pdf_builder_puppeteer_url" 
@@ -329,7 +168,7 @@
                                             </p>
                                         </td>
                                     </tr>
-                                    <tr class="puppeteer-config-row">
+                                    <tr class="pdfb-puppeteer-config-row">
                                         <th scope="row"><label for="pdf_builder_puppeteer_token">API Puppeteer - Token</label></th>
                                         <td>
                                     <input type="password" id="pdf_builder_puppeteer_token" name="pdf_builder_puppeteer_token" 
@@ -344,7 +183,7 @@
                                             </p>
                                         </td>
                                     </tr>
-                                    <tr class="puppeteer-config-row">
+                                    <tr class="pdfb-puppeteer-config-row">
                                         <th scope="row"><label for="pdf_builder_puppeteer_timeout">Timeout (secondes)</label></th>
                                         <td>
                                             <input type="number" id="pdf_builder_puppeteer_timeout" name="pdf_builder_puppeteer_timeout" 
@@ -353,21 +192,21 @@
                                             <p class="description">Durée maximale d'attente pour la génération PDF (5-120s)</p>
                                         </td>
                                     </tr>
-                                    <tr class="puppeteer-config-row">
+                                    <tr class="pdfb-puppeteer-config-row">
                                         <th scope="row"><label for="pdf_builder_puppeteer_fallback">Fallback automatique</label></th>
                                         <td>
-                                            <label class="toggle-switch">
+                                            <label class="pdfb-toggle-switch">
                                                 <input type="hidden" name="pdf_builder_puppeteer_fallback" value="0">
                                                 <input type="checkbox" id="pdf_builder_puppeteer_fallback" name="pdf_builder_puppeteer_fallback" 
                                                        value="1" <?php checked(pdf_builder_get_option('pdf_builder_puppeteer_fallback', 1), 1); ?>>
-                                                <span class="toggle-slider"></span>
+                                                <span class="pdfb-toggle-slider"></span>
                                             </label>
                                             <p class="description">
                                                 En cas d'échec Puppeteer, basculer automatiquement sur DomPDF
                                             </p>
                                         </td>
                                     </tr>
-                                    <tr class="puppeteer-config-row">
+                                    <tr class="pdfb-puppeteer-config-row">
                                         <th scope="row">Test de connexion</th>
                                         <td>
                                             <button type="button" class="button button-secondary" id="test-puppeteer-connection">
@@ -507,10 +346,10 @@
                             <tr>
                                 <th scope="row"><label for="general_cache_enabled">Cache activé</label></th>
                                 <td>
-                                    <label class="toggle-switch">
+                                    <label class="pdfb-toggle-switch">
                                         <input type="hidden" name="pdf_builder_settings[pdf_builder_cache_enabled]" value="0">
                                         <input type="checkbox" id="general_cache_enabled" name="pdf_builder_settings[pdf_builder_cache_enabled]" value="1" <?php checked($cache_enabled, '1'); ?>>
-                                        <span class="toggle-slider"></span>
+                                        <span class="pdfb-toggle-slider"></span>
                                     </label>
                                     <p class="description">Améliore les performances en mettant en cache les données</p>
                                 </td>
@@ -518,10 +357,10 @@
                             <tr>
                                 <th scope="row"><label for="cache_compression">Compression du cache</label></th>
                                 <td>
-                                    <label class="toggle-switch">
+                                    <label class="pdfb-toggle-switch">
                                         <input type="hidden" name="pdf_builder_settings[pdf_builder_cache_compression]" value="0">
                                         <input type="checkbox" id="cache_compression" name="pdf_builder_settings[pdf_builder_cache_compression]" value="1" <?php checked($cache_compression, '1'); ?>>
-                                        <span class="toggle-slider"></span>
+                                        <span class="pdfb-toggle-slider"></span>
                                     </label>
                                     <p class="description">Compresser les données en cache pour économiser l'espace disque</p>
                                 </td>
@@ -529,10 +368,10 @@
                             <tr>
                                 <th scope="row"><label for="cache_auto_cleanup">Nettoyage automatique</label></th>
                                 <td>
-                                    <label class="toggle-switch">
+                                    <label class="pdfb-toggle-switch">
                                         <input type="hidden" name="pdf_builder_settings[pdf_builder_cache_auto_cleanup]" value="0">
                                         <input type="checkbox" id="cache_auto_cleanup" name="pdf_builder_settings[pdf_builder_cache_auto_cleanup]" value="1" <?php checked($cache_auto_cleanup, '1'); ?>>
-                                        <span class="toggle-slider"></span>
+                                        <span class="pdfb-toggle-slider"></span>
                                     </label>
                                     <p class="description">Nettoyer automatiquement les anciens fichiers cache</p>
                                 </td>
@@ -554,10 +393,10 @@
                             <tr>
                                 <th scope="row"><label for="performance_auto_optimization">Optimisation automatique des performances</label></th>
                                 <td>
-                                    <label class="toggle-switch">
+                                    <label class="pdfb-toggle-switch">
                                         <input type="hidden" name="pdf_builder_settings[pdf_builder_performance_auto_optimization]" value="0">
                                         <input type="checkbox" id="performance_auto_optimization" name="pdf_builder_settings[pdf_builder_performance_auto_optimization]" value="1" <?php checked($performance_auto_optimization, '1'); ?>>
-                                        <span class="toggle-slider"></span>
+                                        <span class="pdfb-toggle-slider"></span>
                                     </label>
                                     <p class="description">Optimisation hebdomadaire automatique de la base de données et des ressources système</p>
                                 </td>
@@ -645,10 +484,10 @@
                             <tr>
                                 <th scope="row"><label for="systeme_auto_maintenance">Maintenance automatique</label></th>
                                 <td>
-                                    <label class="toggle-switch">
+                                    <label class="pdfb-toggle-switch">
                                         <input type="hidden" name="pdf_builder_settings[pdf_builder_systeme_auto_maintenance]" value="0">
                                         <input type="checkbox" id="systeme_auto_maintenance" name="pdf_builder_settings[pdf_builder_systeme_auto_maintenance]" value="1" <?php checked($auto_maintenance, '1'); ?>>
-                                        <span class="toggle-slider"></span>
+                                        <span class="pdfb-toggle-slider"></span>
                                     </label>
                                     <p class="description">Active la maintenance automatique hebdomadaire</p>
                                     <div class="pdfb-maintenance-info-box">
@@ -1386,13 +1225,13 @@
                         }
 
                         output += '<div class="backup-list" style="margin-top: 15px;">';
-                        output += '<style>.backup-item-info { margin-bottom: 0 !important; }</style>';
-                        output += '<style>@keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.8); 20% { opacity: 1; transform: scale(1.1); 80% { opacity: 1; transform: scale(1); 100% { opacity: 0; transform: scale(0.8); } .backup-count-plus-one { animation: fadeInOut 3s ease-in-out; }</style>';
+                        output += '';
+                        output += '';
 
                         response.data.backups.forEach(function(backup, index) {
                             
                             output += '<div class="backup-item" style="display: flex; align-items: center; justify-content: space-between; padding: 12px; margin-bottom: 10px; background: white; border: 1px solid #dee2e6; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">';
-                            output += '<div class="backup-item-info" style="flex: 1; display: flex; align-items: center; gap: 12px;">';
+                            output += '<div class="pdfb-backup-item-info" style="flex: 1; display: flex; align-items: center; gap: 12px;">';
                             output += '<div class="backup-icon" style="font-size: 20px;">📄</div>';
                             output += '<div class="backup-details">';
                             output += '<div class="backup-filename" style="font-weight: 600; color: #007cba; margin-bottom: 2px;">' + backup.filename + '</div>';
@@ -1630,15 +1469,4 @@
 
 })(jQuery);
 </script>
-
-
-
-
-
-
-
-
-
-
-
 

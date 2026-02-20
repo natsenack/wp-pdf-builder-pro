@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Core;
 
@@ -270,8 +270,8 @@ class PdfBuilderCore
             <h1><?php _e('PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
             <p><?php _e('Welcome to PDF Builder Pro - Professional PDF creation made easy.', 'pdf-builder-pro'); ?></p>
 
-            <div class="pdf-builder-dashboard">
-                <div class="pdf-builder-card">
+            <div class="pdfb-pdf-builder-dashboard">
+                <div class="pdfb-pdf-builder-card">
                     <h3><?php _e('Quick Start', 'pdf-builder-pro'); ?></h3>
                     <p><?php _e('Create your first PDF template in minutes.', 'pdf-builder-pro'); ?></p>
                     <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates'); ?>" class="button button-primary">
@@ -279,7 +279,7 @@ class PdfBuilderCore
                     </a>
                 </div>
 
-                <div class="pdf-builder-card">
+                <div class="pdfb-pdf-builder-card">
                     <h3><?php _e('Documentation', 'pdf-builder-pro'); ?></h3>
                     <p><?php _e('Learn how to use all features.', 'pdf-builder-pro'); ?></p>
                     <a href="#" class="button"><?php _e('View Docs', 'pdf-builder-pro'); ?></a>
@@ -287,25 +287,7 @@ class PdfBuilderCore
             </div>
         </div>
 
-        <style>
-            .pdf-builder-dashboard {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 20px;
-                margin-top: 20px;
-            }
-            .pdf-builder-card {
-                background: white;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                padding: 20px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            }
-            .pdf-builder-card h3 {
-                margin-top: 0;
-                color: #23282d;
-            }
-        </style>
+
         <?php
     }
 
@@ -391,7 +373,7 @@ class PdfBuilderCore
                     <p><?php _e('Aucun log récent trouvé. Commencez par créer et générer des PDF avec vos templates.', 'pdf-builder-pro'); ?></p>
                 </div>
             <?php else: ?>
-                <div class="recent-documents-container">
+                <div class="pdfb-recent-documents-container">
                     <table class="wp-list-table widefat fixed striped">
                         <thead>
                             <tr>
@@ -417,11 +399,7 @@ class PdfBuilderCore
                     </table>
                 </div>
 
-                <style>
-                    .recent-documents-container {
-                        margin-top: 20px;
-                    }
-                </style>
+
             <?php endif; ?>
 
             <div class="recent-documents-info" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007cba;">

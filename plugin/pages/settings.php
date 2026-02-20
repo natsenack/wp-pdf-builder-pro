@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro V2 - Page de paramètres
  */
@@ -25,9 +25,9 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
         </a>
     </nav>
     
-    <div class="tab-content">
+    <div class="pdfb-tab-content">
         <?php if ($active_tab === 'general'): ?>
-            <div class="tab-pane">
+            <div class="pdfb-tab-pane">
                 <h2><?php _e('Paramètres généraux', 'pdf-builder-pro'); ?></h2>
                 <p><?php _e('Configurez les options générales du PDF Builder Pro.', 'pdf-builder-pro'); ?></p>
                 
@@ -38,7 +38,7 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
                 </form>
             </div>
         <?php elseif ($active_tab === 'advanced'): ?>
-            <div class="tab-pane">
+            <div class="pdfb-tab-pane">
                 <h2><?php _e('Paramètres avancés', 'pdf-builder-pro'); ?></h2>
                 <p><?php _e('Configurer les options avancées du PDF Builder Pro.', 'pdf-builder-pro'); ?></p>
                 
@@ -49,9 +49,9 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
                 </form>
             </div>
         <?php else: ?>
-            <div class="tab-pane">
+            <div class="pdfb-tab-pane">
                 <h2><?php _e('À propos de PDF Builder Pro', 'pdf-builder-pro'); ?></h2>
-                <div class="about-box">
+                <div class="pdfb-about-box">
                     <h3>Version 2.0.0</h3>
                     <p><strong><?php _e('PDF Builder Pro V2', 'pdf-builder-pro'); ?></strong></p>
                     <p><?php _e('Refonte complète avec architecture moderne et React 18', 'pdf-builder-pro'); ?></p>
@@ -71,115 +71,13 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
 </div>
 
 <!-- Bouton flottant Enregistrer -->
-<div id="pdf-builder-floating-save" class="pdf-builder-floating-save">
-    <button type="button" id="pdf-builder-save-settings" class="pdf-builder-save-btn">
+<div id="pdf-builder-floating-save" class="pdfb-pdf-builder-floating-save">
+    <button type="button" id="pdf-builder-save-settings" class="pdfb-pdf-builder-save-btn">
         <span class="dashicons dashicons-yes"></span>
         <?php _e('Enregistrer', 'pdf-builder-pro'); ?>
     </button>
-    <div id="pdf-builder-save-status" class="pdf-builder-save-status"></div>
+    <div id="pdf-builder-save-status" class="pdfb-pdf-builder-save-status"></div>
 </div>
-
-<style>
-.pdf-builder-floating-save {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    z-index: 9999;
-}
-
-.pdf-builder-save-btn {
-    background: #2271b1;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 50px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
-}
-
-.pdf-builder-save-btn:hover {
-    background: #135e96;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-.pdf-builder-save-btn:active {
-    transform: translateY(0);
-}
-
-.pdf-builder-save-btn.saving {
-    background: #f39c12;
-    cursor: not-allowed;
-}
-
-.pdf-builder-save-btn.saved {
-    background: #27ae60;
-}
-
-.pdf-builder-save-btn.error {
-    background: #e74c3c;
-}
-
-.pdf-builder-save-status {
-    position: absolute;
-    top: -40px;
-    right: 0;
-    background: #333;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.3s ease;
-    white-space: nowrap;
-}
-
-.pdf-builder-save-status.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.pdf-builder-save-status.success {
-    background: #27ae60;
-}
-
-.pdf-builder-save-status.error {
-    background: #e74c3c;
-}
-
-.tab-content {
-    background: white;
-    padding: 20px;
-    margin-top: 0;
-}
-
-.tab-pane {
-    display: block;
-}
-
-.about-box {
-    background: #f9f9f9;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-top: 20px;
-}
-
-.about-box ul {
-    margin-left: 20px;
-}
-
-.about-box li {
-    margin-bottom: 8px;
-}
-</style>
 
 <script type="text/javascript">
 jQuery(document).ready(function($) {
@@ -342,5 +240,4 @@ jQuery(document).ready(function($) {
     console.log('PDF Builder Settings: Initialization complete');
 });
 </script>
-
 

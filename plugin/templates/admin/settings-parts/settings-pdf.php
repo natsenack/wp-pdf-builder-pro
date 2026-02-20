@@ -1,4 +1,4 @@
-<?php // PDF tab content - Updated: 2025-11-19 01:40:00
+﻿<?php // PDF tab content - Updated: 2025-11-19 01:40:00
 
 $settings = pdf_builder_get_option('pdf_builder_settings', array());
 error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($settings));
@@ -11,155 +11,6 @@ $canvas_orientation = $settings['pdf_builder_canvas_default_orientation'] ?? 'po
 $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
 $is_premium = $license_manager->isPremium();
 ?>
-
-<style>
-/* Layout flexbox pour les paramètres PDF avec aperçu */
-.pdfb-pdf-settings-wrapper {
-    display: flex;
-    gap: 30px;
-    align-items: flex-start;
-    margin-bottom: 30px;
-}
-
-.pdfb-pdf-settings-left {
-    flex: 1;
-    min-width: 0;
-}
-
-.pdfb-pdf-preview-panel {
-    flex: 0 0 350px;
-    background: linear-gradient(135deg, #667eea 0%, #5568d3 100%);
-    border-radius: 12px;
-    padding: 25px;
-    color: white;
-    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
-    position: sticky;
-    top: 20px;
-}
-
-.pdfb-pdf-preview-title {
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.pdfb-pdf-preview-canvas {
-    background: white;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.pdfb-pdf-preview-frame {
-    width: 100%;
-    aspect-ratio: var(--preview-ratio, 210/297);
-    background: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    color: #999;
-    padding: 10px;
-    text-align: center;
-    position: relative;
-}
-
-.pdfb-pdf-preview-frame::before {
-    content: attr(data-format);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.pdfb-pdf-preview-info {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    font-size: 13px;
-}
-
-.pdfb-pdf-info-item {
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 8px;
-    padding: 12px;
-    backdrop-filter: blur(10px);
-}
-
-.pdfb-pdf-info-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    font-weight: 600;
-    opacity: 0.9;
-    display: block;
-    margin-bottom: 4px;
-}
-
-.pdfb-pdf-info-value {
-    font-size: 14px;
-    font-weight: 700;
-    display: block;
-}
-
-.pdfb-pdf-quality-bar {
-    width: 100%;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 2px;
-    margin-top: 6px;
-    overflow: hidden;
-}
-
-.pdfb-pdf-quality-fill {
-    height: 100%;
-    background: #4ade80;
-    border-radius: 2px;
-    transition: width 0.3s ease;
-}
-
-.pdfb-pdf-file-size {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 15px;
-    text-align: center;
-    margin-top: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.pdfb-pdf-file-size-value {
-    font-size: 18px;
-    font-weight: 700;
-    margin: 8px 0;
-}
-
-@media (max-width: 1200px) {
-    .pdfb-pdf-settings-wrapper {
-        flex-direction: column;
-    }
-
-    .pdfb-pdf-preview-panel {
-        position: static;
-        flex: 1;
-        width: 100%;
-    }
-}
-
-@media (max-width: 768px) {
-    .pdfb-pdf-settings-wrapper {
-        flex-direction: column;
-    }
-
-    .pdfb-pdf-preview-panel {
-        flex: 0 0 auto;
-        width: 100%;
-        position: static;
-    }
-}
-</style>
 
 <!-- Section Principale : Configuration PDF -->
 <section id="pdf-config" class="pdf-section contenu-canvas-section">
@@ -452,5 +303,4 @@ $is_premium = $license_manager->isPremium();
     });
 })(jQuery);
 </script>
-
 

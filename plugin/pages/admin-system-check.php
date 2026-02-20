@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Page d'administration - Vérification du système
  * 
@@ -74,24 +74,7 @@ function pdf_builder_check_wkhtmltoimage() {
 <html>
 <head>
     <meta charset="UTF-8">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-align: center;
-        }
-        .box {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 40px;
-            backdrop-filter: blur(10px);
-        }
-        h1 { font-size: 48px; margin: 0 0 20px 0; }
-        p { font-size: 24px; margin: 10px 0; }
-        .success { color: #00ff88; font-weight: bold; }
-    </style>
+    
 </head>
 <body>
     <div class="box">
@@ -422,19 +405,3 @@ sudo apt-get install -y wkhtmltopdf</pre>
     
 </div>
 
-<style>
-.wrap h2, .wrap h3 {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.widefat th {
-    font-weight: 600;
-    background: #f9f9f9;
-}
-
-.widefat td {
-    vertical-align: middle;
-}
-</style>

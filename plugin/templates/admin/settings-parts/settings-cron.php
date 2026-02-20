@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!defined('ABSPATH')) exit('Direct access not allowed');
 
 // Task Scheduler is already loaded in bootstrap.php
@@ -9,22 +9,22 @@ $task_scheduler = PDF_Builder_Task_Scheduler::get_instance();
     <h2><?php echo __('Cron System Diagnostics', 'pdf-builder-pro'); ?></h2>
 
     <!-- WP Cron Status Indicator -->
-    <div class="wp-cron-status-indicator" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
+    <div class="wp-cron-pdfb-status-indicator" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
         <h3 style="margin-top: 0; color: #495057;">
             <span class="dashicons dashicons-clock" style="vertical-align: middle; margin-right: 8px;"></span>
             <?php echo __('WP Cron Status', 'pdf-builder-pro'); ?>
         </h3>
         <div id="wp-cron-status-content">
             <div class="wp-cron-status-item" style="display: flex; align-items: center; margin-bottom: 8px;">
-                <span class="status-indicator" id="wp-cron-enabled-indicator" style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 10px; background: #ffc107;"></span>
+                <span class="pdfb-status-indicator" id="wp-cron-enabled-indicator" style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 10px; background: #ffc107;"></span>
                 <span id="wp-cron-enabled-text"><?php echo __('Checking WP Cron status...', 'pdf-builder-pro'); ?></span>
             </div>
             <div class="wp-cron-status-item" style="display: flex; align-items: center; margin-bottom: 8px;">
-                <span class="status-indicator" id="wp-cron-scheduled-indicator" style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 10px; background: #ffc107;"></span>
+                <span class="pdfb-status-indicator" id="wp-cron-scheduled-indicator" style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 10px; background: #ffc107;"></span>
                 <span id="wp-cron-scheduled-text"><?php echo __('Checking scheduled tasks...', 'pdf-builder-pro'); ?></span>
             </div>
             <div class="wp-cron-status-item" style="display: flex; align-items: center;">
-                <span class="status-indicator" id="wp-cron-response-indicator" style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 10px; background: #ffc107;"></span>
+                <span class="pdfb-status-indicator" id="wp-cron-response-indicator" style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 10px; background: #ffc107;"></span>
                 <span id="wp-cron-response-text"><?php echo __('Testing cron response...', 'pdf-builder-pro'); ?></span>
             </div>
         </div>
@@ -107,7 +107,6 @@ jQuery(document).ready(function($) {
         checking: '<?php echo esc_js(__('Checking...', 'pdf-builder-pro')); ?>',
         refreshStatus: '<?php echo esc_js(__('Refresh Status', 'pdf-builder-pro')); ?>'
     };
-
 
     // Diagnose cron system
     $('#diagnose-cron-btn').on('click', function() {
@@ -254,15 +253,15 @@ jQuery(document).ready(function($) {
         var textElement = $('#' + elementId + '-text');
 
         // Reset classes
-        indicator.removeClass('status-good status-warning status-error');
+        indicator.removeClass(' pdfb-status-good  status-warning status-error');
 
         // Set status
         if (status === 'good') {
-            indicator.addClass('status-good').css('background', '#28a745');
+            indicator.addClass(' pdfb-status-good ').css('background', '#28a745');
         } else if (status === 'warning') {
-            indicator.addClass('status-warning').css('background', '#ffc107');
+            indicator.addClass(' pdfb-status-warning ').css('background', '#ffc107');
         } else if (status === 'error') {
-            indicator.addClass('status-error').css('background', '#dc3545');
+            indicator.addClass(' pdfb-status-error ').css('background', '#dc3545');
         }
 
         textElement.text(text);
@@ -369,38 +368,5 @@ jQuery(document).ready(function($) {
 });
 </script>
 
-<style>
-/* WP Cron Status Indicator Styles */
-.status-indicator {
-    transition: background-color 0.3s ease;
-}
-
-.dashicons.spin {
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    from { transform: rotate(0deg);
-    to { transform: rotate(360deg);
-}
-
-.wp-cron-status-indicator .status-good {
-    background-color: #28a745 !important;
-}
-
-.wp-cron-status-indicator .status-warning {
-    background-color: #ffc107 !important;
-}
-
-.wp-cron-status-indicator .status-error {
-    background-color: #dc3545 !important;
-}
-</style>
 </script>
-
-
-
-
-
-
 
