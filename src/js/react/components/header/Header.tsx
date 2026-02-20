@@ -544,11 +544,12 @@ export const Header = memo(function Header({
 
     setIsGeneratingPreview(true);
     try {
-      // Étape 1: Obtenir le HTML avec les données de commande
+      // Appel direct à Puppeteer (backend) — génération PNG/JPG haute qualité
       const formData = new FormData();
-      formData.append("action", "pdf_builder_get_preview_html");
+      formData.append("action", "pdf_builder_generate_image");
       formData.append("template_id", templateId.toString());
       formData.append("order_id", previewOrderId.trim());
+      formData.append("format", format);
       formData.append("nonce", (window as any).pdfBuilderNonce || "");
 
       const response = await fetch(
@@ -568,45 +569,20 @@ export const Header = memo(function Header({
               errorData.message ||
               `Erreur ${response.status}`,
           );
-        } else {
-          throw new Error(`Erreur serveur ${response.status}`);
         }
+        throw new Error(`Erreur serveur ${response.status}`);
       }
 
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.data?.message || "Erreur inconnue");
-      }
-
-      const { html, width, height, order_number } = result.data;
-
-      // Étape 2: Créer un conteneur temporaire pour le HTML
-      const container = document.createElement("div");
-      container.style.position = "absolute";
-      container.style.left = "-9999px";
-      container.style.top = "0";
-      container.style.width = `${width}px`;
-      container.style.height = `${height}px`;
-      container.innerHTML = html;
-      document.body.appendChild(container);
-
-      // Étape 3: Capturer avec html2canvas
-      const html2canvas = (await import("html2canvas")).default;
-      const canvas = await html2canvas(container, {
-        width: width,
-        height: height,
-        scale: 2, // Haute qualité
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: "#ffffff",
+      // Lire le blob binaire retourné par Puppeteer et le convertir en data URL stable
+      const blob = await response.blob();
+      const imageDataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
       });
 
-      // Nettoyer le conteneur
-      document.body.removeChild(container);
-
-      // Étape 4: Convertir en data URL (stable, pas besoin de révoquer)
-      const mimeType = format === "jpg" ? "image/jpeg" : "image/png";
-      const imageDataUrl = canvas.toDataURL(mimeType, 0.95);
+      const order_number = previewOrderId.trim();
       const fileName = `facture-${order_number}.${format}`;
 
       // Créer une page HTML avec l'image et les boutons
@@ -795,43 +771,6 @@ export const Header = memo(function Header({
     } finally {
       setIsGeneratingPreview(false);
     }
-  };
-
-  // Convertir PNG en JPEG côté client
-  const convertToJPEG = (dataURL: string): Promise<Blob> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-
-        const ctx = canvas.getContext("2d");
-        if (!ctx) {
-          reject(new Error("Impossible de créer le contexte canvas"));
-          return;
-        }
-
-        // Fond blanc pour JPG (JPG ne supporte pas la transparence)
-        ctx.fillStyle = "#FFFFFF";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
-
-        canvas.toBlob(
-          (blob) => {
-            if (blob) {
-              resolve(blob);
-            } else {
-              reject(new Error("Échec de la conversion en JPEG"));
-            }
-          },
-          "image/jpeg",
-          0.95, // Qualité 95%
-        );
-      };
-      img.onerror = () => reject(new Error("Échec du chargement de l'image"));
-      img.src = dataURL;
-    });
   };
 
   // Debug logging
