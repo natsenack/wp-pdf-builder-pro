@@ -2901,6 +2901,9 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
             
             $this->debug_log("PDF généré avec succès - Taille: " . strlen($pdf_content) . " bytes");
+            // Vérifier que le contenu commence bien par %PDF-
+            $first_bytes = substr($pdf_content, 0, 20);
+            error_log('[PDF GENERATE] First bytes: ' . bin2hex(substr($pdf_content, 0, 8)) . ' = ' . addslashes(substr($pdf_content, 0, 8)));
             
             // Envoyer le PDF au navigateur
             $this->debug_log("Envoi du PDF au navigateur");
