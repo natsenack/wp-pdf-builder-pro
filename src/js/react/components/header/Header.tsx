@@ -564,8 +564,10 @@ export const Header = memo(function Header({
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
           const errorData = await response.json();
+          // Afficher details en priorité (message d'erreur PHP réel)
           throw new Error(
-            errorData.data?.message ||
+            errorData.data?.details ||
+              errorData.data?.message ||
               errorData.message ||
               `Erreur ${response.status}`,
           );
