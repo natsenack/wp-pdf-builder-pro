@@ -54,40 +54,46 @@ export const Header = memo(function Header({
   const deferredIsEditingExistingTemplate = useDeferredValue(
     isEditingExistingTemplate,
   );
-  
+
   // État pour le flag du mode développeur (récupéré dynamiquement)
   const [developerModeActive, setDeveloperModeActive] = useState(false);
-  
+
   // Récupérer le flag du mode développeur dynamiquement
   useEffect(() => {
     const checkDeveloperMode = async () => {
       try {
-        const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
-        const nonce = (window as any).pdfBuilderData?.nonce || '';
+        const ajaxUrl =
+          (window as any).pdfBuilderData?.ajaxUrl || "/wp-admin/admin-ajax.php";
+        const nonce = (window as any).pdfBuilderData?.nonce || "";
 
         const formData = new FormData();
-        formData.append('action', 'pdf_builder_get_developer_mode');
+        formData.append("action", "pdf_builder_get_developer_mode");
         if (nonce) {
-          formData.append('nonce', nonce);
+          formData.append("nonce", nonce);
         }
 
         const response = await fetch(ajaxUrl, {
-          method: 'POST',
+          method: "POST",
           body: formData,
         });
 
         if (response.ok) {
           const result = await response.json();
-          
+
           if (result.success && result.data) {
-            const isActive = result.data.developerModeActive === true || result.data.developerModeActive === '1';
+            const isActive =
+              result.data.developerModeActive === true ||
+              result.data.developerModeActive === "1";
             setDeveloperModeActive(isActive);
           }
         }
       } catch (error) {
         // Fallback: essayer d'obtenir du pdfBuilderData
-        const existingValue = (window as any).pdfBuilderData?.developerModeActive || false;
-        setDeveloperModeActive(existingValue === true || existingValue === 'true');
+        const existingValue =
+          (window as any).pdfBuilderData?.developerModeActive || false;
+        setDeveloperModeActive(
+          existingValue === true || existingValue === "true",
+        );
       }
     };
 
@@ -95,7 +101,7 @@ export const Header = memo(function Header({
     const timer = setTimeout(checkDeveloperMode, 100);
     return () => clearTimeout(timer);
   }, []);
-  
+
   // Debug logging
   useEffect(() => {}, []);
 
@@ -239,7 +245,9 @@ export const Header = memo(function Header({
       }
     } catch (error) {
       console.error("Erreur lors du chargement des commandes:", error);
-      alert("Erreur: " + (error instanceof Error ? error.message : String(error)));
+      alert(
+        "Erreur: " + (error instanceof Error ? error.message : String(error)),
+      );
     } finally {
       setIsLoadingOrders(false);
     }
@@ -2975,24 +2983,28 @@ export const Header = memo(function Header({
           <span>Aperçu</span>
         </button>
 
-        <div
-          style={{ width: "1px", height: "24px", backgroundColor: "#e0e0e0" }}
-        />
+        {developerModeActive && (
+          <>
+            <div
+              style={{ width: "1px", height: "24px", backgroundColor: "#e0e0e0" }}
+            />
 
-        <button
-          onClick={() => setShowJsonModal(true)}
-          onMouseEnter={() => setHoveredButton("json")}
-          onMouseLeave={() => setHoveredButton(null)}
-          style={{
-            ...secondaryButtonStyles,
-            opacity: isSaving ? 0.6 : 1,
-            pointerEvents: isSaving ? "none" : "auto",
-          }}
-          title="Voir et copier le JSON du canvas"
-        >
-          <span>📄</span>
-          <span>JSON</span>
-        </button>
+            <button
+              onClick={() => setShowJsonModal(true)}
+              onMouseEnter={() => setHoveredButton("json")}
+              onMouseLeave={() => setHoveredButton(null)}
+              style={{
+                ...secondaryButtonStyles,
+                opacity: isSaving ? 0.6 : 1,
+                pointerEvents: isSaving ? "none" : "auto",
+              }}
+              title="Voir et copier le JSON du canvas"
+            >
+              <span>📄</span>
+              <span>JSON</span>
+            </button>
+          </>
+        )}
 
         <button
           onClick={() => setShowSettingsModal(true)}
@@ -3821,7 +3833,9 @@ export const Header = memo(function Header({
                             ? "not-allowed"
                             : "pointer",
                         opacity:
-                          isGeneratingPreview || !previewOrderId.trim() ? 0.5 : 1,
+                          isGeneratingPreview || !previewOrderId.trim()
+                            ? 0.5
+                            : 1,
                         transition: "all 0.2s",
                         display: "flex",
                         flexDirection: "column",
