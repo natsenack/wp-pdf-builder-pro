@@ -106,8 +106,8 @@ class Puppeteer_Client {
 
         // ─── Rendu synchrone (Premium) ───────────────────────────────────────────
         if ( $status === 200 ) {
-            $tier   = $resp_headers['x-pup-tier']   ?? $resp_headers['X-Pup-Tier']   ?? 'unknown';
-            $job_id = $resp_headers['x-pup-job-id'] ?? $resp_headers['X-Pup-Job-Id'] ?? '';
+            $tier   = $resp_headers['x-pup-tier'] ?? 'unknown'; // clés normalisées en minuscules
+            $job_id = $resp_headers['x-pup-job-id'] ?? ''; // clés normalisées en minuscules
             $this->log( 'Rendu synchrone OK – tier=' . $tier . '  job_id=' . $job_id . '  ' . strlen( $response_body ) . ' octets' );
             error_log( '[Puppeteer_Client] TIER=' . $tier . '  job_id=' . $job_id . '  size=' . strlen( $response_body ) . ' bytes' );
             return $response_body;
@@ -262,8 +262,16 @@ class Puppeteer_Client {
         $code          = (int) wp_remote_retrieve_response_code( $response );
         $response_body = wp_remote_retrieve_body( $response );
         $response_headers = wp_remote_retrieve_headers( $response );
-        // Normaliser en tableau simple clé→valeur (WP retourne un objet Requests_Utility_CaseInsensitiveDictionary)
-        $headers_arr = is_array( $response_headers ) ? $response_headers : (array) $response_headers;
+        // Normaliser en tableau simple clé→valeur (WP retourne un objet CaseInsensitiveDictionary)
+        // getAll() permet d'extraire proprement les clés sans artifacts d'objet
+        if ( method_exists( $response_headers, 'getAll' ) ) {
+            $headers_arr = array_change_key_case( $response_headers->getAll(), CASE_LOWER );
+        } elseif ( is_array( $response_headers ) ) {
+            $headers_arr = array_change_key_case( $response_headers, CASE_LOWER );
+        } else {
+            $headers_arr = array_change_key_case( (array) $response_headers, CASE_LOWER );
+        }
+        $this->log( 'Response headers: ' . json_encode( array_keys( $headers_arr ) ) );
 
         $this->log( "← HTTP {$code}  body_len=" . strlen( $response_body ) );
 

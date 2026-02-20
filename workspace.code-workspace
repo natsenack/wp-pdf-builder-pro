@@ -4,6 +4,9 @@
       "path": ".",
       "name": "📦 V2 (Production Ready)",
     },
+    {
+      "path": "G:/1. projet vscode/puppeteer moteur + serveur + dashboard",
+    },
   ],
   "settings": {
     "typescript.enablePromptUseWorkspaceTsdk": true,
