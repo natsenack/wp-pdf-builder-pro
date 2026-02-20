@@ -55,8 +55,40 @@ export const Header = memo(function Header({
     isEditingExistingTemplate,
   );
   
-  // Récupérer le flag du mode développeur depuis les données PHP
-  const developerModeActive = (window as any).pdfBuilderData?.developerModeActive || false;
+  // État pour le flag du mode développeur (récupéré dynamiquement)
+  const [developerModeActive, setDeveloperModeActive] = useState(false);
+  
+  // Récupérer le flag du mode développeur dynamiquement
+  useEffect(() => {
+    const checkDeveloperMode = async () => {
+      try {
+        const formData = new FormData();
+        formData.append('action', 'pdf_builder_get_developer_mode');
+        formData.append('nonce', (window as any).pdfBuilderAjax?.nonce || (window as any).pdfBuilderData?.nonce || '');
+
+        const response = await fetch(
+          (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php',
+          {
+            method: 'POST',
+            body: formData,
+          }
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success && result.data) {
+            setDeveloperModeActive(result.data.developerModeActive === true || result.data.developerModeActive === '1');
+          }
+        }
+      } catch (error) {
+        // Fallback: essayer d'obtenir du pdfBuilderData
+        const existingValue = (window as any).pdfBuilderData?.developerModeActive || false;
+        setDeveloperModeActive(existingValue === true || existingValue === 'true');
+      }
+    };
+
+    checkDeveloperMode();
+  }, []);
   
   // Debug logging
   useEffect(() => {}, []);

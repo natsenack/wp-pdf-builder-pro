@@ -109,6 +109,9 @@ class PDF_Builder_Unified_Ajax_Handler {
         add_action('wp_ajax_pdf_builder_test_all_engines', [$this, 'handle_test_all_engines']);
         add_action('wp_ajax_pdf_builder_get_active_engine', [$this, 'handle_get_active_engine']);
         
+        // Action pour obtenir le statut du mode développeur
+        add_action('wp_ajax_pdf_builder_get_developer_mode', [$this, 'handle_get_developer_mode']);
+        
         add_action('wp_ajax_pdf_builder_debug_html', [$this, 'handle_debug_html']);
         error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_debug_html");
         add_action('wp_ajax_pdf_builder_get_preview_html', [$this, 'handle_get_preview_html']);
@@ -5820,6 +5823,27 @@ class PDF_Builder_Unified_Ajax_Handler {
         } catch (Exception $e) {
             wp_send_json_error([
                 'message' => 'Erreur: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Handler pour récupérer le statut du mode développeur
+     */
+    public function handle_get_developer_mode() {
+        try {
+            // Vérifier le statut du mode développeur
+            $developer_mode_active = function_exists('pdf_builder_is_developer_mode_active') 
+                && pdf_builder_is_developer_mode_active();
+
+            wp_send_json_success([
+                'developerModeActive' => $developer_mode_active
+            ]);
+
+        } catch (Exception $e) {
+            // En cas d'erreur, retourner false pour sécurité
+            wp_send_json_success([
+                'developerModeActive' => false
             ]);
         }
     }
