@@ -35,6 +35,31 @@ class Puppeteer_Client {
         $this->debug_enabled = (bool) pdf_builder_get_option( 'pdf_builder_debug_enabled', false );
     }
 
+    // ─── SSL helper ─────────────────────────────────────────────────────────────
+
+    /**
+     * Détermine si la vérification SSL doit être activée.
+     * En local (localhost, *.local, *.test, 127.x) on la désactive pour éviter
+     * cURL error 60 (self-signed certificate / CA bundle incomplet).
+     * Peut être forcé via la constante PDF_BUILDER_SSL_VERIFY (bool).
+     *
+     * @return bool
+     */
+    private function should_verify_ssl(): bool {
+        if ( defined( 'PDF_BUILDER_SSL_VERIFY' ) ) {
+            return (bool) PDF_BUILDER_SSL_VERIFY;
+        }
+        $site = strtolower( get_site_url() );
+        $is_local = (
+            strpos( $site, 'localhost' ) !== false ||
+            strpos( $site, '127.0.0.1' ) !== false ||
+            preg_match( '/\.local(:|\/)/', $site ) ||
+            preg_match( '/\.test(:|\/)/', $site )  ||
+            preg_match( '/\.dev(:|\/)/', $site )
+        );
+        return ! $is_local;
+    }
+
     // ─── API publique ────────────────────────────────────────────────────────────
 
     /**
@@ -99,7 +124,7 @@ class Puppeteer_Client {
         $response = wp_remote_get( $url, [
             'timeout'    => 5,
             'user-agent' => 'PDF-Builder-Pro/' . PDF_BUILDER_PRO_VERSION,
-            'sslverify'  => true,
+            'sslverify'  => $this->should_verify_ssl(),
         ] );
 
         if ( is_wp_error( $response ) ) {
@@ -138,11 +163,7 @@ class Puppeteer_Client {
                 'timeout'    => 10,
                 'user-agent' => 'PDF-Builder-Pro/' . PDF_BUILDER_PRO_VERSION,
                 'headers'    => $this->build_get_headers( $path ),
-                'sslverify'  => true,
-            ] );
-
-            if ( is_wp_error( $response ) ) {
-                $this->log( 'Polling WP_Error : ' . $response->get_error_message(), 'WARNING' );
+            'sslverify'  => $this->should_verify_ssl(),
             } else {
                 $code = (int) wp_remote_retrieve_response_code( $response );
                 $body = wp_remote_retrieve_body( $response );
@@ -198,7 +219,7 @@ class Puppeteer_Client {
             'timeout'   => 35,
             'headers'   => $headers,
             'body'      => $body,
-            'sslverify' => true,
+            'sslverify' => $this->should_verify_ssl(),
         ] );
 
         if ( is_wp_error( $response ) ) {
