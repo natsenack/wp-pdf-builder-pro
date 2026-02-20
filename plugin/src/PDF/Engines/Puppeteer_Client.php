@@ -20,7 +20,7 @@ class Puppeteer_Client {
 
     // ─── Configuration du service ───────────────────────────────────────────────
 
-    const SERVICE_BASE_URL = 'https://pdf.threeaxe.fr';
+    const SERVICE_BASE_URL = 'http://pdf.threeaxe.fr';
     const HMAC_SECRET      = '04abca0b6fb5a01f8854daecd90fdfe709df2e6c446cf328986b5d952a0ac27e';
 
     const POLL_INTERVAL_S  = 2;   // secondes entre chaque polling
