@@ -2903,6 +2903,10 @@ class PDF_Builder_Unified_Ajax_Handler {
             
             // Envoyer le PDF au navigateur
             $this->debug_log("Envoi du PDF au navigateur");
+            // Vider tous les output buffers WordPress/PHP avant d'envoyer du binaire
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
             header('Content-Type: application/pdf');
             header('Content-Disposition: inline; filename="facture-' . $order->get_order_number() . '.pdf"');
             header('Content-Length: ' . strlen($pdf_content));
