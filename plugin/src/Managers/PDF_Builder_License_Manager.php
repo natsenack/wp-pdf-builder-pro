@@ -105,6 +105,15 @@ class PDF_Builder_License_Manager
     }
 
     /**
+     * Retourne la clé de licence déchiffrée (pour les moteurs PDF internes).
+     * Alias snake_case pour compatibilité avec PuppeteerEngine::get_license_key().
+     */
+    public function get_license_key(): string
+    {
+        return $this->license_key;
+    }
+
+    /**
      * Retourne l'ID interne EDD du record de licence (pour les URL Renouveler / Désabonner).
      */
     public function getLicenseId(): string
@@ -155,6 +164,8 @@ class PDF_Builder_License_Manager
         if (empty($license_key)) {
             return ['success' => false, 'message' => 'Clé de licence requise'];
         }
+
+        error_log('[PDF_Builder_License] activateLicense called, key_length=' . strlen($license_key));
 
         // Validation de la licence (simulation - à remplacer par appel API réel)
         $result = $this->validateLicense($license_key);
@@ -223,13 +234,19 @@ class PDF_Builder_License_Manager
         );
 
         if (is_wp_error($response)) {
+            $err = $response->get_error_message();
+            error_log('[PDF_Builder_License] validateLicense WP_Error: ' . $err);
             return [
                 'success' => false,
-                'message' => 'Impossible de contacter le serveur de licences : ' . $response->get_error_message(),
+                'message' => 'Impossible de contacter le serveur de licences : ' . $err,
             ];
         }
 
-        $license_data = json_decode(wp_remote_retrieve_body($response), true);
+        $http_code    = wp_remote_retrieve_response_code($response);
+        $raw_body     = wp_remote_retrieve_body($response);
+        $license_data = json_decode($raw_body, true);
+
+        error_log('[PDF_Builder_License] validateLicense HTTP=' . $http_code . ' body=' . substr($raw_body, 0, 500));
 
         if (!is_array($license_data)) {
             return ['success' => false, 'message' => 'Réponse invalide du serveur de licences'];
