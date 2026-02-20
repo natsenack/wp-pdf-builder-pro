@@ -708,7 +708,7 @@
 
                                 // État chargement
                                 btn.disabled = true;
-                                btn.querySelector('.btn-text').textContent = 'Activation…';
+                                btn.querySelector('.pdfb-license-btn-text').textContent = 'Activation…';
                                 showNotice('⏳ Vérification auprès du serveur de licences…', 'loading');
 
                                 var formData = new FormData();
@@ -729,13 +729,13 @@
                                     } else {
                                         showNotice('✗ ' + (data.data && data.data.message ? data.data.message : 'Erreur inconnue'), 'error');
                                         btn.disabled = false;
-                                        btn.querySelector('.btn-text').textContent = '<?php echo $is_premium ? 'Changer' : 'Activer'; ?>';
+                                        btn.querySelector('.pdfb-license-btn-text').textContent = '<?php echo $is_premium ? 'Changer' : 'Activer'; ?>';
                                     }
                                 })
                                 .catch(function(err) {
                                     showNotice('✗ Erreur réseau : ' + err.message, 'error');
                                     btn.disabled = false;
-                                    btn.querySelector('.btn-text').textContent = '<?php echo $is_premium ? 'Changer' : 'Activer'; ?>';
+                                    btn.querySelector('.pdfb-license-btn-text').textContent = '<?php echo $is_premium ? 'Changer' : 'Activer'; ?>';
                                 });
                             });
                         })();
