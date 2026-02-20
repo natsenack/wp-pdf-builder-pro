@@ -655,6 +655,21 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
+        // ✅ Préserver les champs "settings" stockés en DB (category, canvas_format, etc.)
+        // L'éditeur ne renvoie pas ces champs → ils ne doivent pas être écrasés
+        $existing = $wpdb->get_row(
+            $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
+            ARRAY_A
+        );
+        if ($existing) {
+            $existing_data = json_decode($existing['template_data'], true) ?: [];
+            foreach (['category', 'canvas_format', 'canvas_orientation', 'canvas_dpi', 'description'] as $field) {
+                if (isset($existing_data[$field]) && !isset($template_data[$field])) {
+                    $template_data[$field] = $existing_data[$field];
+                }
+            }
+        }
+
         $result = $wpdb->update(
             $table_templates,
             [
