@@ -429,19 +429,14 @@
                                 <td style="text-align:center;border:1px solid #eee;">✅</td>
                             </tr>
                             <tr>
-                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Génération PDF mensuelle</td>
-                                <td style="text-align:center;border:1px solid #eee;">50</td>
-                                <td style="text-align:center;border:1px solid #eee;">∞</td>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Génération PDF</td>
+                                <td style="text-align:center;border:1px solid #eee;">✅ (avec attente)</td>
+                                <td style="text-align:center;border:1px solid #eee;">✅ (prioritaire)</td>
                             </tr>
                             <tr style="background:#fafafa;">
                                 <td style="padding:.45rem .75rem;border:1px solid #eee;">Qualité d'export (DPI)</td>
-                                <td style="text-align:center;border:1px solid #eee;">72 DPI</td>
-                                <td style="text-align:center;border:1px solid #eee;">300/600 DPI</td>
-                            </tr>
-                            <tr>
-                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Watermark sur PDFs</td>
-                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#cc1818;">✓</span></td>
-                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
+                                <td style="text-align:center;border:1px solid #eee;">72 DPI - Écran<br>96 DPI - Web<br>150 DPI - Impression</td>
+                                <td style="text-align:center;border:1px solid #eee;">72 DPI - Écran<br>96 DPI - Web<br>150 DPI - Impression<br>300/600 DPI - Pro</td>
                             </tr>
                             <tr style="background:#fafafa;">
                                 <td style="padding:.45rem .75rem;border:1px solid #eee;">Support</td>
@@ -450,16 +445,6 @@
                             </tr>
                         </tbody>
                         <tbody id="pdfb-compare-hidden" style="display:none;">
-                            <tr>
-                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Éléments premium (codes-barres, QR, graphiques)</td>
-                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
-                                <td style="text-align:center;border:1px solid #eee;">✅</td>
-                            </tr>
-                            <tr style="background:#fafafa;">
-                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Signatures et champs</td>
-                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
-                                <td style="text-align:center;border:1px solid #eee;">✅</td>
-                            </tr>
                             <tr>
                                 <td style="padding:.45rem .75rem;border:1px solid #eee;">Exports multi-format (PNG, JPG, SVG)</td>
                                 <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
@@ -486,7 +471,7 @@
                                 <td style="text-align:center;border:1px solid #eee;">✅</td>
                             </tr>
                             <tr style="background:#fafafa;">
-                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Formats étendus (A3, Letter, Legal, Étiquettes)</td>
+                                <td style="padding:.45rem .75rem;border:1px solid #eee;">Formats étendus (A3, Letter, Legal, Étiquettes) <small style="color:#999;">(soon)</small></td>
                                 <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
                                 <td style="text-align:center;border:1px solid #eee;">✅</td>
                             </tr>
@@ -537,8 +522,8 @@
                             </tr>
                             <tr style="background:#fafafa;">
                                 <td style="padding:.45rem .75rem;border:1px solid #eee;">Mises à jour gratuites à vie</td>
-                                <td style="text-align:center;border:1px solid #eee;"><span style="color:#bbb;">—</span></td>
                                 <td style="text-align:center;border:1px solid #eee;">✅</td>
+                                <td style="text-align:center;border:1px solid #eee;">✅ + nouvelles fonctions</td>
                             </tr>
                         </tbody>
                     </table>
