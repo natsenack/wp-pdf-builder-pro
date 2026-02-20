@@ -80,70 +80,11 @@ class PuppeteerEngine implements PDFEngineInterface {
 
         $license_key = $this->get_license_key();
         $site_url    = get_site_url();
-        $last_error  = '';
 
-        // ━━━ Tentative 1 : génération directe PNG/JPG via le service Puppeteer ━━━
-        try {
-            $image = $this->client->render_image( $html, $format, $width, $height, $quality, $license_key, $site_url );
-            $this->log( "Image générée via service – " . strlen( $image ) . " octets (format={$format})" );
-            return $image;
-        } catch ( \Exception $e ) {
-            $last_error = $e->getMessage();
-            $this->log( "Service image échoué : {$last_error}, tentative Imagick…", 'WARNING' );
-        }
-
-        // ━━━ Tentative 2 (fallback) : génération PDF puis conversion Imagick ━━━
-
-        // Si le service a refusé pour restriction de tier (Free), inutile de tenter Imagick :
-        // on lève directement l'exception pour que le frontend bascule sur html2canvas.
-        if ( str_contains( $last_error, 'tier_restriction' ) || str_contains( $last_error, 'HTTP 403' ) ) {
-            throw new \RuntimeException(
-                "Génération image indisponible sur licence gratuite — le format PNG/JPG haute qualité nécessite une licence Premium."
-            );
-        }
-
-        if ( ! extension_loaded( 'imagick' ) ) {
-            $this->log( "Imagick non disponible.", 'ERROR' );
-            throw new \RuntimeException(
-                "Génération image impossible : service Puppeteer ({$last_error}) et Imagick non installé."
-            );
-        }
-
-        // Retirer 'format' des options pour que resolve_format() récupère 'A4' depuis les dimensions
-        // (évite que 'png'/'jpg' soit interprété comme format papier PDF)
-        $pdf_options = $options;
-        unset( $pdf_options['format'] );
-
-        $pdf = $this->generate( $html, $pdf_options );
-        if ( $pdf === false ) {
-            throw new \RuntimeException(
-                "Génération image impossible : service Puppeteer ({$last_error}) et génération PDF de secours également échouée."
-            );
-        }
-
-        try {
-            $imagick = new \Imagick();
-            $imagick->setResolution( 150, 150 );
-            $imagick->readImageBlob( $pdf );
-            $imagick->setIteratorIndex( 0 );
-
-            if ( $format === 'jpg' || $format === 'jpeg' ) {
-                $imagick->setImageFormat( 'jpeg' );
-                $imagick->setImageCompressionQuality( $quality );
-            } else {
-                $imagick->setImageFormat( 'png' );
-            }
-
-            $image_data = $imagick->getImageBlob();
-            $imagick->clear();
-            $imagick->destroy();
-
-            $this->log( "Image générée via Imagick – " . strlen( $image_data ) . " octets (format={$format})" );
-            return $image_data;
-
-        } catch ( \Exception $e ) {
-            throw new \RuntimeException( 'Erreur Imagick : ' . $e->getMessage() );
-        }
+        // Génération directe PNG/JPG via le service Puppeteer (screenshot natif)
+        $image = $this->client->render_image( $html, $format, $width, $height, $quality, $license_key, $site_url );
+        $this->log( "Image générée via service – " . strlen( $image ) . " octets (format={$format})" );
+        return $image;
     }
 
     /**
