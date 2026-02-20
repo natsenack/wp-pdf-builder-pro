@@ -197,10 +197,12 @@ class Puppeteer_Client {
                     return $body;
                 }
 
-                // 202 = toujours en cours, 404 = job inconnu
-                if ( $code !== 202 ) {
+                // 202 ou 409 = job toujours en cours (409 = "job_not_ready")
+                if ( $code !== 202 && $code !== 409 ) {
                     throw new \RuntimeException( "Polling job {$job_id} – HTTP {$code} : " . substr( $body, 0, 200 ) );
                 }
+
+                $this->log( "Polling #{$attempts} → HTTP {$code} (en cours, on attend…)" );
             }
 
             sleep( self::POLL_INTERVAL_S );
