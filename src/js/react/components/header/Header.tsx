@@ -2986,7 +2986,11 @@ export const Header = memo(function Header({
         {developerModeActive && (
           <>
             <div
-              style={{ width: "1px", height: "24px", backgroundColor: "#e0e0e0" }}
+              style={{
+                width: "1px",
+                height: "24px",
+                backgroundColor: "#e0e0e0",
+              }}
             />
 
             <button

@@ -1,6 +1,42 @@
 # Changelog - PDF Builder Pro
 
-Tous les changements notables de ce projet seront documentés dans ce fichier.
+## Tous les changements notables de ce projet seront documentés dans ce fichier.
+
+## Version 1.1.0.0 (À venir)
+
+### Fonctionnalités (Features)
+
+- 🆕 **Nouveaux éléments dans la liste React** : Ajout de nouveaux types d'éléments disponibles dans le panneau d'insertion
+  - [ ] Élément 1 (à définir)
+  - [ ] Élément 2 (à définir)
+  - [ ] Élément 3 (à définir)
+
+---
+
+## Version 1.0.4.0 (À venir)
+
+### Fonctionnalités (Features)
+
+- 🆕 **Format A3 activé** : Le format papier A3 (297×420mm) est désormais disponible et sélectionnable dans les paramètres du template
+
+### Restrictions en cours
+
+> ⚠️ Les formats et options suivants sont **temporairement désactivés** dans le plugin et seront activés dans une prochaine version :
+
+- 🔒 **Format désactivé** — 🇺🇸 Letter (8.5×11")
+- 🔒 **Format désactivé** — ⚖️ Legal (8.5×14")
+- 🔒 **Format désactivé** — 📦 Étiquette Colis (100×150mm)
+- 🔒 **Orientation désactivée** — Paysage (seul le **Portrait** est disponible)
+
+---
+
+## Version 1.0.3.0 (Mars 2026)
+
+### Corrections (Bug Fixes)
+
+- [ ] **Bug 1** : À définir
+- [ ] **Bug 2** : À définir
+- [ ] **Bug 3** : À définir
 
 ## [1.0.2.0] - 2026-02-20
 

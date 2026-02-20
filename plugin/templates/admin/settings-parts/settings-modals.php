@@ -185,25 +185,30 @@ function get_canvas_modal_value($key, $default = '') {
                         $can_use_extended_formats = \PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('extended_formats');
 
                         $format_options = [
-                            ['value' => 'A4', 'label' => 'A4 (210×297mm)', 'desc' => 'Format standard européen', 'icon' => '📄', 'premium' => false],
-                            ['value' => 'A3', 'label' => 'A3 (297×420mm)', 'desc' => 'Format double A4', 'icon' => '📃', 'premium' => true],
-                            ['value' => 'Letter', 'label' => 'Letter (8.5×11")', 'desc' => 'Format américain standard', 'icon' => '🇺🇸', 'premium' => true],
-                            ['value' => 'Legal', 'label' => 'Legal (8.5×14")', 'desc' => 'Format américain légal', 'icon' => '⚖️', 'premium' => true],
-                            ['value' => 'Label', 'label' => 'Étiquette Colis (100×150mm)', 'desc' => 'Format pour étiquettes de colis', 'icon' => '📦', 'premium' => true]
+                            ['value' => 'A4',     'label' => 'A4 (210×297mm)',          'desc' => 'Format standard européen',       'icon' => '📄', 'premium' => false, 'coming_soon' => false],
+                            ['value' => 'A3',     'label' => 'A3 (297×420mm)',          'desc' => 'Format double A4',               'icon' => '📃', 'premium' => true,  'coming_soon' => false],
+                            ['value' => 'Letter', 'label' => 'Letter (8.5×11")',        'desc' => 'Format américain standard',      'icon' => '🇺🇸', 'premium' => true,  'coming_soon' => true],
+                            ['value' => 'Legal',  'label' => 'Legal (8.5×14")',         'desc' => 'Format américain légal',         'icon' => '⚖️', 'premium' => true,  'coming_soon' => true],
+                            ['value' => 'Label',  'label' => 'Étiquette Colis (100×150mm)', 'desc' => 'Format pour étiquettes de colis', 'icon' => '📦', 'premium' => true,  'coming_soon' => true]
                         ];
 
                         foreach ($format_options as $option) {
-                            $disabled = ($option['premium'] && !$can_use_extended_formats) ? 'disabled' : '';
-                            $checked = in_array($option['value'], $current_formats) ? 'checked' : '';
+                            $is_coming_soon = !empty($option['coming_soon']);
+                            $disabled = ($is_coming_soon || ($option['premium'] && !$can_use_extended_formats)) ? 'disabled' : '';
+                            $checked = (!$is_coming_soon && in_array($option['value'], $current_formats)) ? 'checked' : '';
                             $premium_class = $option['premium'] ? ' pdfb-premium-option ' : '';
+                            $opacity_style = ($is_coming_soon || ($option['premium'] && !$can_use_extended_formats)) ? 'opacity: 0.5;' : '';
+                            $pointer_style = $is_coming_soon ? 'pointer-events: none; cursor: not-allowed;' : '';
 
-                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . ($option['premium'] && !$can_use_extended_formats ? 'opacity: 0.6;' : '') . '" class="' . $premium_class . '" onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'">';
+                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . $opacity_style . ' ' . $pointer_style . '" class="' . $premium_class . '" ' . (!$is_coming_soon ? 'onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'"' : '') . '>';
                             echo '<input type="checkbox" name="pdf_builder_canvas_formats[]" value="' . $option['value'] . '" ' . $checked . ' ' . $disabled . '>';
                             echo '<div style="flex: 1;">';
                             echo '<div style="font-weight: 500; color: #2c3e50;">' . $option['icon'] . ' ' . $option['label'] . '</div>';
                             echo '<div style="font-size: 12px; color: #6c757d;">' . $option['desc'] . '</div>';
                             echo '</div>';
-                            if ($option['premium']) {
+                            if ($is_coming_soon) {
+                                echo '<span style="font-size: 11px; padding: 3px 8px; background: #e9ecef; color: #6c757d; border-radius: 4px; font-weight: 600; white-space: nowrap;">🔒 Prochainement</span>';
+                            } elseif ($option['premium']) {
                                 echo '<span class="pdfb-pdfb-premium-badge">⭐ PREMIUM</span>';
                             }
                             echo '</label>';
@@ -235,19 +240,26 @@ function get_canvas_modal_value($key, $default = '') {
                         $current_orientations = array_map('strval', $current_orientations); // S'assurer que ce sont des chaînes
 
                         $orientation_options = [
-                            ['value' => 'portrait', 'label' => 'Portrait', 'desc' => '794×1123 px • Vertical', 'icon' => '📱'],
-                            ['value' => 'landscape', 'label' => 'Paysage', 'desc' => '1123×794 px • Horizontal', 'icon' => '🖥️']
+                            ['value' => 'portrait',  'label' => 'Portrait', 'desc' => '794×1123 px • Vertical',   'icon' => '📱', 'coming_soon' => false],
+                            ['value' => 'landscape', 'label' => 'Paysage',  'desc' => '1123×794 px • Horizontal', 'icon' => '🖥️', 'coming_soon' => true]
                         ];
 
                         foreach ($orientation_options as $option) {
-                            $checked = in_array($option['value'], $current_orientations) ? 'checked' : '';
+                            $is_coming_soon = !empty($option['coming_soon']);
+                            $disabled = $is_coming_soon ? 'disabled' : '';
+                            $checked = (!$is_coming_soon && in_array($option['value'], $current_orientations)) ? 'checked' : '';
+                            $opacity_style = $is_coming_soon ? 'opacity: 0.5;' : 'opacity: 1;';
+                            $pointer_style = $is_coming_soon ? 'pointer-events: none; cursor: not-allowed;' : '';
 
-                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . ($option['value'] === 'portrait' ? 'opacity: 1;' : '') . '" onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'">';
-                            echo '<input type="checkbox" name="pdf_builder_canvas_orientations[]" value="' . $option['value'] . '" ' . $checked . '>';
+                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . $opacity_style . ' ' . $pointer_style . '" ' . (!$is_coming_soon ? 'onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'"' : '') . '>';
+                            echo '<input type="checkbox" name="pdf_builder_canvas_orientations[]" value="' . $option['value'] . '" ' . $checked . ' ' . $disabled . '>';
                             echo '<div style="flex: 1;">';
                             echo '<div style="font-weight: 500; color: #2c3e50;">' . $option['icon'] . ' ' . $option['label'] . '</div>';
                             echo '<div style="font-size: 12px; color: #6c757d;">' . $option['desc'] . '</div>';
                             echo '</div>';
+                            if ($is_coming_soon) {
+                                echo '<span style="font-size: 11px; padding: 3px 8px; background: #e9ecef; color: #6c757d; border-radius: 4px; font-weight: 600; white-space: nowrap;">🔒 Prochainement</span>';
+                            }
                             echo '</label>';
                         }
                         ?>
