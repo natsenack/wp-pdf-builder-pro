@@ -661,16 +661,6 @@ function showUpgradeModal(feature) {
         document.getElementById('upgrade-modal-overlay').style.display = 'flex';
     }
 }
-
-/**
- * Fonction pour fermer le modal de mise à niveau
- */
-function closeUpgradeModal() {
-    var modal = document.getElementById('upgrade-modal-overlay');
-    if (modal) {
-        modal.style.display = 'none';
-    }
-}
 </script>
 
 <?php

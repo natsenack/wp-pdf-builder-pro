@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) exit;
     <div class="pdfb-modal-content" style="background: white; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
         <div class="pdfb-modal-header" style="padding: 20px 30px; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
             <h3 style="margin: 0; color: #23282d; font-size: 20px;">🚀 Débloquer les Templates</h3>
-            <button class="pdfb-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+            <button class="pdfb-modal-close" onclick="closeUpgradeModal('upgrade-modal-template')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
         </div>
         <div class="pdfb-modal-body" style="padding: 30px;">
             <div class="upgrade-feature" style="text-align: center; margin-bottom: 30px;">
@@ -48,7 +48,7 @@ if (!defined('ABSPATH')) exit;
     <div class="pdfb-modal-content" style="background: white; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
         <div class="pdfb-modal-header" style="padding: 20px 30px; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
             <h3 style="margin: 0; color: #23282d; font-size: 24px;">🎨 Modèles Prédéfinis Premium</h3>
-            <button class="pdfb-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+            <button class="pdfb-modal-close" onclick="closeUpgradeModal('upgrade-modal-gallery')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
         </div>
         <div class="pdfb-modal-body" style="padding: 30px;">
             <div class="upgrade-feature" style="text-align: center; margin-bottom: 30px;">
@@ -84,7 +84,7 @@ if (!defined('ABSPATH')) exit;
     <div class="pdfb-modal-content" style="background: white; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
         <div class="pdfb-modal-header" style="padding: 20px 30px; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;">
             <h3 style="margin: 0; color: #23282d; font-size: 24px;">💎 Licence Premium</h3>
-            <button class="pdfb-modal-close" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
+            <button class="pdfb-modal-close" onclick="closeUpgradeModal('upgrade-modal-license_tab')" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;">&times;</button>
         </div>
         <div class="pdfb-modal-body" style="padding: 30px;">
             <div class="upgrade-feature" style="text-align: center; margin-bottom: 30px;">
@@ -117,6 +117,14 @@ if (!defined('ABSPATH')) exit;
 </div>
 
 <script>
+// Fonction pour fermer le modal upgrade premium
+window.closeUpgradeModal = function(modalId) {
+    var modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+    }
+};
+
 // Fonction globale partagée — afficher modal upgrade premium
 if (typeof window.showUpgradeModal === 'undefined') {
     window.showUpgradeModal = function(reason) {
@@ -125,17 +133,6 @@ if (typeof window.showUpgradeModal === 'undefined') {
             modal.style.display = 'flex';
         }
     };
-
-    // Fermer modal au clic sur overlay ou bouton close
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('pdfb-modal-overlay') ||
-            e.target.classList.contains('pdfb-modal-close')) {
-            var modal = e.target.closest('.pdfb-modal-overlay');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        }
-    });
 }
 </script>
 
