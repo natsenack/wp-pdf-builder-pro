@@ -1,0 +1,449 @@
+/* ============================================================================
+   SYSTEM TAB - MODERN STYLING
+   Prefix: pdfb- (PDF Builder) to avoid conflicts with WordPress and themes
+   ============================================================================ */
+
+/* Section Containers */
+.pdfb-system-cache-section,
+.pdfb-system-maintenance-section,
+.pdfb-system-backup-section {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pdfb-system-cache-section:hover,
+.pdfb-system-maintenance-section:hover,
+.pdfb-system-backup-section:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Section Headers */
+.pdfb-system-cache-section > header,
+.pdfb-system-maintenance-section > header,
+.pdfb-system-backup-section > header {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.pdfb-system-cache-section > header h3,
+.pdfb-system-maintenance-section > header h3,
+.pdfb-system-backup-section > header h3,
+.pdfb-system-maintenance-section > h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Status Badges */
+.pdfb-cache-performance-status,
+.pdfb-maintenance-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: auto;
+}
+
+.pdfb-cache-performance-status {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+  animation: pdfb-status-pulse 2s ease-in-out infinite;
+}
+
+.pdfb-maintenance-status {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+
+@keyframes pdfb-status-pulse {
+  0%,
+  100% {
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
+  }
+}
+
+/* Section Content */
+.pdfb-system-section-content {
+  padding: 24px;
+}
+
+/* Form Tables Enhancement */
+.pdfb-system-cache-section .form-table,
+.pdfb-system-maintenance-section .form-table,
+.pdfb-system-backup-section .form-table {
+  background: transparent;
+}
+
+.pdfb-system-cache-section .form-table th,
+.pdfb-system-maintenance-section .form-table th,
+.pdfb-system-backup-section .form-table th {
+  font-weight: 600;
+  color: #475569;
+  padding: 16px 0;
+}
+
+.pdfb-system-cache-section .form-table td,
+.pdfb-system-maintenance-section .form-table td,
+.pdfb-system-backup-section .form-table td {
+  padding: 16px 0;
+}
+
+/* System Buttons */
+.pdfb-system-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  cursor: pointer;
+}
+
+.pdfb-system-btn:not(.pdfb-danger) {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.pdfb-system-btn:not(.pdfb-danger):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+}
+
+.pdfb-system-btn.pdfb-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.pdfb-system-btn.pdfb-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+}
+
+/* Metric Cards Grid */
+.pdfb-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.pdfb-cache-metric-card,
+.pdfb-maintenance-metric-card {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.pdfb-cache-metric-card::before,
+.pdfb-maintenance-metric-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.pdfb-cache-metric-card:hover::before,
+.pdfb-maintenance-metric-card:hover::before {
+  transform: scaleX(1);
+}
+
+.pdfb-cache-metric-card:hover,
+.pdfb-maintenance-metric-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+  transform: translateY(-4px);
+}
+
+.pdfb-metric-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.pdfb-metric-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.pdfb-metric-status {
+  display: flex;
+  align-items: center;
+}
+
+.pdfb-status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  animation: pdfb-indicator-pulse 2s ease-in-out infinite;
+}
+
+.pdfb-metric-status[data-status="inactive"] .pdfb-status-indicator {
+  background: #94a3b8;
+  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.2);
+}
+
+.pdfb-metric-status[data-status="scheduled"] .pdfb-status-indicator {
+  background: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+@keyframes pdfb-indicator-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+}
+
+.pdfb-metric-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 8px 0;
+  line-height: 1.2;
+}
+
+.pdfb-metric-label {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Status Info Cards */
+.pdfb-cache-status-info,
+.pdfb-maintenance-status-info,
+.pdfb-backup-info {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 24px;
+}
+
+.pdfb-cache-status-info header h4,
+.pdfb-maintenance-status-info header h4,
+.pdfb-backup-info header h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Maintenance Action Buttons */
+.pdfb-maintenance-action-btn {
+  cursor: pointer;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+}
+
+.pdfb-maintenance-action-btn:hover {
+  border-color: #3b82f6;
+}
+
+.pdfb-metric-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #3b82f6;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+.pdfb-maintenance-action-btn:hover .pdfb-metric-action {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.pdfb-action-icon {
+  font-size: 16px;
+}
+
+/* Status Badges */
+.pdfb-status-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pdfb-status-badge.pdfb-status-active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+}
+
+.pdfb-status-badge.pdfb-status-inactive {
+  background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+  color: #ffffff;
+}
+
+.pdfb-manual-badge {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Maintenance Info Box */
+.pdfb-maintenance-info-box {
+  margin-top: 12px;
+  padding: 16px;
+  background: #eff6ff;
+  border-left: 4px solid #3b82f6;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.pdfb-maintenance-info-box strong {
+  color: #1e40af;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.pdfb-maintenance-info-box em {
+  color: #475569;
+  font-style: normal;
+  font-weight: 600;
+  display: block;
+  margin-top: 8px;
+}
+
+/* Premium Feature Card */
+.pdfb-premium-feature {
+  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+  border: 2px solid #3b82f6;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.pdfb-premium-feature-content {
+  position: relative;
+  overflow: hidden;
+}
+
+.pdfb-premium-feature-content::before {
+  content: "✨";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 60px;
+  opacity: 0.1;
+  animation: pdfb-sparkle-rotate 10s linear infinite;
+}
+
+@keyframes pdfb-sparkle-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Cache Enabled Indicator */
+.pdfb-cache-enabled-indicator {
+  color: #10b981;
+  font-weight: 700;
+}
+
+.pdfb-systeme-cache-status[data-metric="status"] .pdfb-cache-enabled-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.pdfb-systeme-cache-status[data-metric="status"]
+  .pdfb-cache-enabled-indicator::before {
+  content: "✅";
+  font-size: 20px;
+}
+
+/* Backup Actions */
+.pdfb-backup-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pdfb-backup-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.pdfb-backup-actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 782px) {
+  .pdfb-metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pdfb-system-section-content {
+    padding: 16px;
+  }
+}

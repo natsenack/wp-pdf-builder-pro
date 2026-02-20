@@ -3530,7 +3530,7 @@ export const Header = memo(function Header({
             >
               <button
                 onClick={() => setShowSettingsModal(false)}
-                className="pdfb-canvas-modal-btn canvas-modal-btn-secondary"
+                className="pdfb-canvas-modal-btn pdfb-canvas-modal-btn-secondary"
                 style={{
                   padding: "10px 20px",
                   border: "1px solid #ccc",
@@ -3559,7 +3559,7 @@ export const Header = memo(function Header({
 
                   setShowSettingsModal(false);
                 }}
-                className="pdfb-canvas-modal-btn canvas-modal-btn-primary"
+                className="pdfb-canvas-modal-btn pdfb-canvas-modal-btn-primary"
                 style={{
                   padding: "10px 20px",
                   border: "none",
@@ -3855,7 +3855,7 @@ export const Header = memo(function Header({
             <div className="pdfb-canvas-modal-footer">
               <button
                 onClick={() => setShowPreviewModal(false)}
-                className="pdfb-canvas-modal-btn canvas-modal-btn-secondary"
+                className="pdfb-canvas-modal-btn pdfb-canvas-modal-btn-secondary"
                 disabled={isGeneratingPreview}
               >
                 Annuler

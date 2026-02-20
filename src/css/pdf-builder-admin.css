@@ -1,227 +1,175 @@
-/* PDF Builder Pro Admin Styles */
-/* Cross-browser compatibility with vendor prefixes */
+/* PDF Builder Pro Admin Styles - Simplified */
 
-/* PDF Preview Modal Styles */
-.pdfb-pdf-preview-modal-overlay {
+/* Canvas Modal Styles - 👁️ Générer un aperçu */
+.pdfb-canvas-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: -o-flex;
   align-items: center;
-  -webkit-align-items: center;
-  -moz-align-items: center;
-  -ms-align-items: center;
-  -o-align-items: center;
   justify-content: center;
-  -webkit-justify-content: center;
-  -moz-justify-content: center;
-  -ms-justify-content: center;
-  -o-justify-content: center;
   z-index: 10000;
 }
 
-.pdfb-pdf-preview-modal-content {
+.pdfb-canvas-modal-container {
   background: white;
   border-radius: 8px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  -ms-border-radius: 8px;
-  -o-border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  -webkit-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  -ms-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  -o-box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  width: 500px;
   max-width: 90vw;
-  max-height: 90vh;
-  width: 800px;
-  height: 600px;
-  display: flex;
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: -o-flex;
-  flex-direction: column;
-  -webkit-flex-direction: column;
-  -moz-flex-direction: column;
-  -ms-flex-direction: column;
-  -o-flex-direction: column;
+  max-height: 85vh;
   overflow: hidden;
-}
-
-.pdfb-pdf-preview-modal-header {
   display: flex;
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: -o-flex;
-  justify-content: space-between;
-  -webkit-justify-content: space-between;
-  -moz-justify-content: space-between;
-  -ms-justify-content: space-between;
-  -o-justify-content: space-between;
-  align-items: center;
-  -webkit-align-items: center;
-  -moz-align-items: center;
-  -ms-align-items: center;
-  -o-align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid #e1e1e1;
-  background: rgba(219, 234, 254, 0.9);
+  flex-direction: column;
 }
 
-.pdfb-pdf-preview-modal-title {
+.pdfb-canvas-modal-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid #e1e1e1;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.pdfb-canvas-modal-header h3 {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
   color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.pdfb-pdf-preview-modal-close {
+.pdfb-canvas-modal-close {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 28px;
   cursor: pointer;
-  color: #4b5563;
+  color: #666;
   padding: 0;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   display: flex;
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: -o-flex;
   align-items: center;
-  -webkit-align-items: center;
-  -moz-align-items: center;
-  -ms-align-items: center;
-  -o-align-items: center;
   justify-content: center;
-  -webkit-justify-content: center;
-  -moz-justify-content: center;
-  -ms-justify-content: center;
-  -o-justify-content: center;
   border-radius: 4px;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  -ms-border-radius: 4px;
-  -o-border-radius: 4px;
-  transition: background-color 0.2s;
-  -webkit-transition: background-color 0.2s;
-  -moz-transition: background-color 0.2s;
-  -o-transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
-.pdfb-pdf-preview-modal-close:hover {
-  background-color: #e9ecef;
+.pdfb-canvas-modal-close:hover {
+  background: #ddd;
   color: #333;
 }
 
-.pdfb-pdf-preview-modal-body {
+.pdfb-canvas-modal-body {
+  padding: 24px;
+  overflow-y: auto;
   flex: 1;
-  -webkit-flex: 1;
-  -moz-flex: 1;
-  -ms-flex: 1;
-  -o-flex: 1;
-  overflow: auto;
-  padding: 20px;
-  background: #fff;
+  background: white;
 }
 
-.pdfb-pdf-preview-loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.9);
+.pdfb-canvas-modal-footer {
+  border-top: 1px solid #ddd;
+  padding: 16px 24px;
   display: flex;
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: -ms-flex;
-  display: -o-flex;
-  flex-direction: column;
-  -webkit-flex-direction: column;
-  -moz-flex-direction: column;
-  -ms-flex-direction: column;
-  -o-flex-direction: column;
-  align-items: center;
-  -webkit-align-items: center;
-  -moz-align-items: center;
-  -ms-align-items: center;
-  -o-align-items: center;
-  justify-content: center;
-  -webkit-justify-content: center;
-  -moz-justify-content: center;
-  -ms-justify-content: center;
-  -o-justify-content: center;
-  z-index: 10;
+  justify-content: flex-end;
+  gap: 12px;
+  background: #f9f9f9;
 }
 
-.pdfb-pdf-preview-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3b82f6;
-  border-radius: 50%;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  -ms-border-radius: 50%;
-  -o-border-radius: 50%;
-  animation: spin 1s linear infinite;
-  -webkit-animation: spin 1s linear infinite;
-  -moz-animation: spin 1s linear infinite;
-  -o-animation: spin 1s linear infinite;
+.pdfb-canvas-modal-btn {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background: white;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.pdfb-canvas-modal-btn:hover {
+  background: #e9e9e9;
+}
+
+.pdfb-canvas-modal-btn-primary {
+  background: #0073aa;
+  color: white;
+  border-color: #0073aa;
+}
+
+.pdfb-canvas-modal-btn-primary:hover {
+  background: #005177;
+  border-color: #005177;
+}
+
+.pdfb-canvas-modal-btn-secondary {
+  background: #f5f5f5;
+  border-color: #ccc;
+}
+
+.pdfb-canvas-modal-btn-secondary:hover {
+  background: #e9e9e9;
+}
+
+.pdfb-canvas-modal-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Form Groups */
+.pdfb-setting-group {
+  margin-bottom: 20px;
+}
+
+.pdfb-setting-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.pdfb-setting-input,
+.pdfb-setting-textarea,
+.pdfb-setting-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  background: white;
+  color: #333;
+}
+
+.pdfb-setting-input:focus,
+.pdfb-setting-textarea:focus,
+.pdfb-setting-select:focus {
+  outline: none;
+  border-color: #0073aa;
+  box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.1);
+}
+
+.pdfb-setting-hint {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
 }
 
 @keyframes spin {
   0% {
     transform: rotate(0deg);
-    -webkit-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
   }
   100% {
     transform: rotate(360deg);
-    -webkit-transform: rotate(360deg);
-    -moz-transform: rotate(360deg);
-    -ms-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-  }
-}
-
-@-webkit-keyframes spin {
-  0% {
-    -webkit-transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-  }
-}
-
-@-moz-keyframes spin {
-  0% {
-    -moz-transform: rotate(0deg);
-  }
-  100% {
-    -moz-transform: rotate(360deg);
-  }
-}
-
-@-o-keyframes spin {
-  0% {
-    -o-transform: rotate(0deg);
-  }
-  100% {
-    -o-transform: rotate(360deg);
   }
 }
 
@@ -264,7 +212,6 @@
 }
 
 /* Masquer les notifications WordPress et autres plugins dans le PDF Builder */
-/* Cible les pages du PDF Builder Pro */
 body.toplevel_page_wp-pdf-builder-pro .pdfb-notice,
 body.toplevel_page_wp-pdf-builder-pro .pdfb-notice-info,
 body.toplevel_page_wp-pdf-builder-pro .pdfb-notice-warning,
@@ -272,7 +219,6 @@ body.toplevel_page_wp-pdf-builder-pro .pdfb-notice-error,
 body.toplevel_page_wp-pdf-builder-pro .pdfb-notice-success,
 body.toplevel_page_wp-pdf-builder-pro .pdfb-updated,
 body.toplevel_page_wp-pdf-builder-pro .pdfb-update-nag,
-/* Masquer spécifiquement dans les metaboxes du PDF Builder */
 #wp-pdf-builder-pro-metabox .pdfb-notice,
 #wp-pdf-builder-pro-metabox .pdfb-notice-info,
 #wp-pdf-builder-pro-metabox .pdfb-notice-warning,
@@ -281,154 +227,4 @@ body.toplevel_page_wp-pdf-builder-pro .pdfb-update-nag,
 #wp-pdf-builder-pro-metabox .pdfb-updated,
 #wp-pdf-builder-pro-metabox .pdfb-error {
   display: none !important;
-}
-
-/* Canvas Modal Styles - 👁️ Générer un aperçu */
-.pdfb-canvas-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-  backdrop-filter: blur(3px);
-}
-
-.pdfb-canvas-modal-container {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  width: 500px;
-  max-width: 90vw;
-  max-height: 85vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.pdfb-canvas-modal-header {
-  background: linear-gradient(135deg, #667eea 0%, #5568d3 100%);
-  border-bottom: 1px solid #e1e1e1;
-  padding: 20px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-
-.pdfb-canvas-modal-header h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.pdfb-canvas-modal-close {
-  background: none;
-  border: none;
-  font-size: 28px;
-  cursor: pointer;
-  color: white;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  opacity: 0.8;
-}
-
-.pdfb-canvas-modal-close:hover {
-  background: rgba(255, 255, 255, 0.2);
-  opacity: 1;
-  transform: scale(1.1);
-}
-
-.pdfb-canvas-modal-body {
-  padding: 24px;
-  overflow-y: auto;
-  flex: 1;
-  background: white;
-}
-
-.pdfb-canvas-modal-body::-webkit-scrollbar {
-  width: 6px;
-}
-
-.pdfb-canvas-modal-body::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-.pdfb-canvas-modal-body::-webkit-scrollbar-thumb {
-  background: #667eea;
-  border-radius: 3px;
-}
-
-.pdfb-canvas-modal-body::-webkit-scrollbar-thumb:hover {
-  background: #5568d3;
-}
-
-.pdfb-canvas-modal-footer {
-  border-top: 1px solid #ddd;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  background: #f9f9f9;
-}
-
-.pdfb-canvas-modal-btn {
-  padding: 10px 20px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
-}
-
-.canvas-modal-btn-secondary {
-  background: white;
-  color: #333;
-  border: 1px solid #ccc;
-}
-
-.canvas-modal-btn-secondary:hover {
-  background: #f5f5f5;
-  border-color: #999;
-}
-
-.canvas-modal-btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #5568d3 100%);
-  color: white;
-}
-
-.canvas-modal-btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-.canvas-modal-btn-primary:active {
-  transform: translateY(0);
 }
