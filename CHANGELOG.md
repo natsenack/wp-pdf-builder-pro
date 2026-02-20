@@ -2,13 +2,42 @@
 
 ## Tous les changements notables de ce projet seront documentés dans ce fichier.
 
+## Version 1.1.3.0 (À venir)
+
+### Fonctionnalités (Features)
+
+- [] Fonction 1 (à définir)
+- [ ] Fonction 2 (à définir)
+- [ ] Fonction 3 (à définir)
+
+---
+
+## Version 1.1.2.0 (À venir)
+
+### Fonctionnalités (Features)
+
+- [] Fonction 1 (à définir)
+- [ ] Fonction 2 (à définir)
+- [ ] Fonction 3 (à définir)
+
+---
+
+## Version 1.1.1.0 (À venir)
+
+### Fonctionnalités (Features)
+
+- [] Fonction 1 (à définir)
+- [ ] Fonction 2 (à définir)
+- [ ] Fonction 3 (à définir)
+
+---
+
 ## Version 1.1.0.0 (À venir)
 
 ### Fonctionnalités (Features)
 
 - 🆕 **Nouveaux éléments dans la liste React** : Ajout de nouveaux types d'éléments disponibles dans le panneau d'insertion
-  - [ ] Élément 1 (à définir)
-  - [ ] Élément 2 (à définir)
+  - [ajouter les fonctions dans le toolbar du menu contextuel] Élément 2 (à définir)
   - [ ] Élément 3 (à définir)
 
 ---
@@ -34,8 +63,8 @@
 
 ### Corrections (Bug Fixes)
 
-- [ ] **Bug 1** : À définir
-- [ ] **Bug 2** : À définir
+- [correction des affichage des modale dans l'onglet canvas ] **Bug 1**
+- [réparation du menu contextuel] **Bug 2**
 - [ ] **Bug 3** : À définir
 
 ## [1.0.2.0] - 2026-02-20

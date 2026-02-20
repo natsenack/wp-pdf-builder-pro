@@ -32,6 +32,17 @@
 
 ---
 
+## Version 1.1.1.0 (À venir)
+
+### Fonctionnalités (Features)
+
+- 🆕 **Toolbar du menu contextuel enrichie** : Ajout de nouvelles fonctions directement accessibles depuis le menu contextuel (clic droit / sélection d'un élément)
+  - [ ] Fonction 1 (à définir)
+  - [ ] Fonction 2 (à définir)
+  - [ ] Fonction 3 (à définir)
+
+---
+
 ## Version 1.1.0.0 (À venir)
 
 ### Fonctionnalités (Features)
