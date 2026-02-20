@@ -80,6 +80,7 @@ class PuppeteerEngine implements PDFEngineInterface {
 
         $license_key = $this->get_license_key();
         $site_url    = get_site_url();
+        $last_error  = '';
 
         // ━━━ Tentative 1 : génération directe PNG/JPG via le service Puppeteer ━━━
         try {
@@ -87,18 +88,23 @@ class PuppeteerEngine implements PDFEngineInterface {
             $this->log( "Image générée via service – " . strlen( $image ) . " octets (format={$format})" );
             return $image;
         } catch ( \Exception $e ) {
-            $this->log( "Service image indisponible ({$e->getMessage()}), tentative Imagick…", 'WARNING' );
+            $last_error = $e->getMessage();
+            $this->log( "Service image échoué : {$last_error}, tentative Imagick…", 'WARNING' );
         }
 
         // ━━━ Tentative 2 (fallback) : génération PDF puis conversion Imagick ━━━
         if ( ! extension_loaded( 'imagick' ) ) {
-            $this->log( "Imagick non disponible et service image échoué.", 'ERROR' );
-            return false;
+            $this->log( "Imagick non disponible.", 'ERROR' );
+            throw new \RuntimeException(
+                "Génération image impossible : service Puppeteer ({$last_error}) et Imagick non installé."
+            );
         }
 
         $pdf = $this->generate( $html, $options );
         if ( $pdf === false ) {
-            return false;
+            throw new \RuntimeException(
+                "Génération image impossible : échec PDF (service indisponible) et Imagick non utilisable."
+            );
         }
 
         try {
@@ -122,8 +128,7 @@ class PuppeteerEngine implements PDFEngineInterface {
             return $image_data;
 
         } catch ( \Exception $e ) {
-            $this->log( "Erreur Imagick : " . $e->getMessage(), 'ERROR' );
-            return false;
+            throw new \RuntimeException( 'Erreur Imagick : ' . $e->getMessage() );
         }
     }
 

@@ -3042,22 +3042,13 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'quality' => 90,
             ];
 
-            // --- Génération image via PuppeteerEngine (service threeaxe.fr + Imagick) ---
-            $this->debug_log("Moteur image : PuppeteerEngine v2 (PDF → Imagick)");
+            // --- Génération image via PuppeteerEngine ---
+            $this->debug_log("Moteur image : PuppeteerEngine v2 (service natif PNG/JPG + fallback Imagick)");
             $this->current_engine_name = 'puppeteer';
 
             $puppeteer     = new \PDF_Builder\PDF\Engines\PuppeteerEngine();
             $image_content = $puppeteer->generate_image($html, $image_options);
-
-            if ($image_content === false) {
-                $this->debug_log("Échec génération image (PuppeteerEngine)", "ERROR");
-                wp_send_json_error([
-                    'message' => "Génération d'image échouée",
-                    'details' => "Le service Puppeteer n'a pas pu générer l'image. " .
-                                 "Vérifiez la disponibilité du service et qu'Imagick est installé sur le serveur.",
-                    'code'    => 'IMAGE_GENERATION_FAILED',
-                ], 500);
-            }
+            // generate_image() lève une exception en cas d'échec (ne retourne jamais false)
             
             $this->debug_log("Image générée avec succès - Taille: " . strlen($image_content) . " bytes");
             
