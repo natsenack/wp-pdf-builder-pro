@@ -64,9 +64,6 @@ export const Header = memo(function Header({
       try {
         const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
         const nonce = (window as any).pdfBuilderData?.nonce || '';
-        
-        // Log pour déboguer
-        console.log('[Developer Mode Check] ajaxUrl:', ajaxUrl, 'nonce:', nonce ? 'exists' : 'missing');
 
         const formData = new FormData();
         formData.append('action', 'pdf_builder_get_developer_mode');
@@ -81,23 +78,15 @@ export const Header = memo(function Header({
 
         if (response.ok) {
           const result = await response.json();
-          console.log('[Developer Mode Check] Full Response:', JSON.stringify(result, null, 2));
           
           if (result.success && result.data) {
             const isActive = result.data.developerModeActive === true || result.data.developerModeActive === '1';
-            console.log('[Developer Mode Check] Setting developerModeActive to:', isActive, 'from value:', result.data.developerModeActive);
             setDeveloperModeActive(isActive);
-          } else {
-            console.warn('[Developer Mode Check] No data in response or success is false');
           }
-        } else {
-          console.warn('[Developer Mode Check] HTTP error:', response.status);
         }
       } catch (error) {
-        console.error('[Developer Mode Check] Error:', error);
         // Fallback: essayer d'obtenir du pdfBuilderData
         const existingValue = (window as any).pdfBuilderData?.developerModeActive || false;
-        console.log('[Developer Mode Check] Using fallback value:', existingValue);
         setDeveloperModeActive(existingValue === true || existingValue === 'true');
       }
     };
