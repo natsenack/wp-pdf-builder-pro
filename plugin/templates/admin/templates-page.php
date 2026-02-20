@@ -616,7 +616,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Gestionnaires pour les filtres de la galerie
-    var galleryFilterBtns = document.querySelectorAll('.gallery-filter-btn');
+    var galleryFilterBtns = document.querySelectorAll('.pdfb-pdfb-gallery-filter-btn');
     galleryFilterBtns.forEach(function(btn) {
         btn.addEventListener('click', function() {
             // Retirer la classe active de tous les boutons
@@ -640,7 +640,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function filterTemplates(filter) {
-    var cards = document.querySelectorAll('.template-card');
+    var cards = document.querySelectorAll('.pdfb-template-card');
     cards.forEach(function(card) {
         if (filter === 'all' || card.classList.contains('template-type-' + filter)) {
             card.style.display = 'block';
