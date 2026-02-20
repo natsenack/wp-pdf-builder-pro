@@ -163,7 +163,11 @@ class Puppeteer_Client {
                 'timeout'    => 10,
                 'user-agent' => 'PDF-Builder-Pro/' . PDF_BUILDER_PRO_VERSION,
                 'headers'    => $this->build_get_headers( $path ),
-            'sslverify'  => $this->should_verify_ssl(),
+                'sslverify'  => $this->should_verify_ssl(),
+            ] );
+
+            if ( is_wp_error( $response ) ) {
+                $this->log( 'Polling WP_Error : ' . $response->get_error_message(), 'WARNING' );
             } else {
                 $code = (int) wp_remote_retrieve_response_code( $response );
                 $body = wp_remote_retrieve_body( $response );
