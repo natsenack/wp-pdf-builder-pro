@@ -602,13 +602,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Gestionnaires pour les filtres
-    var filterBtns = document.querySelectorAll('.filter-btn');
+    var filterBtns = document.querySelectorAll('.pdfb-filter-btn');
     filterBtns.forEach(function(btn) {
         btn.addEventListener('click', function() {
             // Retirer la classe active de tous les boutons
-            filterBtns.forEach(function(b) { b.classList.remove('active'); });
+            filterBtns.forEach(function(b) { b.classList.remove('pdfb-active'); });
             // Ajouter la classe active au bouton cliqué
-            this.classList.add('active');
+            this.classList.add('pdfb-active');
 
             var filter = this.getAttribute('data-filter');
             filterTemplates(filter);
