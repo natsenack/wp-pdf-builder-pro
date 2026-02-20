@@ -278,7 +278,7 @@ class PDF_Builder_Updates_Manager {
      * Retourne la clé si elle existe, sinon vide (les clients gratuits n'en ont pas)
      */
     private function get_license_key() {
-        $license_manager = new PDF_Builder_License_Manager();
+        $license_manager = PDF_Builder_License_Manager::getInstance();
         
         // Vérifier que c'est un admin (sécurité)
         if (!current_user_can('manage_options')) {
