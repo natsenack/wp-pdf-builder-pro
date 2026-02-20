@@ -542,6 +542,61 @@ export const Header = memo(function Header({
       return;
     }
 
+    const openImageViewer = (
+      imageDataUrl: string,
+      order_number: string,
+      fmt: string,
+    ) => {
+      const fileName = `facture-${order_number}.${fmt}`;
+      const htmlPage = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Facture ${order_number}</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; flex-direction: column; align-items: center; }
+        .toolbar { position: fixed; top: 20px; right: 20px; display: flex; gap: 12px; z-index: 1000; }
+        .btn { padding: 12px 24px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .btn-download { background: #2271b1; color: white; }
+        .btn-download:hover { background: #135e96; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(34,113,177,0.3); }
+        .btn-print { background: #10b981; color: white; }
+        .btn-print:hover { background: #059669; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+        .btn-zoom { background: #6b7280; color: white; padding: 12px 16px; }
+        .btn-zoom:hover { background: #4b5563; transform: translateY(-1px); }
+        .zoom-level { background: #f3f4f6; color: #374151; padding: 12px 16px; font-weight: bold; border-radius: 6px; min-width: 70px; text-align: center; }
+        .image-container { margin-top: 60px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 16px rgba(0,0,0,0.1); max-width: 50%; transition: transform 0.2s; transform-origin: center top; }
+        img { max-width: 100%; height: auto; display: block; }
+        @media print { body { background: white; padding: 0; } .toolbar { display: none !important; } .image-container { margin: 0; padding: 0; box-shadow: none; } }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button class="btn btn-zoom" onclick="zoomOut()" title="Zoom arrière"><span>🔍➖</span></button>
+        <div class="zoom-level" id="zoomLevel">100%</div>
+        <button class="btn btn-zoom" onclick="zoomIn()" title="Zoom avant"><span>🔍➕</span></button>
+        <button class="btn btn-download" onclick="downloadImage()"><span>📥</span><span>Télécharger</span></button>
+        <button class="btn btn-print" onclick="window.print()"><span>🖨️</span><span>Imprimer</span></button>
+    </div>
+    <div class="image-container" id="imageContainer">
+        <img src="${imageDataUrl}" alt="Facture ${order_number}" />
+    </div>
+    <script>
+        let zoomScale = 1.0;
+        const container = document.getElementById('imageContainer');
+        const zoomLevelDisplay = document.getElementById('zoomLevel');
+        function updateZoom() { container.style.transform = 'scale(' + zoomScale + ')'; zoomLevelDisplay.textContent = Math.round(zoomScale * 100) + '%'; }
+        function zoomIn() { if (zoomScale < 3.0) { zoomScale += 0.25; updateZoom(); } }
+        function zoomOut() { if (zoomScale > 0.25) { zoomScale -= 0.25; updateZoom(); } }
+        function downloadImage() { const link = document.createElement('a'); link.href = '${imageDataUrl}'; link.download = '${fileName}'; document.body.appendChild(link); link.click(); document.body.removeChild(link); }
+    <\/script>
+</body>
+</html>`;
+      const htmlBlob = new Blob([htmlPage], { type: "text/html" });
+      const htmlUrl = URL.createObjectURL(htmlBlob);
+      window.open(htmlUrl, "_blank");
+    };
+
     setIsGeneratingPreview(true);
     try {
       // Appel direct à Puppeteer (backend) — génération PNG/JPG haute qualité
@@ -585,232 +640,15 @@ export const Header = memo(function Header({
       });
 
       const order_number = previewOrderId.trim();
-      const fileName = `facture-${order_number}.${format}`;
 
-      // Créer une page HTML avec l'image et les boutons
-      const htmlPage = `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Facture ${order_number}</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            background: #f5f5f5;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .toolbar {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 12px;
-            z-index: 1000;
-        }
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-        .btn-download {
-            background: #2271b1;
-            color: white;
-        }
-        .btn-download:hover {
-            background: #135e96;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(34,113,177,0.3);
-        }
-        .btn-print {
-            background: #10b981;
-            color: white;
-        }
-        .btn-print:hover {
-            background: #059669;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(16,185,129,0.3);
-        }
-        .btn-zoom {
-            background: #6b7280;
-            color: white;
-            padding: 12px 16px;
-        }
-        .btn-zoom:hover {
-            background: #4b5563;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(107,114,128,0.3);
-        }
-        .zoom-level {
-            background: #f3f4f6;
-            color: #374151;
-            padding: 12px 16px;
-            font-weight: bold;
-            border-radius: 6px;
-            min-width: 70px;
-            text-align: center;
-        }
-        .image-container {
-            margin-top: 60px;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 16px rgba(0,0,0,0.1);
-            max-width: 50%;
-            transition: transform 0.2s;
-            transform-origin: center top;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-        }
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-            .toolbar {
-                display: none !important;
-            }
-            .image-container {
-                margin: 0;
-                padding: 0;
-                box-shadow: none;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="toolbar">
-        <button class="btn btn-zoom" onclick="zoomOut()" title="Zoom arrière">
-            <span>🔍➖</span>
-        </button>
-        <div class="zoom-level" id="zoomLevel">100%</div>
-        <button class="btn btn-zoom" onclick="zoomIn()" title="Zoom avant">
-            <span>🔍➕</span>
-        </button>
-        <button class="btn btn-download" onclick="downloadImage()">
-            <span>📥</span>
-            <span>Télécharger</span>
-        </button>
-        <button class="btn btn-print" onclick="window.print()">
-            <span>🖨️</span>
-            <span>Imprimer</span>
-        </button>
-    </div>
-    
-    <div class="image-container" id="imageContainer">
-        <img src="${imageDataUrl}" alt="Facture ${order_number}" />
-    </div>
-    
-    <script>
-        let zoomScale = 1.0;
-        const container = document.getElementById('imageContainer');
-        const zoomLevelDisplay = document.getElementById('zoomLevel');
-        
-        function updateZoom() {
-            container.style.transform = 'scale(' + zoomScale + ')';
-            zoomLevelDisplay.textContent = Math.round(zoomScale * 100) + '%';
-        }
-        
-        function zoomIn() {
-            if (zoomScale < 3.0) {
-                zoomScale += 0.25;
-                updateZoom();
-            }
-        }
-        
-        function zoomOut() {
-            if (zoomScale > 0.25) {
-                zoomScale -= 0.25;
-                updateZoom();
-            }
-        }
-        
-        function downloadImage() {
-            const link = document.createElement('a');
-            link.href = '${imageDataUrl}';
-            link.download = '${fileName}';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-    </script>
-</body>
-</html>`;
+      // Ouvrir dans un nouvel onglet avec viewer
+      openImageViewer(imageDataUrl, order_number, format);
 
-      // Créer un blob HTML et l'ouvrir
-      const htmlBlob = new Blob([htmlPage], { type: "text/html" });
-      const htmlUrl = URL.createObjectURL(htmlBlob);
-      window.open(htmlUrl, "_blank");
-
-      // Pas besoin de révoquer - les data URLs sont stables
       setShowPreviewModal(false);
     } catch (error) {
-      console.error(
-        `[PREVIEW] Erreur génération ${format.toUpperCase()} via Puppeteer:`,
-        error,
-      );
-      console.warn(`[PREVIEW] Fallback html2canvas activé (service indisponible)`);
-
-      // ─── Fallback html2canvas quand le service Puppeteer est inaccessible ───
-      try {
-        const canvasEl = document.querySelector(
-          ".canvas-area canvas, #pdf-canvas, canvas",
-        ) as HTMLCanvasElement | null;
-
-        if (!canvasEl) {
-          // Pas de canvas trouvé → fallback sur l'élément prévisualisé
-          const html2canvas = (await import("html2canvas")).default;
-          const previewEl = document.querySelector(
-            ".canvas-container, .pdf-preview, .canvas-area",
-          ) as HTMLElement | null;
-          if (!previewEl) throw new Error("Aucun élément à capturer trouvé");
-          const capturedCanvas = await html2canvas(previewEl, { scale: 2, useCORS: true });
-          const mimeType = format === "jpg" ? "image/jpeg" : "image/png";
-          const imageDataUrl = capturedCanvas.toDataURL(mimeType, 0.95);
-          const order_number = previewOrderId.trim();
-          const link = document.createElement("a");
-          link.href = imageDataUrl;
-          link.download = `facture-${order_number}.${format}`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        } else {
-          const mimeType = format === "jpg" ? "image/jpeg" : "image/png";
-          const imageDataUrl = canvasEl.toDataURL(mimeType, 0.95);
-          const order_number = previewOrderId.trim();
-          const link = document.createElement("a");
-          link.href = imageDataUrl;
-          link.download = `facture-${order_number}.${format}`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
-
-        console.info(`[PREVIEW] Fallback html2canvas réussi`);
-        setShowPreviewModal(false);
-      } catch (fallbackError) {
-        console.error(`[PREVIEW] Fallback html2canvas échoué:`, fallbackError);
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        alert(
-          `Erreur lors de la génération ${format.toUpperCase()}\n\n${errorMessage}`,
-        );
-      }
+      console.error(`[PREVIEW] Erreur génération ${format.toUpperCase()}:`, error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      alert(`Erreur lors de la génération ${format.toUpperCase()}\n\n${errorMessage}`);
     } finally {
       setIsGeneratingPreview(false);
     }

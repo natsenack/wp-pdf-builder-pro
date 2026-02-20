@@ -93,6 +93,15 @@ class PuppeteerEngine implements PDFEngineInterface {
         }
 
         // ━━━ Tentative 2 (fallback) : génération PDF puis conversion Imagick ━━━
+
+        // Si le service a refusé pour restriction de tier (Free), inutile de tenter Imagick :
+        // on lève directement l'exception pour que le frontend bascule sur html2canvas.
+        if ( str_contains( $last_error, 'tier_restriction' ) || str_contains( $last_error, 'HTTP 403' ) ) {
+            throw new \RuntimeException(
+                "Génération image indisponible sur licence gratuite — le format PNG/JPG haute qualité nécessite une licence Premium."
+            );
+        }
+
         if ( ! extension_loaded( 'imagick' ) ) {
             $this->log( "Imagick non disponible.", 'ERROR' );
             throw new \RuntimeException(
