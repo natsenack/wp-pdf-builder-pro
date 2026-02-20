@@ -82,21 +82,6 @@
                 <span>⚙️ Système - Performance, Maintenance & Sauvegarde</span>
             </h3>
 
-                <!-- Section Moteur PDF -->
-                <section id="pdf-engine" class="pdfb-system-pdf-engine-section">
-                    <header>
-                        <h3>
-                            <span>
-                                🚀 Moteur de génération PDF
-                                <span class="pdfb-engine-status" id="pdf-engine-status">Puppeteer ACTIF</span>
-                            </span>
-                        </h3>
-                    </header>
-
-                    <div class="pdfb-system-section-content">
-                        
-
-
                 <!-- Section Cache et Performance -->
                 <section id="systeme" class="pdfb-system-cache-section">
                     <header>
