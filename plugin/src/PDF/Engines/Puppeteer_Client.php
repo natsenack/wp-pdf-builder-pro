@@ -80,12 +80,25 @@ class Puppeteer_Client {
     ): string {
 
         $path = '/v2/render';
-        $body = (string) wp_json_encode( [
-            'html'        => $html,
-            'format'      => $format,
-            'license_key' => $license_key,
-            'site_url'    => $site_url ?: get_site_url(),
-        ] );
+
+        // 'format' dans le payload = type de sortie (pdf/png/jpg)
+        // Le format papier (A4, A3…) va dans options.format (Puppeteer PDF options)
+        $body_data = [
+            'html'    => $html,
+            'format'  => 'pdf',
+            'options' => [
+                'format'          => $format,  // ex: 'A4', 'A3'
+                'printBackground' => true,
+            ],
+            'site_url' => $site_url ?: get_site_url(),
+        ];
+
+        // license_key est optionnel côté service : on l'omet si vide
+        if ( $license_key !== '' ) {
+            $body_data['license_key'] = $license_key;
+        }
+
+        $body = (string) wp_json_encode( $body_data );
 
         $this->log( "render() → POST {$path}  (license=" . ( $license_key ? 'yes' : 'no' ) . ", format={$format})" );
 
