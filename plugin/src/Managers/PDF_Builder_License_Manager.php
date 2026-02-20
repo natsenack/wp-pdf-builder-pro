@@ -177,9 +177,20 @@ class PDF_Builder_License_Manager
             pdf_builder_update_option('pdf_builder_license_status', 'active');
             pdf_builder_update_option('pdf_builder_license_data', $result['data']);
 
+            // Mise à jour du tableau groupé pdf_builder_settings (lu par settings-licence.php)
+            $grouped = pdf_builder_get_option('pdf_builder_settings', []);
+            if (!is_array($grouped)) $grouped = [];
+            $grouped['pdf_builder_license_key']    = $encrypted;
+            $grouped['pdf_builder_license_status']  = 'active';
+            $grouped['pdf_builder_license_expires'] = $result['data']['expires_raw'] ?? '';
+            $grouped['pdf_builder_license_data']    = $result['data'];
+            pdf_builder_update_option('pdf_builder_settings', $grouped);
+
             $this->license_key    = $license_key; // en clair en mémoire uniquement
             $this->license_status = 'active';
             $this->license_data   = $result['data'];
+
+            error_log('[PDF_Builder_License] activateLicense SUCCESS - status=active stored in both individual + grouped settings');
 
             return ['success' => true, 'message' => 'Licence activée avec succès !'];
         }
@@ -195,6 +206,13 @@ class PDF_Builder_License_Manager
         pdf_builder_delete_option('pdf_builder_license_key');
         pdf_builder_delete_option('pdf_builder_license_status');
         pdf_builder_delete_option('pdf_builder_license_data');
+
+        // Mise à jour du tableau groupé pdf_builder_settings
+        $grouped = pdf_builder_get_option('pdf_builder_settings', []);
+        if (!is_array($grouped)) $grouped = [];
+        unset($grouped['pdf_builder_license_key'], $grouped['pdf_builder_license_status'],
+              $grouped['pdf_builder_license_expires'], $grouped['pdf_builder_license_data']);
+        pdf_builder_update_option('pdf_builder_settings', $grouped);
 
         $this->license_key = '';
         $this->license_status = 'free';
