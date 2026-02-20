@@ -62,32 +62,49 @@ export const Header = memo(function Header({
   useEffect(() => {
     const checkDeveloperMode = async () => {
       try {
+        const ajaxUrl = (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php';
+        const nonce = (window as any).pdfBuilderData?.nonce || '';
+        
+        // Log pour déboguer
+        if (typeof console !== 'undefined') {
+          console.log('[Developer Mode Check] ajaxUrl:', ajaxUrl, 'nonce:', nonce ? 'exists' : 'missing');
+        }
+
         const formData = new FormData();
         formData.append('action', 'pdf_builder_get_developer_mode');
-        formData.append('nonce', (window as any).pdfBuilderAjax?.nonce || (window as any).pdfBuilderData?.nonce || '');
+        if (nonce) {
+          formData.append('nonce', nonce);
+        }
 
-        const response = await fetch(
-          (window as any).pdfBuilderData?.ajaxUrl || '/wp-admin/admin-ajax.php',
-          {
-            method: 'POST',
-            body: formData,
-          }
-        );
+        const response = await fetch(ajaxUrl, {
+          method: 'POST',
+          body: formData,
+        });
 
         if (response.ok) {
           const result = await response.json();
+          if (typeof console !== 'undefined') {
+            console.log('[Developer Mode Check] Response:', result);
+          }
           if (result.success && result.data) {
             setDeveloperModeActive(result.data.developerModeActive === true || result.data.developerModeActive === '1');
           }
+        } else {
+          console.warn('[Developer Mode Check] HTTP error:', response.status);
         }
       } catch (error) {
+        if (typeof console !== 'undefined') {
+          console.error('[Developer Mode Check] Error:', error);
+        }
         // Fallback: essayer d'obtenir du pdfBuilderData
         const existingValue = (window as any).pdfBuilderData?.developerModeActive || false;
         setDeveloperModeActive(existingValue === true || existingValue === 'true');
       }
     };
 
-    checkDeveloperMode();
+    // Délai court pour s'assurer que pdfBuilderData est disponible
+    const timer = setTimeout(checkDeveloperMode, 100);
+    return () => clearTimeout(timer);
   }, []);
   
   // Debug logging

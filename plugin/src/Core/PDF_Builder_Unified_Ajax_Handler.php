@@ -5832,6 +5832,14 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     public function handle_get_developer_mode() {
         try {
+            // Vérifier le nonce si présent
+            if (isset($_POST['nonce'])) {
+                if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_ajax')) {
+                    wp_send_json_error(['message' => 'Nonce invalide'], 403);
+                    return;
+                }
+            }
+
             // Vérifier le statut du mode développeur
             $developer_mode_active = function_exists('pdf_builder_is_developer_mode_active') 
                 && pdf_builder_is_developer_mode_active();
@@ -5842,9 +5850,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         } catch (Exception $e) {
             // En cas d'erreur, retourner false pour sécurité
-            wp_send_json_success([
-                'developerModeActive' => false
-            ]);
+            wp_send_json_error(['message' => 'Erreur: ' . $e->getMessage()]);
         }
     }
     
