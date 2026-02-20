@@ -628,9 +628,13 @@ function showUpgradeModal(feature) {
                         <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
                             <h5 style="margin: 0 0 10px 0; color: #23282d;">Avantages Premium :</h5>
                             <ul style="text-align: left; color: #666; margin: 0; padding-left: 20px;">
-                                <li>� Templates illimités — aucune restriction</li>
+                                <li>📄 Templates illimités — créez sans aucune limite</li>
                                 <li>🖼️ Génération PDF, PNG &amp; JPG prioritaire</li>
-                                <li>🎯 Haute résolution 300/600 DPI</li>
+                                <li>📤 Export PDF, PNG &amp; JPG en haute qualité</li>
+                                <li>🎯 Haute résolution 300 &amp; 600 DPI</li>
+                                <li>🎨 Couleurs &amp; fonds personnalisés du canvas</li>
+                                <li>📐 Grille, guides &amp; accrochage magnétique</li>
+                                <li>🔄 Mises à jour gratuites à vie</li>
                                 <li>💬 Support prioritaire avec réponse garantie</li>
                             </ul>
                         </div>

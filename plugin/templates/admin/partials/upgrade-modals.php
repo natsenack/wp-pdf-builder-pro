@@ -21,9 +21,13 @@ if (!defined('ABSPATH')) exit;
                     Créez autant de templates PDF que vous voulez avec votre propre design et branding.
                 </p>
                 <ul style="text-align: left; background: #f8f9fa; padding: 20px; border-radius: 8px; list-style: none; margin: 0;">
-                    <li style="margin: 8px 0; color: #23282d;">� <strong>Templates illimités</strong> — aucune restriction</li>
+                    <li style="margin: 8px 0; color: #23282d;">📄 <strong>Templates illimités</strong> — créez sans aucune limite</li>
                     <li style="margin: 8px 0; color: #23282d;">🖼️ <strong>Génération PDF, PNG & JPG prioritaire</strong></li>
-                    <li style="margin: 8px 0; color: #23282d;">🎯 <strong>Haute résolution</strong> 300/600 DPI</li>
+                    <li style="margin: 8px 0; color: #23282d;">📤 <strong>Export PDF, PNG & JPG</strong> en haute qualité</li>
+                    <li style="margin: 8px 0; color: #23282d;">🎯 <strong>Haute résolution</strong> 300 & 600 DPI</li>
+                    <li style="margin: 8px 0; color: #23282d;">🎨 <strong>Couleurs & fonds personnalisés</strong> du canvas</li>
+                    <li style="margin: 8px 0; color: #23282d;">📐 <strong>Grille, guides & accrochage</strong> magnétique</li>
+                    <li style="margin: 8px 0; color: #23282d;">🔄 <strong>Mises à jour gratuites</strong> à vie</li>
                     <li style="margin: 8px 0; color: #23282d;">💬 <strong>Support prioritaire</strong> avec réponse garantie</li>
                 </ul>
             </div>
@@ -54,9 +58,13 @@ if (!defined('ABSPATH')) exit;
                     Accédez à notre collection de templates professionnels prédéfinis pour factures, devis et plus encore.
                 </p>
                 <ul style="text-align: left; background: #f8f9fa; padding: 20px; border-radius: 8px; list-style: none; margin: 0;">
-                    <li style="margin: 8px 0; color: #23282d;">📄 <strong>Templates illimités</strong> — aucune restriction</li>
+                    <li style="margin: 8px 0; color: #23282d;">📄 <strong>Templates illimités</strong> — créez sans aucune limite</li>
                     <li style="margin: 8px 0; color: #23282d;">🖼️ <strong>Génération PDF, PNG & JPG prioritaire</strong></li>
-                    <li style="margin: 8px 0; color: #23282d;">🎯 <strong>Haute résolution</strong> 300/600 DPI</li>
+                    <li style="margin: 8px 0; color: #23282d;">📤 <strong>Export PDF, PNG & JPG</strong> en haute qualité</li>
+                    <li style="margin: 8px 0; color: #23282d;">🎯 <strong>Haute résolution</strong> 300 & 600 DPI</li>
+                    <li style="margin: 8px 0; color: #23282d;">🎨 <strong>Couleurs & fonds personnalisés</strong> du canvas</li>
+                    <li style="margin: 8px 0; color: #23282d;">📐 <strong>Grille, guides & accrochage</strong> magnétique</li>
+                    <li style="margin: 8px 0; color: #23282d;">🔄 <strong>Mises à jour gratuites</strong> à vie</li>
                     <li style="margin: 8px 0; color: #23282d;">💬 <strong>Support prioritaire</strong> avec réponse garantie</li>
                 </ul>
             </div>
