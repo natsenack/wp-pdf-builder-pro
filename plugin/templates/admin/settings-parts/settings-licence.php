@@ -764,7 +764,7 @@
                     <!-- Actions rapides -->
                     <div class="license-quick-actions">
                         <?php if (!$is_premium): ?>
-                            <a href="#activate-section" class="license-btn-primary-large">
+                            <a href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/" class="license-btn-primary-large">
                                 <span class="license-btn-icon">🚀</span>
                                 Activer Premium
                             </a>
@@ -846,7 +846,7 @@
                                 </div>
                                 <p class="license-input-help">
                                     <?php if (!$is_premium): ?>
-                                        Vous n'avez pas de clé ? <a href="#get-license" class="license-link-primary">Obtenir une licence premium</a>
+                                        Vous n'avez pas de clé ? <a href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/" class="license-link-primary">Obtenir une licence premium</a>
                                     <?php else: ?>
                                         Une nouvelle clé remplacera l'actuelle
                                     <?php endif; ?>
@@ -1275,8 +1275,8 @@
                     <div class="license-upgrade-prompt" style="margin-top:1rem;">
                         <h4>Prêt à passer au premium ?</h4>
                         <p>Débloquez toutes ces fonctionnalités et bien plus encore</p>
-                        <a href="#activate-section" class="btn-primary-large">
-                            <span class="btn-icon">🚀</span>
+                        <a href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/" class="license-btn-primary-large">
+                            <span class="license-btn-icon">🚀</span>
                             Activer maintenant
                         </a>
                     </div>
