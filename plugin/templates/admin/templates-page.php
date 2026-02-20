@@ -388,8 +388,8 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
 
         <!-- Modale de la galerie de modèles prédéfinis -->
         <div id="template-gallery-modal" class="pdfb-template-gallery-modal pdfb-template-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
-            <div class="pdfb-pdfb-pdfb-template-modal-content" style="background: #fff; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; padding: 0; max-width: 1200px; width: 95%; max-height: 90vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); -webkit-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -moz-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -ms-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -o-box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
-                <div class="pdfb-pdfb-template-modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 25px 30px; border-bottom: 1px solid var(--pdf-border); background: var(--pdf-light); color: var(--pdf-text);">
+            <div class="pdfb-template-modal-content" style="background: #fff; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; padding: 0; max-width: 1200px; width: 95%; max-height: 90vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); -webkit-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -moz-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -ms-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -o-box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
+                <div class="pdfb-template-modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 25px 30px; border-bottom: 1px solid var(--pdf-border); background: var(--pdf-light); color: var(--pdf-text);">
                     <div>
                         <h2 style="margin: 0; font-size: 24px; font-weight: 600;">🎨 Galerie de Modèles Prédéfinis</h2>
                         <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 14px; color: var(--pdf-secondary);">Choisissez un modèle professionnel pour commencer</p>
@@ -854,7 +854,7 @@ function selectPredefinedTemplate(templateSlug) {
 </script>
 
 <!-- Modal des paramètres du template (dynamique - créée par JavaScript) -->
-<div id="template-settings-modal" class="pdfb-pdfb-template-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center;">
+<div id="template-settings-modal" class="pdfb-template-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center;">
 </div>
 
 <script>
@@ -894,18 +894,18 @@ function loadTemplateSettings(templateId) {
                 modalContent.className = ' pdfb-template-modal-content ';
                 modalContent.style.cssText = 'background: #fff; border-radius: 12px; padding: 0; max-width: 600px; width: 95%; max-height: 80vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
                 modalContent.innerHTML = `
-                    <div class="pdfb-pdfb-template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <div class="pdfb-template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                         <div>
                             <h2 style="margin: 0; font-size: 24px; font-weight: 600;">⚙️ Erreur de chargement</h2>
                             <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Impossible de charger les paramètres</p>
                         </div>
                         <button onclick="closeTemplateSettingsModal()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
                     </div>
-                    <div class="pdfb-pdfb-template-modal-body" style="padding: 30px; text-align: center; color: #dc3545;">
+                    <div class="pdfb-template-modal-body" style="padding: 30px; text-align: center; color: #dc3545;">
                         <div style="font-size: 2rem; margin-bottom: 20px;">❌</div>
                         <p>${errorMsg}</p>
                     </div>
-                    <div class="pdfb-pdfb-template-modal-footer" style="display: flex; justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;">
+                    <div class="pdfb-template-modal-footer" style="display: flex; justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;">
                         <button onclick="closeTemplateSettingsModal()" class="button button-secondary" style="padding: 10px 20px;">Fermer</button>
                     </div>
                 `;
@@ -928,18 +928,18 @@ function loadTemplateSettings(templateId) {
             modalContent.className = ' pdfb-template-modal-content ';
             modalContent.style.cssText = 'background: #fff; border-radius: 12px; padding: 0; max-width: 600px; width: 95%; max-height: 80vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
             modalContent.innerHTML = `
-                <div class="pdfb-pdfb-template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div class="pdfb-template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                     <div>
                         <h2 style="margin: 0; font-size: 24px; font-weight: 600;">⚙️ Erreur de chargement</h2>
                         <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Impossible de charger les paramètres</p>
                     </div>
                     <button onclick="closeTemplateSettingsModal()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
                 </div>
-                <div class="pdfb-pdfb-template-modal-body" style="padding: 30px; text-align: center; color: #dc3545;">
+                <div class="pdfb-template-modal-body" style="padding: 30px; text-align: center; color: #dc3545;">
                     <div style="font-size: 2rem; margin-bottom: 20px;">❌</div>
                     <p>Erreur de communication avec le serveur</p>
                 </div>
-                <div class="pdfb-pdfb-template-modal-footer" style="display: flex; justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;">
+                <div class="pdfb-template-modal-footer" style="display: flex; justify-content: flex-end; gap: 15px; padding: 20px 30px; border-top: 1px solid #e1e8ed; background: #f8f9fa;">
                     <button onclick="closeTemplateSettingsModal()" class="button button-secondary" style="padding: 10px 20px;">Fermer</button>
                 </div>
             `;
@@ -966,20 +966,20 @@ function displayTemplateSettings(template) {
     modalContent.className = ' pdfb-template-modal-content ';
     modalContent.style.cssText = 'background: #fff; border-radius: 12px; padding: 0; max-width: 600px; width: 95%; max-height: 80vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
     modalContent.innerHTML = `
-        <div class="pdfb-pdfb-template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <div class="pdfb-template-modal-header" style="padding: 25px 30px; border-bottom: 1px solid #e1e8ed; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
             <div>
                 <h2 style="margin: 0; font-size: 24px; font-weight: 600;">⚙️ Paramètres du Template</h2>
                 <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Configuration de "${template.name || 'Template'}"</p>
             </div>
             <button onclick="closeTemplateSettingsModal()" style="background: rgba(255,255,255,0.2); border: none; font-size: 24px; cursor: pointer; color: white; padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
         </div>
-        <div class="pdfb-pdfb-template-modal-body" style="padding: 30px; max-height: calc(80vh - 200px); overflow-y: auto;">
+        <div class="pdfb-template-modal-body" style="padding: 30px; max-height: calc(80vh - 200px); overflow-y: auto;">
             <div style="text-align: center; padding: 40px;">
                 <div style="font-size: 2rem; margin-bottom: 20px;">⏳</div>
                 <p>Chargement des paramètres...</p>
             </div>
         </div>
-        <div class="pdfb-pdfb-template-modal-footer pdfb-template-settings-modal-footer" style="padding: 20px 32px; border-top: 1px solid #e1e5e9; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; min-height: 80px;">
+        <div class="pdfb-template-modal-footer pdfb-template-settings-modal-footer" style="padding: 20px 32px; border-top: 1px solid #e1e5e9; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; min-height: 80px;">
             <div class="pdfb-pdfb-template-settings-footer-content" style="flex: 1; padding-right: 20px;">
                 <div class="pdfb-pdfb-template-settings-footer-title" style="font-size: 16px; font-weight: 600; color: #23282d; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
                     <span class="pdfb-pdfb-template-settings-icon">⚙️</span>
