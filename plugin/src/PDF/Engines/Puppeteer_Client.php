@@ -53,9 +53,9 @@ class Puppeteer_Client {
         $is_local = (
             strpos( $site, 'localhost' ) !== false ||
             strpos( $site, '127.0.0.1' ) !== false ||
-            preg_match( '/\.local(:|\/)/', $site ) ||
-            preg_match( '/\.test(:|\/)/', $site )  ||
-            preg_match( '/\.dev(:|\/)/', $site )
+            strpos( $site, '.local' )    !== false ||
+            strpos( $site, '.test' )     !== false ||
+            strpos( $site, '.dev' )      !== false
         );
         return ! $is_local;
     }
