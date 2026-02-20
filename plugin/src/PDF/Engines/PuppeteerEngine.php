@@ -73,8 +73,26 @@ class PuppeteerEngine implements PDFEngineInterface {
 
         $this->log( "========== GÉNÉRATION IMAGE (PuppeteerEngine v2) ==========" );
 
+        $format  = strtolower( $options['format'] ?? 'png' );
+        $width   = (int) ( $options['width']   ?? 794 );
+        $height  = (int) ( $options['height']  ?? 1123 );
+        $quality = (int) ( $options['quality'] ?? 90 );
+
+        $license_key = $this->get_license_key();
+        $site_url    = get_site_url();
+
+        // ━━━ Tentative 1 : génération directe PNG/JPG via le service Puppeteer ━━━
+        try {
+            $image = $this->client->render_image( $html, $format, $width, $height, $quality, $license_key, $site_url );
+            $this->log( "Image générée via service – " . strlen( $image ) . " octets (format={$format})" );
+            return $image;
+        } catch ( \Exception $e ) {
+            $this->log( "Service image indisponible ({$e->getMessage()}), tentative Imagick…", 'WARNING' );
+        }
+
+        // ━━━ Tentative 2 (fallback) : génération PDF puis conversion Imagick ━━━
         if ( ! extension_loaded( 'imagick' ) ) {
-            $this->log( "Imagick non disponible.", 'ERROR' );
+            $this->log( "Imagick non disponible et service image échoué.", 'ERROR' );
             return false;
         }
 
@@ -84,9 +102,6 @@ class PuppeteerEngine implements PDFEngineInterface {
         }
 
         try {
-            $format  = strtolower( $options['format'] ?? 'png' );
-            $quality = isset( $options['quality'] ) ? (int) $options['quality'] : 90;
-
             $imagick = new \Imagick();
             $imagick->setResolution( 150, 150 );
             $imagick->readImageBlob( $pdf );
@@ -103,7 +118,7 @@ class PuppeteerEngine implements PDFEngineInterface {
             $imagick->clear();
             $imagick->destroy();
 
-            $this->log( "Image générée – " . strlen( $image_data ) . " octets (format={$format})" );
+            $this->log( "Image générée via Imagick – " . strlen( $image_data ) . " octets (format={$format})" );
             return $image_data;
 
         } catch ( \Exception $e ) {

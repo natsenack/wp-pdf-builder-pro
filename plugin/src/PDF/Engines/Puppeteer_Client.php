@@ -132,6 +132,73 @@ class Puppeteer_Client {
     }
 
     /**
+     * Génère une image PNG ou JPG directement via le service Puppeteer.
+     *
+     * @param string $html
+     * @param string $format      'png' | 'jpg'
+     * @param int    $width       Largeur en pixels
+     * @param int    $height      Hauteur en pixels
+     * @param int    $quality     Qualité JPEG (1-100)
+     * @param string $license_key Clé de licence EDD
+     * @param string $site_url    URL du site WordPress
+     * @return string             Contenu binaire de l'image
+     * @throws \RuntimeException  En cas d'erreur ou de timeout
+     */
+    public function render_image(
+        string $html,
+        string $format      = 'png',
+        int    $width       = 794,
+        int    $height      = 1123,
+        int    $quality     = 90,
+        string $license_key = '',
+        string $site_url    = ''
+    ): string {
+
+        $path      = '/v2/render';
+        $fmt_lower = strtolower( $format ) === 'jpg' ? 'jpg' : 'png';
+
+        $body_data = [
+            'html'    => $html,
+            'format'  => $fmt_lower,
+            'options' => [
+                'width'   => $width,
+                'height'  => $height,
+                'quality' => $quality,
+                'printBackground' => true,
+            ],
+            'site_url' => $site_url ?: get_site_url(),
+        ];
+
+        if ( $license_key !== '' ) {
+            $body_data['license_key'] = $license_key;
+        }
+
+        $body = (string) wp_json_encode( $body_data );
+
+        $this->log( "render_image() → POST {$path}  format={$fmt_lower}  {$width}x{$height}  quality={$quality}" );
+
+        [ $status, $response_body, $resp_headers ] = $this->http_post( $path, $body );
+
+        if ( $status === 200 ) {
+            $this->log( 'Image synchrone OK – ' . strlen( $response_body ) . ' octets' );
+            return $response_body;
+        }
+
+        if ( $status === 202 ) {
+            $data = json_decode( $response_body, true );
+            if ( empty( $data['job_id'] ) ) {
+                throw new \RuntimeException( 'Service 202 sans job_id dans la réponse.' );
+            }
+            $this->log( "render_image async → job_id={$data['job_id']}" );
+            return $this->poll_job( (string) $data['job_id'] );
+        }
+
+        $err_msg = "Service Image — HTTP {$status} : " . substr( $response_body, 0, 500 );
+        error_log( '[Puppeteer_Client] IMAGE ERROR: ' . $err_msg );
+        throw new \RuntimeException( $err_msg );
+    }
+
+    /**
      * Vérifie la disponibilité du service.
      *
      * Logique :
