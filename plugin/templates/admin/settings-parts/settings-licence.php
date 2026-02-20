@@ -11,13 +11,15 @@
                     // Récupération des paramètres depuis le tableau unifié
                     $settings = pdf_builder_get_option('pdf_builder_settings', array());
                     // Fallback : si le statut n'est pas dans le tableau groupé, lire l'option individuelle
-                    if (!isset($settings['pdf_builder_license_status'])) {
-                        $individual_status = pdf_builder_get_option('pdf_builder_license_status', '');
-                        if (!empty($individual_status)) {
-                            $settings['pdf_builder_license_status'] = $individual_status;
-                        }
+                    $individual_status = pdf_builder_get_option('pdf_builder_license_status', '');
+                    if (empty($settings['pdf_builder_license_status']) && !empty($individual_status)) {
+                        $settings['pdf_builder_license_status'] = $individual_status;
                     }
-                    error_log('[PDF Builder] settings-licence.php loaded - license_status: ' . ($settings['pdf_builder_license_status'] ?? 'not set') . ', settings count: ' . count($settings));
+                    $individual_key = pdf_builder_get_option('pdf_builder_license_key', '');
+                    if (empty($settings['pdf_builder_license_key']) && !empty($individual_key)) {
+                        $settings['pdf_builder_license_key'] = $individual_key;
+                    }
+                    error_log('[PDF Builder] settings-licence.php loaded - individual_status=' . var_export($individual_status, true) . ' grouped_status=' . var_export($settings['pdf_builder_license_status'] ?? 'not set', true));
 
                     $license_status = $settings['pdf_builder_license_status'] ?? 'free';
                     // La clé est chiffrée en DB — on ne la lit plus directement

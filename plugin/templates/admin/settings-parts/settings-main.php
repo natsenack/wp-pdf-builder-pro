@@ -14,6 +14,7 @@ if (!is_user_logged_in() || !current_user_can('manage_options')) {
 // Récupération des paramètres
 $settings = pdf_builder_get_option('pdf_builder_settings', array());
 $current_tab = sanitize_text_field($_GET['tab'] ?? 'general');
+error_log('[PDF Builder] settings-main.php tab=' . $current_tab . ' GET=' . json_encode($_GET));
 
 // Accès développeur : uniquement si le token secret est défini et valide dans wp-config.php
 // define('PDF_BUILDER_DEV_TOKEN', '<votre_token_secret>');
