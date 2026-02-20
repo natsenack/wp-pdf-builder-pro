@@ -519,41 +519,6 @@
 
             </section>
 
-                <!-- Section Templates -->
-            <section class="contenu-templates-section">
-                <h3>
-                    <span>
-                        📋 Templates
-                        <span id="template-library-indicator" class="template-library-indicator" style="background: <?php echo (($settings['pdf_builder_template_library_enabled'] ?? '1') === '1') ? '#28a745' : '#dc3545'; ?>;"><?php echo (($settings['pdf_builder_template_library_enabled'] ?? '1') === '1') ? 'ACTIF' : 'INACTIF'; ?></span>
-                    </span>
-                </h3>
-
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row"><label for="default_template">Template par défaut</label></th>
-                            <td>
-                                <select id="default_template" name="pdf_builder_settings[pdf_builder_default_template]">
-                                    <option value="blank" <?php selected($settings['pdf_builder_default_template'] ?? 'blank', 'blank'); ?>>Page blanche</option>
-                                    <option value="invoice" <?php selected($settings['pdf_builder_default_template'] ?? 'blank', 'invoice'); ?>>Facture</option>
-                                    <option value="quote" <?php selected($settings['pdf_builder_default_template'] ?? 'blank', 'quote'); ?>>Devis</option>
-                                </select>
-                                <p class="description">Template utilisé par défaut pour nouveaux documents</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row"><label for="template_library_enabled">Bibliothèque de templates</label></th>
-                            <td>
-                                <label class="toggle-switch">
-                                    <input type="hidden" name="pdf_builder_settings[pdf_builder_template_library_enabled]" value="0">
-                                    <input type="checkbox" id="template_library_enabled" name="pdf_builder_settings[pdf_builder_template_library_enabled]" value="1" <?php checked($settings['pdf_builder_template_library_enabled'] ?? '1', '1'); ?>>
-                                    <span class="toggle-slider"></span>
-                                </label>
-                                <p class="description">Active la bibliothèque de templates prédéfinis</p>
-                            </td>
-                        </tr>
-                    </table>
-            </section>
-
             <script>
                 var ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
                 (function() {
