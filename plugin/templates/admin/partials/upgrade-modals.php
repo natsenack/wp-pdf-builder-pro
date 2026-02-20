@@ -21,11 +21,10 @@ if (!defined('ABSPATH')) exit;
                     Créez autant de templates PDF que vous voulez avec votre propre design et branding.
                 </p>
                 <ul style="text-align: left; background: #f8f9fa; padding: 20px; border-radius: 8px; list-style: none; margin: 0;">
-                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Templates personnalisés illimités</strong></li>
-                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Import/Export de templates</strong></li>
-                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Thèmes CSS avancés</strong></li>
-                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Variables dynamiques premium</strong></li>
-                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Support prioritaire</strong></li>
+                    <li style="margin: 8px 0; color: #23282d;">� <strong>Templates illimités</strong> — aucune restriction</li>
+                    <li style="margin: 8px 0; color: #23282d;">🖼️ <strong>Génération PDF, PNG & JPG prioritaire</strong></li>
+                    <li style="margin: 8px 0; color: #23282d;">🎯 <strong>Haute résolution</strong> 300/600 DPI</li>
+                    <li style="margin: 8px 0; color: #23282d;">💬 <strong>Support prioritaire</strong> avec réponse garantie</li>
                 </ul>
             </div>
             <div class="pricing" style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 8px; color: white;">
@@ -55,11 +54,12 @@ if (!defined('ABSPATH')) exit;
                     Accédez à notre collection de templates professionnels prédéfinis pour factures, devis et plus encore.
                 </p>
                 <ul style="text-align: left; background: #f8f9fa; padding: 20px; border-radius: 8px; list-style: none; margin: 0;">
-                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>10+ templates professionnels</strong></li>
-                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Factures, devis, contrats</strong></li>
-                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Designs modernes et élégants</strong></li>
-                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Prêts à personnaliser</strong></li>
-                    <li style="margin: 8px 0; color: #23282d;">✅ <strong>Mises à jour régulières</strong></li>
+                    <li style="margin: 8px 0; color: #23282d;">� <strong>Templates illimités</strong> — aucune restriction</li>
+                    <li style="margin: 8px 0; color: #23282d;">⚡ <strong>Génération en masse</strong> de PDFs en un clic</li>
+                    <li style="margin: 8px 0; color: #23282d;">🖼️ <strong>Génération PDF, PNG & JPG prioritaire</strong></li>
+                    <li style="margin: 8px 0; color: #23282d;">🎯 <strong>Haute résolution</strong> 300/600 DPI + formats A3, Legal</li>
+                    <li style="margin: 8px 0; color: #23282d;">🛠️ <strong>API REST développeur</strong> — intégration totale</li>
+                    <li style="margin: 8px 0; color: #23282d;">💬 <strong>Support prioritaire</strong> avec réponse garantie</li>
                 </ul>
             </div>
             <div class="pricing" style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 8px; color: white;">
