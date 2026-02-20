@@ -239,7 +239,7 @@ export const Header = memo(function Header({
       }
     } catch (error) {
       console.error("Erreur lors du chargement des commandes:", error);
-      alert("Erreur: " + error.message);
+      alert("Erreur: " + (error instanceof Error ? error.message : String(error)));
     } finally {
       setIsLoadingOrders(false);
     }
@@ -925,7 +925,7 @@ export const Header = memo(function Header({
     if (scrollTimeout) return; // Si un timeout est déjà en cours, ignorer
 
     setScrollTimeout(
-      setTimeout(() => {
+      window.setTimeout(() => {
         const scrollTop =
           window.pageYOffset || document.documentElement.scrollTop;
         // Le header devient fixe après 120px de scroll
