@@ -157,15 +157,20 @@ class Puppeteer_Client {
         $path      = '/v2/render';
         $fmt_lower = strtolower( $format ) === 'jpg' ? 'jpg' : 'png';
 
+        $img_options = [
+            'width'           => $width,
+            'height'          => $height,
+            'printBackground' => true,
+        ];
+        // quality n'est supporté que pour JPEG (PNG l'ignore et plante Puppeteer)
+        if ( $fmt_lower === 'jpg' ) {
+            $img_options['quality'] = $quality;
+        }
+
         $body_data = [
-            'html'    => $html,
-            'format'  => $fmt_lower,
-            'options' => [
-                'width'   => $width,
-                'height'  => $height,
-                'quality' => $quality,
-                'printBackground' => true,
-            ],
+            'html'     => $html,
+            'format'   => $fmt_lower,
+            'options'  => $img_options,
             'site_url' => $site_url ?: get_site_url(),
         ];
 
