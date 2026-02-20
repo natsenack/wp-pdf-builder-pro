@@ -121,9 +121,9 @@ class Puppeteer_Client {
         }
 
         // ─── Erreur HTTP ─────────────────────────────────────────────────────────
-        throw new \RuntimeException(
-            "Service PDF — HTTP {$status} : " . substr( $response_body, 0, 300 )
-        );
+        $err_msg = "Service PDF — HTTP {$status} : " . substr( $response_body, 0, 500 );
+        error_log( '[Puppeteer_Client] HTTP ERROR: ' . $err_msg );
+        throw new \RuntimeException( $err_msg );
     }
 
     /**

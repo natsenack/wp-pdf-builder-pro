@@ -55,6 +55,7 @@ class PuppeteerEngine implements PDFEngineInterface {
             $this->log( "PDF généré – " . strlen( $pdf ) . " octets" );
             return $pdf;
         } catch ( \Exception $e ) {
+            error_log( '[PuppeteerEngine] EXCEPTION: ' . $e->getMessage() );
             $this->log( "Erreur : " . $e->getMessage(), 'ERROR' );
             return false;
         }
