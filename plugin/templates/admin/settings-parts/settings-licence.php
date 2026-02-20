@@ -97,12 +97,12 @@
                     <!-- Actions rapides -->
                     <div class="pdfb-license-quick-actions">
                         <?php if (!$is_premium): ?>
-                            <a href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/" class="pdfb-pdfb-license-btn-primary-large">
+                            <a href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/" class="pdfb-license-btn-primary-large">
                                 <span class="pdfb-license-btn-icon">🚀</span>
                                 Activer Premium
                             </a>
                         <?php else: ?>
-                            <button type="button" class="pdfb-pdfb-license-btn-secondary-large" onclick="showDeactivateModal()">
+                            <button type="button" class="pdfb-license-btn-secondary-large" onclick="showDeactivateModal()">
                                 <span class="pdfb-license-btn-icon">🔓</span>
                                 Désactiver
                             </button>
@@ -556,7 +556,7 @@
                     <div class="pdfb-license-upgrade-prompt" style="margin-top:1rem;">
                         <h4>Prêt à passer au premium ?</h4>
                         <p>Débloquez toutes ces fonctionnalités et bien plus encore</p>
-                        <a href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/" class="pdfb-pdfb-license-btn-primary-large">
+                        <a href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/" class="pdfb-license-btn-primary-large">
                             <span class="pdfb-license-btn-icon">🚀</span>
                             Activer maintenant
                         </a>

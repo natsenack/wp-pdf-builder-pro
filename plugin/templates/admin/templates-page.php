@@ -394,7 +394,7 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                         <h2 style="margin: 0; font-size: 24px; font-weight: 600;">🎨 Galerie de Modèles Prédéfinis</h2>
                         <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 14px; color: var(--pdf-secondary);">Choisissez un modèle professionnel pour commencer</p>
                     </div>
-                    <button onclick="closeTemplateGallery()" style="background: var(--pdf-border); border: none; font-size: 24px; cursor: pointer; color: var(--pdf-secondary); padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
+                    <button onclick="document.getElementById('template-gallery-modal').style.display='none'" style="background: var(--pdf-border); border: none; font-size: 24px; cursor: pointer; color: var(--pdf-secondary); padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
                 </div>
 
                 <div style="padding: 30px; max-height: calc(90vh - 120px); overflow-y: auto;">
