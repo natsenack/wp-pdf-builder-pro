@@ -5840,9 +5840,10 @@ class PDF_Builder_Unified_Ajax_Handler {
                 }
             }
 
-            // Vérifier le statut du mode développeur
-            $developer_mode_active = function_exists('pdf_builder_is_developer_mode_active') 
-                && pdf_builder_is_developer_mode_active();
+            // Vérifier JUSTE l'accès développeur (le token dans wp-config.php)
+            // C'est la vraie barrière de sécurité
+            $developer_mode_active = function_exists('pdf_builder_is_dev_access') 
+                && pdf_builder_is_dev_access();
 
             wp_send_json_success([
                 'developerModeActive' => $developer_mode_active
