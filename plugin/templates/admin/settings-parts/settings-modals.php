@@ -610,7 +610,14 @@ document.addEventListener('DOMContentLoaded', function() {
  * Fonction pour afficher le modal de mise à niveau
  */
 function showUpgradeModal(feature) {
-    // Créer le modal de mise à niveau s'il n'existe pas
+    // Vérifier d'abord s'il y a un modal pré-existant (upgrade-modals.php)
+    var specificModal = document.getElementById('upgrade-modal-' + feature);
+    if (specificModal) {
+        specificModal.style.display = 'flex';
+        return;
+    }
+    
+    // Sinon, créer le modal générique
     if (!document.getElementById('upgrade-modal-overlay')) {
         var modalHTML = `
             <div id="upgrade-modal-overlay" class="pdfb-canvas-modal-overlay" style="display: flex; z-index: 10002;">
