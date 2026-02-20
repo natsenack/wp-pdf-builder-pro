@@ -100,10 +100,15 @@ class PuppeteerEngine implements PDFEngineInterface {
             );
         }
 
-        $pdf = $this->generate( $html, $options );
+        // Retirer 'format' des options pour que resolve_format() récupère 'A4' depuis les dimensions
+        // (évite que 'png'/'jpg' soit interprété comme format papier PDF)
+        $pdf_options = $options;
+        unset( $pdf_options['format'] );
+
+        $pdf = $this->generate( $html, $pdf_options );
         if ( $pdf === false ) {
             throw new \RuntimeException(
-                "Génération image impossible : échec PDF (service indisponible) et Imagick non utilisable."
+                "Génération image impossible : service Puppeteer ({$last_error}) et génération PDF de secours également échouée."
             );
         }
 

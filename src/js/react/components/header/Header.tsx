@@ -761,15 +761,56 @@ export const Header = memo(function Header({
       setShowPreviewModal(false);
     } catch (error) {
       console.error(
-        `[PREVIEW] Erreur génération ${format.toUpperCase()}:`,
+        `[PREVIEW] Erreur génération ${format.toUpperCase()} via Puppeteer:`,
         error,
       );
+      console.warn(`[PREVIEW] Fallback html2canvas activé (service indisponible)`);
 
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      alert(
-        `Erreur lors de la génération ${format.toUpperCase()}\n\n${errorMessage}`,
-      );
+      // ─── Fallback html2canvas quand le service Puppeteer est inaccessible ───
+      try {
+        const canvasEl = document.querySelector(
+          ".canvas-area canvas, #pdf-canvas, canvas",
+        ) as HTMLCanvasElement | null;
+
+        if (!canvasEl) {
+          // Pas de canvas trouvé → fallback sur l'élément prévisualisé
+          const html2canvas = (await import("html2canvas")).default;
+          const previewEl = document.querySelector(
+            ".canvas-container, .pdf-preview, .canvas-area",
+          ) as HTMLElement | null;
+          if (!previewEl) throw new Error("Aucun élément à capturer trouvé");
+          const capturedCanvas = await html2canvas(previewEl, { scale: 2, useCORS: true });
+          const mimeType = format === "jpg" ? "image/jpeg" : "image/png";
+          const imageDataUrl = capturedCanvas.toDataURL(mimeType, 0.95);
+          const order_number = previewOrderId.trim();
+          const link = document.createElement("a");
+          link.href = imageDataUrl;
+          link.download = `facture-${order_number}.${format}`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          const mimeType = format === "jpg" ? "image/jpeg" : "image/png";
+          const imageDataUrl = canvasEl.toDataURL(mimeType, 0.95);
+          const order_number = previewOrderId.trim();
+          const link = document.createElement("a");
+          link.href = imageDataUrl;
+          link.download = `facture-${order_number}.${format}`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+
+        console.info(`[PREVIEW] Fallback html2canvas réussi`);
+        setShowPreviewModal(false);
+      } catch (fallbackError) {
+        console.error(`[PREVIEW] Fallback html2canvas échoué:`, fallbackError);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        alert(
+          `Erreur lors de la génération ${format.toUpperCase()}\n\n${errorMessage}`,
+        );
+      }
     } finally {
       setIsGeneratingPreview(false);
     }
