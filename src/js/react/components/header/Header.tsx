@@ -543,11 +543,12 @@ export const Header = memo(function Header({
     }
 
     const openImageViewer = (
-      imageDataUrl: string,
+      imageBlobUrl: string,
       order_number: string,
       fmt: string,
     ) => {
       const fileName = `facture-${order_number}.${fmt}`;
+      const mimeType = fmt === "jpg" ? "image/jpeg" : "image/png";
       const htmlPage = `
 <!DOCTYPE html>
 <html>
@@ -579,22 +580,36 @@ export const Header = memo(function Header({
         <button class="btn btn-print" onclick="window.print()"><span>🖨️</span><span>Imprimer</span></button>
     </div>
     <div class="image-container" id="imageContainer">
-        <img src="${imageDataUrl}" alt="Facture ${order_number}" />
+        <img id="facImg" src="${imageBlobUrl}" alt="Facture ${order_number}" crossorigin="anonymous" onload="onImageLoaded()" />
     </div>
     <script>
+        /* URL de téléchargement capturée via canvas dès que l'image est chargée          *
+         * → indépendant de la durée de vie de la blob URL du parent                      */
+        let downloadHref = '${imageBlobUrl}';
+        function onImageLoaded() {
+            try {
+                const img = document.getElementById('facImg');
+                const canvas = document.createElement('canvas');
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                canvas.getContext('2d').drawImage(img, 0, 0);
+                downloadHref = canvas.toDataURL('${mimeType}');
+            } catch(e) { /* cross-origin : on garde la blob URL */ }
+        }
         let zoomScale = 1.0;
         const container = document.getElementById('imageContainer');
         const zoomLevelDisplay = document.getElementById('zoomLevel');
         function updateZoom() { container.style.transform = 'scale(' + zoomScale + ')'; zoomLevelDisplay.textContent = Math.round(zoomScale * 100) + '%'; }
         function zoomIn() { if (zoomScale < 3.0) { zoomScale += 0.25; updateZoom(); } }
         function zoomOut() { if (zoomScale > 0.25) { zoomScale -= 0.25; updateZoom(); } }
-        function downloadImage() { const link = document.createElement('a'); link.href = '${imageDataUrl}'; link.download = '${fileName}'; document.body.appendChild(link); link.click(); document.body.removeChild(link); }
+        function downloadImage() { const link = document.createElement('a'); link.href = downloadHref; link.download = '${fileName}'; document.body.appendChild(link); link.click(); document.body.removeChild(link); }
     <\/script>
 </body>
 </html>`;
       const htmlBlob = new Blob([htmlPage], { type: "text/html" });
       const htmlUrl = URL.createObjectURL(htmlBlob);
       window.open(htmlUrl, "_blank");
+      setTimeout(() => URL.revokeObjectURL(htmlUrl), 5_000);
     };
 
     setIsGeneratingPreview(true);
@@ -630,19 +645,17 @@ export const Header = memo(function Header({
         throw new Error(`Erreur serveur ${response.status}`);
       }
 
-      // Lire le blob binaire retourné par Puppeteer et le convertir en data URL stable
+      // Créer une blob URL directement — pas de conversion base64 (beaucoup plus rapide)
       const blob = await response.blob();
-      const imageDataUrl = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
+      const imageBlobUrl = URL.createObjectURL(blob);
 
       const order_number = previewOrderId.trim();
 
       // Ouvrir dans un nouvel onglet avec viewer
-      openImageViewer(imageDataUrl, order_number, format);
+      openImageViewer(imageBlobUrl, order_number, format);
+
+      // Révoquer après un délai suffisant pour que l'onglet l'ait chargée
+      setTimeout(() => URL.revokeObjectURL(imageBlobUrl), 60_000);
 
       setShowPreviewModal(false);
     } catch (error) {
