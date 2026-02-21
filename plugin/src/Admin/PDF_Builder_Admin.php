@@ -924,6 +924,46 @@ class PdfBuilderAdminNew
             }
         }, 1);
 
+        // Streaming PDF blob (fetch depuis JS - tous utilisateurs)
+        \add_action('wp_ajax_pdf_builder_stream_pdf', function() {
+            $integration = $this->getWooCommerceIntegration();
+            if ($integration) {
+                $integration->ajaxStreamPdf();
+            } else {
+                status_header(503);
+                echo 'WooCommerce integration unavailable';
+                exit;
+            }
+        }, 1);
+
+        // File d'attente PDF (utilisateurs gratuits)
+        \add_action('wp_ajax_pdf_builder_pdf_queue_join', function() {
+            $integration = $this->getWooCommerceIntegration();
+            if ($integration) {
+                $integration->ajaxPdfQueueJoin();
+            } else {
+                \wp_send_json_error(['message' => 'WooCommerce integration unavailable']);
+            }
+        }, 1);
+
+        \add_action('wp_ajax_pdf_builder_pdf_queue_poll', function() {
+            $integration = $this->getWooCommerceIntegration();
+            if ($integration) {
+                $integration->ajaxPdfQueuePoll();
+            } else {
+                \wp_send_json_error(['message' => 'WooCommerce integration unavailable']);
+            }
+        }, 1);
+
+        \add_action('wp_ajax_pdf_builder_pdf_queue_leave', function() {
+            $integration = $this->getWooCommerceIntegration();
+            if ($integration) {
+                $integration->ajaxPdfQueueLeave();
+            } else {
+                \wp_send_json_error(['message' => 'ok']);
+            }
+        }, 1);
+
         // Enregistrer directement pour le hook shop_order (version legacy)
         \add_action('add_meta_boxes_shop_order', function() {
             // Vérifier que WooCommerce est activé
