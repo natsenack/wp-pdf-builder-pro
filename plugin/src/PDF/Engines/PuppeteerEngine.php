@@ -106,6 +106,18 @@ class PuppeteerEngine implements PDFEngineInterface {
     }
 
     /**
+     * Récupère le PDF d'un job déjà terminé sans le re-générer.
+     * À utiliser quand on sait que le job est status 200.
+     *
+     * @param string $job_id
+     * @return string  Contenu binaire PDF
+     * @throws \RuntimeException
+     */
+    public function get_job_result( string $job_id ): string {
+        return $this->client->get_job_result( $job_id );
+    }
+
+    /**
      * Retourne le nom du moteur.
      *
      * @return string

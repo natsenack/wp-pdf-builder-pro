@@ -3194,39 +3194,40 @@ class PDF_Builder_Unified_Ajax_Handler {
                 return;
             }
 
-            // Vérifier que le job est effectivement prêt
             // Pour les jobs simulation (sim-*), on skip la re-vérification Puppeteer
             $is_simulation = strpos($job_id, 'sim-') === 0;
 
-            if (!$is_simulation) {
-                $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
-                $status = $engine->get_queue_status($job_id);
-                if (!$status || $status['status'] !== 200) {
-                    wp_send_json_error(['message' => 'Le job n\'est pas encore prêt'], 409);
-                    return;
-                }
-            }
-
-            // Générer le PDF final
-            // Pour les jobs simulation, on utilise DomPDF directement (pas de Puppeteer)
-            $html = $this->generate_template_html($template, $order, 'pdf');
-            $html = $this->optimize_html($html);
-            
-            $template_data = json_decode($template['template_data'], true);
-            $width = $template_data['canvasWidth'] ?? 794;
-            $height = $template_data['canvasHeight'] ?? 1123;
-
             $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
 
-            $pdf_content = $engine->generate($html, [
-                'width'                => $width,
-                'height'               => $height,
-                'force_simulation_off' => $is_simulation,  // Ignore la simulation pour le rendu final
-            ]);
-            
-            if ($pdf_content === false) {
-                wp_send_json_error(['message' => 'Erreur lors de la génération du PDF'], 500);
-                return;
+            if (!$is_simulation) {
+                // ── JOB RÉEL : le PDF est déjà sur le service, on le récupère directement ──
+                // Pas de re-génération : évite de doubler le temps de rendu
+                try {
+                    $pdf_content = $engine->get_job_result($job_id);
+                } catch (\Exception $e) {
+                    error_log('[PDF QUEUE] get_job_result failed: ' . $e->getMessage());
+                    wp_send_json_error(['message' => 'Impossible de récupérer le PDF : ' . $e->getMessage()], 500);
+                    return;
+                }
+            } else {
+                // ── JOB SIMULATION : générer le vrai PDF maintenant (Puppeteer, sim=OFF) ──
+                $html = $this->generate_template_html($template, $order, 'pdf');
+                $html = $this->optimize_html($html);
+
+                $template_data = json_decode($template['template_data'], true);
+                $width  = $template_data['canvasWidth']  ?? 794;
+                $height = $template_data['canvasHeight'] ?? 1123;
+
+                $pdf_content = $engine->generate($html, [
+                    'width'                => $width,
+                    'height'               => $height,
+                    'force_simulation_off' => true,
+                ]);
+
+                if ($pdf_content === false) {
+                    wp_send_json_error(['message' => 'Erreur lors de la génération du PDF'], 500);
+                    return;
+                }
             }
             
             $this->debug_log("PDF généré avec succès - Taille: " . strlen($pdf_content) . " bytes");

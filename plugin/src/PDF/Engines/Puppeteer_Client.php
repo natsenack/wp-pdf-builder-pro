@@ -457,6 +457,49 @@ class Puppeteer_Client {
         ];
     }
 
+    // ─── Récupération résultat ────────────────────────────────────────────────────
+
+    /**
+     * Récupère le PDF d'un job déjà terminé (status 200 confirmé au préalable).
+     * Fait un unique GET /v2/jobs/{job_id}/result — pas de polling.
+     *
+     * @param string $job_id  ID du job Puppeteer (ex retourné par render_non_blocking)
+     * @return string         Contenu binaire du PDF
+     * @throws \RuntimeException  Si le job n'est pas encore prêt ou erreur service
+     */
+    public function get_job_result( string $job_id ): string {
+
+        $path = "/v2/jobs/{$job_id}/result";
+        $url  = self::SERVICE_BASE_URL . $path;
+
+        $this->log( "get_job_result() → GET {$path}" );
+
+        $response = wp_remote_get( $url, [
+            'timeout'    => 30,
+            'user-agent' => 'PDF-Builder-Pro/' . PDF_BUILDER_PRO_VERSION,
+            'headers'    => $this->build_get_headers( $path ),
+            'sslverify'  => $this->should_verify_ssl(),
+        ] );
+
+        if ( is_wp_error( $response ) ) {
+            throw new \RuntimeException( 'get_job_result WP_Error : ' . $response->get_error_message() );
+        }
+
+        $code = (int) wp_remote_retrieve_response_code( $response );
+        $body = wp_remote_retrieve_body( $response );
+
+        if ( $code === 200 ) {
+            $this->log( "get_job_result → PDF reçu (" . strlen( $body ) . " octets)" );
+            return $body;
+        }
+
+        if ( $code === 202 || $code === 409 ) {
+            throw new \RuntimeException( "Le job {$job_id} n'est pas encore terminé (HTTP {$code})" );
+        }
+
+        throw new \RuntimeException( "get_job_result HTTP {$code} : " . substr( $body, 0, 300 ) );
+    }
+
     // ─── Polling ─────────────────────────────────────────────────────────────────
 
     /**
