@@ -169,8 +169,9 @@
 
                             <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px;">
                                 <div style="display: flex; gap: 10px; align-items: center;">
-                                    <select id="export-format" style="min-width: 100px;">
+                                    <select id="export-format" style="min-width: 130px;">
                                         <option value="html">📄 HTML (Lisible)</option>
+                                        <option value="json">📋 JSON (Brut)</option>
                                     </select>
                                     <button type="button" id="export-my-data" class="button button-secondary" style="display: flex; align-items: center; gap: 8px;">
                                         📥 Exporter mes données
@@ -187,6 +188,7 @@
                             <div id="gdpr-user-actions-result" style="margin-top: 15px; display: none;"></div>
                             <input type="hidden" id="export_user_data_nonce" value="<?php echo wp_create_nonce('pdf_builder_gdpr'); ?>" />
                             <input type="hidden" id="delete_user_data_nonce" value="<?php echo wp_create_nonce('pdf_builder_gdpr'); ?>" />
+                            <input type="hidden" id="audit_log_nonce"        value="<?php echo wp_create_nonce('pdf_builder_gdpr'); ?>" />
                         </div>
 
                         <!-- Section Logs d'Audit -->
@@ -216,41 +218,177 @@
 (function($) {
     'use strict';
 
-    // Mise à jour dynamique des indicateurs de statut
+    // ── Indicateurs de statut ─────────────────────────────────────────────────
     function updateSecurityStatusIndicators() {
-        // Mettre à jour le statut de sécurité (logging)
-        const loggingEnabled = document.getElementById('enable_logging').checked;
-        const securityStatusElement = document.getElementById('security-status-indicator');
-
-        if (securityStatusElement) {
-            securityStatusElement.textContent = loggingEnabled ? 'ACTIF' : 'INACTIF';
-            securityStatusElement.style.backgroundColor = loggingEnabled ? '#28a745' : '#dc3545';
+        var loggingEnabled = document.getElementById('enable_logging').checked;
+        var securityEl     = document.getElementById('security-status-indicator');
+        if (securityEl) {
+            securityEl.textContent        = loggingEnabled ? 'ACTIF' : 'INACTIF';
+            securityEl.style.backgroundColor = loggingEnabled ? '#28a745' : '#dc3545';
         }
-
-        // Mettre à jour le statut RGPD
-        const gdprEnabled = document.getElementById('gdpr_enabled').checked;
-        const rgpdStatusElement = document.getElementById('rgpd-status-indicator');
-
-        if (rgpdStatusElement) {
-            rgpdStatusElement.textContent = gdprEnabled ? 'ACTIF' : 'INACTIF';
-            rgpdStatusElement.style.backgroundColor = gdprEnabled ? '#28a745' : '#dc3545';
+        var gdprEnabled = document.getElementById('gdpr_enabled').checked;
+        var rgpdEl      = document.getElementById('rgpd-status-indicator');
+        if (rgpdEl) {
+            rgpdEl.textContent        = gdprEnabled ? 'ACTIF' : 'INACTIF';
+            rgpdEl.style.backgroundColor = gdprEnabled ? '#28a745' : '#dc3545';
         }
     }
 
-    // Écouter les changements sur les toggles principaux
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    function gdprNonce() {
+        return document.getElementById('export_user_data_nonce')?.value || '';
+    }
+
+    function showResult(html, isError) {
+        var $el = $('#gdpr-user-actions-result');
+        var bg  = isError ? '#f8d7da' : '#d4edda';
+        var col = isError ? '#721c24' : '#155724';
+        $el.html('<div style="padding:12px;background:' + bg + ';color:' + col + ';border-radius:6px;border:1px solid ' + (isError ? '#f5c6cb' : '#c3e6cb') + '">' + html + '</div>').show();
+    }
+
+    function setLoading($btn, loading) {
+        if (loading) {
+            $btn.prop('disabled', true).data('orig', $btn.html()).html('⏳ Chargement…');
+        } else {
+            $btn.prop('disabled', false).html($btn.data('orig'));
+        }
+    }
+
+    function ajaxGdpr(action, extra, onSuccess, onError) {
+        $.post(ajaxurl, $.extend({ action: action, nonce: gdprNonce() }, extra), function(res) {
+            if (res.success) { onSuccess(res.data); }
+            else             { onError(res.data?.message || 'Erreur'); }
+        }).fail(function() { onError('Erreur de connexion'); });
+    }
+
+    // ── 📥 Exporter mes données ───────────────────────────────────────────────
+    $('#export-my-data').on('click', function() {
+        var $btn = $(this);
+        var fmt  = $('#export-format').val() || 'html';
+        setLoading($btn, true);
+
+        ajaxGdpr('pdf_builder_export_gdpr_data', { format: fmt }, function(data) {
+            setLoading($btn, false);
+            if (fmt === 'json') {
+                var blob = new Blob([JSON.stringify(data.content, null, 2)], { type: 'application/json' });
+                var url  = URL.createObjectURL(blob);
+                var a    = document.createElement('a');
+                a.href = url; a.download = 'mes-donnees-rgpd.json'; a.click();
+                URL.revokeObjectURL(url);
+                showResult('✅ Export JSON téléchargé.', false);
+            } else {
+                showResult(data.content, false);
+            }
+        }, function(msg) {
+            setLoading($btn, false);
+            showResult('❌ ' + msg, true);
+        });
+    });
+
+    // ── 🗑️ Supprimer mes données ─────────────────────────────────────────────
+    $('#delete-my-data').on('click', function() {
+        if (!confirm('⚠️ Êtes-vous sûr de vouloir supprimer vos données personnelles stockées par le plugin ?')) return;
+        var $btn = $(this);
+        setLoading($btn, true);
+
+        ajaxGdpr('pdf_builder_delete_gdpr_data', {}, function(data) {
+            setLoading($btn, false);
+            showResult('✅ ' + data.message, false);
+        }, function(msg) {
+            setLoading($btn, false);
+            showResult('❌ ' + msg, true);
+        });
+    });
+
+    // ── 👁️ Voir mes consentements ────────────────────────────────────────────
+    $('#view-consent-status').on('click', function() {
+        var $btn = $(this);
+        setLoading($btn, true);
+
+        ajaxGdpr('pdf_builder_get_consent_status', {}, function(data) {
+            setLoading($btn, false);
+            var rows = data.consents.map(function(c) {
+                var icon = (c.value === true || c.value === 1) ? '✅' : (c.value === false ? '❌' : '');
+                var val  = (typeof c.value === 'boolean') ? (c.value ? 'Oui' : 'Non') : c.value;
+                return '<tr><td style="padding:4px 10px;font-weight:600">' + c.label + '</td><td style="padding:4px 10px">' + icon + ' ' + val + '</td></tr>';
+            }).join('');
+            showResult('<strong>👁️ État des consentements RGPD</strong><br><table style="margin-top:8px;width:100%">' + rows + '</table>', false);
+        }, function(msg) {
+            setLoading($btn, false);
+            showResult('❌ ' + msg, true);
+        });
+    });
+
+    // ── 🔄 Actualiser les logs ───────────────────────────────────────────────
+    $('#refresh-audit-log').on('click', function() {
+        var $btn = $(this);
+        setLoading($btn, true);
+
+        ajaxGdpr('pdf_builder_get_audit_log', { limit: 50 }, function(data) {
+            setLoading($btn, false);
+            var $container = $('#audit-log-container');
+            var $content   = $('#audit-log-content');
+            $container.show();
+
+            if (!data.logs || data.logs.length === 0) {
+                $content.html('<p style="color:#6c757d;text-align:center;margin:10px 0">Aucune entrée de log disponible.</p>');
+                return;
+            }
+
+            var rows = data.logs.map(function(e) {
+                return '<tr style="border-bottom:1px solid #f0f0f0">'
+                    + '<td style="padding:4px 8px;font-size:11px;color:#666;white-space:nowrap">' + (e.date || '') + '</td>'
+                    + '<td style="padding:4px 8px;font-weight:600">' + (e.user || '') + '</td>'
+                    + '<td style="padding:4px 8px"><code style="background:#e9ecef;padding:2px 6px;border-radius:3px;font-size:11px">' + (e.action || '') + '</code></td>'
+                    + '<td style="padding:4px 8px;font-size:12px;color:#495057">' + (e.details || '') + '</td>'
+                    + '</tr>';
+            }).join('');
+
+            $content.html(
+                '<table style="width:100%;border-collapse:collapse">'
+                + '<thead><tr style="background:#f8f9fa">'
+                + '<th style="padding:6px 8px;text-align:left;font-size:12px">Date</th>'
+                + '<th style="padding:6px 8px;text-align:left;font-size:12px">Utilisateur</th>'
+                + '<th style="padding:6px 8px;text-align:left;font-size:12px">Action</th>'
+                + '<th style="padding:6px 8px;text-align:left;font-size:12px">Détails</th>'
+                + '</tr></thead><tbody>' + rows + '</tbody></table>'
+            );
+        }, function(msg) {
+            setLoading($btn, false);
+            $('#audit-log-container').show();
+            $('#audit-log-content').html('<p style="color:#dc3545">❌ ' + msg + '</p>');
+        });
+    });
+
+    // ── 📤 Exporter les logs ─────────────────────────────────────────────────
+    $('#export-audit-log').on('click', function() {
+        var $btn = $(this);
+        setLoading($btn, true);
+
+        ajaxGdpr('pdf_builder_export_audit_log', {}, function(data) {
+            setLoading($btn, false);
+            if (!data.count) {
+                showResult('ℹ️ Aucun log à exporter.', false);
+                return;
+            }
+            var blob = new Blob([data.csv], { type: 'text/csv;charset=utf-8;' });
+            var url  = URL.createObjectURL(blob);
+            var a    = document.createElement('a');
+            a.href = url; a.download = data.filename; a.click();
+            URL.revokeObjectURL(url);
+            showResult('✅ ' + data.count + ' entrée(s) exportée(s) dans <strong>' + data.filename + '</strong>', false);
+        }, function(msg) {
+            setLoading($btn, false);
+            showResult('❌ ' + msg, true);
+        });
+    });
+
+    // ── Init ─────────────────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', function() {
-        const enableLoggingCheckbox = document.getElementById('enable_logging');
-        const gdprEnabledCheckbox = document.getElementById('gdpr_enabled');
-
-        if (enableLoggingCheckbox) {
-            enableLoggingCheckbox.addEventListener('change', updateSecurityStatusIndicators);
-        }
-
-        if (gdprEnabledCheckbox) {
-            gdprEnabledCheckbox.addEventListener('change', updateSecurityStatusIndicators);
-        }
-
-        // Initialiser les indicateurs au chargement
+        var loggingCb = document.getElementById('enable_logging');
+        var gdprCb    = document.getElementById('gdpr_enabled');
+        if (loggingCb) loggingCb.addEventListener('change', updateSecurityStatusIndicators);
+        if (gdprCb)    gdprCb.addEventListener('change',    updateSecurityStatusIndicators);
         updateSecurityStatusIndicators();
     });
 
