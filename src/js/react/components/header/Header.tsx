@@ -659,9 +659,15 @@ export const Header = memo(function Header({
 
       setShowPreviewModal(false);
     } catch (error) {
-      console.error(`[PREVIEW] Erreur génération ${format.toUpperCase()}:`, error);
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      alert(`Erreur lors de la génération ${format.toUpperCase()}\n\n${errorMessage}`);
+      console.error(
+        `[PREVIEW] Erreur génération ${format.toUpperCase()}:`,
+        error,
+      );
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      alert(
+        `Erreur lors de la génération ${format.toUpperCase()}\n\n${errorMessage}`,
+      );
     } finally {
       setIsGeneratingPreview(false);
     }
