@@ -4,9 +4,20 @@
 
 ## Version 1.1.3.0 (À venir)
 
+==================================================================================================================
+
 ## Version 1.2.0.0 (À venir)
 
 - **global** - optimisation du code et performance(gzip)
+- **stat** - mise en place d'un systeme de statistique du nombre de création ???
+
+### 📊 Système de rapports avancé
+
+- **Tableaux de bord** : vue d'ensemble des documents générés
+- **Statistiques** : nombre de PDF/mois, poids moyen, usage API
+- **Logs d'audit** : qui, quand, quoi — 100% transparent
+- **Exports** : CSV, JSON pour vos outils BI
+- **langue** - mise en pla de la langue espagnile et allement
 
 ### Fonctionnalités (Features)
 
@@ -14,7 +25,7 @@
 - [ ] Fonction 2 (à définir)
 - [ ] Fonction 3 (à définir)
 
----
+==================================================================================================================
 
 ## Version 1.1.2.0 (À venir)
 
@@ -24,9 +35,9 @@
 - [ ] Fonction 2 (à définir)
 - [ ] Fonction 3 (à définir)
 
----
+==================================================================================================================
 
-## Version 1.1.1.0 (À venir)
+## **_Version 1.1.1.0_** (À venir)
 
 ### Fonctionnalités (Features)
 
@@ -34,19 +45,30 @@
 - [ ] Fonction 2 (à définir)
 - [ ] Fonction 3 (à définir)
 
----
+==================================================================================================================
 
-## Version 1.1.0.0 (À venir)
+## **_Version 1.1.0.0_** (À venir)(juillet/aout)
 
 ### Fonctionnalités (Features)
 
 - 🆕 **Nouveaux éléments dans la liste React** : Ajout de nouveaux types d'éléments disponibles dans le panneau d'insertion
   - [ajouter les fonctions dans le toolbar du menu contextuel] Élément 2 (à définir)
   - [ajout de la personnalisation du choix du moteur pdf] Élément 3 (à définir)
+- **Français, anglais, espagnol, allemand** : switchez en un clic
+- **Convertisseur de devises** : EUR, USD, GBP, JPY…
+- **Formats régionaux** : dates, nombres, symboles monétaires
+- **RTL support** : arabe, hébreu compatible
+- **Intégration ERP/CRM**
 
----
+### Extensibilité & intégrations
 
-## Version 1.0.4.0 (À venir)
+- **Hooks WordPress** : intégrez PDF Builder à vos workflows
+- **Stockage flexible** : local ou compatible S3
+- **Compatible tiers** : CRM, email, outils business
+
+==================================================================================================================
+
+## **_Version 1.0.4.0_** (À venir)
 
 ### Fonctionnalités (Features)
 
@@ -61,8 +83,9 @@
 - 🔒 **Format désactivé** — 📦 Étiquette Colis (100×150mm)
 - 🔒 **Orientation désactivée** — Paysage (seul le **Portrait** est disponible)
 - **onglet "configuration pdf"** - correction et optimisation des fonctions
+- **langue** - vérifier la langue anglais si bien traduit à 100%
 
----
+==================================================================================================================
 
 ## Version 1.0.3.0 (Mars/avril 2026)
 

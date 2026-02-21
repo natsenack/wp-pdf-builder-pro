@@ -235,10 +235,10 @@
                             </div>
 
                             <div class="pdfb-license-support-actions" style="display: flex; gap: 0.5rem; justify-content: center;">
-                                <a href="https://wp-pdf-builder.com/support" target="_blank" class="pdfb-license-btn-secondary" style="flex: 1; text-align: center; padding: 0.6rem; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-size: 0.8rem; backdrop-filter: blur(10px);">
+                                <a href="https://hub.threeaxe.fr/index.php/ticket/" target="_blank" class="pdfb-license-btn-secondary" style="flex: 1; text-align: center; padding: 0.6rem; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-size: 0.8rem; backdrop-filter: blur(10px);">
                                     <span style="display: block; font-weight: 500;">📞 Support</span>
                                 </a>
-                                <a href="https://wp-pdf-builder.com/docs" target="_blank" class="pdfb-license-btn-secondary" style="flex: 1; text-align: center; padding: 0.6rem; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-size: 0.8rem; backdrop-filter: blur(10px);">
+                                <a href="https://github.com/natsenack/wp-pdf-builder-pro" target="_blank" class="pdfb-license-btn-secondary" style="flex: 1; text-align: center; padding: 0.6rem; background: rgba(255,255,255,0.2); color: white; text-decoration: none; border-radius: 20px; font-size: 0.8rem; backdrop-filter: blur(10px);">
                                     <span style="display: block; font-weight: 500;">📚 Docs</span>
                                 </a>
                             </div>
