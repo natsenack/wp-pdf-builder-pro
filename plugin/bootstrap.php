@@ -1624,7 +1624,10 @@ add_action('wp_enqueue_scripts', function() {
     );
     
     // Passer les variables globales au JavaScript
-    wp_localize_script('pdf-builder-generator-handler', 'ajaxNonce', wp_create_nonce('pdf_builder_queue'));
+    wp_localize_script('pdf-builder-generator-handler', 'pdfBuilderQueue', array(
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('pdf_builder_queue')
+    ));
 });
 
 // ============================================================================
@@ -1643,7 +1646,10 @@ add_action('admin_enqueue_scripts', function() {
         true
     );
     
-    wp_localize_script('pdf-builder-queue-simulation-panel', 'ajaxNonce', wp_create_nonce('pdf_builder_ajax'));
+    wp_localize_script('pdf-builder-queue-simulation-panel', 'pdfBuilderQueueSimulation', array(
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('pdf_builder_ajax')
+    ));
 });
 
 // ============================================================================

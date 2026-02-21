@@ -55,14 +55,14 @@
             this.showLoading();
             
             // Appeler l'endpoint AJAX
-            fetch(ajaxurl, {
+            fetch(pdfBuilderQueue.ajaxurl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: 'action=pdf_builder_generate_pdf&template_id=' + encodeURIComponent(templateId) + 
                       '&order_id=' + encodeURIComponent(orderId) + 
-                      '&nonce=' + encodeURIComponent(ajaxNonce || '')
+                      '&nonce=' + encodeURIComponent(pdfBuilderQueue.nonce || '')
             })
             .then(response => {
                 // D'abord, vérifier si c'est du JSON ou du binaire

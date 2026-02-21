@@ -40,12 +40,12 @@
          * Charge l'état actuel du mode simulation
          */
         loadStatus: function() {
-            fetch(ajaxurl, {
+            fetch(pdfBuilderQueueSimulation.ajaxurl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: 'action=pdf_builder_toggle_queue_simulation&action_type=status&nonce=' + ajaxNonce
+                body: 'action=pdf_builder_toggle_queue_simulation&action_type=status&nonce=' + pdfBuilderQueueSimulation.nonce
             })
             .then(response => response.json())
             .then(data => {
@@ -63,12 +63,12 @@
             const btn = document.getElementById('pdf-queue-sim-toggle');
             btn.disabled = true;
             
-            fetch(ajaxurl, {
+            fetch(pdfBuilderQueueSimulation.ajaxurl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: 'action=pdf_builder_toggle_queue_simulation&action_type=toggle&nonce=' + ajaxNonce
+                body: 'action=pdf_builder_toggle_queue_simulation&action_type=toggle&nonce=' + pdfBuilderQueueSimulation.nonce
             })
             .then(response => response.json())
             .then(data => {
@@ -105,7 +105,7 @@
             
             btn.disabled = true;
             
-            fetch(ajaxurl, {
+            fetch(pdfBuilderQueueSimulation.ajaxurl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -113,7 +113,7 @@
                 body: 'action=pdf_builder_toggle_queue_simulation&action_type=configure&' +
                       'initial_position=' + initialPosition + '&' +
                       'wait_time=' + waitTime + '&' +
-                      'nonce=' + ajaxNonce
+                      'nonce=' + pdfBuilderQueueSimulation.nonce
             })
             .then(response => response.json())
             .then(data => {
