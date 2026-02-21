@@ -3195,23 +3195,33 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
 
             // Vérifier que le job est effectivement prêt
-            $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
-            $status = $engine->get_queue_status($job_id);
-            
-            if (!$status || $status['status'] !== 200) {
-                wp_send_json_error(['message' => 'Le job n\'est pas encore prêt'], 409);
-                return;
+            // Pour les jobs simulation (sim-*), on skip la re-vérification Puppeteer
+            $is_simulation = strpos($job_id, 'sim-') === 0;
+
+            if (!$is_simulation) {
+                $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
+                $status = $engine->get_queue_status($job_id);
+                if (!$status || $status['status'] !== 200) {
+                    wp_send_json_error(['message' => 'Le job n\'est pas encore prêt'], 409);
+                    return;
+                }
             }
 
-            // Générer le PDF final (ou retourner le PDF depuis le job_id si possible)
-            // Pour l'instant, on régénère le PDF
+            // Générer le PDF final
+            // Pour les jobs simulation, on utilise DomPDF directement (pas de Puppeteer)
             $html = $this->generate_template_html($template, $order, 'pdf');
             $html = $this->optimize_html($html);
             
             $template_data = json_decode($template['template_data'], true);
             $width = $template_data['canvasWidth'] ?? 794;
             $height = $template_data['canvasHeight'] ?? 1123;
-            
+
+            if ($is_simulation) {
+                $engine = new \PDF_Builder\PDF\Engines\DomPDFEngine();
+            } else {
+                $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
+            }
+
             $pdf_content = $engine->generate($html, [
                 'width' => $width,
                 'height' => $height

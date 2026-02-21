@@ -368,11 +368,11 @@
          * Télécharge le PDF une fois prêt
          */
         downloadPDF: function() {
-            console.log('[PDF Builder Queue] PDF is ready, downloading...');
+            console.log('[PDF Builder Queue] PDF is ready, opening in new tab...');
             
             const messageEl = document.getElementById('queue-status-message');
             if (messageEl) {
-                messageEl.textContent = 'Génération terminée, téléchargement en cours...';
+                messageEl.textContent = 'Génération terminée, ouverture du PDF...';
                 messageEl.className = 'queue-status-message queue-ready';
             }
             
@@ -381,7 +381,7 @@
                 progressEl.style.width = '100%';
             }
             
-            // Télécharger le PDF via fetch + blob (évite l'ouverture d'onglet)
+            // Ouvrir le PDF dans un nouvel onglet via fetch + blob URL
             const dlData = (typeof pdfBuilderQueueData !== 'undefined') ? pdfBuilderQueueData : { ajaxurl: ajaxurl, nonce: '' };
             fetch(dlData.ajaxurl, {
                 method: 'POST',
@@ -396,15 +396,11 @@
                 const buffer = await response.arrayBuffer();
                 const blob = new Blob([buffer], { type: 'application/pdf' });
                 const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'document-' + this.orderId + '.pdf';
-                document.body.appendChild(a);
-                a.click();
-                URL.revokeObjectURL(url);
-                a.remove();
+                window.open(url, '_blank');
+                // Révoquer après un délai pour laisser le temps au navigateur de charger
+                setTimeout(() => URL.revokeObjectURL(url), 10000);
             })
-            .catch(err => console.error('[PDF Builder Queue] Download error:', err))
+            .catch(err => console.error('[PDF Builder Queue] Open error:', err))
             .finally(() => {
                 setTimeout(() => this.closeModal(), 1000);
             });
