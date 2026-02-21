@@ -389,10 +389,10 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
         <!-- Modale de la galerie de modèles prédéfinis -->
         <div id="template-gallery-modal" class="pdfb-template-gallery-modal pdfb-template-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
             <div class="pdfb-template-modal-content" style="background: #fff; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; padding: 0; max-width: 1200px; width: 95%; max-height: 90vh; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); -webkit-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -moz-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -ms-box-shadow: 0 20px 60px rgba(0,0,0,0.4); -o-box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
-                <div class="pdfb-template-modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 25px 30px; border-bottom: 1px solid var(--pdf-border); background: var(--pdf-light); color: var(--pdf-text);">
+                <div class="pdfb-template-modal-header">
                     <div>
                         <h2 style="margin: 0; font-size: 24px; font-weight: 600;">🎨 Galerie de Modèles Prédéfinis</h2>
-                        <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 14px; color: var(--pdf-secondary);">Choisissez un modèle professionnel pour commencer</p>
+                        <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 14px; color: var(--pdf-text);">Choisissez un modèle professionnel pour commencer</p>
                     </div>
                     <button onclick="document.getElementById('template-gallery-modal').style.display='none'" style="background: var(--pdf-border); border: none; font-size: 24px; cursor: pointer; color: var(--pdf-secondary); padding: 8px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">×</button>
                 </div>
