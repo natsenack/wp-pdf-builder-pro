@@ -20,8 +20,9 @@ $is_premium = $license_manager->isPremium();
     
     <div class="pdfb-pdf-settings-wrapper">
         <div class="pdfb-pdf-settings-left">
-            <h4 style="color: #495057; margin-top: 0; border-bottom: 2px solid #007cba; padding-bottom: 10px;">
+            <h4 style="color: #495057; margin-top: 0; border-bottom: 2px solid #007cba; padding-bottom: 10px; display: flex; align-items: center; gap: 8px;">
                 ⚙️ Paramètres principaux
+                <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: #7c3aed; color: #fff; padding: 2px 7px; border-radius: 10px; vertical-align: middle;">beta</span>
             </h4>
 
             <table class="form-table">
