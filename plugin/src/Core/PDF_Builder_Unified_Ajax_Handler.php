@@ -1199,22 +1199,29 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     private function save_system_settings() {
         $saved_count = 0;
-        
+
+        // Lire les champs depuis le tableau pdf_builder_settings envoyé par le formulaire
+        $post_settings = $_POST['pdf_builder_settings'] ?? [];
+
         // Paramètres cache/performance/maintenance
-        $settings = [
-            'cache_enabled' => $_POST['cache_enabled'] ?? '0',
-            'cache_compression' => $_POST['cache_compression'] ?? '0',
-            'cache_auto_cleanup' => $_POST['cache_auto_cleanup'] ?? '0',
-            'cache_max_size' => intval($_POST['cache_max_size'] ?? 100),
-            'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
-            'performance_auto_optimization' => isset($_POST['performance_auto_optimization']) ? '1' : '0',
-            'auto_maintenance' => $_POST['systeme_auto_maintenance'] ?? '0',
+        $cache_fields = [
+            'pdf_builder_cache_enabled'                 => sanitize_text_field($post_settings['pdf_builder_cache_enabled'] ?? '0'),
+            'pdf_builder_cache_compression'             => sanitize_text_field($post_settings['pdf_builder_cache_compression'] ?? '0'),
+            'pdf_builder_cache_auto_cleanup'            => sanitize_text_field($post_settings['pdf_builder_cache_auto_cleanup'] ?? '0'),
+            'pdf_builder_cache_max_size'                => intval($post_settings['pdf_builder_cache_max_size'] ?? 100),
+            'pdf_builder_cache_ttl'                     => intval($post_settings['pdf_builder_cache_ttl'] ?? 3600),
+            'pdf_builder_performance_auto_optimization' => sanitize_text_field($post_settings['pdf_builder_performance_auto_optimization'] ?? '0'),
+            'pdf_builder_systeme_auto_maintenance'      => sanitize_text_field($post_settings['pdf_builder_systeme_auto_maintenance'] ?? '0'),
         ];
 
-        foreach ($settings as $key => $value) {
-            pdf_builder_update_option('pdf_builder_' . $key, $value);
-            $saved_count++;
+        // Sauvegarder dans le tableau unifié pdf_builder_settings
+        $existing_settings = pdf_builder_get_option('pdf_builder_settings', []);
+        foreach ($cache_fields as $key => $value) {
+            $existing_settings[$key] = $value;
+            error_log("[UNIFIED AJAX] save_system_settings - {$key} = {$value}");
         }
+        pdf_builder_update_option('pdf_builder_settings', $existing_settings);
+        $saved_count += count($cache_fields);
 
         // Paramètres Puppeteer (top-level POST)
         $puppeteer_settings = [
