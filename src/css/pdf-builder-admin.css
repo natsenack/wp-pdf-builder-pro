@@ -3745,11 +3745,35 @@ section[id^="dev-"] h3.pdfb-section-title {
 }
 
 /* === Maintenance Section Styling === */
-.pdfb-system-maintenance-section {
+.pdfb-system-maintenance-section,
+.pdfb-system-backup-section {
   background: white;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 20px;
   margin-bottom: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.pdfb-system-maintenance-section header,
+.pdfb-system-backup-section header {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecef 100%);
+  padding: 15px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.pdfb-system-maintenance-section header h3,
+.pdfb-system-backup-section header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d2327;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pdfb-system-maintenance-section .pdfb-system-section-content,
+.pdfb-system-backup-section .pdfb-system-section-content {
+  padding: 20px;
 }

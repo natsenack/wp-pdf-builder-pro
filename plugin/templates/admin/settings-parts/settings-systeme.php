@@ -211,27 +211,29 @@
                 </section>
                 <!-- Section Maintenance -->
                 <section id="systeme" class="pdfb-system-maintenance-section">
-                    <h3>
-                        <span style="display: inline-flex; align-items: center; gap: 10px;">
-                            🔧 Maintenance
-                            <span class="pdfb-maintenance-status"><?php echo $auto_maintenance === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
-                        </span>
-                    </h3>
+                    <header>
+                        <h3>
+                            <span>
+                                🔧 Maintenance
+                                <span class="pdfb-maintenance-status"><?php echo $auto_maintenance === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
+                            </span>
+                        </h3>
+                    </header>
 
-                    <table class="form-table">
-                        <tr>
-                            <th scope="row">Actions de maintenance</th>
-                            <td>
-                                <button type="button" id="optimize-db-btn" class="button button-secondary" style="margin-right: 10px;">🗃️ Optimiser la base</button>
-                                <button type="button" id="repair-templates-btn" class="button button-secondary" style="margin-right: 10px;">🔧 Réparer les templates</button>
-                                <button type="button" id="remove-temp-btn" class="button button-secondary">🗂️ Supprimer fichiers temp</button>
-                                <div id="maintenance-results" style="margin-top: 10px;"></div>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <!-- Section Maintenance Système -->
                     <div class="pdfb-system-section-content">
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row">Actions de maintenance</th>
+                                <td>
+                                    <button type="button" id="optimize-db-btn" class="button button-secondary" style="margin-right: 10px;">🗃️ Optimiser la base</button>
+                                    <button type="button" id="repair-templates-btn" class="button button-secondary" style="margin-right: 10px;">🔧 Réparer les templates</button>
+                                    <button type="button" id="remove-temp-btn" class="button button-secondary">🗂️ Supprimer fichiers temp</button>
+                                    <div id="maintenance-results" style="margin-top: 10px;"></div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Section Maintenance Système -->
                         <table class="form-table">
                             <tr>
                                 <th scope="row"><label for="systeme_auto_maintenance">Maintenance automatique</label></th>
