@@ -85,40 +85,40 @@ if (isset($_GET['updated']) && $_GET['updated'] === '1') {
         <input type="hidden" name="submit" value="1">
 
         <!-- Navigation par onglets -->
-        <h2 class="nav-tab-wrapper">
-            <div class="tabs-container">
-                <a href="?page=pdf-builder-settings&tab=general" class="nav-tab<?php echo $current_tab === 'general' ? ' nav-tab-active' : ''; ?>">
-                    <span class="tab-icon">⚙️</span>
-                    <span class="tab-text"><?php _e('Général', 'pdf-builder-pro'); ?></span>
+        <h2 class="pdfb-nav-tab-wrapper">
+            <div class="pdfb-tabs-container">
+                <a href="?page=pdf-builder-settings&tab=general" class="pdfb-nav-tab<?php echo $current_tab === 'general' ? ' pdfb-nav-tab-active' : ''; ?>">
+                    <span class="pdfb-tab-icon">⚙️</span>
+                    <span class="pdfb-tab-text"><?php _e('Général', 'pdf-builder-pro'); ?></span>
                 </a>
-                <a href="?page=pdf-builder-settings&tab=licence" class="nav-tab<?php echo $current_tab === 'licence' ? ' nav-tab-active' : ''; ?>">
-                    <span class="tab-icon">🔑</span>
-                    <span class="tab-text"><?php _e('Licence', 'pdf-builder-pro'); ?></span>
+                <a href="?page=pdf-builder-settings&tab=licence" class="pdfb-nav-tab<?php echo $current_tab === 'licence' ? ' pdfb-nav-tab-active' : ''; ?>">
+                    <span class="pdfb-tab-icon">🔑</span>
+                    <span class="pdfb-tab-text"><?php _e('Licence', 'pdf-builder-pro'); ?></span>
                 </a>
-                <a href="?page=pdf-builder-settings&tab=systeme" class="nav-tab<?php echo $current_tab === 'systeme' ? ' nav-tab-active' : ''; ?>">
-                    <span class="tab-icon">🖥️</span>
-                    <span class="tab-text"><?php _e('Système', 'pdf-builder-pro'); ?></span>
+                <a href="?page=pdf-builder-settings&tab=systeme" class="pdfb-nav-tab<?php echo $current_tab === 'systeme' ? ' pdfb-nav-tab-active' : ''; ?>">
+                    <span class="pdfb-tab-icon">🖥️</span>
+                    <span class="pdfb-tab-text"><?php _e('Système', 'pdf-builder-pro'); ?></span>
                 </a>
-                <a href="?page=pdf-builder-settings&tab=securite" class="nav-tab<?php echo $current_tab === 'securite' ? ' nav-tab-active' : ''; ?>">
-                    <span class="tab-icon">🔒</span>
-                    <span class="tab-text"><?php _e('Sécurité', 'pdf-builder-pro'); ?></span>
+                <a href="?page=pdf-builder-settings&tab=securite" class="pdfb-nav-tab<?php echo $current_tab === 'securite' ? ' pdfb-nav-tab-active' : ''; ?>">
+                    <span class="pdfb-tab-icon">🔒</span>
+                    <span class="pdfb-tab-text"><?php _e('Sécurité', 'pdf-builder-pro'); ?></span>
                 </a>
-                <a href="?page=pdf-builder-settings&tab=pdf" class="nav-tab<?php echo $current_tab === 'pdf' ? ' nav-tab-active' : ''; ?>">
-                    <span class="tab-icon">📄</span>
-                    <span class="tab-text"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></span>
+                <a href="?page=pdf-builder-settings&tab=pdf" class="pdfb-nav-tab<?php echo $current_tab === 'pdf' ? ' pdfb-nav-tab-active' : ''; ?>">
+                    <span class="pdfb-tab-icon">📄</span>
+                    <span class="pdfb-tab-text"><?php _e('Configuration PDF', 'pdf-builder-pro'); ?></span>
                 </a>
-                <a href="?page=pdf-builder-settings&tab=contenu" class="nav-tab<?php echo $current_tab === 'contenu' ? ' nav-tab-active' : ''; ?>">
-                    <span class="tab-icon">🎨</span>
-                    <span class="tab-text"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></span>
+                <a href="?page=pdf-builder-settings&tab=contenu" class="pdfb-nav-tab<?php echo $current_tab === 'contenu' ? ' pdfb-nav-tab-active' : ''; ?>">
+                    <span class="pdfb-tab-icon">🎨</span>
+                    <span class="pdfb-tab-text"><?php _e('Canvas & Design', 'pdf-builder-pro'); ?></span>
                 </a>
-                <a href="?page=pdf-builder-settings&tab=templates" class="nav-tab<?php echo $current_tab === 'templates' ? ' nav-tab-active' : ''; ?>">
-                    <span class="tab-icon">📋</span>
-                    <span class="tab-text"><?php _e('Templates', 'pdf-builder-pro'); ?></span>
+                <a href="?page=pdf-builder-settings&tab=templates" class="pdfb-nav-tab<?php echo $current_tab === 'templates' ? ' pdfb-nav-tab-active' : ''; ?>">
+                    <span class="pdfb-tab-icon">📋</span>
+                    <span class="pdfb-tab-text"><?php _e('Templates', 'pdf-builder-pro'); ?></span>
                 </a>
                 <?php if ($is_dev_access) : ?>
-                <a href="?page=pdf-builder-settings&tab=developpeur" class="nav-tab<?php echo $current_tab === 'developpeur' ? ' nav-tab-active' : ''; ?>">
-                    <span class="tab-icon">👨‍💻</span>
-                    <span class="tab-text"><?php _e('Développeur', 'pdf-builder-pro'); ?></span>
+                <a href="?page=pdf-builder-settings&tab=developpeur" class="pdfb-nav-tab<?php echo $current_tab === 'developpeur' ? ' pdfb-nav-tab-active' : ''; ?>">
+                    <span class="pdfb-tab-icon">👨‍💻</span>
+                    <span class="pdfb-tab-text"><?php _e('Développeur', 'pdf-builder-pro'); ?></span>
                 </a>
                 <?php endif; ?>
             </div>
