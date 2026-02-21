@@ -3217,7 +3217,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             $height = $template_data['canvasHeight'] ?? 1123;
 
             if ($is_simulation) {
-                $engine = new \PDF_Builder\PDF\Engines\DomPDFEngine();
+                $engine = new \PDF_Builder\PDF\Engines\PuppeteerEngine();
             } else {
                 $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
             }
