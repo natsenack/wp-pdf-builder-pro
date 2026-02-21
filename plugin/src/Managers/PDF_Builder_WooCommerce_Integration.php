@@ -512,11 +512,67 @@ class PDF_Builder_WooCommerce_Integration
                 setTimeout(function() { btn.prop('disabled', false).html(orig); }, 4000);
 
                 if (type === 'pdf') {
-                    openExportForm(ajaxUrl, {
-                        action:      'pdf_builder_generate_order_pdf',
-                        order_id:    orderId,
-                        template_id: templateId,
-                        nonce:       nonce
+                    fetch(ajaxUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams({
+                            action:      'pdf_builder_generate_order_pdf',
+                            order_id:    orderId,
+                            template_id: templateId,
+                            nonce:       nonce
+                        })
+                    })
+                    .then(async function(response) {
+                        var buffer = await response.arrayBuffer();
+                        var json = null;
+                        try {
+                            var text = new TextDecoder('utf-8').decode(new Uint8Array(buffer));
+                            json = JSON.parse(text);
+                        } catch(e) {}
+
+                        btn.prop('disabled', false).html(orig);
+
+                        if (json !== null) {
+                            if (json.data && json.data.queue_active) {
+                                // Afficher la modal de queue
+                                if (window.PdfBuilderQueueModal && window.PdfBuilderQueueModal.init) {
+                                    window.PdfBuilderQueueModal.init(
+                                        json.data.job_id,
+                                        json.data.template_id,
+                                        json.data.order_id,
+                                        { pollInterval: 2000, maxWaitTime: 600000 }
+                                    );
+                                } else {
+                                    alert('Votre demande est en queue. Position: ' + (json.data.position || '?'));
+                                }
+                            } else if (!json.success) {
+                                alert('Erreur: ' + (json.data && json.data.message ? json.data.message : 'Erreur lors de la génération'));
+                            } else {
+                                // JSON success sans queue → fallback form
+                                openExportForm(ajaxUrl, {
+                                    action:      'pdf_builder_generate_order_pdf',
+                                    order_id:    orderId,
+                                    template_id: templateId,
+                                    nonce:       nonce
+                                });
+                            }
+                        } else {
+                            // PDF binaire → téléchargement
+                            var blob = new Blob([buffer], { type: 'application/pdf' });
+                            var url  = URL.createObjectURL(blob);
+                            var a    = document.createElement('a');
+                            a.href     = url;
+                            a.download = 'document-' + orderId + '.pdf';
+                            document.body.appendChild(a);
+                            a.click();
+                            URL.revokeObjectURL(url);
+                            a.remove();
+                        }
+                    })
+                    .catch(function(err) {
+                        btn.prop('disabled', false).html(orig);
+                        console.error('[PDF Builder] Erreur fetch PDF:', err);
+                        alert('Erreur réseau: ' + err.message);
                     });
                 } else {
                     // PNG / JPG : génération via Puppeteer (screenshot natif haute qualité)

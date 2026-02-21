@@ -271,12 +271,13 @@
             }
             
             // AJAX call
-            fetch(ajaxurl, {
+            const queueData = (typeof pdfBuilderQueueData !== 'undefined') ? pdfBuilderQueueData : { ajaxurl: ajaxurl, nonce: '' };
+            fetch(queueData.ajaxurl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: 'action=pdf_builder_check_queue_position&job_id=' + encodeURIComponent(this.jobId) + '&_wpnonce=' + ajaxNonce
+                body: 'action=pdf_builder_check_queue_position&job_id=' + encodeURIComponent(this.jobId) + '&_wpnonce=' + queueData.nonce
             })
             .then(response => response.json())
             .then(data => {
@@ -380,34 +381,33 @@
                 progressEl.style.width = '100%';
             }
             
-            // Use the dedicated download endpoint
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = ajaxurl;
-            
-            const inputs = [
-                { name: 'action', value: 'pdf_builder_download_queued_pdf' },
-                { name: 'job_id', value: this.jobId },
-                { name: 'order_id', value: this.orderId },
-                { name: 'template_id', value: this.templateId },
-                { name: '_wpnonce', value: ajaxNonce }
-            ];
-            
-            inputs.forEach(input => {
-                const field = document.createElement('input');
-                field.type = 'hidden';
-                field.name = input.name;
-                field.value = input.value;
-                form.appendChild(field);
+            // Télécharger le PDF via fetch + blob (évite l'ouverture d'onglet)
+            const dlData = (typeof pdfBuilderQueueData !== 'undefined') ? pdfBuilderQueueData : { ajaxurl: ajaxurl, nonce: '' };
+            fetch(dlData.ajaxurl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'action=pdf_builder_download_queued_pdf' +
+                      '&job_id=' + encodeURIComponent(this.jobId) +
+                      '&order_id=' + encodeURIComponent(this.orderId) +
+                      '&template_id=' + encodeURIComponent(this.templateId) +
+                      '&_wpnonce=' + dlData.nonce
+            })
+            .then(async response => {
+                const buffer = await response.arrayBuffer();
+                const blob = new Blob([buffer], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'document-' + this.orderId + '.pdf';
+                document.body.appendChild(a);
+                a.click();
+                URL.revokeObjectURL(url);
+                a.remove();
+            })
+            .catch(err => console.error('[PDF Builder Queue] Download error:', err))
+            .finally(() => {
+                setTimeout(() => this.closeModal(), 1000);
             });
-            
-            document.body.appendChild(form);
-            form.submit();
-            
-            // Close modal after 1 second
-            setTimeout(() => {
-                this.closeModal();
-            }, 1000);
         },
 
         /**

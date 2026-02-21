@@ -1614,7 +1614,11 @@ add_action('wp_enqueue_scripts', function() {
         PDF_BUILDER_PRO_VERSION,
         true
     );
-    
+    wp_localize_script('pdf-builder-queue-modal', 'pdfBuilderQueueData', array(
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'nonce'   => wp_create_nonce('pdf_builder_ajax')
+    ));
+
     wp_enqueue_script(
         'pdf-builder-generator-handler',
         plugins_url('assets/js/pdf-generator-handler.js', __FILE__),
@@ -1622,11 +1626,9 @@ add_action('wp_enqueue_scripts', function() {
         PDF_BUILDER_PRO_VERSION,
         true
     );
-    
-    // Passer les variables globales au JavaScript
     wp_localize_script('pdf-builder-generator-handler', 'pdfBuilderQueue', array(
         'ajaxurl' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('pdf_builder_queue')
+        'nonce'   => wp_create_nonce('pdf_builder_queue')
     ));
 });
 
@@ -1649,6 +1651,19 @@ add_action('admin_enqueue_scripts', function() {
     wp_localize_script('pdf-builder-queue-simulation-panel', 'pdfBuilderQueueSimulation', array(
         'ajaxurl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('pdf_builder_ajax')
+    ));
+
+    // Charger la modal de queue sur les pages WooCommerce admin (commandes)
+    wp_enqueue_script(
+        'pdf-builder-queue-modal-admin',
+        plugins_url('assets/js/queue-position-modal.js', __FILE__),
+        [],
+        PDF_BUILDER_PRO_VERSION,
+        true
+    );
+    wp_localize_script('pdf-builder-queue-modal-admin', 'pdfBuilderQueueData', array(
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'nonce'   => wp_create_nonce('pdf_builder_ajax')
     ));
 });
 
