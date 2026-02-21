@@ -20,7 +20,7 @@ error_log('[PDF Builder] settings-main.php tab=' . $current_tab . ' GET=' . json
 // define('PDF_BUILDER_DEV_TOKEN', '<votre_token_secret>');
 $is_dev_access = function_exists('pdf_builder_is_dev_access') && pdf_builder_is_dev_access();
 
-$valid_tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates'];
+$valid_tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'queue-simulation'];
 if ($is_dev_access) {
     $valid_tabs[] = 'developpeur';
 }
