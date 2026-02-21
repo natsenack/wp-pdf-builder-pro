@@ -753,16 +753,19 @@
 }
 
 .pdfb-new-feature-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 16px;
-  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    font-size: 14px;
+    color: #475569;
+    line-height: 1.6;
 }
 
 .pdfb-new-feature-item::before {
@@ -840,12 +843,6 @@
 
 .pdfb-new-feature-item:hover strong {
   color: #667eea;
-}
-
-.pdfb-new-feature-item {
-  font-size: 14px;
-  color: #475569;
-  line-height: 1.6;
 }
 
 /* Animation d'entrée échelonnée pour les feature items */
