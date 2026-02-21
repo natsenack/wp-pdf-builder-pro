@@ -1471,10 +1471,6 @@ body.toplevel_page_wp-pdf-builder-pro .pdfb-update-nag,
   transform: translateX(26px);
 }
 
-.pdfb-toggle-switch input[type="checkbox"]:checked {
-  /* This selector doesn't work for background color */
-}
-
 /* Use JavaScript to add/remove class for background color */
 .pdfb-toggle-switch.pdfb-checked {
   background: #667eea;
@@ -2333,10 +2329,6 @@ section[id^="dev-"] h3.pdfb-section-title {
   background: #5568d3;
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
-}
-
-.pdfb-license-btn-text {
-  /* Placeholder for button text styling */
 }
 
 .pdfb-license-btn-secondary {

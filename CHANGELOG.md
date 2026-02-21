@@ -4,6 +4,10 @@
 
 ## Version 1.1.3.0 (À venir)
 
+## Version 1.2.0.0 (À venir)
+
+- **global** - optimisation du code et performance(gzip)
+
 ### Fonctionnalités (Features)
 
 - [] Fonction 1 (à définir)
@@ -56,10 +60,11 @@
 - 🔒 **Format désactivé** — ⚖️ Legal (8.5×14")
 - 🔒 **Format désactivé** — 📦 Étiquette Colis (100×150mm)
 - 🔒 **Orientation désactivée** — Paysage (seul le **Portrait** est disponible)
+- **onglet "configuration pdf"** - correction et optimisation des fonctions
 
 ---
 
-## Version 1.0.3.0 (Mars 2026)
+## Version 1.0.3.0 (Mars/avril 2026)
 
 ### Corrections (Bug Fixes)
 
