@@ -80,8 +80,8 @@
 
                 <!-- Header avec titre et actions principales -->
                 <div class="pdfb-license-header">
-                    <div class="pdfb-pdfb-license-header-content">
-                        <div class="pdfb-pdfb-license-header-top">
+                    <div class="pdfb-license-header-content">
+                        <div class="pdfb-license-header-top">
                             <h2 class="license-main-title">
                                 <span class="pdfb-license-icon">🔐</span>
                                 Gestion de la Licence
@@ -156,7 +156,7 @@
 
                     <!-- Activation de licence -->
                     <div id="activate-section" class="pdfb-license-action-card">
-                        <div class="pdfb-pdfb-license-action-card-header">
+                        <div class="pdfb-license-action-card-header">
                             <h3>
                                 <span class="pdfb-license-action-icon">🔑</span>
                                 <?php echo $is_premium ? 'Changer de Licence' : 'Activer une Licence'; ?>
@@ -165,9 +165,9 @@
                         </div>
 
                         <div class="pdfb-license-action-card-content">
-                            <div class="pdfb-pdfb-license-input-group">
+                            <div class="pdfb-license-input-group">
                                 <label for="license_key_input">Clé de licence</label>
-                                <div class="pdfb-pdfb-license-input-with-button">
+                                <div class="pdfb-license-input-with-button">
                                     <input type="text"
                                            id="license_key_input"
                                            placeholder="<?php echo $is_premium && !empty($license_key_masked) ? esc_attr($license_key_masked) : 'Entrez votre clé de licence premium'; ?>"
@@ -177,7 +177,7 @@
                                         <span class="pdfb-license-btn-icon">✓</span>
                                     </button>
                                 </div>
-                                <p class="pdfb-pdfb-license-input-help">
+                                <p class="pdfb-license-input-help">
                                     <?php if (!$is_premium): ?>
                                         Vous n'avez pas de clé ? <a href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/" class="pdfb-license-link-primary">Obtenir une licence premium</a>
                                     <?php else: ?>
@@ -205,8 +205,8 @@
 
                     <!-- Support & Avantages Premium -->
                     <?php if ($is_premium || $is_test_mode): ?>
-                    <div class="pdfb-license-action-card pdfb-pdfb-license-premium-support" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 12px; box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);">
-                        <div class="pdfb-pdfb-license-action-card-header" style="padding: 1rem; text-align: center;">
+                    <div class="pdfb-license-action-card pdfb-license-premium-support" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 12px; box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);">
+                        <div class="pdfb-license-action-card-header" style="padding: 1rem; text-align: center;">
                             <div style="font-size: 2.5rem; margin-bottom: 0.5rem; animation: supportPulse 2s ease-in-out infinite;">💎</div>
                             <h3 style="margin: 0 0 0.5rem 0; color: white; font-size: 1.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Support Premium & Avantages</h3>
                             <p style="margin: 0 0 1rem 0; color: rgba(255,255,255,0.9); font-size: 0.9rem; line-height: 1.4;">
@@ -216,19 +216,19 @@
 
                         <div class="pdfb-license-action-card-content" style="padding: 0 1rem 1rem 1rem;">
                             <div class="license-premium-pdfb-features-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem;">
-                                <div class="pdfb-pdfb-license-feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                                <div class="pdfb-license-feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
                                     <div style="font-size: 1.5rem; margin-bottom: 0.3rem;">📊</div>
                                     <div style="font-size: 0.8rem; color: white; font-weight: 500;">Exports Multi-Formats</div>
                                 </div>
-                                <div class="pdfb-pdfb-license-feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                                <div class="pdfb-license-feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
                                     <div style="font-size: 1.5rem; margin-bottom: 0.3rem;">🎯</div>
                                     <div style="font-size: 0.8rem; color: white; font-weight: 500;">Navigation Grille</div>
                                 </div>
-                                <div class="pdfb-pdfb-license-feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                                <div class="pdfb-license-feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
                                     <div style="font-size: 1.5rem; margin-bottom: 0.3rem;">⚡</div>
                                     <div style="font-size: 0.8rem; color: white; font-weight: 500;">Résolutions Élevées</div>
                                 </div>
-                                <div class="pdfb-pdfb-license-feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                                <div class="pdfb-license-feature-item" style="background: rgba(255,255,255,0.1); padding: 0.8rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
                                     <div style="font-size: 1.5rem; margin-bottom: 0.3rem;">🔧</div>
                                     <div style="font-size: 0.8rem; color: white; font-weight: 500;">Outils Avancés</div>
                                 </div>
@@ -248,14 +248,14 @@
                     
                     <?php else: ?>
                     <!-- Section publicité premium -->
-                    <div class="pdfb-license-action-card pdfb-pdfb-license-premium-promo" style="max-height: 200px; overflow: hidden; position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); background-size: 200% 200%; animation: gradientShift 3s ease infinite; border-radius: 12px; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);">
-                        <div class="pdfb-pdfb-pdfb-license-premium-promo-content" style="padding: 1rem; text-align: center; position: relative; z-index: 2;">
+                    <div class="pdfb-license-action-card pdfb-license-premium-promo" style="max-height: 200px; overflow: hidden; position: relative; background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); background-size: 200% 200%; animation: gradientShift 3s ease infinite; border-radius: 12px; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);">
+                        <div class="pdfb-license-premium-promo-content" style="padding: 1rem; text-align: center; position: relative; z-index: 2;">
                             <div style="font-size: 2.5rem; margin-bottom: 0.5rem; animation: rocketFloat 2s ease-in-out infinite; display: inline-block;">🚀</div>
                             <h3 style="margin: 0 0 0.5rem 0; color: white; font-size: 1.2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3); animation: textGlow 2s ease-in-out infinite alternate;">Découvrez la Version Premium</h3>
                             <p style="margin: 0 0 1rem 0; color: rgba(255,255,255,0.9); font-size: 0.9rem; line-height: 1.4; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
                                 Débloquez toutes les fonctionnalités avancées : exports multi-formats, résolutions élevées, navigation grille, et bien plus !
                             </p>
-                            <a href="#" onclick="showUpgradeModal('license_tab')" class="pdfb-license-btn-primary pdfb-pdfb-license-premium-cta" style="display: inline-block; padding: 0.6rem 1.2rem; background: linear-gradient(45deg, #ff6b6b, #ffa500); color: white; text-decoration: none; border-radius: 25px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4); transition: all 0.3s ease; position: relative; overflow: hidden;">
+                            <a href="#" onclick="showUpgradeModal('license_tab')" class="pdfb-license-btn-primary pdfb-license-premium-cta" style="display: inline-block; padding: 0.6rem 1.2rem; background: linear-gradient(45deg, #ff6b6b, #ffa500); color: white; text-decoration: none; border-radius: 25px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4); transition: all 0.3s ease; position: relative; overflow: hidden;">
                                 <span style="position: relative; z-index: 2;">✨ Passer en Premium</span>
                                 <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s ease; z-index: 1;"></div>
                             </a>

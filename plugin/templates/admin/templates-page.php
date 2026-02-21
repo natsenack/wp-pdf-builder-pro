@@ -330,7 +330,7 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                     ];
                     $type_label = isset($type_labels[$template_type]) ? $type_labels[$template_type] : $type_labels['autre'];
 
-                    echo '<div class="pdfb-pdfb-template-type-badge" style="position: absolute; top: 10px; left: 10px; background: ' . $type_color . '; color: white; padding: 4px 8px; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
+                    echo '<div class="pdfb-template-type-badge" style="position: absolute; top: 10px; left: 10px; background: ' . $type_color . '; color: white; padding: 4px 8px; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
                     echo $type_label;
                     echo '</div>';
 
@@ -402,13 +402,13 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                     <div style="margin-bottom: 30px;">
                         <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">Filtrer par catégorie</h3>
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <button class="pdfb-pdfb-gallery-filter-btn button button-secondary active" data-filter="all">📄 Tous</button>
-                            <button class="pdfb-pdfb-gallery-filter-btn button button-secondary facture" data-filter="facture">🧾 Factures</button>
-                            <button class="pdfb-pdfb-gallery-filter-btn button button-secondary devis" data-filter="devis">📋 Devis</button>
+                            <button class="pdfb-gallery-filter-btn button button-secondary active" data-filter="all">📄 Tous</button>
+                            <button class="pdfb-gallery-filter-btn button button-secondary facture" data-filter="facture">🧾 Factures</button>
+                            <button class="pdfb-gallery-filter-btn button button-secondary devis" data-filter="devis">📋 Devis</button>
                             <!-- Catégories désactivées temporairement -->
-                            <!-- <button class="pdfb-pdfb-gallery-filter-btn button button-secondary commande" data-filter="commande">📦 Commandes</button> -->
-                            <!-- <button class="pdfb-pdfb-gallery-filter-btn button button-secondary contrat" data-filter="contrat">📑 Contrats</button> -->
-                            <!-- <button class="pdfb-pdfb-gallery-filter-btn button button-secondary newsletter" data-filter="newsletter">📰 Newsletters</button> -->
+                            <!-- <button class="pdfb-gallery-filter-btn button button-secondary commande" data-filter="commande">📦 Commandes</button> -->
+                            <!-- <button class="pdfb-gallery-filter-btn button button-secondary contrat" data-filter="contrat">📑 Contrats</button> -->
+                            <!-- <button class="pdfb-gallery-filter-btn button button-secondary newsletter" data-filter="newsletter">📰 Newsletters</button> -->
                         </div>
                     </div>
 
@@ -616,7 +616,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Gestionnaires pour les filtres de la galerie
-    var galleryFilterBtns = document.querySelectorAll('.pdfb-pdfb-gallery-filter-btn');
+    var galleryFilterBtns = document.querySelectorAll('.pdfb-gallery-filter-btn');
     galleryFilterBtns.forEach(function(btn) {
         btn.addEventListener('click', function() {
             // Retirer la classe active de tous les boutons
@@ -980,16 +980,16 @@ function displayTemplateSettings(template) {
             </div>
         </div>
         <div class="pdfb-template-modal-footer pdfb-template-settings-modal-footer" style="padding: 20px 32px; border-top: 1px solid #e1e5e9; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; min-height: 80px;">
-            <div class="pdfb-pdfb-template-settings-footer-content" style="flex: 1; padding-right: 20px;">
-                <div class="pdfb-pdfb-template-settings-footer-title" style="font-size: 16px; font-weight: 600; color: #23282d; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
-                    <span class="pdfb-pdfb-template-settings-icon">⚙️</span>
+            <div class="pdfb-template-settings-footer-content" style="flex: 1; padding-right: 20px;">
+                <div class="pdfb-template-settings-footer-title" style="font-size: 16px; font-weight: 600; color: #23282d; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+                    <span class="pdfb-template-settings-icon">⚙️</span>
                     Paramètres du Template
                 </div>
-                <div class="pdfb-pdfb-template-settings-footer-subtitle" style="font-size: 14px; color: #6c757d; font-style: italic;">
+                <div class="pdfb-template-settings-footer-subtitle" style="font-size: 14px; color: #6c757d; font-style: italic;">
                     Configuration de "Template par défaut"
                 </div>
             </div>
-            <div class="pdfb-pdfb-template-settings-footer-actions" style="display: flex; gap: 12px; flex-shrink: 0;">
+            <div class="pdfb-template-settings-footer-actions" style="display: flex; gap: 12px; flex-shrink: 0;">
                 <button onclick="closeTemplateSettingsModal()" class="pdfb-canvas-modal-btn canvas-modal-btn-secondary" style="padding: 12px 24px; border-radius: 8px; font-weight: 500; font-size: 14px; border: none; cursor: pointer; min-width: 100px; background: #6c757d; color: #ffffff;">Annuler</button>
                 <button onclick="saveTemplateSettings()" class="pdfb-canvas-modal-btn canvas-modal-btn-primary" style="padding: 12px 24px; border-radius: 8px; font-weight: 500; font-size: 14px; border: none; cursor: pointer; min-width: 100px; background: #007cba; color: #ffffff;">💾 Enregistrer</button>
             </div>
