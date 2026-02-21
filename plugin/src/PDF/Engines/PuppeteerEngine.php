@@ -48,41 +48,11 @@ class PuppeteerEngine implements PDFEngineInterface {
         $license_key = $this->get_license_key();
         $site_url    = get_site_url();
 
-        // Pour les jobs simulation, forcer un client sans mode simulation
-        $force_no_sim = ! empty( $options['force_simulation_off'] );
-        if ( $force_no_sim ) {
-            $client = new Puppeteer_Client( true );
-        } else {
-            $client = $this->client;
-        }
-
-        $this->log( "format={$format}  license=" . ( $license_key ? 'yes' : 'no' ) . ( $force_no_sim ? '  [sim=OFF]' : '' ) );
-
-        // ─── Cache Redis / transient ────────────────────────────────────────────
-        $order_id    = (int) ( $options['order_id']    ?? 0 );
-        $template_id = (string) ( $options['template_id'] ?? '' );
-        $cache_key   = ( $order_id && $template_id )
-            ? \PDF_Builder\PDF\PDF_Builder_PDF_Cache::make_key( $order_id, $template_id, $html )
-            : '';
-
-        if ( $cache_key !== '' ) {
-            $cached = \PDF_Builder\PDF\PDF_Builder_PDF_Cache::get( $cache_key );
-            if ( $cached !== false ) {
-                $this->log( "PDF servi depuis le cache (" . strlen( $cached ) . " octets)" );
-                return $cached;
-            }
-        }
-        // ───────────────────────────────────────────────────────────────────────
+        $this->log( "format={$format}  license=" . ( $license_key ? 'yes' : 'no' ) );
 
         try {
-            $pdf = $client->render( $html, $format, $license_key, $site_url );
+            $pdf = $this->client->render( $html, $format, $license_key, $site_url );
             $this->log( "PDF généré – " . strlen( $pdf ) . " octets" );
-
-            // Mise en cache
-            if ( $cache_key !== '' && strlen( $pdf ) > 0 ) {
-                \PDF_Builder\PDF\PDF_Builder_PDF_Cache::set( $cache_key, $pdf );
-            }
-
             return $pdf;
         } catch ( \Exception $e ) {
             error_log( '[PuppeteerEngine] EXCEPTION: ' . $e->getMessage() );
@@ -115,28 +85,6 @@ class PuppeteerEngine implements PDFEngineInterface {
         $image = $this->client->render_image( $html, $format, $width, $height, $quality, $license_key, $site_url );
         $this->log( "Image générée via service – " . strlen( $image ) . " octets (format={$format})" );
         return $image;
-    }
-
-    /**
-     * Interroge l'état d'un job en attente (pour affichage de la position dans la queue).
-     *
-     * @param string $job_id
-     * @return array  { 'status' => HTTP_CODE, 'position' => int|null, 'wait_time' => int|null, 'error' => string|null, 'body' => string }
-     */
-    public function get_queue_status( string $job_id ): array {
-        return $this->client->get_job_status( $job_id );
-    }
-
-    /**
-     * Récupère le PDF d'un job déjà terminé sans le re-générer.
-     * À utiliser quand on sait que le job est status 200.
-     *
-     * @param string $job_id
-     * @return string  Contenu binaire PDF
-     * @throws \RuntimeException
-     */
-    public function get_job_result( string $job_id ): string {
-        return $this->client->get_job_result( $job_id );
     }
 
     /**

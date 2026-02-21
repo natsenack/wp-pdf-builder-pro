@@ -488,7 +488,7 @@ class PDF_Builder_WooCommerce_Integration
         <script type="text/javascript">
         (function($) {
 
-            // --- Export PDF / PNG / JPG via form POST (nouvel onglet) ---
+            // --- Export PDF / PNG / JPG ---
             function openExportForm(ajaxUrl, params) {
                 var form = $('<form>', {method:'POST', action:ajaxUrl, target:'_blank', style:'display:none'});
                 $.each(params, function(k, v) {
@@ -498,6 +498,131 @@ class PDF_Builder_WooCommerce_Integration
                 form.submit();
                 form.remove();
             }
+
+            // ── File d'attente PDF ──────────────────────────────────────────────────
+            // Affiche le modal de position dans la file pour les utilisateurs free.
+
+            function pdfbCreateQueueModal() {
+                if ($('#pdfb-queue-modal-overlay').length) return;
+                var html =
+                    '<div id="pdfb-queue-modal-overlay" style="' +
+                        'display:none;position:fixed;inset:0;z-index:999999;' +
+                        'background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;">' +
+                    '<div id="pdfb-queue-modal" style="' +
+                        'background:#fff;border-radius:12px;width:380px;max-width:95vw;' +
+                        'box-shadow:0 10px 40px rgba(0,0,0,.35);overflow:hidden;">' +
+
+                        '<div style="background:linear-gradient(135deg,#667eea,#764ba2);padding:20px 24px;' +
+                             'display:flex;justify-content:space-between;align-items:center;">' +
+                            '<h3 style="margin:0;color:#fff;font-size:16px;font-weight:600;">📄 Génération PDF en cours</h3>' +
+                            '<button id="pdfb-queue-modal-close" style="' +
+                                'background:rgba(255,255,255,.2);border:none;color:#fff;width:28px;height:28px;' +
+                                'border-radius:50%;cursor:pointer;font-size:16px;line-height:1;padding:0;">✕</button>' +
+                        '</div>' +
+
+                        '<div style="padding:28px 24px;text-align:center;">' +
+                            '<div id="pdfb-queue-spinner" style="font-size:40px;animation:pdfbSpin 2s linear infinite;display:inline-block;margin-bottom:16px;">⏳</div>' +
+                            '<p style="margin:0 0 8px;color:#374151;font-size:14px;">' +
+                                'Votre document est en cours de génération.</p>' +
+                            '<p style="margin:0 0 20px;color:#6b7280;font-size:13px;">' +
+                                'La génération PDF est traitée en arrière-plan.</p>' +
+                            '<div id="pdfb-queue-position-box" style="' +
+                                'background:#f3f4f6;border-radius:8px;padding:14px;margin-bottom:20px;">' +
+                                '<div style="font-size:12px;color:#6b7280;margin-bottom:4px;">Position dans la file</div>' +
+                                '<div style="font-size:28px;font-weight:700;color:#667eea;" id="pdfb-queue-pos">—</div>' +
+                            '</div>' +
+                            '<div id="pdfb-queue-status-msg" style="font-size:13px;color:#6b7280;"></div>' +
+                        '</div>' +
+
+                        '<div id="pdfb-queue-done-section" style="display:none;padding:0 24px 24px;">' +
+                            '<a id="pdfb-queue-download-btn" href="#" target="_blank" style="' +
+                                'display:block;width:100%;padding:12px;background:#10b981;color:#fff;' +
+                                'border:none;border-radius:8px;text-align:center;font-size:14px;font-weight:600;' +
+                                'text-decoration:none;cursor:pointer;">📥 Télécharger le PDF</a>' +
+                        '</div>' +
+
+                    '</div></div>';
+
+                $('body').append(html);
+
+                // Ajouter l'animation rotation une seule fois
+                if (!$('#pdfb-queue-keyframes').length) {
+                    $('head').append('<style id="pdfb-queue-keyframes">' +
+                        '@keyframes pdfbSpin{0%{transform:none}50%{transform:rotateY(180deg)}100%{transform:none}}' +
+                        '</style>');
+                }
+
+                $('#pdfb-queue-modal-close').on('click', pdfbCloseQueueModal);
+                $('#pdfb-queue-modal-overlay').on('click', function(e) {
+                    if ($(e.target).is('#pdfb-queue-modal-overlay')) pdfbCloseQueueModal();
+                });
+            }
+
+            function pdfbCloseQueueModal() {
+                $('#pdfb-queue-modal-overlay').fadeOut(200);
+                window._pdfbQueuePolling = false;
+            }
+
+            function pdfbShowQueueModal(jobId, position, ajaxUrl, nonce) {
+                pdfbCreateQueueModal();
+                $('#pdfb-queue-pos').text(position > 0 ? '#' + position : '—');
+                $('#pdfb-queue-status-msg').text('Vérification toutes les 3 secondes…');
+                $('#pdfb-queue-done-section').hide();
+                $('#pdfb-queue-spinner').show();
+                $('#pdfb-queue-modal-overlay').fadeIn(200);
+
+                window._pdfbQueuePolling = true;
+                pdfbPollQueueStatus(jobId, ajaxUrl, nonce);
+            }
+
+            function pdfbPollQueueStatus(jobId, ajaxUrl, nonce) {
+                if (!window._pdfbQueuePolling) return;
+
+                $.post(ajaxUrl, {
+                    action:  'pdf_builder_pdf_queue_status',
+                    job_id:  jobId,
+                    nonce:   nonce
+                }, function(resp) {
+                    if (!window._pdfbQueuePolling) return;
+
+                    if (!resp || !resp.success) {
+                        var msg = (resp && resp.data && resp.data.message) ? resp.data.message : 'Erreur inconnue';
+                        $('#pdfb-queue-status-msg').text('❌ ' + msg);
+                        return;
+                    }
+
+                    var data = resp.data;
+
+                    if (data.status === 'done') {
+                        $('#pdfb-queue-pos').text('✅');
+                        $('#pdfb-queue-status-msg').text('PDF prêt !');
+                        $('#pdfb-queue-spinner').hide();
+                        $('#pdfb-queue-done-section').show();
+                        $('#pdfb-queue-download-btn').attr('href', data.download_url);
+                        window._pdfbQueuePolling = false;
+                        return;
+                    }
+
+                    if (data.status === 'pending') {
+                        var pos = data.position > 0 ? '#' + data.position : '—';
+                        $('#pdfb-queue-pos').text(pos);
+                        $('#pdfb-queue-status-msg').text('Prochain contrôle dans 3 secondes…');
+                    }
+
+                    // Continuer le polling
+                    setTimeout(function() {
+                        pdfbPollQueueStatus(jobId, ajaxUrl, nonce);
+                    }, 3000);
+
+                }).fail(function() {
+                    if (!window._pdfbQueuePolling) return;
+                    $('#pdfb-queue-status-msg').text('Erreur réseau — nouvelle tentative…');
+                    setTimeout(function() {
+                        pdfbPollQueueStatus(jobId, ajaxUrl, nonce);
+                    }, 5000);
+                });
+            }
+            // ── Fin file d'attente ──────────────────────────────────────────────────
 
             $('.pdf-builder-action-btn').on('click', function() {
                 var btn        = $(this);
@@ -509,74 +634,41 @@ class PDF_Builder_WooCommerce_Integration
                 var orig       = btn.html();
 
                 btn.prop('disabled', true).html('⏳');
-                setTimeout(function() { btn.prop('disabled', false).html(orig); }, 4000);
 
                 if (type === 'pdf') {
-                    fetch(ajaxUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({
-                            action:      'pdf_builder_generate_order_pdf',
-                            order_id:    orderId,
-                            template_id: templateId,
-                            nonce:       nonce
-                        })
-                    })
-                    .then(async function(response) {
-                        var buffer = await response.arrayBuffer();
-                        var json = null;
-                        try {
-                            var text = new TextDecoder('utf-8').decode(new Uint8Array(buffer));
-                            json = JSON.parse(text);
-                        } catch(e) {}
+                    // Génération asynchrone avec gestion de la file d'attente
+                    var formData = new FormData();
+                    formData.append('action',      'pdf_builder_generate_pdf_async');
+                    formData.append('template_id', templateId);
+                    formData.append('order_id',    orderId);
+                    formData.append('nonce',       nonce);
 
-                        btn.prop('disabled', false).html(orig);
-
-                        if (json !== null) {
-                            if (json.data && json.data.queue_active) {
-                                // Afficher la modal de queue
-                                if (window.PdfBuilderQueueModal && window.PdfBuilderQueueModal.init) {
-                                    window.PdfBuilderQueueModal.init(
-                                        json.data.job_id,
-                                        json.data.template_id,
-                                        json.data.order_id,
-                                        { pollInterval: 2000, maxWaitTime: 600000 }
-                                    );
-                                } else {
-                                    alert('Votre demande est en queue. Position: ' + (json.data.position || '?'));
-                                }
-                            } else if (!json.success) {
-                                alert('Erreur: ' + (json.data && json.data.message ? json.data.message : 'Erreur lors de la génération'));
-                            } else {
-                                // JSON success sans queue → fallback form
-                                openExportForm(ajaxUrl, {
-                                    action:      'pdf_builder_generate_order_pdf',
-                                    order_id:    orderId,
-                                    template_id: templateId,
-                                    nonce:       nonce
-                                });
+                    fetch(ajaxUrl, { method: 'POST', body: formData })
+                        .then(function(res) { return res.json(); })
+                        .then(function(resp) {
+                            btn.prop('disabled', false).html(orig);
+                            if (!resp.success) {
+                                var msg = (resp.data && resp.data.message) ? resp.data.message : 'Erreur inconnue';
+                                alert('❌ Erreur lors de la génération PDF :\n\n' + msg);
+                                return;
                             }
-                        } else {
-                            // PDF binaire → téléchargement
-                            var blob = new Blob([buffer], { type: 'application/pdf' });
-                            var url  = URL.createObjectURL(blob);
-                            var a    = document.createElement('a');
-                            a.href     = url;
-                            a.download = 'document-' + orderId + '.pdf';
-                            document.body.appendChild(a);
-                            a.click();
-                            URL.revokeObjectURL(url);
-                            a.remove();
-                        }
-                    })
-                    .catch(function(err) {
-                        btn.prop('disabled', false).html(orig);
-                        console.error('[PDF Builder] Erreur fetch PDF:', err);
-                        alert('Erreur réseau: ' + err.message);
-                    });
+                            var data = resp.data;
+                            if (data.status === 'done') {
+                                // PDF prêt immédiatement (premium) → ouverture directe
+                                window.open(data.download_url, '_blank');
+                            } else if (data.status === 'queued') {
+                                // En file d'attente (free) → afficher le modal de position
+                                pdfbShowQueueModal(data.job_id, data.position, ajaxUrl, nonce);
+                            }
+                        })
+                        .catch(function(err) {
+                            btn.prop('disabled', false).html(orig);
+                            alert('❌ Erreur réseau :\n\n' + err.message);
+                        });
+
                 } else {
                     // PNG / JPG : génération via Puppeteer (screenshot natif haute qualité)
-                    btn.prop('disabled', true).html('⏳');
+                    setTimeout(function() { btn.prop('disabled', false).html(orig); }, 4000);
 
                     var formData = new FormData();
                     formData.append('action',      'pdf_builder_generate_image');

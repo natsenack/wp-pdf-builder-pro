@@ -20,7 +20,7 @@ error_log('[PDF Builder] settings-main.php tab=' . $current_tab . ' GET=' . json
 // define('PDF_BUILDER_DEV_TOKEN', '<votre_token_secret>');
 $is_dev_access = function_exists('pdf_builder_is_dev_access') && pdf_builder_is_dev_access();
 
-$valid_tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates', 'queue-simulation'];
+$valid_tabs = ['general', 'licence', 'systeme', 'securite', 'pdf', 'contenu', 'templates'];
 if ($is_dev_access) {
     $valid_tabs[] = 'developpeur';
 }
@@ -115,10 +115,6 @@ if (isset($_GET['updated']) && $_GET['updated'] === '1') {
                     <span class="pdfb-tab-icon">📋</span>
                     <span class="pdfb-tab-text"><?php _e('Templates', 'pdf-builder-pro'); ?></span>
                 </a>
-                <a href="?page=pdf-builder-settings&tab=queue-simulation" class="pdfb-nav-tab<?php echo $current_tab === 'queue-simulation' ? ' pdfb-nav-tab-active' : ''; ?>">
-                    <span class="pdfb-tab-icon">🔬</span>
-                    <span class="pdfb-tab-text"><?php _e('Test Queue', 'pdf-builder-pro'); ?></span>
-                </a>
                 <?php if ($is_dev_access) : ?>
                 <a href="?page=pdf-builder-settings&tab=developpeur" class="pdfb-nav-tab<?php echo $current_tab === 'developpeur' ? ' pdfb-nav-tab-active' : ''; ?>">
                     <span class="pdfb-tab-icon">👨‍💻</span>
@@ -151,9 +147,6 @@ if (isset($_GET['updated']) && $_GET['updated'] === '1') {
                     break;
                 case 'templates':
                     include __DIR__ . '/settings-templates.php';
-                    break;
-                case 'queue-simulation':
-                    include __DIR__ . '/settings-queue-simulation.php';
                     break;
                 case 'developpeur':
                     if (!$is_dev_access) { wp_die('Accès refusé.', 403); }
@@ -346,7 +339,7 @@ jQuery(document).ready(function($) {
     });
 
     // Changer d'onglet
-    $('.pdfb-nav-tab').on('click', function(e) {
+    $('.nav-tab').on('click', function(e) {
         e.preventDefault();
         var tab = $(this).attr('href').split('tab=')[1];
         if (tab) {

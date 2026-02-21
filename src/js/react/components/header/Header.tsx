@@ -2,6 +2,7 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useRef,
   memo,
   useDeferredValue,
 } from "react";
@@ -172,6 +173,14 @@ export const Header = memo(function Header({
 
   // Vérifier le statut premium depuis pdfBuilderData
   const isPremium = (window as any).pdfBuilderData?.license?.isPremium || false;
+
+  // ── File d'attente PDF (utilisateurs free) ───────────────────────────────────
+  const [showQueueModal, setShowQueueModal] = useState(false);
+  const [queuePosition, setQueuePosition] = useState<number>(1);
+  const [queueJobId, setQueueJobId] = useState<string>("");
+  const [queueStatus, setQueueStatus] = useState<"pending" | "done" | "error">("pending");
+  const [queueDownloadUrl, setQueueDownloadUrl] = useState<string>("");
+  const queuePollingRef = useRef<boolean>(false);
 
   // Charger le moteur PDF actif
   const loadActiveEngine = async () => {
@@ -469,7 +478,56 @@ export const Header = memo(function Header({
     }
   };
 
-  // Générer un PDF via AJAX
+  // ── Polling de la file d'attente PDF ─────────────────────────────────────────
+  const pollQueueStatus = useCallback(
+    async (jobId: string) => {
+      if (!queuePollingRef.current) return;
+
+      const ajaxUrl =
+        (window as any).pdfBuilderData?.ajaxUrl || "/wp-admin/admin-ajax.php";
+      const nonce = (window as any).pdfBuilderNonce || "";
+
+      try {
+        const formData = new FormData();
+        formData.append("action", "pdf_builder_pdf_queue_status");
+        formData.append("job_id", jobId);
+        formData.append("nonce", nonce);
+
+        const response = await fetch(ajaxUrl, { method: "POST", body: formData });
+        const resp = await response.json();
+
+        if (!queuePollingRef.current) return;
+
+        if (!resp.success) {
+          setQueueStatus("error");
+          return;
+        }
+
+        const data = resp.data;
+
+        if (data.status === "done") {
+          setQueueStatus("done");
+          setQueueDownloadUrl(data.download_url);
+          queuePollingRef.current = false;
+          return;
+        }
+
+        if (data.status === "pending") {
+          setQueuePosition(data.position ?? 1);
+        }
+
+        // Continuer le polling toutes les 3 secondes
+        setTimeout(() => pollQueueStatus(jobId), 3000);
+      } catch {
+        if (!queuePollingRef.current) return;
+        // Réessayer après 5 secondes en cas d'erreur réseau
+        setTimeout(() => pollQueueStatus(jobId), 5000);
+      }
+    },
+    [],
+  );
+
+  // Générer un PDF via AJAX (asynchrone — gère la file d'attente free)
   const generatePDF = async () => {
     if (!previewOrderId || previewOrderId.trim() === "") {
       alert("Veuillez sélectionner une commande");
@@ -487,29 +545,44 @@ export const Header = memo(function Header({
     setIsGeneratingPreview(true);
     try {
       const formData = new FormData();
-      formData.append("action", "pdf_builder_generate_pdf");
+      formData.append("action", "pdf_builder_generate_pdf_async");
       formData.append("template_id", templateId.toString());
       formData.append("order_id", previewOrderId.trim());
       formData.append("nonce", (window as any).pdfBuilderNonce || "");
 
       const response = await fetch(
         (window as any).pdfBuilderData?.ajaxUrl || "/wp-admin/admin-ajax.php",
-        {
-          method: "POST",
-          body: formData,
-        },
+        { method: "POST", body: formData },
       );
 
-      if (!response.ok) {
-        throw new Error("Erreur lors de la génération du PDF");
+      const resp = await response.json();
+
+      if (!resp.success) {
+        const msg = resp.data?.message ?? "Erreur inconnue";
+        throw new Error(msg);
       }
 
-      // Ouvrir le PDF dans un nouvel onglet
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      window.open(url, "_blank");
+      const data = resp.data;
 
-      setShowPreviewModal(false);
+      if (data.status === "done") {
+        // PDF prêt immédiatement (premium) → ouvrir dans nouvel onglet
+        window.open(data.download_url, "_blank");
+        setShowPreviewModal(false);
+        return;
+      }
+
+      if (data.status === "queued") {
+        // Mettre en file d'attente (free) → afficher le modal de position
+        setShowPreviewModal(false);
+        setQueueJobId(data.job_id);
+        setQueuePosition(data.position ?? 1);
+        setQueueStatus("pending");
+        setQueueDownloadUrl("");
+        setShowQueueModal(true);
+        queuePollingRef.current = true;
+        // Démarrer le polling après un court délai
+        setTimeout(() => pollQueueStatus(data.job_id), 3000);
+      }
     } catch (error) {
       console.error("[PREVIEW] Erreur génération PDF:", error);
       alert(
@@ -3717,6 +3790,146 @@ export const Header = memo(function Header({
               >
                 Annuler
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modale File d'attente PDF (utilisateurs free) ──────────────────── */}
+      {showQueueModal && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 999999,
+            backgroundColor: "rgba(0,0,0,.55)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              queuePollingRef.current = false;
+              setShowQueueModal(false);
+            }
+          }}
+        >
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: "12px",
+              width: "380px",
+              maxWidth: "95vw",
+              boxShadow: "0 10px 40px rgba(0,0,0,.35)",
+              overflow: "hidden",
+            }}
+          >
+            {/* Header */}
+            <div
+              style={{
+                background: "linear-gradient(135deg,#667eea,#764ba2)",
+                padding: "20px 24px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <h3 style={{ margin: 0, color: "#fff", fontSize: "16px", fontWeight: 600 }}>
+                📄 Génération PDF en cours
+              </h3>
+              <button
+                onClick={() => {
+                  queuePollingRef.current = false;
+                  setShowQueueModal(false);
+                }}
+                style={{
+                  background: "rgba(255,255,255,.2)",
+                  border: "none",
+                  color: "#fff",
+                  width: "28px",
+                  height: "28px",
+                  borderRadius: "50%",
+                  cursor: "pointer",
+                  fontSize: "16px",
+                  lineHeight: "1",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Body */}
+            <div style={{ padding: "28px 24px", textAlign: "center" }}>
+              {queueStatus !== "done" && (
+                <div style={{ fontSize: "40px", marginBottom: "16px" }}>⏳</div>
+              )}
+              {queueStatus === "done" && (
+                <div style={{ fontSize: "40px", marginBottom: "16px" }}>✅</div>
+              )}
+
+              {queueStatus === "pending" && (
+                <>
+                  <p style={{ margin: "0 0 8px", color: "#374151", fontSize: "14px" }}>
+                    Votre document est en cours de génération.
+                  </p>
+                  <p style={{ margin: "0 0 20px", color: "#6b7280", fontSize: "13px" }}>
+                    La génération PDF est traitée en arrière-plan.
+                  </p>
+                  <div
+                    style={{
+                      background: "#f3f4f6",
+                      borderRadius: "8px",
+                      padding: "14px",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    <div style={{ fontSize: "12px", color: "#6b7280", marginBottom: "4px" }}>
+                      Position dans la file
+                    </div>
+                    <div style={{ fontSize: "28px", fontWeight: 700, color: "#667eea" }}>
+                      {queuePosition > 0 ? `#${queuePosition}` : "—"}
+                    </div>
+                  </div>
+                  <div style={{ fontSize: "13px", color: "#6b7280" }}>
+                    Vérification toutes les 3 secondes…
+                  </div>
+                </>
+              )}
+
+              {queueStatus === "done" && (
+                <>
+                  <p style={{ margin: "0 0 20px", color: "#374151", fontSize: "14px" }}>
+                    Votre PDF est prêt !
+                  </p>
+                  <a
+                    href={queueDownloadUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      display: "block",
+                      padding: "12px",
+                      background: "#10b981",
+                      color: "#fff",
+                      borderRadius: "8px",
+                      textAlign: "center",
+                      fontSize: "14px",
+                      fontWeight: 600,
+                      textDecoration: "none",
+                    }}
+                  >
+                    📥 Télécharger le PDF
+                  </a>
+                </>
+              )}
+
+              {queueStatus === "error" && (
+                <p style={{ color: "#dc2626", fontSize: "14px" }}>
+                  ❌ Une erreur est survenue lors de la génération. Veuillez réessayer.
+                </p>
+              )}
             </div>
           </div>
         </div>

@@ -23,31 +23,16 @@ class Puppeteer_Client {
     const SERVICE_BASE_URL = 'http://pdf.threeaxe.fr';
     const HMAC_SECRET      = '04abca0b6fb5a01f8854daecd90fdfe709df2e6c446cf328986b5d952a0ac27e';
 
-    const POLL_INTERVAL_S  = 3;   // secondes entre chaque polling
-    const POLL_MAX_WAIT_S  = 120; // délai maximum total (secondes)
+    const POLL_INTERVAL_S  = 2;   // secondes entre chaque polling
+    const POLL_MAX_WAIT_S  = 30;  // délai maximum total (secondes)
 
     /** @var bool */
     private $debug_enabled;
-    
-    /** @var bool – Mode simulation pour tester la queue sans vrai service */
-    private $simulation_mode;
-    
-    /** @var int – Position initiale dans la queue simulée */
-    private $simulation_initial_position = 5;
-    
-    /** @var int – Temps d'attente estimé en secondes */
-    private $simulation_wait_time = 30;
 
     // ─── Constructeur ────────────────────────────────────────────────────────────
 
-    public function __construct( bool $force_simulation_off = false ) {
+    public function __construct() {
         $this->debug_enabled = (bool) pdf_builder_get_option( 'pdf_builder_debug_enabled', false );
-        if ( $force_simulation_off ) {
-            $this->simulation_mode = false;
-        } else {
-            $this->simulation_mode = (bool) pdf_builder_get_option( 'pdf_builder_queue_simulation_enabled', false );
-        }
-        $this->log( "Puppeteer_Client initialized - simulation_mode=" . ( $this->simulation_mode ? 'ON' : 'OFF' ) );
     }
 
     // ─── SSL helper ─────────────────────────────────────────────────────────────
@@ -144,6 +129,130 @@ class Puppeteer_Client {
         $err_msg = "Service PDF — HTTP {$status} : " . substr( $response_body, 0, 500 );
         error_log( '[Puppeteer_Client] HTTP ERROR: ' . $err_msg );
         throw new \RuntimeException( $err_msg );
+    }
+
+    /**
+     * Initie un rendu PDF sans attendre le résultat (non-bloquant pour les utilisateurs free).
+     *
+     * Comportement :
+     *  - HTTP 200 → rendu synchrone (premium) : retourne ['status' => 'done', 'pdf' => binary]
+     *  - HTTP 202 → rendu asynchrone (free)   : retourne ['status' => 'queued', 'job_id' => '...']
+     *
+     * @param string $html
+     * @param string $format      Format papier : 'A4', 'A3', …
+     * @param string $license_key Clé de licence EDD
+     * @param string $site_url    URL du site WordPress
+     * @return array{status: string, pdf?: string, job_id?: string, tier?: string}
+     * @throws \RuntimeException  En cas d'erreur HTTP
+     */
+    public function start_render_job(
+        string $html,
+        string $format      = 'A4',
+        string $license_key = '',
+        string $site_url    = ''
+    ): array {
+
+        $path = '/v2/render';
+
+        $body_data = [
+            'html'    => $html,
+            'format'  => 'pdf',
+            'options' => [
+                'format'          => $format,
+                'printBackground' => true,
+            ],
+            'site_url' => $site_url ?: get_site_url(),
+        ];
+
+        if ( $license_key !== '' ) {
+            $body_data['license_key'] = $license_key;
+        }
+
+        $body = (string) wp_json_encode( $body_data );
+
+        $this->log( "start_render_job() → POST {$path}  (license=" . ( $license_key ? 'yes' : 'no' ) . ", format={$format})" );
+
+        [ $status, $response_body, $resp_headers ] = $this->http_post( $path, $body );
+
+        // Rendu synchrone (Premium)
+        if ( $status === 200 ) {
+            $tier = $resp_headers['x-pup-tier'] ?? 'premium';
+            $this->log( "start_render_job → rendu synchrone – tier={$tier}  " . strlen( $response_body ) . " octets" );
+            return [
+                'status' => 'done',
+                'pdf'    => $response_body,
+                'tier'   => $tier,
+            ];
+        }
+
+        // Rendu asynchrone (Free → 202)
+        if ( $status === 202 ) {
+            $data = json_decode( $response_body, true );
+            if ( empty( $data['job_id'] ) ) {
+                throw new \RuntimeException( 'Service 202 sans job_id dans la réponse.' );
+            }
+            $tier = $data['tier'] ?? 'free';
+            $this->log( "start_render_job → rendu asynchrone – tier={$tier}  job_id={$data['job_id']}" );
+            return [
+                'status' => 'queued',
+                'job_id' => (string) $data['job_id'],
+                'tier'   => $tier,
+            ];
+        }
+
+        $err_msg = "Service PDF — HTTP {$status} : " . substr( $response_body, 0, 500 );
+        error_log( '[Puppeteer_Client] start_render_job ERROR: ' . $err_msg );
+        throw new \RuntimeException( $err_msg );
+    }
+
+    /**
+     * Interroge UNE SEULE FOIS le résultat d'un job (non-bloquant).
+     * Utilisé par le polling frontend via AJAX.
+     *
+     * @param string $job_id
+     * @return array{status: string, pdf?: string, position?: int, message?: string}
+     *   status = 'done'    → PDF prêt, contenu binaire dans 'pdf'
+     *   status = 'pending' → En attente, position estimée dans 'position'
+     *   status = 'error'   → Erreur, message dans 'message'
+     */
+    public function check_job_result( string $job_id ): array {
+
+        $path = "/v2/jobs/{$job_id}/result";
+        $url  = self::SERVICE_BASE_URL . $path;
+
+        $this->log( "check_job_result() → GET {$path}" );
+
+        $response = wp_remote_get( $url, [
+            'timeout'    => 10,
+            'user-agent' => 'PDF-Builder-Pro/' . PDF_BUILDER_PRO_VERSION,
+            'headers'    => $this->build_get_headers( $path ),
+            'sslverify'  => $this->should_verify_ssl(),
+        ] );
+
+        if ( is_wp_error( $response ) ) {
+            $msg = $response->get_error_message();
+            $this->log( 'check_job_result WP_Error : ' . $msg, 'WARNING' );
+            return [ 'status' => 'error', 'message' => $msg ];
+        }
+
+        $code = (int) wp_remote_retrieve_response_code( $response );
+        $body = wp_remote_retrieve_body( $response );
+
+        if ( $code === 200 ) {
+            $this->log( "check_job_result → PDF prêt – " . strlen( $body ) . " octets" );
+            return [ 'status' => 'done', 'pdf' => $body ];
+        }
+
+        // 202 ou 409 = job toujours en attente
+        if ( $code === 202 || $code === 409 ) {
+            $data     = json_decode( $body, true ) ?: [];
+            $position = isset( $data['position'] ) ? (int) $data['position'] : 1;
+            $this->log( "check_job_result → en attente – HTTP {$code}  position={$position}" );
+            return [ 'status' => 'pending', 'position' => $position ];
+        }
+
+        $this->log( "check_job_result → erreur HTTP {$code}", 'ERROR' );
+        return [ 'status' => 'error', 'message' => "HTTP {$code} : " . substr( $body, 0, 200 ) ];
     }
 
     /**
@@ -250,260 +359,8 @@ class Puppeteer_Client {
         return $ok;
     }
 
-    /**
-     * Interroge l'état d'un job en attente (pour affichage de la position dans la queue).
-     * Retourne l'état sans bloquer.
-     *
-     * @param string $job_id
-     * @return array  { 'status' => HTTP_CODE, 'position' => int|null, 'wait_time' => int|null, 'error' => string|null, 'body' => string }
-     */
-    public function get_job_status( string $job_id ): array {
-        
-        // ─── MODE SIMULATION : Simuler l'état du job ────────────────────────────
-        if ( $this->simulation_mode && strpos( $job_id, 'sim-' ) === 0 ) {
-            $sim_data = get_transient( 'pdf_queue_sim_' . $job_id );
-            
-            if ( ! $sim_data ) {
-                // Job expiré ou inexistant
-                return [
-                    'status'    => 404,
-                    'error'     => 'Simulation job expired',
-                    'position'  => null,
-                    'wait_time' => null,
-                    'body'      => '',
-                ];
-            }
-            
-            $elapsed = time() - $sim_data['created_at'];
-            $position = max( 1, $sim_data['position'] - intval( $elapsed / 3 ) ); // Position -1 toutes les 3 sec
-            $wait_time = max( 0, $sim_data['wait_time'] - $elapsed ); // Temps qui décroît
-            
-            // Quand position <= 1, le job est prêt
-            if ( $position <= 1 ) {
-                $this->log( "Simulation: Job {$job_id} is ready (position reached 1)" );
-                return [
-                    'status'    => 200, // Prêt !
-                    'position'  => 1,
-                    'wait_time' => 0,
-                    'error'     => null,
-                    'body'      => 'Simulated PDF content',
-                ];
-            }
-            
-            $this->log( "Simulation: Job {$job_id} still pending (position={$position}, wait_time={$wait_time}s)" );
-            return [
-                'status'    => 202, // Toujours en attente
-                'position'  => (int) $position,
-                'wait_time' => (int) max( 0, $wait_time ),
-                'error'     => null,
-                'body'      => '',
-            ];
-        }
-        
-        // ─── MODE NORMAL : Interroger le service réel ──────────────────────────
-        $path = "/v2/jobs/{$job_id}/result";
-        $url  = self::SERVICE_BASE_URL . $path;
-
-        $response = wp_remote_get( $url, [
-            'timeout'    => 10,
-            'user-agent' => 'PDF-Builder-Pro/' . PDF_BUILDER_PRO_VERSION,
-            'headers'    => $this->build_get_headers( $path ),
-            'sslverify'  => $this->should_verify_ssl(),
-        ] );
-
-        if ( is_wp_error( $response ) ) {
-            return [
-                'status'    => null,
-                'error'     => $response->get_error_message(),
-                'position'  => null,
-                'wait_time' => null,
-                'body'      => '',
-            ];
-        }
-
-        $code = (int) wp_remote_retrieve_response_code( $response );
-        $body = wp_remote_retrieve_body( $response );
-        $headers = wp_remote_retrieve_headers( $response );
-
-        // Normaliser les headers
-        if ( method_exists( $headers, 'getAll' ) ) {
-            $headers_arr = array_change_key_case( $headers->getAll(), CASE_LOWER );
-        } else {
-            $headers_arr = array_change_key_case( (array) $headers, CASE_LOWER );
-        }
-
-        $result = [
-            'status'    => $code,
-            'body'      => $body,
-            'position'  => null,
-            'wait_time' => null,
-            'error'     => null,
-        ];
-
-        // Parser les headers de réponse pour position et temps d'attente
-        if ( ! empty( $headers_arr['x-pup-queue-position'] ) ) {
-            $result['position'] = (int) $headers_arr['x-pup-queue-position'];
-        }
-        if ( ! empty( $headers_arr['x-pup-wait-time'] ) ) {
-            $result['wait_time'] = (int) $headers_arr['x-pup-wait-time'];
-        }
-
-        if ( $code >= 500 ) {
-            $result['error'] = "Service error (HTTP {$code})";
-        }
-
-        return $result;
-    }
-
-    /**
-     * Initie une génération PDF et retourne immédiatement.
-     * Si le service retient la requête (HTTP 202), retourne l'ID du job.
-     * Si la génération est synchrone (HTTP 200), retourne le PDF binaire.
-     *
-     * @param string $html
-     * @param string $format 
-     * @param string $license_key
-     * @param string $site_url
-     * @return array  { 'is_ready' => bool, 'pdf' => string|null, 'job_id' => string|null, 'error' => string|null }
-     */
-    public function render_non_blocking(
-        string $html,
-        string $format      = 'A4',
-        string $license_key = '',
-        string $site_url    = ''
-    ): array {
-        
-        // ─── MODE SIMULATION : Tester la queue sans appeler le vrai service ─────
-        if ( $this->simulation_mode ) {
-            $this->log( "SIMULATION MODE - Simulating queued response" );
-            $job_id = 'sim-' . bin2hex( random_bytes( 12 ) );
-            
-            // Stocker l'info du job simulé en transient (30 minutes)
-            set_transient( 'pdf_queue_sim_' . $job_id, [
-                'created_at'  => time(),
-                'position'    => $this->simulation_initial_position,
-                'wait_time'   => $this->simulation_wait_time,
-            ], 30 * MINUTE_IN_SECONDS );
-            
-            $this->log( "Simulation: Created job_id={$job_id} with initial_position={$this->simulation_initial_position}" );
-            
-            return [
-                'is_ready' => false,
-                'pdf'      => null,
-                'job_id'   => $job_id,
-                'error'    => null,
-            ];
-        }
-
-        $path = '/v2/render';
-        $body_data = [
-            'html'    => $html,
-            'format'  => 'pdf',
-            'options' => [
-                'format'          => $format,
-                'printBackground' => true,
-            ],
-            'site_url' => $site_url ?: get_site_url(),
-        ];
-
-        if ( $license_key !== '' ) {
-            $body_data['license_key'] = $license_key;
-        }
-
-        $body = (string) wp_json_encode( $body_data );
-        $this->log( "render_non_blocking() → POST {$path}" );
-
-        [ $status, $response_body, $resp_headers ] = $this->http_post( $path, $body );
-
-        // ─── Rendu synchrone (Premium) ──────────────────────────────────────────
-        if ( $status === 200 ) {
-            $this->log( 'Rendu synchrone OK – ' . strlen( $response_body ) . ' octets' );
-            return [
-                'is_ready' => true,
-                'pdf'      => $response_body,
-                'job_id'   => null,
-                'error'    => null,
-            ];
-        }
-
-        // ─── Rendu asynchrone (Free – queue) ────────────────────────────────────
-        if ( $status === 202 ) {
-            $data = json_decode( $response_body, true );
-            if ( empty( $data['job_id'] ) ) {
-                return [
-                    'is_ready' => false,
-                    'pdf'      => null,
-                    'job_id'   => null,
-                    'error'    => 'Service 202 sans job_id',
-                ];
-            }
-            $this->log( "Rendu asynchrone → job_id={$data['job_id']}" );
-            return [
-                'is_ready' => false,
-                'pdf'      => null,
-                'job_id'   => $data['job_id'],
-                'error'    => null,
-            ];
-        }
-
-        // ─── Erreur HTTP ───────────────────────────────────────────────────────
-        $error_msg = "HTTP {$status}: " . substr( $response_body, 0, 200 );
-        $this->log( "Erreur : {$error_msg}", 'ERROR' );
-        return [
-            'is_ready' => false,
-            'pdf'      => null,
-            'job_id'   => null,
-            'error'    => $error_msg,
-        ];
-    }
-
-    // ─── Récupération résultat ────────────────────────────────────────────────────
-
-    /**
-     * Récupère le PDF d'un job déjà terminé (status 200 confirmé au préalable).
-     * Fait un unique GET /v2/jobs/{job_id}/result — pas de polling.
-     *
-     * @param string $job_id  ID du job Puppeteer (ex retourné par render_non_blocking)
-     * @return string         Contenu binaire du PDF
-     * @throws \RuntimeException  Si le job n'est pas encore prêt ou erreur service
-     */
-    public function get_job_result( string $job_id ): string {
-
-        $path = "/v2/jobs/{$job_id}/result";
-        $url  = self::SERVICE_BASE_URL . $path;
-
-        $this->log( "get_job_result() → GET {$path}" );
-
-        $response = wp_remote_get( $url, [
-            'timeout'    => 30,
-            'user-agent' => 'PDF-Builder-Pro/' . PDF_BUILDER_PRO_VERSION,
-            'headers'    => $this->build_get_headers( $path ),
-            'sslverify'  => $this->should_verify_ssl(),
-        ] );
-
-        if ( is_wp_error( $response ) ) {
-            throw new \RuntimeException( 'get_job_result WP_Error : ' . $response->get_error_message() );
-        }
-
-        $code = (int) wp_remote_retrieve_response_code( $response );
-        $body = wp_remote_retrieve_body( $response );
-
-        if ( $code === 200 ) {
-            $this->log( "get_job_result → PDF reçu (" . strlen( $body ) . " octets)" );
-            return $body;
-        }
-
-        if ( $code === 202 || $code === 409 ) {
-            throw new \RuntimeException( "Le job {$job_id} n'est pas encore terminé (HTTP {$code})" );
-        }
-
-        throw new \RuntimeException( "get_job_result HTTP {$code} : " . substr( $body, 0, 300 ) );
-    }
-
     // ─── Polling ─────────────────────────────────────────────────────────────────
 
-    /**
-     * Interroge l'état d'un job en attente (pour affichage de la position dans la queue).
     /**
      * Interroge /v2/jobs/{job_id}/result jusqu'à obtenir le PDF (ou timeout).
      *
