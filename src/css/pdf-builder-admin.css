@@ -3743,3 +3743,13 @@ section[id^="dev-"] h3.pdfb-section-title {
     opacity: 1;
   }
 }
+
+/* === Maintenance Section Styling === */
+.pdfb-system-maintenance-section {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
