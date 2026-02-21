@@ -182,6 +182,10 @@ class PDF_Builder_WooCommerce_Integration
         add_action('wp_ajax_pdf_builder_get_order_data', [$this, 'ajax_get_order_data'], 1);
         add_action('wp_ajax_pdf_builder_get_company_data', [$this, 'ajax_get_company_data'], 1);
         add_action('wp_ajax_pdf_builder_validate_order_access', [$this, 'ajax_validate_order_access'], 1);
+        // Queue PDF pour utilisateurs gratuits
+        add_action('wp_ajax_pdf_builder_pdf_queue_join',   [$this, 'ajaxPdfQueueJoin'],   1);
+        add_action('wp_ajax_pdf_builder_pdf_queue_poll',   [$this, 'ajaxPdfQueuePoll'],   1);
+        add_action('wp_ajax_pdf_builder_pdf_queue_leave',  [$this, 'ajaxPdfQueueLeave'],  1);
     }
     private function detectDocumentType($order_status)
     {
@@ -395,6 +399,7 @@ class PDF_Builder_WooCommerce_Integration
                             data-template-id="<?php echo esc_attr($selected_template['id']); ?>"
                             data-nonce="<?php echo esc_attr($nonce); ?>"
                             data-ajax="<?php echo esc_attr($ajax_url); ?>"
+                            data-is-premium="<?php echo $is_premium ? '1' : '0'; ?>"
                             style="font-size:12px;padding:5px 8px;">
                         📥 <?php _e('PDF', 'pdf-builder-pro'); ?>
                     </button>
@@ -482,147 +487,179 @@ class PDF_Builder_WooCommerce_Integration
                 </div>
             </div>
 
+            <!-- Modal file d'attente PDF (utilisateurs gratuits) -->
+            <div id="pdfb-queue-modal" style="display:none;position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.6);" role="dialog" aria-modal="true" aria-labelledby="pdfb-queue-modal-title">
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:10px;width:340px;max-width:95vw;box-shadow:0 12px 48px rgba(0,0,0,.40);overflow:hidden;">
+                    <!-- En-tête -->
+                    <div style="padding:16px 20px;border-bottom:1px solid #e0e0e0;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:10px 10px 0 0;">
+                        <div id="pdfb-queue-modal-title" style="font-size:15px;font-weight:700;margin-bottom:2px;">⏳ <?php _e('Génération du PDF', 'pdf-builder-pro'); ?></div>
+                        <div style="font-size:12px;opacity:.85;"><?php _e('Fichier gratuit · File d\'attente active', 'pdf-builder-pro'); ?></div>
+                    </div>
+                    <!-- Corps -->
+                    <div style="padding:24px 20px;text-align:center;">
+                        <!-- Spinner animé -->
+                        <div style="margin-bottom:18px;">
+                            <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="animation:pdfb-spin 1.2s linear infinite">
+                                <circle cx="28" cy="28" r="22" stroke="#e9ecef" stroke-width="6"/>
+                                <path d="M28 6a22 22 0 0 1 22 22" stroke="#667eea" stroke-width="6" stroke-linecap="round"/>
+                            </svg>
+                            <style>@keyframes pdfb-spin{to{transform:rotate(360deg)}}</style>
+                        </div>
+                        <!-- Position -->
+                        <div id="pdfb-queue-pos-text" style="font-size:28px;font-weight:800;color:#667eea;line-height:1;margin-bottom:6px;">#<span id="pdfb-queue-pos-num">…</span></div>
+                        <div style="font-size:13px;color:#6c757d;margin-bottom:16px;"><?php _e('dans la file d\'attente', 'pdf-builder-pro'); ?></div>
+                        <!-- Barre de progression -->
+                        <div style="background:#e9ecef;border-radius:6px;height:8px;overflow:hidden;margin-bottom:14px;">
+                            <div id="pdfb-queue-progress-bar" style="height:100%;background:linear-gradient(90deg,#667eea,#764ba2);width:0%;transition:width 0.5s ease;border-radius:6px;"></div>
+                        </div>
+                        <div id="pdfb-queue-status-text" style="font-size:12px;color:#868e96;"><?php _e('Patience, votre PDF sera généré automatiquement…', 'pdf-builder-pro'); ?></div>
+                    </div>
+                    <!-- Pied -->
+                    <div style="padding:12px 20px;border-top:1px solid #e0e0e0;text-align:center;">
+                        <button type="button" id="pdfb-queue-cancel" class="button button-secondary" style="font-size:12px;">
+                            <?php _e('Annuler', 'pdf-builder-pro'); ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <?php endif; ?>
         </div>
 
         <script type="text/javascript">
         (function($) {
 
-            // --- Export PDF / PNG / JPG ---
-            function openExportForm(ajaxUrl, params) {
-                var form = $('<form>', {method:'POST', action:ajaxUrl, target:'_blank', style:'display:none'});
-                $.each(params, function(k, v) {
-                    form.append($('<input>', {type:'hidden', name:k, value:v}));
-                });
-                $('body').append(form);
-                form.submit();
-                form.remove();
+            // ---------------------------------------------------------------
+            //  Génération PDF : fetch → Blob → nouvel onglet
+            //  Pour les utilisateurs gratuits : file d'attente avec modal
+            // ---------------------------------------------------------------
+
+            /** Ouvre le PDF (blob) dans un nouvel onglet avec barre d'outils */
+            function openPdfBlob(blob, orderNum) {
+                var pdfUrl = URL.createObjectURL(blob);
+                var htmlPage =
+                    '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+                    '<title>PDF Commande #' + orderNum + '</title>' +
+                    '<style>' +
+                    'body{margin:0;padding:0;background:#525659;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}' +
+                    '.toolbar{position:fixed;top:0;left:0;right:0;height:48px;background:#323639;display:flex;align-items:center;gap:10px;padding:0 16px;z-index:1000;box-shadow:0 2px 8px rgba(0,0,0,.4);}' +
+                    '.btn{padding:8px 18px;border:none;border-radius:5px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .2s;}' +
+                    '.btn-dl{background:#2271b1;color:#fff;}.btn-dl:hover{background:#135e96;}' +
+                    '.btn-print{background:#10b981;color:#fff;}.btn-print:hover{background:#059669;}' +
+                    '.title{color:#ccc;font-size:13px;flex:1;}' +
+                    'iframe{position:fixed;top:48px;left:0;right:0;bottom:0;width:100%;height:calc(100% - 48px);border:none;}' +
+                    '@media print{.toolbar{display:none!important;} iframe{top:0;height:100%;}}' +
+                    '</style></head><body>' +
+                    '<div class="toolbar">' +
+                    '<span class="title">📄 Commande #' + orderNum + '.pdf</span>' +
+                    '<button class="btn btn-dl" onclick="dl()">📥 Télécharger</button>' +
+                    '<button class="btn btn-print" onclick="ifr.contentWindow.print()">🖨️ Imprimer</button>' +
+                    '</div>' +
+                    '<iframe id="ifr" src="' + pdfUrl + '"></iframe>' +
+                    '<script>var ifr=document.getElementById("ifr");function dl(){var a=document.createElement("a");a.href="' + pdfUrl + '";a.download="commande-' + orderNum + '.pdf";a.click();}<\/script>' +
+                    '</body></html>';
+                var pageBlob = new Blob([htmlPage], {type:'text/html;charset=utf-8'});
+                window.open(URL.createObjectURL(pageBlob), '_blank');
+                setTimeout(function(){URL.revokeObjectURL(pdfUrl);}, 120000);
             }
 
-            // ── File d'attente PDF ──────────────────────────────────────────────────
-            // Affiche le modal de position dans la file pour les utilisateurs free.
+            /** Fetch le PDF et l'ouvre en blob */
+            function doGeneratePdf(ajaxUrl, orderId, templateId, nonce, btn, orig, callback) {
+                var fd = new FormData();
+                fd.append('action',      'pdf_builder_generate_order_pdf');
+                fd.append('order_id',    orderId);
+                fd.append('template_id', templateId);
+                fd.append('nonce',       nonce);
 
-            function pdfbCreateQueueModal() {
-                if ($('#pdfb-queue-modal-overlay').length) return;
-                var html =
-                    '<div id="pdfb-queue-modal-overlay" style="' +
-                        'display:none;position:fixed;inset:0;z-index:999999;' +
-                        'background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;">' +
-                    '<div id="pdfb-queue-modal" style="' +
-                        'background:#fff;border-radius:12px;width:380px;max-width:95vw;' +
-                        'box-shadow:0 10px 40px rgba(0,0,0,.35);overflow:hidden;">' +
+                fetch(ajaxUrl, {method:'POST', body:fd})
+                    .then(function(res) {
+                        var ct = res.headers.get('Content-Type') || '';
+                        if (!res.ok || ct.indexOf('application/pdf') === -1) {
+                            return res.text().then(function(t) { throw new Error(t || 'Erreur ' + res.status); });
+                        }
+                        return res.blob();
+                    })
+                    .then(function(blob) {
+                        btn.prop('disabled', false).html(orig);
+                        openPdfBlob(blob, orderId);
+                        if (callback) callback(null);
+                    })
+                    .catch(function(err) {
+                        btn.prop('disabled', false).html(orig);
+                        alert('Erreur génération PDF :\n' + err.message);
+                        if (callback) callback(err);
+                    });
+            }
 
-                        '<div style="background:linear-gradient(135deg,#667eea,#764ba2);padding:20px 24px;' +
-                             'display:flex;justify-content:space-between;align-items:center;">' +
-                            '<h3 style="margin:0;color:#fff;font-size:16px;font-weight:600;">📄 Génération PDF en cours</h3>' +
-                            '<button id="pdfb-queue-modal-close" style="' +
-                                'background:rgba(255,255,255,.2);border:none;color:#fff;width:28px;height:28px;' +
-                                'border-radius:50%;cursor:pointer;font-size:16px;line-height:1;padding:0;">✕</button>' +
-                        '</div>' +
+            // ----- File d'attente (utilisateurs gratuits) -----
+            var _queuePollTimer = null;
+            var _queueCancelled = false;
 
-                        '<div style="padding:28px 24px;text-align:center;">' +
-                            '<div id="pdfb-queue-spinner" style="font-size:40px;animation:pdfbSpin 2s linear infinite;display:inline-block;margin-bottom:16px;">⏳</div>' +
-                            '<p style="margin:0 0 8px;color:#374151;font-size:14px;">' +
-                                'Votre document est en cours de génération.</p>' +
-                            '<p style="margin:0 0 20px;color:#6b7280;font-size:13px;">' +
-                                'La génération PDF est traitée en arrière-plan.</p>' +
-                            '<div id="pdfb-queue-position-box" style="' +
-                                'background:#f3f4f6;border-radius:8px;padding:14px;margin-bottom:20px;">' +
-                                '<div style="font-size:12px;color:#6b7280;margin-bottom:4px;">Position dans la file</div>' +
-                                '<div style="font-size:28px;font-weight:700;color:#667eea;" id="pdfb-queue-pos">—</div>' +
-                            '</div>' +
-                            '<div id="pdfb-queue-status-msg" style="font-size:13px;color:#6b7280;"></div>' +
-                        '</div>' +
+            function showQueueModal(position) {
+                _queueCancelled = false;
+                $('#pdfb-queue-pos-num').text(position + 1);
+                $('#pdfb-queue-progress-bar').css('width', '0%');
+                $('#pdfb-queue-status-text').text('<?php echo esc_js(__('Patience, votre PDF sera généré automatiquement…', 'pdf-builder-pro')); ?>');
+                $('#pdfb-queue-modal').fadeIn(200);
+            }
 
-                        '<div id="pdfb-queue-done-section" style="display:none;padding:0 24px 24px;">' +
-                            '<a id="pdfb-queue-download-btn" href="#" target="_blank" style="' +
-                                'display:block;width:100%;padding:12px;background:#10b981;color:#fff;' +
-                                'border:none;border-radius:8px;text-align:center;font-size:14px;font-weight:600;' +
-                                'text-decoration:none;cursor:pointer;">📥 Télécharger le PDF</a>' +
-                        '</div>' +
-
-                    '</div></div>';
-
-                $('body').append(html);
-
-                // Ajouter l'animation rotation une seule fois
-                if (!$('#pdfb-queue-keyframes').length) {
-                    $('head').append('<style id="pdfb-queue-keyframes">' +
-                        '@keyframes pdfbSpin{0%{transform:none}50%{transform:rotateY(180deg)}100%{transform:none}}' +
-                        '</style>');
+            function updateQueueModal(position, queueSize) {
+                $('#pdfb-queue-pos-num').text(position + 1);
+                var pct = queueSize > 1 ? Math.max(5, Math.round((1 - position / queueSize) * 100)) : 80;
+                $('#pdfb-queue-progress-bar').css('width', pct + '%');
+                if (position === 0) {
+                    $('#pdfb-queue-status-text').text('<?php echo esc_js(__('C\'est votre tour ! Génération en cours…', 'pdf-builder-pro')); ?>');
                 }
-
-                $('#pdfb-queue-modal-close').on('click', pdfbCloseQueueModal);
-                $('#pdfb-queue-modal-overlay').on('click', function(e) {
-                    if ($(e.target).is('#pdfb-queue-modal-overlay')) pdfbCloseQueueModal();
-                });
             }
 
-            function pdfbCloseQueueModal() {
-                $('#pdfb-queue-modal-overlay').fadeOut(200);
-                window._pdfbQueuePolling = false;
+            function hideQueueModal() {
+                $('#pdfb-queue-modal').fadeOut(150);
+                if (_queuePollTimer) { clearTimeout(_queuePollTimer); _queuePollTimer = null; }
             }
 
-            function pdfbShowQueueModal(jobId, position, ajaxUrl, nonce) {
-                pdfbCreateQueueModal();
-                $('#pdfb-queue-pos').text(position > 0 ? '#' + position : '—');
-                $('#pdfb-queue-status-msg').text('Vérification toutes les 3 secondes…');
-                $('#pdfb-queue-done-section').hide();
-                $('#pdfb-queue-spinner').show();
-                $('#pdfb-queue-modal-overlay').fadeIn(200);
-
-                window._pdfbQueuePolling = true;
-                pdfbPollQueueStatus(jobId, ajaxUrl, nonce);
+            function pollQueue(ajaxUrl, nonce, onReady) {
+                if (_queueCancelled) return;
+                var fd = new FormData();
+                fd.append('action', 'pdf_builder_pdf_queue_poll');
+                fd.append('nonce',  nonce);
+                fetch(ajaxUrl, {method:'POST', body:fd})
+                    .then(function(r){ return r.json(); })
+                    .then(function(data) {
+                        if (_queueCancelled) return;
+                        if (data.success) {
+                            var pos  = data.data.position;
+                            var size = data.data.queue_size;
+                            updateQueueModal(pos, size);
+                            if (pos === 0) {
+                                onReady();
+                            } else {
+                                _queuePollTimer = setTimeout(function(){ pollQueue(ajaxUrl, nonce, onReady); }, 3000);
+                            }
+                        } else {
+                            _queuePollTimer = setTimeout(function(){ pollQueue(ajaxUrl, nonce, onReady); }, 3000);
+                        }
+                    })
+                    .catch(function() {
+                        if (!_queueCancelled) {
+                            _queuePollTimer = setTimeout(function(){ pollQueue(ajaxUrl, nonce, onReady); }, 5000);
+                        }
+                    });
             }
 
-            function pdfbPollQueueStatus(jobId, ajaxUrl, nonce) {
-                if (!window._pdfbQueuePolling) return;
-
-                $.post(ajaxUrl, {
-                    action:  'pdf_builder_pdf_queue_status',
-                    job_id:  jobId,
-                    nonce:   nonce
-                }, function(resp) {
-                    if (!window._pdfbQueuePolling) return;
-
-                    if (!resp || !resp.success) {
-                        var msg = (resp && resp.data && resp.data.message) ? resp.data.message : 'Erreur inconnue';
-                        $('#pdfb-queue-status-msg').text('❌ ' + msg);
-                        return;
-                    }
-
-                    var data = resp.data;
-
-                    if (data.status === 'done') {
-                        $('#pdfb-queue-pos').text('✅');
-                        $('#pdfb-queue-status-msg').text('PDF prêt !');
-                        $('#pdfb-queue-spinner').hide();
-                        $('#pdfb-queue-done-section').show();
-                        $('#pdfb-queue-download-btn').attr('href', data.download_url);
-                        window._pdfbQueuePolling = false;
-                        return;
-                    }
-
-                    if (data.status === 'pending') {
-                        var pos = data.position > 0 ? '#' + data.position : '—';
-                        $('#pdfb-queue-pos').text(pos);
-                        $('#pdfb-queue-status-msg').text('Prochain contrôle dans 3 secondes…');
-                    }
-
-                    // Continuer le polling
-                    setTimeout(function() {
-                        pdfbPollQueueStatus(jobId, ajaxUrl, nonce);
-                    }, 3000);
-
-                }).fail(function() {
-                    if (!window._pdfbQueuePolling) return;
-                    $('#pdfb-queue-status-msg').text('Erreur réseau — nouvelle tentative…');
-                    setTimeout(function() {
-                        pdfbPollQueueStatus(jobId, ajaxUrl, nonce);
-                    }, 5000);
-                });
+            function leaveQueue(ajaxUrl, nonce) {
+                var fd = new FormData();
+                fd.append('action', 'pdf_builder_pdf_queue_leave');
+                fd.append('nonce',  nonce);
+                fetch(ajaxUrl, {method:'POST', body:fd});
             }
-            // ── Fin file d'attente ──────────────────────────────────────────────────
+
+            // Bouton Annuler du modal
+            $('#pdfb-queue-cancel').on('click', function() {
+                _queueCancelled = true;
+                hideQueueModal();
+            });
+
+            // ---------------------------------------------------------------
 
             $('.pdf-builder-action-btn').on('click', function() {
                 var btn        = $(this);
@@ -631,45 +668,56 @@ class PDF_Builder_WooCommerce_Integration
                 var templateId = btn.data('template-id');
                 var nonce      = btn.data('nonce');
                 var ajaxUrl    = btn.data('ajax');
+                var isPremium  = btn.data('is-premium') === 1 || btn.data('is-premium') === '1';
                 var orig       = btn.html();
 
                 btn.prop('disabled', true).html('⏳');
 
                 if (type === 'pdf') {
-                    // Génération asynchrone avec gestion de la file d'attente
-                    var formData = new FormData();
-                    formData.append('action',      'pdf_builder_generate_pdf_async');
-                    formData.append('template_id', templateId);
-                    formData.append('order_id',    orderId);
-                    formData.append('nonce',       nonce);
-
-                    fetch(ajaxUrl, { method: 'POST', body: formData })
-                        .then(function(res) { return res.json(); })
-                        .then(function(resp) {
-                            btn.prop('disabled', false).html(orig);
-                            if (!resp.success) {
-                                var msg = (resp.data && resp.data.message) ? resp.data.message : 'Erreur inconnue';
-                                alert('❌ Erreur lors de la génération PDF :\n\n' + msg);
-                                return;
-                            }
-                            var data = resp.data;
-                            if (data.status === 'done') {
-                                // PDF prêt immédiatement (premium) → ouverture directe
-                                window.open(data.download_url, '_blank');
-                            } else if (data.status === 'queued') {
-                                // En file d'attente (free) → afficher le modal de position
-                                pdfbShowQueueModal(data.job_id, data.position, ajaxUrl, nonce);
-                            }
-                        })
-                        .catch(function(err) {
-                            btn.prop('disabled', false).html(orig);
-                            alert('❌ Erreur réseau :\n\n' + err.message);
-                        });
-
+                    if (isPremium) {
+                        // ── Premium : fetch direct → blob → onglet ──
+                        doGeneratePdf(ajaxUrl, orderId, templateId, nonce, btn, orig);
+                    } else {
+                        // ── Gratuit : rejoindre la file → modal → générer → onglet ──
+                        var fd = new FormData();
+                        fd.append('action', 'pdf_builder_pdf_queue_join');
+                        fd.append('nonce',  nonce);
+                        fetch(ajaxUrl, {method:'POST', body:fd})
+                            .then(function(r){ return r.json(); })
+                            .then(function(data) {
+                                if (!data.success) {
+                                    btn.prop('disabled', false).html(orig);
+                                    alert('<?php echo esc_js(__('Impossible de rejoindre la file : ', 'pdf-builder-pro')); ?>' + (data.data && data.data.message ? data.data.message : ''));
+                                    return;
+                                }
+                                var pos = data.data.position;
+                                if (pos === 0) {
+                                    // Slot disponible immédiatement
+                                    showQueueModal(0);
+                                    updateQueueModal(0, 1);
+                                    doGeneratePdf(ajaxUrl, orderId, templateId, nonce, btn, orig, function() {
+                                        leaveQueue(ajaxUrl, nonce);
+                                        hideQueueModal();
+                                    });
+                                } else {
+                                    // En attente
+                                    showQueueModal(pos);
+                                    pollQueue(ajaxUrl, nonce, function() {
+                                        // C'est notre tour
+                                        doGeneratePdf(ajaxUrl, orderId, templateId, nonce, btn, orig, function() {
+                                            leaveQueue(ajaxUrl, nonce);
+                                            hideQueueModal();
+                                        });
+                                    });
+                                }
+                            })
+                            .catch(function(err) {
+                                btn.prop('disabled', false).html(orig);
+                                alert('<?php echo esc_js(__('Erreur réseau : ', 'pdf-builder-pro')); ?>' + err.message);
+                            });
+                    }
                 } else {
                     // PNG / JPG : génération via Puppeteer (screenshot natif haute qualité)
-                    setTimeout(function() { btn.prop('disabled', false).html(orig); }, 4000);
-
                     var formData = new FormData();
                     formData.append('action',      'pdf_builder_generate_image');
                     formData.append('template_id', templateId);
@@ -815,6 +863,141 @@ class PDF_Builder_WooCommerce_Integration
         </script>
         <?php
     }
+
+    // -----------------------------------------------------------------------
+    //  FILE D'ATTENTE PDF (utilisateurs gratuits)
+    //  Stockage : option WP  pdfb_free_pdf_slots  = [user_id => timestamp, …]
+    //  Durée de vie max d'un slot actif : 3 min (sécurité contre les crashs)
+    // -----------------------------------------------------------------------
+
+    /** Retourne et nettoie les slots actifs */
+    private function _pdfQueueGetSlots(): array
+    {
+        $slots = get_option('pdfb_free_pdf_slots', []);
+        $now   = time();
+        $slots = array_filter($slots, fn($ts) => ($now - $ts) < 180);
+        return $slots;
+    }
+
+    /** Sauvegarde les slots */
+    private function _pdfQueueSaveSlots(array $slots): void
+    {
+        update_option('pdfb_free_pdf_slots', $slots, false);
+    }
+
+    /** Vérifie si l'utilisateur courant est premium */
+    private function _checkIsPremium(): bool
+    {
+        if (!class_exists('PDF_Builder\Managers\PDF_Builder_License_Manager')) {
+            return false;
+        }
+        return \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->isPremium();
+    }
+
+    /**
+     * Rejoindre la file / obtenir sa position
+     * Réponse : { is_premium, position, slot_available, queue_size }
+     */
+    public function ajaxPdfQueueJoin()
+    {
+        if (!current_user_can('edit_shop_orders') && !current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permission refusée'], 403);
+            return;
+        }
+        $nonce = sanitize_text_field($_POST['nonce'] ?? '');
+        if (!wp_verify_nonce($nonce, 'pdf_builder_order_actions')) {
+            wp_send_json_error(['message' => 'Nonce invalide'], 403);
+            return;
+        }
+
+        if ($this->_checkIsPremium()) {
+            wp_send_json_success(['is_premium' => true, 'position' => 0, 'slot_available' => true, 'queue_size' => 0]);
+            return;
+        }
+
+        $slots   = $this->_pdfQueueGetSlots();
+        $user_id = get_current_user_id();
+
+        // Ajouter l'utilisateur s'il n'est pas encore dans la file
+        if (!isset($slots[$user_id])) {
+            $slots[$user_id] = time();
+            $this->_pdfQueueSaveSlots($slots);
+        }
+
+        $keys     = array_keys($slots);
+        $position = (int) array_search($user_id, $keys, true);
+
+        wp_send_json_success([
+            'is_premium'     => false,
+            'position'       => $position,      // 0 = premier (peut générer)
+            'slot_available' => ($position === 0),
+            'queue_size'     => count($slots),
+        ]);
+    }
+
+    /**
+     * Sonder la file (polling) pour connaître la position actuelle
+     * Réponse : { position, slot_available, queue_size }
+     */
+    public function ajaxPdfQueuePoll()
+    {
+        if (!current_user_can('edit_shop_orders') && !current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permission refusée'], 403);
+            return;
+        }
+        $nonce = sanitize_text_field($_POST['nonce'] ?? '');
+        if (!wp_verify_nonce($nonce, 'pdf_builder_order_actions')) {
+            wp_send_json_error(['message' => 'Nonce invalide'], 403);
+            return;
+        }
+
+        $slots   = $this->_pdfQueueGetSlots();
+        $user_id = get_current_user_id();
+
+        if (!isset($slots[$user_id])) {
+            // L'utilisateur n'est plus dans la file (expiration) – le remettre en premier
+            $slots = [$user_id => time()] + $slots;
+            $this->_pdfQueueSaveSlots($slots);
+        } else {
+            // Rafraîchir le timestamp pour éviter l'expiration
+            $slots[$user_id] = time();
+            $this->_pdfQueueSaveSlots($slots);
+        }
+
+        $keys     = array_keys($slots);
+        $position = (int) array_search($user_id, $keys, true);
+
+        wp_send_json_success([
+            'position'       => $position,
+            'slot_available' => ($position === 0),
+            'queue_size'     => count($slots),
+        ]);
+    }
+
+    /**
+     * Quitter la file après la génération (ou en cas d'erreur)
+     */
+    public function ajaxPdfQueueLeave()
+    {
+        if (!current_user_can('edit_shop_orders') && !current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permission refusée'], 403);
+            return;
+        }
+        $nonce = sanitize_text_field($_POST['nonce'] ?? '');
+        if (!wp_verify_nonce($nonce, 'pdf_builder_order_actions')) {
+            wp_send_json_error(['message' => 'Nonce invalide'], 403);
+            return;
+        }
+
+        $slots   = $this->_pdfQueueGetSlots();
+        $user_id = get_current_user_id();
+        unset($slots[$user_id]);
+        $this->_pdfQueueSaveSlots($slots);
+
+        wp_send_json_success(['message' => 'ok', 'queue_size' => count($slots)]);
+    }
+
+    // -----------------------------------------------------------------------
 
     /**
      * AJAX handler pour générer le PDF d'une commande
