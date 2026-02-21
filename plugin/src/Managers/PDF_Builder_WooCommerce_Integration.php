@@ -186,6 +186,8 @@ class PDF_Builder_WooCommerce_Integration
         add_action('wp_ajax_pdf_builder_pdf_queue_join',   [$this, 'ajaxPdfQueueJoin'],   1);
         add_action('wp_ajax_pdf_builder_pdf_queue_poll',   [$this, 'ajaxPdfQueuePoll'],   1);
         add_action('wp_ajax_pdf_builder_pdf_queue_leave',  [$this, 'ajaxPdfQueueLeave'],  1);
+        // Streaming PDF en blob (fetch depuis JS, tous utilisateurs)
+        add_action('wp_ajax_pdf_builder_stream_pdf',       [$this, 'ajaxStreamPdf'],      1);
     }
     private function detectDocumentType($order_status)
     {
@@ -566,7 +568,7 @@ class PDF_Builder_WooCommerce_Integration
             /** Fetch le PDF et l'ouvre en blob */
             function doGeneratePdf(ajaxUrl, orderId, templateId, nonce, btn, orig, callback) {
                 var fd = new FormData();
-                fd.append('action',      'pdf_builder_generate_order_pdf');
+                fd.append('action',      'pdf_builder_stream_pdf');
                 fd.append('order_id',    orderId);
                 fd.append('template_id', templateId);
                 fd.append('nonce',       nonce);
@@ -995,6 +997,82 @@ class PDF_Builder_WooCommerce_Integration
         $this->_pdfQueueSaveSlots($slots);
 
         wp_send_json_success(['message' => 'ok', 'queue_size' => count($slots)]);
+    }
+
+    // -----------------------------------------------------------------------
+
+    /**
+     * Stream le PDF en binaire pour un fetch() depuis le navigateur (blob URL).
+     * Endpoint dédié, distinct de handle_generate_pdf(), pour éviter les
+     * conflits liés à $_REQUEST / form-POST vs AJAX fetch.
+     */
+    public function ajaxStreamPdf()
+    {
+        // Permissions
+        if (!current_user_can('edit_shop_orders') && !current_user_can('manage_options')) {
+            status_header(403);
+            echo 'Permission refusée';
+            exit;
+        }
+
+        // Nonce
+        $nonce = sanitize_text_field($_POST['nonce'] ?? '');
+        if (!wp_verify_nonce($nonce, 'pdf_builder_order_actions')) {
+            status_header(403);
+            echo 'Nonce invalide';
+            exit;
+        }
+
+        // Paramètres
+        $order_id    = intval($_POST['order_id'] ?? 0);
+        $template_id = sanitize_text_field($_POST['template_id'] ?? '');
+
+        if (!$order_id || !$template_id) {
+            status_header(422);
+            echo 'Paramètres manquants (order_id=' . $order_id . ' template_id=' . $template_id . ')';
+            exit;
+        }
+
+        if (!class_exists('PDF_Builder_Unified_Ajax_Handler')) {
+            status_header(500);
+            echo 'Handler PDF indisponible';
+            exit;
+        }
+
+        set_time_limit(120);
+
+        $handler     = \PDF_Builder_Unified_Ajax_Handler::get_instance();
+        $pdf_content = $handler->get_pdf_buffer($template_id, $order_id);
+
+        if ($pdf_content === false || strlen($pdf_content) === 0) {
+            status_header(500);
+            echo 'Échec génération PDF';
+            exit;
+        }
+
+        // Stream le PDF
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+        header_remove();
+        header('Content-Type: application/pdf');
+
+        // Récupérer le numéro de commande pour le filename
+        $order_number = $order_id;
+        if (function_exists('wc_get_order')) {
+            $order = \wc_get_order($order_id);
+            if ($order) {
+                $order_number = $order->get_order_number();
+            }
+        }
+
+        header('Content-Disposition: inline; filename="commande-' . $order_number . '.pdf"');
+        header('Content-Length: ' . strlen($pdf_content));
+        header('Cache-Control: private, max-age=0, must-revalidate');
+        header('X-Content-Type-Options: nosniff');
+
+        echo $pdf_content;
+        exit;
     }
 
     // -----------------------------------------------------------------------
