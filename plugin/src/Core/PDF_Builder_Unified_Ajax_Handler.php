@@ -104,6 +104,12 @@ class PDF_Builder_Unified_Ajax_Handler {
         add_action('wp_ajax_pdf_builder_generate_image', [$this, 'handle_generate_image']);
         error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_generate_image");
         
+        // Actions de queue position
+        add_action('wp_ajax_pdf_builder_check_queue_position', [$this, 'handle_check_queue_position']);
+        add_action('wp_ajax_pdf_builder_download_queued_pdf', [$this, 'handle_download_queued_pdf']);
+        add_action('wp_ajax_pdf_builder_toggle_queue_simulation', [$this, 'handle_toggle_queue_simulation']);
+        error_log("[UNIFIED AJAX] Registered pdf_builder_check_queue_position and pdf_builder_download_queued_pdf");
+        
         // Actions de test moteur PDF
         add_action('wp_ajax_pdf_builder_test_puppeteer', [$this, 'handle_test_puppeteer']);
         add_action('wp_ajax_pdf_builder_test_all_engines', [$this, 'handle_test_all_engines']);
@@ -2887,41 +2893,70 @@ class PDF_Builder_Unified_Ajax_Handler {
             $this->debug_log("Génération PDF avec moteur: " . $engine->get_name());
             error_log("[PDF GENERATE] Calling engine->generate() with moteur=" . $engine->get_name() . " width={$width} height={$height}");
             
-            // Générer le PDF avec le moteur sélectionné
-            $pdf_content = $engine->generate($html, [
-                'width' => $width,
-                'height' => $height
-            ]);
+            // === MODE NON-BLOQUANT : Utiliser render_non_blocking au lieu de render ===
+            // Cela retourne immédiatement avec le job_id si le service met la requête en queue
+            $puppeteer_client = new \PDF_Builder\PDF\Engines\Puppeteer_Client();
+            $license_key = $this->get_license_key();
+            $site_url = get_site_url();
             
-            error_log("[PDF GENERATE] generate() returned: " . ($pdf_content === false ? 'FALSE' : strlen($pdf_content) . ' bytes'));
+            $render_result = $puppeteer_client->render_non_blocking($html, 'A4', $license_key, $site_url);
             
-            if ($pdf_content === false) {
-                $this->debug_log("Échec génération PDF", "ERROR");
-                wp_die('Erreur lors de la génération du PDF', '', ['response' => 500]);
+            error_log("[PDF GENERATE] render_non_blocking returned: " . json_encode(['is_ready' => $render_result['is_ready'], 'has_job_id' => !empty($render_result['job_id']), 'has_error' => !empty($render_result['error'])]));
+            
+            // === CAS 1: La génération est synchrone (Premium) ===
+            if ($render_result['is_ready'] && !empty($render_result['pdf'])) {
+                $pdf_content = $render_result['pdf'];
+                $this->debug_log("PDF généré avec succès (synchrone) - Taille: " . strlen($pdf_content) . " bytes");
+                
+                // Vérifier que le contenu commence bien par %PDF-
+                $first_bytes = substr($pdf_content, 0, 20);
+                error_log('[PDF GENERATE] First bytes: ' . bin2hex(substr($pdf_content, 0, 8)));
+                
+                // Envoyer le PDF au navigateur
+                $this->debug_log("Envoi du PDF au navigateur");
+                // Vider tous les output buffers WordPress/PHP avant d'envoyer du binaire
+                while (ob_get_level() > 0) {
+                    ob_end_clean();
+                }
+                // Supprimer tous les headers existants pour éviter la corruption
+                header_remove();
+                header('Content-Type: application/pdf');
+                header('Content-Disposition: inline; filename="facture-' . $order->get_order_number() . '.pdf"');
+                header('Content-Length: ' . strlen($pdf_content));
+                header('Cache-Control: private, max-age=0, must-revalidate');
+                header('Pragma: public');
+                header('X-Content-Type-Options: nosniff');
+                
+                echo $pdf_content;
+                exit;
             }
             
-            $this->debug_log("PDF généré avec succès - Taille: " . strlen($pdf_content) . " bytes");
-            // Vérifier que le contenu commence bien par %PDF-
-            $first_bytes = substr($pdf_content, 0, 20);
-            error_log('[PDF GENERATE] First bytes: ' . bin2hex(substr($pdf_content, 0, 8)) . ' = ' . addslashes(substr($pdf_content, 0, 8)));
-            
-            // Envoyer le PDF au navigateur
-            $this->debug_log("Envoi du PDF au navigateur");
-            // Vider tous les output buffers WordPress/PHP avant d'envoyer du binaire
-            while (ob_get_level() > 0) {
-                ob_end_clean();
+            // === CAS 2: La queue est active (Free tier) - Retourner job_id en JSON ===
+            if (!$render_result['is_ready'] && !empty($render_result['job_id'])) {
+                error_log("[PDF GENERATE] Job is queued - job_id=" . $render_result['job_id']);
+                $this->debug_log("Travail mis en queue - Affichage de la modal à l'utilisateur");
+                
+                // Retourner JSON avec job_id pour afficher la modal côté client
+                wp_send_json_success([
+                    'queue_active' => true,
+                    'job_id' => $render_result['job_id'],
+                    'template_id' => $template_id,
+                    'order_id' => $order_id,
+                    'message' => 'Votre demande a été ajoutée à la queue. Veuillez patienter...'
+                ]);
+                exit;
             }
-            // Supprimer tous les headers existants pour éviter la corruption
-            header_remove();
-            header('Content-Type: application/pdf');
-            header('Content-Disposition: inline; filename="facture-' . $order->get_order_number() . '.pdf"');
-            header('Content-Length: ' . strlen($pdf_content));
-            header('Cache-Control: private, max-age=0, must-revalidate');
-            header('Pragma: public');
-            header('X-Content-Type-Options: nosniff');
             
-            echo $pdf_content;
-            exit;
+            // === CAS 3: Erreur lors de la génération ===
+            if (!empty($render_result['error'])) {
+                error_log("[PDF GENERATE] Error: " . $render_result['error']);
+                $this->debug_log('Erreur génération PDF: ' . $render_result['error'], "ERROR");
+                wp_die('Erreur: ' . $render_result['error'], '', ['response' => 500]);
+            }
+            
+            // === CAS 4: Résultat inattendu ===
+            error_log("[PDF GENERATE] Unexpected result: " . json_encode($render_result));
+            wp_die('Erreur: Résultat inattendu de la génération', '', ['response' => 500]);
             
         } catch (Exception $e) {
             error_log("[PDF GENERATE] EXCEPTION: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
@@ -3072,6 +3107,220 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'code' => 'EXCEPTION'
             ], 500);
         }
+    }
+
+    /**
+     * Handler pour checker la position d'une commande dans la queue
+     * Utilisé pour afficher le statut quand un job est en attente
+     */
+    public function handle_check_queue_position() {
+        error_log("[PDF QUEUE] handle_check_queue_position called");
+        
+        // Vérifier les permissions
+        if (!is_user_logged_in() || !current_user_can('edit_shop_orders')) {
+            wp_send_json_error(['message' => 'Permission refusée'], 403);
+            return;
+        }
+
+        // Paramètres
+        $job_id = sanitize_text_field($_POST['job_id'] ?? '');
+        
+        if (!$job_id) {
+            wp_send_json_error(['message' => 'job_id manquant'], 400);
+            return;
+        }
+
+        try {
+            $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
+            $status = $engine->get_queue_status($job_id);
+            
+            error_log("[PDF QUEUE] Status for job {$job_id}: " . json_encode($status));
+            
+            // Retourner le statut
+            wp_send_json_success([
+                'status' => $status['status'],
+                'position' => $status['position'],
+                'wait_time' => $status['wait_time'],
+                'error' => $status['error'],
+                'job_id' => $job_id,
+            ]);
+        } catch (Exception $e) {
+            error_log("[PDF QUEUE] Exception: " . $e->getMessage());
+            wp_send_json_error([
+                'message' => 'Erreur lors de la vérification de la queue',
+                'details' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Handler pour télécharger un PDF qui était en queue
+     * Appelé quand le job est prêt (status 200)
+     */
+    public function handle_download_queued_pdf() {
+        error_log("[PDF QUEUE] handle_download_queued_pdf called");
+        set_time_limit(120);
+        
+        // Vérifier les permissions
+        if (!is_user_logged_in() || !current_user_can('edit_shop_orders')) {
+            wp_send_json_error(['message' => 'Permission refusée'], 403);
+            return;
+        }
+
+        $job_id = sanitize_text_field($_POST['job_id'] ?? '');
+        $order_id = intval($_POST['order_id'] ?? 0);
+        $template_id = sanitize_text_field($_POST['template_id'] ?? '');
+        
+        if (!$job_id || !$order_id || !$template_id) {
+            wp_send_json_error(['message' => 'Paramètres manquants'], 400);
+            return;
+        }
+
+        try {
+            if (!function_exists('wc_get_order')) {
+                wp_send_json_error(['message' => 'WooCommerce non actif'], 500);
+                return;
+            }
+
+            $order = wc_get_order($order_id);
+            if (!$order) {
+                wp_send_json_error(['message' => 'Commande introuvable'], 404);
+                return;
+            }
+
+            $template = $this->get_template($template_id);
+            if (!$template) {
+                wp_send_json_error(['message' => 'Modèle introuvable'], 404);
+                return;
+            }
+
+            // Vérifier que le job est effectivement prêt
+            $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
+            $status = $engine->get_queue_status($job_id);
+            
+            if (!$status || $status['status'] !== 200) {
+                wp_send_json_error(['message' => 'Le job n\'est pas encore prêt'], 409);
+                return;
+            }
+
+            // Générer le PDF final (ou retourner le PDF depuis le job_id si possible)
+            // Pour l'instant, on régénère le PDF
+            $html = $this->generate_template_html($template, $order, 'pdf');
+            $html = $this->optimize_html($html);
+            
+            $template_data = json_decode($template['template_data'], true);
+            $width = $template_data['canvasWidth'] ?? 794;
+            $height = $template_data['canvasHeight'] ?? 1123;
+            
+            $pdf_content = $engine->generate($html, [
+                'width' => $width,
+                'height' => $height
+            ]);
+            
+            if ($pdf_content === false) {
+                wp_send_json_error(['message' => 'Erreur lors de la génération du PDF'], 500);
+                return;
+            }
+            
+            $this->debug_log("PDF généré avec succès - Taille: " . strlen($pdf_content) . " bytes");
+            
+            // Envoyer le PDF au navigateur
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+            header_remove();
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: inline; filename="facture-' . $order->get_order_number() . '.pdf"');
+            header('Content-Length: ' . strlen($pdf_content));
+            header('Cache-Control: private, max-age=0, must-revalidate');
+            header('Pragma: public');
+            header('X-Content-Type-Options: nosniff');
+            
+            echo $pdf_content;
+            exit;
+            
+        } catch (Exception $e) {
+            error_log("[PDF QUEUE] Exception: " . $e->getMessage());
+            wp_send_json_error([
+                'message' => 'Erreur lors du téléchargement du PDF',
+                'details' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Handler pour activer/désactiver le mode simulation de queue
+     * Endpoint pour tester la modal sans avoir besoin d'une vraie queue
+     */
+    public function handle_toggle_queue_simulation() {
+        error_log("[QUEUE SIMULATION] handle_toggle_queue_simulation called");
+        
+        // Vérifier les permissions - admin uniquement
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permission refusée'], 403);
+            return;
+        }
+
+        // Vérifier le nonce
+        $nonce = sanitize_text_field($_POST['nonce'] ?? $_GET['nonce'] ?? '');
+        if (!wp_verify_nonce($nonce, 'pdf_builder_ajax')) {
+            wp_send_json_error(['message' => 'Nonce invalide'], 403);
+            return;
+        }
+
+        $action = sanitize_text_field($_POST['action_type'] ?? '');
+        
+        if ($action === 'toggle') {
+            // Basculer le mode
+            $current = (bool) pdf_builder_get_option('pdf_builder_queue_simulation_enabled', false);
+            $new_state = !$current;
+            pdf_builder_update_option('pdf_builder_queue_simulation_enabled', $new_state);
+            
+            error_log("[QUEUE SIMULATION] Toggled to: " . ($new_state ? 'ON' : 'OFF'));
+            
+            wp_send_json_success([
+                'enabled' => $new_state,
+                'message' => $new_state ? 'Mode simulation activé' : 'Mode simulation désactivé'
+            ]);
+            return;
+        }
+        
+        if ($action === 'configure') {
+            // Configurer les paramètres de simulation
+            $initial_position = intval($_POST['initial_position'] ?? 5);
+            $wait_time = intval($_POST['wait_time'] ?? 30);
+            
+            $initial_position = max(1, min(50, $initial_position)); // Entre 1 et 50
+            $wait_time = max(5, min(300, $wait_time)); // Entre 5 et 300 secondes
+            
+            pdf_builder_update_option('pdf_builder_queue_simulation_position', $initial_position);
+            pdf_builder_update_option('pdf_builder_queue_simulation_wait_time', $wait_time);
+            
+            error_log("[QUEUE SIMULATION] Configured: position=$initial_position, wait_time=$wait_time");
+            
+            wp_send_json_success([
+                'initial_position' => $initial_position,
+                'wait_time' => $wait_time,
+                'message' => 'Paramètres de simulation sauvegardés'
+            ]);
+            return;
+        }
+        
+        if ($action === 'status') {
+            // Retourner l'état actuel
+            $enabled = (bool) pdf_builder_get_option('pdf_builder_queue_simulation_enabled', false);
+            $position = intval(pdf_builder_get_option('pdf_builder_queue_simulation_position', 5));
+            $wait_time = intval(pdf_builder_get_option('pdf_builder_queue_simulation_wait_time', 30));
+            
+            wp_send_json_success([
+                'enabled' => $enabled,
+                'initial_position' => $position,
+                'wait_time' => $wait_time,
+            ]);
+            return;
+        }
+        
+        wp_send_json_error(['message' => 'Action inconnue'], 400);
     }
 
     /**
@@ -5831,6 +6080,21 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Police sans espaces: utiliser telle quelle
         return $font_name;
+    }
+
+    /**
+     * Récupère la clé de licence EDD active
+     *
+     * @return string
+     */
+    private function get_license_key(): string {
+        if ( class_exists( '\PDF_Builder\Managers\PDF_Builder_License_Manager' ) ) {
+            $lm = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+            if ( method_exists( $lm, 'get_license_key' ) ) {
+                return (string) $lm->get_license_key();
+            }
+        }
+        return (string) pdf_builder_get_option( 'pdf_builder_license_key', '' );
     }
 }
 

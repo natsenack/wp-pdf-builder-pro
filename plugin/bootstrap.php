@@ -1604,6 +1604,49 @@ if (file_exists($migration_ajax_path)) {
 // ============================================================================
 
 // ============================================================================
+// ✅ ENREGISTRER LE JAVASCRIPT DE QUEUE POSITION MODAL
+// ============================================================================
+add_action('wp_enqueue_scripts', function() {
+    wp_enqueue_script(
+        'pdf-builder-queue-modal',
+        plugins_url('assets/js/queue-position-modal.js', __FILE__),
+        [],
+        PDF_BUILDER_PRO_VERSION,
+        true
+    );
+    
+    wp_enqueue_script(
+        'pdf-builder-generator-handler',
+        plugins_url('assets/js/pdf-generator-handler.js', __FILE__),
+        ['pdf-builder-queue-modal'],
+        PDF_BUILDER_PRO_VERSION,
+        true
+    );
+    
+    // Passer les variables globales au JavaScript
+    wp_localize_script('pdf-builder-generator-handler', 'ajaxNonce', wp_create_nonce('pdf_builder_queue'));
+});
+
+// ============================================================================
+// ✅ ENREGISTRER LE PANEL DE CONTRÔLE SIMULATION (ADMIN UNIQUEMENT)
+// ============================================================================
+add_action('admin_enqueue_scripts', function() {
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+    
+    wp_enqueue_script(
+        'pdf-builder-queue-simulation-panel',
+        plugins_url('assets/js/queue-simulation-panel.js', __FILE__),
+        ['jquery'],
+        PDF_BUILDER_PRO_VERSION,
+        true
+    );
+    
+    wp_localize_script('pdf-builder-queue-simulation-panel', 'ajaxNonce', wp_create_nonce('pdf_builder_ajax'));
+});
+
+// ============================================================================
 // FIN DU BOOTSTRAP
 // ============================================================================
 

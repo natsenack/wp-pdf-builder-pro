@@ -88,6 +88,16 @@ class PuppeteerEngine implements PDFEngineInterface {
     }
 
     /**
+     * Interroge l'état d'un job en attente (pour affichage de la position dans la queue).
+     *
+     * @param string $job_id
+     * @return array  { 'status' => HTTP_CODE, 'position' => int|null, 'wait_time' => int|null, 'error' => string|null, 'body' => string }
+     */
+    public function get_queue_status( string $job_id ): array {
+        return $this->client->get_job_status( $job_id );
+    }
+
+    /**
      * Retourne le nom du moteur.
      *
      * @return string
