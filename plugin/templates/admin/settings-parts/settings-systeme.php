@@ -87,7 +87,7 @@
                     <header>
                         <h3>
                             <span>
-                                📋 Cache & Performance - ⚠️ En attente d'implémentation
+                                📋 Cache & Performance
                                 <span class="pdfb-cache-performance-status" id="cache-performance-status"><?php echo $cache_enabled ? 'ACTIF' : 'INACTIF'; ?></span>
                             </span>
                         </h3>

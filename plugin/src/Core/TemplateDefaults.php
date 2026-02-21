@@ -17,23 +17,23 @@ class TemplateDefaults {
     public static function get_free_templates() {
         return [
             'modern' => [
-                'name' => 'Modern Invoice',
+                'name' => 'Facture Moderne',
                 'description' => 'Template moderne et épuré pour factures professionnelles',
-                'category' => 'invoice',
+                'category' => 'facture',
                 'is_free' => true,
                 'elements' => self::get_modern_template_elements()
             ],
             'classic' => [
-                'name' => 'Classic Invoice',
+                'name' => 'Facture Classique',
                 'description' => 'Template traditionnel professionnel et intemporel',
-                'category' => 'invoice',
+                'category' => 'facture',
                 'is_free' => true,
                 'elements' => self::get_classic_template_elements()
             ],
             'corporate' => [
-                'name' => 'Corporate Invoice',
+                'name' => 'Facture Corporate',
                 'description' => 'Template entreprise avec branding professionnel',
-                'category' => 'invoice',
+                'category' => 'facture',
                 'is_free' => true,
                 'elements' => self::get_corporate_template_elements()
             ]
@@ -48,28 +48,20 @@ class TemplateDefaults {
     public static function get_premium_templates() {
         return [
             'invoice_pro' => [
-                'name' => 'Invoice Pro',
-                'description' => 'Template professionnel avancé avec en-têtes personnalisables',
-                'category' => 'invoice',
+                'name' => 'Facture Pro',
+                'description' => 'Template de facture professionnel avancé avec en-têtes personnalisables',
+                'category' => 'facture',
                 'is_free' => false,
                 'is_premium' => true,
-                'elements' => self::get_modern_template_elements() // Utilise les mêmes éléments pour l'instant
+                'elements' => self::get_modern_template_elements()
             ],
             'quote_advanced' => [
-                'name' => 'Quote Advanced',
+                'name' => 'Devis Avancé',
                 'description' => 'Template de devis professionnel avec calculs automatiques',
-                'category' => 'quote',
+                'category' => 'devis',
                 'is_free' => false,
                 'is_premium' => true,
-                'elements' => self::get_classic_template_elements() // Utilise les mêmes éléments pour l'instant
-            ],
-            'contract_legal' => [
-                'name' => 'Contract Legal',
-                'description' => 'Template de contrat juridique avec clauses standard',
-                'category' => 'contract',
-                'is_free' => false,
-                'is_premium' => true,
-                'elements' => self::get_corporate_template_elements() // Utilise les mêmes éléments pour l'instant
+                'elements' => self::get_classic_template_elements()
             ]
         ];
     }

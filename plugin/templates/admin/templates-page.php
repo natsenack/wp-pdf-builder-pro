@@ -447,6 +447,11 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                             }
                         }
 
+                        // Filtrer : uniquement facture et devis
+                        $templates = array_filter($templates, function($t) {
+                            return in_array($t['category'], ['facture', 'devis'], true);
+                        });
+
                         if (empty($templates)) : ?>
                             <!-- Aucun modèle prédéfini disponible pour le moment -->
                         <?php else : ?>
