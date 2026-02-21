@@ -269,6 +269,7 @@
 
         ajaxGdpr('pdf_builder_export_gdpr_data', { format: fmt }, function(data) {
             setLoading($btn, false);
+
             if (fmt === 'json') {
                 var blob = new Blob([JSON.stringify(data.content, null, 2)], { type: 'application/json' });
                 var url  = URL.createObjectURL(blob);
@@ -276,8 +277,57 @@
                 a.href = url; a.download = 'mes-donnees-rgpd.json'; a.click();
                 URL.revokeObjectURL(url);
                 showResult('✅ Export JSON téléchargé.', false);
+                return;
+            }
+
+            // Format HTML → nouvel onglet avec page complète + bouton télécharger
+            var htmlContent = data.content;
+            var filename    = 'mes-donnees-rgpd-' + new Date().toISOString().slice(0, 10) + '.html';
+
+            var fullPage = '<!DOCTYPE html><html lang="fr"><head>'
+                + '<meta charset="UTF-8">'
+                + '<meta name="viewport" content="width=device-width,initial-scale=1">'
+                + '<title>Mes données personnelles — PDF Builder Pro</title>'
+                + '<style>'
+                + 'body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f4f6f9;color:#333}'
+                + '.header{background:#155724;color:#fff;padding:24px 40px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.2)}'
+                + '.header h1{margin:0;font-size:22px;font-weight:600;display:flex;align-items:center;gap:10px}'
+                + '.header small{opacity:.8;font-size:13px;margin-top:4px;display:block}'
+                + '.dl-btn{background:#fff;color:#155724;border:none;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;text-decoration:none;transition:background .2s}'
+                + '.dl-btn:hover{background:#e8f5e8}'
+                + '.content{max-width:860px;margin:40px auto;background:#fff;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.08);padding:36px;}'
+                + '.badge{display:inline-block;background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;margin-bottom:18px}'
+                + '.footer{text-align:center;color:#999;font-size:12px;margin:32px 0 20px}'
+                + '</style>'
+                + '</head><body>'
+                + '<div class="header">'
+                + '  <div><h1>📋 Mes données personnelles<br><small>PDF Builder Pro — Export RGPD</small></h1></div>'
+                + '  <a class="dl-btn" id="dlBtn" href="#" download="' + filename + '">📥 Télécharger cette page</a>'
+                + '</div>'
+                + '<div class="content">'
+                + '  <span class="badge">✅ Généré le ' + new Date().toLocaleString('fr-FR') + '</span>'
+                + htmlContent
+                + '</div>'
+                + '<div class="footer">Document généré par PDF Builder Pro · Conforme RGPD</div>'
+                + '<script>'
+                + 'document.getElementById("dlBtn").addEventListener("click",function(e){'
+                + '  e.preventDefault();'
+                + '  var src=document.documentElement.outerHTML;'
+                + '  var blob=new Blob([src],{type:"text/html;charset=utf-8"});'
+                + '  var url=URL.createObjectURL(blob);'
+                + '  var a=document.createElement("a");a.href=url;a.download="' + filename + '";a.click();'
+                + '  setTimeout(function(){URL.revokeObjectURL(url);},2000);'
+                + '});'
+                + '<\/script>'
+                + '</body></html>';
+
+            var tab = window.open('', '_blank');
+            if (tab) {
+                tab.document.open();
+                tab.document.write(fullPage);
+                tab.document.close();
             } else {
-                showResult(data.content, false);
+                showResult('⚠️ Le navigateur a bloqué l\'ouverture de l\'onglet. Veuillez autoriser les pop-ups.', true);
             }
         }, function(msg) {
             setLoading($btn, false);
