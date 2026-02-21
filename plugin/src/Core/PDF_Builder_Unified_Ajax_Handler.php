@@ -3159,7 +3159,7 @@ class PDF_Builder_Unified_Ajax_Handler {
      */
     public function handle_download_queued_pdf() {
         error_log("[PDF QUEUE] handle_download_queued_pdf called");
-        set_time_limit(120);
+        set_time_limit(200);
         
         // Vérifier les permissions
         if (!is_user_logged_in() || !current_user_can('edit_shop_orders')) {

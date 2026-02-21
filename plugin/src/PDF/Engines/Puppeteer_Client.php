@@ -23,8 +23,8 @@ class Puppeteer_Client {
     const SERVICE_BASE_URL = 'http://pdf.threeaxe.fr';
     const HMAC_SECRET      = '04abca0b6fb5a01f8854daecd90fdfe709df2e6c446cf328986b5d952a0ac27e';
 
-    const POLL_INTERVAL_S  = 2;   // secondes entre chaque polling
-    const POLL_MAX_WAIT_S  = 30;  // délai maximum total (secondes)
+    const POLL_INTERVAL_S  = 3;   // secondes entre chaque polling
+    const POLL_MAX_WAIT_S  = 120; // délai maximum total (secondes)
 
     /** @var bool */
     private $debug_enabled;
