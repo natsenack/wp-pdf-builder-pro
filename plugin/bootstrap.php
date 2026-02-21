@@ -1668,6 +1668,21 @@ add_action('admin_enqueue_scripts', function() {
 });
 
 // ============================================================================
+// ✅ INVALIDATION CACHE PDF LORS DE MODIFICATIONS DE COMMANDE
+// ============================================================================
+add_action('woocommerce_order_status_changed', function($order_id) {
+    if (class_exists('PDF_Builder\\PDF\\PDF_Builder_PDF_Cache')) {
+        \PDF_Builder\PDF\PDF_Builder_PDF_Cache::invalidate((int) $order_id);
+    }
+}, 10, 1);
+
+add_action('woocommerce_process_shop_order_meta', function($order_id) {
+    if (class_exists('PDF_Builder\\PDF\\PDF_Builder_PDF_Cache')) {
+        \PDF_Builder\PDF\PDF_Builder_PDF_Cache::invalidate((int) $order_id);
+    }
+}, 10, 1);
+
+// ============================================================================
 // FIN DU BOOTSTRAP
 // ============================================================================
 

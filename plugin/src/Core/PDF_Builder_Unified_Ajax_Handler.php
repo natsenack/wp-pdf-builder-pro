@@ -3201,13 +3201,31 @@ class PDF_Builder_Unified_Ajax_Handler {
 
             if (!$is_simulation) {
                 // ── JOB RÉEL : le PDF est déjà sur le service, on le récupère directement ──
-                // Pas de re-génération : évite de doubler le temps de rendu
-                try {
-                    $pdf_content = $engine->get_job_result($job_id);
-                } catch (\Exception $e) {
-                    error_log('[PDF QUEUE] get_job_result failed: ' . $e->getMessage());
-                    wp_send_json_error(['message' => 'Impossible de récupérer le PDF : ' . $e->getMessage()], 500);
-                    return;
+                // Vérifier d'abord dans le cache (cas de re-téléchargement)
+                $html_for_cache = $this->generate_template_html($template, $order, 'pdf');
+                $html_for_cache = $this->optimize_html($html_for_cache);
+                $cache_key = \PDF_Builder\PDF\PDF_Builder_PDF_Cache::make_key(
+                    $order_id, $template_id, $html_for_cache
+                );
+                $cached = \PDF_Builder\PDF\PDF_Builder_PDF_Cache::get($cache_key);
+
+                if ($cached !== false) {
+                    error_log('[PDF QUEUE] PDF servi depuis le cache pour order=' . $order_id);
+                    $pdf_content = $cached;
+                } else {
+                    // Récupérer le PDF déjà généré par le service (GET /v2/jobs/{id}/result)
+                    try {
+                        $pdf_content = $engine->get_job_result($job_id);
+                    } catch (\Exception $e) {
+                        error_log('[PDF QUEUE] get_job_result failed: ' . $e->getMessage());
+                        wp_send_json_error(['message' => 'Impossible de récupérer le PDF : ' . $e->getMessage()], 500);
+                        return;
+                    }
+                    // Mettre en cache pour les prochains téléchargements
+                    if (strlen($pdf_content) > 0) {
+                        \PDF_Builder\PDF\PDF_Builder_PDF_Cache::set($cache_key, $pdf_content);
+                        error_log('[PDF QUEUE] PDF mis en cache pour order=' . $order_id);
+                    }
                 }
             } else {
                 // ── JOB SIMULATION : générer le vrai PDF maintenant (Puppeteer, sim=OFF) ──
@@ -3222,6 +3240,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                     'width'                => $width,
                     'height'               => $height,
                     'force_simulation_off' => true,
+                    'order_id'             => $order_id,
+                    'template_id'          => $template_id,
                 ]);
 
                 if ($pdf_content === false) {

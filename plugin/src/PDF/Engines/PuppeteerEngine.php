@@ -58,9 +58,31 @@ class PuppeteerEngine implements PDFEngineInterface {
 
         $this->log( "format={$format}  license=" . ( $license_key ? 'yes' : 'no' ) . ( $force_no_sim ? '  [sim=OFF]' : '' ) );
 
+        // ─── Cache Redis / transient ────────────────────────────────────────────
+        $order_id    = (int) ( $options['order_id']    ?? 0 );
+        $template_id = (string) ( $options['template_id'] ?? '' );
+        $cache_key   = ( $order_id && $template_id )
+            ? \PDF_Builder\PDF\PDF_Builder_PDF_Cache::make_key( $order_id, $template_id, $html )
+            : '';
+
+        if ( $cache_key !== '' ) {
+            $cached = \PDF_Builder\PDF\PDF_Builder_PDF_Cache::get( $cache_key );
+            if ( $cached !== false ) {
+                $this->log( "PDF servi depuis le cache (" . strlen( $cached ) . " octets)" );
+                return $cached;
+            }
+        }
+        // ───────────────────────────────────────────────────────────────────────
+
         try {
             $pdf = $client->render( $html, $format, $license_key, $site_url );
             $this->log( "PDF généré – " . strlen( $pdf ) . " octets" );
+
+            // Mise en cache
+            if ( $cache_key !== '' && strlen( $pdf ) > 0 ) {
+                \PDF_Builder\PDF\PDF_Builder_PDF_Cache::set( $cache_key, $pdf );
+            }
+
             return $pdf;
         } catch ( \Exception $e ) {
             error_log( '[PuppeteerEngine] EXCEPTION: ' . $e->getMessage() );
