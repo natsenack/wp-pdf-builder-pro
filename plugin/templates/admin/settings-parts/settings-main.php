@@ -346,7 +346,7 @@ jQuery(document).ready(function($) {
     });
 
     // Changer d'onglet
-    $('.nav-tab').on('click', function(e) {
+    $('.pdfb-nav-tab').on('click', function(e) {
         e.preventDefault();
         var tab = $(this).attr('href').split('tab=')[1];
         if (tab) {
