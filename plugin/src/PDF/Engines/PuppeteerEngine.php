@@ -48,10 +48,18 @@ class PuppeteerEngine implements PDFEngineInterface {
         $license_key = $this->get_license_key();
         $site_url    = get_site_url();
 
-        $this->log( "format={$format}  license=" . ( $license_key ? 'yes' : 'no' ) );
+        // Pour les jobs simulation, forcer un client sans mode simulation
+        $force_no_sim = ! empty( $options['force_simulation_off'] );
+        if ( $force_no_sim ) {
+            $client = new Puppeteer_Client( true );
+        } else {
+            $client = $this->client;
+        }
+
+        $this->log( "format={$format}  license=" . ( $license_key ? 'yes' : 'no' ) . ( $force_no_sim ? '  [sim=OFF]' : '' ) );
 
         try {
-            $pdf = $this->client->render( $html, $format, $license_key, $site_url );
+            $pdf = $client->render( $html, $format, $license_key, $site_url );
             $this->log( "PDF généré – " . strlen( $pdf ) . " octets" );
             return $pdf;
         } catch ( \Exception $e ) {

@@ -3216,15 +3216,12 @@ class PDF_Builder_Unified_Ajax_Handler {
             $width = $template_data['canvasWidth'] ?? 794;
             $height = $template_data['canvasHeight'] ?? 1123;
 
-            if ($is_simulation) {
-                $engine = new \PDF_Builder\PDF\Engines\PuppeteerEngine();
-            } else {
-                $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
-            }
+            $engine = \PDF_Builder\PDF\Engines\PDFEngineFactory::create();
 
             $pdf_content = $engine->generate($html, [
-                'width' => $width,
-                'height' => $height
+                'width'                => $width,
+                'height'               => $height,
+                'force_simulation_off' => $is_simulation,  // Ignore la simulation pour le rendu final
             ]);
             
             if ($pdf_content === false) {

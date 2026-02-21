@@ -394,6 +394,13 @@
             })
             .then(async response => {
                 const buffer = await response.arrayBuffer();
+
+                // Diagnostic : afficher la réponse brute si erreur
+                if (!response.ok) {
+                    const errText = new TextDecoder('utf-8').decode(new Uint8Array(buffer));
+                    console.error('[PDF Queue] Erreur HTTP ' + response.status + ' :', errText.substring(0, 1000));
+                    return;
+                }
                 const blob = new Blob([buffer], { type: 'application/pdf' });
                 const url = URL.createObjectURL(blob);
                 window.open(url, '_blank');

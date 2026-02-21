@@ -40,9 +40,13 @@ class Puppeteer_Client {
 
     // ─── Constructeur ────────────────────────────────────────────────────────────
 
-    public function __construct() {
+    public function __construct( bool $force_simulation_off = false ) {
         $this->debug_enabled = (bool) pdf_builder_get_option( 'pdf_builder_debug_enabled', false );
-        $this->simulation_mode = (bool) pdf_builder_get_option( 'pdf_builder_queue_simulation_enabled', false );
+        if ( $force_simulation_off ) {
+            $this->simulation_mode = false;
+        } else {
+            $this->simulation_mode = (bool) pdf_builder_get_option( 'pdf_builder_queue_simulation_enabled', false );
+        }
         $this->log( "Puppeteer_Client initialized - simulation_mode=" . ( $this->simulation_mode ? 'ON' : 'OFF' ) );
     }
 
