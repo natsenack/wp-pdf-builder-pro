@@ -64,13 +64,25 @@
                       '&order_id=' + encodeURIComponent(orderId) + 
                       '&nonce=' + encodeURIComponent(pdfBuilderQueue.nonce || '')
             })
-            .then(response => {
-                // D'abord, vérifier si c'est du JSON ou du binaire
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    return response.json().then(json => ({ json, response }));
+            .then(async response => {
+                // Lire en ArrayBuffer pour préserver les données binaires
+                const buffer = await response.arrayBuffer();
+                const bytes = new Uint8Array(buffer);
+
+                // Tenter de décoder comme UTF-8 et parser en JSON
+                let json = null;
+                try {
+                    const text = new TextDecoder('utf-8').decode(bytes);
+                    json = JSON.parse(text);
+                } catch (e) {
+                    // Pas du JSON valide → c'est un PDF binaire
+                }
+
+                if (json !== null) {
+                    return { json, response };
                 } else {
-                    return response.blob().then(blob => ({ blob, response }));
+                    const blob = new Blob([buffer], { type: 'application/pdf' });
+                    return { blob, response };
                 }
             })
             .then(({ json, blob, response }) => {
