@@ -896,6 +896,11 @@ class SettingsManager
             $changed = ($old_val !== $new_val) ? 'CHANGED' : 'UNCHANGED';
         }
 
+        // Invalider le cache du plugin quand les paramètres changent
+        if (class_exists('PDF_Builder_Cache_Manager')) {
+            PDF_Builder_Cache_Manager::get_instance()->on_settings_updated();
+        }
+
     }
 
     /**

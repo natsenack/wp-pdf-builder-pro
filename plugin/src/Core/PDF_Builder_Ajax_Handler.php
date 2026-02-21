@@ -52,13 +52,14 @@ class PDF_Builder_Ajax_Handler {
      */
     private function init_systems() {
         $this->systems = array(
-            'logger' => PDF_Builder_Core_Logger::get_instance(),
-            'security' => class_exists('\PDF_Builder\Core\PDF_Builder_Security_Validator') ? \PDF_Builder\Core\PDF_Builder_Security_Validator::get_instance() : null,
+            'logger'     => PDF_Builder_Core_Logger::get_instance(),
+            'security'   => class_exists('\\PDF_Builder\\Core\\PDF_Builder_Security_Validator') ? \PDF_Builder\Core\PDF_Builder_Security_Validator::get_instance() : null,
             'diagnostic' => PDF_Builder_Diagnostic_Tool::get_instance(),
-            'backup' => PDF_Builder_Backup_Recovery_System::get_instance(),
-            'license' => \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance(),
-            'user' => PDF_Builder_User_Manager::get_instance(),
-            'reporting' => PDF_Builder_Advanced_Reporting::get_instance(),
+            'backup'     => PDF_Builder_Backup_Recovery_System::get_instance(),
+            'license'    => \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance(),
+            'user'       => PDF_Builder_User_Manager::get_instance(),
+            'reporting'  => PDF_Builder_Advanced_Reporting::get_instance(),
+            'cache'      => class_exists('PDF_Builder_Cache_Manager') ? PDF_Builder_Cache_Manager::get_instance() : null,
         );
     }
 

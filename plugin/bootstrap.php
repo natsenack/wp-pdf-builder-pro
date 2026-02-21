@@ -629,6 +629,7 @@ function pdf_builder_load_core()
         'PDF_Builder_Security_Validator.php',
         'PDF_Builder_MU_Plugin_Blocker.php',
         'PDF_Builder_Nonce_Manager.php',
+        'PDF_Builder_Cache_Manager.php',
         'PDF_Builder_Unified_Ajax_Handler.php'
     );
     foreach ($core_classes as $core_class) {
@@ -645,6 +646,11 @@ function pdf_builder_load_core()
         PDF_Builder_Unified_Ajax_Handler::get_instance();
     } else {
         error_log("[BOOTSTRAP] PDF_Builder_Unified_Ajax_Handler class does not exist!");
+    }
+
+    // Initialiser le gestionnaire de cache (enregistre ses hooks tôt)
+    if (class_exists('PDF_Builder_Cache_Manager')) {
+        PDF_Builder_Cache_Manager::get_instance();
     }
 
     // Charger TemplateDefaults depuis core/

@@ -1547,11 +1547,15 @@ class PDF_Builder_Unified_Ajax_Handler {
             return;
         }
 
-        // Implémentation simplifiée - à étendre selon les besoins
-        wp_send_json_success([
-            'message' => 'Métriques de cache récupérées',
-            'cache_status' => 'OK'
-        ]);
+        try {
+            $metrics = class_exists('PDF_Builder_Cache_Manager')
+                ? PDF_Builder_Cache_Manager::get_instance()->get_metrics()
+                : ['status' => 'unavailable', 'message' => 'Cache manager non chargé'];
+
+            wp_send_json_success(array_merge($metrics, ['message' => 'Métriques de cache récupérées']));
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => 'Erreur metrics cache : ' . $e->getMessage()]);
+        }
     }
 
     /**
@@ -1563,52 +1567,17 @@ class PDF_Builder_Unified_Ajax_Handler {
         }
 
         try {
-            // Test 1: Vérifier si le cache WordPress fonctionne
-            $test_key = 'pdf_builder_cache_test_' . time();
-            $test_value = 'test_value_' . rand(1000, 9999);
+            if (!class_exists('PDF_Builder_Cache_Manager')) {
+                wp_send_json_error(['message' => 'Cache manager non chargé']);
+                return;
+            }
 
-            \wp_cache_set($test_key, $test_value, 'pdf_builder', 300);
-            $retrieved_value = wp_cache_get($test_key, 'pdf_builder');
-
-            $cache_wp_ok = ($retrieved_value === $test_value);
-
-            // Nettoyer le test
-            \wp_cache_delete($test_key, 'pdf_builder');
-
-            // Test 2: Vérifier les transients
-            $transient_key = 'pdf_builder_test_transient';
-            $transient_value = 'transient_test_' . rand(1000, 9999);
-
-            set_transient($transient_key, $transient_value, 300);
-            $transient_retrieved = get_transient($transient_key);
-
-            $transient_ok = ($transient_retrieved === $transient_value);
-
-            // Nettoyer
-            delete_transient($transient_key);
-
-            // Test 3: Vérifier les options
-            $option_test = pdf_builder_get_option('pdf_builder_settings', array());
-            $options_ok = is_array($option_test);
-
-            // Résultats
-            $results = [
-                'cache_wordpress' => $cache_wp_ok ? '✅ Fonctionnel' : '❌ Défaillant',
-                'transients' => $transient_ok ? '✅ Fonctionnel' : '❌ Défaillant',
-                'options' => $options_ok ? '✅ Fonctionnel' : '❌ Défaillant'
-            ];
-
-            $all_ok = $cache_wp_ok && $transient_ok && $options_ok;
-
-            wp_send_json_success([
-                'message' => $all_ok ? '✅ Test d\'intégration du cache réussi' : '⚠️ Certains tests ont échoué',
-                'results' => $results,
-                'status' => $all_ok ? 'success' : 'warning'
-            ]);
+            $result = PDF_Builder_Cache_Manager::get_instance()->test_integration();
+            wp_send_json_success($result);
 
         } catch (Exception $e) {
             wp_send_json_error([
-                'message' => '❌ Erreur lors du test du cache: ' . $e->getMessage()
+                'message' => '❌ Erreur lors du test du cache : ' . $e->getMessage()
             ]);
         }
     }
@@ -1621,10 +1590,18 @@ class PDF_Builder_Unified_Ajax_Handler {
             return;
         }
 
-        \wp_cache_flush();
-        delete_transient('pdf_builder_cache');
-
-        wp_send_json_success(['message' => 'Cache vidé avec succès']);
+        try {
+            if (class_exists('PDF_Builder_Cache_Manager')) {
+                $result = PDF_Builder_Cache_Manager::get_instance()->clear_all();
+                wp_send_json_success($result);
+            } else {
+                // Fallback minimal si la classe n'est pas chargée
+                wp_cache_flush();
+                wp_send_json_success(['message' => '✅ Cache vidé (mode basique)']);
+            }
+        } catch (Exception $e) {
+            wp_send_json_error(['message' => 'Erreur nettoyage cache : ' . $e->getMessage()]);
+        }
     }
 
     /**

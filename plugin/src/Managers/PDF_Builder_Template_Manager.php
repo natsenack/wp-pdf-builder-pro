@@ -540,6 +540,11 @@ class PDF_Builder_Template_Manager
                 $element_count = isset($saved_data['elements']) ? \count($saved_data['elements']) : 0;
             }
 
+            // === CACHE INVALIDATION ===
+            if (class_exists('PDF_Builder_Cache_Manager') && !empty($template_id)) {
+                \PDF_Builder_Cache_Manager::get_instance()->delete('template_' . $template_id);
+            }
+
             // Réponse de succès - INCLURE LE NOM DU TEMPLATE
             
             \wp_send_json_success(
@@ -659,6 +664,11 @@ class PDF_Builder_Template_Manager
                 \wp_send_json_error('Erreur lors de la mise à jour du template');
             }
 
+            // === CACHE INVALIDATION ===
+            if (class_exists('PDF_Builder_Cache_Manager') && !empty($template_id)) {
+                \PDF_Builder_Cache_Manager::get_instance()->delete('template_' . $template_id);
+            }
+
             \wp_send_json_success([
                 'message' => 'Auto-save réussi',
                 'template_id' => $template_id,
@@ -702,6 +712,16 @@ class PDF_Builder_Template_Manager
 
             if (empty($template_id)) {
                 \wp_send_json_error('ID template invalide');
+            }
+
+            // === CACHE READ ===
+            $cache_key = 'template_' . $template_id;
+            if (class_exists('PDF_Builder_Cache_Manager')) {
+                $cached_response = \PDF_Builder_Cache_Manager::get_instance()->get($cache_key);
+                if ($cached_response !== false && is_array($cached_response)) {
+                    \wp_send_json_success($cached_response);
+                    return;
+                }
             }
 
             // Chercher d'abord dans la table personnalisée (custom table)
@@ -780,11 +800,17 @@ class PDF_Builder_Template_Manager
                 $element_types[$type] = ($element_types[$type] ?? 0) + 1;
             }
 
-            // Réponse de succès - Format attendu par React: {success: true, data: {template: {...}, template_name: "..."}}
-            \wp_send_json_success([
-                'template' => $template_data,
+            // === CACHE WRITE ===
+            $response_to_cache = [
+                'template'      => $template_data,
                 'template_name' => $template_name
-            ]);
+            ];
+            if (class_exists('PDF_Builder_Cache_Manager')) {
+                \PDF_Builder_Cache_Manager::get_instance()->set($cache_key, $response_to_cache);
+            }
+
+            // Réponse de succès - Format attendu par React: {success: true, data: {template: {...}, template_name: "..."}}
+            \wp_send_json_success($response_to_cache);
 
         } catch (\Throwable $e) {
             
