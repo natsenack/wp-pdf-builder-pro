@@ -542,18 +542,13 @@ class PDF_Builder_WooCommerce_Integration
                             return response.blob();
                         })
                         .then(function(blob) {
-                            return new Promise(function(resolve, reject) {
-                                var reader = new FileReader();
-                                reader.onload  = function() { resolve(reader.result); };
-                                reader.onerror = reject;
-                                reader.readAsDataURL(blob);
-                            });
-                        })
-                        .then(function(dataUrl) {
                             btn.prop('disabled', false).html(orig);
 
-                            var orderNum = orderId;
-                            var fileName = 'facture-' + orderNum + '.' + type;
+                            // Blob URL directe — pas de conversion base64 (beaucoup plus rapide)
+                            var imageBlobUrl = URL.createObjectURL(blob);
+                            var mimeType     = (type === 'jpg') ? 'image/jpeg' : 'image/png';
+                            var orderNum     = orderId;
+                            var fileName     = 'facture-' + orderNum + '.' + type;
 
                             var htmlPage =
                                 '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
@@ -577,17 +572,21 @@ class PDF_Builder_WooCommerce_Integration
                                 '<button class="btn btn-download" onclick="downloadImage()"><span>📥</span><span>Télécharger</span></button>' +
                                 '<button class="btn btn-print" onclick="window.print()"><span>🖨️</span><span>Imprimer</span></button>' +
                                 '</div>' +
-                                '<div class="image-container" id="imageContainer"><img src="' + dataUrl + '" alt="Facture ' + orderNum + '" /></div>' +
+                                '<div class="image-container" id="imageContainer"><img id="facImg" src="' + imageBlobUrl + '" alt="Facture ' + orderNum + '" crossorigin="anonymous" onload="onImageLoaded()" /></div>' +
                                 '<script>' +
+                                'var downloadHref="' + imageBlobUrl + '";' +
+                                'function onImageLoaded(){try{var img=document.getElementById("facImg");var c=document.createElement("canvas");c.width=img.naturalWidth;c.height=img.naturalHeight;c.getContext("2d").drawImage(img,0,0);downloadHref=c.toDataURL("' + mimeType + '");}catch(e){}}' +
                                 'var zoomScale=1.0,container=document.getElementById("imageContainer"),zoomLevelDisplay=document.getElementById("zoomLevel");' +
                                 'function updateZoom(){container.style.transform="scale("+zoomScale+")";zoomLevelDisplay.textContent=Math.round(zoomScale*100)+"%";}' +
                                 'function zoomIn(){if(zoomScale<3.0){zoomScale+=0.25;updateZoom();}}' +
                                 'function zoomOut(){if(zoomScale>0.25){zoomScale-=0.25;updateZoom();}}' +
-                                'function downloadImage(){var l=document.createElement("a");l.href="' + dataUrl + '";l.download="' + fileName + '";document.body.appendChild(l);l.click();document.body.removeChild(l);}' +
+                                'function downloadImage(){var l=document.createElement("a");l.href=downloadHref;l.download="' + fileName + '";document.body.appendChild(l);l.click();document.body.removeChild(l);}' +
                                 '<\/script></body></html>';
 
                             var pageBlob = new Blob([htmlPage], { type: 'text/html; charset=utf-8' });
                             window.open(URL.createObjectURL(pageBlob), '_blank');
+                            // Révoquer la blob URL image après 60s (déjà chargée par le nouvel onglet)
+                            setTimeout(function() { URL.revokeObjectURL(imageBlobUrl); }, 60000);
                         })
                         .catch(function(err) {
                             btn.prop('disabled', false).html(orig);
