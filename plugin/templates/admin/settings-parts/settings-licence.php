@@ -420,7 +420,7 @@
                         <tbody id="pdfb-compare-visible">
                             <tr>
                                 <td style="padding:.45rem .75rem;border:1px solid #eee;">Templates prédéfinis</td>
-                                <td style="text-align:center;border:1px solid #eee;">4</td>
+                                <td style="text-align:center;border:1px solid #eee;">1</td>
                                 <td style="text-align:center;border:1px solid #eee;">∞</td>
                             </tr>
                             <tr style="background:#fafafa;">
