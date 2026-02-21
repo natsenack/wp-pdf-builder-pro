@@ -3780,7 +3780,7 @@ section[id^="dev-"] h3.pdfb-section-title {
 
 /* === Settings Tabs Navigation Styling === */
 .pdfb-nav-tab-wrapper {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #667eea;
   border-radius: 12px;
   margin-bottom: 2rem;
   padding: 0;
@@ -3798,25 +3798,22 @@ section[id^="dev-"] h3.pdfb-section-title {
 .pdfb-nav-tab {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 14px 20px;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 16px;
   color: rgba(255, 255, 255, 0.8);
   background: transparent;
   border: none;
   text-decoration: none;
   font-weight: 500;
   font-size: 14px;
-  transition: all 0.3s ease;
-  position: relative;
+  transition: background-color 0.2s ease;
   cursor: pointer;
   white-space: nowrap;
 }
 
 .pdfb-nav-tab .pdfb-tab-icon {
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 16px;
 }
 
 .pdfb-nav-tab .pdfb-tab-text {
@@ -3824,29 +3821,22 @@ section[id^="dev-"] h3.pdfb-section-title {
 }
 
 .pdfb-nav-tab:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
   color: white;
 }
 
 .pdfb-nav-tab.pdfb-nav-tab-active {
   background: rgba(255, 255, 255, 0.25);
   color: white;
-  border-bottom: 3px solid white;
-}
-
-.pdfb-nav-tab.pdfb-nav-tab-active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: white;
-  border-radius: 2px 2px 0 0;
 }
 
 /* Responsive: Show text on larger screens */
 @media (min-width: 768px) {
+  .pdfb-nav-tab {
+    gap: 8px;
+    padding: 14px 18px;
+  }
+
   .pdfb-nav-tab .pdfb-tab-text {
     display: inline;
   }
