@@ -5,23 +5,47 @@
 
 // Fonctions globales appelées directement depuis le HTML (plus fiable)
 window.pdfBuilderSkipFeedback = function() {
-    console.log('[PDF Builder] Skip clicked, URL:', window._pdfBuilderDeactivateUrl);
+    console.log('[PDF Builder] ✅ pdfBuilderSkipFeedback() appelée');
+    console.log('[PDF Builder] URL de désactivation:', window._pdfBuilderDeactivateUrl);
     if (window._pdfBuilderDeactivateUrl) {
         window.location.href = window._pdfBuilderDeactivateUrl;
+    } else {
+        console.error('[PDF Builder] ❌ _pdfBuilderDeactivateUrl est null/undefined !');
+        alert('[DEBUG] _pdfBuilderDeactivateUrl est vide. Vérifiez que le lien a bien été intercepté.');
     }
 };
 
 window.pdfBuilderSendFeedback = function() {
+    console.log('[PDF Builder] ✅ pdfBuilderSendFeedback() appelée');
+    console.log('[PDF Builder] URL de désactivation:', window._pdfBuilderDeactivateUrl);
     var reason = document.querySelector('input[name="deactivation_reason"]:checked');
     var message = document.getElementById('pdf_builder_feedback_message');
     var email = document.getElementById('pdf_builder_feedback_email');
     var btn = document.getElementById('pdf_builder_send_feedback');
 
-    console.log('[PDF Builder] Send feedback clicked, reason:', reason ? reason.value : 'none');
+    console.log('[PDF Builder] reason:', reason ? reason.value : 'AUCUNE RAISON SÉLECTIONNÉE');
+    console.log('[PDF Builder] email:', email ? email.value : 'N/A');
+    console.log('[PDF Builder] pdfBuilderDeactivation:', typeof pdfBuilderDeactivation !== 'undefined' ? pdfBuilderDeactivation : 'UNDEFINED ❌');
 
     if (btn) {
         btn.disabled = true;
         btn.textContent = 'Envoi en cours...';
+    }
+
+    if (typeof jQuery === 'undefined') {
+        console.error('[PDF Builder] ❌ jQuery non disponible !');
+        if (window._pdfBuilderDeactivateUrl) {
+            window.location.href = window._pdfBuilderDeactivateUrl;
+        }
+        return;
+    }
+
+    if (typeof pdfBuilderDeactivation === 'undefined') {
+        console.error('[PDF Builder] ❌ pdfBuilderDeactivation non défini, désactivation directe');
+        if (window._pdfBuilderDeactivateUrl) {
+            window.location.href = window._pdfBuilderDeactivateUrl;
+        }
+        return;
     }
 
     jQuery.ajax({
@@ -35,19 +59,24 @@ window.pdfBuilderSendFeedback = function() {
             email: email ? email.value : '',
         },
         success: function(response) {
-            console.log('[PDF Builder] Feedback sent successfully:', response);
+            console.log('[PDF Builder] ✅ Feedback envoyé:', response);
         },
         error: function(xhr, status, error) {
-            console.error('[PDF Builder] Feedback error:', error);
+            console.error('[PDF Builder] ❌ Erreur AJAX:', status, error);
         },
         complete: function() {
-            console.log('[PDF Builder] Redirecting to:', window._pdfBuilderDeactivateUrl);
+            console.log('[PDF Builder] Redirection vers:', window._pdfBuilderDeactivateUrl);
             if (window._pdfBuilderDeactivateUrl) {
                 window.location.href = window._pdfBuilderDeactivateUrl;
             }
         }
     });
 };
+
+console.log('[PDF Builder] ✅ Fonctions globales définies:', {
+    skip: typeof window.pdfBuilderSkipFeedback,
+    send: typeof window.pdfBuilderSendFeedback
+});
 
 (function($) {
     'use strict';
@@ -226,7 +255,10 @@ window.pdfBuilderSendFeedback = function() {
             e.stopImmediatePropagation();
             window._pdfBuilderDeactivateUrl = this.href;
             console.log('[PDF Builder] Désactivation interceptée:', window._pdfBuilderDeactivateUrl);
+            console.log('[PDF Builder] pdfBuilderSkipFeedback disponible:', typeof window.pdfBuilderSkipFeedback);
+            console.log('[PDF Builder] pdfBuilderSendFeedback disponible:', typeof window.pdfBuilderSendFeedback);
             $modal.addClass('show');
+            console.log('[PDF Builder] Modal show appliqué, classes:', $modal.attr('class'));
         });
     });
 })(jQuery);
