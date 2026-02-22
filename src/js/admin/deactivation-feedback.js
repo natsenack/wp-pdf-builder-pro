@@ -231,8 +231,8 @@ console.log('[PDF Builder] ✅ Fonctions globales définies:', {
                         <textarea id="pdf_builder_feedback_message" placeholder="Parlez-nous de votre expérience... (optionnel)"></textarea>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="skip-button" onclick="pdfBuilderSkipFeedback()">Passer et désactiver</button>
-                        <button type="button" id="pdf_builder_send_feedback" class="deactivate-button" onclick="pdfBuilderSendFeedback()">Envoyer et désactiver</button>
+                        <button type="button" class="skip-button" id="pdf_builder_skip_btn">Passer et désactiver</button>
+                        <button type="button" id="pdf_builder_send_feedback" class="deactivate-button">Envoyer et désactiver</button>
                     </div>
                 </div>
             </div>
@@ -242,6 +242,19 @@ console.log('[PDF Builder] ✅ Fonctions globales définies:', {
         console.log('[PDF Builder] Modal HTML ajouté au DOM');
 
         const $modal = $('#pdf-builder-deactivation-modal');
+
+        // Attacher les événements APRÈS injection dans le DOM (évite les problèmes CSP avec onclick inline)
+        document.getElementById('pdf_builder_skip_btn').addEventListener('click', function() {
+            console.log('[PDF Builder] ✅ Bouton Skip cliqué');
+            window.pdfBuilderSkipFeedback();
+        });
+
+        document.getElementById('pdf_builder_send_feedback').addEventListener('click', function() {
+            console.log('[PDF Builder] ✅ Bouton Send cliqué');
+            window.pdfBuilderSendFeedback();
+        });
+
+        console.log('[PDF Builder] Event listeners attachés aux boutons');
 
         // Show/hide textarea et email quand une raison est sélectionnée
         $body.on('change', 'input[name="deactivation_reason"]', function() {
