@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * PDF Builder Pro - Deactivation Feedback Modal
  */

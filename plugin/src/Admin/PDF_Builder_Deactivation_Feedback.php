@@ -117,17 +117,19 @@ class PDF_Builder_Deactivation_Feedback {
      */
     private function build_feedback_email($reason, $message, $email, $site_url, $admin_email) {
         $reason_labels = [
-            'dont_need' => 'N\'en a plus besoin',
+            'dont_need'   => "N'en a plus besoin",
             'not_working' => 'Le plugin ne fonctionne pas correctement',
-            'slow_performance' => 'Le plugin ralentit le site',
-            'confusing' => 'Le plugin est difficile à utiliser',
-            'expensive' => 'Trop cher pour les fonctionnalités',
-            'found_alternative' => 'Trouvé une meilleure alternative',
-            'temporary' => 'Désactivation temporaire',
-            'autre' => 'Autre raison',
+            'slow'        => 'Le plugin ralentit le site',
+            'confusing'   => 'Le plugin est difficile à utiliser',
+            'expensive'   => 'Trop cher pour les fonctionnalités',
+            'alternative' => 'Meilleure alternative trouvée',
+            'temporary'   => 'Désactivation temporaire',
+            'autre'       => 'Autre raison',
         ];
         
         $reason_label = isset($reason_labels[$reason]) ? $reason_labels[$reason] : $reason;
+        
+        $date_now = date('d/m/Y H:i:s');
         
         $html = <<<EMAIL
 <!DOCTYPE html>
@@ -177,7 +179,7 @@ EMAIL;
                 URL du site : {$site_url}<br>
                 Email admin : {$admin_email}<br>
                 Version PHP : {$_SERVER['SERVER_SOFTWARE']}<br>
-                Heure : {date('d/m/Y H:i:s')}
+                Heure : {$date_now}
             </div>
         </div>
     </div>
