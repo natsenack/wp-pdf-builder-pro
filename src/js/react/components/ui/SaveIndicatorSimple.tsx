@@ -1,0 +1,159 @@
+import { FC } from 'react';
+
+export interface SaveIndicatorProps {
+  state: 'idle' | 'saving' | 'saved' | 'error';
+  lastSavedAt?: string | null;
+  error?: string | null;
+  onRetry?: () => void;
+  progress?: number;
+  showProgressBar?: boolean;
+}
+
+/**
+ * SaveIndicator Simple et Robuste
+ * Affiche UNE notification simple en haut à droite
+ */
+export const SaveIndicator: FC<SaveIndicatorProps> = ({
+  state,
+  lastSavedAt: _lastSavedAt,
+  error,
+  onRetry,
+  progress = 0,
+  showProgressBar: _showProgressBar
+}) => {
+  // Ne rien afficher si idle
+  if (state === 'idle') {
+    return null;
+  }
+
+  // Couleurs par state
+  const colors: Record<string, { bg: string; text: string; border: string }> = {
+    saving: { bg: '#2196F3', text: '#fff', border: '#1976D2' },
+    saved: { bg: '#4CAF50', text: '#fff', border: '#388E3C' },
+    error: { bg: '#FF9800', text: '#fff', border: '#F57C00' } // Orange au lieu de rouge
+  };
+
+  const color = colors[state];
+
+  // Message
+  const getMessage = (): string => {
+    switch (state) {
+      case 'saving':
+        return `Sauvegarde en cours${progress > 0 ? ` (${Math.round(progress)}%)` : ''}...`;
+      case 'saved':
+        return 'Sauvegardé ✓';
+      case 'error':
+        // Message moins alarmant pour les erreurs d'auto-save
+        return 'Auto-save temporairement indisponible';
+      default:
+        return '';
+    }
+  };
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        top: '50px',
+        right: '20px',
+        padding: '14px 20px',
+        WebkitBorderRadius: '6px',
+        MozBorderRadius: '6px',
+        borderRadius: '6px',
+        background: color.bg,
+        border: `2px solid ${color.border}`,
+        WebkitBoxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
+        MozBoxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
+        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
+        fontSize: '14px',
+        fontWeight: 'bold',
+        fontFamily: 'Arial, sans-serif',
+        color: color.text,
+        zIndex: 999999,
+        display: 'flex',
+        WebkitBoxAlign: 'center',
+        WebkitAlignItems: 'center',
+        MozBoxAlign: 'center',
+        alignItems: 'center',
+        gap: '12px',
+        minWidth: '200px',
+        animation: state === 'saving' ? 'pulse 2s infinite' : 'slideIn 0.3s ease-out'
+      }}
+    >
+      {state === 'saving' && (
+        <div style={{ fontSize: '16px', animation: 'spin 1s linear infinite' }}>⟳</div>
+      )}
+      {state === 'saved' && <div style={{ fontSize: '16px' }}>✓</div>}
+      {state === 'error' && <div style={{ fontSize: '16px' }}>!</div>}
+      
+      <span>{getMessage()}</span>
+
+      {state === 'error' && onRetry && (
+        <button
+          onClick={onRetry}
+          style={{
+            marginLeft: 'auto',
+            padding: '4px 8px',
+            background: 'rgba(255,255,255,0.2)',
+            border: '1px solid rgba(255,255,255,0.4)',
+            color: '#fff',
+            WebkitBorderRadius: '3px',
+            MozBorderRadius: '3px',
+            borderRadius: '3px',
+            cursor: 'pointer',
+            fontSize: '12px',
+            fontWeight: 'bold'
+          }}
+        >
+          Réessayer
+        </button>
+      )}
+
+      <style>{`
+        @keyframes spin {
+          from { 
+            -webkit-transform: rotate(0deg); 
+            -moz-transform: rotate(0deg); 
+            -ms-transform: rotate(0deg); 
+            -o-transform: rotate(0deg); 
+            transform: rotate(0deg); 
+          }
+          to { 
+            -webkit-transform: rotate(360deg); 
+            -moz-transform: rotate(360deg); 
+            -ms-transform: rotate(360deg); 
+            -o-transform: rotate(360deg); 
+            transform: rotate(360deg); 
+          }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
+        }
+        @keyframes slideIn {
+          from {
+            -webkit-transform: translateX(100px);
+            -moz-transform: translateX(100px);
+            -ms-transform: translateX(100px);
+            -o-transform: translateX(100px);
+            transform: translateX(100px);
+            opacity: 0;
+          }
+          to {
+            -webkit-transform: translateX(0);
+            -moz-transform: translateX(0);
+            -ms-transform: translateX(0);
+            -o-transform: translateX(0);
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default SaveIndicator;
+
+
+

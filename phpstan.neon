@@ -1,0 +1,23 @@
+parameters:
+  level: 5
+  paths:
+    - plugin/src
+    - plugin/bootstrap.php
+    - plugin/pdf-builder-pro.php
+  excludePaths:
+    - plugin/vendor
+    - plugin/node_modules
+  bootstrap: build/phpstan-bootstrap.php
+  autoload_directories:
+    - plugin/lib
+  autoload_files:
+    - plugin/lib/pdf-builder-stubs.php
+    - plugin/src/stubs.php
+
+includes:
+  - vendor/phpstan/phpstan/conf/config.level5.neon
+
+rules:
+  NoUnnecessaryLogicalOperatorRule: null
+  NoUnnecessaryTernaryOperatorRule: null
+  UndefinedVariableRule: null

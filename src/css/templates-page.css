@@ -1,0 +1,576 @@
+/* ============================================================================
+   TEMPLATES PAGE STYLES - PDF Builder Pro
+   Style moderne inspiré de l'onglet Canvas avec préfixe pdfb-
+   ============================================================================ */
+
+/* Container principal */
+.pdfb-templates-page {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header avec actions */
+.pdfb-templates-header {
+  background: #667eea;
+  border-radius: 16px;
+  padding: 32px 40px;
+  color: white;
+  margin-bottom: 32px;
+  box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.pdfb-templates-header-left h1 {
+  margin: 0 0 8px 0;
+  font-size: 32px;
+  font-weight: 700;
+  color: white;
+}
+
+.pdfb-templates-header-left p {
+  margin: 0;
+  font-size: 15px;
+  opacity: 0.95;
+  color: white;
+}
+
+.pdfb-templates-header-right .button {
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  background: white;
+  color: #667eea;
+  border: none;
+  transition: all 0.2s;
+}
+
+.pdfb-templates-header-right .button:hover {
+  background: #f8fafc;
+  transform: scale(1.05);
+}
+
+/* Barre de filtres */
+.pdfb-templates-filters {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px 28px;
+  margin-bottom: 28px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.pdfb-templates-filters strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.pdfb-filter-btn {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pdfb-filter-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+  background: #f0f4ff;
+}
+
+.pdfb-filter-btn.pdfb-active {
+  background: #667eea;
+  color: white;
+  border-color: transparent;
+}
+
+/* Notifications */
+.pdfb-notice-warning {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-left: 4px solid #f59e0b;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 28px;
+  position: relative;
+}
+
+.pdfb-notice-warning h4 {
+  margin: 0 0 12px 0;
+  color: #856404;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pdfb-notice-warning p {
+  margin: 0 0 16px 0;
+  color: #856404;
+  line-height: 1.6;
+}
+
+.pdfb-notice-dismiss {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #856404;
+  cursor: pointer;
+  padding: 8px;
+  font-size: 18px;
+  line-height: 1;
+  transition: all 0.2s;
+}
+
+.pdfb-notice-dismiss:hover {
+  color: #533f03;
+  transform: scale(1.1);
+}
+
+/* Liste de templates */
+.pdfb-templates-list {
+  margin-top: 28px;
+}
+
+/* Grille de templates */
+.pdfb-templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.pdfb-template-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+}
+
+.pdfb-template-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+  border-color: #667eea;
+}
+
+.pdfb-template-preview {
+  position: relative;
+  width: 100%;
+  padding-top: 70.7%; /* Ratio A4 */
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.pdfb-template-preview img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pdfb-template-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  background: #667eea;
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.pdfb-template-badge.pdfb-pro {
+  background: #f59e0b;
+}
+
+.pdfb-template-badge.pdfb-new {
+  background: #10b981;
+}
+
+.pdfb-template-info {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.pdfb-template-title {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.pdfb-template-meta {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.pdfb-template-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pdfb-template-description {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.pdfb-template-tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.pdfb-template-tag {
+  padding: 4px 10px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #475569;
+  font-weight: 500;
+}
+
+.pdfb-template-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.pdfb-template-actions .button {
+  flex: 1;
+  text-align: center;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.pdfb-template-actions .button-primary {
+  background: #667eea;
+  color: white;
+  border: none;
+}
+
+.pdfb-template-actions .button-primary:hover {
+  background: #5568d3;
+  transform: scale(1.02);
+}
+
+.pdfb-template-actions .button-secondary {
+  background: white;
+  color: #667eea;
+  border: 1px solid #667eea;
+}
+
+.pdfb-template-actions .button-secondary:hover {
+  background: #f0f4ff;
+  transform: scale(1.02);
+}
+
+/* Modal styles */
+.pdfb-template-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdfb-template-modal-overlay.pdfb-show {
+  display: flex;
+}
+
+.pdfb-template-modal-content {
+  background: white;
+  border-radius: 16px;
+  max-width: 90%;
+  width: 1200px;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  animation: modalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pdfb-template-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 36px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #667eea;
+  color: white;
+}
+
+.pdfb-template-modal-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+}
+
+.pdfb-template-modal-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.pdfb-template-modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.pdfb-template-modal-body {
+  padding: 32px 36px;
+  overflow-y: auto;
+  max-height: calc(90vh - 200px);
+}
+
+.pdfb-template-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 36px;
+  border-top: 1px solid #e2e8f0;
+  background: #f8f9fa;
+}
+
+.pdfb-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  z-index: 10000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.pdfb-modal-overlay.pdfb-show {
+  display: flex;
+}
+
+.pdfb-modal-content {
+  background: white;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+.pdfb-modal-header {
+  padding: 24px 32px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #667eea;
+  color: white;
+  border-radius: 16px 16px 0 0;
+}
+
+.pdfb-modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+}
+
+.pdfb-modal-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.pdfb-modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.pdfb-modal-body {
+  padding: 28px 32px;
+}
+
+/* Gallery filters dans le modal */
+.pdfb-gallery-filters {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.pdfb-gallery-filter-btn {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pdfb-gallery-filter-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+  background: #f0f4ff;
+}
+
+.pdfb-gallery-filter-btn.pdfb-active {
+  background: #667eea;
+  color: white;
+  border-color: transparent;
+}
+
+/* Gallery grid dans le modal */
+.pdfb-template-gallery-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdfb-template-gallery-modal.pdfb-show {
+  display: flex;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pdfb-templates-header {
+    padding: 24px;
+  }
+
+  .pdfb-templates-header h1 {
+    font-size: 24px;
+  }
+
+  .pdfb-templates-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pdfb-template-modal-content {
+    width: 95%;
+  }
+
+  .pdfb-template-modal-header,
+  .pdfb-template-modal-body,
+  .pdfb-template-modal-footer {
+    padding: 20px;
+  }
+}
+
+/* Animations */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pdfb-template-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.pdfb-template-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.pdfb-template-card:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.pdfb-template-card:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.pdfb-template-card:nth-child(5) {
+  animation-delay: 0.25s;
+}
+.pdfb-template-card:nth-child(6) {
+  animation-delay: 0.3s;
+}
