@@ -242,19 +242,40 @@ console.log('[PDF Builder] ✅ Fonctions globales définies:', {
         console.log('[PDF Builder] Modal HTML ajouté au DOM');
 
         const $modal = $('#pdf-builder-deactivation-modal');
+        const skipBtn = document.getElementById('pdf_builder_skip_btn');
+        const sendBtn = document.getElementById('pdf_builder_send_feedback');
 
-        // Attacher les événements APRÈS injection dans le DOM (évite les problèmes CSP avec onclick inline)
-        document.getElementById('pdf_builder_skip_btn').addEventListener('click', function() {
-            console.log('[PDF Builder] ✅ Bouton Skip cliqué');
+        // Test mousedown en phase de capture (détecte même si un élément absorde le click)
+        skipBtn.addEventListener('mousedown', function(e) {
+            console.log('[PDF Builder] 🖱️ mousedown sur Skip, target:', e.target.id);
+        }, true);
+        sendBtn.addEventListener('mousedown', function(e) {
+            console.log('[PDF Builder] 🖱️ mousedown sur Send, target:', e.target.id);
+        }, true);
+
+        // Click en phase de capture
+        skipBtn.addEventListener('click', function(e) {
+            console.log('[PDF Builder] ✅ click Skip (capture)');
+            e.stopPropagation();
             window.pdfBuilderSkipFeedback();
-        });
-
-        document.getElementById('pdf_builder_send_feedback').addEventListener('click', function() {
-            console.log('[PDF Builder] ✅ Bouton Send cliqué');
+        }, true);
+        sendBtn.addEventListener('click', function(e) {
+            console.log('[PDF Builder] ✅ click Send (capture)');
+            e.stopPropagation();
             window.pdfBuilderSendFeedback();
-        });
+        }, true);
 
-        console.log('[PDF Builder] Event listeners attachés aux boutons');
+        // Détecter si un autre élément absorbe les clics sur le modal
+        document.getElementById('pdf-builder-deactivation-modal').addEventListener('click', function(e) {
+            console.log('[PDF Builder] 🎯 Click sur le modal, target:', e.target.tagName, e.target.id, e.target.className);
+        }, true);
+
+        console.log('[PDF Builder] Event listeners attachés aux boutons', {
+            skipBtn: !!skipBtn,
+            sendBtn: !!sendBtn,
+            skipBtnRect: skipBtn ? JSON.stringify(skipBtn.getBoundingClientRect()) : 'N/A',
+            sendBtnRect: sendBtn ? JSON.stringify(sendBtn.getBoundingClientRect()) : 'N/A'
+        });
 
         // Show/hide textarea et email quand une raison est sélectionnée
         $body.on('change', 'input[name="deactivation_reason"]', function() {
