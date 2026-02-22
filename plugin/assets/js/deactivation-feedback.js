@@ -118,6 +118,7 @@
                 font-size: 12px !important;
                 opacity: 0.6 !important;
                 transition: opacity 0.2s !important;
+                pointer-events: auto !important;
             }
             #pdf-builder-deactivation-modal .skip-button:hover {
                 opacity: 0.8 !important;
@@ -131,6 +132,7 @@
                 cursor: pointer !important;
                 font-weight: 500 !important;
                 transition: background 0.2s !important;
+                pointer-events: auto !important;
             }
             #pdf-builder-deactivation-modal .deactivate-button:hover {
                 background: #c82333 !important;
@@ -232,7 +234,7 @@
         });
 
         // Observer les changements de sélection radio
-        $('input[name="deactivation_reason"]').on('change', function() {
+        $(document).on('change', 'input[name="deactivation_reason"]', function() {
             const value = $(this).val();
             
             // Afficher la zone de texte et d'email si une raison est sélectionnée
@@ -271,8 +273,10 @@
             });
         }
 
-        // Bouton "Passer et désactiver" - très discret
-        $skipBtn.on('click', function() {
+        // Bouton "Passer et désactiver" - très discret (délégation d'événements)
+        $(document).on('click', '#pdf_builder_skip_feedback', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             console.log('[PDF Builder] Skip clicked, redirecting to:', pluginDeactivateUrl);
             // Désactiver directement sans envoyer de feedback
             if (pluginDeactivateUrl) {
@@ -280,8 +284,10 @@
             }
         });
 
-        // Bouton "Envoyer et désactiver"
-        $sendBtn.on('click', function() {
+        // Bouton "Envoyer et désactiver" (délégation d'événements)
+        $(document).on('click', '#pdf_builder_send_feedback', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             const reason = $('input[name="deactivation_reason"]:checked').val();
             const message = $textarea.val();
             const email = $('#pdf_builder_feedback_email').val();
@@ -289,7 +295,7 @@
             console.log('[PDF Builder] Send feedback:', {reason, email, messageLength: message.length});
 
             // Désactiver le bouton pendant l'envoi
-            $sendBtn.prop('disabled', true).addClass('loading');
+            $(this).prop('disabled', true).addClass('loading');
 
             // Envoyer le feedback via AJAX
             $.ajax({
