@@ -88,13 +88,20 @@ class PDF_Builder_Deactivation_Feedback {
         $body    = $this->build_feedback_email($reason, $message, $site_url, $admin_email, $date_now);
         $headers = ['Content-Type: text/html; charset=UTF-8'];
 
-        // Tentative 1 : PHPMailer Gmail SMTP (le plus fiable, credentials dédiés)
-        $mail_sent = $this->send_via_phpmailer($subject, $body);
+        // Tentative 1 : wp_mail() — utilise le serveur mail de l'hébergeur ou un plugin SMTP actif
+        $wp_mail_ok = false;
+        add_action('wp_mail_failed', function($err) {
+            error_log('[PDF Builder Pro] wp_mail failed: ' . $err->get_error_message());
+        });
+        $wp_mail_ok = wp_mail($this->email, $subject, $body, $headers);
+        error_log('[PDF Builder Pro] wp_mail result: ' . ($wp_mail_ok ? 'ok' : 'failed'));
 
-        // Tentative 2 : wp_mail en fallback si PHPMailer échoue
-        if (!$mail_sent) {
-            error_log('[PDF Builder Pro] PHPMailer échoué, tentative wp_mail');
-            $mail_sent = wp_mail($this->email, $subject, $body, $headers);
+        // Tentative 2 : Gmail SMTP direct (timeout court pour éviter un hang)
+        if (!$wp_mail_ok) {
+            error_log('[PDF Builder Pro] Tentative Gmail SMTP...');
+            $mail_sent = $this->send_via_phpmailer($subject, $body);
+        } else {
+            $mail_sent = true;
         }
 
         error_log('[PDF Builder Pro] Feedback – raison: ' . $reason . ' – mail_sent: ' . ($mail_sent ? 'oui' : 'non'));
@@ -129,6 +136,7 @@ class PDF_Builder_Deactivation_Feedback {
             $mail->isSMTP();
             $mail->SMTPAuth   = true;
             $mail->SMTPDebug  = 0; // mettre à 2 pour debug verbeux dans error_log
+            $mail->Timeout    = 10; // 10 secondes max pour éviter le hang
 
             // Priorité 1 : constantes définies dans wp-config.php
             if (defined('SMTP_HOST') && SMTP_HOST) {
@@ -144,6 +152,13 @@ class PDF_Builder_Deactivation_Feedback {
                 $mail->Host       = 'smtp.gmail.com';
                 $mail->Port       = 465;
                 $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+                $mail->SMTPOptions = [
+                    'ssl' => [
+                        'verify_peer'       => false,
+                        'verify_peer_name'  => false,
+                        'allow_self_signed' => true,
+                    ],
+                ];
                 $mail->Username   = 'threaaxe.france@gmail.com';
                 $mail->Password   = $this->decode_pass('JSk3LiEmJCAmPylTXVRQTA==');
                 $from             = $mail->Username;
