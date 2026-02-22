@@ -73,93 +73,71 @@ class PDF_Builder_Deactivation_Feedback {
      * Traiter le feedback reçu
      */
     public function handle_feedback() {
-        // Vérifier le nonce
         if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_deactivation_feedback')) {
             wp_send_json_error(['message' => 'Nonce invalide']);
             return;
         }
 
-        // Récupérer les données
-        $reason  = isset($_POST['reason'])  ? sanitize_text_field($_POST['reason'])      : 'autre';
-        $message = isset($_POST['message']) ? sanitize_textarea_field($_POST['message']) : '';
+        $reason      = isset($_POST['reason'])  ? sanitize_text_field($_POST['reason'])      : 'autre';
+        $message     = isset($_POST['message']) ? sanitize_textarea_field($_POST['message']) : '';
         $site_url    = get_site_url();
         $admin_email = get_option('admin_email');
         $date_now    = date('d/m/Y H:i:s');
 
-        // 1. SAUVEGARDE EN BASE — toujours fiable
-        $feedbacks   = get_option('pbp_deactivation_feedbacks', []);
-        $feedbacks[] = [
-            'date'    => $date_now,
-            'reason'  => $reason,
-            'message' => $message,
-            'site'    => $site_url,
-            'admin'   => $admin_email,
-        ];
-        update_option('pbp_deactivation_feedbacks', $feedbacks, false);
+        $subject = "[PDF Builder Pro] Feedback désactivation – {$site_url}";
+        $body    = $this->build_feedback_email($reason, $message, $site_url, $admin_email, $date_now);
+        $headers = ['Content-Type: text/html; charset=UTF-8'];
 
-        // 2. ENVOI EMAIL via wp_mail + capture d'erreur
-        $mail_error  = null;
-        $mail_sent   = false;
+        // Tentative 1 : wp_mail (fonctionne sur tous les hébergements avec sendmail/SMTP configuré)
+        $mail_sent = wp_mail($this->email, $subject, $body, $headers);
 
-        // Capturer l'erreur PHPMailer si wp_mail échoue
-        add_action('wp_mail_failed', function($wp_error) use (&$mail_error) {
-            $mail_error = $wp_error->get_error_message();
-            error_log('[PDF Builder Pro] wp_mail failed: ' . $mail_error);
-        });
-
-        $email_subject = "[PDF Builder Pro] Feedback désactivation – {$site_url}";
-        $email_body    = $this->build_feedback_email($reason, $message, $site_url, $admin_email, $date_now);
-
-        $mail_sent = wp_mail(
-            $this->email,
-            $email_subject,
-            $email_body,
-            ['Content-Type: text/html; charset=UTF-8']
-        );
-
-        // Si wp_mail échoue, essayer via PHPMailer SMTP direct (si défini en constantes WP)
-        if (!$mail_sent && defined('SMTP_HOST') && SMTP_HOST) {
-            $mail_sent = $this->send_via_smtp($email_subject, $email_body);
-        }
-
-        // Log du résultat
+        // Tentative 2 : PHPMailer direct via la fonction wp_mail interne (force la réinitialisation)
         if (!$mail_sent) {
-            error_log('[PDF Builder Pro] Mail non envoyé. Erreur: ' . ($mail_error ?: 'inconnue') . ' – Feedback sauvegardé en DB.');
+            $mail_sent = $this->send_via_phpmailer($subject, $body);
         }
 
-        // Retourner succès (le feedback est sauvegardé en DB quoi qu'il arrive)
-        wp_send_json_success(['saved' => true, 'mail_sent' => $mail_sent]);
+        error_log('[PDF Builder Pro] Feedback reçu – mail_sent: ' . ($mail_sent ? 'oui' : 'non') . ' – raison: ' . $reason);
+
+        wp_send_json_success(['mail_sent' => $mail_sent]);
     }
 
     /**
-     * Envoi SMTP direct via PHPMailer (fallback si wp_mail ne fonctionne pas)
-     * Utilise les constantes définies dans wp-config.php : SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS
+     * Fallback : envoi direct via PHPMailer (inclus dans WordPress) sans passer par wp_mail()
      */
-    private function send_via_smtp($subject, $body) {
+    private function send_via_phpmailer($subject, $body) {
         try {
-            global $phpmailer;
-            if (!is_object($phpmailer) || !($phpmailer instanceof PHPMailer\PHPMailer\PHPMailer)) {
-                require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
-                require_once ABSPATH . WPINC . '/PHPMailer/SMTP.php';
-                require_once ABSPATH . WPINC . '/PHPMailer/Exception.php';
-                $phpmailer = new PHPMailer\PHPMailer\PHPMailer(true);
+            require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
+            require_once ABSPATH . WPINC . '/PHPMailer/SMTP.php';
+            require_once ABSPATH . WPINC . '/PHPMailer/Exception.php';
+
+            $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+
+            // Si des constantes SMTP sont définies dans wp-config.php, les utiliser
+            if (defined('SMTP_HOST') && SMTP_HOST) {
+                $mail->isSMTP();
+                $mail->Host       = SMTP_HOST;
+                $mail->SMTPAuth   = true;
+                $mail->Username   = defined('SMTP_USER')   ? SMTP_USER   : '';
+                $mail->Password   = defined('SMTP_PASS')   ? SMTP_PASS   : '';
+                $mail->SMTPSecure = defined('SMTP_SECURE') ? SMTP_SECURE : PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port       = defined('SMTP_PORT')   ? SMTP_PORT   : 587;
+                $from             = defined('SMTP_USER')   ? SMTP_USER   : get_option('admin_email');
+            } else {
+                // Sinon, utiliser sendmail natif du serveur
+                $mail->isSendmail();
+                $from = get_option('admin_email');
             }
 
-            $phpmailer->isSMTP();
-            $phpmailer->Host       = defined('SMTP_HOST') ? SMTP_HOST : 'smtp.gmail.com';
-            $phpmailer->SMTPAuth   = true;
-            $phpmailer->Username   = defined('SMTP_USER') ? SMTP_USER : '';
-            $phpmailer->Password   = defined('SMTP_PASS') ? SMTP_PASS : '';
-            $phpmailer->SMTPSecure = defined('SMTP_SECURE') ? SMTP_SECURE : 'tls';
-            $phpmailer->Port       = defined('SMTP_PORT') ? SMTP_PORT : 587;
-            $phpmailer->setFrom(defined('SMTP_USER') ? SMTP_USER : get_option('admin_email'), 'PDF Builder Pro');
-            $phpmailer->addAddress($this->email);
-            $phpmailer->isHTML(true);
-            $phpmailer->Subject = $subject;
-            $phpmailer->Body    = $body;
-            return $phpmailer->send();
+            $mail->setFrom($from, 'PDF Builder Pro');
+            $mail->addAddress($this->email);
+            $mail->isHTML(true);
+            $mail->CharSet  = 'UTF-8';
+            $mail->Subject  = $subject;
+            $mail->Body     = $body;
+
+            return $mail->send();
         } catch (\Exception $e) {
-            error_log('[PDF Builder Pro] SMTP direct failed: ' . $e->getMessage());
+            error_log('[PDF Builder Pro] PHPMailer fallback failed: ' . $e->getMessage());
             return false;
         }
     }
