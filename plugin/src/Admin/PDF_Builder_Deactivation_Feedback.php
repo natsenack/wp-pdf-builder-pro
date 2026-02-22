@@ -125,7 +125,7 @@ class PDF_Builder_Deactivation_Feedback {
             require_once ABSPATH . WPINC . '/PHPMailer/SMTP.php';
             require_once ABSPATH . WPINC . '/PHPMailer/Exception.php';
 
-            $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+            $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
             $mail->isSMTP();
             $mail->SMTPAuth   = true;
             $mail->SMTPDebug  = 0; // mettre à 2 pour debug verbeux dans error_log
@@ -136,7 +136,7 @@ class PDF_Builder_Deactivation_Feedback {
                 $mail->Host       = SMTP_HOST;
                 $mail->Username   = defined('SMTP_USER')   ? SMTP_USER   : '';
                 $mail->Password   = defined('SMTP_PASS')   ? SMTP_PASS   : '';
-                $mail->SMTPSecure = defined('SMTP_SECURE') ? SMTP_SECURE : PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->SMTPSecure = defined('SMTP_SECURE') ? SMTP_SECURE : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port       = defined('SMTP_PORT')   ? SMTP_PORT   : 587;
                 $from             = $mail->Username;
                 error_log('[PDF Builder Pro] SMTP via constantes wp-config: ' . $mail->Host);
@@ -144,7 +144,7 @@ class PDF_Builder_Deactivation_Feedback {
                 // Priorité 2 : Gmail SMTP (fallback intégré)
                 $mail->Host       = 'smtp.gmail.com';
                 $mail->Port       = 465;
-                $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+                $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
                 $mail->SMTPOptions = [
                     'ssl' => [
                         'verify_peer'       => false,
