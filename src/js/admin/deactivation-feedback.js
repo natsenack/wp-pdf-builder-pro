@@ -1,328 +1,129 @@
 /**
  * PDF Builder Pro - Deactivation Feedback Modal
- * Affiche un modal de feedback lors de la désactivation du plugin
  */
-
-// Fonctions globales appelées directement depuis le HTML (plus fiable)
-window.pdfBuilderSkipFeedback = function() {
-    console.log('[PDF Builder] ✅ pdfBuilderSkipFeedback() appelée');
-    console.log('[PDF Builder] URL de désactivation:', window._pdfBuilderDeactivateUrl);
-    if (window._pdfBuilderDeactivateUrl) {
-        window.location.href = window._pdfBuilderDeactivateUrl;
-    } else {
-        console.error('[PDF Builder] ❌ _pdfBuilderDeactivateUrl est null/undefined !');
-        alert('[DEBUG] _pdfBuilderDeactivateUrl est vide. Vérifiez que le lien a bien été intercepté.');
-    }
-};
-
-window.pdfBuilderSendFeedback = function() {
-    console.log('[PDF Builder] ✅ pdfBuilderSendFeedback() appelée');
-    console.log('[PDF Builder] URL de désactivation:', window._pdfBuilderDeactivateUrl);
-    var reason = document.querySelector('input[name="deactivation_reason"]:checked');
-    var message = document.getElementById('pdf_builder_feedback_message');
-    var email = document.getElementById('pdf_builder_feedback_email');
-    var btn = document.getElementById('pdf_builder_send_feedback');
-
-    console.log('[PDF Builder] reason:', reason ? reason.value : 'AUCUNE RAISON SÉLECTIONNÉE');
-    console.log('[PDF Builder] email:', email ? email.value : 'N/A');
-    console.log('[PDF Builder] pdfBuilderDeactivation:', typeof pdfBuilderDeactivation !== 'undefined' ? pdfBuilderDeactivation : 'UNDEFINED ❌');
-
-    if (btn) {
-        btn.disabled = true;
-        btn.textContent = 'Envoi en cours...';
-    }
-
-    if (typeof jQuery === 'undefined') {
-        console.error('[PDF Builder] ❌ jQuery non disponible !');
-        if (window._pdfBuilderDeactivateUrl) {
-            window.location.href = window._pdfBuilderDeactivateUrl;
-        }
-        return;
-    }
-
-    if (typeof pdfBuilderDeactivation === 'undefined') {
-        console.error('[PDF Builder] ❌ pdfBuilderDeactivation non défini, désactivation directe');
-        if (window._pdfBuilderDeactivateUrl) {
-            window.location.href = window._pdfBuilderDeactivateUrl;
-        }
-        return;
-    }
-
-    jQuery.ajax({
-        url: pdfBuilderDeactivation.ajaxUrl,
-        type: 'POST',
-        data: {
-            action: 'pdf_builder_send_deactivation_feedback',
-            nonce: pdfBuilderDeactivation.nonce,
-            reason: reason ? reason.value : 'autre',
-            message: message ? message.value : '',
-            email: email ? email.value : '',
-        },
-        success: function(response) {
-            console.log('[PDF Builder] ✅ Feedback envoyé:', response);
-        },
-        error: function(xhr, status, error) {
-            console.error('[PDF Builder] ❌ Erreur AJAX:', status, error);
-        },
-        complete: function() {
-            console.log('[PDF Builder] Redirection vers:', window._pdfBuilderDeactivateUrl);
-            if (window._pdfBuilderDeactivateUrl) {
-                window.location.href = window._pdfBuilderDeactivateUrl;
-            }
-        }
-    });
-};
-
-console.log('[PDF Builder] ✅ Fonctions globales définies:', {
-    skip: typeof window.pdfBuilderSkipFeedback,
-    send: typeof window.pdfBuilderSendFeedback
-});
-
 (function($) {
     'use strict';
 
-    $(document).ready(function() {
-        const $body = $('body');
+    // CSS du modal
+    var css = [
+        '#pbp-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:999999;background:rgba(0,0,0,.6);justify-content:center;align-items:center}',
+        '#pbp-modal.open{display:flex}',
+        '#pbp-modal-box{background:#fff;border-radius:8px;width:90%;max-width:480px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}',
+        '#pbp-modal-box h2{margin:0;padding:20px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;font-size:17px}',
+        '#pbp-modal-body{padding:20px}',
+        '#pbp-modal-body p{margin:0 0 12px}',
+        '.pbp-opt{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid #ddd;border-radius:5px;margin-bottom:6px;cursor:pointer}',
+        '.pbp-opt:hover{background:#f5f5f5;border-color:#667eea}',
+        '.pbp-opt input{margin:0;cursor:pointer}',
+        '.pbp-opt label{cursor:pointer;margin:0}',
+        '#pbp-extra{display:none;margin-top:12px}',
+        '#pbp-extra.show{display:block}',
+        '#pbp-extra input,#pbp-extra textarea{width:100%;box-sizing:border-box;border:1px solid #ddd;border-radius:4px;padding:8px;font-family:inherit;margin-top:6px}',
+        '#pbp-extra textarea{min-height:70px;resize:vertical}',
+        '#pbp-modal-footer{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:#f7f7f7;border-top:1px solid #eee}',
+        '#pbp-btn-skip{background:none;border:none;color:#888;cursor:pointer;text-decoration:underline;font-size:13px;padding:0}',
+        '#pbp-btn-send{background:#dc3545;color:#fff;border:none;border-radius:5px;padding:10px 22px;cursor:pointer;font-size:14px;font-weight:600}',
+        '#pbp-btn-send:hover{background:#c82333}',
+        '#pbp-btn-send:disabled{opacity:.6;cursor:not-allowed}'
+    ].join('');
 
-        // Injecter les styles du modal directement
-        const modalStyles = `
-            #pdf-builder-deactivation-modal {
-                display: none !important;
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                z-index: 999999 !important;
-                width: 100% !important;
-                height: 100% !important;
-                background: rgba(0, 0, 0, 0.6) !important;
-                justify-content: center !important;
-                align-items: center !important;
-            }
-            #pdf-builder-deactivation-modal.show {
-                display: flex !important;
-            }
-            #pdf-builder-deactivation-modal .modal-content {
-                background: white !important;
-                border-radius: 8px !important;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
-                max-width: 500px !important;
-                width: 90% !important;
-                padding: 0 !important;
-                overflow: hidden !important;
-            }
-            #pdf-builder-deactivation-modal .modal-header {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-                color: white !important;
-                padding: 20px !important;
-                margin: 0 !important;
-            }
-            #pdf-builder-deactivation-modal .modal-header h2 {
-                margin: 0 !important;
-                font-size: 18px !important;
-            }
-            #pdf-builder-deactivation-modal .modal-body {
-                padding: 20px !important;
-            }
-            #pdf-builder-deactivation-modal .feedback-group {
-                margin-bottom: 15px !important;
-            }
-            #pdf-builder-deactivation-modal .feedback-option {
-                display: flex !important;
-                align-items: flex-start !important;
-                padding: 10px !important;
-                border: 1px solid #e0e0e0 !important;
-                border-radius: 5px !important;
-                cursor: pointer !important;
-                margin-bottom: 8px !important;
-            }
-            #pdf-builder-deactivation-modal .feedback-option:hover {
-                background: #f9f9f9 !important;
-                border-color: #667eea !important;
-            }
-            #pdf-builder-deactivation-modal .feedback-option input[type="radio"] {
-                margin-top: 2px !important;
-                margin-right: 10px !important;
-                cursor: pointer !important;
-            }
-            #pdf-builder-deactivation-modal .feedback-option label {
-                cursor: pointer !important;
-                flex: 1 !important;
-            }
-            #pdf-builder-deactivation-modal textarea {
-                width: 100% !important;
-                min-height: 80px !important;
-                padding: 10px !important;
-                border: 1px solid #e0e0e0 !important;
-                border-radius: 5px !important;
-                font-family: inherit !important;
-                display: none !important;
-                box-sizing: border-box !important;
-                margin-top: 10px !important;
-            }
-            #pdf-builder-deactivation-modal textarea.show { display: block !important; }
-            #pdf-builder-deactivation-modal .email-field { margin-bottom: 15px !important; display: none !important; }
-            #pdf-builder-deactivation-modal .email-field.show { display: block !important; }
-            #pdf-builder-deactivation-modal .email-field input {
-                width: 100% !important;
-                padding: 8px !important;
-                border: 1px solid #e0e0e0 !important;
-                border-radius: 5px !important;
-                box-sizing: border-box !important;
-            }
-            #pdf-builder-deactivation-modal .modal-footer {
-                display: flex !important;
-                gap: 10px !important;
-                padding: 20px !important;
-                background: #f5f5f5 !important;
-                justify-content: space-between !important;
-            }
-            #pdf-builder-deactivation-modal .skip-button {
-                padding: 8px 12px !important;
-                border: none !important;
-                background: transparent !important;
-                color: #666 !important;
-                cursor: pointer !important;
-                font-size: 13px !important;
-                text-decoration: underline !important;
-            }
-            #pdf-builder-deactivation-modal .deactivate-button {
-                padding: 10px 20px !important;
-                border: none !important;
-                background: #dc3545 !important;
-                color: white !important;
-                border-radius: 5px !important;
-                cursor: pointer !important;
-                font-weight: 500 !important;
-                font-size: 14px !important;
-            }
-            #pdf-builder-deactivation-modal .deactivate-button:disabled {
-                opacity: 0.6 !important;
-                cursor: not-allowed !important;
-            }
-            /* Masquer la modale WordPress native de désactivation pour notre plugin */
-            #pdf-builder-btn-proceed,
-            #pdf-builder-btn-cancel,
-            [id^="pdf-builder-pro-btn-"] {
-                display: none !important;
-            }
-        `;
-        
-        $('<style id="pdf-builder-modal-styles">').text(modalStyles).appendTo('head');
-        console.log('[PDF Builder] Styles injectés');
+    $('<style>').text(css).appendTo('head');
 
-        // Créer le modal HTML avec onclick natifs
-        const modalHTML = `
-            <div id="pdf-builder-deactivation-modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2>Nous serions tristes de vous voir partir 😢</h2>
-                        <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.9;">Aidez-nous à améliorer PDF Builder Pro</p>
-                    </div>
-                    <div class="modal-body">
-                        <p style="margin: 0 0 15px 0; font-size: 14px;">Dites-nous pourquoi vous désactivez le plugin :</p>
-                        <div class="feedback-group">
-                            <div class="feedback-option"><input type="radio" id="r1" name="deactivation_reason" value="dont_need"><label for="r1">Je n'en ai plus besoin</label></div>
-                            <div class="feedback-option"><input type="radio" id="r2" name="deactivation_reason" value="not_working"><label for="r2">Le plugin ne fonctionne pas correctement</label></div>
-                            <div class="feedback-option"><input type="radio" id="r3" name="deactivation_reason" value="slow_performance"><label for="r3">Le plugin ralentit mon site</label></div>
-                            <div class="feedback-option"><input type="radio" id="r4" name="deactivation_reason" value="confusing"><label for="r4">Le plugin est difficile à utiliser</label></div>
-                            <div class="feedback-option"><input type="radio" id="r5" name="deactivation_reason" value="expensive"><label for="r5">C'est trop cher pour les fonctionnalités</label></div>
-                            <div class="feedback-option"><input type="radio" id="r6" name="deactivation_reason" value="found_alternative"><label for="r6">J'ai trouvé une meilleure alternative</label></div>
-                            <div class="feedback-option"><input type="radio" id="r7" name="deactivation_reason" value="temporary"><label for="r7">Désactivation temporaire</label></div>
-                            <div class="feedback-option"><input type="radio" id="r8" name="deactivation_reason" value="autre"><label for="r8">Autre raison</label></div>
-                        </div>
-                        <div class="email-field" id="pdf_builder_email_field">
-                            <label for="pdf_builder_feedback_email">Votre email (pour vous recontacter) :</label>
-                            <input type="email" id="pdf_builder_feedback_email" placeholder="votre@email.com">
-                        </div>
-                        <textarea id="pdf_builder_feedback_message" placeholder="Parlez-nous de votre expérience... (optionnel)"></textarea>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="skip-button" id="pdf_builder_skip_btn">Passer et désactiver</button>
-                        <button type="button" id="pdf_builder_send_feedback" class="deactivate-button">Envoyer et désactiver</button>
-                    </div>
-                </div>
-            </div>
-        `;
+    // HTML du modal
+    var html = [
+        '<div id="pbp-modal">',
+        '  <div id="pbp-modal-box">',
+        '    <h2>Nous serions tristes de vous voir partir 😢</h2>',
+        '    <div id="pbp-modal-body">',
+        '      <p>Pourquoi désactivez-vous PDF Builder Pro ?</p>',
+        '      <div class="pbp-opt"><input type="radio" name="pbp_reason" id="pbp_r1" value="dont_need"><label for="pbp_r1">Je n\'en ai plus besoin</label></div>',
+        '      <div class="pbp-opt"><input type="radio" name="pbp_reason" id="pbp_r2" value="not_working"><label for="pbp_r2">Le plugin ne fonctionne pas</label></div>',
+        '      <div class="pbp-opt"><input type="radio" name="pbp_reason" id="pbp_r3" value="slow"><label for="pbp_r3">Ralentit mon site</label></div>',
+        '      <div class="pbp-opt"><input type="radio" name="pbp_reason" id="pbp_r4" value="confusing"><label for="pbp_r4">Difficile à utiliser</label></div>',
+        '      <div class="pbp-opt"><input type="radio" name="pbp_reason" id="pbp_r5" value="expensive"><label for="pbp_r5">Trop cher</label></div>',
+        '      <div class="pbp-opt"><input type="radio" name="pbp_reason" id="pbp_r6" value="alternative"><label for="pbp_r6">Meilleure alternative trouvée</label></div>',
+        '      <div class="pbp-opt"><input type="radio" name="pbp_reason" id="pbp_r7" value="temporary"><label for="pbp_r7">Désactivation temporaire</label></div>',
+        '      <div class="pbp-opt"><input type="radio" name="pbp_reason" id="pbp_r8" value="autre"><label for="pbp_r8">Autre</label></div>',
+        '      <div id="pbp-extra">',
+        '        <input type="email" id="pbp-email" placeholder="Votre email (optionnel)">',
+        '        <textarea id="pbp-message" placeholder="Détails supplémentaires (optionnel)"></textarea>',
+        '      </div>',
+        '    </div>',
+        '    <div id="pbp-modal-footer">',
+        '      <button type="button" id="pbp-btn-skip">Passer et désactiver</button>',
+        '      <button type="button" id="pbp-btn-send">Envoyer et désactiver</button>',
+        '    </div>',
+        '  </div>',
+        '</div>'
+    ].join('');
 
-        $body.append(modalHTML);
-        console.log('[PDF Builder] Modal HTML ajouté au DOM');
+    $('body').append(html);
 
-        const $modal = $('#pdf-builder-deactivation-modal');
-        const skipBtn = document.getElementById('pdf_builder_skip_btn');
-        const sendBtn = document.getElementById('pdf_builder_send_feedback');
+    var deactivateUrl = null;
+    var $modal = $('#pbp-modal');
 
-        // Test mousedown en phase de capture (détecte même si un élément absorde le click)
-        skipBtn.addEventListener('mousedown', function(e) {
-            console.log('[PDF Builder] 🖱️ mousedown sur Skip, target:', e.target.id);
-        }, true);
-        sendBtn.addEventListener('mousedown', function(e) {
-            console.log('[PDF Builder] 🖱️ mousedown sur Send, target:', e.target.id);
-        }, true);
-
-        // Click en phase de capture
-        skipBtn.addEventListener('click', function(e) {
-            console.log('[PDF Builder] ✅ click Skip (capture)');
-            e.stopPropagation();
-            window.pdfBuilderSkipFeedback();
-        }, true);
-        sendBtn.addEventListener('click', function(e) {
-            console.log('[PDF Builder] ✅ click Send (capture)');
-            e.stopPropagation();
-            window.pdfBuilderSendFeedback();
-        }, true);
-
-        // Détecter si un autre élément absorbe les clics sur le modal
-        document.getElementById('pdf-builder-deactivation-modal').addEventListener('click', function(e) {
-            console.log('[PDF Builder] 🎯 Click sur le modal, target:', e.target.tagName, e.target.id, e.target.className);
-        }, true);
-
-        console.log('[PDF Builder] Event listeners attachés aux boutons', {
-            skipBtn: !!skipBtn,
-            sendBtn: !!sendBtn,
-            skipBtnRect: skipBtn ? JSON.stringify(skipBtn.getBoundingClientRect()) : 'N/A',
-            sendBtnRect: sendBtn ? JSON.stringify(sendBtn.getBoundingClientRect()) : 'N/A'
+    // Au chargement : remplacer le href du lien de désactivation par # 
+    // pour empêcher WordPress d'attacher ses propres handlers
+    function patchDeactivationLink() {
+        $('a[href*="action=deactivate"][href*="pdf-builder"]').each(function() {
+            var $a = $(this);
+            var realUrl = $a.attr('href');
+            if (realUrl && realUrl !== '#') {
+                deactivateUrl = realUrl;
+                $a.attr('href', '#').attr('data-pbp-url', realUrl);
+                console.log('[PDF Builder] Lien patché, URL sauvegardée:', realUrl);
+            }
         });
+    }
 
-        // Show/hide textarea et email quand une raison est sélectionnée
-        $body.on('change', 'input[name="deactivation_reason"]', function() {
-            $('#pdf_builder_feedback_message').addClass('show');
-            $('#pdf_builder_email_field').addClass('show');
-        });
+    // Exécuter après le DOM mais avant que WP attache ses handlers (window.load)
+    patchDeactivationLink();
 
-        // Intercepter le clic de désactivation en phase de CAPTURE (avant WordPress)
-        document.addEventListener('click', function(e) {
-            var link = e.target.closest('a[href*="action=deactivate"][href*="pdf-builder"]');
-            if (!link) return;
-
-            console.log('[PDF Builder] Clic intercepté (capture), URL:', link.href);
-            e.preventDefault();
-            e.stopImmediatePropagation();
-
-            window._pdfBuilderDeactivateUrl = link.href;
-
-            // Masquer la modale WordPress native si elle apparaît
-            setTimeout(function() {
-                // WordPress crée des modales avec id type "pdf-builder-pro-btn-proceed" ou role=dialog
-                var wpDialogs = document.querySelectorAll('[role="dialog"], .plugin-deactivation-dialog');
-                wpDialogs.forEach(function(d) {
-                    if (d.id !== 'pdf-builder-deactivation-modal') {
-                        console.log('[PDF Builder] Modale WordPress masquée:', d.id || d.className);
-                        d.style.setProperty('display', 'none', 'important');
-                    }
-                });
-                // Masquer spécifiquement le bouton WordPress généré par notre slug
-                var wpBtn = document.getElementById('pdf-builder-btn-proceed');
-                if (wpBtn) {
-                    var wpModal = wpBtn.closest('[role="dialog"]') || wpBtn.parentElement;
-                    if (wpModal) {
-                        console.log('[PDF Builder] Modale WP native masquée:', wpModal.id);
-                        wpModal.style.setProperty('display', 'none', 'important');
-                    }
-                }
-            }, 0);
-
-            $modal.addClass('show');
-            console.log('[PDF Builder] Notre modal affiché');
-        }, true); // true = phase de capture, avant tous les autres handlers
+    // Clic sur le lien patché
+    $(document).on('click', 'a[data-pbp-url]', function(e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        deactivateUrl = $(this).attr('data-pbp-url');
+        console.log('[PDF Builder] Lien cliqué, URL:', deactivateUrl);
+        $modal.addClass('open');
     });
+
+    // Afficher les champs extra quand une raison est sélectionnée
+    $(document).on('change', 'input[name="pbp_reason"]', function() {
+        $('#pbp-extra').addClass('show');
+    });
+
+    // Bouton Skip — désactiver sans envoyer
+    $('#pbp-btn-skip').on('click', function() {
+        console.log('[PDF Builder] Skip, redirection vers:', deactivateUrl);
+        if (deactivateUrl) window.location.href = deactivateUrl;
+    });
+
+    // Bouton Envoyer
+    $('#pbp-btn-send').on('click', function() {
+        console.log('[PDF Builder] Send clicked');
+        var $btn = $(this).prop('disabled', true).text('Envoi...');
+        var reason = $('input[name="pbp_reason"]:checked').val() || 'autre';
+        var email  = $('#pbp-email').val();
+        var msg    = $('#pbp-message').val();
+
+        $.ajax({
+            url: pdfBuilderDeactivation.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_send_deactivation_feedback',
+                nonce:  pdfBuilderDeactivation.nonce,
+                reason: reason,
+                email:  email,
+                message: msg
+            },
+            complete: function() {
+                console.log('[PDF Builder] AJAX terminé, redirection');
+                if (deactivateUrl) window.location.href = deactivateUrl;
+            }
+        });
+    });
+
+    console.log('[PDF Builder] Modal de désactivation prêt');
+
 })(jQuery);
