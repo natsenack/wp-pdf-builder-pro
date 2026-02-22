@@ -307,9 +307,8 @@ Fonctionnalité en développement. Actuellement disponible :
 ### Formats papier & impression
 
 - **Format A4** : dimension standard, optimisée pour tous les templates
-- **Orientation** : portrait et paysage supportés
+- **Orientation** : portrait supportés
 - **Marges personnalisables** : contrôle fin des espacements
-- **Page breaks intelligents** : gestion automatique des sauts de page
 - **Mode économique** : réduction d'encre pour impression
 
 ---

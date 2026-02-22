@@ -702,6 +702,11 @@ function pdf_builder_load_core()
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/Canvas_AJAX_Handler.php';
     }
 
+    // Charger le modal de feedback de désactivation
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Deactivation_Feedback.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Deactivation_Feedback.php';
+    }
+
     // PDF generation system removed
 
     // Charger les handlers AJAX pour les paramètres
