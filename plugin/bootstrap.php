@@ -244,6 +244,30 @@ if (!function_exists('pdf_builder_get_all_options')) {
         return \PDF_Builder\Database\Settings_Table_Manager::get_all_options();
     }
 }
+
+/**
+ * Vérifier si l'utilisateur a une licence premium active
+ * @return bool true si la licence est active, false sinon
+ */
+if (!function_exists('pdf_builder_is_premium')) {
+    function pdf_builder_is_premium() {
+        try {
+            // Première tentative : utiliser le License Manager
+            if (class_exists('PDF_Builder\Managers\PDF_Builder_License_Manager')) {
+                $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::get_instance();
+                return $license_manager->is_premium();
+            }
+            
+            // Fallback : vérifier directement l'option de licence
+            $license_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
+            return $license_status === 'active';
+        } catch (\Exception $e) {
+            error_log('[PDF Builder] Error checking premium status: ' . $e->getMessage());
+            return false;
+        }
+    }
+}
+
 // ✅ FONCTION DE CHARGEMENT D'URGENCE DES UTILITAIRES
 // ============================================================================
 
