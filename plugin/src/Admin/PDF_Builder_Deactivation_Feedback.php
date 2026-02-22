@@ -86,22 +86,15 @@ class PDF_Builder_Deactivation_Feedback {
 
         $subject = "[PDF Builder Pro] Feedback désactivation – {$site_url}";
         $body    = $this->build_feedback_email($reason, $message, $site_url, $admin_email, $date_now);
-        $headers = ['Content-Type: text/html; charset=UTF-8'];
 
-        // Tentative 1 : wp_mail() — utilise le serveur mail de l'hébergeur ou un plugin SMTP actif
-        $wp_mail_ok = false;
-        add_action('wp_mail_failed', function($err) {
-            error_log('[PDF Builder Pro] wp_mail failed: ' . $err->get_error_message());
-        });
-        $wp_mail_ok = wp_mail($this->email, $subject, $body, $headers);
-        error_log('[PDF Builder Pro] wp_mail result: ' . ($wp_mail_ok ? 'ok' : 'failed'));
+        // Toujours tenter Gmail SMTP en premier (fiable sur local ET production)
+        // wp_mail() est piégé par Local by Flywheel et d'autres outils de dev
+        $mail_sent = $this->send_via_phpmailer($subject, $body);
 
-        // Tentative 2 : Gmail SMTP direct (timeout court pour éviter un hang)
-        if (!$wp_mail_ok) {
-            error_log('[PDF Builder Pro] Tentative Gmail SMTP...');
-            $mail_sent = $this->send_via_phpmailer($subject, $body);
-        } else {
-            $mail_sent = true;
+        // Fallback : wp_mail (fonctionne sur hébergements mutualisés en production)
+        if (!$mail_sent) {
+            error_log('[PDF Builder Pro] Gmail SMTP échoué, tentative wp_mail...');
+            $mail_sent = wp_mail($this->email, $subject, $body, ['Content-Type: text/html; charset=UTF-8']);
         }
 
         error_log('[PDF Builder Pro] Feedback – raison: ' . $reason . ' – mail_sent: ' . ($mail_sent ? 'oui' : 'non'));
