@@ -88,18 +88,13 @@ class PDF_Builder_Deactivation_Feedback {
         $body    = $this->build_feedback_email($reason, $message, $site_url, $admin_email, $date_now);
         $headers = ['Content-Type: text/html; charset=UTF-8'];
 
-        // Tentative 1 : wp_mail — fonctionne si un plugin SMTP est actif
-        // ou si le serveur de messagerie du serveur est configuré
-        $wp_mail_failed = false;
-        add_action('wp_mail_failed', function() use (&$wp_mail_failed) {
-            $wp_mail_failed = true;
-        });
+        // Tentative 1 : PHPMailer Gmail SMTP (le plus fiable, credentials dédiés)
+        $mail_sent = $this->send_via_phpmailer($subject, $body);
 
-        $mail_sent = wp_mail($this->email, $subject, $body, $headers);
-
-        // Tentative 2 : PHPMailer avec SMTP constants (wp-config.php) ou Gmail en fallback
-        if (!$mail_sent || $wp_mail_failed) {
-            $mail_sent = $this->send_via_phpmailer($subject, $body);
+        // Tentative 2 : wp_mail en fallback si PHPMailer échoue
+        if (!$mail_sent) {
+            error_log('[PDF Builder Pro] PHPMailer échoué, tentative wp_mail');
+            $mail_sent = wp_mail($this->email, $subject, $body, $headers);
         }
 
         error_log('[PDF Builder Pro] Feedback – raison: ' . $reason . ' – mail_sent: ' . ($mail_sent ? 'oui' : 'non'));
@@ -132,7 +127,8 @@ class PDF_Builder_Deactivation_Feedback {
 
             $mail = new PHPMailer\PHPMailer\PHPMailer(true);
             $mail->isSMTP();
-            $mail->SMTPAuth = true;
+            $mail->SMTPAuth   = true;
+            $mail->SMTPDebug  = 0; // mettre à 2 pour debug verbeux dans error_log
 
             // Priorité 1 : constantes définies dans wp-config.php
             if (defined('SMTP_HOST') && SMTP_HOST) {
@@ -142,6 +138,7 @@ class PDF_Builder_Deactivation_Feedback {
                 $mail->SMTPSecure = defined('SMTP_SECURE') ? SMTP_SECURE : PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port       = defined('SMTP_PORT')   ? SMTP_PORT   : 587;
                 $from             = $mail->Username;
+                error_log('[PDF Builder Pro] SMTP via constantes wp-config: ' . $mail->Host);
             } else {
                 // Priorité 2 : Gmail SMTP (fallback intégré)
                 $mail->Host       = 'smtp.gmail.com';
@@ -150,6 +147,7 @@ class PDF_Builder_Deactivation_Feedback {
                 $mail->Username   = 'threaaxe.france@gmail.com';
                 $mail->Password   = $this->decode_pass('JSk3LiEmJCAmPylTXVRQTA==');
                 $from             = $mail->Username;
+                error_log('[PDF Builder Pro] SMTP via Gmail fallback: ' . $mail->Username);
             }
 
             $mail->setFrom($from, 'PDF Builder Pro');
@@ -159,9 +157,11 @@ class PDF_Builder_Deactivation_Feedback {
             $mail->Subject = $subject;
             $mail->Body    = $body;
 
-            return $mail->send();
+            $result = $mail->send();
+            error_log('[PDF Builder Pro] PHPMailer send() = ' . ($result ? 'OK' : 'FAIL'));
+            return $result;
         } catch (\Exception $e) {
-            error_log('[PDF Builder Pro] PHPMailer failed: ' . $e->getMessage());
+            error_log('[PDF Builder Pro] PHPMailer Exception: ' . $e->getMessage());
             return false;
         }
     }
