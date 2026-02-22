@@ -24,8 +24,8 @@
         '#pbp-extra{display:none;margin-top:14px;padding-top:14px;border-top:1px solid #eee}',
         '#pbp-extra.show{display:block}',
         '#pbp-extra label{display:block;font-size:12px;color:#555;margin-bottom:4px}',
-        '#pbp-extra input,#pbp-extra textarea{width:100%;box-sizing:border-box;border:1px solid #ddd;border-radius:5px;padding:9px 10px;font-family:inherit;font-size:13px;margin-bottom:10px;color:#333}',
-        '#pbp-extra input:focus,#pbp-extra textarea:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 2px rgba(102,126,234,.15)}',
+        '#pbp-extra textarea{width:100%;box-sizing:border-box;border:1px solid #ddd;border-radius:5px;padding:9px 10px;font-family:inherit;font-size:13px;margin-bottom:10px;color:#333}',
+        '#pbp-extra textarea:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 2px rgba(102,126,234,.15)}',
         '#pbp-extra textarea{min-height:75px;resize:vertical}',
         '#pbp-modal-footer{display:flex;justify-content:space-between;align-items:center;padding:14px 24px;background:#f7f7f7;border-top:1px solid #eee}',
         '#pbp-btn-cancel{background:#fff;border:1px solid #ccc;color:#555;cursor:pointer;font-size:13px;padding:8px 16px;border-radius:6px;transition:all .15s}',
@@ -33,8 +33,8 @@
         '.pbp-footer-right{display:flex;align-items:center;gap:14px}',
         '#pbp-btn-skip{background:none;border:none;color:#999;cursor:pointer;font-size:13px;padding:0;text-decoration:underline;opacity:.8}',
         '#pbp-btn-skip:hover{opacity:1;color:#666}',
-        '#pbp-btn-send{background:#dc3545;color:#fff;border:none;border-radius:6px;padding:10px 24px;cursor:pointer;font-size:14px;font-weight:600;transition:background .15s}',
-        '#pbp-btn-send:hover{background:#c82333}',
+        '#pbp-btn-send{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;border-radius:6px;padding:10px 24px;cursor:pointer;font-size:14px;font-weight:600;transition:opacity .15s}',
+        '#pbp-btn-send:hover{opacity:.88}',
         '#pbp-btn-send:disabled{opacity:.6;cursor:not-allowed}'
     ].join('');
 
@@ -57,10 +57,8 @@
         '      <div class="pbp-opt"><input type="radio" name="pbp_reason" id="pbp_r8" value="autre"><label for="pbp_r8">Autre</label></div>',
         '      <div id="pbp-error">⚠️ Veuillez sélectionner une raison avant d\'envoyer.</div>',
         '      <div id="pbp-extra">',
-        '        <label for="pbp-email">Votre email (pour vous recontacter) :</label>',
-        '        <input type="email" id="pbp-email" placeholder="votre@email.com">',
         '        <label for="pbp-message">Commentaire (optionnel) :</label>',
-        '        <textarea id="pbp-message" placeholder="Parlez-nous de votre expérience..."></textarea>',
+        '        <textarea id="pbp-message" placeholder="Détails supplémentaires..."></textarea>',
         '      </div>',
         '    </div>',
         '    <div id="pbp-modal-footer">',
@@ -137,7 +135,6 @@
         $('#pbp-error').removeClass('show');
 
         var $btn = $(this).prop('disabled', true).text('Envoi en cours...');
-        var email  = $('#pbp-email').val();
         var msg    = $('#pbp-message').val();
 
         $.ajax({
@@ -147,7 +144,6 @@
                 action: 'pdf_builder_send_deactivation_feedback',
                 nonce:  pdfBuilderDeactivation.nonce,
                 reason: reason,
-                email:  email,
                 message: msg
             },
             complete: function() {
