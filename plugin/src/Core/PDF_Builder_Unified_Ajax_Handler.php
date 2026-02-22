@@ -294,7 +294,13 @@ class PDF_Builder_Unified_Ajax_Handler {
                 'pdf_builder_canvas_performance_monitoring',
                 'pdf_builder_canvas_error_reporting',
                 'pdf_builder_canvas_memory_limit_php',
-                'pdf_builder_canvas_backup' // Paramètre de cache/backup
+                'pdf_builder_canvas_backup', // Paramètre de cache/backup
+                // Marges du document
+                'pdf_builder_canvas_margin_top',
+                'pdf_builder_canvas_margin_right',
+                'pdf_builder_canvas_margin_bottom',
+                'pdf_builder_canvas_margin_left',
+                'pdf_builder_canvas_show_margins'
             ];
 
             // Sauvegarder chaque paramètre

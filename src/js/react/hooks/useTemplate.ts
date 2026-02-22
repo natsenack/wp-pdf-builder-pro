@@ -85,6 +85,8 @@ export function useTemplate() {
               snapToGrid: templateData.snapToGrid ?? false,
               marginTop: templateData.marginTop ?? 0,
               marginBottom: templateData.marginBottom ?? 0,
+              marginLeft: templateData.marginLeft ?? 0,
+              marginRight: templateData.marginRight ?? 0,
               description: templateData.description ?? "",
             } as LoadTemplatePayload,
           });
@@ -212,6 +214,8 @@ export function useTemplate() {
             snapToGrid: (fallbackTemplateData as any)?.snapToGrid ?? false,
             marginTop: (fallbackTemplateData as any)?.marginTop ?? 0,
             marginBottom: (fallbackTemplateData as any)?.marginBottom ?? 0,
+            marginLeft: (fallbackTemplateData as any)?.marginLeft ?? 0,
+            marginRight: (fallbackTemplateData as any)?.marginRight ?? 0,
             description: (fallbackTemplateData as any)?.description ?? "",
           } as LoadTemplatePayload,
         });
@@ -506,6 +510,10 @@ export function useTemplate() {
       formData.append("template_description", state.template.description || "");
 
       formData.append("template_data", jsonData);
+      formData.append("margin_top", String(state.template.marginTop ?? 0));
+      formData.append("margin_bottom", String(state.template.marginBottom ?? 0));
+      formData.append("margin_left", String(state.template.marginLeft ?? 0));
+      formData.append("margin_right", String(state.template.marginRight ?? 0));
       ClientNonceManager.addToFormData(formData);
 
       const response = await fetch(ClientNonceManager.getAjaxUrl(), {
@@ -621,6 +629,8 @@ export function useTemplate() {
       canvasHeight: state.template.canvasHeight || canvasSettings.canvasHeight,
       marginTop: state.template.marginTop || canvasSettings.marginTop,
       marginBottom: state.template.marginBottom || canvasSettings.marginBottom,
+      marginLeft: state.template.marginLeft ?? canvasSettings.marginLeft,
+      marginRight: state.template.marginRight ?? canvasSettings.marginRight,
       showGuides: state.template.showGuides,
       snapToGrid: state.template.snapToGrid,
       isNewTemplate: state.template.isNew,

@@ -167,6 +167,8 @@ class PDF_Builder_Template_Manager
             $snap_to_grid = false;
             $margin_top = 0;
             $margin_bottom = 0;
+            $margin_left = 0;
+            $margin_right = 0;
             $canvas_width = 0;
             $canvas_height = 0;
             $template_id = 0;
@@ -187,6 +189,10 @@ class PDF_Builder_Template_Manager
                              (isset($json_data['margin_top']) ? \intval($json_data['margin_top']) : 0);
                 $margin_bottom = isset($json_data['marginBottom']) ? \intval($json_data['marginBottom']) : 
                                 (isset($json_data['margin_bottom']) ? \intval($json_data['margin_bottom']) : 0);
+                $margin_left = isset($json_data['marginLeft']) ? \intval($json_data['marginLeft']) : 
+                              (isset($json_data['margin_left']) ? \intval($json_data['margin_left']) : 0);
+                $margin_right = isset($json_data['marginRight']) ? \intval($json_data['marginRight']) : 
+                               (isset($json_data['margin_right']) ? \intval($json_data['margin_right']) : 0);
                 $canvas_width = isset($json_data['canvasWidth']) ? \intval($json_data['canvasWidth']) : 
                                (isset($json_data['canvas_width']) ? \intval($json_data['canvas_width']) : 0);
                 $canvas_height = isset($json_data['canvasHeight']) ? \intval($json_data['canvasHeight']) : 
@@ -206,6 +212,8 @@ class PDF_Builder_Template_Manager
                 $snap_to_grid = isset($_POST['snap_to_grid']) ? (bool)$_POST['snap_to_grid'] : false;
                 $margin_top = isset($_POST['margin_top']) ? \intval($_POST['margin_top']) : 0;
                 $margin_bottom = isset($_POST['margin_bottom']) ? \intval($_POST['margin_bottom']) : 0;
+                $margin_left = isset($_POST['margin_left']) ? \intval($_POST['margin_left']) : 0;
+                $margin_right = isset($_POST['margin_right']) ? \intval($_POST['margin_right']) : 0;
                 $canvas_width = isset($_POST['canvas_width']) ? \intval($_POST['canvas_width']) : 0;
                 $canvas_height = isset($_POST['canvas_height']) ? \intval($_POST['canvas_height']) : 0;
                 $template_id = isset($_POST['template_id']) ? \intval($_POST['template_id']) : 
@@ -302,7 +310,9 @@ class PDF_Builder_Template_Manager
                     'showGuides' => $show_guides,
                     'snapToGrid' => $snap_to_grid,
                     'marginTop' => $margin_top,
-                    'marginBottom' => $margin_bottom
+                    'marginBottom' => $margin_bottom,
+                    'marginLeft' => $margin_left,
+                    'marginRight' => $margin_right
                 ];
 
                 $template_data = \wp_json_encode($template_structure);
@@ -330,6 +340,8 @@ class PDF_Builder_Template_Manager
                 $decoded_data['snapToGrid'] = $snap_to_grid;
                 $decoded_data['marginTop'] = $margin_top;
                 $decoded_data['marginBottom'] = $margin_bottom;
+                $decoded_data['marginLeft'] = $margin_left;
+                $decoded_data['marginRight'] = $margin_right;
 
                 $template_data = \wp_json_encode($decoded_data);
                 if ($template_data === false) {

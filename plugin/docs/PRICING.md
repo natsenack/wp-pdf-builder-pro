@@ -3,15 +3,17 @@
 ## 💰 Plans disponibles
 
 ### 🎁 Version Gratuite
+
 **Pour débuter**
 
 ```
-€0 / mois
+€3,99 / mois
 ou
 Gratuit indéfiniment
 ```
 
 #### Inclus
+
 - ✅ Éditeur visuel complet (drag & drop)
 - ✅ 3 templates professionnels pré-construits
 - ✅ Génération PDF (illimitée)
@@ -20,14 +22,8 @@ Gratuit indéfiniment
 - ✅ Téléchargement PDF direct
 - ✅ Support communautaire (forum)
 
-#### Limites
-- ❌ WooCommerce non intégré
-- ❌ Pas d'API
-- ❌ Cache désactivé
-- ❌ Support email non disponible
-- ❌ Audit log basique
-
 #### Idéal pour
+
 - Freelancers créant factures manuellesment
 - Petites équipes (<5 utilisateurs)
 - Tests & évaluation du plugin
@@ -36,25 +32,20 @@ Gratuit indéfiniment
 ---
 
 ### 💎 Version Pro
+
 **Pour les professionnels**
 
 ```
-€49 / an
-(€4.08/mois)
+€39,99 / an
+
 ```
 
 #### Inclus (tout de Gratuit plus...)
-- ✅ **25+ templates professionnels** :
+
+- ✅ **templates illimité** :
   - Factures (simple, entreprise, multi-devises)
   - Devis commerciaux (avec signature)
-  - Bons de commande & bon de livraison
-  - Relances de paiement
   - Factures d'avoir (remboursement)
-  - Certificats & diplômes
-  - Rapports & tableaux
-  - Étiquettes produit
-  - Reçu/ticket
-  - Et 15+ autres...
 
 - ✅ **WooCommerce intégration complète** :
   - Auto-génération par statut de commande
@@ -83,23 +74,17 @@ Gratuit indéfiniment
   - Job queue pour génération en masse
 
 - ✅ **Support prioritaire** :
-  - Email support : réponse <4h
-  - Accès forum modéré
-  - Video tutorials dédiées
-  - Documentations avançées
-
-- ✅ **Audit log avancé** :
-  - 90 jours historique
-  - Export audit (CSV/JSON)
-  - Traçabilité complète (qui, quand, quoi)
+  - Email support : réponse <12h
 
 #### Mises à jour & support
+
 - ✅ Mises à jour illimitées
 - ✅ Bug fixes prioritaires
 - ✅ Nouvelles templates régulières
 - ✅ Accès early beta features
 
 #### Idéal pour
+
 - PME/TPE (5–50 utilisateurs)
 - E-commerce WooCommerce
 - Agences (clients multiples)
@@ -107,67 +92,75 @@ Gratuit indéfiniment
 - Besoin d'automatisation
 
 #### Estimation ROI
+
 Gainz heures : ~10h/semaine en facturation auto
 **Économie annuelle** : 500€+ (en temps salarié)
 
 ---
 
-
 ---
 
 ## 📊 Tableau comparatif complet
 
-| Fonctionnalité | **Gratuit** | **Pro** | **Entreprise** |
-|---|:---:|:---:|:---:|
+| Fonctionnalité          |  **Gratuit**   |   **Premium**    |
+| ----------------------- | :------------: | :--------------: |
 | **Édition & Templates** |
-| Éditeur visuel | ✅ | ✅ | ✅ |
-| Templates inclus | 3 | 25+ | Illimit. |
-| Personnalisation | Complète | Complète | Complète + custom |
-| Drag & drop | ✅ | ✅ | ✅ |
+| Éditeur visuel          |       ✅       |        ✅        |
+| Templates inclus        |       1        |       25+        |
+| Personnalisation        |    Complète    |     Complète     |
+| Drag & drop             |       ✅       |        ✅        |
+| Génération PDF          | ✅ (illimitée) | ✅ (prioritaire) |
+
+                                file d'attente
+
+| Aperçu en temps réel | ✅ | ✅ |
 | **WooCommerce** |
-| Intégration | — | ✅ | ✅ |
-| Auto-génération | — | ✅ | ✅ |
-| Webhooks commandes | — | ✅ | ✅ |
-| Conversion devise | — | ✅ | ✅ |
+| Intégration basique | ✅ | ✅ |
+| Auto-génération par statut | — | ✅ |
+| Email automatique client | ✅ | ✅ |
+| Sync produit/client/commande | ✅ | ✅ |
+| Conversion devise | ✅ | ✅ |
 | **API & Intégrations** |
-| API REST | Basique | Complète | Complète + OAuth2 |
-| Appels/jour | 100 | 1,000 | Illimit. |
-| Webhooks | — | 5 | Illimit. |
-| Authentification | API Keys | API Keys | API Keys + OAuth2 |
-| Documentation | ✅ | ✅ OpenAPI | ✅ + webhook SDK |
+| API REST | Basique | Complète |
+| Appels/jour | 100 | 1 000 |
+| Webhooks | — | 5 |
+| Authentification | API Keys | API Keys |
+| Documentation OpenAPI | — | ✅ |
 | **Performance & Cache** |
-| Cache | — | ✅ | ✅ + CDN |
-| Compression | — | ✅ | ✅  |
-| TTL configurable | — | ✅ | ✅ |
-| Stats cache | — | ✅ | ✅ + monitoring |
+| Cache transients WordPress | — | ✅ |
+| Compression gzip | — | ✅ |
+| TTL configurable | — | ✅ (3 600s défaut) |
+| Stats cache (hit rate) | — | ✅ |
+| **Automation** |
+| Génération auto par statut | — | ✅ |
+| Actions post-génération | — | ✅ |
+| Conditionnels | — | ✅ |
+| Job queue (masse) | — | ✅ |
 | **Sécurité & RGPD** |
-| Audit log | Basique | 90j | Illimit. + export |
-| Chiffrement | — | Standard | AES-256 + E2E |
-| Consentements | ✅ | ✅ | ✅ + granulaire |
-| Anonymisation | — | ✅ | ✅ |
-| RGPD compliant | ✅ | ✅ | ✅ + SOC2 |
+| Audit log | Basique | 90j |
+| Chiffrement AES-256 | — | ✅ |
+| Consentements | ✅ | ✅ |
+| Anonymisation | — | ✅ |
+| RGPD compliant | ✅ | ✅ |
+| **Qualité d'export (DPI)** |
+| 72 / 96 / 150 DPI | ✅ | ✅ |
+| 300 / 600 DPI (Pro) | — | ✅ |
 | **Support** |
-| Forum community | ✅ | ✅ | ✅ |
-| Email support | — | Prioritaire | 24/7 VIP |
-| Phone support | — | — | ✅ 24/7 |
-| Account manager | — | — | ✅ Dédié |
-| SLA uptime | — | — | 99.9% |
-| Response time | — | <4h | <1h critical |
-| Training | — | — | 2 sessions/an |
-| **Stockage & Données** |
-| PDF storage | Local | Local | Illimit. + CDN |
-| Backup | — | Local | 3x/day automatique |
-| Rétention job | 7j | 30j | 1 an |
-| Historique audit | — | 90j | Illimit. |
+| Forum communautaire | ✅ | ✅ |
+| Email prioritaire | — | ✅ (<12h) |
+| Mises à jour illimitées | ✅ | ✅ |
+| Bug fixes prioritaires | — | ✅ |
+| Early beta features | — | ✅ |
 | **Prix** |
-| Coût annuel | **€0** | **€49** | **Devis (499€+)** |
-| Coût/mois | — | **€4.08** | **À partir du 41€/mois** |
+| Coût annuel | **€0** | **€39,99** |
+| Coût/mois | — | **€3,99** |
 
 ---
 
 ## 🎯 Quel plan choisir ?
 
 ### Choisir **Gratuit** si vous...
+
 - [ ] Gérez <10 factures/mois
 - [ ] N'avez pas WooCommerce
 - [ ] Créez documents manuellement (pas d'automation)
@@ -175,6 +168,7 @@ Gainz heures : ~10h/semaine en facturation auto
 - [ ] Avez budget très limité
 
 ### Choisir **Premium** si vous...
+
 - [ ] Avez WooCommerce (e-commerce)
 - [ ] Générez >50 PDFs/mois
 - [ ] Besoin d'automatisation (auto-email, statuts)
@@ -186,9 +180,10 @@ Gainz heures : ~10h/semaine en facturation auto
 ## 💳 Options de paiement
 
 ### Premium
-- **Mensuel** : €5.99/mois (résiliable anytime)
-- **Annuel** : €49/an (meilleur prix, −20%)
-- **2 ans** : €88/2ans (−26% vs mensuel)
+
+- **Mensuel** : €3.99/mois (résiliable anytime)
+- **Annuel** : €39,99/an (meilleur prix, −20%)
+- **a vie** : 69,99
 
 Facturation via Stripe, PayPal.
 
@@ -197,6 +192,7 @@ Facturation via Stripe, PayPal.
 ## 🔄 Upgrade & downgrade
 
 ### Passer de Gratuit à Premium
+
 1. Accueil PDF Builder → **Upgrade maintenant**
 2. Choisir plan (mensuel/annuel)
 3. Fournir email de facturation
@@ -206,6 +202,7 @@ Facturation via Stripe, PayPal.
 **Migration data** : automatique, zéro perte
 
 ### Revenir à Gratuit
+
 Gérer subscription → **Annuler** → revenir à Gratuit au prochain cycle
 
 (Vos templates/données restent, features Premium désactivées)
@@ -215,14 +212,17 @@ Gérer subscription → **Annuler** → revenir à Gratuit au prochain cycle
 ## 📈 Nos garanties
 
 ### Satisfaction garantie
+
 - **14 jours** : période d'essai gratuit (Premium)
 - **100% remboursable** : aucune question si non satisfait
 - **Pas d'engagement** : annulez anytime via account
 
 ### Uptime & fiabilité
+
 - **Gratuit/Premium** : 99.5% uptime (best effort)
 
 ### Security & privacy
+
 - ✅ Données non revendues
 - ✅ Backup automatiques
 - ✅ GDPR/RGPD complet
@@ -230,47 +230,27 @@ Gérer subscription → **Annuler** → revenir à Gratuit au prochain cycle
 
 ---
 
-## 🚀 Offres spéciales
-
-### 🎁 Free trial Premium
-Nouveau utilisateur → **14 jours Premium gratuit**
-(Puis gratuit à jamais, ou continuer Premium)
-
 ### 👥 Réductions volume
-- 5+ licences Premium : -15%
-- 10+ licences Premium : -25%
 
-### 🎓 Non-profit & éducation
-- 50% réduction Premium annuel
-- Support accéléré
-- Licences illimitées schools
-
-### 🤝 Partenaires & revendeurs
-Programme affilié : 20% commission
+- 5+ licences Premium : -10%
+- 10+ licences Premium : -15%
 
 ---
 
 ## ❓ Questions tarification ?
 
-📧 **sales@pdfbuilder.pro**
+📧 **threeaxe.france@gmail.com**
+
 - Demandes tarification custom
 - Questions sur les plans
 - Besoin spécial
 
-💬 **community.pdfbuilder.pro**
-- Retours utilisateurs
-- Comparaisons avec concurrents
-- Conseils de choix
-
----
-
 ## 🎯 Prochaines étapes
 
-1. **[Essayez gratuitement](https://pdfbuilder.pro/getstarted)** — aucune carte bancaire
-2. **[Comparer plans](./PRICING.md)** — tableau détaillé ci-dessus
-3. **[Lire la FAQ](./FAQ.md)** — réponses à vos questions
-4. **[Installer PDF Builder](./INSTALLATION.md)** — guide complet
+1. **[Comparer plans](./PRICING.md)** — tableau détaillé ci-dessus
+2. **[Lire la FAQ](./FAQ.md)** — réponses à vos questions
+3. **[Installer PDF Builder](./INSTALLATION.md)** — guide complet
 
 ---
 
-**PDF Builder Pro V2** — *Générez vos PDFs, nous gérons le reste* 🚀
+**PDF Builder Pro V2** — _Générez vos PDFs, nous gérons le reste_ 🚀

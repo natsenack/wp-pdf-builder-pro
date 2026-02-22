@@ -55,6 +55,8 @@ export interface TemplateState {
   canvasHeight?: number;
   marginTop?: number;
   marginBottom?: number;
+  marginLeft?: number;
+  marginRight?: number;
   showGuides?: boolean;
   snapToGrid?: boolean;
   isNew: boolean;
@@ -562,6 +564,8 @@ export interface LoadTemplatePayload {
   snapToGrid?: boolean;
   marginTop?: number;
   marginBottom?: number;
+  marginLeft?: number;
+  marginRight?: number;
 }
 
 // Propriétés spécifiques pour les éléments

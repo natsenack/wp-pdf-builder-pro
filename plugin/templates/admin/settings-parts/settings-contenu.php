@@ -551,6 +551,11 @@
                         }
                         ?>
                         shadow_enabled: <?php echo json_encode(get_canvas_option_contenu('canvas_shadow_enabled', '0') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        margin_top: <?php echo json_encode(intval(get_canvas_option_contenu('canvas_margin_top', '28')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        margin_right: <?php echo json_encode(intval(get_canvas_option_contenu('canvas_margin_right', '28')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        margin_bottom: <?php echo json_encode(intval(get_canvas_option_contenu('canvas_margin_bottom', '10')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        margin_left: <?php echo json_encode(intval(get_canvas_option_contenu('canvas_margin_left', '10')), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+                        show_margins: <?php echo json_encode(get_canvas_option_contenu('canvas_show_margins', '0') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
                         show_grid: <?php echo json_encode(get_canvas_option_contenu('canvas_grid_enabled', '1') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
                         grid_size: <?php echo json_encode(get_canvas_option_contenu('canvas_grid_size', '20'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
                         show_guides: <?php echo json_encode(get_canvas_option_contenu('canvas_guides_enabled', '1') === '1', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,

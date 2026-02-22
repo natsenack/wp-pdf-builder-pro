@@ -269,6 +269,41 @@ function get_canvas_modal_value($key, $default = '') {
                         </div>
                     </div>
                 </div>
+                <div class="pdfb-setting-group" style="grid-column: span 2;">
+                    <label><span style="font-size: 16px;">📐</span> Marges du document (px) <span class="pdfb-info-tooltip" title="Marges internes appliquées lors de la génération PDF">ℹ️</span></label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-top: 12px;">
+                        <?php
+                        $margin_fields = [
+                            ['key' => 'canvas_margin_top',    'label' => '⬆️ Haut',   'default' => '28'],
+                            ['key' => 'canvas_margin_right',  'label' => '➡️ Droite', 'default' => '28'],
+                            ['key' => 'canvas_margin_bottom', 'label' => '⬇️ Bas',    'default' => '10'],
+                            ['key' => 'canvas_margin_left',   'label' => '⬅️ Gauche', 'default' => '10'],
+                        ];
+                        foreach ($margin_fields as $mf) :
+                        ?>
+                        <div>
+                            <label style="font-size: 12px; color: #6c757d; display: block; margin-bottom: 4px;"><?php echo $mf['label']; ?></label>
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <input type="number" name="pdf_builder_<?php echo $mf['key']; ?>"
+                                       value="<?php echo esc_attr(get_canvas_modal_value($mf['key'], $mf['default'])); ?>"
+                                       min="0" max="200" style="width: 100%; padding: 6px 8px; border: 1px solid #ced4da; border-radius: 6px;">
+                                <span style="font-size: 11px; color: #6c757d;">px</span>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-top: 14px;">
+                        <label for="modal_canvas_show_margins" style="font-weight: 500; cursor: pointer; flex: 1;">Afficher les guides de marge dans l'éditeur</label>
+                        <div class="pdfb-toggle-switch">
+                            <input type="checkbox" id="modal_canvas_show_margins" name="pdf_builder_canvas_show_margins"
+                                   value="1" <?php checked(get_canvas_modal_value('canvas_show_margins', '0'), '1'); ?>>
+                            <label for="modal_canvas_show_margins"></label>
+                        </div>
+                    </div>
+                    <div class="pdfb-info-box" style="margin-top: 10px;">
+                        <strong>ℹ️ Information:</strong> Les marges définissent la zone de contenu imprimable dans le PDF généré.
+                    </div>
+                </div>
                 <div class="pdfb-setting-group">
                     <label style="display: flex; align-items: center; justify-content: space-between;"><span style="font-size: 16px;">🔳</span> Bordure du canvas <span class="pdfb-premium-badge">⭐ PREMIUM</span></label>
                     <?php $can_use_custom_colors = \PDF_Builder\Managers\PDF_Builder_Feature_Manager::canUseFeature('custom_colors'); ?>
