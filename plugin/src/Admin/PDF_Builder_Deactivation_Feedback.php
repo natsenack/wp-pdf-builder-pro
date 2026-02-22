@@ -51,10 +51,9 @@ class PDF_Builder_Deactivation_Feedback {
             return;
         }
         
-        // Utiliser le fichier source directement (plus fiable que la version minifiée)
         wp_enqueue_script(
             'pdf-builder-deactivation-feedback',
-            plugin_dir_url(PDF_BUILDER_PLUGIN_FILE) . 'assets/js/deactivation-feedback.js',
+            plugin_dir_url(PDF_BUILDER_PLUGIN_FILE) . 'assets/js/deactivation-feedback.min.js',
             ['jquery'],
             $this->get_version(),
             true

@@ -24,6 +24,7 @@ module.exports = {
     notifications: "./src/js/admin/notifications.js",
     "pdf-builder-wrap": "./src/js/admin/pdf-builder-wrap.js",
     "pdf-builder-init": "./src/js/admin/pdf-builder-init.js",
+    "deactivation-feedback": "./src/js/admin/deactivation-feedback.js",
     // Preview system removed
     "notifications-css": "./src/css/notifications.css",
     "settings-systeme-css": "./src/css/settings-systeme.css",
