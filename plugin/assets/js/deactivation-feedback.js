@@ -3,11 +3,56 @@
  * Affiche un modal de feedback lors de la désactivation du plugin
  */
 
+// Fonctions globales appelées directement depuis le HTML (plus fiable)
+window.pdfBuilderSkipFeedback = function() {
+    console.log('[PDF Builder] Skip clicked, URL:', window._pdfBuilderDeactivateUrl);
+    if (window._pdfBuilderDeactivateUrl) {
+        window.location.href = window._pdfBuilderDeactivateUrl;
+    }
+};
+
+window.pdfBuilderSendFeedback = function() {
+    var reason = document.querySelector('input[name="deactivation_reason"]:checked');
+    var message = document.getElementById('pdf_builder_feedback_message');
+    var email = document.getElementById('pdf_builder_feedback_email');
+    var btn = document.getElementById('pdf_builder_send_feedback');
+
+    console.log('[PDF Builder] Send feedback clicked, reason:', reason ? reason.value : 'none');
+
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Envoi en cours...';
+    }
+
+    jQuery.ajax({
+        url: pdfBuilderDeactivation.ajaxUrl,
+        type: 'POST',
+        data: {
+            action: 'pdf_builder_send_deactivation_feedback',
+            nonce: pdfBuilderDeactivation.nonce,
+            reason: reason ? reason.value : 'autre',
+            message: message ? message.value : '',
+            email: email ? email.value : '',
+        },
+        success: function(response) {
+            console.log('[PDF Builder] Feedback sent successfully:', response);
+        },
+        error: function(xhr, status, error) {
+            console.error('[PDF Builder] Feedback error:', error);
+        },
+        complete: function() {
+            console.log('[PDF Builder] Redirecting to:', window._pdfBuilderDeactivateUrl);
+            if (window._pdfBuilderDeactivateUrl) {
+                window.location.href = window._pdfBuilderDeactivateUrl;
+            }
+        }
+    });
+};
+
 (function($) {
     'use strict';
 
     $(document).ready(function() {
-        const PLUGIN_SLUG = 'pdf-builder-pro';
         const $body = $('body');
 
         // Injecter les styles du modal directement
@@ -60,7 +105,6 @@
                 border-radius: 5px !important;
                 cursor: pointer !important;
                 margin-bottom: 8px !important;
-                transition: all 0.2s !important;
             }
             #pdf-builder-deactivation-modal .feedback-option:hover {
                 background: #f9f9f9 !important;
@@ -84,17 +128,11 @@
                 font-family: inherit !important;
                 display: none !important;
                 box-sizing: border-box !important;
+                margin-top: 10px !important;
             }
-            #pdf-builder-deactivation-modal textarea.show {
-                display: block !important;
-            }
-            #pdf-builder-deactivation-modal .email-field {
-                margin-bottom: 15px !important;
-                display: none !important;
-            }
-            #pdf-builder-deactivation-modal .email-field.show {
-                display: block !important;
-            }
+            #pdf-builder-deactivation-modal textarea.show { display: block !important; }
+            #pdf-builder-deactivation-modal .email-field { margin-bottom: 15px !important; display: none !important; }
+            #pdf-builder-deactivation-modal .email-field.show { display: block !important; }
             #pdf-builder-deactivation-modal .email-field input {
                 width: 100% !important;
                 padding: 8px !important;
@@ -113,15 +151,10 @@
                 padding: 8px 12px !important;
                 border: none !important;
                 background: transparent !important;
-                color: #999 !important;
+                color: #666 !important;
                 cursor: pointer !important;
-                font-size: 12px !important;
-                opacity: 0.6 !important;
-                transition: opacity 0.2s !important;
-                pointer-events: auto !important;
-            }
-            #pdf-builder-deactivation-modal .skip-button:hover {
-                opacity: 0.8 !important;
+                font-size: 13px !important;
+                text-decoration: underline !important;
             }
             #pdf-builder-deactivation-modal .deactivate-button {
                 padding: 10px 20px !important;
@@ -131,22 +164,18 @@
                 border-radius: 5px !important;
                 cursor: pointer !important;
                 font-weight: 500 !important;
-                transition: background 0.2s !important;
-                pointer-events: auto !important;
+                font-size: 14px !important;
             }
-            #pdf-builder-deactivation-modal .deactivate-button:hover {
-                background: #c82333 !important;
-            }
-            #pdf-builder-deactivation-modal .deactivate-button.loading {
+            #pdf-builder-deactivation-modal .deactivate-button:disabled {
                 opacity: 0.6 !important;
                 cursor: not-allowed !important;
             }
         `;
         
-        $('<style>').text(modalStyles).appendTo('head');
+        $('<style id="pdf-builder-modal-styles">').text(modalStyles).appendTo('head');
         console.log('[PDF Builder] Styles injectés');
 
-        // Créer le modal HTML
+        // Créer le modal HTML avec onclick natifs
         const modalHTML = `
             <div id="pdf-builder-deactivation-modal">
                 <div class="modal-content">
@@ -156,172 +185,48 @@
                     </div>
                     <div class="modal-body">
                         <p style="margin: 0 0 15px 0; font-size: 14px;">Dites-nous pourquoi vous désactivez le plugin :</p>
-                        
                         <div class="feedback-group">
-                            <div class="feedback-option">
-                                <input type="radio" id="reason_dont_need" name="deactivation_reason" value="dont_need">
-                                <label for="reason_dont_need">Je n'en ai plus besoin</label>
-                            </div>
-                            
-                            <div class="feedback-option">
-                                <input type="radio" id="reason_not_working" name="deactivation_reason" value="not_working">
-                                <label for="reason_not_working">Le plugin ne fonctionne pas correctement</label>
-                            </div>
-                            
-                            <div class="feedback-option">
-                                <input type="radio" id="reason_slow" name="deactivation_reason" value="slow_performance">
-                                <label for="reason_slow">Le plugin ralentit mon site</label>
-                            </div>
-                            
-                            <div class="feedback-option">
-                                <input type="radio" id="reason_confusing" name="deactivation_reason" value="confusing">
-                                <label for="reason_confusing">Le plugin est difficile à utiliser</label>
-                            </div>
-                            
-                            <div class="feedback-option">
-                                <input type="radio" id="reason_expensive" name="deactivation_reason" value="expensive">
-                                <label for="reason_expensive">C'est trop cher pour les fonctionnalités</label>
-                            </div>
-                            
-                            <div class="feedback-option">
-                                <input type="radio" id="reason_alternative" name="deactivation_reason" value="found_alternative">
-                                <label for="reason_alternative">J'ai trouvé une meilleure alternative</label>
-                            </div>
-                            
-                            <div class="feedback-option">
-                                <input type="radio" id="reason_temporary" name="deactivation_reason" value="temporary">
-                                <label for="reason_temporary">Désactivation temporaire</label>
-                            </div>
-                            
-                            <div class="feedback-option">
-                                <input type="radio" id="reason_other" name="deactivation_reason" value="autre">
-                                <label for="reason_other">Autre raison</label>
-                            </div>
+                            <div class="feedback-option"><input type="radio" id="r1" name="deactivation_reason" value="dont_need"><label for="r1">Je n'en ai plus besoin</label></div>
+                            <div class="feedback-option"><input type="radio" id="r2" name="deactivation_reason" value="not_working"><label for="r2">Le plugin ne fonctionne pas correctement</label></div>
+                            <div class="feedback-option"><input type="radio" id="r3" name="deactivation_reason" value="slow_performance"><label for="r3">Le plugin ralentit mon site</label></div>
+                            <div class="feedback-option"><input type="radio" id="r4" name="deactivation_reason" value="confusing"><label for="r4">Le plugin est difficile à utiliser</label></div>
+                            <div class="feedback-option"><input type="radio" id="r5" name="deactivation_reason" value="expensive"><label for="r5">C'est trop cher pour les fonctionnalités</label></div>
+                            <div class="feedback-option"><input type="radio" id="r6" name="deactivation_reason" value="found_alternative"><label for="r6">J'ai trouvé une meilleure alternative</label></div>
+                            <div class="feedback-option"><input type="radio" id="r7" name="deactivation_reason" value="temporary"><label for="r7">Désactivation temporaire</label></div>
+                            <div class="feedback-option"><input type="radio" id="r8" name="deactivation_reason" value="autre"><label for="r8">Autre raison</label></div>
                         </div>
-                        
-                        <div class="email-field">
+                        <div class="email-field" id="pdf_builder_email_field">
                             <label for="pdf_builder_feedback_email">Votre email (pour vous recontacter) :</label>
                             <input type="email" id="pdf_builder_feedback_email" placeholder="votre@email.com">
                         </div>
-                        
                         <textarea id="pdf_builder_feedback_message" placeholder="Parlez-nous de votre expérience... (optionnel)"></textarea>
                     </div>
                     <div class="modal-footer">
-                        <button class="skip-button" id="pdf_builder_skip_feedback">Passer et désactiver</button>
-                        <button class="deactivate-button" id="pdf_builder_send_feedback">Envoyer et désactiver</button>
+                        <button type="button" class="skip-button" onclick="pdfBuilderSkipFeedback()">Passer et désactiver</button>
+                        <button type="button" id="pdf_builder_send_feedback" class="deactivate-button" onclick="pdfBuilderSendFeedback()">Envoyer et désactiver</button>
                     </div>
                 </div>
             </div>
         `;
 
-        // Ajouter le modal au DOM
         $body.append(modalHTML);
         console.log('[PDF Builder] Modal HTML ajouté au DOM');
 
         const $modal = $('#pdf-builder-deactivation-modal');
-        const $skipBtn = $('#pdf_builder_skip_feedback');
-        const $sendBtn = $('#pdf_builder_send_feedback');
-        const $textarea = $('#pdf_builder_feedback_message');
-        const $emailField = $('.email-field');
-        let pluginDeactivateUrl = null;
 
-        console.log('[PDF Builder] Elements trouvés:', {
-            modal: $modal.length > 0,
-            skipBtn: $skipBtn.length > 0,
-            sendBtn: $sendBtn.length > 0,
-            textarea: $textarea.length > 0,
-            emailField: $emailField.length > 0
+        // Show/hide textarea et email quand une raison est sélectionnée
+        $body.on('change', 'input[name="deactivation_reason"]', function() {
+            $('#pdf_builder_feedback_message').addClass('show');
+            $('#pdf_builder_email_field').addClass('show');
         });
 
-        // Observer les changements de sélection radio
-        $(document).on('change', 'input[name="deactivation_reason"]', function() {
-            const value = $(this).val();
-            
-            // Afficher la zone de texte et d'email si une raison est sélectionnée
-            if (value) {
-                $textarea.addClass('show');
-                $emailField.addClass('show');
-            }
-        });
-
-        // Intercepter le clic sur le lien de désactivation du plugin PDF Builder Pro
-        $(document).on('click', 'a.submitdelete[href*="pdf-builder-pro"]', function(e) {
-            // Vérifier que c'est bien un lien de désactivation
-            if (!$(this).attr('href').includes('action=deactivate')) {
-                return;
-            }
-            
+        // Intercepter le clic de désactivation (sélecteur primaire)
+        $(document).on('click', 'a[href*="action=deactivate"][href*="pdf-builder"]', function(e) {
             e.preventDefault();
-            pluginDeactivateUrl = this.href;
-            console.log('[PDF Builder] Intercepté désactivation:', pluginDeactivateUrl);
-            console.log('[PDF Builder] Ajout de la classe show au modal');
+            e.stopImmediatePropagation();
+            window._pdfBuilderDeactivateUrl = this.href;
+            console.log('[PDF Builder] Désactivation interceptée:', window._pdfBuilderDeactivateUrl);
             $modal.addClass('show');
-            console.log('[PDF Builder] Modal affichage requis, CSS appliqué');
-            $('input[name="deactivation_reason"]').first().focus();
-        });
-
-        // Fallback: si le sélecteur ci-dessus ne fonctionne pas, chercher tous les liens de désactivation
-        if (!pluginDeactivateUrl) {
-            $(document).on('click', 'a[href*="action=deactivate"][href*="pdf-builder"]', function(e) {
-                e.preventDefault();
-                pluginDeactivateUrl = this.href;
-                console.log('[PDF Builder] Intercepté (fallback):', pluginDeactivateUrl);
-                console.log('[PDF Builder] Ajout de la classe show au modal (fallback)');
-                $modal.addClass('show');
-                console.log('[PDF Builder] Modal affichage requis, CSS appliqué (fallback)');
-                $('input[name="deactivation_reason"]').first().focus();
-            });
-        }
-
-        // Bouton "Passer et désactiver" - très discret (délégation d'événements)
-        $(document).on('click', '#pdf_builder_skip_feedback', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('[PDF Builder] Skip clicked, redirecting to:', pluginDeactivateUrl);
-            // Désactiver directement sans envoyer de feedback
-            if (pluginDeactivateUrl) {
-                window.location.href = pluginDeactivateUrl;
-            }
-        });
-
-        // Bouton "Envoyer et désactiver" (délégation d'événements)
-        $(document).on('click', '#pdf_builder_send_feedback', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const reason = $('input[name="deactivation_reason"]:checked').val();
-            const message = $textarea.val();
-            const email = $('#pdf_builder_feedback_email').val();
-
-            console.log('[PDF Builder] Send feedback:', {reason, email, messageLength: message.length});
-
-            // Désactiver le bouton pendant l'envoi
-            $(this).prop('disabled', true).addClass('loading');
-
-            // Envoyer le feedback via AJAX
-            $.ajax({
-                url: pdfBuilderDeactivation.ajaxUrl,
-                type: 'POST',
-                data: {
-                    action: 'pdf_builder_send_deactivation_feedback',
-                    nonce: pdfBuilderDeactivation.nonce,
-                    reason: reason || 'autre',
-                    message: message,
-                    email: email,
-                },
-                success: function(response) {
-                    console.log('[PDF Builder] Feedback sent successfully:', response);
-                },
-                error: function(xhr, status, error) {
-                    console.error('[PDF Builder] Feedback error:', error);
-                },
-                complete: function() {
-                    // Toujours désactiver le plugin, même si l'email a échoué
-                    console.log('[PDF Builder] Redirecting to deactivation URL:', pluginDeactivateUrl);
-                    if (pluginDeactivateUrl) {
-                        window.location.href = pluginDeactivateUrl;
-                    }
-                }
-            });
         });
     });
 })(jQuery);
