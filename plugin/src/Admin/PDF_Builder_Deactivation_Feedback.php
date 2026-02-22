@@ -27,6 +27,25 @@ class PDF_Builder_Deactivation_Feedback {
         // AJAX endpoint pour recevoir le feedback
         add_action('wp_ajax_pdf_builder_send_deactivation_feedback', [$this, 'handle_feedback']);
         add_action('wp_ajax_nopriv_pdf_builder_send_deactivation_feedback', [$this, 'handle_feedback']);
+
+        // Liens supplémentaires dans la liste des plugins
+        add_filter('plugin_action_links_' . plugin_basename(PDF_BUILDER_PLUGIN_FILE), [$this, 'add_plugin_action_links']);
+    }
+
+    /**
+     * Ajoute des liens Paramètres et Passer en Premium dans la liste des plugins
+     */
+    public function add_plugin_action_links($links) {
+        $settings_link = '<a href="' . admin_url('admin.php?page=pdf-builder-settings') . '" style="color:#555;">'
+            . __('Paramètres', 'pdf-builder-pro') . '</a>';
+
+        $premium_link = '<a href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/" target="_blank"'
+            . ' style="color:#764ba2;font-weight:600;">⭐ ' . __('Passer en Premium', 'pdf-builder-pro') . '</a>';
+
+        array_unshift($links, $premium_link);
+        array_unshift($links, $settings_link);
+
+        return $links;
     }
     
     /**
