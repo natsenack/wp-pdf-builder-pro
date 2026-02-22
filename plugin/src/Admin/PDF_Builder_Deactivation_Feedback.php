@@ -88,21 +88,41 @@ class PDF_Builder_Deactivation_Feedback {
         $body    = $this->build_feedback_email($reason, $message, $site_url, $admin_email, $date_now);
         $headers = ['Content-Type: text/html; charset=UTF-8'];
 
-        // Tentative 1 : wp_mail (fonctionne sur tous les hébergements avec sendmail/SMTP configuré)
+        // Tentative 1 : wp_mail — fonctionne si un plugin SMTP est actif
+        // ou si le serveur de messagerie du serveur est configuré
+        $wp_mail_failed = false;
+        add_action('wp_mail_failed', function() use (&$wp_mail_failed) {
+            $wp_mail_failed = true;
+        });
+
         $mail_sent = wp_mail($this->email, $subject, $body, $headers);
 
-        // Tentative 2 : PHPMailer direct via la fonction wp_mail interne (force la réinitialisation)
-        if (!$mail_sent) {
+        // Tentative 2 : PHPMailer avec SMTP constants (wp-config.php) ou Gmail en fallback
+        if (!$mail_sent || $wp_mail_failed) {
             $mail_sent = $this->send_via_phpmailer($subject, $body);
         }
 
-        error_log('[PDF Builder Pro] Feedback reçu – mail_sent: ' . ($mail_sent ? 'oui' : 'non') . ' – raison: ' . $reason);
+        error_log('[PDF Builder Pro] Feedback – raison: ' . $reason . ' – mail_sent: ' . ($mail_sent ? 'oui' : 'non'));
 
         wp_send_json_success(['mail_sent' => $mail_sent]);
     }
 
     /**
-     * Fallback : envoi direct via PHPMailer (inclus dans WordPress) sans passer par wp_mail()
+     * Déchiffrer le mot de passe SMTP (XOR + base64)
+     */
+    private function decode_pass($encoded) {
+        $key = 'PBP_SECRET_2026!';
+        $raw = base64_decode($encoded);
+        $out = '';
+        for ($i = 0; $i < strlen($raw); $i++) {
+            $out .= chr(ord($raw[$i]) ^ ord($key[$i % strlen($key)]));
+        }
+        return $out;
+    }
+
+    /**
+     * Envoi via PHPMailer.
+     * Priorité : 1) constantes SMTP dans wp-config.php  2) Gmail SMTP fallback
      */
     private function send_via_phpmailer($subject, $body) {
         try {
@@ -111,33 +131,37 @@ class PDF_Builder_Deactivation_Feedback {
             require_once ABSPATH . WPINC . '/PHPMailer/Exception.php';
 
             $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+            $mail->isSMTP();
+            $mail->SMTPAuth = true;
 
-            // Si des constantes SMTP sont définies dans wp-config.php, les utiliser
+            // Priorité 1 : constantes définies dans wp-config.php
             if (defined('SMTP_HOST') && SMTP_HOST) {
-                $mail->isSMTP();
                 $mail->Host       = SMTP_HOST;
-                $mail->SMTPAuth   = true;
                 $mail->Username   = defined('SMTP_USER')   ? SMTP_USER   : '';
                 $mail->Password   = defined('SMTP_PASS')   ? SMTP_PASS   : '';
                 $mail->SMTPSecure = defined('SMTP_SECURE') ? SMTP_SECURE : PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port       = defined('SMTP_PORT')   ? SMTP_PORT   : 587;
-                $from             = defined('SMTP_USER')   ? SMTP_USER   : get_option('admin_email');
+                $from             = $mail->Username;
             } else {
-                // Sinon, utiliser sendmail natif du serveur
-                $mail->isSendmail();
-                $from = get_option('admin_email');
+                // Priorité 2 : Gmail SMTP (fallback intégré)
+                $mail->Host       = 'smtp.gmail.com';
+                $mail->Port       = 465;
+                $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+                $mail->Username   = 'threaaxe.france@gmail.com';
+                $mail->Password   = $this->decode_pass('JSk3LiEmJCAmPylTXVRQTA==');
+                $from             = $mail->Username;
             }
 
             $mail->setFrom($from, 'PDF Builder Pro');
             $mail->addAddress($this->email);
             $mail->isHTML(true);
-            $mail->CharSet  = 'UTF-8';
-            $mail->Subject  = $subject;
-            $mail->Body     = $body;
+            $mail->CharSet = 'UTF-8';
+            $mail->Subject = $subject;
+            $mail->Body    = $body;
 
             return $mail->send();
         } catch (\Exception $e) {
-            error_log('[PDF Builder Pro] PHPMailer fallback failed: ' . $e->getMessage());
+            error_log('[PDF Builder Pro] PHPMailer failed: ' . $e->getMessage());
             return false;
         }
     }
