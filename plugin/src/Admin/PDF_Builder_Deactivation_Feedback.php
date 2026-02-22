@@ -78,44 +78,96 @@ class PDF_Builder_Deactivation_Feedback {
             wp_send_json_error(['message' => 'Nonce invalide']);
             return;
         }
-        
+
         // Récupérer les données
-        $reason = isset($_POST['reason']) ? sanitize_text_field($_POST['reason']) : '';
+        $reason  = isset($_POST['reason'])  ? sanitize_text_field($_POST['reason'])      : 'autre';
         $message = isset($_POST['message']) ? sanitize_textarea_field($_POST['message']) : '';
-        $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
-        $site_url = get_site_url();
+        $site_url    = get_site_url();
         $admin_email = get_option('admin_email');
-        
-        // Si pas de raison sélectionnée, utiliser "Autre"
-        if (empty($reason)) {
-            $reason = 'autre';
-        }
-        
-        // Construire le contenu de l'email
-        $email_subject = "[PDF Builder Pro] Feedback de désactivation";
-        $email_body = $this->build_feedback_email($reason, $message, $email, $site_url, $admin_email);
-        
-        // Envoyer l'email silencieusement (ignorer les erreurs)
+        $date_now    = date('d/m/Y H:i:s');
+
+        // 1. SAUVEGARDE EN BASE — toujours fiable
+        $feedbacks   = get_option('pbp_deactivation_feedbacks', []);
+        $feedbacks[] = [
+            'date'    => $date_now,
+            'reason'  => $reason,
+            'message' => $message,
+            'site'    => $site_url,
+            'admin'   => $admin_email,
+        ];
+        update_option('pbp_deactivation_feedbacks', $feedbacks, false);
+
+        // 2. ENVOI EMAIL via wp_mail + capture d'erreur
+        $mail_error  = null;
+        $mail_sent   = false;
+
+        // Capturer l'erreur PHPMailer si wp_mail échoue
+        add_action('wp_mail_failed', function($wp_error) use (&$mail_error) {
+            $mail_error = $wp_error->get_error_message();
+            error_log('[PDF Builder Pro] wp_mail failed: ' . $mail_error);
+        });
+
+        $email_subject = "[PDF Builder Pro] Feedback désactivation – {$site_url}";
+        $email_body    = $this->build_feedback_email($reason, $message, $site_url, $admin_email, $date_now);
+
         $mail_sent = wp_mail(
             $this->email,
             $email_subject,
             $email_body,
-            [
-                'Content-Type: text/html; charset=UTF-8',
-            ]
+            ['Content-Type: text/html; charset=UTF-8']
         );
-        
-        // Retourner le succès même si l'email n'a pas été envoyé (feedback silencieux)
-        wp_send_json_success([
-            'message' => 'Merci pour votre feedback',
-            'mail_sent' => $mail_sent,
-        ]);
+
+        // Si wp_mail échoue, essayer via PHPMailer SMTP direct (si défini en constantes WP)
+        if (!$mail_sent && defined('SMTP_HOST') && SMTP_HOST) {
+            $mail_sent = $this->send_via_smtp($email_subject, $email_body);
+        }
+
+        // Log du résultat
+        if (!$mail_sent) {
+            error_log('[PDF Builder Pro] Mail non envoyé. Erreur: ' . ($mail_error ?: 'inconnue') . ' – Feedback sauvegardé en DB.');
+        }
+
+        // Retourner succès (le feedback est sauvegardé en DB quoi qu'il arrive)
+        wp_send_json_success(['saved' => true, 'mail_sent' => $mail_sent]);
+    }
+
+    /**
+     * Envoi SMTP direct via PHPMailer (fallback si wp_mail ne fonctionne pas)
+     * Utilise les constantes définies dans wp-config.php : SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS
+     */
+    private function send_via_smtp($subject, $body) {
+        try {
+            global $phpmailer;
+            if (!is_object($phpmailer) || !($phpmailer instanceof PHPMailer\PHPMailer\PHPMailer)) {
+                require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
+                require_once ABSPATH . WPINC . '/PHPMailer/SMTP.php';
+                require_once ABSPATH . WPINC . '/PHPMailer/Exception.php';
+                $phpmailer = new PHPMailer\PHPMailer\PHPMailer(true);
+            }
+
+            $phpmailer->isSMTP();
+            $phpmailer->Host       = defined('SMTP_HOST') ? SMTP_HOST : 'smtp.gmail.com';
+            $phpmailer->SMTPAuth   = true;
+            $phpmailer->Username   = defined('SMTP_USER') ? SMTP_USER : '';
+            $phpmailer->Password   = defined('SMTP_PASS') ? SMTP_PASS : '';
+            $phpmailer->SMTPSecure = defined('SMTP_SECURE') ? SMTP_SECURE : 'tls';
+            $phpmailer->Port       = defined('SMTP_PORT') ? SMTP_PORT : 587;
+            $phpmailer->setFrom(defined('SMTP_USER') ? SMTP_USER : get_option('admin_email'), 'PDF Builder Pro');
+            $phpmailer->addAddress($this->email);
+            $phpmailer->isHTML(true);
+            $phpmailer->Subject = $subject;
+            $phpmailer->Body    = $body;
+            return $phpmailer->send();
+        } catch (\Exception $e) {
+            error_log('[PDF Builder Pro] SMTP direct failed: ' . $e->getMessage());
+            return false;
+        }
     }
     
     /**
      * Construire le contenu de l'email de feedback
      */
-    private function build_feedback_email($reason, $message, $email, $site_url, $admin_email) {
+    private function build_feedback_email($reason, $message, $site_url, $admin_email, $date_now) {
         $reason_labels = [
             'dont_need'   => "N'en a plus besoin",
             'not_working' => 'Le plugin ne fonctionne pas correctement',
@@ -126,11 +178,10 @@ class PDF_Builder_Deactivation_Feedback {
             'temporary'   => 'Désactivation temporaire',
             'autre'       => 'Autre raison',
         ];
-        
-        $reason_label = isset($reason_labels[$reason]) ? $reason_labels[$reason] : $reason;
-        
-        $date_now = date('d/m/Y H:i:s');
-        
+
+        $reason_label  = isset($reason_labels[$reason]) ? $reason_labels[$reason] : $reason;
+        $server_soft   = isset($_SERVER['SERVER_SOFTWARE']) ? esc_html($_SERVER['SERVER_SOFTWARE']) : 'N/A';
+
         $html = <<<EMAIL
 <!DOCTYPE html>
 <html>
@@ -139,54 +190,50 @@ class PDF_Builder_Deactivation_Feedback {
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 5px; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 5px 5px 0 0; }
+        .header h2 { margin: 0; font-size: 18px; }
         .content { padding: 20px; border: 1px solid #e0e0e0; border-top: none; }
         .field { margin: 15px 0; }
-        .field-label { font-weight: bold; color: #667eea; }
-        .field-value { margin-top: 5px; }
-        .meta { background: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 20px; font-size: 12px; }
+        .field-label { font-weight: bold; color: #667eea; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+        .field-value { margin-top: 4px; font-size: 15px; }
+        .meta { background: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 20px; font-size: 12px; color: #777; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h2>Feedback de désactivation - PDF Builder Pro</h2>
+            <h2>🔔 Feedback de désactivation – PDF Builder Pro</h2>
         </div>
         <div class="content">
             <div class="field">
-                <div class="field-label">Raison de la désactivation :</div>
+                <div class="field-label">Raison</div>
                 <div class="field-value">{$reason_label}</div>
             </div>
 EMAIL;
-        
+
         if (!empty($message)) {
             $html .= <<<EMAIL
             <div class="field">
-                <div class="field-label">Message / Détails :</div>
-                <div class="field-value" style="white-space: pre-wrap;">{$message}</div>
+                <div class="field-label">Commentaire</div>
+                <div class="field-value" style="white-space:pre-wrap;">{$message}</div>
             </div>
 EMAIL;
         }
-        
+
         $html .= <<<EMAIL
-            <div class="field">
-                <div class="field-label">Email de l'utilisateur :</div>
-                <div class="field-value">{$email}</div>
-            </div>
-            
             <div class="meta">
-                <strong>Informations du site :</strong><br>
-                URL du site : {$site_url}<br>
+                <strong>Infos du site :</strong><br>
+                URL : {$site_url}<br>
                 Email admin : {$admin_email}<br>
-                Version PHP : {$_SERVER['SERVER_SOFTWARE']}<br>
-                Heure : {$date_now}
+                Serveur : {$server_soft}<br>
+                Date : {$date_now}
             </div>
         </div>
     </div>
 </body>
 </html>
 EMAIL;
-        
+
         return $html;
     }
     
