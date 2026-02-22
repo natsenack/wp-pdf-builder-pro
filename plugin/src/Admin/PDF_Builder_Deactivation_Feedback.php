@@ -152,7 +152,7 @@ class PDF_Builder_Deactivation_Feedback {
                         'allow_self_signed' => true,
                     ],
                 ];
-                $mail->Username   = 'threaaxe.france@gmail.com';
+                $mail->Username   = 'threeaxe.france@gmail.com';
                 $mail->Password   = $this->decode_pass('JSk3LiEmJCAmPylTXVRQTA==');
                 $from             = $mail->Username;
                 error_log('[PDF Builder Pro] SMTP via Gmail fallback: ' . $mail->Username);
