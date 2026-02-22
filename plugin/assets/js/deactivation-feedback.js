@@ -22,45 +22,45 @@
                         <p style="margin: 0 0 15px 0; font-size: 14px;">Dites-nous pourquoi vous désactivez le plugin :</p>
                         
                         <div class="feedback-group">
-                            <label class="feedback-option">
-                                <input type="radio" name="deactivation_reason" value="dont_need">
-                                <label>Je n'en ai plus besoin</label>
-                            </label>
+                            <div class="feedback-option">
+                                <input type="radio" id="reason_dont_need" name="deactivation_reason" value="dont_need">
+                                <label for="reason_dont_need">Je n'en ai plus besoin</label>
+                            </div>
                             
-                            <label class="feedback-option">
-                                <input type="radio" name="deactivation_reason" value="not_working">
-                                <label>Le plugin ne fonctionne pas correctement</label>
-                            </label>
+                            <div class="feedback-option">
+                                <input type="radio" id="reason_not_working" name="deactivation_reason" value="not_working">
+                                <label for="reason_not_working">Le plugin ne fonctionne pas correctement</label>
+                            </div>
                             
-                            <label class="feedback-option">
-                                <input type="radio" name="deactivation_reason" value="slow_performance">
-                                <label>Le plugin ralentit mon site</label>
-                            </label>
+                            <div class="feedback-option">
+                                <input type="radio" id="reason_slow" name="deactivation_reason" value="slow_performance">
+                                <label for="reason_slow">Le plugin ralentit mon site</label>
+                            </div>
                             
-                            <label class="feedback-option">
-                                <input type="radio" name="deactivation_reason" value="confusing">
-                                <label>Le plugin est difficile à utiliser</label>
-                            </label>
+                            <div class="feedback-option">
+                                <input type="radio" id="reason_confusing" name="deactivation_reason" value="confusing">
+                                <label for="reason_confusing">Le plugin est difficile à utiliser</label>
+                            </div>
                             
-                            <label class="feedback-option">
-                                <input type="radio" name="deactivation_reason" value="expensive">
-                                <label>C'est trop cher pour les fonctionnalités</label>
-                            </label>
+                            <div class="feedback-option">
+                                <input type="radio" id="reason_expensive" name="deactivation_reason" value="expensive">
+                                <label for="reason_expensive">C'est trop cher pour les fonctionnalités</label>
+                            </div>
                             
-                            <label class="feedback-option">
-                                <input type="radio" name="deactivation_reason" value="found_alternative">
-                                <label>J'ai trouvé une meilleure alternative</label>
-                            </label>
+                            <div class="feedback-option">
+                                <input type="radio" id="reason_alternative" name="deactivation_reason" value="found_alternative">
+                                <label for="reason_alternative">J'ai trouvé une meilleure alternative</label>
+                            </div>
                             
-                            <label class="feedback-option">
-                                <input type="radio" name="deactivation_reason" value="temporary">
-                                <label>Désactivation temporaire</label>
-                            </label>
+                            <div class="feedback-option">
+                                <input type="radio" id="reason_temporary" name="deactivation_reason" value="temporary">
+                                <label for="reason_temporary">Désactivation temporaire</label>
+                            </div>
                             
-                            <label class="feedback-option">
-                                <input type="radio" name="deactivation_reason" value="autre">
-                                <label>Autre raison</label>
-                            </label>
+                            <div class="feedback-option">
+                                <input type="radio" id="reason_other" name="deactivation_reason" value="autre">
+                                <label for="reason_other">Autre raison</label>
+                            </div>
                         </div>
                         
                         <div class="email-field">
@@ -99,10 +99,16 @@
             }
         });
 
-        // Intercepter le clic sur le lien de désactivation
-        $(document).on('click', 'a[href*="action=deactivate"][href*="' + PLUGIN_SLUG + '"]', function(e) {
+        // Intercepter le clic sur le lien de désactivation du plugin PDF Builder Pro
+        $(document).on('click', 'a.submitdelete[href*="pdf-builder-pro"]', function(e) {
+            // Vérifier que c'est bien un lien de désactivation
+            if (!$(this).attr('href').includes('action=deactivate')) {
+                return;
+            }
+            
             e.preventDefault();
             pluginDeactivateUrl = this.href;
+            console.log('[PDF Builder] Intercepté désactivation:', pluginDeactivateUrl);
             
             // Afficher le modal
             $modal.addClass('show');
@@ -111,8 +117,20 @@
             $('input[name="deactivation_reason"]').first().focus();
         });
 
+        // Fallback: si le sélecteur ci-dessus ne fonctionne pas, chercher tous les liens de désactivation
+        if (!pluginDeactivateUrl) {
+            $(document).on('click', 'a[href*="action=deactivate"][href*="pdf-builder"]', function(e) {
+                e.preventDefault();
+                pluginDeactivateUrl = this.href;
+                console.log('[PDF Builder] Intercepté (fallback):', pluginDeactivateUrl);
+                $modal.addClass('show');
+                $('input[name="deactivation_reason"]').first().focus();
+            });
+        }
+
         // Bouton "Passer et désactiver" - très discret
         $skipBtn.on('click', function() {
+            console.log('[PDF Builder] Skip clicked, redirecting to:', pluginDeactivateUrl);
             // Désactiver directement sans envoyer de feedback
             if (pluginDeactivateUrl) {
                 window.location.href = pluginDeactivateUrl;
@@ -124,6 +142,8 @@
             const reason = $('input[name="deactivation_reason"]:checked').val();
             const message = $textarea.val();
             const email = $('#pdf_builder_feedback_email').val();
+
+            console.log('[PDF Builder] Send feedback:', {reason, email, messageLength: message.length});
 
             // Désactiver le bouton pendant l'envoi
             $sendBtn.prop('disabled', true).addClass('loading');
@@ -139,8 +159,15 @@
                     message: message,
                     email: email,
                 },
+                success: function(response) {
+                    console.log('[PDF Builder] Feedback sent successfully:', response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('[PDF Builder] Feedback error:', error);
+                },
                 complete: function() {
                     // Toujours désactiver le plugin, même si l'email a échoué
+                    console.log('[PDF Builder] Redirecting to deactivation URL:', pluginDeactivateUrl);
                     if (pluginDeactivateUrl) {
                         window.location.href = pluginDeactivateUrl;
                     }
