@@ -185,7 +185,7 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                 </p>
                 <a href="#" onclick="showUpgradeModal('gallery')" class="button button-primary">
                     <span class="dashicons dashicons-star-filled"></span>
-                    <?php _e('Passer en Premium - 79.99€ à vie', 'pdf-builder-pro'); ?>
+                    <?php _e('Passer en Premium - 69.99€ à vie', 'pdf-builder-pro'); ?>
                 </a>
             </div>
         <?php endif; ?>

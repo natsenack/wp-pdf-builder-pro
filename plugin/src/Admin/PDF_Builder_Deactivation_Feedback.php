@@ -39,11 +39,15 @@ class PDF_Builder_Deactivation_Feedback {
         $settings_link = '<a href="' . admin_url('admin.php?page=pdf-builder-settings') . '" style="color:#555;">'
             . __('Paramètres', 'pdf-builder-pro') . '</a>';
 
-        $premium_link = '<a href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/" target="_blank"'
-            . ' style="color:#764ba2;font-weight:600;">⭐ ' . __('Passer en Premium', 'pdf-builder-pro') . '</a>';
-
-        array_unshift($links, $premium_link);
         array_unshift($links, $settings_link);
+
+        // Afficher le lien Premium uniquement si la licence n'est pas active
+        $license_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
+        if ($license_status !== 'active') {
+            $premium_link = '<a href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/" target="_blank"'
+                . ' style="color:#764ba2;font-weight:600;">⭐ ' . __('Passer en Premium', 'pdf-builder-pro') . '</a>';
+            array_unshift($links, $premium_link);
+        }
 
         return $links;
     }
