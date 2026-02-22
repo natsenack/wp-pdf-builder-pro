@@ -30,6 +30,9 @@ class PDF_Builder_Deactivation_Feedback {
 
         // Liens supplémentaires dans la liste des plugins
         add_filter('plugin_action_links_' . plugin_basename(PDF_BUILDER_PLUGIN_FILE), [$this, 'add_plugin_action_links']);
+
+        // Nom du plugin dynamique selon la licence
+        add_filter('all_plugins', [$this, 'filter_plugin_name']);
     }
 
     /**
@@ -51,7 +54,24 @@ class PDF_Builder_Deactivation_Feedback {
 
         return $links;
     }
-    
+
+    /**
+     * Modifie le nom affiché du plugin dans la liste selon le statut de la licence
+     */
+    public function filter_plugin_name($plugins) {
+        $basename = plugin_basename(PDF_BUILDER_PLUGIN_FILE);
+        if (!isset($plugins[$basename])) {
+            return $plugins;
+        }
+
+        $license_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
+        $plugins[$basename]['Name'] = ($license_status === 'active')
+            ? 'PDF Builder Pro'
+            : 'PDF Builder';
+
+        return $plugins;
+    }
+
     /**
      * Récupérer la version du plugin
      */
