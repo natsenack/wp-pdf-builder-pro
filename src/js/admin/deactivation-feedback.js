@@ -199,6 +199,12 @@ console.log('[PDF Builder] ✅ Fonctions globales définies:', {
                 opacity: 0.6 !important;
                 cursor: not-allowed !important;
             }
+            /* Masquer la modale WordPress native de désactivation pour notre plugin */
+            #pdf-builder-btn-proceed,
+            #pdf-builder-btn-cancel,
+            [id^="pdf-builder-pro-btn-"] {
+                display: none !important;
+            }
         `;
         
         $('<style id="pdf-builder-modal-styles">').text(modalStyles).appendTo('head');
@@ -283,16 +289,40 @@ console.log('[PDF Builder] ✅ Fonctions globales définies:', {
             $('#pdf_builder_email_field').addClass('show');
         });
 
-        // Intercepter le clic de désactivation (sélecteur primaire)
-        $(document).on('click', 'a[href*="action=deactivate"][href*="pdf-builder"]', function(e) {
+        // Intercepter le clic de désactivation en phase de CAPTURE (avant WordPress)
+        document.addEventListener('click', function(e) {
+            var link = e.target.closest('a[href*="action=deactivate"][href*="pdf-builder"]');
+            if (!link) return;
+
+            console.log('[PDF Builder] Clic intercepté (capture), URL:', link.href);
             e.preventDefault();
             e.stopImmediatePropagation();
-            window._pdfBuilderDeactivateUrl = this.href;
-            console.log('[PDF Builder] Désactivation interceptée:', window._pdfBuilderDeactivateUrl);
-            console.log('[PDF Builder] pdfBuilderSkipFeedback disponible:', typeof window.pdfBuilderSkipFeedback);
-            console.log('[PDF Builder] pdfBuilderSendFeedback disponible:', typeof window.pdfBuilderSendFeedback);
+
+            window._pdfBuilderDeactivateUrl = link.href;
+
+            // Masquer la modale WordPress native si elle apparaît
+            setTimeout(function() {
+                // WordPress crée des modales avec id type "pdf-builder-pro-btn-proceed" ou role=dialog
+                var wpDialogs = document.querySelectorAll('[role="dialog"], .plugin-deactivation-dialog');
+                wpDialogs.forEach(function(d) {
+                    if (d.id !== 'pdf-builder-deactivation-modal') {
+                        console.log('[PDF Builder] Modale WordPress masquée:', d.id || d.className);
+                        d.style.setProperty('display', 'none', 'important');
+                    }
+                });
+                // Masquer spécifiquement le bouton WordPress généré par notre slug
+                var wpBtn = document.getElementById('pdf-builder-btn-proceed');
+                if (wpBtn) {
+                    var wpModal = wpBtn.closest('[role="dialog"]') || wpBtn.parentElement;
+                    if (wpModal) {
+                        console.log('[PDF Builder] Modale WP native masquée:', wpModal.id);
+                        wpModal.style.setProperty('display', 'none', 'important');
+                    }
+                }
+            }, 0);
+
             $modal.addClass('show');
-            console.log('[PDF Builder] Modal show appliqué, classes:', $modal.attr('class'));
-        });
+            console.log('[PDF Builder] Notre modal affiché');
+        }, true); // true = phase de capture, avant tous les autres handlers
     });
 })(jQuery);
