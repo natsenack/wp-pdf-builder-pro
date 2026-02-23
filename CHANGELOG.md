@@ -2,6 +2,24 @@
 
 ## Tous les changements notables de ce projet seront documentés dans ce fichier.
 
+## Version 1.0.3.12 (2026-02-23)
+
+- 🔒 **Plugin Check** : Correction de toutes les erreurs `EscapeOutput` — `_e()` → `esc_html_e()`, `echo __()` → `esc_html__()`, `echo admin_url()` → `esc_url()`, variables HTML échappées avec `esc_html()`/`esc_attr()`
+- 🛡️ **Sécurité** : Ajout de protections ABSPATH manquantes (`settings-developpeur.php`, `bootstrap.php`)
+- 🔧 **wp_redirect** : Remplacement par `wp_safe_redirect()` dans `builtin-editor-page.php`
+- 🧹 **Conformité WordPress.org** : 13 fichiers mis en conformité avec les standards WordPress
+
+==================================================================================================================
+
+## Version 1.0.3.11 (2026-02-23)
+
+- 🎉 **EDD Free Updates** : Mise en place du mu-plugin `/wp-content/mu-plugins/edd-free-update.php` sur hub.threeaxe.fr
+- 📦 **Utilisateurs gratuits** : Téléchargement des mises à jour sans clé de licence depuis `/downloads/`
+- 🔗 **Intégration EDD** : Le mu-plugin injecte l'URL du package dans les réponses get_version
+- ✅ **Test validé** : HTTP 200 sur package ZIP, auto-mise à jour fonctionnelle
+
+==================================================================================================================
+
 ## Version 1.1.3.0 (À venir)
 
 ==================================================================================================================
@@ -84,6 +102,59 @@
 - 🔒 **Orientation désactivée** — Paysage (seul le **Portrait** est disponible)
 - **onglet "configuration pdf"** - correction et optimisation des fonctions
 - # **langue** - vérifier la langue anglais si bien traduit à 100%
+
+## **_Version 1.0.3.12_** — 23 février 2026
+
+### 🔧 Corrections
+
+- **[Updates] Mises à jour gratuites EDD** : Les utilisateurs sans clé de licence envoient maintenant une requête EDD **sans le paramètre `license`**, ce qui permet à EDD de retourner le lien de téléchargement public pour la version gratuite/libre. Auparavant, envoyer `license=` vide bloquait la réponse.
+
+==================================================================================================================
+
+## **_Version 1.0.3.11_** — 11 février 2026
+
+### 🔧 Corrections
+
+- **[Updates] Clé de licence EDD en contexte cron** : Correction du check auto-update. `getLicenseKeyForLinks()` ne vérifie plus `current_user_can('manage_options')` qui retourne toujours false en contexte transient (pas de requête HTTP). Les clients peuvent maintenant auto-mettre à jour sans erreur `download_link` vide.
+
+==================================================================================================================
+
+## **_Version 1.0.3.10_** — 23 février 2026
+
+### 🔧 Corrections
+
+- **[Updates] Purge transient WordPress** : L'action de diagnostic vide maintenant aussi `site_transient('update_plugins')` pour garantir un token de téléchargement EDD toujours frais lors des mises à jour.
+
+==================================================================================================================
+
+## **_Version 1.0.3.9_** — 23 février 2026
+
+### 🔧 Corrections
+
+- **[UI] Logo plugin** : Ajout des icones `plugin-icon.png` et `plugin-icon-2x.png` affichées dans la page mises à jour WordPress.
+
+==================================================================================================================
+
+## **_Version 1.0.3.8_** — 23 février 2026
+
+### 🔧 Corrections
+
+- **[Updates] Logs de diagnostic** : Ajout de logs `error_log` détaillés dans `get_remote_version()` et `check_for_updates()` pour tracer l'appel EDD, la réponse HTTP, le parsing JSON et le résultat de comparaison de version.
+
+==================================================================================================================
+
+## **_Version 1.0.3.7_** — 23 février 2026
+
+### 🔧 Corrections
+
+- **[Updates] Correctif système de mises à jour automatiques** : Le système de check EDD retournait `false` car il cherchait `version`/`package` alors qu'EDD Software Licensing retourne `new_version`/`download_link`. Normalisation des deux champs.
+- **[Updates] `item_name` ajouté** à la requête `get_version` vers `hub.threeaxe.fr` pour conformité EDD SL.
+- **[Updates] Gestion JSON/sérialisé** : Support des deux formats de réponse EDD (JSON et PHP sérialisé).
+- **[Updates] Cron sans utilisateur** : Suppression du guard `current_user_can()` dans `get_license_key()` qui bloquait les checks en contexte wp-cron (aucun user connecté).
+- **[Updates] Logs verbeux supprimés** : Retrait des `error_log()` systématiques dans `PDF_Builder_Unified_Ajax_Handler` (constructor, init_hooks, handle_save_settings) et `bootstrap.php` qui polluaient les logs PHP à chaque requête.
+- **[Updates] Action AJAX de diagnostic** `pdf_builder_test_update_check` ajoutée pour tester la connexion EDD depuis la console navigateur.
+
+==================================================================================================================
 
 ## **_Version 1.0.3.6_** — 24 février 2026
 

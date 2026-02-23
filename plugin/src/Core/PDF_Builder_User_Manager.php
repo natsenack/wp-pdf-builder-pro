@@ -460,7 +460,7 @@ class PDF_Builder_User_Manager {
      */
     public function get_pdf_users() {
         $users = get_users([
-            'meta_query' => [
+            'meta_query' => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
                 'relation' => 'OR',
                 [
                     'key' => 'pdf_builder_permissions',

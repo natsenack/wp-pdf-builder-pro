@@ -3275,7 +3275,9 @@ class PDF_Builder_Unified_Ajax_Handler {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>' . esc_html($template['name'] ?? 'Document') . '</title>
     <!-- Google Fonts pour Puppeteer (garantit disponibilité des polices) -->
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&family=Lora:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    ' .
+    '<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Roboto:wght@400;700&family=Open+Sans:wght@400;700&family=Lora:wght@400;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">' . // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet -- HTML template pour moteur PDF Puppeteer, impossible d'utiliser wp_enqueue_style()
+    '
     <style>
         /* 
          * IMPORTANT: box-sizing: border-box est utilisé pour tous les éléments.

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Template for PDF Builder Pro Dashboard
  *
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
             <p class="pdfb-dashboard-subtitle">Constructeur de PDF professionnel avec éditeur visuel avancé</p>
             <div class="pdfb-dashboard-meta">
                 <span class="pdfb-version-info">Version <?php echo esc_html($plugin_version); ?></span>
-                <span class="pdfb-last-update">Dernière mise à jour: <?php echo date('d/m/Y'); ?></span>
+                <span class="pdfb-last-update">Dernière mise à jour: <?php echo esc_html(date('d/m/Y'); ?></span>
             </div>
         </div>
 
@@ -54,7 +54,7 @@ if (!defined('ABSPATH')) {
                 <h3>⚛️ Créer un nouveau PDF<?php if (!$is_premium): ?> <span class="pdfb-premium-badge">PRO</span><?php endif; ?></h3>
                 <p>Utilisez notre éditeur React moderne pour concevoir vos documents</p>
                 <?php if ($is_premium): ?>
-                    <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>"
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-react-editor')); ?>"
                         class="button button-primary">
                         Ouvrir l'Éditeur React
                     </a>
@@ -69,7 +69,7 @@ if (!defined('ABSPATH')) {
             <div class="pdfb-action-card">
                 <h3>📋 Gérer les Templates</h3>
                 <p>Créez, modifiez et organisez vos modèles de documents</p>
-                <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates'); ?>"
+                <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-templates')); ?>"
                     class="button button-secondary">
                     Voir les Templates
                 </a>
@@ -79,7 +79,7 @@ if (!defined('ABSPATH')) {
                 <h3>⚙️ Paramètres & Configuration<?php if (!$is_premium): ?> <span class="pdfb-premium-badge">PRO</span><?php endif; ?></h3>
                 <p>Configurez les paramètres avancés, polices, qualité d'impression et options WooCommerce</p>
                 <?php if ($is_premium): ?>
-                    <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings'); ?>"
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings')); ?>"
                         class="button button-secondary">
                         Ouvrir les Paramètres
                     </a>
@@ -96,7 +96,7 @@ if (!defined('ABSPATH')) {
         <div class="pdfb-dashboard-guide">
             <h3>🚀 Guide de démarrage rapide</h3>
             <div class="pdfb-guide-steps">
-                <a href="<?php echo admin_url('admin.php?page=pdf-builder-pro'); ?>" class="pdfb-step pdfb-step-link">
+                <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-pro')); ?>" class="pdfb-step pdfb-step-link">
                     <span class="pdfb-step-number">1</span>
                     <div class="pdfb-step-content">
                         <h4>🛠️ Configuration initiale</h4>
@@ -104,7 +104,7 @@ if (!defined('ABSPATH')) {
                         <small>💡 La page d'accueil affiche automatiquement votre version et les métriques en temps réel</small>
                     </div>
                 </a>
-                <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates'); ?>" class="pdfb-step pdfb-step-link">
+                <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-templates')); ?>" class="pdfb-step pdfb-step-link">
                     <span class="pdfb-step-number">2</span>
                     <div class="pdfb-step-content">
                         <h4>📋 Créez votre premier template</h4>
@@ -112,7 +112,7 @@ if (!defined('ABSPATH')) {
                         <small>💡 Utilisez l'éditeur React avec Canvas avancé, grille d'aimantation et guides</small>
                     </div>
                 </a>
-                <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>" class="pdfb-step pdfb-step-link">
+                <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-react-editor')); ?>" class="pdfb-step pdfb-step-link">
                     <span class="pdfb-step-number">3</span>
                     <div class="pdfb-step-content">
                         <h4>🎨 Concevez votre PDF</h4>
@@ -120,7 +120,7 @@ if (!defined('ABSPATH')) {
                         <small>💡 Les propriétés sont organisées en accordéons pour une meilleure ergonomie</small>
                     </div>
                 </a>
-                <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings'); ?>" class="pdfb-step pdfb-step-link">
+                <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings')); ?>" class="pdfb-step pdfb-step-link">
                     <span class="pdfb-step-number">4</span>
                     <div class="pdfb-step-content">
                         <h4>🛒 Intégrez WooCommerce</h4>
@@ -128,7 +128,7 @@ if (!defined('ABSPATH')) {
                         <small>💡 Aperçu direct dans les metabox des commandes WooCommerce</small>
                     </div>
                 </a>
-                <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings'); ?>" class="pdfb-step pdfb-step-link">
+                <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings')); ?>" class="pdfb-step pdfb-step-link">
                     <span class="pdfb-step-number">5</span>
                     <div class="pdfb-step-content">
                         <h4>⚙️ Configurez les paramètres avancés</h4>
@@ -136,7 +136,7 @@ if (!defined('ABSPATH')) {
                         <small>💡 Paramètres Canvas complets : dimensions, orientation, grille, zoom</small>
                     </div>
                 </a>
-                <a href="<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>" class="pdfb-step pdfb-step-link">
+                <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-react-editor')); ?>" class="pdfb-step pdfb-step-link">
                     <span class="pdfb-step-number">6</span>
                     <div class="pdfb-step-content">
                         <h4>📤 Générez et testez</h4>

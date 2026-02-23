@@ -120,14 +120,19 @@ function Build-PluginZip {
         # Créer le ZIP
         Write-Host "   Création du ZIP..." -ForegroundColor Gray
         
-        # Utiliser la compression compression .NET
-        Add-Type -AssemblyName System.IO.Compression.FileSystem
-        
         if (Test-Path $ZipPath) {
             Remove-Item $ZipPath -Force
         }
-        
-        [System.IO.Compression.ZipFile]::CreateFromDirectory($PluginTempDir, $ZipPath, [System.IO.Compression.CompressionLevel]::Optimal, $true)
+
+        # Utiliser Compress-Archive depuis le répertoire parent du dossier plugin
+        # pour que le ZIP contienne pdf-builder-pro\... à la racine
+        $TempParent = Split-Path $PluginTempDir -Parent
+        Push-Location $TempParent
+        try {
+            Compress-Archive -Path "pdf-builder-pro" -DestinationPath $ZipPath -CompressionLevel Optimal -Force
+        } finally {
+            Pop-Location
+        }
         
         # Vérifier la taille du ZIP
         $zipSize = (Get-Item $ZipPath).Length

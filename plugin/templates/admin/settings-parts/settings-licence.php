@@ -74,7 +74,7 @@ if (!defined('ABSPATH')) {
                                     <li>Cliquez sur <strong>Générer une clé de test</strong></li>
                                     <li>La clé TEST s\'activera automatiquement</li>
                                 </ol>
-                                <p><a href="' . admin_url('admin.php?page=pdf-builder-pro-settings&tab=developer') . '">↻ Aller au mode Développeur</a></p>
+                                <p><a href="' . esc_url(admin_url('admin.php?page=pdf-builder-pro-settings&tab=developer')) . '">&#x21BB; Aller au mode Développeur</a></p>
                             </div>', 'Activation désactivée', ['response' => 403]);
                     }
 

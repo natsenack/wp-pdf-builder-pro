@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Builtin Templates Editor
@@ -40,7 +40,7 @@ function pdf_builder_builtin_editor_page()
 
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
-        wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        wp_die(esc_html__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
     }
 
     // Récupérer le template_id depuis l'URL
@@ -49,7 +49,7 @@ function pdf_builder_builtin_editor_page()
     if (!empty($template_id)) {
 // SYSTÈME BUILTIN SUPPRIMÉ - Redirection directe vers l'éditeur normal
         $redirect_url = admin_url('admin.php?page=pdf-builder-react-editor');
-        wp_redirect($redirect_url);
+        wp_safe_redirect($redirect_url);
         exit;
     }
 
@@ -84,18 +84,18 @@ function pdf_builder_builtin_templates_list_page()
 
     ?>
     <div class="wrap">
-        <h1><?php _e('Éditeur de Templates Prédéfinis', 'pdf-builder-pro'); ?></h1>
-        <p><?php _e('Sélectionnez un template pour l\'éditer visuellement avec l\'éditeur React.', 'pdf-builder-pro'); ?></p>
+        <h1><?php esc_html_e('Éditeur de Templates Prédéfinis', 'pdf-builder-pro'); ?></h1>
+        <p><?php esc_html_e('Sélectionnez un template pour l\'éditer visuellement avec l\'éditeur React.', 'pdf-builder-pro'); ?></p>
 
         <div class="pdf-builder-builtin-editor">
             <!-- Boutons d'action -->
             <div style="margin-bottom: 20px;">
-                <button id="new-template-btn" class="button button-primary"><?php _e('Créer un Nouveau Template', 'pdf-builder-pro'); ?></button>
+                <button id="new-template-btn" class="button button-primary"><?php esc_html_e('Créer un Nouveau Template', 'pdf-builder-pro'); ?></button>
             </div>
 
             <!-- Liste des templates -->
             <div class="templates-list-panel" style="width: 100%; max-width: none;">
-                <h3><?php _e('Templates Disponibles', 'pdf-builder-pro'); ?></h3>
+                <h3><?php esc_html_e('Templates Disponibles', 'pdf-builder-pro'); ?></h3>
                 <div id="templates-list" class="templates-list">
                     <!-- Les templates seront chargés ici -->
                 </div>
@@ -116,15 +116,15 @@ function pdf_builder_builtin_templates_list_page()
                     <small><%= category || 'general' %> | v<%= version || '1.0' %></small>
                 </div>
                 <div class="template-actions">
-                    <button class="template-edit-btn" data-template-id="<%= id %>" title="<?php _e('Modifier les paramètres', 'pdf-builder-pro'); ?>">
+                    <button class="template-edit-btn" data-template-id="<%= id %>" title="<?php esc_html_e('Modifier les paramètres', 'pdf-builder-pro'); ?>">
                         <span class="dashicons dashicons-admin-generic"></span>
                     </button>
-                    <button class="template-delete-btn" data-template-id="<%= id %>" title="<?php _e('Supprimer le template', 'pdf-builder-pro'); ?>">
+                    <button class="template-delete-btn" data-template-id="<%= id %>" title="<?php esc_html_e('Supprimer le template', 'pdf-builder-pro'); ?>">
                         <span class="dashicons dashicons-trash"></span>
                     </button>
-                    <a href="<?php echo admin_url('admin.php?page=pdf-builder-builtin-editor&template='); ?><%= id %>" class="button button-primary button-small">
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-builtin-editor&template=')); ?><%= id %>" class="button button-primary button-small">
                         <span class="dashicons dashicons-edit"></span>
-                        <?php _e('Éditer', 'pdf-builder-pro'); ?>
+                        <?php esc_html_e('Éditer', 'pdf-builder-pro'); ?>
                     </a>
                 </div>
             </div>
@@ -135,33 +135,33 @@ function pdf_builder_builtin_templates_list_page()
             <div class="pdf-modal-backdrop"></div>
             <div class="pdf-modal-content">
                 <div class="pdf-modal-header">
-                    <h2><?php _e('Nouveau Template', 'pdf-builder-pro'); ?></h2>
+                    <h2><?php esc_html_e('Nouveau Template', 'pdf-builder-pro'); ?></h2>
                     <button class="pdf-modal-close">&times;</button>
                 </div>
                 <div class="pdf-modal-body">
                     <form id="new-template-form">
                         <div class="form-group">
-                            <label for="template-name"><?php _e('Nom du template', 'pdf-builder-pro'); ?></label>
+                            <label for="template-name"><?php esc_html_e('Nom du template', 'pdf-builder-pro'); ?></label>
                             <input type="text" id="template-name" name="name" required>
                         </div>
                         <div class="form-group">
-                            <label for="template-description"><?php _e('Description', 'pdf-builder-pro'); ?></label>
+                            <label for="template-description"><?php esc_html_e('Description', 'pdf-builder-pro'); ?></label>
                             <textarea id="template-description" name="description"></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="template-category"><?php _e('Catégorie', 'pdf-builder-pro'); ?></label>
+                            <label for="template-category"><?php esc_html_e('Catégorie', 'pdf-builder-pro'); ?></label>
                             <select id="template-category" name="category">
-                                <option value="general"><?php _e('Général', 'pdf-builder-pro'); ?></option>
-                                <option value="invoice"><?php _e('Facture', 'pdf-builder-pro'); ?></option>
-                                <option value="quote"><?php _e('Devis', 'pdf-builder-pro'); ?></option>
-                                <option value="business"><?php _e('Entreprise', 'pdf-builder-pro'); ?></option>
+                                <option value="general"><?php esc_html_e('Général', 'pdf-builder-pro'); ?></option>
+                                <option value="invoice"><?php esc_html_e('Facture', 'pdf-builder-pro'); ?></option>
+                                <option value="quote"><?php esc_html_e('Devis', 'pdf-builder-pro'); ?></option>
+                                <option value="business"><?php esc_html_e('Entreprise', 'pdf-builder-pro'); ?></option>
                             </select>
                         </div>
                     </form>
                 </div>
                 <div class="pdf-modal-footer">
-                    <button class="button button-secondary pdf-modal-close"><?php _e('Annuler', 'pdf-builder-pro'); ?></button>
-                    <button class="button button-primary" id="create-template-confirm"><?php _e('Créer', 'pdf-builder-pro'); ?></button>
+                    <button class="button button-secondary pdf-modal-close"><?php esc_html_e('Annuler', 'pdf-builder-pro'); ?></button>
+                    <button class="button button-primary" id="create-template-confirm"><?php esc_html_e('Créer', 'pdf-builder-pro'); ?></button>
                 </div>
             </div>
         </div>
@@ -171,34 +171,34 @@ function pdf_builder_builtin_templates_list_page()
             <div class="pdf-modal-backdrop"></div>
             <div class="pdf-modal-content">
                 <div class="pdf-modal-header">
-                    <h2><?php _e('Modifier les Paramètres', 'pdf-builder-pro'); ?></h2>
+                    <h2><?php esc_html_e('Modifier les Paramètres', 'pdf-builder-pro'); ?></h2>
                     <button class="pdf-modal-close">&times;</button>
                 </div>
                 <div class="pdf-modal-body">
                     <form id="edit-template-form">
                         <input type="hidden" id="edit-template-id" name="template_id">
                         <div class="form-group">
-                            <label for="edit-template-name"><?php _e('Nom du template', 'pdf-builder-pro'); ?></label>
+                            <label for="edit-template-name"><?php esc_html_e('Nom du template', 'pdf-builder-pro'); ?></label>
                             <input type="text" id="edit-template-name" name="name" required>
                         </div>
                         <div class="form-group">
-                            <label for="edit-template-description"><?php _e('Description', 'pdf-builder-pro'); ?></label>
+                            <label for="edit-template-description"><?php esc_html_e('Description', 'pdf-builder-pro'); ?></label>
                             <textarea id="edit-template-description" name="description"></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="edit-template-category"><?php _e('Catégorie', 'pdf-builder-pro'); ?></label>
+                            <label for="edit-template-category"><?php esc_html_e('Catégorie', 'pdf-builder-pro'); ?></label>
                             <select id="edit-template-category" name="category">
-                                <option value="general"><?php _e('Général', 'pdf-builder-pro'); ?></option>
-                                <option value="invoice"><?php _e('Facture', 'pdf-builder-pro'); ?></option>
-                                <option value="quote"><?php _e('Devis', 'pdf-builder-pro'); ?></option>
-                                <option value="business"><?php _e('Entreprise', 'pdf-builder-pro'); ?></option>
+                                <option value="general"><?php esc_html_e('Général', 'pdf-builder-pro'); ?></option>
+                                <option value="invoice"><?php esc_html_e('Facture', 'pdf-builder-pro'); ?></option>
+                                <option value="quote"><?php esc_html_e('Devis', 'pdf-builder-pro'); ?></option>
+                                <option value="business"><?php esc_html_e('Entreprise', 'pdf-builder-pro'); ?></option>
                             </select>
                         </div>
                     </form>
                 </div>
                 <div class="pdf-modal-footer">
-                    <button class="button button-secondary pdf-modal-close"><?php _e('Annuler', 'pdf-builder-pro'); ?></button>
-                    <button class="button button-primary" id="update-template-confirm"><?php _e('Mettre à jour', 'pdf-builder-pro'); ?></button>
+                    <button class="button button-secondary pdf-modal-close"><?php esc_html_e('Annuler', 'pdf-builder-pro'); ?></button>
+                    <button class="button button-primary" id="update-template-confirm"><?php esc_html_e('Mettre à jour', 'pdf-builder-pro'); ?></button>
                 </div>
             </div>
         </div>

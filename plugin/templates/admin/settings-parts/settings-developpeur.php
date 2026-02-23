@@ -1,4 +1,5 @@
-<?php // Developer tab content - Updated: 2025-11-18 20:20:00
+﻿<?php // Developer tab content - Updated: 2025-11-18 20:20:00
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 // Double-sécurité : bloquer l'accès direct sans le token développeur valide
 if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access()) {
@@ -524,10 +525,10 @@ if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access(
                         </button>
                         <div id="system_info_result" style="display: none; margin-top: 10px; padding: 15px; background: #f8fff8; border-left: 4px solid #28a745; border-radius: 4px;">
                             <strong>Configuration actuelle :</strong><br>
-                            • Mémoire PHP : <?php echo ini_get('memory_limit'); ?><br>
-                            • Timeout max : <?php echo ini_get('max_execution_time'); ?>s<br>
-                            • Upload max : <?php echo ini_get('upload_max_filesize'); ?><br>
-                            • Post max : <?php echo ini_get('post_max_size'); ?><br>
+                            • Mémoire PHP : <?php echo esc_html(ini_get('memory_limit')); ?><br>
+                            • Timeout max : <?php echo esc_html(ini_get('max_execution_time')); ?>s<br>
+                            • Upload max : <?php echo esc_html(ini_get('upload_max_filesize')); ?><br>
+                            • Post max : <?php echo esc_html(ini_get('post_max_size')); ?><br>
                             <strong>Paramètres Performance :</strong><br>
                             • FPS cible : <?php echo intval(pdf_builder_get_option('pdf_builder_canvas_fps_target', 60)); ?> FPS<br>
                             • Mémoire JS : <?php echo intval(pdf_builder_get_option('pdf_builder_canvas_memory_limit_js', 256)); ?> MB<br>

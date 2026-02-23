@@ -242,8 +242,8 @@ class PDF_Builder_GDPR_Manager {
 
         
 
-        // translators: %s: export file format (e.g. CSV, JSON)
         \wp_send_json_success([
+            // translators: %s: export file format (e.g. CSV, JSON)
             'message' => sprintf(__('Données exportées avec succès au format %s.', 'pdf-builder-pro'), strtoupper($format)),
             'download_url' => $export_result['download_url'],
             'filename' => $export_result['filename'],
@@ -989,7 +989,7 @@ class PDF_Builder_GDPR_Manager {
         ]);
 
         // 3. Supprimer toutes les métadonnées liées à l'utilisateur
-        $wpdb->delete($wpdb->postmeta, [
+        $wpdb->delete($wpdb->postmeta, [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key,WordPress.DB.SlowDBQuery.slow_db_query_meta_value
             'meta_key' => '_pdf_template_author',
             'meta_value' => $user_id
         ]);

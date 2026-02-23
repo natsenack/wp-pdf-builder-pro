@@ -56,8 +56,8 @@ class MaintenanceActionHandler
 
         return array(
             'success' => true,
-            // translators: 1: number of deleted files, 2: amount of space freed
             'message' => sprintf(
+                // translators: 1: number of deleted files, 2: amount of space freed
                 __('Fichiers temporaires nettoyés. %1$d fichiers supprimés, %2$s libérés.', 'pdf-builder-pro'),
                 $cleared_files,
                 size_format($total_size)
@@ -87,8 +87,8 @@ class MaintenanceActionHandler
         
         return array(
             'success' => true,
-            // translators: %d: number of corrupted templates deleted
             'message' => sprintf(
+                // translators: %d: number of corrupted templates deleted
                 __('Templates réparés. %d templates corrompus supprimés.', 'pdf-builder-pro'),
                 $repaired_count
             )
@@ -125,8 +125,8 @@ class MaintenanceActionHandler
         
         return array(
             'success' => true,
-            // translators: %d: number of reset options
             'message' => sprintf(
+                // translators: %d: number of reset options
                 __('Paramètres réinitialisés avec succès. %d options supprimées.', 'pdf-builder-pro'),
                 $reset_count
             )

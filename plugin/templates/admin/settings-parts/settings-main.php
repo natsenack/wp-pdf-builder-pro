@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 }
 
 if (!is_user_logged_in() || !current_user_can('manage_options')) {
-    wp_die(__('Accès refusé. Vous devez être administrateur pour accéder à cette page.', 'pdf-builder-pro'));
+    wp_die(esc_html__('Accès refusé. Vous devez être administrateur pour accéder à cette page.', 'pdf-builder-pro'));
 }
 
 // Récupération des paramètres
@@ -153,7 +153,7 @@ if (isset($_GET['updated']) && $_GET['updated'] === '1') {
                     include __DIR__ . '/settings-developpeur.php';
                     break;
                 default:
-                    echo '<p>' . __('Onglet non valide.', 'pdf-builder-pro') . '</p>';
+                    echo '<p>' . esc_html__('Onglet non valide.', 'pdf-builder-pro') . '</p>';
                     break;
             }
             ?>

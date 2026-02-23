@@ -377,7 +377,7 @@ class PDF_Builder_Reporting_System {
         $stats = array(
             'total_templates' => intval($wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}pdf_builder_templates")),
             'total_pdfs_generated' => intval(pdf_builder_get_option('pdf_builder_total_pdfs', 0)),
-            'active_users' => count(get_users(array('meta_key' => 'pdf_builder_last_activity', 'meta_compare' => '>', 'meta_value' => strtotime('-30 days')))),
+            'active_users' => count(get_users(array('meta_key' => 'pdf_builder_last_activity', 'meta_compare' => '>', 'meta_value' => strtotime('-30 days')))), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key,WordPress.DB.SlowDBQuery.slow_db_query_meta_value
             'total_logins' => intval(pdf_builder_get_option('pdf_builder_total_logins', 0)),
         );
 

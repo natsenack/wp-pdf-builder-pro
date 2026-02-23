@@ -1,4 +1,60 @@
 {
+  "1.0.3.13": {
+    "version": "1.0.3.13",
+    "released": "2026-02-23",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.3.13 - Conformit\u00e9 Plugin Check (Round 3)<\/h3>\n<ul>\n<li>\uD83D\uDEE0\uFE0F <strong>NoExplicitVersion<\/strong> : Ajout phpcs:ignore sur wp_enqueue_script react\/react-dom dans bootstrap.php<\/li>\n<li>\uD83D\uDEE0\uFE0F <strong>NonEnqueuedStylesheet<\/strong> : Ajout phpcs:ignore sur le tag &lt;link&gt; Google Fonts dans le template HTML Puppeteer<\/li>\n<li>\uD83D\uDEE0\uFE0F <strong>MissingVersion + NotInFooter<\/strong> : Correction de wp_register_script dans PDFEditorPreferences.php (null \u2192 false, ajout 5e param)<\/li>\n<li>\u26A1 <strong>SlowDBQuery<\/strong> : Ajout phpcs:ignore sur les requ\u00eates meta_key\/meta_value\/meta_query dans 5 fichiers<\/li>\n<\/ul>"
+  },
+  "1.0.3.12": {
+    "version": "1.0.3.12",
+    "released": "2026-02-23",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.3.12 - Conformit\u00e9 Plugin Check</h3>\n<ul>\n<li>\uD83D\uDD12 <strong>Plugin Check</strong> : Correction de toutes les erreurs EscapeOutput - _e() remplacer par esc_html_e(), echo __() par esc_html__(), admin_url() par esc_url(), variables HTML avec esc_html()/esc_attr()</li>\n<li>\uD83D\uDEE1\uFE0F <strong>S\u00e9curit\u00e9</strong> : Ajout de protections ABSPATH manquantes dans settings-developpeur.php et bootstrap.php</li>\n<li>\uD83D\uDD27 <strong>wp_safe_redirect</strong> : Remplacement de wp_redirect() par wp_safe_redirect() dans builtin-editor-page.php</li>\n<li>\uD83E\uDDF9 <strong>Conformit\u00e9 WordPress.org</strong> : 13 fichiers mis en conformit\u00e9 avec les standards WordPress</li>\n</ul>"
+  },
+  "1.0.3.11": {
+    "version": "1.0.3.11",
+    "released": "2026-02-23",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.3.11 - EDD Free Updates mu-plugin</h3>\n<ul>\n<li>🎉 <strong>Utilisateurs gratuits</strong> : Mise en place du mu-plugin /wp-content/mu-plugins/edd-free-update.php sur hub.threeaxe.fr</li>\n<li>📦 <strong>Auto-update sans licence</strong> : Les utilisateurs sans clé de licence téléchargent les mises à jour depuis /downloads/pdf-builder-pro-1.0.3.11.zip</li>\n<li>🔗 <strong>Intégration EDD</strong> : Le mu-plugin injecte l'URL du package dans les réponses get_version pour requêtes non authentifiées</li>\n<li>✅ <strong>Test validé</strong> : HTTP 200 sur package ZIP, auto-mise à jour fonctionnelle pour tous les utilisateurs</li>\n</ul>"
+  },
+  "1.0.3.10": {
+    "version": "1.0.3.10",
+    "released": "2026-02-23",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.3.10 - Correctif purge transient</h3>\n<ul>\n<li>\uD83D\uDD27 <strong>update_plugins transient</strong> : Purge du transient WordPress natif pour garantir un token EDD frais lors des mises \u00e0 jour</li>\n</ul>"
+  },
+  "1.0.3.9": {
+    "version": "1.0.3.9",
+    "released": "2026-02-23",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.3.9 - Logo plugin</h3>\n<ul>\n<li>\uD83D\uDD27 <strong>Logo</strong> : Ajout des ic\u00f4nes plugin-icon.png et plugin-icon-2x.png pour la page mises \u00e0 jour WordPress</li>\n</ul>"
+  },
+  "1.0.3.8": {
+    "version": "1.0.3.8",
+    "released": "2026-02-23",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.3.8 - Logs de diagnostic update checker</h3>\n<ul>\n<li>\uD83D\uDD27 <strong>Logs EDD</strong> : Traces détaillées dans get_remote_version() et check_for_updates() pour déboguer la connexion EDD</li>\n</ul>"
+  },
+  "1.0.3.7": {
+    "version": "1.0.3.7",
+    "released": "2026-02-23",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.3.7 - Correctifs syst\u00e8me de mises \u00e0 jour</h3>\n<ul>\n<li>\uD83D\uDD27 <strong>Update checker EDD</strong> : Correction du mapping new_version/download_link (EDD SL) → version/package</li>\n<li>\uD83D\uDD27 <strong>item_name</strong> : Ajout du param\u00e8tre manquant dans la requ\u00eate get_version</li>\n<li>\uD83D\uDD27 <strong>Cron wp-cron</strong> : Suppression du guard current_user_can() qui bloquait les checks automatis\u00e9s</li>\n<li>\uD83D\uDD27 <strong>Logs verbeux</strong> : Suppression des error_log syst\u00e9matiques dans le bootstrap et l'AJAX handler</li>\n</ul>"
+  },
   "1.0.3.6": {
     "version": "1.0.3.6",
     "released": "2026-02-24",

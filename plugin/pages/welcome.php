@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 }
 
 if (!current_user_can('manage_options')) {
-    wp_die(__('Accès refusé', 'pdf-builder-pro'));
+    wp_die(esc_html__('Accès refusé', 'pdf-builder-pro'));
 }
 
 // Redirection automatique vers l'éditeur

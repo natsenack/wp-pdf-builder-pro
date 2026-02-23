@@ -108,8 +108,18 @@ class PDF_Builder_Updates_Manager {
         // Le cache est géré via transient WordPress dans get_remote_version() (12h)
         // WordPress contrôle la fréquence des appels via wp_update_plugins()
 
+        error_log('[PDF Builder] check_for_updates() appelé. Version locale: ' . $this->current_version);
+
         // Récupérer la version disponible depuis EDD
         $remote_version = $this->get_remote_version();
+
+        if (!$remote_version) {
+            error_log('[PDF Builder] check_for_updates() : get_remote_version() a retourné false (échec EDD)');
+        } else {
+            error_log('[PDF Builder] check_for_updates() : version distante = ' . $remote_version['version'] . ' | package = ' . $remote_version['package']);
+            $cmp = version_compare($remote_version['version'], $this->current_version, '>');
+            error_log('[PDF Builder] check_for_updates() : update disponible = ' . ($cmp ? 'OUI' : 'NON'));
+        }
 
         if ($remote_version && version_compare($remote_version['version'], $this->current_version, '>')) {
             // Il y a une mise à jour disponible
@@ -231,8 +241,12 @@ class PDF_Builder_Updates_Manager {
         if (!$force) {
             $cached = get_transient(self::UPDATE_TRANSIENT_KEY);
             if ($cached !== false) {
+                error_log('[PDF Builder] get_remote_version() : cache HIT → version=' . ($cached['version'] ?? 'N/A'));
                 return $cached;
             }
+            error_log('[PDF Builder] get_remote_version() : cache MISS → appel EDD');
+        } else {
+            error_log('[PDF Builder] get_remote_version() : force=true → appel EDD sans cache');
         }
 
         // Requête vers EDD Software Licensing
@@ -246,6 +260,15 @@ class PDF_Builder_Updates_Manager {
             'php_version'    => phpversion(),
             'plugin_version' => $this->current_version,
         ], self::EDD_STORE_URL);
+
+        // Log de l'URL (sans la clé de licence pour la sécurité)
+        $log_url = add_query_arg([
+            'edd_action'     => 'get_version',
+            'item_id'        => self::EDD_ITEM_ID,
+            'item_name'      => 'PDF Builder Pro',
+            'plugin_version' => $this->current_version,
+        ], self::EDD_STORE_URL);
+        error_log('[PDF Builder] get_remote_version() : appel EDD → ' . $log_url);
 
         $response = wp_remote_get($api_url, [
             'timeout'    => 15,
@@ -262,6 +285,8 @@ class PDF_Builder_Updates_Manager {
         $http_code = wp_remote_retrieve_response_code($response);
         $body      = wp_remote_retrieve_body($response);
 
+        error_log('[PDF Builder] get_remote_version() : réponse HTTP ' . $http_code . ' | body (' . strlen($body) . ' octets) : ' . substr($body, 0, 500));
+
         if ($http_code !== 200 || empty($body)) {
             error_log('[PDF Builder] Update check failed. HTTP ' . $http_code);
             return false;
@@ -270,8 +295,10 @@ class PDF_Builder_Updates_Manager {
         // EDD SL peut retourner du JSON ou du PHP sérialisé selon la version
         $data = json_decode($body, true);
         if (!is_array($data)) {
+            error_log('[PDF Builder] get_remote_version() : JSON decode failed, tentative maybe_unserialize()');
             $data = (array) maybe_unserialize($body);
         }
+        error_log('[PDF Builder] get_remote_version() : clés reçues = ' . implode(', ', array_keys($data)));
 
         // EDD SL utilise "new_version" et "download_link"
         // On normalise vers notre format interne
@@ -291,6 +318,21 @@ class PDF_Builder_Updates_Manager {
             'changelog'    => $data['sections']['changelog'] ?? ($data['changelog'] ?? ''),
         ];
 
+        error_log('[PDF Builder] get_remote_version() : résultat normalisé → version=' . $normalized['version'] . ' | package=' . $normalized['package']);
+
+        // Vérification santé : si EDD fournit un package mais qu'il retourne 404,
+        // les règles de réécriture du serveur EDD sont probablement obsolètes.
+        // Solution : Réglages → Permaliens → Enregistrer sur hub.threeaxe.fr
+        if (!empty($normalized['package'])) {
+            $head = wp_remote_head($normalized['package'], ['timeout' => 5, 'sslverify' => true]);
+            $code = wp_remote_retrieve_response_code($head);
+            if ($code === 404) {
+                error_log('[PDF Builder] AVERTISSEMENT : EDD package_download retourne 404. Les permaliens de hub.threeaxe.fr sont probablement obsolètes. Aller sur Réglages → Permaliens → Enregistrer.');
+            } else {
+                error_log('[PDF Builder] get_remote_version() : package accessible (HTTP ' . $code . ')');
+            }
+        }
+
         // Mettre en cache 12h
         set_transient(self::UPDATE_TRANSIENT_KEY, $normalized, self::CACHE_TIMEOUT);
 
@@ -303,7 +345,9 @@ class PDF_Builder_Updates_Manager {
      */
     private function get_license_key() {
         $license_manager = PDF_Builder_License_Manager::getInstance();
-        return $license_manager->getLicenseKeyForLinks();
+        // get_license_key() retourne la clé en clair dans tous les contextes (cron inclus)
+        // Contrairement à getLicenseKeyForLinks() qui exige current_user_can('manage_options')
+        return $license_manager->get_license_key();
     }
 
     /**

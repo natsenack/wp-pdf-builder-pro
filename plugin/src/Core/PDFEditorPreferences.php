@@ -306,8 +306,8 @@ class PDFEditorPreferences {
      */
     public function register_empty_wp_preferences() {
         // Enregistrer les scripts vides avec un source vide
-        wp_register_script('wp-preferences', '', array(), null);
-        wp_register_script('wp-preferences-persistence', '', array(), null);
+        wp_register_script('wp-preferences', '', array(), false, false); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- Script vide pour écraser le handle WP natif
+        wp_register_script('wp-preferences-persistence', '', array(), false, false); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- Script vide pour écraser le handle WP natif
     }
 
     public function dequeue_wp_preferences($hook) {

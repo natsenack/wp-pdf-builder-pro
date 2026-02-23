@@ -593,8 +593,9 @@ class PDF_Builder_Onboarding_Manager {
                                 <div class="summary-card">
                                     <div class="card-icon">📄</div>
                                     <div class="card-content">
+                                        <h5>' .
                                         // translators: %d: number of available templates
-                                        <h5>' . sprintf(__('%d Templates disponibles', 'pdf-builder-pro'), $template_count) . '</h5>
+                                        sprintf(__('%d Templates disponibles', 'pdf-builder-pro'), $template_count) . '</h5>
                                         <p>' . __('Templates professionnels prêts à utiliser', 'pdf-builder-pro') . '</p>
                                     </div>
                                 </div>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Direct access not allowed');
@@ -146,23 +146,23 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
         <!-- Header avec actions -->
         <div class="pdfb-templates-header">
             <div class="pdfb-templates-header-left">
-                <h1><?php _e('Templates PDF', 'pdf-builder-pro'); ?></h1>
-                <p><?php _e('Créez et gérez vos modèles de documents PDF professionnels', 'pdf-builder-pro'); ?></p>
+                <h1><?php esc_html_e('Templates PDF', 'pdf-builder-pro'); ?></h1>
+                <p><?php esc_html_e('Créez et gérez vos modèles de documents PDF professionnels', 'pdf-builder-pro'); ?></p>
             </div>
             <div class="pdfb-templates-header-right">
                 <?php if ($user_can_create): ?>
                     <a href="#" class="button" id="create-template-btn">
                         <span class="dashicons dashicons-plus"></span>
-                        <?php _e('Créer un Template', 'pdf-builder-pro'); ?>
+                        <?php esc_html_e('Créer un Template', 'pdf-builder-pro'); ?>
                     </a>
                 <?php else: ?>
                     <button class="button" id="upgrade-required-btn" onclick="showUpgradeModal('gallery'); <?php if (!$is_premium): ?>showTemplateLimitNotice();<?php endif; ?>">
                         <span class="dashicons dashicons-lock"></span>
-                        <?php _e('Créer un Template (Premium)', 'pdf-builder-pro'); ?>
+                        <?php esc_html_e('Créer un Template (Premium)', 'pdf-builder-pro'); ?>
                     </button>
                 <?php endif; ?>
                 <button id="open-template-gallery" class="button" onclick="<?php if ($is_premium): ?>document.getElementById('template-gallery-modal').style.display = 'flex';<?php else: ?>showUpgradeModal('gallery'); showTemplateLimitNotice();<?php endif; ?>">
-                    🎨 <?php _e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
+                    🎨 <?php esc_html_e('Parcourir les Modèles', 'pdf-builder-pro'); ?>
                 </button>
             </div>
         </div>
@@ -175,18 +175,19 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                 </button>
                 <h4>
                     <span class="dashicons dashicons-info"></span>
-                    <?php _e('Limite de Templates Atteinte', 'pdf-builder-pro'); ?>
+                    <?php esc_html_e('Limite de Templates Atteinte', 'pdf-builder-pro'); ?>
                 </h4>
                 <p>
-                    <?php /* translators: %d: number of templates created by the user */
+                    <?php
+                    /* translators: %d: number of templates created by the user */
                     printf(
-                        __('Vous avez créé %d template gratuit sur 1. Passez en Premium pour créer des templates illimités !', 'pdf-builder-pro'),
+                        esc_html__('Vous avez créé %d template gratuit sur 1. Passez en Premium pour créer des templates illimités !', 'pdf-builder-pro'),
                         $templates_count
                     ); ?>
                 </p>
                 <a href="#" onclick="showUpgradeModal('gallery')" class="button button-primary">
                     <span class="dashicons dashicons-star-filled"></span>
-                    <?php _e('Passer en Premium - 69.99€ à vie', 'pdf-builder-pro'); ?>
+                    <?php esc_html_e('Passer en Premium - 69.99€ à vie', 'pdf-builder-pro'); ?>
                 </a>
             </div>
         <?php endif; ?>
@@ -332,7 +333,7 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                     $type_label = isset($type_labels[$template_type]) ? $type_labels[$template_type] : $type_labels['autre'];
 
                     echo '<div class="pdfb-template-type-badge" style="position: absolute; top: 10px; left: 10px; background: ' . $type_color . '; color: white; padding: 4px 8px; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
-                    echo $type_label;
+                    echo esc_html($type_label);
                     echo '</div>';
 
                     // Badge pour templates en trop (utilisateurs gratuits)
@@ -366,7 +367,7 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                         echo '</div>';
                     } else {
                         // Boutons normaux
-                        echo '<a href="' . admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template" onclick="console.log(\'[PDF Builder] Edit button clicked for template ID: ' . intval($template_id) . '\'); console.log(\'[PDF Builder] Navigating to editor for template: ' . esc_js($template_name) . '\');">✏️</a>';
+                        echo '<a href="' . esc_url(admin_url('admin.php?page=pdf-builder-react-editor&template_id=' . $template_id)) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;" title="Éditer ce template" onclick="console.log(\'[PDF Builder] Edit button clicked for template ID: ' . intval($template_id) . '\'); console.log(\'[PDF Builder] Navigating to editor for template: ' . esc_js($template_name) . '\');">✏️</a>';
                         echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . esc_js($button_action) . '(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Paramètres">⚙️</button>';
                         if ($is_premium) {
                             echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="duplicateTemplate(' . intval($template_id) . ', \'' . esc_js($template_name) . '\')" title="Dupliquer ce template">📋</button>';
@@ -382,7 +383,7 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
 
                 echo '</div>';
             } else {
-                echo '<p>' . __('Template principal introuvable. Veuillez contacter l\'administrateur.', 'pdf-builder-pro') . '</p>';
+                echo '<p>' . esc_html__('Template principal introuvable. Veuillez contacter l\'administrateur.', 'pdf-builder-pro') . '</p>';
             }
             ?>
         </div>
@@ -471,7 +472,7 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                                 <div class="predefined-template-card" data-category="<?php echo esc_attr($template['category']); ?>" style="border: 2px solid #e1e8ed; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)';">
                                     <div style="height: 160px; background: linear-gradient(135deg, <?php echo $template['category'] === 'facture' ? '#667eea 0%, #764ba2 100%' : ($template['category'] === 'devis' ? '#28a745 0%, #20c997 100%' : '#6c757d 0%, #495057 100%'); ?>); display: flex; align-items: center; justify-content: center; position: relative;">
                                         <div style="font-size: 4rem; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);"><?php echo esc_html($template['icon']); ?></div>
-                                        <div style="position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.9); color: <?php echo $type_color; ?>; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;"><?php echo esc_html(strtoupper($template['category'])); ?></div>
+                                        <div style="position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.9); color: <?php echo esc_attr($type_color); ?>; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;"><?php echo esc_html(strtoupper($template['category'])); ?></div>
                                         <?php if ($template['is_premium']): ?>
                                         <div style="position: absolute; top: 15px; right: 15px; background: #ffd700; color: #000; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">PREMIUM</div>
                                         <?php endif; ?>
@@ -480,9 +481,9 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                                         <h3 style="margin: 0 0 10px 0; color: #23282d; font-size: 18px;"><?php echo esc_html($template['name']); ?></h3>
                                         <p style="margin: 0 0 15px 0; color: #666; font-size: 14px;"><?php echo esc_html($template['description']); ?></p>
                                         <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;">
-                                            <span style="background: #f0f8ff; color: <?php echo $type_color; ?>; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Template prédéfini</span>
-                                            <span style="background: #f0f8ff; color: <?php echo $type_color; ?>; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Prêt à utiliser</span>
-                                            <span style="background: #f0f8ff; color: <?php echo $type_color; ?>; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Personnalisable</span>
+                                            <span style="background: #f0f8ff; color: <?php echo esc_attr($type_color); ?>; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Template prédéfini</span>
+                                            <span style="background: #f0f8ff; color: <?php echo esc_attr($type_color); ?>; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Prêt à utiliser</span>
+                                            <span style="background: #f0f8ff; color: <?php echo esc_attr($type_color); ?>; padding: 3px 8px; border-radius: 10px; font-size: 11px;">✓ Personnalisable</span>
                                         </div>
                                         <button class="button button-primary" style="width: 100%; border-radius: 6px;" onclick="selectPredefinedTemplate('<?php echo esc_attr($template['slug']); ?>')">Charger dans l'Éditeur</button>
                                     </div>
@@ -497,8 +498,8 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
 
         <div id="no-templates" style="display: none; text-align: center; padding: 40px; color: var(--pdf-secondary);">
             <div style="font-size: 3rem; margin-bottom: 1rem;">📄</div>
-            <h3 style="color: var(--pdf-text);"><?php _e('Aucun template trouvé', 'pdf-builder-pro'); ?></h3>
-            <p><?php _e('Créez votre premier template pour commencer à concevoir des PDF personnalisés.', 'pdf-builder-pro'); ?></p>
+            <h3 style="color: var(--pdf-text);"><?php esc_html_e('Aucun template trouvé', 'pdf-builder-pro'); ?></h3>
+            <p><?php esc_html_e('Créez votre premier template pour commencer à concevoir des PDF personnalisés.', 'pdf-builder-pro'); ?></p>
         </div>
     </div>
 </div>
@@ -589,7 +590,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var createBtn = document.getElementById('create-template-btn');
     if (createBtn) {
         createBtn.addEventListener('click', function() {
-            window.location.href = '<?php echo admin_url('admin.php?page=pdf-builder-react-editor'); ?>';
+            window.location.href = '<?php echo esc_url(admin_url('admin.php?page=pdf-builder-react-editor')); ?>';
         });
     }
 

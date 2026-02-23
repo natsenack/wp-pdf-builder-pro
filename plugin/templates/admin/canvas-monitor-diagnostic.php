@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Outil de diagnostic pour le système de monitoring des cartes canvas
  * Permet de vérifier l'état du système et diagnostiquer les problèmes
@@ -149,11 +149,11 @@ $analysis = analyze_canvas_monitoring_system($settings);
             <tbody>
                 <tr>
                     <td><strong>Paramètres totaux</strong></td>
-                    <td><?php echo $analysis['details']['total_settings']; ?></td>
+                    <td><?php echo esc_html($analysis['details']['total_settings']); ?></td>
                 </tr>
                 <tr>
                     <td><strong>Paramètres Canvas</strong></td>
-                    <td><?php echo $analysis['details']['canvas_settings_count']; ?></td>
+                    <td><?php echo esc_html($analysis['details']['canvas_settings_count']); ?></td>
                 </tr>
                 <tr>
                     <td><strong>Problèmes détectés</strong></td>
@@ -161,7 +161,7 @@ $analysis = analyze_canvas_monitoring_system($settings);
                 </tr>
                 <tr>
                     <td><strong>Dernière analyse</strong></td>
-                    <td><?php echo $analysis['details']['last_analysis']; ?></td>
+                    <td><?php echo esc_html($analysis['details']['last_analysis']); ?></td>
                 </tr>
             </tbody>
         </table>
@@ -243,7 +243,7 @@ function resetCanvasDefaults() {
             },
             body: new URLSearchParams({
                 action: 'reset_canvas_defaults',
-                nonce: '<?php echo wp_create_nonce('reset_canvas_defaults'); ?>'
+                nonce: '<?php echo esc_attr(wp_create_nonce('reset_canvas_defaults')); ?>'
             })
         })
         .then(response => response.json())

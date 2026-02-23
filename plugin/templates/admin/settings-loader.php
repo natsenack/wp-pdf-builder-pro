@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Settings Loader
  * Charge les styles et scripts pour la page de paramètres
@@ -185,8 +185,8 @@ function pdf_builder_load_settings_assets($hook) {
         // Rendre pdf_builder_ajax disponible globalement pour les scripts inline
         if (typeof window.pdf_builder_ajax === 'undefined') {
             window.pdf_builder_ajax = {
-                ajax_url: '<?php echo admin_url('admin-ajax.php'); ?>',
-                nonce: '<?php echo $main_nonce; ?>'
+                ajax_url: '<?php echo esc_url(admin_url('admin-ajax.php')); ?>',
+                nonce: '<?php echo esc_attr($main_nonce); ?>'
             };
         }
         </script>

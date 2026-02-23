@@ -391,8 +391,8 @@ class PDF_Builder_Backup_Restore_Manager
                 $imported++;
 
             } catch (\Exception $e) {
-                // translators: 1: template name, 2: error message
                 $errors[] = sprintf(
+                    // translators: 1: template name, 2: error message
                     __('Erreur lors de l\'import du template "%1$s": %2$s', 'pdf-builder-pro'),
                     $template_data['name'],
                     $e->getMessage()

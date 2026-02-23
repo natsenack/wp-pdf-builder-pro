@@ -1,4 +1,4 @@
-<?php
+﻿<?php
     /**
      * PDF Builder Pro - Content Settings Tab
      * Canvas and design configuration settings
@@ -31,14 +31,14 @@
     if (!function_exists('selected')) {
         function selected($selected, $current = true, $echo = true) {
             $result = $selected == $current ? ' selected="selected"' : '';
-            if ($echo) echo $result;
+            if ($echo) echo wp_kses_post($result);
             return $result;
         }
     }
     if (!function_exists('checked')) {
         function checked($checked, $current = true, $echo = true) {
             $result = $checked == $current ? ' checked="checked"' : '';
-            if ($echo) echo $result;
+            if ($echo) echo wp_kses_post($result);
             return $result;
         }
     }
@@ -240,7 +240,7 @@
                                         </div>
                                         
                                         <!-- Canvas miniature avec couleurs réelles -->
-                                        <div class="pdfb-mini-canvas-preview" style="width: <?php echo $previewWidth; ?>px; height: <?php echo $previewHeight; ?>px; background-color: <?php echo esc_attr($bgColor); ?>; border-color: <?php echo esc_attr($borderColor); ?>;">
+                                        <div class="pdfb-mini-canvas-preview" style="width: <?php echo esc_attr(intval($previewWidth)); ?>px; height: <?php echo esc_attr(intval($previewHeight)); ?>px; background-color: <?php echo esc_attr($bgColor); ?>; border-color: <?php echo esc_attr($borderColor); ?>;">
                                             <!-- Badge du format -->
                                             <div class="pdfb-format-badge"><?php echo esc_html($format); ?></div>
                                             
@@ -260,10 +260,10 @@
                                         
                                         <!-- Indicateurs de dimensions -->
                                         <div class="pdfb-dimension-indicator width-indicator">
-                                            <span><?php echo $width; ?>px</span>
+                                            <span><?php echo esc_html(intval($width)); ?>px</span>
                                         </div>
                                         <div class="pdfb-dimension-indicator height-indicator">
-                                            <span><?php echo $height; ?>px</span>
+                                            <span><?php echo esc_html(intval($height)); ?>px</span>
                                         </div>
                                     </div>
                                     
@@ -271,15 +271,15 @@
                                     <div class="pdfb-preview-details">
                                         <div class="pdfb-detail-item">
                                             <span class="pdfb-detail-label">DPI</span>
-                                            <span class="pdfb-detail-value"><?php echo $dpi; ?></span>
+                                            <span class="pdfb-detail-value"><?php echo esc_html(intval($dpi)); ?></span>
                                         </div>
                                         <div class="pdfb-detail-item">
                                             <span class="pdfb-detail-label">Taille réelle</span>
-                                            <span class="pdfb-detail-value"><?php echo $widthMM; ?>×<?php echo $heightMM; ?>mm</span>
+                                            <span class="pdfb-detail-value"><?php echo esc_html(intval($widthMM)); ?>×<?php echo esc_html(intval($heightMM)); ?>mm</span>
                                         </div>
                                         <div class="pdfb-detail-item">
                                             <span class="pdfb-detail-label">Ratio</span>
-                                            <span class="pdfb-detail-value"><?php echo round($ratio, 2); ?></span>
+                                            <span class="pdfb-detail-value"><?php echo esc_html(round($ratio, 2)); ?></span>
                                         </div>
                                     </div>
                                     
@@ -786,7 +786,7 @@
                         // Collecter les données à sauvegarder
                         var formData = new FormData();
                         formData.append('action', 'pdf_builder_save_canvas_modal_settings');
-                        formData.append('nonce', '<?php echo \PDF_Builder\Admin\Handlers\NonceManager::createNonce(); ?>');
+                        formData.append('nonce', '<?php echo esc_attr(\PDF_Builder\Admin\Handlers\NonceManager::createNonce()); ?>');
                         formData.append('category', category);
 
                         // Collecter TOUS les champs de formulaire dans la modale

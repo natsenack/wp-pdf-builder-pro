@@ -113,7 +113,7 @@ jQuery(document).ready(function($) {
         $(this).prop('disabled', true).text(i18n.diagnosing);
         var ajaxData = {
             action: 'pdf_builder_diagnose_cron',
-            nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
+            nonce: '<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>'
         };
         
 
@@ -159,7 +159,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_repair_cron',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
+                nonce: '<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>'
             },
             success: function(response) {
                 
@@ -190,7 +190,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_get_backup_stats',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
+                nonce: '<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>'
             },
             success: function(response) {
                 
@@ -225,7 +225,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_create_backup',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
+                nonce: '<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>'
             },
             success: function(response) {
                 
@@ -281,7 +281,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_check_wp_cron_config',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
+                nonce: '<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>'
             },
             success: function(response) {
                 
@@ -306,7 +306,7 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'pdf_builder_check_scheduled_tasks',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
+                nonce: '<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>'
             },
             success: function(response) {
                 
@@ -328,7 +328,7 @@ jQuery(document).ready(function($) {
 
         // Third check: Cron response test
         $.ajax({
-            url: '<?php echo admin_url('admin-ajax.php?action=pdf_builder_cron_test&nonce=' . wp_create_nonce('pdf_builder_cron_test')); ?>',
+            url: '<?php echo esc_url(admin_url('admin-ajax.php?action=pdf_builder_cron_test&nonce=' . wp_create_nonce('pdf_builder_cron_test'))) ?>',
             type: 'GET',
             timeout: 10000, // 10 second timeout
             success: function(response) {

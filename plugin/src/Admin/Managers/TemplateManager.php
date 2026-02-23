@@ -478,7 +478,7 @@ class TemplateManager
         ];
 
         if ($type) {
-            $args['meta_query'] = [
+            $args['meta_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
                 [
                     'key' => '_pdf_template_type',
                     'value' => $type,
@@ -513,7 +513,7 @@ class TemplateManager
             'post_type' => 'pdf_template',
             'posts_per_page' => 1,
             'post_status' => 'publish',
-            'meta_query' => [
+            'meta_query' => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
                 [
                     'key' => '_pdf_template_default',
                     'value' => '1',

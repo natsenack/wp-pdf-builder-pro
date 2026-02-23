@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 
 // Vérifier les permissions
 if (!current_user_can('manage_options')) {
-    wp_die(__('Vous n\'avez pas les permissions nécessaires.', 'pdf-builder-pro'));
+    wp_die(esc_html__('Vous n\'avez pas les permissions nécessaires.', 'pdf-builder-pro'));
 }
 
 // Importer les classes nécessaires

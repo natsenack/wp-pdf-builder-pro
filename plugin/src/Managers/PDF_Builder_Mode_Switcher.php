@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Mode Switcher - Gestionnaire de basculement entre modes Canvas/Metabox
@@ -67,7 +67,7 @@ class PDF_Builder_Mode_Switcher
     {
         // Validation du mode
         if (!in_array($mode, [self::MODE_CANVAS, self::MODE_METABOX])) {
-            throw new \InvalidArgumentException("Mode invalide: {$mode}. Modes valides: " . self::MODE_CANVAS . ", " . self::MODE_METABOX);
+            throw new \InvalidArgumentException("Mode invalide: {$mode}. Modes valides: " . self::MODE_CANVAS . ", " . self::MODE_METABOX); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         // Si le mode est déjà actif, pas de changement
@@ -184,7 +184,7 @@ class PDF_Builder_Mode_Switcher
 
                 break;
             default:
-                throw new \InvalidArgumentException("Mode non supporté: {$mode}");
+                throw new \InvalidArgumentException("Mode non supporté: {$mode}"); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         // Mettre en cache

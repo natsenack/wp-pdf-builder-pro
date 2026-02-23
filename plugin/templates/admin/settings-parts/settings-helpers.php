@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Settings Helper Functions
  * Common utility functions used across all settings tabs
@@ -33,7 +33,7 @@ if (!function_exists('pdf_builder_safe_checked')) {
             return checked($checked, $current, $echo);
         }
         $result = checked($checked, $current, false);
-        if ($echo) echo $result;
+        if ($echo) echo wp_kses_post($result);
         return $result;
     }
 }
@@ -47,7 +47,7 @@ if (!function_exists('pdf_builder_safe_selected')) {
             return selected($selected, $current, $echo);
         }
         $result = selected($selected, $current, false);
-        if ($echo) echo $result;
+        if ($echo) echo wp_kses_post($result);
         return $result;
     }
 }

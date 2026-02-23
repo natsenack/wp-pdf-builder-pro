@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 namespace PDF_Builder\Admin;
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
@@ -264,16 +264,16 @@ class PDF_Builder_Predefined_Templates_Manager
     public function renderAdminPage()
     {
         if (!current_user_can('manage_options')) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires.', 'pdf-builder-pro'));
+            wp_die(esc_html__('Vous n\'avez pas les permissions nécessaires.', 'pdf-builder-pro'));
         }
 
         // Vérifier que le mode développeur est actif (token wp-config + BDD)
         if (!function_exists('pdf_builder_is_developer_mode_active') || !pdf_builder_is_developer_mode_active()) {
             ?>
             <div class="wrap">
-                <h1><?php _e('🔒 Accès Restreint', 'pdf-builder-pro'); ?></h1>
+                <h1><?php esc_html_e('🔒 Accès Restreint', 'pdf-builder-pro'); ?></h1>
                 <div class="notice notice-warning">
-                    <p><?php _e('Le mode développeur n\'est pas activé.', 'pdf-builder-pro'); ?></p>
+                    <p><?php esc_html_e('Le mode développeur n\'est pas activé.', 'pdf-builder-pro'); ?></p>
                 </div>
             </div>
             <?php
@@ -292,29 +292,29 @@ class PDF_Builder_Predefined_Templates_Manager
         
         <div class="wrap">
             <div style="display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-pack: justify; -webkit-justify-content: space-between; -moz-box-pack: justify; -ms-flex-pack: justify; justify-content: space-between; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center; margin-bottom: 20px;">
-                <h1 style="margin: 0;"><?php _e('📝 Gestion des Modèles Prédéfinis', 'pdf-builder-pro'); ?></h1>
+                <h1 style="margin: 0;"><?php esc_html_e('📝 Gestion des Modèles Prédéfinis', 'pdf-builder-pro'); ?></h1>
                 <button id="developer-logout-btn" class="button button-secondary" style="background: #dc3545; border-color: #dc3545; color: white;">
-                    🚪 <?php _e('Déconnexion Développeur', 'pdf-builder-pro'); ?>
+                    🚪 <?php esc_html_e('Déconnexion Développeur', 'pdf-builder-pro'); ?>
                 </button>
             </div>
             <div class="pdfb-pdf-builder-predefined-container">
                 <!-- Liste des modèles -->
                 <div class="pdfb-pdfb-templates-list-section">
-                    <h2><?php _e('🎨 Galerie de Modèles Prédéfinis', 'pdf-builder-pro'); ?></h2>
+                    <h2><?php esc_html_e('🎨 Galerie de Modèles Prédéfinis', 'pdf-builder-pro'); ?></h2>
                     <div class="pdfb-templates-actions">
                         <button id="new-template-btn" class="button button-primary">
-                            ➕ <?php _e('Nouveau Modèle', 'pdf-builder-pro'); ?>
+                            ➕ <?php esc_html_e('Nouveau Modèle', 'pdf-builder-pro'); ?>
                         </button>
                         <button id="refresh-templates-btn" class="button button-secondary">
-                            🔄 <?php _e('Actualiser', 'pdf-builder-pro'); ?>
+                            🔄 <?php esc_html_e('Actualiser', 'pdf-builder-pro'); ?>
                         </button>
                     </div>
                     <div id=" pdfb-templates-list " class="pdfb-templates-list">
                         <?php if (empty($templates)) :
                             ?>
                             <div class="pdfb-pdfb-no-templates">
-                                <p><?php _e('Aucun modèle prédéfini trouvé.', 'pdf-builder-pro'); ?></p>
-                                <p><?php _e('Cliquez sur "Nouveau Modèle" pour créer votre premier modèle.', 'pdf-builder-pro'); ?></p>
+                                <p><?php esc_html_e('Aucun modèle prédéfini trouvé.', 'pdf-builder-pro'); ?></p>
+                                <p><?php esc_html_e('Cliquez sur "Nouveau Modèle" pour créer votre premier modèle.', 'pdf-builder-pro'); ?></p>
                             </div>
                             <?php
                         else :
@@ -326,10 +326,10 @@ class PDF_Builder_Predefined_Templates_Manager
                                         <h3><?php echo esc_html($template['name']); ?></h3>
                                         <div class="pdfb-template-actions">
                                             <button class="button button-small edit-template" data-slug="<?php echo esc_attr($template['slug']); ?>">
-                                                ✏️ <?php _e('Éditer', 'pdf-builder-pro'); ?>
+                                                ✏️ <?php esc_html_e('Éditer', 'pdf-builder-pro'); ?>
                                             </button>
                                             <button class="button button-small button-danger delete-template" data-slug="<?php echo esc_attr($template['slug']); ?>">
-                                                🗑️ <?php _e('Supprimer', 'pdf-builder-pro'); ?>
+                                                🗑️ <?php esc_html_e('Supprimer', 'pdf-builder-pro'); ?>
                                             </button>
                                         </div>
                                     </div>
@@ -339,17 +339,17 @@ class PDF_Builder_Predefined_Templates_Manager
                                     </div>
                                     <div class="template-json">
                                         <details>
-                                            <summary><?php _e('📄 Voir le JSON', 'pdf-builder-pro'); ?></summary>
+                                            <summary><?php esc_html_e('📄 Voir le JSON', 'pdf-builder-pro'); ?></summary>
                                             <pre><?php echo esc_html(wp_json_encode($template, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)); ?></pre>
                                         </details>
                                     </div>
                                     <div class="pdfb-pdfb-template-preview">
                                         <?php if (!empty($template['preview_svg'])) :
                                             ?>
-                                            <img src="data:image/svg+xml;base64,<?php echo base64_encode($template['preview_svg']); ?>" alt="Aperçu" />
+                                            <img src="data:image/svg+xml;base64,<?php echo esc_attr(base64_encode($template['preview_svg'])); ?>" alt="Aperçu" />
                                             <div class="preview-actions">
                                                 <button class="regenerate-preview button button-small" data-slug="<?php echo esc_attr($template['slug']); ?>">
-                                                    🔄 <?php _e('Régénérer Aperçu', 'pdf-builder-pro'); ?>
+                                                    🔄 <?php esc_html_e('Régénérer Aperçu', 'pdf-builder-pro'); ?>
                                                 </button>
                                             </div>
                                             <?php
@@ -357,7 +357,7 @@ class PDF_Builder_Predefined_Templates_Manager
                                             ?>
                                             <div class="no-preview">
                                                 <button class="generate-preview button button-small" data-slug="<?php echo esc_attr($template['slug']); ?>">
-                                                    🎨 <?php _e('Générer Aperçu', 'pdf-builder-pro'); ?>
+                                                    🎨 <?php esc_html_e('Générer Aperçu', 'pdf-builder-pro'); ?>
                                                 </button>
                                             </div>
                                             <?php
@@ -372,42 +372,42 @@ class PDF_Builder_Predefined_Templates_Manager
                 </div>
                 <!-- Éditeur de modèle -->
                 <div class="pdfb-template-editor-section">
-                    <h2 id="editor-title"><?php _e('Éditeur de Modèle', 'pdf-builder-pro'); ?></h2>
+                    <h2 id="editor-title"><?php esc_html_e('Éditeur de Modèle', 'pdf-builder-pro'); ?></h2>
                     <form id="template-form">
                         <div class="form-row">
-                            <label for="template-slug"><?php _e('Slug du modèle', 'pdf-builder-pro'); ?> *</label>
+                            <label for="template-slug"><?php esc_html_e('Slug du modèle', 'pdf-builder-pro'); ?> *</label>
                             <input type="text" id="template-slug" name="slug" required
                                    placeholder="ex: facture-moderne" />
-                            <small><?php _e('Identifiant unique (lettres minuscules, tirets)', 'pdf-builder-pro'); ?></small>
+                            <small><?php esc_html_e('Identifiant unique (lettres minuscules, tirets)', 'pdf-builder-pro'); ?></small>
                         </div>
                         <div class="form-row">
-                            <label for="template-name"><?php _e('Nom du modèle', 'pdf-builder-pro'); ?> *</label>
+                            <label for="template-name"><?php esc_html_e('Nom du modèle', 'pdf-builder-pro'); ?> *</label>
                             <input type="text" id="template-name" name="name" required
                                    placeholder="ex: Facture Moderne" />
                         </div>
                         <div class="form-row">
-                            <label for="template-category"><?php _e('Catégorie', 'pdf-builder-pro'); ?> *</label>
+                            <label for="template-category"><?php esc_html_e('Catégorie', 'pdf-builder-pro'); ?> *</label>
                             <select id="template-category" name="category" required>
-                                <option value="facture"><?php _e('Facture', 'pdf-builder-pro'); ?></option>
-                                <option value="devis"><?php _e('Devis', 'pdf-builder-pro'); ?></option>
+                                <option value="facture"><?php esc_html_e('Facture', 'pdf-builder-pro'); ?></option>
+                                <option value="devis"><?php esc_html_e('Devis', 'pdf-builder-pro'); ?></option>
                                 <!-- Catégories désactivées temporairement -->
-                                <!-- <option value="commande"><?php _e('Bon de commande', 'pdf-builder-pro'); ?></option> -->
-                                <!-- <option value="contrat"><?php _e('Contrat', 'pdf-builder-pro'); ?></option> -->
-                                <!-- <option value="newsletter"><?php _e('Newsletter', 'pdf-builder-pro'); ?></option> -->
-                                <!-- <option value="autre"><?php _e('Autre', 'pdf-builder-pro'); ?></option> -->
+                                <!-- <option value="commande"><?php esc_html_e('Bon de commande', 'pdf-builder-pro'); ?></option> -->
+                                <!-- <option value="contrat"><?php esc_html_e('Contrat', 'pdf-builder-pro'); ?></option> -->
+                                <!-- <option value="newsletter"><?php esc_html_e('Newsletter', 'pdf-builder-pro'); ?></option> -->
+                                <!-- <option value="autre"><?php esc_html_e('Autre', 'pdf-builder-pro'); ?></option> -->
                             </select>
                         </div>
                         <div class="form-row">
-                            <label for="template-description"><?php _e('Description', 'pdf-builder-pro'); ?> *</label>
+                            <label for="template-description"><?php esc_html_e('Description', 'pdf-builder-pro'); ?> *</label>
                             <textarea id="template-description" name="description" rows="3" required
                                       placeholder="Description du modèle..."></textarea>
                         </div>
                         <div class="form-row">
-                            <label for="template-icon"><?php _e('Icône (emoji)', 'pdf-builder-pro'); ?></label>
+                            <label for="template-icon"><?php esc_html_e('Icône (emoji)', 'pdf-builder-pro'); ?></label>
                             <input type="text" id="template-icon" name="icon" placeholder="ex: 🧾" />
                         </div>
                         <div class="form-row">
-                            <label for="template-json"><?php _e('Configuration JSON', 'pdf-builder-pro'); ?> *</label>
+                            <label for="template-json"><?php esc_html_e('Configuration JSON', 'pdf-builder-pro'); ?> *</label>
                             <div class="pdfb-json-editor-container">
                                 <textarea id="template-json" name="json" rows="20" required
                                           placeholder='{
@@ -417,17 +417,17 @@ class PDF_Builder_Predefined_Templates_Manager
   "version": "1.0"
 }'></textarea>
                             </div>
-                            <small><?php _e('Collez ici le JSON exporté depuis l\'éditeur de templates', 'pdf-builder-pro'); ?></small>
+                            <small><?php esc_html_e('Collez ici le JSON exporté depuis l\'éditeur de templates', 'pdf-builder-pro'); ?></small>
                         </div>
                         <div class="form-actions">
                             <button type="submit" id="save-template-btn" class="button button-primary">
-                                💾 <?php _e('Sauvegarder', 'pdf-builder-pro'); ?>
+                                💾 <?php esc_html_e('Sauvegarder', 'pdf-builder-pro'); ?>
                             </button>
                             <button type="button" id="cancel-edit-btn" class="button button-secondary">
-                                🚪 <?php _e('Fermer', 'pdf-builder-pro'); ?>
+                                🚪 <?php esc_html_e('Fermer', 'pdf-builder-pro'); ?>
                             </button>
                             <button type="button" id="validate-json-btn" class="button button-secondary">
-                                ✅ <?php _e('Valider JSON', 'pdf-builder-pro'); ?>
+                                ✅ <?php esc_html_e('Valider JSON', 'pdf-builder-pro'); ?>
                             </button>
                         </div>
                     </form>
@@ -438,7 +438,7 @@ class PDF_Builder_Predefined_Templates_Manager
         <div id="preview-modal" class="pdfb-pdf-builder-modal" style="display: none;">
             <div class="pdfb-modal-content preview-pdfb-modal-content">
                 <div class="pdfb-pdfb-modal-header">
-                    <h3><?php _e('Aperçu du Modèle', 'pdf-builder-pro'); ?></h3>
+                    <h3><?php esc_html_e('Aperçu du Modèle', 'pdf-builder-pro'); ?></h3>
                     <button class="close-modal">&times;</button>
                 </div>
                 <div class="pdfb-pdfb-modal-toolbar">
@@ -465,7 +465,7 @@ class PDF_Builder_Predefined_Templates_Manager
                     <div id="preview-container" class="pdfb-preview-image-container">
                         <div class="pdfb-preview-loading">
                             <div class="pdfb-spinner"></div>
-                            <p><?php _e('Génération de l\'aperçu...', 'pdf-builder-pro'); ?></p>
+                            <p><?php esc_html_e('Génération de l\'aperçu...', 'pdf-builder-pro'); ?></p>
                         </div>
                     </div>
                 </div>
@@ -482,26 +482,26 @@ class PDF_Builder_Predefined_Templates_Manager
         
         <div class="wrap">
             <div class="pdfb-developer-login-container">
-                <h1><?php _e('🔐 Accès Développeur', 'pdf-builder-pro'); ?></h1>
+                <h1><?php esc_html_e('🔐 Accès Développeur', 'pdf-builder-pro'); ?></h1>
                 <p class="description">
-                    <?php _e('Cette section est réservée aux développeurs. Entrez le mot de passe développeur pour continuer.', 'pdf-builder-pro'); ?>
+                    <?php esc_html_e('Cette section est réservée aux développeurs. Entrez le mot de passe développeur pour continuer.', 'pdf-builder-pro'); ?>
                 </p>
                 <form id=" pdfb-developer-login-form " class="pdfb-developer-login-form">
                     <?php wp_nonce_field('pdf_builder_developer_auth', 'nonce'); ?>
                     <!-- Champ username caché pour l'accessibilité des gestionnaires de mots de passe -->
                     <input type="text" name="username" style="display: none; visibility: hidden;" autocomplete="username" />
                     <div class="form-row">
-                        <label for="developer-password"><?php _e('Mot de passe développeur', 'pdf-builder-pro'); ?></label>
+                        <label for="developer-password"><?php esc_html_e('Mot de passe développeur', 'pdf-builder-pro'); ?></label>
                         <div style="position: relative; display: -webkit-box; display: -webkit-flex; display: -moz-box; display: -ms-flexbox; display: flex; -webkit-box-align: center; -webkit-align-items: center; -moz-box-align: center; -ms-flex-align: center; align-items: center;">
                             <input type="password" id="developer-password" name="password" required
-                                   placeholder="<?php _e('Entrez le mot de passe...', 'pdf-builder-pro'); ?>" autocomplete="current-password" style="flex: 1; padding-right: 40px;" />
+                                   placeholder="<?php esc_html_e('Entrez le mot de passe...', 'pdf-builder-pro'); ?>" autocomplete="current-password" style="flex: 1; padding-right: 40px;" />
                             <button type="button" id="toggle-password-visibility" style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; font-size: 18px; padding: 0;">
                                 👁️
                             </button>
                         </div>
                     </div>
                     <button type="submit" class="button button-primary">
-                        🔓 <?php _e('Se connecter', 'pdf-builder-pro'); ?>
+                        🔓 <?php esc_html_e('Se connecter', 'pdf-builder-pro'); ?>
                     </button>
                 </form>
                 <div id=" pdfb-login-message " class="pdfb-login-message"></div>

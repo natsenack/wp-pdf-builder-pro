@@ -1,9 +1,11 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Bootstrap
  * Chargement différé des fonctionnalités du plugin
  */
+
+if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit('Direct access not allowed');
@@ -107,7 +109,7 @@ SCRIPT;
     $script = str_replace('%AJAX_URL%', $ajax_url ? \esc_js($ajax_url) : '', $script);
     $script = str_replace('%TIMESTAMP%', time(), $script);
     
-    echo $script;
+    echo $script; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 
 // DÉSACTIVER CE HOOK POUR L'INSTANT - IL CAUSE UNE ERREUR D'INITIALISATION
@@ -436,8 +438,9 @@ if (function_exists('add_action')) {
                 if (!current_user_can('manage_options')) {
                     wp_send_json_error(['message' => 'Accès refusé'], 403);
                 }
-                // Vider le cache transient pour forcer un vrai appel
+                // Vider notre cache ET le transient natif WordPress (contient le package URL)
                 delete_transient(\PDF_Builder\Managers\PDF_Builder_Updates_Manager::UPDATE_TRANSIENT_KEY);
+                delete_site_transient('update_plugins');
                 $result = $updates_manager->get_remote_version(true);
                 wp_send_json_success([
                     'current_version' => $updates_manager->get_current_version(),
@@ -820,8 +823,8 @@ function pdf_builder_load_core()
     // 🚀 CHARGEMENT OPTIMISÉ DE REACT POUR L'ÉDITEUR
     add_action('admin_enqueue_scripts', function($hook) {
         // Charger React sur TOUTES les pages admin pour éviter les problèmes de dépendances
-        \wp_enqueue_script('react', false, [], false, true);
-        \wp_enqueue_script('react-dom', false, ['react'], false, true);
+        \wp_enqueue_script('react', false, [], false, true); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion -- Re-enqueue du handle WordPress natif
+        \wp_enqueue_script('react-dom', false, ['react'], false, true); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion -- Re-enqueue du handle WordPress natif
 
         // Charger seulement le bundle sur la page de l'éditeur React
         if ($hook === 'pdf-builder_page_pdf-builder-react-editor' || (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-react-editor')) {

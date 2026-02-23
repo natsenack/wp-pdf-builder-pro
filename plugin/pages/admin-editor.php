@@ -16,7 +16,7 @@ $has_permission = current_user_can('manage_options') ||
                   ($is_preview_mode && current_user_can('edit_shop_orders'));
 
 if (!$has_permission) {
-    wp_die(__('Accès refusé', 'pdf-builder-pro'));
+    wp_die(esc_html__('Accès refusé', 'pdf-builder-pro'));
 }
 
 // Inclure les assets React

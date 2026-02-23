@@ -113,8 +113,8 @@ class PDF_Builder_Template_Migrator
 
             $updated = $wpdb->update(
                 $table,
-                ['meta_value' => json_encode($migrated)],
-                ['post_id' => $row->post_id, 'meta_key' => $meta_key],
+                ['meta_value' => json_encode($migrated)], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+                ['post_id' => $row->post_id, 'meta_key' => $meta_key], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
                 ['%s'],
                 ['%d', '%s']
             );
