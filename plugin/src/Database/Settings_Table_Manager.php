@@ -27,125 +27,76 @@ class Settings_Table_Manager {
 
     /**
      * Retourne le nom complet de la table avec le bon préfixe WordPress.
+     * Le préfixe est lu directement depuis $table_prefix (défini dans wp-config.php).
      */
     public static function get_table_name(): string {
-        global $wpdb;
-        return $wpdb->prefix . 'pdf_builder_settings';
+        global $table_prefix;
+        return $table_prefix . 'pdf_builder_settings';
     }
 
     /**
-     * Créer la table lors de l'activation + migration depuis l'ancienne table wp_ hardcodée.
+     * Créer la table lors de l'activation.
      */
     public static function create_table() {
         global $wpdb;
 
-        $table_name    = $wpdb->prefix . 'pdf_builder_settings';
-        $legacy_table  = self::LEGACY_TABLE_NAME; // 'wp_pdf_builder_settings'
+        $table_name      = self::get_table_name();
         $charset_collate = $wpdb->get_charset_collate();
 
-        // Vérifier si la table existe déjà via information_schema (plus fiable)
+        // Vérifier si la table existe déjà
         $table_exists = $wpdb->get_var( $wpdb->prepare(
             "SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s",
             DB_NAME,
             $table_name
         ) );
 
-        if ( ! $table_exists ) {
-            $sql = "CREATE TABLE IF NOT EXISTS $table_name (
-                option_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                option_name varchar(191) NOT NULL DEFAULT '',
-                option_value longtext NOT NULL,
-                autoload varchar(20) NOT NULL DEFAULT 'yes',
-                PRIMARY KEY (option_id),
-                UNIQUE KEY option_name (option_name)
-            ) $charset_collate;";
-
-            require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-            dbDelta( $sql );
-
-            $table_exists = $wpdb->get_var( $wpdb->prepare(
-                "SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s",
-                DB_NAME,
-                $table_name
-            ) );
-
-            if ( $table_exists ) {
-                error_log( "[PDF Builder] Table {$table_name} créée avec succès" );
-            } else {
-                error_log( "[PDF Builder] ERREUR: Table {$table_name} NOT créée" );
-                return false;
-            }
+        if ( $table_exists ) {
+            return true;
         }
 
-        // ── Migration depuis l'ancienne table hardcodée 'wp_pdf_builder_settings' ──
-        // Si le préfixe WP n'est pas 'wp_', l'ancienne table peut contenir des données
-        // que les queries courantes ($wpdb->prefix) ne trouvent pas.
-        if ( $table_name !== $legacy_table ) {
-            $legacy_exists = $wpdb->get_var( $wpdb->prepare(
-                "SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s",
-                DB_NAME,
-                $legacy_table
-            ) );
+        $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+            option_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            option_name varchar(191) NOT NULL DEFAULT '',
+            option_value longtext NOT NULL,
+            autoload varchar(20) NOT NULL DEFAULT 'yes',
+            PRIMARY KEY (option_id),
+            UNIQUE KEY option_name (option_name)
+        ) $charset_collate;";
 
-            if ( $legacy_exists ) {
-                // Compter les lignes dans la table cible
-                $target_count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM $table_name" );
+        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+        dbDelta( $sql );
 
-                if ( $target_count === 0 ) {
-                    // Table cible vide → copier toutes les lignes depuis l'ancienne table
-                    $rows = $wpdb->get_results( "SELECT option_name, option_value, autoload FROM $legacy_table", ARRAY_A );
-                    $migrated = 0;
-                    foreach ( (array) $rows as $row ) {
-                        $wpdb->replace( $table_name, $row, [ '%s', '%s', '%s' ] );
-                        $migrated++;
-                    }
-                    error_log( "[PDF Builder] Migration: {$migrated} options copiées de '{$legacy_table}' vers '{$table_name}'" );
-                } else {
-                    error_log( "[PDF Builder] Migration ignorée: '{$table_name}' contient déjà {$target_count} ligne(s)" );
-                }
-            }
+        $table_exists = $wpdb->get_var( $wpdb->prepare(
+            "SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s",
+            DB_NAME,
+            $table_name
+        ) );
+
+        if ( $table_exists ) {
+            error_log( "[PDF Builder] Table {$table_name} créée avec succès" );
+            return true;
+        } else {
+            error_log( "[PDF Builder] ERREUR: Table {$table_name} NOT créée" );
+            return false;
         }
-
-        return true;
     }
 
     /**
-     * Récupérer une option depuis la table personnalisée.
-     * Fallback automatique vers l'ancienne table 'wp_pdf_builder_settings' si la table préfixée
-     * n'existe pas encore ou ne contient pas l'option (ex : migration non encore effectuée).
+     * Récupérer une option depuis la table {prefix}pdf_builder_settings.
      */
     public static function get_option($option_name, $default = false) {
         global $wpdb;
 
-        $table_name   = $wpdb->prefix . 'pdf_builder_settings';
-        $legacy_table = self::LEGACY_TABLE_NAME;
+        $table_name = self::get_table_name();
 
         $option_value = $wpdb->get_var(
             $wpdb->prepare( "SELECT option_value FROM $table_name WHERE option_name = %s", $option_name )
         );
 
-        // Fallback : chercher dans l'ancienne table hardcodée si la table préfixée ne contient rien
-        if ( $option_value === null && $table_name !== $legacy_table ) {
-            $legacy_exists = $wpdb->get_var( $wpdb->prepare(
-                "SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s",
-                DB_NAME,
-                $legacy_table
-            ) );
-            if ( $legacy_exists ) {
-                $option_value = $wpdb->get_var(
-                    $wpdb->prepare( "SELECT option_value FROM $legacy_table WHERE option_name = %s", $option_name )
-                );
-                if ( $option_value !== null ) {
-                    error_log( "[PDF Builder] get_option('{$option_name}') — lu depuis table legacy '{$legacy_table}' (migration en attente)" );
-                }
-            }
-        }
-
         if ( $option_value === null ) {
             return $default;
         }
 
-        // Déserialiser si nécessaire
         return maybe_unserialize( $option_value );
     }
     
@@ -155,7 +106,7 @@ class Settings_Table_Manager {
     public static function update_option($option_name, $option_value, $autoload = 'yes') {
         global $wpdb;
         
-        $table_name = $wpdb->prefix . 'pdf_builder_settings';
+        $table_name = self::get_table_name();
         
         // Sérialiser si nécessaire
         $serialized_value = maybe_serialize($option_value);
@@ -179,7 +130,7 @@ class Settings_Table_Manager {
     public static function delete_option($option_name) {
         global $wpdb;
         
-        $table_name = $wpdb->prefix . 'pdf_builder_settings';
+        $table_name = self::get_table_name();
         
         $result = $wpdb->delete(
             $table_name,
@@ -196,7 +147,7 @@ class Settings_Table_Manager {
     public static function get_all_options() {
         global $wpdb;
         
-        $table_name = $wpdb->prefix . 'pdf_builder_settings';
+        $table_name = self::get_table_name();
         
         $options = $wpdb->get_results(
             "SELECT option_name, option_value FROM $table_name",
@@ -221,11 +172,11 @@ class Settings_Table_Manager {
     public static function clear_all_options() {
         global $wpdb;
         
-        $table_name = $wpdb->prefix . 'pdf_builder_settings';
+        $table_name = self::get_table_name();
         
         $result = $wpdb->query("TRUNCATE TABLE $table_name");
 
-        error_log('[PDF Builder] Table wp_pdf_builder_settings vidée');
+        error_log("[PDF Builder] Table {$table_name} vidée");
 
         return $result !== false;
     }
