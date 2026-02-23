@@ -218,8 +218,11 @@ class PDF_Builder_Updates_Manager {
     }
 
     /**
-     * Récupérer la version distante depuis EDD
-     * 
+     * Récupérer la version distante depuis EDD Software Licensing
+     *
+     * EDD SL retourne un objet JSON avec les clés :
+     *   new_version, download_link, sections, url, name, slug, tested, requires, requires_php
+     *
      * @param bool $force Force cache bypass
      * @return array|bool
      */
@@ -232,55 +235,74 @@ class PDF_Builder_Updates_Manager {
             }
         }
 
-        // Requête vers EDD pour récupérer les infos du produit
-        $response = wp_remote_get(
-            add_query_arg([
-                'edd_action'           => 'get_version',
-                'license'              => $this->get_license_key(),
-                'item_id'              => self::EDD_ITEM_ID,
-                'url'                  => home_url(),
-                'wp_version'           => get_bloginfo('version'),
-                'php_version'          => phpversion(),
-                'plugin_version'       => $this->current_version,
-            ], self::EDD_STORE_URL),
-            [
-                'timeout'     => 15,
-                'sslverify'   => true,
-                'user-agent'  => 'PDF-Builder-Pro/' . $this->current_version . '; ' . home_url(),
-            ]
-        );
+        // Requête vers EDD Software Licensing
+        $api_url = add_query_arg([
+            'edd_action'     => 'get_version',
+            'license'        => $this->get_license_key(),
+            'item_id'        => self::EDD_ITEM_ID,
+            'item_name'      => rawurlencode('PDF Builder Pro'),
+            'url'            => home_url(),
+            'wp_version'     => get_bloginfo('version'),
+            'php_version'    => phpversion(),
+            'plugin_version' => $this->current_version,
+        ], self::EDD_STORE_URL);
 
-        // Gestion des erreurs
+        $response = wp_remote_get($api_url, [
+            'timeout'    => 15,
+            'sslverify'  => true,
+            'user-agent' => 'PDF-Builder-Pro/' . $this->current_version . '; ' . home_url(),
+        ]);
+
         if (is_wp_error($response)) {
+            error_log('[PDF Builder] Update check HTTP error: ' . $response->get_error_message());
             do_action('pdf_builder_update_check_error', $response);
             return false;
         }
 
-        $body = wp_remote_retrieve_body($response);
-        $remote_version = json_decode($body, true);
+        $http_code = wp_remote_retrieve_response_code($response);
+        $body      = wp_remote_retrieve_body($response);
 
-        if (!is_array($remote_version) || empty($remote_version['version'])) {
+        if ($http_code !== 200 || empty($body)) {
+            error_log('[PDF Builder] Update check failed. HTTP ' . $http_code);
             return false;
         }
 
-        // Cacher le résultat
-        set_transient(self::UPDATE_TRANSIENT_KEY, $remote_version, self::CACHE_TIMEOUT);
+        // EDD SL peut retourner du JSON ou du PHP sérialisé selon la version
+        $data = json_decode($body, true);
+        if (!is_array($data)) {
+            $data = (array) maybe_unserialize($body);
+        }
 
-        return $remote_version;
+        // EDD SL utilise "new_version" et "download_link"
+        // On normalise vers notre format interne
+        $version = $data['new_version'] ?? $data['version'] ?? null;
+        if (empty($version)) {
+            error_log('[PDF Builder] Update check: no version in response. Body: ' . substr($body, 0, 300));
+            return false;
+        }
+
+        $normalized = [
+            'version'      => $version,
+            'package'      => $data['download_link'] ?? $data['package'] ?? '',
+            'url'          => $data['url'] ?? $data['homepage'] ?? self::EDD_STORE_URL,
+            'requires'     => $data['requires'] ?? '5.0',
+            'requires_php' => $data['requires_php'] ?? '7.4',
+            'tested'       => $data['tested'] ?? '6.9',
+            'changelog'    => $data['sections']['changelog'] ?? ($data['changelog'] ?? ''),
+        ];
+
+        // Mettre en cache 12h
+        set_transient(self::UPDATE_TRANSIENT_KEY, $normalized, self::CACHE_TIMEOUT);
+
+        return $normalized;
     }
 
     /**
      * Récupérer la clé de licence
-     * Retourne la clé si elle existe, sinon vide (les clients gratuits n'en ont pas)
+     * Fonctionne aussi en contexte cron (pas de user connecté)
      */
     private function get_license_key() {
         $license_manager = PDF_Builder_License_Manager::getInstance();
-        
-        // Vérifier que c'est un admin (sécurité)
-        if (!current_user_can('manage_options')) {
-            return '';
-        }
-
         return $license_manager->getLicenseKeyForLinks();
     }
 

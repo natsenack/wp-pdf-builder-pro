@@ -25,7 +25,6 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Constructeur privé
      */
     private function __construct() {
-        error_log("[UNIFIED AJAX] PDF_Builder_Unified_Ajax_Handler constructor called");
         $this->nonce_manager = PDF_Builder_Nonce_Manager::get_instance();
         $this->init_hooks();
     }
@@ -34,11 +33,8 @@ class PDF_Builder_Unified_Ajax_Handler {
      * Initialise les hooks AJAX
      */
     private function init_hooks() {
-        error_log("[UNIFIED AJAX] init_hooks called - registering AJAX handlers");
-
         // Actions de sauvegarde principales
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'handle_save_settings']);
-        error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_save_settings");
 
         add_action('wp_ajax_pdf_builder_save_all_settings', [$this, 'handle_save_all_settings']);
         // REMOVED: pdf_builder_save_canvas_settings is now handled by AjaxHandler to avoid conflicts
@@ -107,9 +103,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         // Actions de génération PDF et images
         add_action('wp_ajax_pdf_builder_generate_pdf', [$this, 'handle_generate_pdf']);
-        error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_generate_pdf");
         add_action('wp_ajax_pdf_builder_generate_image', [$this, 'handle_generate_image']);
-        error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_generate_image");
         
         // Actions de test moteur PDF
         add_action('wp_ajax_pdf_builder_test_puppeteer', [$this, 'handle_test_puppeteer']);
@@ -120,31 +114,20 @@ class PDF_Builder_Unified_Ajax_Handler {
         add_action('wp_ajax_pdf_builder_get_developer_mode', [$this, 'handle_get_developer_mode']);
         
         add_action('wp_ajax_pdf_builder_debug_html', [$this, 'handle_debug_html']);
-        error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_debug_html");
         add_action('wp_ajax_pdf_builder_get_preview_html', [$this, 'handle_get_preview_html']);
-        error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_get_preview_html");
         add_action('wp_ajax_pdf_builder_get_orders_list', [$this, 'handle_get_orders_list']);
-        error_log("[UNIFIED AJAX] Registered wp_ajax_pdf_builder_get_orders_list");
     }
 
     /**
      * Handler principal pour la sauvegarde des paramètres
      */
     public function handle_save_settings() {
-        error_log("[UNIFIED AJAX] handle_save_settings called - POST data: " . json_encode($_POST));
-        error_log("[UNIFIED AJAX] REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
-        error_log("[UNIFIED AJAX] action parameter: " . ($_POST['action'] ?? 'NOT SET'));
-
         if (!$this->nonce_manager->validate_ajax_request('save_settings')) {
-            error_log("[UNIFIED AJAX] Nonce validation FAILED");
             return;
         }
 
-        error_log("[UNIFIED AJAX] Nonce validation PASSED");
-
         try {
             $current_tab = sanitize_text_field($_POST['tab'] ?? 'all');
-            error_log("[UNIFIED AJAX] Processing tab: {$current_tab}");
             $saved_count = 0;
             $saved_options = [];
 
@@ -156,10 +139,8 @@ class PDF_Builder_Unified_Ajax_Handler {
                     $saved_options = $this->get_saved_options_for_tab('all');
                     break;
                 case 'general':
-                    error_log("[UNIFIED AJAX] Calling save_general_settings");
                     $saved_count = $this->save_general_settings();
                     $saved_options = $this->get_saved_options_for_tab('general');
-                    error_log("[UNIFIED AJAX] save_general_settings returned: {$saved_count}");
                     break;
                 case 'performance':
                     $saved_count = $this->save_performance_settings();
@@ -218,7 +199,6 @@ class PDF_Builder_Unified_Ajax_Handler {
             }
 
             if ($saved_count > 0) {
-                error_log("[UNIFIED AJAX] Sending success response with saved_count: {$saved_count}");
                 wp_send_json_success([
                     'message' => 'Paramètres sauvegardés avec succès',
                     'saved_count' => $saved_count,

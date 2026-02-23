@@ -40,7 +40,6 @@ spl_autoload_register(function($class) {
     }
     return false;
 });
-error_log('[BOOTSTRAP] PSR-4 autoloader registered as fallback');
 
 // ========================================================================
 // ✅ INJECTION DU NONCE DANS LE HEAD - TRÈS TÔT
@@ -431,6 +430,21 @@ if (function_exists('add_action')) {
             // Initialiser les hooks WordPress pour les mises à jour automatiques
             $updates_manager = new \PDF_Builder\Managers\PDF_Builder_Updates_Manager();
             $updates_manager->init();
+
+            // Action AJAX de diagnostic : force le check EDD et affiche la réponse brute
+            add_action('wp_ajax_pdf_builder_test_update_check', function() use ($updates_manager) {
+                if (!current_user_can('manage_options')) {
+                    wp_send_json_error(['message' => 'Accès refusé'], 403);
+                }
+                // Vider le cache transient pour forcer un vrai appel
+                delete_transient(\PDF_Builder\Managers\PDF_Builder_Updates_Manager::UPDATE_TRANSIENT_KEY);
+                $result = $updates_manager->get_remote_version(true);
+                wp_send_json_success([
+                    'current_version' => $updates_manager->get_current_version(),
+                    'remote_result'   => $result,
+                    'has_update'      => $result && version_compare($result['version'], $updates_manager->get_current_version(), '>'),
+                ]);
+            });
         }
         
         // ✅ HANDLER AJAX POUR LA DÉSACTIVATION DE LICENCE
@@ -664,12 +678,8 @@ function pdf_builder_load_core()
     }
 
     // Initialiser les gestionnaires Core
-    error_log("[BOOTSTRAP] Checking if PDF_Builder_Unified_Ajax_Handler class exists: " . (class_exists('PDF_Builder_Unified_Ajax_Handler') ? 'YES' : 'NO'));
     if (class_exists('PDF_Builder_Unified_Ajax_Handler')) {
-        error_log("[BOOTSTRAP] Calling PDF_Builder_Unified_Ajax_Handler::get_instance()");
         PDF_Builder_Unified_Ajax_Handler::get_instance();
-    } else {
-        error_log("[BOOTSTRAP] PDF_Builder_Unified_Ajax_Handler class does not exist!");
     }
 
     // Initialiser le gestionnaire de cache (enregistre ses hooks tôt)
