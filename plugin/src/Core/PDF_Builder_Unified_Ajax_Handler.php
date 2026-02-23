@@ -3037,7 +3037,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             ];
 
             // --- Génération image via PuppeteerEngine ---
-            $this->debug_log("Moteur image : PuppeteerEngine v2 (service natif PNG/JPG + fallback Imagick)");
+            $this->debug_log("Moteur image : PuppeteerEngine v2 (service natif PNG/JPG — toujours via Puppeteer)");
             $this->current_engine_name = 'puppeteer';
 
             $puppeteer     = new \PDF_Builder\PDF\Engines\PuppeteerEngine();

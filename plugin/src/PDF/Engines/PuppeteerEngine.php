@@ -152,13 +152,30 @@ class PuppeteerEngine implements PDFEngineInterface {
      * @return string
      */
     private function get_license_key(): string {
+        $raw_encrypted = (string) pdf_builder_get_option( 'pdf_builder_license_key', '' );
+        error_log( '[PuppeteerEngine] get_license_key() — raw_encrypted len=' . strlen( $raw_encrypted ) );
+
         if ( class_exists( '\PDF_Builder\Managers\PDF_Builder_License_Manager' ) ) {
-            $lm = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+            $lm  = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
             if ( method_exists( $lm, 'get_license_key' ) ) {
-                return (string) $lm->get_license_key();
+                $key = (string) $lm->get_license_key();
+                error_log( '[PuppeteerEngine] get_license_key() via LicenseManager — key len=' . strlen( $key ) . ' status=' . ( method_exists( $lm, 'getLicenseStatus' ) ? $lm->getLicenseStatus() : 'N/A' ) );
+                if ( $key !== '' ) {
+                    return $key;
+                }
+                // Decrypt a peut-être échoué (AUTH_KEY différents) — essai fallback plain text
+                if ( $raw_encrypted !== '' ) {
+                    $data = base64_decode( $raw_encrypted, true );
+                    if ( $data === false || strlen( $data ) < 17 ) {
+                        // Clé stockée en clair (non chiffrée)
+                        error_log( '[PuppeteerEngine] get_license_key() — fallback: clé en clair, len=' . strlen( $raw_encrypted ) );
+                        return $raw_encrypted;
+                    }
+                }
+                return '';
             }
         }
-        return (string) pdf_builder_get_option( 'pdf_builder_license_key', '' );
+        return $raw_encrypted;
     }
 
     /**

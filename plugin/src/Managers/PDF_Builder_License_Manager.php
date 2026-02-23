@@ -92,7 +92,11 @@ class PDF_Builder_License_Manager
         $iv     = substr($data, 0, 16);
         $cipher = substr($data, 16);
         $plain  = openssl_decrypt($cipher, 'aes-256-cbc', $secret, OPENSSL_RAW_DATA, $iv);
-        return ($plain !== false) ? $plain : '';
+        if ( $plain === false ) {
+            error_log( '[PDF_Builder_License_Manager] decrypt_key FAILED — probablement AUTH_KEY/SECURE_AUTH_KEY différents entre le stockage et la lecture. encrypted_len=' . strlen( $encrypted ) );
+            return '';
+        }
+        return $plain;
     }
 
     /**

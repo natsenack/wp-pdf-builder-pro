@@ -83,7 +83,11 @@
 - 🔒 **Format désactivé** — 📦 Étiquette Colis (100×150mm)
 - 🔒 **Orientation désactivée** — Paysage (seul le **Portrait** est disponible)
 - **onglet "configuration pdf"** - correction et optimisation des fonctions
-- **langue** - vérifier la langue anglais si bien traduit à 100%
+- # **langue** - vérifier la langue anglais si bien traduit à 100%
+
+## **_Version 1.0.3.1_**
+
+- **bug** - Correction de bug de l'activation de licence
 
 ==================================================================================================================
 
