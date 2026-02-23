@@ -9,7 +9,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
     private static $instance = null;
     private $nonce_manager;
-    private $current_engine_name = 'dompdf'; // Moteur utilisé pour la génération en cours
+    private $current_engine_name = 'puppeteer'; // Moteur utilisé pour la génération en cours
 
     /**
      * Singleton pattern

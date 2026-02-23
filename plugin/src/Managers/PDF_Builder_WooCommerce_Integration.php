@@ -1104,10 +1104,7 @@ class PDF_Builder_WooCommerce_Integration
             return;
         }
 
-        // Déléguer au handler unifié qui contient toute la logique
-        // Puppeteer (si configuré) → fallback DomPDF
-        // La classe est sans namespace : class PDF_Builder_Unified_Ajax_Handler
-        // Elle est chargée par le bootstrap, pas besoin de require_once
+        // Déléguer au handler unifié — toujours via PuppeteerEngine (service threeaxe.fr)
         $_POST['template_id'] = $template_id;
         $_POST['order_id']    = $order_id;
 
