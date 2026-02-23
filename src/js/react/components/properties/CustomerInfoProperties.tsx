@@ -1117,8 +1117,9 @@ export function CustomerInfoProperties({
                   marginTop: "4px",
                 }}
               >
-                Actuel: {parseFloat(String(element.lineHeight || 1.1)).toFixed(1)} (Puppeteer
-                uniquement)
+                Actuel:{" "}
+                {parseFloat(String(element.lineHeight || 1.1)).toFixed(1)}{" "}
+                (Puppeteer uniquement)
               </div>
             </div>
 

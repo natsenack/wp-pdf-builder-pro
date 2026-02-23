@@ -4793,31 +4793,75 @@ export const Canvas = function Canvas({
             display: "block",
           }}
         />
-        {canvasSettings?.showMargins && (() => {
-          const mTop    = (canvasSettings.marginTop    ?? 0) * zoomScale;
-          const mBottom = (canvasSettings.marginBottom ?? 0) * zoomScale;
-          const mLeft   = (canvasSettings.marginLeft   ?? 0) * zoomScale;
-          const mRight  = (canvasSettings.marginRight  ?? 0) * zoomScale;
-          const lineColor = "rgba(0, 120, 215, 0.6)";
-          const commonStyle: React.CSSProperties = {
-            position: "absolute",
-            pointerEvents: "none",
-            backgroundColor: lineColor,
-            zIndex: 10,
-          };
-          return (
-            <div style={{ position: "absolute", top: 0, left: 0, width: `${displayWidth}px`, height: `${displayHeight}px`, pointerEvents: "none", zIndex: 10, overflow: "hidden" }}>
-              {/* Ligne haut */}
-              <div style={{ ...commonStyle, top: `${mTop}px`, left: 0, right: 0, height: "1px" }} />
-              {/* Ligne bas */}
-              <div style={{ ...commonStyle, top: `${displayHeight - mBottom}px`, left: 0, right: 0, height: "1px" }} />
-              {/* Ligne gauche */}
-              <div style={{ ...commonStyle, left: `${mLeft}px`, top: 0, bottom: 0, width: "1px" }} />
-              {/* Ligne droite */}
-              <div style={{ ...commonStyle, left: `${displayWidth - mRight}px`, top: 0, bottom: 0, width: "1px" }} />
-            </div>
-          );
-        })()}
+        {canvasSettings?.showMargins &&
+          (() => {
+            const mTop = (canvasSettings.marginTop ?? 0) * zoomScale;
+            const mBottom = (canvasSettings.marginBottom ?? 0) * zoomScale;
+            const mLeft = (canvasSettings.marginLeft ?? 0) * zoomScale;
+            const mRight = (canvasSettings.marginRight ?? 0) * zoomScale;
+            const lineColor = "rgba(0, 120, 215, 0.6)";
+            const commonStyle: React.CSSProperties = {
+              position: "absolute",
+              pointerEvents: "none",
+              backgroundColor: lineColor,
+              zIndex: 10,
+            };
+            return (
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: `${displayWidth}px`,
+                  height: `${displayHeight}px`,
+                  pointerEvents: "none",
+                  zIndex: 10,
+                  overflow: "hidden",
+                }}
+              >
+                {/* Ligne haut */}
+                <div
+                  style={{
+                    ...commonStyle,
+                    top: `${mTop}px`,
+                    left: 0,
+                    right: 0,
+                    height: "1px",
+                  }}
+                />
+                {/* Ligne bas */}
+                <div
+                  style={{
+                    ...commonStyle,
+                    top: `${displayHeight - mBottom}px`,
+                    left: 0,
+                    right: 0,
+                    height: "1px",
+                  }}
+                />
+                {/* Ligne gauche */}
+                <div
+                  style={{
+                    ...commonStyle,
+                    left: `${mLeft}px`,
+                    top: 0,
+                    bottom: 0,
+                    width: "1px",
+                  }}
+                />
+                {/* Ligne droite */}
+                <div
+                  style={{
+                    ...commonStyle,
+                    left: `${displayWidth - mRight}px`,
+                    top: 0,
+                    bottom: 0,
+                    width: "1px",
+                  }}
+                />
+              </div>
+            );
+          })()}
       </div>
       {contextMenu.isVisible && (
         <ContextMenu

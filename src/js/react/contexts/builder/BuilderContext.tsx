@@ -580,11 +580,11 @@ function builderReducer(
             ((action.payload as Record<string, unknown>)
               .marginBottom as number) ?? 0,
           marginLeft:
-            ((action.payload as Record<string, unknown>).marginLeft as number) ??
-            0,
+            ((action.payload as Record<string, unknown>)
+              .marginLeft as number) ?? 0,
           marginRight:
-            ((action.payload as Record<string, unknown>).marginRight as number) ??
-            0,
+            ((action.payload as Record<string, unknown>)
+              .marginRight as number) ?? 0,
           isNew: false,
           isModified: false, // ✅ Template chargé de la DB n'est PAS modifié
           isSaving: false,

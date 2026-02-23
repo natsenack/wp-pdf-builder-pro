@@ -511,7 +511,10 @@ export function useTemplate() {
 
       formData.append("template_data", jsonData);
       formData.append("margin_top", String(state.template.marginTop ?? 0));
-      formData.append("margin_bottom", String(state.template.marginBottom ?? 0));
+      formData.append(
+        "margin_bottom",
+        String(state.template.marginBottom ?? 0),
+      );
       formData.append("margin_left", String(state.template.marginLeft ?? 0));
       formData.append("margin_right", String(state.template.marginRight ?? 0));
       ClientNonceManager.addToFormData(formData);

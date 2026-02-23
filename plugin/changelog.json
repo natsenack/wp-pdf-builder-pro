@@ -1,4 +1,12 @@
 {
+  "1.0.3.4": {
+    "version": "1.0.3.4",
+    "released": "2026-02-23",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.3.4 - Maintenance &amp; Qualit\u00e9 du code</h3>\n<ul>\n<li>\ud83d\udd27 <strong>Reformatage global (Prettier)</strong> : Unification du style de code JS/TSX (guillemets doubles, indentation 2 espaces)</li>\n<li>\ud83d\udce6 <strong>Modal de d\u00e9sactivation refactoris\u00e9</strong> : Meilleur comportement, validation obligatoire, bouton Annuler sans effet secondaire</li>\n<li>\ud83d\udd27 <strong>Canvas.tsx</strong> : Rendu des lignes de marges restructur\u00e9 en JSX lisible</li>\n<li>\ud83d\udd27 <strong>BuilderContext.tsx / useTemplate.ts</strong> : Corrections lint mineurs sur les longues lignes</li>\n</ul>"
+  },
   "1.0.2.0": {
     "version": "1.0.2.0",
     "released": "2026-02-20",

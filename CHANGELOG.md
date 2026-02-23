@@ -85,9 +85,46 @@
 - **onglet "configuration pdf"** - correction et optimisation des fonctions
 - # **langue** - vérifier la langue anglais si bien traduit à 100%
 
-## **_Version 1.0.3.1_**
+## **_Version 1.0.3.4_** — 23 février 2026
 
-- **bug** - Correction de bug de l'activation de licence
+### 🔧 Maintenance & Qualité du code
+
+- **[Code] Reformatage global (Prettier)** : Unification du style de code JS/TSX sur tout le projet (guillemets doubles, indentation 2 espaces, trailing commas).
+- **[UI Admin] Modal de désactivation refactorisé** : Le JS du modal de désactivation a été entièrement réécrit — sélecteurs `#pbp-modal` plus légers, validation obligatoire de raison avant envoi, bouton "Annuler" sans désactivation.
+- **[React] Reformatage Canvas.tsx** : Réorganisation du rendu des lignes de marges en JSX multi-lignes lisible.
+- **[React] Reformatage BuilderContext.tsx** : Correctifs lint sur les lignes `marginLeft`/`marginRight` trop longues.
+- **[React] Reformatage useTemplate.ts** : Wrapping de `margin_bottom` en multi-lignes pour conformité ESLint.
+
+==================================================================================================================
+
+## **_Version 1.0.3.3_** — 23 février 2026
+
+### 🐛 Corrections (Bug Fixes)
+
+- **[Critique] Génération PNG/JPG — erreur 403 `tier_restriction`** : La clé de licence n'était pas transmise au service Puppeteer. Ajout d'un mécanisme de récupération en 3 étapes (LicenseManager → ligne séparée → blob JSON `pdf_builder_settings`).
+- **[Critique] Chemin FTP incorrect** : Les déploiements ciblaient `/wp-pdf-builder-pro/` au lieu du chemin réel `/pdf-builder-pro/`, rendant tous les correctifs précédents inopérants.
+- **[BDD] Préfixe de table dynamique** : `Settings_Table_Manager` lit désormais `$table_prefix` directement depuis `wp-config.php` via la variable globale, toutes les méthodes centralisées sur `get_table_name()`.
+- **[UI React] TypeError `lineHeight.toFixed`** : `element.lineHeight` peut être une string (`"1.1"`) — ajout de `parseFloat(String(...))` dans `CustomerInfoProperties` et `CompanyInfoProperties` pour éviter le crash de l'éditeur.
+- **[UI] Message moteur image** : Correction du message affiché lors de la génération d'image (suppression de la mention "fallback Imagick" — le moteur est toujours Puppeteer).
+- **[Logging] LicenseManager** : Ajout de logs détaillés dans `decrypt_key()` pour diagnostiquer les échecs de déchiffrement AES.
+
+==================================================================================================================
+
+## **_Version 1.0.3.2_** — 22 février 2026
+
+### 🐛 Corrections (Bug Fixes)
+
+- **[BDD] Migration table settings** : Correction de la logique de migration dans `Settings_Table_Manager::create_table()` — suppression du bloc ciblant une table inexistante `wp_pdf_builder_settings`.
+- **[BDD] `get_option()` simplifié** : Suppression du fallback incorrect vers une ancienne table hardcodée.
+- **[Logging] PuppeteerEngine** : Ajout de logs de diagnostic sur la clé de licence (`get_license_key()`) pour identifier les situations où la clé est vide.
+
+==================================================================================================================
+
+## **_Version 1.0.3.1_** — 21 février 2026
+
+### 🐛 Corrections (Bug Fixes)
+
+- **[Licence] Correction du bug d'activation de licence** : La clé de licence n'était pas correctement sauvegardée lors de l'activation, entraînant un retour au mode gratuit après rechargement.
 
 ==================================================================================================================
 

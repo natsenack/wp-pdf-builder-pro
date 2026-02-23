@@ -4,59 +4,70 @@
  */
 
 // Fonctions globales appelées directement depuis le HTML (plus fiable)
-window.pdfBuilderSkipFeedback = function() {
-    console.log('[PDF Builder] Skip clicked, URL:', window._pdfBuilderDeactivateUrl);
-    if (window._pdfBuilderDeactivateUrl) {
+window.pdfBuilderSkipFeedback = function () {
+  console.log(
+    "[PDF Builder] Skip clicked, URL:",
+    window._pdfBuilderDeactivateUrl,
+  );
+  if (window._pdfBuilderDeactivateUrl) {
+    window.location.href = window._pdfBuilderDeactivateUrl;
+  }
+};
+
+window.pdfBuilderSendFeedback = function () {
+  var reason = document.querySelector(
+    'input[name="deactivation_reason"]:checked',
+  );
+  var message = document.getElementById("pdf_builder_feedback_message");
+  var email = document.getElementById("pdf_builder_feedback_email");
+  var btn = document.getElementById("pdf_builder_send_feedback");
+
+  console.log(
+    "[PDF Builder] Send feedback clicked, reason:",
+    reason ? reason.value : "none",
+  );
+
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Envoi en cours...";
+  }
+
+  jQuery.ajax({
+    url: pdfBuilderDeactivation.ajaxUrl,
+    type: "POST",
+    data: {
+      action: "pdf_builder_send_deactivation_feedback",
+      nonce: pdfBuilderDeactivation.nonce,
+      reason: reason ? reason.value : "autre",
+      message: message ? message.value : "",
+      email: email ? email.value : "",
+    },
+    success: function (response) {
+      console.log("[PDF Builder] Feedback sent successfully:", response);
+    },
+    error: function (xhr, status, error) {
+      console.error("[PDF Builder] Feedback error:", error);
+    },
+    complete: function () {
+      console.log(
+        "[PDF Builder] Redirecting to:",
+        window._pdfBuilderDeactivateUrl,
+      );
+      if (window._pdfBuilderDeactivateUrl) {
         window.location.href = window._pdfBuilderDeactivateUrl;
-    }
+      }
+    },
+  });
 };
 
-window.pdfBuilderSendFeedback = function() {
-    var reason = document.querySelector('input[name="deactivation_reason"]:checked');
-    var message = document.getElementById('pdf_builder_feedback_message');
-    var email = document.getElementById('pdf_builder_feedback_email');
-    var btn = document.getElementById('pdf_builder_send_feedback');
+(function ($) {
+  "use strict";
 
-    console.log('[PDF Builder] Send feedback clicked, reason:', reason ? reason.value : 'none');
+  $(document).ready(function () {
+    const $body = $("body");
 
-    if (btn) {
-        btn.disabled = true;
-        btn.textContent = 'Envoi en cours...';
-    }
-
-    jQuery.ajax({
-        url: pdfBuilderDeactivation.ajaxUrl,
-        type: 'POST',
-        data: {
-            action: 'pdf_builder_send_deactivation_feedback',
-            nonce: pdfBuilderDeactivation.nonce,
-            reason: reason ? reason.value : 'autre',
-            message: message ? message.value : '',
-            email: email ? email.value : '',
-        },
-        success: function(response) {
-            console.log('[PDF Builder] Feedback sent successfully:', response);
-        },
-        error: function(xhr, status, error) {
-            console.error('[PDF Builder] Feedback error:', error);
-        },
-        complete: function() {
-            console.log('[PDF Builder] Redirecting to:', window._pdfBuilderDeactivateUrl);
-            if (window._pdfBuilderDeactivateUrl) {
-                window.location.href = window._pdfBuilderDeactivateUrl;
-            }
-        }
-    });
-};
-
-(function($) {
-    'use strict';
-
-    $(document).ready(function() {
-        const $body = $('body');
-
-        // Injecter les styles du modal directement
-        const modalStyles = `
+    // Injecter les styles du modal directement
+    const modalStyles = `
             #pdf-builder-deactivation-modal {
                 display: none !important;
                 position: fixed !important;
@@ -171,12 +182,14 @@ window.pdfBuilderSendFeedback = function() {
                 cursor: not-allowed !important;
             }
         `;
-        
-        $('<style id="pdf-builder-modal-styles">').text(modalStyles).appendTo('head');
-        console.log('[PDF Builder] Styles injectés');
 
-        // Créer le modal HTML avec onclick natifs
-        const modalHTML = `
+    $('<style id="pdf-builder-modal-styles">')
+      .text(modalStyles)
+      .appendTo("head");
+    console.log("[PDF Builder] Styles injectés");
+
+    // Créer le modal HTML avec onclick natifs
+    const modalHTML = `
             <div id="pdf-builder-deactivation-modal">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -209,24 +222,31 @@ window.pdfBuilderSendFeedback = function() {
             </div>
         `;
 
-        $body.append(modalHTML);
-        console.log('[PDF Builder] Modal HTML ajouté au DOM');
+    $body.append(modalHTML);
+    console.log("[PDF Builder] Modal HTML ajouté au DOM");
 
-        const $modal = $('#pdf-builder-deactivation-modal');
+    const $modal = $("#pdf-builder-deactivation-modal");
 
-        // Show/hide textarea et email quand une raison est sélectionnée
-        $body.on('change', 'input[name="deactivation_reason"]', function() {
-            $('#pdf_builder_feedback_message').addClass('show');
-            $('#pdf_builder_email_field').addClass('show');
-        });
-
-        // Intercepter le clic de désactivation (sélecteur primaire)
-        $(document).on('click', 'a[href*="action=deactivate"][href*="pdf-builder"]', function(e) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            window._pdfBuilderDeactivateUrl = this.href;
-            console.log('[PDF Builder] Désactivation interceptée:', window._pdfBuilderDeactivateUrl);
-            $modal.addClass('show');
-        });
+    // Show/hide textarea et email quand une raison est sélectionnée
+    $body.on("change", 'input[name="deactivation_reason"]', function () {
+      $("#pdf_builder_feedback_message").addClass("show");
+      $("#pdf_builder_email_field").addClass("show");
     });
+
+    // Intercepter le clic de désactivation (sélecteur primaire)
+    $(document).on(
+      "click",
+      'a[href*="action=deactivate"][href*="pdf-builder"]',
+      function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        window._pdfBuilderDeactivateUrl = this.href;
+        console.log(
+          "[PDF Builder] Désactivation interceptée:",
+          window._pdfBuilderDeactivateUrl,
+        );
+        $modal.addClass("show");
+      },
+    );
+  });
 })(jQuery);
