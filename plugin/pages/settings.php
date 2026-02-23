@@ -3,6 +3,10 @@
  * PDF Builder Pro V2 - Page de paramètres
  */
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 if (!current_user_can('manage_options')) {
     wp_die(__('Accès refusé', 'pdf-builder-pro'));
 }
@@ -15,21 +19,21 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
 
     <nav class="nav-tab-wrapper">
         <a href="?page=pdf-builder-settings&tab=general" class="nav-tab <?php echo $active_tab === 'general' ? 'nav-tab-active' : ''; ?>">
-            <?php _e('Général', 'pdf-builder-pro'); ?>
+            <?php esc_html_e('Général', 'pdf-builder-pro'); ?>
         </a>
         <a href="?page=pdf-builder-settings&tab=advanced" class="nav-tab <?php echo $active_tab === 'advanced' ? 'nav-tab-active' : ''; ?>">
-            <?php _e('Avancé', 'pdf-builder-pro'); ?>
+            <?php esc_html_e('Avancé', 'pdf-builder-pro'); ?>
         </a>
         <a href="?page=pdf-builder-settings&tab=about" class="nav-tab <?php echo $active_tab === 'about' ? 'nav-tab-active' : ''; ?>">
-            <?php _e('À propos', 'pdf-builder-pro'); ?>
+            <?php esc_html_e('À propos', 'pdf-builder-pro'); ?>
         </a>
     </nav>
     
     <div class="pdfb-tab-content">
         <?php if ($active_tab === 'general'): ?>
             <div class="pdfb-tab-pane">
-                <h2><?php _e('Paramètres généraux', 'pdf-builder-pro'); ?></h2>
-                <p><?php _e('Configurez les options générales du PDF Builder Pro.', 'pdf-builder-pro'); ?></p>
+                <h2><?php esc_html_e('Paramètres généraux', 'pdf-builder-pro'); ?></h2>
+                <p><?php esc_html_e('Configurez les options générales du PDF Builder Pro.', 'pdf-builder-pro'); ?></p>
                 
                 <form id="pdf-builder-settings-form-general" method="post" action="options.php">
                     <?php settings_fields('pdf_builder_general'); ?>
@@ -39,8 +43,8 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
             </div>
         <?php elseif ($active_tab === 'advanced'): ?>
             <div class="pdfb-tab-pane">
-                <h2><?php _e('Paramètres avancés', 'pdf-builder-pro'); ?></h2>
-                <p><?php _e('Configurer les options avancées du PDF Builder Pro.', 'pdf-builder-pro'); ?></p>
+                <h2><?php esc_html_e('Paramètres avancés', 'pdf-builder-pro'); ?></h2>
+                <p><?php esc_html_e('Configurer les options avancées du PDF Builder Pro.', 'pdf-builder-pro'); ?></p>
                 
                 <form id="pdf-builder-settings-form-advanced" method="post" action="options.php">
                     <?php settings_fields('pdf_builder_advanced'); ?>
@@ -50,13 +54,13 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
             </div>
         <?php else: ?>
             <div class="pdfb-tab-pane">
-                <h2><?php _e('À propos de PDF Builder Pro', 'pdf-builder-pro'); ?></h2>
+                <h2><?php esc_html_e('À propos de PDF Builder Pro', 'pdf-builder-pro'); ?></h2>
                 <div class="pdfb-about-box">
                     <h3>Version 2.0.0</h3>
-                    <p><strong><?php _e('PDF Builder Pro V2', 'pdf-builder-pro'); ?></strong></p>
-                    <p><?php _e('Refonte complète avec architecture moderne et React 18', 'pdf-builder-pro'); ?></p>
+                    <p><strong><?php esc_html_e('PDF Builder Pro V2', 'pdf-builder-pro'); ?></strong></p>
+                    <p><?php esc_html_e('Refonte complète avec architecture moderne et React 18', 'pdf-builder-pro'); ?></p>
                     
-                    <h4><?php _e('Améliorations', 'pdf-builder-pro'); ?></h4>
+                    <h4><?php esc_html_e('Améliorations', 'pdf-builder-pro'); ?></h4>
                     <ul>
                         <li>✅ Architecture modulaire</li>
                         <li>✅ TypeScript strict</li>
@@ -74,7 +78,7 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'general
 <div id="pdf-builder-floating-save" class="pdfb-pdf-builder-floating-save">
     <button type="button" id="pdf-builder-save-settings" class="pdfb-pdf-builder-save-btn">
         <span class="dashicons dashicons-yes"></span>
-        <?php _e('Enregistrer', 'pdf-builder-pro'); ?>
+        <?php esc_html_e('Enregistrer', 'pdf-builder-pro'); ?>
     </button>
     <div id="pdf-builder-save-status" class="pdfb-pdf-builder-save-status"></div>
 </div>
@@ -85,13 +89,13 @@ jQuery(document).ready(function($) {
     
     // S'assurer qu'ajaxurl est défini
     if (typeof ajaxurl === 'undefined') {
-        ajaxurl = '<?php echo admin_url("admin-ajax.php"); ?>';
+        ajaxurl = '<?php echo esc_url(admin_url("admin-ajax.php")); ?>';
         console.log('PDF Builder Settings: ajaxurl was undefined, set to:', ajaxurl);
     }
     
     var $saveBtn = $('#pdf-builder-save-settings');
     var $saveStatus = $('#pdf-builder-save-status');
-    var currentTab = '<?php echo $active_tab; ?>';
+    var currentTab = '<?php echo esc_js($active_tab); ?>';
     
     console.log('PDF Builder Settings: Button found:', $saveBtn.length);
     console.log('PDF Builder Settings: ajaxurl available:', ajaxurl);
@@ -199,18 +203,18 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 console.log('PDF Builder Settings: AJAX success:', response);
                 if (response.success) {
-                    showStatus('<?php _e("Paramètres sauvegardés", "pdf-builder-pro"); ?>', 'success');
+                    showStatus('<?php echo esc_js(__('Paramètres sauvegardés', 'pdf-builder-pro')); ?>', 'success');
                     $btn.removeClass('saving').addClass('saved');
                 } else {
-                    showStatus(response.data || '<?php _e("Erreur lors de la sauvegarde", "pdf-builder-pro"); ?>', 'error');
+                    showStatus(response.data || '<?php echo esc_js(__('Erreur lors de la sauvegarde', 'pdf-builder-pro')); ?>', 'error');
                     $btn.removeClass('saving').addClass('error');
                 }
             },
             error: function(xhr, status, error) {
                 console.log('PDF Builder Settings: AJAX error:', xhr, status, error);
-                var errorMsg = '<?php _e("Erreur de connexion", "pdf-builder-pro"); ?>';
+                var errorMsg = '<?php echo esc_js(__('Erreur de connexion', 'pdf-builder-pro')); ?>';
                 if (status === 'timeout') {
-                    errorMsg = '<?php _e("Timeout - Réessayez", "pdf-builder-pro"); ?>';
+                    errorMsg = '<?php echo esc_js(__('Timeout - Réessayez', 'pdf-builder-pro')); ?>';
                 }
                 showStatus(errorMsg, 'error');
                 $btn.removeClass('saving').addClass('error');

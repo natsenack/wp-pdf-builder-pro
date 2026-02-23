@@ -68,6 +68,7 @@ class Utils
 
         return array(
             'success' => true,
+            // translators: %d: number of transients deleted from cache
             'message' => sprintf(\__('Cache nettoyé. %d transients supprimés.', 'pdf-builder-pro'), ($result1 + $result2)) ?: \__('Cache nettoyé.', 'pdf-builder-pro')
         );
     }

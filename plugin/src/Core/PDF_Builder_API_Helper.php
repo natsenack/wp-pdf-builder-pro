@@ -25,8 +25,9 @@ class PDF_Builder_API_Helper {
         if (!self::is_premium()) {
             return new \WP_Error(
                 'premium_required',
+                // translators: 1: feature name, 2: upgrade URL
                 sprintf(
-                    __('%s nécessite une licence PDF Builder Pro Premium. Veuillez <a href="%s" target="_blank">passer en Premium</a>.', 'pdf-builder-pro'),
+                    __('%1$s nécessite une licence PDF Builder Pro Premium. Veuillez <a href="%2$s" target="_blank">passer en Premium</a>.', 'pdf-builder-pro'),
                     $feature,
                     'https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/'
                 ),
@@ -44,8 +45,9 @@ class PDF_Builder_API_Helper {
     public static function send_premium_required_error($feature = 'Fonctionnalité premium') {
         wp_send_json_error(
             [
+                // translators: 1: feature name, 2: upgrade URL
                 'message' => sprintf(
-                    __('%s nécessite une licence PDF Builder Pro Premium. Veuillez <a href="%s" target="_blank">passer en Premium</a>.', 'pdf-builder-pro'),
+                    __('%1$s nécessite une licence PDF Builder Pro Premium. Veuillez <a href="%2$s" target="_blank">passer en Premium</a>.', 'pdf-builder-pro'),
                     $feature,
                     'https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/'
                 ),

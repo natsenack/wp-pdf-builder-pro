@@ -5,6 +5,10 @@
  * Created: 2025-12-12
  */
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 // Valeurs par défaut pour les champs Canvas - SYNCHRONISÉES avec Canvas_Manager.php
 $canvas_defaults = [
     'width' => '794',
@@ -282,9 +286,9 @@ function get_canvas_modal_value($key, $default = '') {
                         foreach ($margin_fields as $mf) :
                         ?>
                         <div>
-                            <label style="font-size: 12px; color: #6c757d; display: block; margin-bottom: 4px;"><?php echo $mf['label']; ?></label>
+                            <label style="font-size: 12px; color: #6c757d; display: block; margin-bottom: 4px;"><?php echo esc_html($mf['label']); ?></label>
                             <div style="display: flex; align-items: center; gap: 4px;">
-                                <input type="number" name="pdf_builder_<?php echo $mf['key']; ?>"
+                                <input type="number" name="pdf_builder_<?php echo esc_attr($mf['key']); ?>"
                                        value="<?php echo esc_attr(get_canvas_modal_value($mf['key'], $mf['default'])); ?>"
                                        min="0" max="200" style="width: 100%; padding: 6px 8px; border: 1px solid #ced4da; border-radius: 6px;">
                                 <span style="font-size: 11px; color: #6c757d;">px</span>

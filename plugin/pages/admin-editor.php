@@ -5,6 +5,10 @@
  * Cette page affiche l'interface React du PDF Builder
  */
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 // Vérifier les permissions WordPress
 // En mode preview, autoriser les utilisateurs avec droits WooCommerce
 $is_preview_mode = isset($_GET['preview']) && $_GET['preview'] === '1';
@@ -25,7 +29,7 @@ require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/ReactAssetsV2.php';
     <div class="pdfb-pdf-builder-header">
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
         <p class="description">
-            <?php _e('Édition de documents PDF avec PDF Builder Pro V2', 'pdf-builder-pro'); ?>
+            <?php esc_html_e('Édition de documents PDF avec PDF Builder Pro V2', 'pdf-builder-pro'); ?>
         </p>
     </div>
     
@@ -33,7 +37,7 @@ require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/ReactAssetsV2.php';
     <div id="pdf-builder-react-root" class="pdfb-pdf-builder-root">
         <div class="pdfb-pdf-builder-loading">
             <div class="pdfb-spinner"></div>
-            <p><?php _e('Chargement du PDF Builder...', 'pdf-builder-pro'); ?></p>
+            <p><?php esc_html_e('Chargement du PDF Builder...', 'pdf-builder-pro'); ?></p>
         </div>
     </div>
 </div>

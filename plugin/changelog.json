@@ -1,4 +1,20 @@
 {
+  "1.0.3.6": {
+    "version": "1.0.3.6",
+    "released": "2026-02-24",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.3.6 - Conformité Plugin Check WordPress (Sécurité)</h3>\n<ul>\n<li>🔒 <strong>ABSPATH protection</strong> : Ajout du garde d'accès direct dans 10 fichiers PHP (pages/, settings-parts/)</li>\n<li>🔒 <strong>EscapeOutput: UnsafePrintingFunction</strong> : Remplacement _e() → esc_html_e() et echo __() → echo esc_html__()</li>\n<li>🔒 <strong>EscapeOutput: OutputNotEscaped</strong> : esc_html() / esc_attr() / esc_url() / esc_attr(wp_create_nonce()) / esc_js(wp_create_nonce()) appliqués partout</li>\n<li>🔒 <strong>SafeRedirect</strong> : wp_redirect() → wp_safe_redirect() dans welcome.php et settings-main.php</li>\n<li>🔒 <strong>Stubs phpcs:ignore</strong> : Commentaires ajoutés sur les fonctions _e() et _ex() légitimes dans pdf-builder-stubs.php</li>\n</ul>"
+  },
+  "1.0.3.5": {
+    "version": "1.0.3.5",
+    "released": "2026-02-23",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.3.5 - Conformit\u00e9 Plugin Check WordPress</h3>\n<ul>\n<li>\ud83d\udc1b <strong>i18n: MissingArgDomain</strong> : Domaine de traduction manquant ajout\u00e9 dans 4 fichiers PHP</li>\n<li>\ud83d\udc1b <strong>i18n: MissingTranslatorsComment</strong> : Commentaires translators: ajout\u00e9s avant tous les sprintf/printf avec placeholders</li>\n<li>\ud83d\udc1b <strong>i18n: UnorderedPlaceholders</strong> : Remplacement %s,%s \u2192 %1$s,%2$s dans API Helper, Maintenance, Backup</li>\n<li>\ud83d\udc1b <strong>i18n: TextDomainMismatch</strong> : Domaine corrig\u00e9 pdf-builder \u2192 pdf-builder-pro dans Auto_Update_Manager</li>\n<li>\ud83d\udc1b <strong>i18n: MissingSingularPlaceholder</strong> : Placeholder %d ajout\u00e9 aux formes singuli\u00e8res _n() dans Auto_Update_Manager</li>\n<li>\ud83d\udc1b <strong>phpcs:ignore</strong> : Ajout\u00e9 sur les fonctions wrapper de traduction l\u00e9gitimement dynamiques</li>\n</ul>"
+  },
   "1.0.3.4": {
     "version": "1.0.3.4",
     "released": "2026-02-23",

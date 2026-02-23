@@ -581,7 +581,7 @@ class PDF_Builder_I18n_Mappings {
         $domain = $domain ?: self::get_text_domain('pdf_builder');
         $text = self::get_translation_string($key);
 
-        return __($text, $domain);
+        return __($text, $domain); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText,WordPress.WP.I18n.NonSingularStringLiteralDomain
     }
 
     /**
@@ -592,7 +592,7 @@ class PDF_Builder_I18n_Mappings {
         $singular = self::get_translation_string($key);
         $plural = self::get_plural_form($key, 2); // Obtenir la forme plurielle
 
-        return _n($singular, $plural, $count, $domain);
+        return _n($singular, $plural, $count, $domain); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralSingle,WordPress.WP.I18n.NonSingularStringLiteralPlural,WordPress.WP.I18n.NonSingularStringLiteralDomain
     }
 
     /**

@@ -936,12 +936,13 @@ class PDF_Builder_Auto_Update_Manager {
             $count = count($status['available_updates']);
             echo '<div class="notice notice-info is-dismissible">';
             echo '<p>';
+            // translators: %d: number of available plugin updates
             printf(
                 _n(
-                    'Une mise à jour est disponible pour PDF Builder Pro.',
+                    '%d mise à jour est disponible pour PDF Builder Pro.',
                     '%d mises à jour sont disponibles pour PDF Builder Pro.',
                     $count,
-                    'pdf-builder'
+                    'pdf-builder-pro'
                 ),
                 $count
             );
@@ -955,12 +956,13 @@ class PDF_Builder_Auto_Update_Manager {
             $count = count($this->security_patches);
             echo '<div class="notice notice-warning is-dismissible">';
             echo '<p>';
+            // translators: %d: number of available security patches
             printf(
                 _n(
-                    'Un correctif de sécurité est disponible.',
+                    '%d correctif de sécurité est disponible.',
                     '%d correctifs de sécurité sont disponibles.',
                     $count,
-                    'pdf-builder'
+                    'pdf-builder-pro'
                 ),
                 $count
             );

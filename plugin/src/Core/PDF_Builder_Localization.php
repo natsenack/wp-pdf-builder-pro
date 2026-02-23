@@ -106,10 +106,10 @@ class PDF_Builder_Localization {
         }
 
         // Traduire le texte
-        $translated = __($text, $domain);
+        $translated = __($text, $domain); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText,WordPress.WP.I18n.NonSingularStringLiteralDomain
 
         if ($context) {
-            $translated = _x($translated, $context, $domain);
+            $translated = _x($translated, $context, $domain); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText,WordPress.WP.I18n.NonSingularStringLiteralContext,WordPress.WP.I18n.NonSingularStringLiteralDomain
         }
 
         // Mettre en cache
@@ -125,10 +125,10 @@ class PDF_Builder_Localization {
         $domain = $domain ?: self::TEXT_DOMAIN;
 
         if ($context) {
-            return _nx($single, $plural, $number, $context, $domain);
+            return _nx($single, $plural, $number, $context, $domain); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralSingle,WordPress.WP.I18n.NonSingularStringLiteralPlural,WordPress.WP.I18n.NonSingularStringLiteralContext,WordPress.WP.I18n.NonSingularStringLiteralDomain
         }
 
-        return _n($single, $plural, $number, $domain);
+        return _n($single, $plural, $number, $domain); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralSingle,WordPress.WP.I18n.NonSingularStringLiteralPlural,WordPress.WP.I18n.NonSingularStringLiteralDomain
     }
 
     /**

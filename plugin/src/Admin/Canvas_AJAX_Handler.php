@@ -50,6 +50,7 @@ class Canvas_AJAX_Handler
             ]);
         } catch (\Exception $e) {
             \wp_send_json_error([
+                // translators: %s: exception error message
                 'message' => sprintf(\__('Erreur: %s', 'pdf-builder-pro'), $e->getMessage())
             ]);
         }
@@ -95,6 +96,7 @@ class Canvas_AJAX_Handler
             }
         } catch (\Exception $e) {
             \wp_send_json_error([
+                // translators: %s: exception error message
                 'message' => sprintf(\__('Erreur: %s', 'pdf-builder-pro'), $e->getMessage())
             ]);
         }
@@ -135,6 +137,7 @@ class Canvas_AJAX_Handler
             ]);
         } catch (\Exception $e) {
             \wp_send_json_error([
+                // translators: %s: exception error message
                 'message' => sprintf(\__('Erreur: %s', 'pdf-builder-pro'), $e->getMessage())
             ]);
         }

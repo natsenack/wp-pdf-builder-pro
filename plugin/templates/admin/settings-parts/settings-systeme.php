@@ -1,5 +1,9 @@
 <?php // Systeme tab content - Updated: 2025-12-05 01:15:00
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
     // Récupération des paramètres depuis le tableau unifié
     $settings = pdf_builder_get_option('pdf_builder_settings', array());
     error_log('[PDF Builder] settings-systeme.php - Full settings from DB: ' . print_r($settings, true));
@@ -88,7 +92,7 @@
                         <h3>
                             <span>
                                 📋 Cache & Performance
-                                <span class="pdfb-cache-performance-status" id="cache-performance-status"><?php echo $cache_enabled ? 'ACTIF' : 'INACTIF'; ?></span>
+                                <span class="pdfb-cache-performance-status" id="cache-performance-status"><?php echo esc_html($cache_enabled ? 'ACTIF' : 'INACTIF'); ?></span>
                             </span>
                         </h3>
                     </header>
@@ -131,14 +135,14 @@
                             <tr>
                                 <th scope="row"><label for="cache_max_size">Taille max du cache (MB)</label></th>
                                 <td>
-                                    <input type="number" id="cache_max_size" name="pdf_builder_settings[pdf_builder_cache_max_size]" value="<?php echo $cache_max_size; ?>" min="10" max="1000" step="10" />
+                                    <input type="number" id="cache_max_size" name="pdf_builder_settings[pdf_builder_cache_max_size]" value="<?php echo esc_attr($cache_max_size); ?>" min="10" max="1000" step="10" />
                                     <p class="description">Taille maximale du dossier cache en mégaoctets</p>
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row"><label for="cache_ttl">TTL du cache (secondes)</label></th>
                                 <td>
-                                    <input type="number" id="cache_ttl" name="pdf_builder_settings[pdf_builder_cache_ttl]" value="<?php echo $cache_ttl; ?>" min="0" max="86400" />
+                                    <input type="number" id="cache_ttl" name="pdf_builder_settings[pdf_builder_cache_ttl]" value="<?php echo esc_attr($cache_ttl); ?>" min="0" max="86400" />
                                     <p class="description">Durée de vie du cache en secondes (défaut: 3600)</p>
                                 </td>
                             </tr>
@@ -183,25 +187,25 @@
                             <div class="pdfb-metric-grid">
                                 <div class="pdfb-cache-metric-card" data-metric="size" style="pointer-events: none; cursor: default;">
                                     <div class="pdfb-metric-value">
-                                        <span id="cache-size-display"><?php echo $cache_file_count; ?> fichiers</span>
+                                        <span id="cache-size-display"><?php echo esc_html($cache_file_count); ?> fichiers</span>
                                     </div>
                                     <div class="pdfb-metric-label">Taille du cache</div>
                                 </div>
                                 <div class="pdfb-cache-metric-card" data-metric="transients" style="pointer-events: none; cursor: default;">
                                     <div class="pdfb-metric-value">
-                                        <?php echo intval($transient_count); ?>
+                                        <?php echo esc_html(intval($transient_count)); ?>
                                     </div>
                                     <div class="pdfb-metric-label">Transients actifs</div>
                                 </div>
                                 <div class="pdfb-cache-metric-card pdfb-systeme-cache-status" data-metric="status" style="pointer-events: none; cursor: default;">
                                     <div class="pdfb-cache-enabled-indicator metric-value">
-                                    <?php echo $cache_enabled ? 'Cache activé' : 'Cache désactivé'; ?>
+                                    <?php echo esc_html($cache_enabled ? 'Cache activé' : 'Cache désactivé'); ?>
                                     </div>
                                     <div class="pdfb-metric-label">État du cache</div>
                                 </div>
                                 <div class="pdfb-cache-metric-card" data-metric="cleanup" style="pointer-events: none; cursor: default;">
                                     <div class="pdfb-metric-value">
-                                        <?php echo $cache_last_cleanup; ?>
+                                        <?php echo esc_html($cache_last_cleanup); ?>
                                     </div>
                                     <div class="pdfb-metric-label">Dernier nettoyage</div>
                                 </div>
@@ -215,7 +219,7 @@
                         <h3>
                             <span>
                                 🔧 Maintenance
-                                <span class="pdfb-maintenance-status"><?php echo $auto_maintenance === '1' ? 'ACTIF' : 'INACTIF'; ?></span>
+                                <span class="pdfb-maintenance-status"><?php echo esc_html($auto_maintenance === '1' ? 'ACTIF' : 'INACTIF'); ?></span>
                             </span>
                         </h3>
                     </header>
@@ -269,8 +273,8 @@
                                             <span class="pdfb-status-indicator"></span>
                                         </div>
                                     </div>
-                                    <div class="pdfb-metric-value">
-                                        <?php echo $last_maintenance; ?>
+                                        <div class="pdfb-metric-value">
+                                        <?php echo esc_html($last_maintenance); ?>
                                     </div>
                                     <div class="pdfb-metric-label">Dernière exécution</div>
                                     <div class="pdfb-metric-action">
@@ -286,8 +290,8 @@
                                             <span class="pdfb-status-indicator"></span>
                                         </div>
                                     </div>
-                                    <div class="pdfb-metric-value">
-                                        <?php echo $next_maintenance; ?>
+                                        <div class="pdfb-metric-value">
+                                        <?php echo esc_html($next_maintenance); ?>
                                     </div>
                                     <div class="pdfb-metric-label">Prochaine exécution</div>
                                     <div class="pdfb-metric-action">
@@ -299,15 +303,15 @@
                                 <button type="button" class="pdfb-maintenance-metric-card maintenance-action-btn" data-metric="status" data-action="toggle-maintenance" title="Activer/désactiver la maintenance automatique">
                                     <div class="pdfb-metric-card-header">
                                         <div class="pdfb-metric-icon">
-                                            <?php echo $auto_maintenance === '1' ? '✅' : '❌'; ?>
+                                            <?php echo esc_html($auto_maintenance === '1' ? '✅' : '❌'); ?>
                                         </div>
-                                        <div class="pdfb-metric-status" data-status="<?php echo $auto_maintenance === '1' ? 'active' : 'inactive'; ?>">
+                                        <div class="pdfb-metric-status" data-status="<?php echo esc_attr($auto_maintenance === '1' ? 'active' : 'inactive'); ?>">
                                             <span class="pdfb-status-indicator"></span>
                                         </div>
                                     </div>
                                     <div class="pdfb-metric-value">
-                                        <span class="pdfb-status-badge <?php echo $auto_maintenance === '1' ? 'pdfb-status-active' : 'pdfb-status-inactive'; ?>">
-                                            <?php echo $auto_maintenance === '1' ? 'Activée' : 'Désactivée'; ?>
+                                        <span class="pdfb-status-badge <?php echo esc_attr($auto_maintenance === '1' ? 'pdfb-status-active' : 'pdfb-status-inactive'); ?>">
+                                            <?php echo esc_html($auto_maintenance === '1' ? 'Activée' : 'Désactivée'); ?>
                                         </span>
                                     </div>
                                     <div class="pdfb-metric-label">Maintenance auto</div>
@@ -366,7 +370,7 @@
                                     <li>Support technique prioritaire</li>
                                     <li>Fonctionnalités avancées supplémentaires</li>
                                 </ul>
-                                <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings&tab=licence'); ?>" class="button button-primary button-large" style="background: #007cba; border-color: #007cba;">
+                                <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings&tab=licence')); ?>" class="button button-primary button-large" style="background: #007cba; border-color: #007cba;">
                                     🚀 Passer à la Version Premium
                                 </a>
                             </div>
@@ -431,14 +435,14 @@
                             <div class="pdfb-metric-grid">
                                 <div class="backup-metric-card" data-metric="last-backup">
                                     <div class="pdfb-metric-value">
-                                        <?php echo $last_backup; ?>
+                                        <?php echo esc_html($last_backup); ?>
                                     </div>
                                     <div class="pdfb-metric-label">Dernière sauvegarde</div>
                                     <div class="metric-hint">Cliquez pour créer</div>
                                 </div>
                                 <div class="backup-metric-card" data-metric="total-backups">
                                     <div class="pdfb-metric-value">
-                                        <?php echo $backup_count; ?>
+                                        <?php echo esc_html($backup_count); ?>
                                     </div>
                                     <div class="pdfb-metric-label">Total sauvegardes</div>
                                     <div class="metric-hint">Cliquez pour lister</div>
@@ -481,7 +485,7 @@
         $output.empty();
 
         // Générer un nonce pour la requête
-        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+        const nonce = '<?php echo esc_js(wp_create_nonce('pdf_builder_ajax')); ?>';
 
         $.ajax({
             url: ajaxurl,
@@ -541,7 +545,7 @@
         $results.html('<span style="color: #007cba;">Vidage en cours...</span>');
 
         // Générer un nonce pour la requête
-        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+        const nonce = '<?php echo esc_js(wp_create_nonce('pdf_builder_ajax')); ?>';
 
         $.ajax({
             url: ajaxurl,
@@ -587,7 +591,7 @@
         $results.html('<span style="color: #007cba;">Optimisation de la base de données en cours...</span>');
 
         // Générer un nonce pour la requête
-        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+        const nonce = '<?php echo esc_js(wp_create_nonce('pdf_builder_ajax')); ?>';
 
         $.ajax({
             url: ajaxurl,
@@ -628,7 +632,7 @@
         $results.html('<span style="color: #007cba;">Vérification et réparation des templates en cours...</span>');
 
         // Générer un nonce pour la requête
-        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+        const nonce = '<?php echo esc_js(wp_create_nonce('pdf_builder_ajax')); ?>';
 
         $.ajax({
             url: ajaxurl,
@@ -673,7 +677,7 @@
         $results.html('<span style="color: #007cba;">Suppression des fichiers temporaires en cours...</span>');
 
         // Générer un nonce pour la requête
-        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+        const nonce = '<?php echo esc_js(wp_create_nonce('pdf_builder_ajax')); ?>';
 
         $.ajax({
             url: ajaxurl,
@@ -711,7 +715,7 @@
         const metric = $btn.data('metric');
 
         // Générer un nonce pour la requête
-        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+        const nonce = '<?php echo esc_js(wp_create_nonce('pdf_builder_ajax')); ?>';
 
         // Désactiver le bouton pendant l'action
         $btn.prop('disabled', true);
@@ -882,7 +886,7 @@
         $btn.prop('disabled', true).html('<span>📦</span> Création en cours...');
 
         // Générer un nonce pour la requête
-        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+        const nonce = '<?php echo esc_js(wp_create_nonce('pdf_builder_ajax')); ?>';
 
         $.ajax({
             url: ajaxurl,
@@ -946,7 +950,7 @@
         const $container = $('#backup-accordion-container');
 
         // Générer un nonce pour la requête
-        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+        const nonce = '<?php echo esc_js(wp_create_nonce('pdf_builder_ajax')); ?>';
 
         $.ajax({
             url: ajaxurl,
@@ -1062,7 +1066,7 @@
         $btn.prop('disabled', true).text('🔄 Restauration...');
 
         // Générer un nonce pour la requête
-        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+        const nonce = '<?php echo esc_js(wp_create_nonce('pdf_builder_ajax')); ?>';
 
         $.ajax({
             url: ajaxurl,
@@ -1102,7 +1106,7 @@
         $btn.prop('disabled', true).text('📥 Téléchargement...');
 
         // Générer un nonce pour la requête
-        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+        const nonce = '<?php echo esc_js(wp_create_nonce('pdf_builder_ajax')); ?>';
 
         // Créer un formulaire temporaire pour le téléchargement
         const form = $('<form>', {
@@ -1156,7 +1160,7 @@
         $btn.prop('disabled', true).text('🗑️ Suppression...');
 
         // Générer un nonce pour la requête
-        const nonce = '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>';
+        const nonce = '<?php echo esc_js(wp_create_nonce('pdf_builder_ajax')); ?>';
 
         $.ajax({
             url: ajaxurl,

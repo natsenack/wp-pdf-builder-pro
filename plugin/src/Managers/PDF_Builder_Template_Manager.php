@@ -74,7 +74,7 @@ class PDF_Builder_Template_Manager
     public function templatesPage()
     {
         if (!current_user_can('manage_options')) {
-            \wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
+            \wp_die(__('Vous n\'avez pas les permissions nécessaires.', 'pdf-builder-pro'));
         }
 
         global $wpdb;

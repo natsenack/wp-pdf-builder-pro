@@ -85,6 +85,33 @@
 - **onglet "configuration pdf"** - correction et optimisation des fonctions
 - # **langue** - vérifier la langue anglais si bien traduit à 100%
 
+## **_Version 1.0.3.6_** — 24 février 2026
+
+### 🔒 Sécurité & Conformité Plugin Check WordPress
+
+- **[Security] `missing_direct_file_access_protection`** : Ajout du garde ABSPATH (`if (!defined('ABSPATH')) { exit; }`) dans 11 fichiers PHP sans protection d'accès direct : `pages/settings.php`, `pages/admin-editor.php`, `pages/welcome.php`, `settings-securite.php`, `settings-pdf.php`, `settings-systeme.php`, `settings-licence.php`, `settings-templates.php`, `settings-cron.php` (déjà présent), `settings-modals.php`, `settings-pdf-fixed.php`.
+- **[Security] `EscapeOutput.UnsafePrintingFunction`** : Remplacement de tous les `_e()` par `esc_html_e()` et des `echo __()` par `echo esc_html__()` dans `pages/settings.php` et `settings-main.php` (onglets de navigation, boutons, messages JS).
+- **[Security] `EscapeOutput.OutputNotEscaped`** : Enveloppement de toutes les variables échappées manquantes : `echo esc_html($var)` pour texte, `echo esc_attr($var)` pour attributs HTML, `echo esc_url(admin_url(...))` pour URL, `echo esc_attr(wp_create_nonce(...))` pour nonces dans champs hidden, `echo esc_js(wp_create_nonce(...))` pour nonces dans blocs JavaScript.
+- **[Security] `SafeRedirect`** : Remplacement de `wp_redirect()` par `wp_safe_redirect()` dans `pages/welcome.php` et `settings-main.php`.
+- **[Security] `EscapeOutput.OutputNotEscaped` (stubs)** : Ajout de `phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped` sur les fonctions `_e()` et `_ex()` dans `lib/pdf-builder-stubs.php` (fonctions stubs légitimes pour PHPStan).
+- **[Security] Nonces JS systeme** : 13 occurrences de `echo wp_create_nonce('pdf_builder_ajax')` dans `settings-systeme.php` migrées vers `esc_js()` pour éviter les injections dans du code JavaScript.
+- **[Security] admin-system-check.php** : Échappement de `wp_nonce_url()` → `esc_url()`, `size_format()` → `esc_html()`, `PHP_OS` → `esc_html()`, `PHP_VERSION` → `esc_html()`.
+
+==================================================================================================================
+
+## **_Version 1.0.3.5_** — 23 février 2026
+
+### 🐛 Corrections (Bug Fixes)
+
+- **[i18n] `MissingArgDomain`** : Ajout du paramètre `'pdf-builder-pro'` manquant dans les appels `__()` de `predefined-templates-manager.php`, `builtin-editor-page.php`, `PDF_Builder_Template_Manager`, `PDF_Builder_Settings_Manager`.
+- **[i18n] `MissingTranslatorsComment`** : Ajout des commentaires `// translators:` requis par WordPress avant tous les appels `sprintf()` / `printf()` / `_n()` contenant des placeholders (`%s`, `%d`) dans 10+ fichiers.
+- **[i18n] `UnorderedPlaceholdersText`** : Remplacement de `%s, %s` / `%d, %s` par `%1$s, %2$s` / `%1$d, %2$s` pour les chaînes à plusieurs placeholders (`PDF_Builder_API_Helper`, `MaintenanceManager`, `MaintenanceActionHandler`, `Backup_Restore_Manager`).
+- **[i18n] `TextDomainMismatch`** : Correction du domaine `'pdf-builder'` → `'pdf-builder-pro'` dans `PDF_Builder_Auto_Update_Manager`.
+- **[i18n] `MissingSingularPlaceholder`** : Ajout du placeholder `%d` dans la forme singulière des appels `_n()` de `PDF_Builder_Auto_Update_Manager` (mises à jour + correctifs sécurité).
+- **[i18n] `NonSingularStringLiteralText/Domain`** : Ajout de `phpcs:ignore` sur les fonctions wrapper de traduction (`pdf-builder-stubs.php`, `PDF_Builder_Localization`, `i18n-mappings.php`) — ces fonctions sont légitimement dynamiques.
+
+==================================================================================================================
+
 ## **_Version 1.0.3.4_** — 23 février 2026
 
 ### 🔧 Maintenance & Qualité du code

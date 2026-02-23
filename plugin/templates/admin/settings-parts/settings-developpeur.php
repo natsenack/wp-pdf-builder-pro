@@ -81,7 +81,7 @@ if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access(
                             <p class="description">Basculer le mode test pour développer et tester sans serveur de licence en production</p>
                             <input type="hidden" name="pdf_builder_settings[pdf_builder_license_test_mode_enabled]" value="0">
                             <input type="checkbox" id="license_test_mode" name="pdf_builder_settings[pdf_builder_license_test_mode_enabled]" value="1" <?php checked($license_test_mode, '1'); ?> class="pdfb-hidden-element" />
-                            <input type="hidden" id="toggle_license_test_mode_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
+                            <input type="hidden" id="toggle_license_test_mode_nonce" value="<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>" />
                         </td>
                     </tr>
                     <tr>
@@ -105,9 +105,9 @@ if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access(
                             </div>
                             <p class="description">Génère une clé de test aléatoire pour valider le système de licence</p>
                             <span id="license_key_status" style="margin-left: 0; margin-top: 10px; display: inline-block;"></span>
-                            <input type="hidden" id="generate_license_key_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
-                            <input type="hidden" id="delete_license_key_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
-                            <input type="hidden" id="validate_license_key_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
+                            <input type="hidden" id="generate_license_key_nonce" value="<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>" />
+                            <input type="hidden" id="delete_license_key_nonce" value="<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>" />
+                            <input type="hidden" id="validate_license_key_nonce" value="<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>" />
                         </td>
                     </tr>
                     <tr>
@@ -118,7 +118,7 @@ if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access(
                             </button>
                             <p class="description">Supprime tous les paramètres de licence et réinitialise à l'état libre. Utile pour les tests.</p>
                             <span id="cleanup_status" style="margin-left: 0; margin-top: 10px; display: inline-block;"></span>
-                            <input type="hidden" id="cleanup_license_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
+                            <input type="hidden" id="cleanup_license_nonce" value="<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>" />
                         </td>
                     </tr>
                     <tr>
@@ -129,7 +129,7 @@ if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access(
                             </button>
                             <p class="description">Déclenche manuellement la vérification d'expiration des licences (normalement exécutée quotidiennement par cron)</p>
                             <span id="check_expiration_status" style="margin-left: 0; margin-top: 10px; display: inline-block;"></span>
-                            <input type="hidden" id="check_expiration_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
+                            <input type="hidden" id="check_expiration_nonce" value="<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>" />
                         </td>
                     </tr>
                 </table>
@@ -600,9 +600,9 @@ if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access(
                         <span id="database_status" style="display: inline-block;"></span>
                     </div>
 
-                    <input type="hidden" id="create_db_table_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
-                    <input type="hidden" id="migrate_db_data_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
-                    <input type="hidden" id="check_db_status_nonce" value="<?php echo wp_create_nonce('pdf_builder_ajax'); ?>" />
+                    <input type="hidden" id="create_db_table_nonce" value="<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>" />
+                    <input type="hidden" id="migrate_db_data_nonce" value="<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>" />
+                    <input type="hidden" id="check_db_status_nonce" value="<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>" />
                 </div>
             </section>
 

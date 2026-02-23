@@ -573,7 +573,7 @@ if (!function_exists('__')) {
 
 if (!function_exists('_e')) {
     function _e($text, $domain = 'default'): void {
-        echo $text;
+        echo $text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
     }
 }
 
@@ -591,7 +591,7 @@ if (!function_exists('_x')) {
 
 if (!function_exists('_ex')) {
     function _ex($text, $context, $domain = 'default'): void {
-        echo $text;
+        echo $text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
     }
 }
 
@@ -752,7 +752,7 @@ if (!function_exists('pdf_builder_get_option')) {
          * @return string
          */
         function pdf_builder_translate($string, $domain = 'pdf-builder-pro') {
-            return __($string, $domain);
+            return __($string, $domain); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText,WordPress.WP.I18n.NonSingularStringLiteralDomain
         }
     }
 

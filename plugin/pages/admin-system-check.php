@@ -164,7 +164,7 @@ if (isset($_GET['run_check']) && $_GET['run_check'] === '1') {
     </div>
     
     <div style="margin-top: 20px;">
-        <a href="<?php echo wp_nonce_url(admin_url('admin.php?page=pdf-builder-system-check&run_check=1'), 'pdf_builder_system_check'); ?>" 
+        <a href="<?php echo esc_url(wp_nonce_url(admin_url('admin.php?page=pdf-builder-system-check&run_check=1'), 'pdf_builder_system_check')); ?>" 
            class="button button-primary button-large">
             <span class="dashicons dashicons-update" style="margin-top: 3px;"></span>
             Lancer la vérification
@@ -228,7 +228,7 @@ if (isset($_GET['run_check']) && $_GET['run_check'] === '1') {
                                     <span class="dashicons dashicons-yes" style="color: #46b450;"></span>
                                     <strong style="color: #46b450;">Réussi</strong>
                                     <br>
-                                    <small>Image générée: <?php echo size_format($check_result['test_output_size']); ?></small>
+                                    <small>Image générée: <?php echo esc_html(size_format($check_result['test_output_size'])); ?></small>
                                 <?php else: ?>
                                     <span class="dashicons dashicons-no" style="color: #dc3232;"></span>
                                     <strong style="color: #dc3232;">Échec</strong>
@@ -247,12 +247,12 @@ if (isset($_GET['run_check']) && $_GET['run_check'] === '1') {
                         
                         <tr>
                             <th>Système d'exploitation</th>
-                            <td><code><?php echo PHP_OS; ?></code></td>
+                            <td><code><?php echo esc_html(PHP_OS); ?></code></td>
                         </tr>
                         
                         <tr>
                             <th>PHP version</th>
-                            <td><code><?php echo PHP_VERSION; ?></code></td>
+                            <td><code><?php echo esc_html(PHP_VERSION); ?></code></td>
                         </tr>
                         
                         <tr>
@@ -371,7 +371,7 @@ sudo apt-get install -y wkhtmltopdf</pre>
                         des images PNG et JPG depuis l'éditeur de templates.
                     </p>
                     <p>
-                        <a href="<?php echo admin_url('admin.php?page=pdf-builder-editor'); ?>" class="button button-primary">
+                        <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-editor')); ?>" class="button button-primary">
                             Aller à l'éditeur
                         </a>
                     </p>

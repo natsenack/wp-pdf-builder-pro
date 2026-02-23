@@ -41,7 +41,7 @@ class PDF_Builder_Settings_Manager
     public function settingsPage()
     {
         if (!current_user_can('manage_options')) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
+            wp_die(__('Vous n\'avez pas les permissions nécessaires.', 'pdf-builder-pro'));
         }
 
         if ((isset($_POST['save_settings']) || isset($_POST['pdf_builder_floating_save'])) && pdf_builder_verify_nonce($_POST['pdf_builder_settings_nonce'] ?? '', 'pdf_builder_settings')) {

@@ -178,7 +178,8 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                     <?php _e('Limite de Templates Atteinte', 'pdf-builder-pro'); ?>
                 </h4>
                 <p>
-                    <?php printf(
+                    <?php /* translators: %d: number of templates created by the user */
+                    printf(
                         __('Vous avez créé %d template gratuit sur 1. Passez en Premium pour créer des templates illimités !', 'pdf-builder-pro'),
                         $templates_count
                     ); ?>

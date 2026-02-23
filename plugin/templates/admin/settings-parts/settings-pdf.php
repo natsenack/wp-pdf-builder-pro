@@ -1,5 +1,9 @@
 <?php // PDF tab content - Updated: 2025-11-19 01:40:00
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 $settings = pdf_builder_get_option('pdf_builder_settings', array());
 error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($settings));
 
@@ -57,7 +61,7 @@ $is_premium = $license_manager->isPremium();
                             $orientation_emoji = ($canvas_orientation === 'landscape') ? '📄' : '📋';
                         ?>
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <span style="font-weight: 600; font-size: 16px; color: #667eea;"><?php echo $orientation_emoji; ?> <?php echo esc_html($orientation_labels[$canvas_orientation] ?? $canvas_orientation); ?></span>
+                            <span style="font-weight: 600; font-size: 16px; color: #667eea;"><?php echo esc_html($orientation_emoji); ?> <?php echo esc_html($orientation_labels[$canvas_orientation] ?? $canvas_orientation); ?></span>
                             <a href="#" class="button button-small" onclick="if(window.PDFBuilderTabsAPI && PDFBuilderTabsAPI.switchToTab) { PDFBuilderTabsAPI.switchToTab('canvas'); return false; } else if(window.switchTab) { switchTab('canvas'); return false; } else { window.location.hash = '#canvas'; return false; }">Modifier dans Canvas →</a>
                         </div>
                         <p class="description" style="margin-top: 12px; color: #666; font-size: 12px;">L'orientation PDF est synchronisée avec l'orientation du Canvas. Pour la modifier, accédez à l'onglet <strong>Canvas</strong>.</p>
@@ -165,7 +169,7 @@ $is_premium = $license_manager->isPremium();
                     Les options avancées de compression, métadonnées et optimisation d'impression sont disponibles dans la version Premium.
                 </p>
                 <p style="margin: 0;">
-                    <a href="#" onclick="if(window.PDFBuilderTabsAPI && PDFBuilderTabsAPI.switchToTab) { PDFBuilderTabsAPI.switchToTab('licence'); return false; } else if(window.switchTab) { switchTab('licence'); return false; } else { window.location.href='<?php echo admin_url('admin.php?page=pdf-builder-settings&tab=licence'); ?>'; return false; }" class="button button-primary" style="background: #007cba; border-color: #007cba; color: white; text-decoration: none; padding: 8px 16px; border-radius: 4px;">
+                    <a href="#" onclick="if(window.PDFBuilderTabsAPI && PDFBuilderTabsAPI.switchToTab) { PDFBuilderTabsAPI.switchToTab('licence'); return false; } else if(window.switchTab) { switchTab('licence'); return false; } else { window.location.href='<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings&tab=licence')); ?>'; return false; }" class="button button-primary" style="background: #007cba; border-color: #007cba; color: white; text-decoration: none; padding: 8px 16px; border-radius: 4px;">
                         Passer à la version Premium
                     </a>
                 </p>

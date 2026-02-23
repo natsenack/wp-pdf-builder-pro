@@ -593,6 +593,7 @@ class PDF_Builder_Onboarding_Manager {
                                 <div class="summary-card">
                                     <div class="card-icon">📄</div>
                                     <div class="card-content">
+                                        // translators: %d: number of available templates
                                         <h5>' . sprintf(__('%d Templates disponibles', 'pdf-builder-pro'), $template_count) . '</h5>
                                         <p>' . __('Templates professionnels prêts à utiliser', 'pdf-builder-pro') . '</p>
                                     </div>
@@ -694,7 +695,7 @@ class PDF_Builder_Onboarding_Manager {
                         <!-- Footer avec bienvenue personnalisée -->
                         <div class="welcome-footer">
                             <p class="welcome-message">
-                                ' . sprintf(__('Bienvenue dans la communauté PDF Builder Pro, %s !', 'pdf-builder-pro'), $current_user->display_name) . '
+                                ' . /* translators: %s: user display name */ sprintf(__('Bienvenue dans la communauté PDF Builder Pro, %s !', 'pdf-builder-pro'), $current_user->display_name) . '
                             </p>
                             <p class="welcome-tip">
                                 💡 ' . __('Astuce : Utilisez Ctrl+S (Cmd+S sur Mac) pour sauvegarder automatiquement vos modifications.', 'pdf-builder-pro') . '
@@ -714,6 +715,7 @@ class PDF_Builder_Onboarding_Manager {
         // Vérification PHP
         $checks[] = [
             'title' => __('Version PHP', 'pdf-builder-pro'),
+            // translators: %s: current PHP version number
             'description' => sprintf(__('Version actuelle : %s (Minimum requis : 7.4)', 'pdf-builder-pro'), PHP_VERSION),
             'status' => version_compare(PHP_VERSION, '7.4', '>=')
         ];
@@ -721,6 +723,7 @@ class PDF_Builder_Onboarding_Manager {
         global $wp_version;
         $checks[] = [
             'title' => __('Version WordPress', 'pdf-builder-pro'),
+            // translators: %s: current WordPress version number
             'description' => sprintf(__('Version actuelle : %s (Minimum requis : 5.0)', 'pdf-builder-pro'), $wp_version),
             'status' => version_compare($wp_version, '5.0', '>=')
         ];
@@ -737,6 +740,7 @@ class PDF_Builder_Onboarding_Manager {
         $memory_bytes = wp_convert_hr_to_bytes($memory_limit);
         $checks[] = [
             'title' => __('Mémoire PHP', 'pdf-builder-pro'),
+            // translators: %s: PHP memory limit value (e.g. 128M)
             'description' => sprintf(__('Limite actuelle : %s (Recommandé : 128M)', 'pdf-builder-pro'), $memory_limit),
             'status' => $memory_bytes >= 134217728 // 128M
         ];

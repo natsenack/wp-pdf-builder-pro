@@ -1,5 +1,9 @@
 <?php // Securite tab content - Updated: 2025-11-18 20:20:00
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
     // Préparer les variables nécessaires
     $settings = pdf_builder_get_option('pdf_builder_settings', array());
     error_log('[PDF Builder] settings-securite.php loaded - security_level: ' . ($settings['pdf_builder_security_level'] ?? 'not set') . ', enable_logging: ' . ($settings['pdf_builder_enable_logging'] ?? 'not set'));
@@ -186,9 +190,9 @@
                             </div>
 
                             <div id="gdpr-user-actions-result" style="margin-top: 15px; display: none;"></div>
-                            <input type="hidden" id="export_user_data_nonce" value="<?php echo wp_create_nonce('pdf_builder_gdpr'); ?>" />
-                            <input type="hidden" id="delete_user_data_nonce" value="<?php echo wp_create_nonce('pdf_builder_gdpr'); ?>" />
-                            <input type="hidden" id="audit_log_nonce"        value="<?php echo wp_create_nonce('pdf_builder_gdpr'); ?>" />
+                            <input type="hidden" id="export_user_data_nonce" value="<?php echo esc_attr(wp_create_nonce('pdf_builder_gdpr')); ?>" />
+                            <input type="hidden" id="delete_user_data_nonce" value="<?php echo esc_attr(wp_create_nonce('pdf_builder_gdpr')); ?>" />
+                            <input type="hidden" id="audit_log_nonce"        value="<?php echo esc_attr(wp_create_nonce('pdf_builder_gdpr')); ?>" />
                         </div>
 
                         <!-- Section Logs d'Audit -->

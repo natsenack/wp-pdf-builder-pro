@@ -60,20 +60,17 @@ class PDF_Builder_Updates_Manager {
 
     /**
      * Initialize update hooks
+     * S'appuie sur le mécanisme natif de WordPress (wp_update_plugins)
+     * qui appelle pre_set_site_transient_update_plugins automatiquement.
+     * Aucun cron personnalisé nécessaire.
      */
     public function init() {
-        // Hook WordPress pour fournir les infos du plugin
+        // Fournit les informations du plugin quand WordPress les demande
         add_filter('plugins_api', [$this, 'plugins_api_handler'], 10, 3);
 
-        // Hook WordPress pour vérifier les mises à jour
+        // WordPress appelle ce filtre lors de chaque vérification native (wp_update_plugins)
         add_filter('pre_set_site_transient_update_plugins', [$this, 'check_for_updates'], 10, 1);
         add_filter('pre_set_transient_update_plugins', [$this, 'check_for_updates'], 10, 1);
-
-        // Background check (optionnel: toutes les 12h)
-        if (!wp_next_scheduled('pdf_builder_check_updates')) {
-            wp_schedule_event(time(), 'twicedaily', 'pdf_builder_check_updates');
-        }
-        add_action('pdf_builder_check_updates', [$this, 'manually_check_updates']);
     }
 
     /**
@@ -108,10 +105,8 @@ class PDF_Builder_Updates_Manager {
             $transient->no_update = [];
         }
 
-        // Cacher à 12 heures pour éviter les surcharges
-        if (!empty($transient->last_checked) && (time() - $transient->last_checked) < self::CACHE_TIMEOUT) {
-            return $transient;
-        }
+        // Le cache est géré via transient WordPress dans get_remote_version() (12h)
+        // WordPress contrôle la fréquence des appels via wp_update_plugins()
 
         // Récupérer la version disponible depuis EDD
         $remote_version = $this->get_remote_version();
@@ -166,7 +161,8 @@ class PDF_Builder_Updates_Manager {
     }
 
     /**
-     * Forcer la vérification manuelle (par cron)
+     * Forcer la vérification manuelle (vide le cache transient)
+     * Peut être appelé depuis un bouton admin ou via WP-CLI
      */
     public function manually_check_updates() {
         delete_transient(self::UPDATE_TRANSIENT_KEY);
@@ -314,6 +310,7 @@ class PDF_Builder_Updates_Manager {
      */
     public static function cleanup() {
         delete_transient(self::UPDATE_TRANSIENT_KEY);
+        // Supprime l'ancien cron personnalisé s'il existait encore
         wp_clear_scheduled_hook('pdf_builder_check_updates');
     }
 }

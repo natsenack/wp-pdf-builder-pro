@@ -6,61 +6,61 @@ $task_scheduler = PDF_Builder_Task_Scheduler::get_instance();
 ?>
 
 <div class="pdf-builder-cron-diagnostics">
-    <h2><?php echo __('Cron System Diagnostics', 'pdf-builder-pro'); ?></h2>
+    <h2><?php echo esc_html__('Cron System Diagnostics', 'pdf-builder-pro'); ?></h2>
 
     <!-- WP Cron Status Indicator -->
     <div class="wp-cron-pdfb-status-indicator" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px;">
         <h3 style="margin-top: 0; color: #495057;">
             <span class="dashicons dashicons-clock" style="vertical-align: middle; margin-right: 8px;"></span>
-            <?php echo __('WP Cron Status', 'pdf-builder-pro'); ?>
+            <?php echo esc_html__('WP Cron Status', 'pdf-builder-pro'); ?>
         </h3>
         <div id="wp-cron-status-content">
             <div class="wp-cron-status-item" style="display: flex; align-items: center; margin-bottom: 8px;">
                 <span class="pdfb-status-indicator" id="wp-cron-enabled-indicator" style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 10px; background: #ffc107;"></span>
-                <span id="wp-cron-enabled-text"><?php echo __('Checking WP Cron status...', 'pdf-builder-pro'); ?></span>
+                <span id="wp-cron-enabled-text"><?php echo esc_html__('Checking WP Cron status...', 'pdf-builder-pro'); ?></span>
             </div>
             <div class="wp-cron-status-item" style="display: flex; align-items: center; margin-bottom: 8px;">
                 <span class="pdfb-status-indicator" id="wp-cron-scheduled-indicator" style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 10px; background: #ffc107;"></span>
-                <span id="wp-cron-scheduled-text"><?php echo __('Checking scheduled tasks...', 'pdf-builder-pro'); ?></span>
+                <span id="wp-cron-scheduled-text"><?php echo esc_html__('Checking scheduled tasks...', 'pdf-builder-pro'); ?></span>
             </div>
             <div class="wp-cron-status-item" style="display: flex; align-items: center;">
                 <span class="pdfb-status-indicator" id="wp-cron-response-indicator" style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 10px; background: #ffc107;"></span>
-                <span id="wp-cron-response-text"><?php echo __('Testing cron response...', 'pdf-builder-pro'); ?></span>
+                <span id="wp-cron-response-text"><?php echo esc_html__('Testing cron response...', 'pdf-builder-pro'); ?></span>
             </div>
         </div>
         <div style="margin-top: 10px;">
             <button type="button" id="check-wp-cron-status-btn" class="button button-small">
                 <span class="dashicons dashicons-update" style="vertical-align: middle; margin-right: 5px;"></span>
-                <?php echo __('Refresh Status', 'pdf-builder-pro'); ?>
+                <?php echo esc_html__('Refresh Status', 'pdf-builder-pro'); ?>
             </button>
         </div>
     </div>
 
     <div class="cron-status-section">
-        <h3><?php echo __('System Status', 'pdf-builder-pro'); ?></h3>
+        <h3><?php echo esc_html__('System Status', 'pdf-builder-pro'); ?></h3>
         <div id="cron-status-display">
-            <p><?php echo __('Click "Diagnose Cron System" to check the current status.', 'pdf-builder-pro'); ?></p>
+            <p><?php echo esc_html__('Click "Diagnose Cron System" to check the current status.', 'pdf-builder-pro'); ?></p>
         </div>
     </div>
 
     <div class="cron-actions-section">
-        <h3><?php echo __('Actions', 'pdf-builder-pro'); ?></h3>
+        <h3><?php echo esc_html__('Actions', 'pdf-builder-pro'); ?></h3>
         <button type="button" id="diagnose-cron-btn" class="button button-secondary">
-            <?php echo __('Diagnose Cron System', 'pdf-builder-pro'); ?>
+            <?php echo esc_html__('Diagnose Cron System', 'pdf-builder-pro'); ?>
         </button>
         <button type="button" id="repair-cron-btn" class="button button-primary">
-            <?php echo __('Repair Cron System', 'pdf-builder-pro'); ?>
+            <?php echo esc_html__('Repair Cron System', 'pdf-builder-pro'); ?>
         </button>
         <button type="button" id="backup-stats-btn" class="button button-secondary">
-            <?php echo __('View Backup Statistics', 'pdf-builder-pro'); ?>
+            <?php echo esc_html__('View Backup Statistics', 'pdf-builder-pro'); ?>
         </button>
         <button type="button" id="manual-backup-btn" class="button button-secondary">
-            <?php echo __('Create Manual Backup', 'pdf-builder-pro'); ?>
+            <?php echo esc_html__('Create Manual Backup', 'pdf-builder-pro'); ?>
         </button>
     </div>
 
     <div class="cron-results-section" id="cron-results" class="hidden-element">
-        <h3><?php echo __('Results', 'pdf-builder-pro'); ?></h3>
+        <h3><?php echo esc_html__('Results', 'pdf-builder-pro'); ?></h3>
         <div id="cron-results-content"></div>
     </div>
 </div>

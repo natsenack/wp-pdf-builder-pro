@@ -6,6 +6,10 @@
      * Updated: 2025-12-02 - Code réorganisé pour une meilleure lisibilité
      */
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
     // Vérifier si l'utilisateur a une licence premium
     $is_premium = false;
     if (class_exists('PDF_Builder\Managers\PDF_Builder_License_Manager')) {
@@ -435,7 +439,7 @@
         <?php if (!$is_premium): ?>
             <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 12px; margin: 15px 0; font-size: 14px;">
                 <strong>🔒 Version Gratuite :</strong> Vous pouvez uniquement assigner des templates au statut "Terminée".
-                Les statuts personnalisés restent disponibles. <a href="#" onclick="if(window.PDFBuilderTabsAPI && PDFBuilderTabsAPI.switchToTab) { PDFBuilderTabsAPI.switchToTab('licence'); return false; } else if(window.switchTab) { switchTab('licence'); return false; } else { window.location.href='<?php echo admin_url('admin.php?page=pdf-builder-settings#licence'); ?>'; return false; }" style="color: #856404;">Passer à la version Premium</a> pour débloquer toutes les fonctionnalités.
+                Les statuts personnalisés restent disponibles. <a href="#" onclick="if(window.PDFBuilderTabsAPI && PDFBuilderTabsAPI.switchToTab) { PDFBuilderTabsAPI.switchToTab('licence'); return false; } else if(window.switchTab) { switchTab('licence'); return false; } else { window.location.href='<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings#licence')); ?>'; return false; }" style="color: #856404;">Passer à la version Premium</a> pour débloquer toutes les fonctionnalités.
             </div>
         <?php endif; ?>
     </header>
@@ -485,7 +489,7 @@
                             $is_premium_required = !$is_custom_status && !$is_default_completed;
                         }
                     ?>
-                        <article class="pdfb-template-status-card <?php echo $is_custom_status ? 'custom-status-card' : ''; ?> <?php echo $is_premium_required ? 'premium-card' : ''; ?>">
+                        <article class="pdfb-template-status-card <?php echo esc_attr($is_custom_status ? 'custom-status-card' : ''); ?> <?php echo esc_attr($is_premium_required ? 'premium-card' : ''); ?>">
                             <header>
                                 <h4>
                                     <?php echo esc_html($status_label); ?>

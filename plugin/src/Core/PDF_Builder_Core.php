@@ -876,6 +876,7 @@ class PdfBuilderCore
 
             <h1><?php _e('PDF Builder - React Editor', 'pdf-builder-pro'); ?></h1>
             <?php if ($template_id) : ?>
+                <?php /* translators: %d: template ID number */ ?>
                 <p><?php printf(__('Editing template #%d', 'pdf-builder-pro'), $template_id); ?></p>
             <?php else : ?>
                 <p><?php _e('Create a new PDF template', 'pdf-builder-pro'); ?></p>

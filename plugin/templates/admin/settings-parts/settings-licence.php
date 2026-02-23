@@ -1,5 +1,9 @@
 <?php // Licence tab content - Updated: AJAX centralized 2025-12-02
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 ?>
             <!-- Licence Settings Section (No Form - AJAX Centralized) -->
             <section id="licence" aria-label="Gestion de la Licence">
@@ -87,8 +91,8 @@
                                 Gestion de la Licence
                             </h2>
                             <!-- Badge Statut Licence -->
-                            <span class="pdfb-license-status-badge <?php echo $is_premium ? 'badge-premium' : 'badge-free'; ?>">
-                                <?php echo $is_premium ? '⭐ Premium' : '○ Version Gratuite'; ?>
+                            <span class="pdfb-license-status-badge <?php echo esc_attr($is_premium ? 'badge-premium' : 'badge-free'); ?>">
+                                <?php echo esc_html($is_premium ? '⭐ Premium' : '○ Version Gratuite'); ?>
                             </span>
                         </div>
                         <p class="pdfb-license-subtitle">Gérez votre licence PDF Builder Pro et accédez aux fonctionnalités premium</p>
@@ -132,8 +136,8 @@
                             <div class="pdfb-license-alert-icon">⏰</div>
                             <div class="pdfb-license-alert-content">
                                 <h4>Expiration imminente</h4>
-                                <p>Votre licence expire dans <strong><?php echo $days_left; ?> jour<?php echo $days_left > 1 ? 's' : ''; ?></strong></p>
-                                <p class="pdfb-license-alert-date">Le <?php echo date('d/m/Y', strtotime($license_expires)); ?></p>
+                                <p>Votre licence expire dans <strong><?php echo (int)$days_left; ?> jour<?php echo esc_html($days_left > 1 ? 's' : ''); ?></strong></p>
+                                <p class="pdfb-license-alert-date">Le <?php echo esc_html(date('d/m/Y', strtotime($license_expires))); ?></p>
                             </div>
                             <div class="pdfb-license-alert-actions">
                                 <a href="#renewal" class="pdfb-license-btn-small">Renouveler</a>
@@ -144,8 +148,8 @@
                             <div class="pdfb-license-alert-icon">❌</div>
                             <div class="pdfb-license-alert-content">
                                 <h4>Licence expirée</h4>
-                                <p>Votre licence a expiré il y a <?php echo abs($days_left); ?> jour<?php echo abs($days_left) > 1 ? 's' : ''; ?></p>
-                                <p class="pdfb-license-alert-date">Le <?php echo date('d/m/Y', strtotime($license_expires)); ?></p>
+                                <p>Votre licence a expiré il y a <?php echo (int)abs($days_left); ?> jour<?php echo esc_html(abs($days_left) > 1 ? 's' : ''); ?></p>
+                                <p class="pdfb-license-alert-date">Le <?php echo esc_html(date('d/m/Y', strtotime($license_expires))); ?></p>
                             </div>
                             <div class="pdfb-license-alert-actions">
                                 <a href="#renewal" class="pdfb-license-btn-small primary">Renouveler maintenant</a>
@@ -165,9 +169,9 @@
                         <div class="pdfb-license-action-card-header">
                             <h3>
                                 <span class="pdfb-license-action-icon">🔑</span>
-                                <?php echo $is_premium ? 'Changer de Licence' : 'Activer une Licence'; ?>
+                                <?php echo esc_html($is_premium ? 'Changer de Licence' : 'Activer une Licence'); ?>
                             </h3>
-                            <p><?php echo $is_premium ? 'Remplacer votre licence actuelle' : 'Débloquer toutes les fonctionnalités premium'; ?></p>
+                            <p><?php echo esc_html($is_premium ? 'Remplacer votre licence actuelle' : 'Débloquer toutes les fonctionnalités premium'); ?></p>
                         </div>
 
                         <div class="pdfb-license-action-card-content">
@@ -179,7 +183,7 @@
                                            placeholder="<?php echo $is_premium && !empty($license_key_masked) ? esc_attr($license_key_masked) : 'Entrez votre clé de licence premium'; ?>"
                                            class="pdfb-license-input">
                                     <button type="button" class="pdfb-license-btn-primary" id="activate-license-btn">
-                                        <span class="pdfb-license-btn-text"><?php echo $is_premium ? 'Changer' : 'Activer'; ?></span>
+                                        <span class="pdfb-license-btn-text"><?php echo esc_html($is_premium ? 'Changer' : 'Activer'); ?></span>
                                         <span class="pdfb-license-btn-icon">✓</span>
                                     </button>
                                 </div>
@@ -357,7 +361,7 @@
                                 <?php elseif ($lic_days_left !== null): ?>
                                     <?php
                                         $color = $lic_days_left > 60 ? '#00a32a' : ($lic_days_left > 14 ? '#d97c00' : '#cc1818');
-                                        echo '<span style="color:' . $color . ';font-weight:600;font-size:1.1rem;">' . (int)$lic_days_left . ' j</span>';
+                                        echo '<span style="color:' . esc_attr($color) . ';font-weight:600;font-size:1.1rem;">' . (int)$lic_days_left . ' j</span>';
                                     ?>
                                 <?php else: ?>
                                     <span style="color:#999;">—</span>
@@ -619,9 +623,9 @@
                     <script type="text/javascript">
                         // Nonces de licence
                         window.pdfBuilderLicense = window.pdfBuilderLicense || {};
-                        window.pdfBuilderLicense.deactivateNonce = '<?php echo wp_create_nonce("pdf_builder_deactivate"); ?>';
-                        window.pdfBuilderLicense.ajaxNonce      = '<?php echo wp_create_nonce("pdf_builder_ajax"); ?>';
-                        window.pdfBuilderLicense.ajaxUrl         = '<?php echo admin_url("admin-ajax.php"); ?>';
+                        window.pdfBuilderLicense.deactivateNonce = '<?php echo esc_js(wp_create_nonce("pdf_builder_deactivate")); ?>';
+                        window.pdfBuilderLicense.ajaxNonce      = '<?php echo esc_js(wp_create_nonce("pdf_builder_ajax")); ?>';
+                        window.pdfBuilderLicense.ajaxUrl         = '<?php echo esc_url(admin_url("admin-ajax.php")); ?>';
 
                         // ── Expand / Collapse générique ─────────────────────────────────────
                         function pdfbToggleExpand(btn, targetId) {

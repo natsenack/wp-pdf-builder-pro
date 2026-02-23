@@ -264,7 +264,7 @@ class PDF_Builder_Predefined_Templates_Manager
     public function renderAdminPage()
     {
         if (!current_user_can('manage_options')) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
+            wp_die(__('Vous n\'avez pas les permissions nécessaires.', 'pdf-builder-pro'));
         }
 
         // Vérifier que le mode développeur est actif (token wp-config + BDD)

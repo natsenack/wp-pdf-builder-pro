@@ -40,7 +40,7 @@ function pdf_builder_builtin_editor_page()
 
     // Vérifier les permissions
     if (!current_user_can('manage_options')) {
-        wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.'));
+        wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
     }
 
     // Récupérer le template_id depuis l'URL

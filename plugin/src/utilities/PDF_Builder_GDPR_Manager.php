@@ -242,6 +242,7 @@ class PDF_Builder_GDPR_Manager {
 
         
 
+        // translators: %s: export file format (e.g. CSV, JSON)
         \wp_send_json_success([
             'message' => sprintf(__('Données exportées avec succès au format %s.', 'pdf-builder-pro'), strtoupper($format)),
             'download_url' => $export_result['download_url'],

@@ -1,5 +1,9 @@
 <?php // PDF tab content - Updated: 2025-11-19 01:40:00
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 $settings = pdf_builder_get_option('pdf_builder_settings', array());
 error_log('[PDF Builder] settings-pdf.php loaded - settings count: ' . count($settings));
 
@@ -145,7 +149,7 @@ $is_premium = $license_manager->isPremium();
                     Les options avancées de compression, métadonnées et optimisation d'impression sont disponibles dans la version Premium.
                 </p>
                 <p style="margin: 0;">
-                    <a href="#" onclick="if(window.PDFBuilderTabsAPI && PDFBuilderTabsAPI.switchToTab) { PDFBuilderTabsAPI.switchToTab('licence'); return false; } else if(window.switchTab) { switchTab('licence'); return false; } else { window.location.href='<?php echo admin_url('admin.php?page=pdf-builder-settings&tab=licence'); ?>'; return false; }" class="button button-primary" style="background: #007cba; border-color: #007cba; color: white; text-decoration: none; padding: 8px 16px; border-radius: 4px;">
+                    <a href="#" onclick="if(window.PDFBuilderTabsAPI && PDFBuilderTabsAPI.switchToTab) { PDFBuilderTabsAPI.switchToTab('licence'); return false; } else if(window.switchTab) { switchTab('licence'); return false; } else { window.location.href='<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings&tab=licence')); ?>'; return false; }" class="button button-primary" style="background: #007cba; border-color: #007cba; color: white; text-decoration: none; padding: 8px 16px; border-radius: 4px;">
                         Passer à la version Premium
                     </a>
                 </p>

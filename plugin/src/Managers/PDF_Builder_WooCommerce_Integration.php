@@ -1199,6 +1199,7 @@ class PDF_Builder_WooCommerce_Integration
         @unlink($tmp_file);
 
         if ($sent) {
+            // translators: %s: recipient email address
             \wp_send_json_success(['message' => sprintf(__('E-mail envoyé avec succès à %s', 'pdf-builder-pro'), $to)]);
         } else {
             \wp_send_json_error(['message' => __('Échec de l\'envoi. Vérifiez la configuration SMTP de WordPress.', 'pdf-builder-pro')]);
