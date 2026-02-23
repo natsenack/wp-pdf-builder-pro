@@ -75,7 +75,7 @@ function Build-PluginZip {
     # Chemins
     $ZipPath = Join-Path $OutputDir "pdf-builder-pro-$Version.zip"
     $TempDir = Join-Path $OutputDir ".temp"
-    $PluginTempDir = Join-Path $TempDir "wp-pdf-builder-pro"
+    $PluginTempDir = Join-Path $TempDir "pdf-builder-pro"
     
     # Créer répertoire temporaire
     if (Test-Path $TempDir) {
@@ -137,7 +137,7 @@ function Build-PluginZip {
             Remove-Item $ZipPath -Force
         }
         
-        [System.IO.Compression.ZipFile]::CreateFromDirectory($TempDir, $ZipPath, [System.IO.Compression.CompressionLevel]::Optimal, $true)
+        [System.IO.Compression.ZipFile]::CreateFromDirectory($PluginTempDir, $ZipPath, [System.IO.Compression.CompressionLevel]::Optimal, $true)
         
         # Vérifier la taille du ZIP
         $zipSize = (Get-Item $ZipPath).Length
