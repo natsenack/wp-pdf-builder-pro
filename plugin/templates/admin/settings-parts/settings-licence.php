@@ -114,10 +114,15 @@
                 <div class="pdfb-license-dashboard">
 
                     <!-- Alertes importantes -->
-                    <?php if ($is_premium && !empty($license_expires)): ?>
+                    <?php if ($is_premium && !empty($license_expires) && strtolower($license_expires) !== 'lifetime'): ?>
                         <?php
                         $now = new DateTime();
-                        $expires = new DateTime($license_expires);
+                        try {
+                            $expires = new DateTime($license_expires);
+                        } catch (\Throwable $e) {
+                            $expires = null;
+                        }
+                        if ($expires):
                         $diff = $now->diff($expires);
                         $days_left = $diff->invert ? -$diff->days : $diff->days;
 
@@ -147,6 +152,7 @@
                             </div>
                         </div>
                         <?php endif; ?>
+                        <?php endif; // if ($expires) ?>
                     <?php endif; ?>
 
                 </div>
