@@ -254,14 +254,14 @@ if (!function_exists('pdf_builder_is_premium')) {
         try {
             // Première tentative : utiliser le License Manager
             if (class_exists('PDF_Builder\Managers\PDF_Builder_License_Manager')) {
-                $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::get_instance();
+                $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
                 return $license_manager->is_premium();
             }
             
             // Fallback : vérifier directement l'option de licence
             $license_status = pdf_builder_get_option('pdf_builder_license_status', 'free');
             return $license_status === 'active';
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             error_log('[PDF Builder] Error checking premium status: ' . $e->getMessage());
             return false;
         }
