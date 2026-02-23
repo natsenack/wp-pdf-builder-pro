@@ -105,13 +105,15 @@ class PDF_Builder_Updates_Manager {
             $transient->no_update = [];
         }
 
-        // Le cache est géré via transient WordPress dans get_remote_version() (12h)
-        // WordPress contrôle la fréquence des appels via wp_update_plugins()
+        // On n'utilise PAS notre cache transient ici :
+        // WP ne déclenche ce filtre que quand son propre transient update_plugins expire (~12h),
+        // donc forcer $force=true garantit des données EDD fraîches à chaque vérification WP.
+        // Notre cache 12h restait périmé et empêchait de détecter les nouvelles versions.
 
         error_log('[PDF Builder] check_for_updates() appelé. Version locale: ' . $this->current_version);
 
-        // Récupérer la version disponible depuis EDD
-        $remote_version = $this->get_remote_version();
+        // Récupérer la version disponible depuis EDD (données fraîches, pas de cache)
+        $remote_version = $this->get_remote_version(true);
 
         if (!$remote_version) {
             error_log('[PDF Builder] check_for_updates() : get_remote_version() a retourné false (échec EDD)');

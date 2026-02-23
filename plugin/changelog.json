@@ -1,4 +1,12 @@
 {
+  "1.0.3.14": {
+    "version": "1.0.3.14",
+    "released": "2026-02-23",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.3.14 - Correctif mise \u00e0 jour licenci\u00e9s<\/h3>\n<ul>\n<li>\uD83D\uDD27 <strong>D\u00e9tection mise \u00e0 jour<\/strong> : check_for_updates() appelle d\u00e9sormais EDD avec force=true \u2192 le cache transient 12h du plugin ne masque plus les nouvelles versions quand WordPress d\u00e9clenche sa v\u00e9rification<\/li>\n<li>\uD83D\uDD27 <strong>Activation licence<\/strong> : purge imm\u00e9diate du transient update_plugins et UPDATE_TRANSIENT_KEY apr\u00e8s activation\/d\u00e9sactivation de licence pour un check EDD instantan\u00e9<\/li>\n<\/ul>"
+  },
   "1.0.3.13": {
     "version": "1.0.3.13",
     "released": "2026-02-23",
