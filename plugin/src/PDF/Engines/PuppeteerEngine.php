@@ -63,11 +63,15 @@ class PuppeteerEngine implements PDFEngineInterface {
 
     /**
      * Génère une image PNG/JPG à partir de HTML.
-     * Génère le PDF via le service puis convertit avec Imagick (si disponible).
+     *
+     * Stratégie en deux temps :
+     *  1. Screenshot natif via le service Puppeteer (plus rapide, requiert licence premium).
+     *  2. Fallback : génération PDF (disponible free + premium) puis conversion Imagick.
      *
      * @param string $html
      * @param array  $options  [format => 'png'|'jpg', width, height, quality]
-     * @return string|false
+     * @return string          Contenu binaire de l'image
+     * @throws \RuntimeException  Si les deux méthodes échouent
      */
     public function generate_image( $html, $options = [] ) {
 
@@ -81,10 +85,68 @@ class PuppeteerEngine implements PDFEngineInterface {
         $license_key = $this->get_license_key();
         $site_url    = get_site_url();
 
-        // Génération directe PNG/JPG via le service Puppeteer (screenshot natif)
-        $image = $this->client->render_image( $html, $format, $width, $height, $quality, $license_key, $site_url );
-        $this->log( "Image générée via service – " . strlen( $image ) . " octets (format={$format})" );
-        return $image;
+        $this->log( "format={$format}  {$width}x{$height}  quality={$quality}  license=" . ( $license_key ? 'yes' : 'no' ) );
+
+        // ── Étape 1 : screenshot natif Puppeteer ─────────────────────────────────
+        try {
+            $image = $this->client->render_image( $html, $format, $width, $height, $quality, $license_key, $site_url );
+            $this->log( "Image générée via service natif – " . strlen( $image ) . " octets (format={$format})" );
+            return $image;
+        } catch ( \Exception $original_e ) {
+            $this->log(
+                "render_image() échoué ({$original_e->getMessage()}) — tentative fallback Imagick",
+                'WARNING'
+            );
+            error_log( '[PuppeteerEngine] render_image failed: ' . $original_e->getMessage() . ' — trying Imagick fallback' );
+        }
+
+        // ── Étape 2 : fallback PDF → Imagick ────────────────────────────────────
+        if ( ! extension_loaded( 'imagick' ) || ! class_exists( '\Imagick' ) ) {
+            throw new \RuntimeException(
+                "Génération {$format} indisponible : le service a refusé la requête (tier_restriction ?) " .
+                "et l'extension PHP Imagick n'est pas installée sur ce serveur. " .
+                "Vérifiez votre licence ou demandez l'activation de l'extension Imagick."
+            );
+        }
+
+        $this->log( "Fallback : génération PDF puis conversion Imagick (→{$format})" );
+
+        $paper_format = ( $width >= 1100 && $height >= 1550 ) ? 'A3' : 'A4';
+
+        try {
+            $pdf_content = $this->client->render( $html, $paper_format, $license_key, $site_url );
+        } catch ( \Exception $pdf_e ) {
+            throw new \RuntimeException(
+                "Fallback Imagick : impossible de générer le PDF intermédiaire — " . $pdf_e->getMessage()
+            );
+        }
+
+        if ( empty( $pdf_content ) ) {
+            throw new \RuntimeException( 'Fallback Imagick : le PDF généré est vide.' );
+        }
+
+        try {
+            $imagick = new \Imagick();
+            $imagick->setResolution( 150, 150 );
+            $imagick->readImageBlob( $pdf_content );
+            $imagick->setIteratorIndex( 0 );  // première page uniquement
+            $imagick->setImageFormat( strtoupper( $format ) );
+            if ( $format === 'jpg' ) {
+                $imagick->setImageCompressionQuality( $quality );
+            }
+            // Redimensionner en préservant le ratio si les dimensions dépassent
+            $imagick->resizeImage( $width, $height, \Imagick::FILTER_LANCZOS, 1, true );
+
+            $image_data = $imagick->getImageBlob();
+            $imagick->clear();
+            $imagick->destroy();
+
+            $this->log( "Fallback Imagick OK – " . strlen( $image_data ) . " octets" );
+            return $image_data;
+
+        } catch ( \Exception $imagick_e ) {
+            throw new \RuntimeException( 'Fallback Imagick échoué : ' . $imagick_e->getMessage() );
+        }
     }
 
     /**
