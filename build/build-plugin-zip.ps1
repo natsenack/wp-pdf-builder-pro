@@ -62,21 +62,11 @@ function Build-PluginZip {
         return $false
     }
     
-    # Nettoyer les anciens ZIPs
-    $oldZips = Get-ChildItem -Path $OutputDir -Filter "pdf-builder-pro-*.zip" -ErrorAction SilentlyContinue
-    if ($oldZips) {
-        Write-Host "🗑️  Suppression des anciens ZIPs..." -ForegroundColor Yellow
-        foreach ($zip in $oldZips) {
-            Remove-Item $zip.FullName -Force
-            Write-Host "   Supprimé: $($zip.Name)" -ForegroundColor Gray
-        }
-    }
-    
     # Chemins
     $ZipPath = Join-Path $OutputDir "pdf-builder-pro-$Version.zip"
     $TempDir = Join-Path $OutputDir ".temp"
     $PluginTempDir = Join-Path $TempDir "pdf-builder-pro"
-    
+
     # Créer répertoire temporaire
     if (Test-Path $TempDir) {
         Remove-Item $TempDir -Recurse -Force

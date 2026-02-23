@@ -28,7 +28,7 @@ class PDF_Builder_Updates_Manager {
     /**
      * Slug du plugin
      */
-    const PLUGIN_SLUG = 'wp-pdf-builder-pro';
+    const PLUGIN_SLUG = 'pdf-builder-pro';
 
     /**
      * Transient cache key
