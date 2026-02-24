@@ -433,7 +433,21 @@ if (function_exists('add_action')) {
         if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Updates_Manager.php')) {
             require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Updates_Manager.php';
             // Initialiser les hooks WordPress pour les mises à jour automatiques
-            $updates_manager = new \PDF_Builder\Managers\PDF_Builder_Updates_Manager();
+            $updates_manager = new \PDF_Builder\Managers\PDF_Builder_Updates_Manager([
+                'store_url'       => 'https://hub.threeaxe.fr',
+                'item_id'         => 19,
+                'item_name'       => 'PDF Builder Pro',
+                'plugin_slug'     => 'pdf-builder-pro',
+                'plugin_file'     => PDF_BUILDER_PLUGIN_FILE,
+                'version'         => defined('PDF_BUILDER_PRO_VERSION') ? PDF_BUILDER_PRO_VERSION : '1.0.1.0',
+                'plugin_url'      => PDF_BUILDER_PLUGIN_URL,
+                'license_callback' => function() {
+                    if ( class_exists('PDF_Builder\\Managers\\PDF_Builder_License_Manager') ) {
+                        return \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->get_license_key();
+                    }
+                    return '';
+                },
+            ]);
             $updates_manager->init();
 
             // Action AJAX de diagnostic : force le check EDD et affiche la réponse brute
@@ -442,7 +456,7 @@ if (function_exists('add_action')) {
                     wp_send_json_error(['message' => 'Accès refusé'], 403);
                 }
                 // Vider notre cache ET le transient natif WordPress (contient le package URL)
-                delete_transient(\PDF_Builder\Managers\PDF_Builder_Updates_Manager::UPDATE_TRANSIENT_KEY);
+                delete_transient($updates_manager->get_transient_key());
                 delete_site_transient('update_plugins');
                 $result = $updates_manager->get_remote_version(true);
                 wp_send_json_success([

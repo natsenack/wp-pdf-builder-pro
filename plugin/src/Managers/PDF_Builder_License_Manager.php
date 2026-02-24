@@ -198,9 +198,9 @@ class PDF_Builder_License_Manager
             error_log('[PDF_Builder_License] activateLicense SUCCESS - status=active stored in both individual + grouped settings');
 
             // Purger les caches de mise à jour pour forcer un nouveau check EDD immédiat
-            delete_transient(\PDF_Builder\Managers\PDF_Builder_Updates_Manager::UPDATE_TRANSIENT_KEY);
+            delete_transient('pdf-builder-pro_edd_update_check');
             delete_site_transient('update_plugins');
-            error_log('[PDF_Builder_License] Transients update_plugins et UPDATE_TRANSIENT_KEY purgés après activation.');
+            error_log('[PDF_Builder_License] Transients update_plugins et pdf-builder-pro_edd_update_check purgés après activation.');
 
             return ['success' => true, 'message' => 'Licence activée avec succès !'];
         }
@@ -229,7 +229,7 @@ class PDF_Builder_License_Manager
         $this->license_data = [];
 
         // Purger les caches de mise à jour
-        delete_transient(\PDF_Builder\Managers\PDF_Builder_Updates_Manager::UPDATE_TRANSIENT_KEY);
+        delete_transient('pdf-builder-pro_edd_update_check');
         delete_site_transient('update_plugins');
 
         return ['success' => true, 'message' => 'Licence désactivée'];

@@ -9,54 +9,99 @@ if (!defined('ABSPATH')) {
 
 /**
  * PDF_Builder_Updates_Manager
- * Gère les mises à jour automatiques du plugin via EDD
- * Intègre WordPress avec hub.threeaxe.fr pour vérifier les versions disponibles
+ * Gestionnaire de mises à jour automatiques via EDD Software Licensing.
+ * Générique : réutilisable pour n'importe quel plugin vendu sur un store EDD.
+ *
+ * Usage pour un autre plugin :
+ *   $updater = new PDF_Builder_Updates_Manager([
+ *       'store_url'      => 'https://hub.threeaxe.fr',
+ *       'item_id'        => 42,
+ *       'item_name'      => 'My Other Plugin',
+ *       'plugin_slug'    => 'my-other-plugin',
+ *       'plugin_file'    => MY_OTHER_PLUGIN_FILE,
+ *       'version'        => MY_OTHER_PLUGIN_VERSION,
+ *       'license_key'    => get_option('my_other_plugin_license_key', ''),
+ *       'plugin_url'     => MY_OTHER_PLUGIN_URL,
+ *   ]);
+ *   $updater->init();
  *
  * @since 1.0.2.0
  */
 class PDF_Builder_Updates_Manager {
 
     /**
-     * Store URL on EDD
-     */
-    const EDD_STORE_URL = 'https://hub.threeaxe.fr';
-
-    /**
-     * Item ID for PDF Builder Pro in EDD
-     */
-    const EDD_ITEM_ID = 19;
-
-    /**
-     * Slug du plugin
-     */
-    const PLUGIN_SLUG = 'pdf-builder-pro';
-
-    /**
-     * Transient cache key
-     */
-    const UPDATE_TRANSIENT_KEY = 'pdf_builder_pro_update_check';
-
-    /**
      * Cache duration (12 hours)
      */
     const CACHE_TIMEOUT = 43200;
 
-    /**
-     * Chemin du plugin
-     */
+    /** @var string URL du store EDD */
+    private $store_url;
+
+    /** @var int ID du produit sur EDD */
+    private $item_id;
+
+    /** @var string Nom du produit sur EDD */
+    private $item_name;
+
+    /** @var string Slug WordPress du plugin */
+    private $plugin_slug;
+
+    /** @var string Chemin absolu du fichier principal du plugin */
     private $plugin_file;
 
-    /**
-     * Données de version
-     */
+    /** @var string Version installée */
     private $current_version;
+
+    /** @var string URL de base du plugin (pour icônes/bannières) */
+    private $plugin_url;
+
+    /** @var string Clé de cache transient (auto-générée depuis le slug) */
+    private $transient_key;
+
+    /** @var callable|null Callback pour récupérer la licence à la volée */
+    private $license_callback;
 
     /**
      * Constructor
+     *
+     * @param array $config {
+     *   @type string        $store_url        URL du store EDD (ex: 'https://hub.threeaxe.fr')
+     *   @type int           $item_id          ID du téléchargement EDD
+     *   @type string        $item_name        Nom du produit EDD
+     *   @type string        $plugin_slug      Slug WordPress du plugin
+     *   @type string        $plugin_file      Chemin absolu vers le fichier principal du plugin
+     *   @type string        $version          Version actuellement installée
+     *   @type string        $plugin_url       URL de base du plugin (pour assets)
+     *   @type string        $license_key      Clé de licence (optionnelle)
+     *   @type callable      $license_callback Callback qui retourne la clé de licence dynamiquement
+     * }
      */
-    public function __construct() {
-        $this->plugin_file = PDF_BUILDER_PLUGIN_FILE;
-        $this->current_version = defined('PDF_BUILDER_PRO_VERSION') ? PDF_BUILDER_PRO_VERSION : '1.0.1.0';
+    public function __construct( array $config = [] ) {
+        $this->store_url       = rtrim( $config['store_url']   ?? 'https://hub.threeaxe.fr', '/' );
+        $this->item_id         = (int) ( $config['item_id']    ?? 19 );
+        $this->item_name       = $config['item_name']          ?? 'PDF Builder Pro';
+        $this->plugin_slug     = $config['plugin_slug']        ?? 'pdf-builder-pro';
+        $this->plugin_file     = $config['plugin_file']        ?? PDF_BUILDER_PLUGIN_FILE;
+        $this->plugin_url      = rtrim( $config['plugin_url']  ?? PDF_BUILDER_PLUGIN_URL, '/' ) . '/';
+        $this->current_version = $config['version']            ?? ( defined('PDF_BUILDER_PRO_VERSION') ? PDF_BUILDER_PRO_VERSION : '1.0.1.0' );
+        $this->license_callback = $config['license_callback']  ?? null;
+
+        // Clé de cache dérivée du slug pour éviter les collisions entre plugins
+        $this->transient_key = sanitize_key( $this->plugin_slug ) . '_edd_update_check';
+
+        // Clé de licence statique passée directement (alternative au callback)
+        if ( isset( $config['license_key'] ) ) {
+            $static_key = $config['license_key'];
+            $this->license_callback = function() use ( $static_key ) { return $static_key; };
+        }
+    }
+
+    /**
+     * Compatibilité : accès aux anciens noms de constantes via propriétés
+     * Permet à l'ancien code (bootstrap.php) d'utiliser ::UPDATE_TRANSIENT_KEY sans erreur.
+     */
+    public function get_transient_key() {
+        return $this->transient_key;
     }
 
     /**
@@ -82,7 +127,7 @@ class PDF_Builder_Updates_Manager {
             return $result;
         }
 
-        if (!isset($args->slug) || $args->slug !== self::PLUGIN_SLUG) {
+        if (!isset($args->slug) || $args->slug !== $this->plugin_slug) {
             return $result;
         }
 
@@ -129,19 +174,19 @@ class PDF_Builder_Updates_Manager {
             $plugin_basename = plugin_basename($this->plugin_file);
 
             $transient->response[$plugin_basename] = (object)[
-                'id'               => self::EDD_ITEM_ID,
-                'slug'             => self::PLUGIN_SLUG,
+                'id'               => $this->item_id,
+                'slug'             => $this->plugin_slug,
                 'plugin'           => $plugin_basename,
                 'new_version'      => $remote_version['version'],
-                'url'              => $remote_version['url'] ?? self::EDD_STORE_URL . '/product/pdf-builder-pro/',
+                'url'              => $remote_version['url'] ?? $this->store_url . '/downloads/' . $this->plugin_slug . '/',
                 'package'          => $remote_version['package'] ?? '',
                 'icons'            => [
-                    '1x' => PDF_BUILDER_PLUGIN_URL . 'assets/images/plugin-icon.png',
-                    '2x' => PDF_BUILDER_PLUGIN_URL . 'assets/images/plugin-icon-2x.png',
+                    '1x' => $this->plugin_url . 'assets/images/plugin-icon.png',
+                    '2x' => $this->plugin_url . 'assets/images/plugin-icon-2x.png',
                 ],
                 'banners'          => [
-                    'low'  => PDF_BUILDER_PLUGIN_URL . 'assets/images/plugin-banner-772x250.png',
-                    'high' => PDF_BUILDER_PLUGIN_URL . 'assets/images/plugin-banner-1544x500.png',
+                    'low'  => $this->plugin_url . 'assets/images/plugin-banner-772x250.png',
+                    'high' => $this->plugin_url . 'assets/images/plugin-banner-1544x500.png',
                 ],
                 'tested'           => $remote_version['tested'] ?? '6.9',
                 'requires'         => $remote_version['requires'] ?? '5.0',
@@ -160,11 +205,11 @@ class PDF_Builder_Updates_Manager {
             if ($remote_version) {
                 $plugin_basename = plugin_basename($this->plugin_file);
                 $transient->no_update[$plugin_basename] = (object)[
-                    'id'          => self::EDD_ITEM_ID,
-                    'slug'        => self::PLUGIN_SLUG,
+                    'id'          => $this->item_id,
+                    'slug'        => $this->plugin_slug,
                     'plugin'      => $plugin_basename,
                     'new_version' => $remote_version['version'] ?? $this->current_version,
-                    'url'         => $remote_version['url'] ?? self::EDD_STORE_URL . '/product/pdf-builder-pro/',
+                    'url'         => $remote_version['url'] ?? $this->store_url . '/downloads/' . $this->plugin_slug . '/',
                 ];
             }
         }
@@ -178,7 +223,7 @@ class PDF_Builder_Updates_Manager {
      * Peut être appelé depuis un bouton admin ou via WP-CLI
      */
     public function manually_check_updates() {
-        delete_transient(self::UPDATE_TRANSIENT_KEY);
+        delete_transient($this->transient_key);
         $this->get_remote_version(true);
     }
 
@@ -198,14 +243,14 @@ class PDF_Builder_Updates_Manager {
         }
 
         return (object)[
-            'id'               => self::EDD_ITEM_ID,
-            'slug'             => self::PLUGIN_SLUG,
-            'name'             => 'PDF Builder Pro',
+            'id'               => $this->item_id,
+            'slug'             => $this->plugin_slug,
+            'name'             => $this->item_name,
             'version'          => $remote['version'] ?? $this->current_version,
             'author'           => 'Natsenack',
             'author_url'       => 'https://github.com/natsenack',
-            'homepage'         => self::EDD_STORE_URL . '/product/pdf-builder-pro/',
-            'url'              => $remote['url'] ?? self::EDD_STORE_URL . '/product/pdf-builder-pro/',
+            'homepage'         => $remote['url'] ?? $this->store_url . '/downloads/' . $this->plugin_slug . '/',
+            'url'              => $remote['url'] ?? $this->store_url . '/downloads/' . $this->plugin_slug . '/',
             'download_url'     => $remote['package'] ?? '',
             'requires'         => $remote['requires'] ?? '5.0',
             'requires_php'     => $remote['requires_php'] ?? '7.4',
@@ -217,16 +262,16 @@ class PDF_Builder_Updates_Manager {
             'last_updated'     => gmdate('Y-m-d H:i:s', time()),
             'added'            => '2025-01-01',
             'banners'          => [
-                'low'  => PDF_BUILDER_PLUGIN_URL . 'assets/images/plugin-banner-772x250.png',
-                'high' => PDF_BUILDER_PLUGIN_URL . 'assets/images/plugin-banner-1544x500.png',
+                'low'  => $this->plugin_url . 'assets/images/plugin-banner-772x250.png',
+                'high' => $this->plugin_url . 'assets/images/plugin-banner-1544x500.png',
             ],
             'icons'            => [
-                '1x' => PDF_BUILDER_PLUGIN_URL . 'assets/images/plugin-icon.png',
-                '2x' => PDF_BUILDER_PLUGIN_URL . 'assets/images/plugin-icon-2x.png',
+                '1x' => $this->plugin_url . 'assets/images/plugin-icon.png',
+                '2x' => $this->plugin_url . 'assets/images/plugin-icon-2x.png',
             ],
             'sections'         => $sections,
             'contributors'     => ['natsenack'],
-            'donate_link'      => self::EDD_STORE_URL,
+            'donate_link'      => $this->store_url,
         ];
     }
 
@@ -242,7 +287,7 @@ class PDF_Builder_Updates_Manager {
     public function get_remote_version($force = false) {
         // Vérifier le cache
         if (!$force) {
-            $cached = get_transient(self::UPDATE_TRANSIENT_KEY);
+            $cached = get_transient($this->transient_key);
             if ($cached !== false) {
                 error_log('[PDF Builder] get_remote_version() : cache HIT → version=' . ($cached['version'] ?? 'N/A'));
                 return $cached;
@@ -256,21 +301,21 @@ class PDF_Builder_Updates_Manager {
         $api_url = add_query_arg([
             'edd_action'     => 'get_version',
             'license'        => $this->get_license_key(),
-            'item_id'        => self::EDD_ITEM_ID,
-            'item_name'      => rawurlencode('PDF Builder Pro'),
+            'item_id'        => $this->item_id,
+            'item_name'      => rawurlencode($this->item_name),
             'url'            => home_url(),
             'wp_version'     => get_bloginfo('version'),
             'php_version'    => phpversion(),
             'plugin_version' => $this->current_version,
-        ], self::EDD_STORE_URL);
+        ], $this->store_url);
 
         // Log de l'URL (sans la clé de licence pour la sécurité)
         $log_url = add_query_arg([
             'edd_action'     => 'get_version',
-            'item_id'        => self::EDD_ITEM_ID,
-            'item_name'      => 'PDF Builder Pro',
+            'item_id'        => $this->item_id,
+            'item_name'      => $this->item_name,
             'plugin_version' => $this->current_version,
-        ], self::EDD_STORE_URL);
+        ], $this->store_url);
         error_log('[PDF Builder] get_remote_version() : appel EDD → ' . $log_url);
 
         $response = wp_remote_get($api_url, [
@@ -314,7 +359,7 @@ class PDF_Builder_Updates_Manager {
         $normalized = [
             'version'      => $version,
             'package'      => $data['download_link'] ?? $data['package'] ?? '',
-            'url'          => $data['url'] ?? $data['homepage'] ?? self::EDD_STORE_URL,
+            'url'          => $data['url'] ?? $data['homepage'] ?? $this->store_url,
             'requires'     => $data['requires'] ?? '5.0',
             'requires_php' => $data['requires_php'] ?? '7.4',
             'tested'       => $data['tested'] ?? '6.9',
@@ -337,20 +382,24 @@ class PDF_Builder_Updates_Manager {
         }
 
         // Mettre en cache 12h
-        set_transient(self::UPDATE_TRANSIENT_KEY, $normalized, self::CACHE_TIMEOUT);
+        set_transient($this->transient_key, $normalized, self::CACHE_TIMEOUT);
 
         return $normalized;
     }
 
     /**
      * Récupérer la clé de licence
-     * Fonctionne aussi en contexte cron (pas de user connecté)
+     * Utilise le callback si fourni, sinon fallback sur PDF_Builder_License_Manager
      */
     private function get_license_key() {
-        $license_manager = PDF_Builder_License_Manager::getInstance();
-        // get_license_key() retourne la clé en clair dans tous les contextes (cron inclus)
-        // Contrairement à getLicenseKeyForLinks() qui exige current_user_can('manage_options')
-        return $license_manager->get_license_key();
+        if ( $this->license_callback ) {
+            return call_user_func( $this->license_callback );
+        }
+        // Fallback par défaut : PDF Builder Pro License Manager
+        if ( class_exists('PDF_Builder\Managers\PDF_Builder_License_Manager') ) {
+            return PDF_Builder_License_Manager::getInstance()->get_license_key();
+        }
+        return '';
     }
 
     /**
@@ -377,8 +426,8 @@ class PDF_Builder_Updates_Manager {
     /**
      * Nettoyer les transients (utilisé lors de la désactivation)
      */
-    public static function cleanup() {
-        delete_transient(self::UPDATE_TRANSIENT_KEY);
+    public function cleanup() {
+        delete_transient($this->transient_key);
         // Supprime l'ancien cron personnalisé s'il existait encore
         wp_clear_scheduled_hook('pdf_builder_check_updates');
     }
