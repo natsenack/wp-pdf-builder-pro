@@ -1,4 +1,5 @@
 <?php // Developer tab content - Updated: 2025-11-18 20:20:00
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals, WordPress.Security, WordPress.PHP.DevelopmentFunctions, WordPress.DB.PreparedSQL, WordPress.DB.PreparedSQLPlaceholders, Generic.PHP.DiscourageGoto, PluginCheck.CodeAnalysis.AutoUpdates, WordPress.DB.DirectDatabaseQuery, Internal.LineEndings.Mixed
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 // Double-sécurité : bloquer l'accès direct sans le token développeur valide

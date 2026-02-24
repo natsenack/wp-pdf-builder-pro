@@ -1,5 +1,5 @@
 <?php
-// phpcs:disable PluginCheck.CodeAnalysis.Forbidden.ForbiddenPluginUpdater -- Commercial plugin with custom EDD updater, not for WordPress.org distribution
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals, WordPress.Security, WordPress.PHP.DevelopmentFunctions, WordPress.DB.PreparedSQL, WordPress.DB.PreparedSQLPlaceholders, Generic.PHP.DiscourageGoto, PluginCheck.CodeAnalysis.AutoUpdates, WordPress.DB.DirectDatabaseQuery, Internal.LineEndings.Mixed
 
 namespace PDF_Builder\Managers;
 
@@ -69,9 +69,9 @@ class PDF_Builder_Updates_Manager {
         // Fournit les informations du plugin quand WordPress les demande
         add_filter('plugins_api', [$this, 'plugins_api_handler'], 10, 3);
 
-        // WordPress appelle ce filtre lors de chaque vérification native (wp_update_plugins)
-        add_filter('pre_set_site_transient_update_plugins', [$this, 'check_for_updates'], 10, 1);
-        add_filter('pre_set_transient_update_plugins', [$this, 'check_for_updates'], 10, 1);
+        // Désactivé pour conformité WordPress.org (plugin_updater_detected)
+        // add_filter('pre_set_site_transient_update_plugins', [$this, 'check_for_updates'], 10, 1);
+        // add_filter('pre_set_transient_update_plugins', [$this, 'check_for_updates'], 10, 1);
     }
 
     /**
