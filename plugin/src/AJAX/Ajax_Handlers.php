@@ -1,4 +1,6 @@
-<?php
+﻿<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
  * PDF Builder Pro - Classe de base pour les handlers AJAX
  * Centralise la validation commune et la gestion d'erreurs

@@ -1,6 +1,8 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Admin;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 use PDF_Builder\Canvas\Canvas_Manager;
 

@@ -1,10 +1,12 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Contrôleur REST API
  * Point d'entrée pour les endpoints REST avec vérification de licence
  */
 
 namespace PDF_Builder\Core;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class PDF_Builder_REST_Controller {
 

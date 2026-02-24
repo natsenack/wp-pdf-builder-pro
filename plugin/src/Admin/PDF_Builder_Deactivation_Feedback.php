@@ -1,10 +1,12 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Deactivation Feedback Modal
  * Recueille le feedback lors de la désactivation du plugin
  */
 
 namespace PDF_Builder\Admin;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 if (!defined('ABSPATH')) exit;
 

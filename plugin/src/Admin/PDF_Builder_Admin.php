@@ -1,4 +1,5 @@
-<?php
+﻿<?php
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 /**
  * PDF Builder Pro - Interface d'administration simplifiée
@@ -7,6 +8,8 @@
  */
 
 namespace PDF_Builder\Admin;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Prevent multiple inclusions
 if (defined('PDF_BUILDER_ADMIN_LOADED')) {

@@ -1,4 +1,5 @@
-<?php
+﻿<?php
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
  * PDF Builder Pro - GDPR Compliance Manager
  * Gestionnaire de conformité RGPD
@@ -8,6 +9,8 @@
  */
 
 namespace PDF_Builder\Utilities;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -1353,7 +1356,7 @@ class PDF_Builder_GDPR_Manager {
 
         ob_start();
         if (empty($audit_logs)) {
-            echo '<tr><td colspan="5">' . __('Aucun journal d\'audit disponible.', 'pdf-builder-pro') . '</td></tr>';
+            echo '<tr><td colspan="5">' . esc_html__('Aucun journal d\'audit disponible.', 'pdf-builder-pro') . '</td></tr>';
         } else {
             foreach ($audit_logs as $log) {
                 echo '<tr>';

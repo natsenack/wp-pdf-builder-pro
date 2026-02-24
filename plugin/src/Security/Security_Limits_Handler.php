@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Gestionnaire des limites de sécurité
@@ -6,6 +6,8 @@
  */
 
 namespace PDF_Builder\Security;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class Security_Limits_Handler
 {

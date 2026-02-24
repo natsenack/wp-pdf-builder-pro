@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Puppeteer_Client — Client HMAC pour le service PDF distant threeaxe.fr
  *
@@ -15,6 +15,8 @@
  */
 
 namespace PDF_Builder\PDF\Engines;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class Puppeteer_Client {
 

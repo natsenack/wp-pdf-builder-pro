@@ -1,5 +1,7 @@
-<?php
+﻿<?php
 namespace PDF_Builder\Utilities;
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 /**
  * PDF Builder Pro - Onboarding Manager
  * Gestionnaire d'onboarding et tutoriels

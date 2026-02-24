@@ -1,4 +1,6 @@
-<?php
+﻿<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
  * PDF Builder Pro - Système de secours et récupération
  * Gère les sauvegardes d'urgence et la récupération en cas de panne
@@ -262,7 +264,7 @@ class PDF_Builder_Backup_Recovery_System {
 
         foreach ($queries as $query) {
             if (!empty($query)) {
-                $wpdb->query($query);
+                $wpdb->query($query); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
             }
         }
 

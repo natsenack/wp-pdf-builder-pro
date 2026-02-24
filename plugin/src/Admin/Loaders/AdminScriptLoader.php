@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Admin Script Loader
@@ -6,6 +6,8 @@
  */
 
 namespace PDF_Builder\Admin\Loaders;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Ensure constants are loaded
 if (!defined('PDF_BUILDER_ASSETS_DIR')) {

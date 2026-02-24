@@ -1,4 +1,6 @@
-<?php
+﻿<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
  * PDF Builder Pro - Outil de diagnostic
  * Fournit des outils de diagnostic et débogage complets

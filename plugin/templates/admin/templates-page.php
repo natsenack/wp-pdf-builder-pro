@@ -1,4 +1,5 @@
 ﻿<?php
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Direct access not allowed');

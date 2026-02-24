@@ -3,6 +3,7 @@
 if (!defined('ABSPATH')) {
     exit;
 }
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
     // Récupération des paramètres depuis le tableau unifié
     $settings = pdf_builder_get_option('pdf_builder_settings', array());

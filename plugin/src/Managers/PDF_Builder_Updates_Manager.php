@@ -79,16 +79,19 @@ class PDF_Builder_Updates_Manager {
      * Fournit les informations du plugin quand WordPress les demande
      */
     public function plugins_api_handler($result, $action, $args) {
-        // On ne traite que les requêtes pour notre plugin
-        if (isset($args->slug) && $args->slug !== self::PLUGIN_SLUG) {
+        // On ne traite QUE les requêtes d'information sur notre plugin spécifique.
+        // query_plugins est géré par WordPress.org et ne doit pas être intercepté.
+        if ($action !== 'plugin_information') {
             return $result;
         }
 
-        if ($action === 'plugin_information' || $action === 'query_plugins') {
-            $plugin_info = $this->get_plugin_info();
-            if ($plugin_info) {
-                return $plugin_info;
-            }
+        if (!isset($args->slug) || $args->slug !== self::PLUGIN_SLUG) {
+            return $result;
+        }
+
+        $plugin_info = $this->get_plugin_info();
+        if ($plugin_info) {
+            return $plugin_info;
         }
 
         return $result;

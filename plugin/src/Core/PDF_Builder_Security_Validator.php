@@ -1,5 +1,7 @@
-<?php
+﻿<?php
 namespace PDF_Builder\Core;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * Validateur de sécurité pour PDF Builder

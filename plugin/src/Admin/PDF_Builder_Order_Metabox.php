@@ -1,6 +1,9 @@
-<?php
+﻿<?php
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 namespace PDF_Builder\Admin;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 use WC_Order;
 

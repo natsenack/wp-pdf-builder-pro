@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Gestionnaire du Rate Limiting
@@ -6,6 +6,8 @@
  */
 
 namespace PDF_Builder\Security;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class Rate_Limiter
 {

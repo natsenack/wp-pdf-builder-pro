@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Gestionnaire de Templates
@@ -6,6 +6,8 @@
  */
 
 namespace PDF_Builder\Admin\Managers;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 use Exception;
 use WP_Error;

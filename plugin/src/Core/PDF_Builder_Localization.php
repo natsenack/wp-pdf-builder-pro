@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Système de localisation et internationalisation
  * Gère les traductions, langues et localisation du contenu

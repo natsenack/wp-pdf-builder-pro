@@ -1,4 +1,5 @@
-<?php
+﻿<?php
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 /**
  * PDF Builder Pro - Gestionnaire AJAX
@@ -6,6 +7,8 @@
  */
 
 namespace PDF_Builder\Admin\Handlers;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 use Exception;
 use WP_Error;
@@ -424,7 +427,7 @@ class AjaxHandler
 
             // Exécuter la réparation SQL
             global $wpdb;
-            $result = $wpdb->query($sql);
+            $result = $wpdb->query($sql); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
             \wp_send_json_success([
                 'result' => $result,

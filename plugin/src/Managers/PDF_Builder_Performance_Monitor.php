@@ -1,6 +1,8 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
  * Déclaration de classe pour Intelephense

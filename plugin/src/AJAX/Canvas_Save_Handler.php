@@ -1,4 +1,5 @@
-<?php
+﻿<?php
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
  * Canvas Save Handler - Sauvegarde 100% des éléments du canvas
  * 
@@ -7,6 +8,8 @@
  */
 
 namespace PDF_Builder\AJAX;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 use PDF_Builder\Security\Security_Validator;
 

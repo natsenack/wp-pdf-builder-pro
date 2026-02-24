@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Gestionnaire centralisé des nonces
  * Système unifié pour la validation et le refresh automatique des nonces

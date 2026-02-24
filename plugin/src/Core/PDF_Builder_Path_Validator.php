@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Validateur de Chemins
@@ -12,6 +12,8 @@
  */
 
 namespace PDF_Builder\Core;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {

@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Gestionnaire de mises à jour (Réservé pour système distant)
  * Ce fichier est réservé pour une future implémentation du système de mise à jour distant

@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Gestionnaire d'APIs externes
  * Gère les intégrations avec des services tiers (Google Drive, Dropbox, etc.)

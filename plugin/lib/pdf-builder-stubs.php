@@ -1,4 +1,5 @@
-<?php
+﻿<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Unified Function Stubs
  * 

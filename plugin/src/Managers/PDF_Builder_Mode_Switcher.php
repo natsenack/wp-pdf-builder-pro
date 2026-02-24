@@ -9,6 +9,8 @@
 
 namespace PDF_Builder\Managers;
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 /**
  * Classe PDF_Builder_Mode_Switcher
  *

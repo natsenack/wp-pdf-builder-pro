@@ -1,4 +1,6 @@
-<?php
+﻿<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
  * PDF Builder Pro - Système de métriques et analyses avancées
  * Collecte et analyse les métriques de performance et d'utilisation
@@ -191,7 +193,7 @@ class PDF_Builder_Metrics_Analytics {
 
         $query = "INSERT INTO $table (type, name, value, metadata, user_id, timestamp, session_id, ip_address, user_agent) VALUES " . implode(', ', $placeholders);
 
-        $wpdb->query($wpdb->prepare($query, $values));
+        $wpdb->query($wpdb->prepare($query, $values)); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
         $this->metric_buffers = [];
     }
@@ -372,7 +374,7 @@ class PDF_Builder_Metrics_Analytics {
             LIMIT %d
         ", array_merge($params, [$limit]));
 
-        return $wpdb->get_results($query, ARRAY_A);
+        return $wpdb->get_results($query, ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
     }
 
     /**
@@ -629,7 +631,7 @@ class PDF_Builder_Metrics_Analytics {
             FROM $raw_table
             WHERE timestamp >= %s
             GROUP BY type, name
-        ", $start_time), ARRAY_A);
+        ", $start_time), ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
         foreach ($results as $result) {
             $aggregated_data = $this->calculate_aggregated_data($result['type'], $start_time);

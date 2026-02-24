@@ -1,4 +1,5 @@
-<?php
+﻿<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Système de reporting et analyse avancé
  * Fournit des rapports détaillés et des analyses d'utilisation
@@ -535,8 +536,8 @@ class PDF_Builder_Advanced_Reporting {
         <body>
             <div class="header">
                 <h1><?php echo esc_html($this->get_report_title($report['type'])); ?></h1>
-                <p><?php printf(pdf_builder_translate('Période : %s', 'reporting'), esc_html($this->format_period($report['period']))); ?></p>
-                <p><?php printf(pdf_builder_translate('Généré le : %s', 'reporting'), esc_html(date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $report['generated_at']))); ?></p>
+                <p><?php printf(pdf_builder_translate('Période : %s', 'reporting'), esc_html($this->format_period($report['period']))); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+                <p><?php printf(pdf_builder_translate('Généré le : %s', 'reporting'), esc_html(date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $report['generated_at']))); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
             </div>
 
             <?php if (!empty($report['metrics'])): ?>

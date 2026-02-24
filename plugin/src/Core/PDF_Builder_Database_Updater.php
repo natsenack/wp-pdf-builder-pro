@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Système de mise à jour de base de données (Réservé pour système distant)
  * Ce fichier est réservé pour une future implémentation du système de mise à jour de base de données distant

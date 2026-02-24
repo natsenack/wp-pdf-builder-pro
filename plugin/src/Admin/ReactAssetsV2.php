@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro V2 - Enregistrement des assets React
  * 
@@ -7,6 +7,8 @@
  */
 
 namespace PDFBuilderPro\V2;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class ReactAssets {
     

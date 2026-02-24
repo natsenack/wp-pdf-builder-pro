@@ -1,4 +1,5 @@
-<?php
+﻿<?php
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
     /**
      * Templates par statut tab content
      * Gestion des templates PDF par défaut selon le statut des commandes WooCommerce

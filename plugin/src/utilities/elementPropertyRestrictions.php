@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Système de gestion des propriétés d'éléments
 // Définit les restrictions et validations pour chaque type d'élément

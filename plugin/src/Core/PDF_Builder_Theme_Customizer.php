@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Système de thème et personnalisation
  * Gère les thèmes, couleurs, polices et personnalisation de l'interface

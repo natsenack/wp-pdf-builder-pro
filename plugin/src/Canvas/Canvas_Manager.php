@@ -1,6 +1,8 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Canvas;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Déclarations des fonctions WordPress pour l'IDE
 if (!function_exists('add_filter')) {

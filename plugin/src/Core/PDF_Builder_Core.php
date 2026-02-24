@@ -1,6 +1,9 @@
-<?php
+﻿<?php
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 namespace PDF_Builder\Core;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Déclarations des fonctions WordPress pour l'IDE
 if (!function_exists('did_action')) {

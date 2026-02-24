@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Gestion des intégrations externes
  * Connecte le plugin avec des services externes (Google Drive, Dropbox, etc.)

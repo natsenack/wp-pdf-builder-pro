@@ -1,10 +1,13 @@
-<?php
+﻿<?php
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
  * PDF Builder Pro - Database Initialization
  * Initialiser les tables de base de données lors de l'activation
  */
 
 namespace PDF_Builder\Database;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class Database_Initializer {
     

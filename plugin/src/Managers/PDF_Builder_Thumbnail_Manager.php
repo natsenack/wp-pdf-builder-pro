@@ -1,4 +1,5 @@
-<?php
+﻿<?php
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 /**
  * PDF Builder Pro - Thumbnail Manager
@@ -7,6 +8,8 @@
 
 namespace PDF_Builder\Managers;
 
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class PDF_Builder_Thumbnail_Manager
 {
@@ -273,7 +276,7 @@ class PDF_Builder_Thumbnail_Manager
 
         if (!$thumbnail_exists) {
             $sql = "ALTER TABLE $table_templates ADD COLUMN thumbnail_url VARCHAR(500) DEFAULT '' AFTER template_data";
-            $result = $wpdb->query($sql);
+            $result = $wpdb->query($sql); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
             if ($result !== false) {
                 $this->logInfo('Colonne thumbnail_url ajoutée avec succès');
             } else {

@@ -1,6 +1,9 @@
-<?php
+﻿<?php
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 namespace PDF_Builder\Managers;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {

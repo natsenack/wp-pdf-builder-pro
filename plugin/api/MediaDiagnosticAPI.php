@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * Endpoint AJAX pour diagnostiquer la bibliothèque média
  */

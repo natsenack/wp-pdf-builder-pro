@@ -1,6 +1,8 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Data;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 use PDF_Builder\Interfaces\DataProviderInterface;
 

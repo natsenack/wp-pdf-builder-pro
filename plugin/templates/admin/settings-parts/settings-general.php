@@ -1,4 +1,5 @@
-<?php
+﻿<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
     /**
      * Paramètres Généraux - PDF Builder Pro (Version compressée)
      * Onglet principal des paramètres généraux avec informations entreprise

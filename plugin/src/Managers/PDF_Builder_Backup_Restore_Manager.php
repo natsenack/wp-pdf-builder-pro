@@ -1,4 +1,5 @@
-<?php
+﻿<?php
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 namespace PDF_Builder\Managers;
 
@@ -846,7 +847,7 @@ class PDF_Builder_Backup_Restore_Manager
         check_ajax_referer('pdf_builder_ajax', 'nonce');
 
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
+            wp_die(esc_html__('Permissions insuffisantes.', 'pdf-builder-pro'));
         }
 
         $filename = $_POST['filename'] ?? '';

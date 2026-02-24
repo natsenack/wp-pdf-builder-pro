@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * License Expiration Handler
@@ -6,6 +6,8 @@
  */
 
 namespace PDFBuilderPro\License;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 class License_Expiration_Handler
 {

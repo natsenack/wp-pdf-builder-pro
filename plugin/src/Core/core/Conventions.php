@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * Conventions de nommage et namespaces pour PDF Builder Pro
@@ -7,6 +7,8 @@
  */
 
 namespace PDF_Builder;
+
+if ( ! defined( 'ABSPATH' ) ) exit;
 
 // =============================================================================
 // NAMESPACES PRINCIPAUX
