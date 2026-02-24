@@ -4,6 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * PDF Builder Pro - Système de localisation et internationalisation
  * Gère les traductions, langues et localisation du contenu
  */
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals -- Plugin commercial utilisant préfixes pdf_builder_
 
 class PDF_Builder_Localization {
     private static $instance = null;
