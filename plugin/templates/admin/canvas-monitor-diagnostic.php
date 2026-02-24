@@ -267,13 +267,8 @@ function exportCanvasSettings() {
     const dataStr = JSON.stringify(settings, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
 
-    const exportFileDefaultName = 'canvas-settings-' + new Date().toISOString().split('T')[0] + '.json';
-
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
     linkElement.click();
 }
-</script></content>
-<parameter name="filePath">i:\pdf-builder-pro\plugin\resources\templates\admin\canvas-monitor-diagnostic.php
+</script>
 
