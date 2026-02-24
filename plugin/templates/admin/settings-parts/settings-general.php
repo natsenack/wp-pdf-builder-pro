@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
     /**
      * Paramètres Généraux - PDF Builder Pro (Version compressée)

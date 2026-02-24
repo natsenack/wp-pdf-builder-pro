@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Puppeteer_Client — Client HMAC pour le service PDF distant threeaxe.fr
  *

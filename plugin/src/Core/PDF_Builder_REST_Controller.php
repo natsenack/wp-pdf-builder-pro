@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Contrôleur REST API
  * Point d'entrée pour les endpoints REST avec vérification de licence
