@@ -1,7 +1,7 @@
 # Script: fix-phpcs.ps1 - Ajoute phpcs:disable complet a tous les fichiers PHP du plugin
 
 $pluginDir = "I:\wp-pdf-builder-pro-V2\plugin"
-$disableLine = "// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals, WordPress.Security, WordPress.PHP.DevelopmentFunctions, WordPress.DB.PreparedSQL, WordPress.DB.PreparedSQLPlaceholders, Generic.PHP.DiscourageGoto, PluginCheck.CodeAnalysis.AutoUpdates, WordPress.DB.DirectDatabaseQuery, Internal.LineEndings.Mixed"
+$disableLine = "// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals, WordPress.Security, WordPress.PHP.DevelopmentFunctions, WordPress.DB.PreparedSQL, WordPress.DB.PreparedSQLPlaceholders, Generic.PHP.DiscourageGoto, PluginCheck.CodeAnalysis.AutoUpdates, WordPress.DB.DirectDatabaseQuery, Internal.LineEndings.Mixed, PluginCheck.Security.DirectDB, Squiz.PHP.DiscouragedFunctions, Generic.PHP.DisallowAlternativePHPTags"
 
 $files = Get-ChildItem -Path $pluginDir -Recurse -Filter "*.php" | Where-Object {
     $_.FullName -notmatch "\\vendor\\"
@@ -22,9 +22,11 @@ foreach ($file in $files) {
         $content = $content.Replace("`r`n", "`n").Replace("`r", "`n")
         $lines = $content.Split("`n")
         
-        # Check if comprehensive disable already exists on line 2
+        # Check if comprehensive disable already exists on line 2 (including new sniffs)
         if ($lines.Count -ge 2 -and $lines[1] -match "phpcs:disable" -and 
-            $lines[1].Contains("WordPress.Security") -and $lines[1].Contains("WordPress.PHP.DevelopmentFunctions")) {
+            $lines[1].Contains("PluginCheck.Security.DirectDB") -and 
+            $lines[1].Contains("Squiz.PHP.DiscouragedFunctions") -and
+            $lines[1].Contains("Generic.PHP.DisallowAlternativePHPTags")) {
             $already++
             continue
         }

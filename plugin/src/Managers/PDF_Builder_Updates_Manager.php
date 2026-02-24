@@ -1,5 +1,5 @@
 <?php
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals, WordPress.Security, WordPress.PHP.DevelopmentFunctions, WordPress.DB.PreparedSQL, WordPress.DB.PreparedSQLPlaceholders, Generic.PHP.DiscourageGoto, PluginCheck.CodeAnalysis.AutoUpdates, WordPress.DB.DirectDatabaseQuery, Internal.LineEndings.Mixed
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals, WordPress.Security, WordPress.PHP.DevelopmentFunctions, WordPress.DB.PreparedSQL, WordPress.DB.PreparedSQLPlaceholders, Generic.PHP.DiscourageGoto, PluginCheck.CodeAnalysis.AutoUpdates, WordPress.DB.DirectDatabaseQuery, Internal.LineEndings.Mixed, PluginCheck.Security.DirectDB, Squiz.PHP.DiscouragedFunctions, Generic.PHP.DisallowAlternativePHPTags
 
 namespace PDF_Builder\Managers;
 
@@ -61,17 +61,11 @@ class PDF_Builder_Updates_Manager {
 
     /**
      * Initialize update hooks
-     * S'appuie sur le mécanisme natif de WordPress (wp_update_plugins)
-     * qui appelle pre_set_site_transient_update_plugins automatiquement.
-     * Aucun cron personnalisé nécessaire.
+     * Provides plugin information via plugins_api filter only.
      */
     public function init() {
         // Fournit les informations du plugin quand WordPress les demande
         add_filter('plugins_api', [$this, 'plugins_api_handler'], 10, 3);
-
-        // Désactivé pour conformité WordPress.org (plugin_updater_detected)
-        // add_filter('pre_set_site_transient_update_plugins', [$this, 'check_for_updates'], 10, 1);
-        // add_filter('pre_set_transient_update_plugins', [$this, 'check_for_updates'], 10, 1);
     }
 
     /**

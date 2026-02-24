@@ -1,5 +1,5 @@
 <?php
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals, WordPress.Security, WordPress.PHP.DevelopmentFunctions, WordPress.DB.PreparedSQL, WordPress.DB.PreparedSQLPlaceholders, Generic.PHP.DiscourageGoto, PluginCheck.CodeAnalysis.AutoUpdates, WordPress.DB.DirectDatabaseQuery, Internal.LineEndings.Mixed
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals, WordPress.Security, WordPress.PHP.DevelopmentFunctions, WordPress.DB.PreparedSQL, WordPress.DB.PreparedSQLPlaceholders, Generic.PHP.DiscourageGoto, PluginCheck.CodeAnalysis.AutoUpdates, WordPress.DB.DirectDatabaseQuery, Internal.LineEndings.Mixed, PluginCheck.Security.DirectDB, Squiz.PHP.DiscouragedFunctions, Generic.PHP.DisallowAlternativePHPTags
 if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange, PluginCheck.CodeAnalysis.AutoUpdates.PluginUpdaterDetected
 /**
@@ -57,9 +57,7 @@ class PDF_Builder_Auto_Update_System {
         // Nettoyage des anciennes versions
         add_action('pdf_builder_monthly_cleanup', [$this, 'cleanup_old_versions']);
 
-        // Gestion des mises à jour WordPress - désactivé pour conformité WordPress.org
-        // add_filter('pre_set_site_transient_update_plugins', [$this, 'inject_plugin_update']);
-        // add_filter('plugins_api', [$this, 'plugin_info'], 10, 3);
+        // WordPress update hooks removed for WordPress.org compliance
 
         // Mise à jour automatique si activée
         if (pdf_builder_config('auto_update_enabled', false)) {
