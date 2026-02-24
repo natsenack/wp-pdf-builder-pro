@@ -14,9 +14,6 @@ if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit('Direct access not allowed');
 }
 
-// 🔴 DEBUG : Confirmer que le bootstrap est chargé
-error_log('[PDF Builder BOOTSTRAP] Fichier bootstrap.php chargé (version: ' . (defined('PDF_BUILDER_PRO_VERSION') ? PDF_BUILDER_PRO_VERSION : 'UNDEFINED') . ')');
-
 
 // ========================================================================
 // ✅ CHARGEMENT DE L'AUTOLOADER COMPOSER OU PERSONNALISÉ
@@ -431,16 +428,11 @@ if (function_exists('add_action')) {
         }
         
         // ✅ INITIALISER LE SYSTÈME DE MISES À JOUR AUTOMATIQUES
-        error_log('[PDF Builder BOOTSTRAP] plugins_loaded - Initialisation des Managers');
-        
         if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_License_Manager.php')) {
             require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_License_Manager.php';
-            error_log('[PDF Builder BOOTSTRAP] License Manager chargé');
         }
         if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Updates_Manager.php')) {
             require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Updates_Manager.php';
-            error_log('[PDF Builder BOOTSTRAP] Updates Manager chargé');
-            
             // Initialiser les hooks WordPress pour les mises à jour automatiques
             $updates_manager = new \PDF_Builder\Managers\PDF_Builder_Updates_Manager([
                 'store_url'       => 'https://hub.threeaxe.fr',
@@ -466,9 +458,7 @@ if (function_exists('add_action')) {
                     return '';
                 },
             ]);
-            error_log('[PDF Builder BOOTSTRAP] Updates Manager instancié');
             $updates_manager->init();
-            error_log('[PDF Builder BOOTSTRAP] Updates Manager init() appelé - hooks enregistrés: pre_set_site_transient_update_plugins, pre_set_transient_update_plugins, plugins_api');
 
             // Action AJAX de diagnostic : force le check EDD et affiche la réponse brute
             add_action('wp_ajax_pdf_builder_test_update_check', function() use ($updates_manager) {
