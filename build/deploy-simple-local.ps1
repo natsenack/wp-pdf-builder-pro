@@ -182,14 +182,22 @@ $filesToDeploy = @()
 
 if ($All) {
     Write-Log "Mode complet: tous les fichiers du plugin" "INFO"
-    $exclusions = @('\\\.git\\', 'node_modules', 'tests', 'temp\.js$', 'composer-setup\.php$', 'phpstan\.neon$', '\.log$', '\.tmp$', 'plugin\\resources\\assets\\js\\dist\\plugin\\resources\\assets', '\.ts$', '\.tsx$', '\.map$', '\.md$', 'README', 'config\.ts', 'tsconfig')
+    $exclusions = @('\\\.git\\', 'node_modules', 'tests', 'temp\.js$', 'composer-setup\.php$', 'phpstan\.neon$', '\.log$', '\.tmp$', 'plugin\\resources\\assets\\js\\dist\\plugin\\resources\\assets', '\.ts$', '\.tsx$', '\.map$', '\.md$', 'README\.md$', 'config\.ts', 'tsconfig')
     if (-not $IncludeVendor) {
         $exclusions += 'vendor'
     }
+    # Include critical files that should not be excluded
+    $criticalFiles = @()
     $filesToDeploy = @(Get-ChildItem -Path $PluginDir -Recurse -File | Where-Object {
         $path = $_.FullName
+        # Always include readme.txt
+        if ($_.Name -eq 'readme.txt') {
+            $criticalFiles += $_
+            return $false
+        }
         -not ($exclusions | Where-Object { $path -match $_ })
     })
+    $filesToDeploy += $criticalFiles
 } else {
     Write-Log "Mode normal: fichiers modifiés" "INFO"
     $modified = @(& git diff --name-only)
