@@ -492,6 +492,18 @@ if (function_exists('add_action')) {
                 }
             }, 10, 2);
 
+            // 🔆 HOTFIX: Détecter l'activation/réactivation du plugin après MAJ
+            // WordPress réactive le plugin après update, on en profite pour marquer le transient
+            add_action('activated_plugin', function($plugin_file) {
+                if (strpos($plugin_file, 'pdf-builder-pro') !== false) {
+                    error_log('[PDF Builder] activated_plugin : Activation détectée après update!');
+                    set_transient('pdf_builder_just_updated', 1, 10 * MINUTE_IN_SECONDS);
+                    error_log('[PDF Builder] activated_plugin : Transient pdf_builder_just_updated SET (10 min)');
+                    delete_site_transient('update_plugins');
+                    delete_transient('pdf-builder-pro_edd_update_check');
+                }
+            }, 10);
+
 
             // Action AJAX de diagnostic : force le check EDD et affiche la réponse brute
             add_action('wp_ajax_pdf_builder_test_update_check', function() use ($updates_manager) {
