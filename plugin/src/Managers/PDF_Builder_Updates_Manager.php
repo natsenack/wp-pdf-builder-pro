@@ -175,11 +175,18 @@ class PDF_Builder_Updates_Manager {
         // Vérifier si le transient existe déjà et est relativement récent (< 1h)
         $transient = get_site_transient('update_plugins');
         $now = time();
-        
+
         if (is_object($transient) && isset($transient->last_checked)) {
             $age = $now - $transient->last_checked;
-            if ($age < 3600) { // 1 heure
-                // Transient récent, ne pas forcer le recalcul
+
+            // Si la version installée a changé depuis le dernier cache → forcer le recalcul
+            $cached_version = get_option( 'pdf_builder_last_cached_version', '' );
+            $version_changed = ( $cached_version !== $this->current_version );
+
+            if ( $version_changed ) {
+                error_log( '[PDF Builder Updates] pre_cache: version changée (' . $cached_version . ' → ' . $this->current_version . '), recalcul forcé' );
+            } elseif ( $age < 3600 ) { // 1 heure
+                // Transient récent et version inchangée, ne pas forcer le recalcul
                 return;
             }
         }
@@ -199,7 +206,9 @@ class PDF_Builder_Updates_Manager {
         
         // Sauvegarder immédiatement dans le transient WordPress
         set_site_transient('update_plugins', $updated_transient, 12 * HOUR_IN_SECONDS);
-        error_log('[PDF Builder Updates] admin_init: Transient update_plugins mis en cache (12h)');
+        // Mémoriser la version installée au moment du cache pour détecter les changements
+        update_option( 'pdf_builder_last_cached_version', $this->current_version, false );
+        error_log('[PDF Builder Updates] admin_init: Transient update_plugins mis en cache (12h) pour v' . $this->current_version);
     }
 
     /**

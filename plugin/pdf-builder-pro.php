@@ -27,8 +27,12 @@ define('PDF_BUILDER_PLUGIN_DIR', dirname(__FILE__) . '/');
 define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('PDF_BUILDER_PRO_ASSETS_URL', plugin_dir_url(__FILE__) . 'assets/');
 define('PDF_BUILDER_PRO_ASSETS_PATH', plugin_dir_path(__FILE__) . 'assets/');
-define('PDF_BUILDER_VERSION', '1.0.3.19');
-define('PDF_BUILDER_PRO_VERSION', '1.0.3.19');
+// Version lue directement depuis le header du fichier (source unique de vérité).
+// Ne jamais modifier manuellement ces deux constantes : changer uniquement "Version:" ci-dessus.
+$_pdf_builder_data = get_file_data( __FILE__, [ 'Version' => 'Version' ] );
+define('PDF_BUILDER_VERSION', $_pdf_builder_data['Version']);
+define('PDF_BUILDER_PRO_VERSION', $_pdf_builder_data['Version']);
+unset($_pdf_builder_data);
 
 // Premium features constant (set to false for free version)
 if (!defined('PDF_BUILDER_PREMIUM')) {
