@@ -480,11 +480,15 @@ if (function_exists('add_action')) {
             add_action('upgrader_process_complete', function($upgrader, $hook_extra) {
                 if (isset($hook_extra['plugin']) && strpos($hook_extra['plugin'], 'pdf-builder-pro') !== false) {
                     // Notre plugin a été mis à jour
+                    error_log('[PDF Builder] upgrader_process_complete : Mise à jour détectée!');
                     // Marquer avec transient (10 min) pour que check_for_updates ignore les suggestions
                     set_transient('pdf_builder_just_updated', 1, 10 * MINUTE_IN_SECONDS);
+                    error_log('[PDF Builder] upgrader_process_complete : Transient pdf_builder_just_updated SET (10 min)');
                     // Purger les transients pour forcer un recalcul
                     delete_site_transient('update_plugins');
+                    error_log('[PDF Builder] upgrader_process_complete : Transient update_plugins supprimé');
                     delete_transient('pdf-builder-pro_edd_update_check');
+                    error_log('[PDF Builder] upgrader_process_complete : Transient pdf-builder-pro_edd_update_check supprimé');
                 }
             }, 10, 2);
 

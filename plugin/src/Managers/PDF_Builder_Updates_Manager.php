@@ -202,8 +202,10 @@ class PDF_Builder_Updates_Manager {
         // 🔧 HOTFIX: Après une mise à jour, ignorer les suggestions de MAJ pendant 10 minutes
         // permet au plugin d'être correctement reloadé par WordPress
         $last_update = get_transient('pdf_builder_just_updated');
+        error_log('[PDF Builder] check_for_updates() : transient pdf_builder_just_updated = ' . ($last_update ? 'SET' : 'NOT SET'));
+        
         if ($last_update) {
-            error_log('[PDF Builder] check_for_updates() : MAJ récente détectée, ignorer les suggestions pendant 10 min');
+            error_log('[PDF Builder] check_for_updates() : MAJ récente détectée, IGNORER les suggestions pendant 10 min');
             return $transient; // Retourner transient vide, pas de mise à jour
         }
 
