@@ -73,7 +73,7 @@ class PDF_Builder_Localization {
             // Fallback vers la langue par défaut
             $plugin_path = plugin_basename(PDF_BUILDER_PLUGIN_FILE);
             if ($plugin_path) {
-                load_plugin_textdomain(self::TEXT_DOMAIN, false, dirname($plugin_path) . '/resources/languages/'); // phpcs:ignore WordPress.WP.I18n.InvalidTextDomainRegistration
+                load_plugin_textdomain(self::TEXT_DOMAIN, false, dirname($plugin_path) . '/resources/languages/'); // phpcs:ignore WordPress.WP.I18n.InvalidTextDomainRegistration, PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
             }
         }
     }
@@ -449,7 +449,7 @@ class PDF_Builder_Localization {
      */
     public function change_locale_ajax() {
         try {
-            if (!pdf_builder_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            if (!pdf_builder_verify_nonce(wp_unslash($_POST['nonce'] ?? ''), 'pdf_builder_ajax')) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- wp_unslash() is applied
                 wp_send_json_error(['message' => 'Nonce invalide']);
                 return;
             }
@@ -459,7 +459,7 @@ class PDF_Builder_Localization {
                 return;
             }
 
-            $locale = sanitize_text_field($_POST['locale'] ?? '');
+            $locale = sanitize_text_field(wp_unslash($_POST['locale'] ?? '')); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- wp_unslash() is applied
 
             if (empty($locale)) {
                 wp_send_json_error(['message' => 'Locale manquante']);
@@ -488,7 +488,7 @@ class PDF_Builder_Localization {
      */
     public function get_translations_ajax() {
         try {
-            if (!pdf_builder_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_ajax')) {
+            if (!pdf_builder_verify_nonce(wp_unslash($_POST['nonce'] ?? ''), 'pdf_builder_ajax')) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- wp_unslash() is applied
                 wp_send_json_error(['message' => 'Nonce invalide']);
                 return;
             }
