@@ -287,8 +287,8 @@ class Puppeteer_Client {
             sleep( self::POLL_INTERVAL_S );
         }
 
-        throw new \RuntimeException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-            "Timeout après " . self::POLL_MAX_WAIT_S . " s (job_id={$job_id})"
+        throw new \RuntimeException(
+            "Timeout après " . self::POLL_MAX_WAIT_S . " s (job_id={$job_id})" // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         );
     }
 
@@ -328,8 +328,8 @@ class Puppeteer_Client {
         ] );
 
         if ( is_wp_error( $response ) ) {
-            throw new \RuntimeException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-                'wp_remote_post échoué : ' . $response->get_error_message()
+            throw new \RuntimeException(
+                'wp_remote_post échoué : ' . $response->get_error_message() // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
             );
         }
 
