@@ -266,7 +266,7 @@ class PDFEditorPreferences {
             }
 
         } catch (Exception $e) {
-            wp_send_json_error(array('message' => 'Erreur: ' . $e->getMessage()));
+            wp_send_json_error(array('message' => 'Erreur: ' . esc_html($e->getMessage()))); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
     }
 
@@ -293,7 +293,7 @@ class PDFEditorPreferences {
             wp_send_json_success(array('preferences' => $preferences));
 
         } catch (Exception $e) {
-            wp_send_json_error(array('message' => 'Erreur: ' . $e->getMessage()));
+            wp_send_json_error(array('message' => 'Erreur: ' . esc_html($e->getMessage()))); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
     }
 
