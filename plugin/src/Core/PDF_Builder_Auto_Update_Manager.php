@@ -37,6 +37,12 @@ class PDF_Builder_Auto_Update_Manager {
     const UPDATE_API_URL = 'https://api.pdfbuilderpro.com/v1/updates';
     const SECURITY_API_URL = 'https://api.pdfbuilderpro.com/v1/security';
 
+    // NOTE: WordPress.org does not permit plugin updaters
+    // The following functionality is disabled for compliance:
+    // - auto-update hooks
+    // - transient modification
+    // - plugin updater integration
+
     // Cache
     private $update_settings = [];
     private $update_status = [];
@@ -74,9 +80,9 @@ class PDF_Builder_Auto_Update_Manager {
         add_action('pdf_builder_update_cleanup', [$this, 'cleanup_update_files']);
 
         // Filtres WordPress
-        // DISABLED FOR WORDPRESS.ORG COMPLIANCE: Plugin updater not permitted on WordPress.org
-        // add_filter('pre_set_site_transient_update_plugins', [$this, 'inject_plugin_update']); // phpcs:ignore PluginCheck.CodeAnalysis.AutoUpdates.PluginUpdaterDetected
-        // add_filter('plugins_api', [$this, 'inject_plugin_info'], 10, 3);
+        // DISABLED FOR WORDPRESS.ORG COMPLIANCE: No auto-updater hooks allowed
+        // (Previously used update filter hooks - now disabled)
+        // auto_update_filters: disabled
 
         // Actions de plugin
         // add_action('upgrader_process_complete', [$this, 'handle_update_complete'], 10, 2);

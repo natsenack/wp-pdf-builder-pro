@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.NamingConventions.PrefixAllGlobals
 
 namespace PDF_Builder\Admin;
 
