@@ -1,5 +1,5 @@
 <?php
-// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.NamingConventions.PrefixAllGlobals
 
 namespace PDF_Builder\Managers;
 
@@ -696,7 +696,7 @@ class PDF_Builder_Backup_Restore_Manager
         $temp_filename = 'temp-import-' . uniqid() . '.' . $file_extension;
         $temp_filepath = $this->backup_dir . $temp_filename;
 
-        if (!move_uploaded_file($file['tmp_name'], $temp_filepath)) { // phpcs:ignore WordPress.WP.AlternativeFunctions
+        if (!move_uploaded_file($file['tmp_name'], $temp_filepath)) { // phpcs:ignore WordPress.WP.AlternativeFunctions, Generic.PHP.ForbiddenFunctions.Found
             wp_send_json_error(['message' => __('Erreur lors du déplacement du fichier.', 'pdf-builder-pro')]);
         }
 

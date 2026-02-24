@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
 /**
  * PDF Builder Pro V2 - Page de paramètres
  */

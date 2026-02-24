@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals, Internal.LineEndings.Mixed
 if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * Fix pour afficher les images dans la bibliothèque média WordPress

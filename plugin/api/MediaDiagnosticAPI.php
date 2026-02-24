@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
 if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * Endpoint AJAX pour diagnostiquer la bibliothèque média

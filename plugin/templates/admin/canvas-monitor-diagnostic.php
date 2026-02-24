@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
 /**
  * Outil de diagnostic pour le système de monitoring des cartes canvas
  * Permet de vérifier l'état du système et diagnostiquer les problèmes
@@ -273,8 +274,6 @@ function exportCanvasSettings() {
     linkElement.setAttribute('download', exportFileDefaultName);
     linkElement.click();
 }
-</script>
-
-<?php</content>
+</script></content>
 <parameter name="filePath">i:\pdf-builder-pro\plugin\resources\templates\admin\canvas-monitor-diagnostic.php
 

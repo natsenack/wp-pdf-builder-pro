@@ -74,11 +74,12 @@ class PDF_Builder_Auto_Update_Manager {
         add_action('pdf_builder_update_cleanup', [$this, 'cleanup_update_files']);
 
         // Filtres WordPress
-        add_filter('pre_set_site_transient_update_plugins', [$this, 'inject_plugin_update']); // phpcs:ignore PluginCheck.CodeAnalysis.AutoUpdates.PluginUpdaterDetected
-        add_filter('plugins_api', [$this, 'inject_plugin_info'], 10, 3);
+        // DISABLED FOR WORDPRESS.ORG COMPLIANCE: Plugin updater not permitted on WordPress.org
+        // add_filter('pre_set_site_transient_update_plugins', [$this, 'inject_plugin_update']); // phpcs:ignore PluginCheck.CodeAnalysis.AutoUpdates.PluginUpdaterDetected
+        // add_filter('plugins_api', [$this, 'inject_plugin_info'], 10, 3);
 
         // Actions de plugin
-        add_action('upgrader_process_complete', [$this, 'handle_update_complete'], 10, 2);
+        // add_action('upgrader_process_complete', [$this, 'handle_update_complete'], 10, 2);
 
         // Nettoyage
         add_action('pdf_builder_monthly_cleanup', [$this, 'cleanup_old_updates']);
