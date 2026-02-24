@@ -101,9 +101,9 @@ if (!defined('ABSPATH')) {
                     <!-- Actions rapides -->
                     <div class="pdfb-license-quick-actions">
                         <?php if (!$is_premium): ?>
-                            <a href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/" class="pdfb-license-btn-primary-large">
-                                <span class="pdfb-license-btn-icon">🚀</span>
-                                Activer Premium
+                            <a href="#activate-section" class="pdfb-license-btn-primary-large" onclick="document.getElementById('activate-section').scrollIntoView({behavior:'smooth'});setTimeout(function(){var el=document.getElementById('license_key_input');if(el){el.focus();}},400);return false;">
+                                <span class="pdfb-license-btn-icon">🔑</span>
+                                Entrer ma clé de licence
                             </a>
                         <?php else: ?>
                             <button type="button" class="pdfb-license-btn-secondary-large" onclick="showDeactivateModal()">
@@ -551,9 +551,9 @@ if (!defined('ABSPATH')) {
                     <div class="pdfb-license-upgrade-prompt" style="margin-top:1rem;">
                         <h4>Prêt à passer au premium ?</h4>
                         <p>Débloquez toutes ces fonctionnalités et bien plus encore</p>
-                        <a href="https://hub.threeaxe.fr/index.php/downloads/pdf-builder-pro/" class="pdfb-license-btn-primary-large">
-                            <span class="pdfb-license-btn-icon">🚀</span>
-                            Activer maintenant
+                        <a href="#activate-section" class="pdfb-license-btn-primary-large" onclick="document.getElementById('activate-section').scrollIntoView({behavior:'smooth'});setTimeout(function(){var el=document.getElementById('license_key_input');if(el){el.focus();}},400);return false;">
+                            <span class="pdfb-license-btn-icon">🔑</span>
+                            Entrer ma clé de licence
                         </a>
                     </div>
                     <?php endif; ?>
