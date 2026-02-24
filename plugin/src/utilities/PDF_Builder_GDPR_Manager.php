@@ -993,8 +993,8 @@ class PDF_Builder_GDPR_Manager {
 
         // 3. Supprimer toutes les métadonnées liées à l'utilisateur
         $wpdb->delete($wpdb->postmeta, [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key,WordPress.DB.SlowDBQuery.slow_db_query_meta_value
-            'meta_key' => '_pdf_template_author',
-            'meta_value' => $user_id
+            'meta_key' => '_pdf_template_author', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+            'meta_value' => $user_id // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
         ]);
 
         // 4. Supprimer les logs d'audit de cet utilisateur (RGPD compliance)
