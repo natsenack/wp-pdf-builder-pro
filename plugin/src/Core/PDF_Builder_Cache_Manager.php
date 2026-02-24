@@ -401,7 +401,7 @@ class PDF_Builder_Cache_Manager {
      */
     private function delete_expired_transients(): int {
         global $wpdb;
-        return (int) $wpdb->query( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
+        return (int) $wpdb->query( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery, PluginCheck.Security.DirectDB.UnescapedDBParameter
             "DELETE a, b FROM {$wpdb->options} a
              INNER JOIN {$wpdb->options} b
                ON b.option_name = REPLACE(a.option_name, '_transient_timeout_', '_transient_')
