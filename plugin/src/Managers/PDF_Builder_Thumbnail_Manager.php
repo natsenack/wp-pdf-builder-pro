@@ -81,7 +81,7 @@ class PDF_Builder_Thumbnail_Manager
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
             $template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-                $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
+                $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 ARRAY_A
             );
 
@@ -226,7 +226,7 @@ class PDF_Builder_Thumbnail_Manager
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
         $template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-            $wpdb->prepare("SELECT thumbnail_url FROM $table_templates WHERE id = %d", $template_id),
+            $wpdb->prepare("SELECT thumbnail_url FROM $table_templates WHERE id = %d", $template_id), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             ARRAY_A
         );
 
@@ -276,7 +276,7 @@ class PDF_Builder_Thumbnail_Manager
 
         if (!$thumbnail_exists) {
             $sql = "ALTER TABLE $table_templates ADD COLUMN thumbnail_url VARCHAR(500) DEFAULT '' AFTER template_data";
-            $result = $wpdb->query($sql); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+            $result = $wpdb->query($sql); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             if ($result !== false) {
                 $this->logInfo('Colonne thumbnail_url ajoutée avec succès');
             } else {

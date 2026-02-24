@@ -90,7 +90,7 @@ class PDF_Builder_Template_Migrator
         $table = $wpdb->postmeta;
         $meta_key = '_pdf_builder_template';
 
-        $query = $wpdb->prepare(
+        $query = $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT post_id, meta_value FROM $table WHERE meta_key = %s",
             $meta_key
         );

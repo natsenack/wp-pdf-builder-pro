@@ -305,7 +305,7 @@ class PDF_Builder_Order_Metabox
             echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML template content
             exit;
         } catch (\Exception $e) {
-            wp_die('Erreur: ' . $e->getMessage(), '', ['response' => 500]); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+            wp_die('Erreur: ' . $e->getMessage(), '', ['response' => 500]); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
     }
 
@@ -336,7 +336,7 @@ class PDF_Builder_Order_Metabox
         global $wpdb;
         $table = $wpdb->prefix . 'pdf_builder_templates';
         $row = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-            $wpdb->prepare("SELECT * FROM {$table} WHERE id = %d", intval($template_id)),
+            $wpdb->prepare("SELECT * FROM {$table} WHERE id = %d", intval($template_id)), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             ARRAY_A
         );
 

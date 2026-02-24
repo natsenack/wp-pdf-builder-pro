@@ -333,7 +333,7 @@ class PDF_Builder_WooCommerce_Integration
             // Premium : chercher le template mappé au statut courant
             if (!empty($status_templates[$status_key])) {
                 $selected_template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-                    $wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $status_templates[$status_key]),
+                    $wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $status_templates[$status_key]), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     ARRAY_A
                 );
             }
@@ -341,7 +341,7 @@ class PDF_Builder_WooCommerce_Integration
             // Gratuit : utiliser le template assigné à wc-completed
             if (!empty($status_templates['wc-completed'])) {
                 $selected_template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-                    $wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $status_templates['wc-completed']),
+                    $wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $status_templates['wc-completed']), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     ARRAY_A
                 );
             }
@@ -352,7 +352,7 @@ class PDF_Builder_WooCommerce_Integration
             $mapped_id = apply_filters('pdf_builder_get_template_for_status', null, $status_key);
             if ($mapped_id) {
                 $selected_template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-                    $wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $mapped_id),
+                    $wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $mapped_id), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     ARRAY_A
                 );
             }
@@ -1913,7 +1913,7 @@ class PDF_Builder_WooCommerce_Integration
                 global $wpdb;
                 $table_templates = $wpdb->prefix . 'pdf_builder_templates';
                 $template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-                    $wpdb->prepare("SELECT id, name, template_data FROM $table_templates WHERE id = %d", $template_id),
+                    $wpdb->prepare("SELECT id, name, template_data FROM $table_templates WHERE id = %d", $template_id), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     ARRAY_A
                 );
 

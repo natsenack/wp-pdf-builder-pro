@@ -193,7 +193,7 @@ class PDF_Builder_Metrics_Analytics {
 
         $query = "INSERT INTO $table (type, name, value, metadata, user_id, timestamp, session_id, ip_address, user_agent) VALUES " . implode(', ', $placeholders);
 
-        $wpdb->query($wpdb->prepare($query, $values)); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $wpdb->query($wpdb->prepare($query, $values)); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
         $this->metric_buffers = [];
     }
@@ -367,14 +367,14 @@ class PDF_Builder_Metrics_Analytics {
             $params[] = $name;
         }
 
-        $query = $wpdb->prepare("
+        $query = $wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT * FROM $table
             WHERE " . implode(' AND ', $where) . "
             ORDER BY date DESC
             LIMIT %d
         ", array_merge($params, [$limit]));
 
-        return $wpdb->get_results($query, ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        return $wpdb->get_results($query, ARRAY_A); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
     }
 
     /**

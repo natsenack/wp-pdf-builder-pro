@@ -32,7 +32,7 @@ if (!function_exists('wp_unslash')) {
 function pdf_builder_preserve_template_settings_fields(int $template_id, array &$template_data, $wpdb): void {
     $table = $wpdb->prefix . 'pdf_builder_templates';
     $existing = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-        $wpdb->prepare("SELECT template_data FROM $table WHERE id = %d", $template_id),
+        $wpdb->prepare("SELECT template_data FROM $table WHERE id = %d", $template_id), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
         ARRAY_A
     );
     if (!$existing) {
@@ -710,7 +710,7 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
         $template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-            $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+            $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             ARRAY_A
         );
 

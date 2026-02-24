@@ -8,53 +8,53 @@ Stable tag: 1.0.3.15
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Constructeur de PDF professionnel ultra-performant avec architecture modulaire avancée.
+Professional high-performance PDF builder plugin with modular architecture.
 
 == Description ==
 
-PDF Builder Pro est un plugin WordPress professionnel permettant de créer, personnaliser et générer des documents PDF directement depuis votre interface WordPress.
+PDF Builder Pro is a professional WordPress plugin for creating, customizing and generating PDF documents directly from your WordPress admin interface.
 
-Fonctionnalités principales :
+Key features:
 
-* Éditeur visuel de templates PDF par glisser-déposer
-* Intégration WooCommerce pour la génération de PDFs de commandes
-* Templates prédéfinis personnalisables
-* Support multilingue (Français, Anglais)
-* Génération de PDF haute performance
-* Gestion des assets et cache optimisée
-* Système de sauvegarde et restauration intégré
-* Tableau de bord analytique
+* Visual drag-and-drop PDF template editor
+* WooCommerce integration for automatic order PDF generation
+* Customizable pre-defined templates
+* Multilingual support (French, English)
+* High-performance PDF generation
+* Optimized asset management and caching
+* Built-in backup and restore system
+* Analytics dashboard
 
 == Installation ==
 
-1. Téléchargez et décompressez le plugin dans le répertoire `/wp-content/plugins/`.
-2. Activez le plugin via le menu "Plugins" dans WordPress.
-3. Accédez à "PDF Builder" dans le menu d'administration pour configurer le plugin.
+1. Download and unzip the plugin to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the "Plugins" menu in WordPress.
+3. Go to "PDF Builder" in the admin menu to configure the plugin.
 
 == Frequently Asked Questions ==
 
-= Quelles versions de WordPress sont supportées ? =
+= Which WordPress versions are supported? =
 
-PDF Builder Pro supporte WordPress 5.0 et supérieur.
+PDF Builder Pro supports WordPress 5.0 and above.
 
-= Le plugin est-il compatible avec WooCommerce ? =
+= Is the plugin compatible with WooCommerce? =
 
-Oui, PDF Builder Pro intègre nativement WooCommerce pour la génération automatique de PDFs de commandes.
+Yes, PDF Builder Pro natively integrates with WooCommerce for automatic order PDF generation.
 
-= Quels formats de sortie sont disponibles ? =
+= What output formats are available? =
 
-Le plugin génère des fichiers PDF au format standard.
+The plugin generates standard PDF files.
 
 == Changelog ==
 
 = 1.0.3.15 =
-* Corrections et améliorations de performance.
-* Mise à jour des dépendances.
+* Bug fixes and performance improvements.
+* Dependency updates.
 
 = 1.0.0 =
-* Version initiale.
+* Initial release.
 
 == Upgrade Notice ==
 
 = 1.0.3.15 =
-Mise à jour recommandée incluant des corrections importantes.
+Recommended update including important fixes.

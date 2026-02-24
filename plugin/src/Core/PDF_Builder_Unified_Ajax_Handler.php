@@ -1693,7 +1693,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             // Nettoyer les transients temporaires du plugin
             global $wpdb;
             $transient_count = $wpdb->query( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-                $wpdb->prepare(
+                $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value = '1'",
                     '_transient_pdf_builder_temp_%'
                 )
@@ -2902,7 +2902,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         } catch (Exception $e) {
             error_log("[PDF GENERATE] EXCEPTION: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
             $this->debug_log('Erreur génération PDF: ' . $e->getMessage(), "ERROR");
-            wp_die('Erreur: ' . $e->getMessage(), '', ['response' => 500]); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+            wp_die('Erreur: ' . $e->getMessage(), '', ['response' => 500]); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
     }
 
@@ -3151,7 +3151,7 @@ class PDF_Builder_Unified_Ajax_Handler {
             echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML template content
             exit;
         } catch (Exception $e) {
-            die('Erreur: ' . $e->getMessage()); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+            die('Erreur: ' . $e->getMessage()); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped,WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
     }
 
@@ -3163,7 +3163,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         
         $table_name = $wpdb->prefix . 'pdf_builder_templates';
         $template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-            $wpdb->prepare(
+            $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 "SELECT * FROM {$table_name} WHERE id = %d",
                 $template_id
             ),

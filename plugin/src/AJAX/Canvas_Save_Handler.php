@@ -346,7 +346,7 @@ class Canvas_Save_Handler {
 
             // Récupérer le template existant
             $existing = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-                $wpdb->prepare("SELECT * FROM $table WHERE id = %d", $template_id)
+                $wpdb->prepare("SELECT * FROM $table WHERE id = %d", $template_id) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             );
 
             if (!$existing) {

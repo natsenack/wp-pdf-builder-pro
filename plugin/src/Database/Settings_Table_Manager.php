@@ -91,7 +91,7 @@ class Settings_Table_Manager {
         $table_name = self::get_table_name();
 
         $option_value = $wpdb->get_var( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-            $wpdb->prepare( "SELECT option_value FROM $table_name WHERE option_name = %s", $option_name )
+            $wpdb->prepare( "SELECT option_value FROM $table_name WHERE option_name = %s", $option_name ) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
         );
 
         if ( $option_value === null ) {

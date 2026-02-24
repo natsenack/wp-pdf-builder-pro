@@ -704,7 +704,7 @@ class PDF_Builder_Test_Suite {
 
         // Cette requête devrait être sécurisée
         global $wpdb;
-        $query = $wpdb->prepare("SELECT * FROM {$wpdb->users} WHERE user_login = %s", $malicious_input);
+        $query = $wpdb->prepare("SELECT * FROM {$wpdb->users} WHERE user_login = %s", $malicious_input); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
         $result = $wpdb->get_var($query); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
         $results['sql_protection'] = $this->assert_not_false(

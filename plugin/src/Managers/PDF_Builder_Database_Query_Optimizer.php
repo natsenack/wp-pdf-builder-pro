@@ -84,7 +84,7 @@ class PDF_Builder_Database_Query_Optimizer
         }
 
         // Requête pour récupérer les données de commande WooCommerce
-        $this->prepared_statements['order_data'] = $wpdb->prepare(
+        $this->prepared_statements['order_data'] = $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT
                 p.ID,
                 p.post_date,
@@ -99,7 +99,7 @@ class PDF_Builder_Database_Query_Optimizer
         );
 
         // Requête pour récupérer les éléments de commande
-        $this->prepared_statements['order_items'] = $wpdb->prepare(
+        $this->prepared_statements['order_items'] = $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT
                 oi.order_item_id,
                 oi.order_item_name,
@@ -116,7 +116,7 @@ class PDF_Builder_Database_Query_Optimizer
         );
 
         // Requête pour récupérer les données client
-        $this->prepared_statements['customer_data'] = $wpdb->prepare(
+        $this->prepared_statements['customer_data'] = $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT
                 u.user_email,
                 um.meta_value as first_name,
@@ -133,7 +133,7 @@ class PDF_Builder_Database_Query_Optimizer
         );
 
         // Requête pour récupérer les métadonnées de produit
-        $this->prepared_statements['product_meta'] = $wpdb->prepare(
+        $this->prepared_statements['product_meta'] = $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT pm.meta_key, pm.meta_value
              FROM {$wpdb->postmeta} pm
              WHERE pm.post_id = %d
@@ -173,18 +173,18 @@ class PDF_Builder_Database_Query_Optimizer
         global $wpdb;
 
         $order_data = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-            $wpdb->prepare($this->prepared_statements['order_data'], $order_id),
+            $wpdb->prepare($this->prepared_statements['order_data'], $order_id), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             ARRAY_A
         );
 
         if ($order_data) {
             $order_items = $wpdb->get_results( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-                $wpdb->prepare($this->prepared_statements['order_items'], $order_id),
+                $wpdb->prepare($this->prepared_statements['order_items'], $order_id), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 ARRAY_A
             );
 
             $customer_data = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-                $wpdb->prepare($this->prepared_statements['customer_data'], $order_id),
+                $wpdb->prepare($this->prepared_statements['customer_data'], $order_id), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 ARRAY_A
             );
 
@@ -230,7 +230,7 @@ class PDF_Builder_Database_Query_Optimizer
 
         // Utiliser une seule requête pour tous les produits
         $placeholders = implode(',', array_fill(0, count($product_ids), '%d'));
-        $query = $wpdb->prepare(
+        $query = $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT
                 p.ID,
                 p.post_title,

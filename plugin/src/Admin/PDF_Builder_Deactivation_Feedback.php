@@ -237,7 +237,7 @@ class PDF_Builder_Deactivation_Feedback {
         $reason_label  = isset($reason_labels[$reason]) ? $reason_labels[$reason] : $reason;
         $server_soft   = isset($_SERVER['SERVER_SOFTWARE']) ? esc_html($_SERVER['SERVER_SOFTWARE']) : 'N/A';
 
-        // phpcs:disable Squiz.PHP.Heredoc.NotAllowed
+        // phpcs:disable PluginCheck.CodeAnalysis.Heredoc.NotAllowed
         $html = <<<EMAIL
 <!DOCTYPE html>
 <html>
@@ -289,7 +289,7 @@ EMAIL;
 </body>
 </html>
 EMAIL;
-        // phpcs:enable Squiz.PHP.Heredoc.NotAllowed
+        // phpcs:enable PluginCheck.CodeAnalysis.Heredoc.NotAllowed
 
         return $html;
     }
@@ -298,7 +298,7 @@ EMAIL;
      * Retourner les styles CSS du modal
      */
     private function get_modal_styles() {
-        // phpcs:disable Squiz.PHP.Heredoc.NotAllowed
+        // phpcs:disable PluginCheck.CodeAnalysis.Heredoc.NotAllowed
         return <<<CSS
 #pdf-builder-deactivation-modal {
     display: none;
@@ -452,7 +452,7 @@ EMAIL;
     content: '...';
 }
 CSS;
-        // phpcs:enable Squiz.PHP.Heredoc.NotAllowed
+        // phpcs:enable PluginCheck.CodeAnalysis.Heredoc.NotAllowed
     }
 }
 

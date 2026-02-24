@@ -414,7 +414,7 @@ class PDF_Builder_Template_Manager
                 $existing_template = null;
                 if ($template_id > 0) {
                     $existing_template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-                        $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+                        $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                         \ARRAY_A
                     );
                     
@@ -530,7 +530,7 @@ class PDF_Builder_Template_Manager
             if ($existing_template) {
                 // Vérification pour la table personnalisée
                 $saved_template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-                    $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+                    $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     \ARRAY_A
                 );
 
@@ -617,7 +617,7 @@ class PDF_Builder_Template_Manager
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
             $template_row = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-                $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+                $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 \ARRAY_A
             );
 
@@ -743,7 +743,7 @@ class PDF_Builder_Template_Manager
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
             $template_row = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-                $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+                $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 \ARRAY_A
             );
 
@@ -876,7 +876,7 @@ class PDF_Builder_Template_Manager
             }
 
             $template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-                $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+                $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 \ARRAY_A
             );
 
