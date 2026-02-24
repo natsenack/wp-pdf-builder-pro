@@ -460,6 +460,23 @@ if (function_exists('add_action')) {
             ]);
             $updates_manager->init();
 
+            // 🔧 Nettoyer les transients corrompus au premier chargement
+            add_action( 'admin_init', function() {
+                static $cleaned = false;
+                if ($cleaned) return;
+                
+                // Vérifier si on vient de mettre à jour (détection basique)
+                $last_clean = get_transient('pdf_builder_transient_clean_1_0_3_16');
+                if (!$last_clean) {
+                    delete_site_transient('update_plugins');
+                    delete_transient('pdf-builder-pro_edd_update_check');
+                    set_transient('pdf_builder_transient_clean_1_0_3_16', 1, HOUR_IN_SECONDS);
+                }
+                
+                $cleaned = true;
+            }, 1 );
+
+
             // Action AJAX de diagnostic : force le check EDD et affiche la réponse brute
             add_action('wp_ajax_pdf_builder_test_update_check', function() use ($updates_manager) {
                 if (!current_user_can('manage_options')) {
