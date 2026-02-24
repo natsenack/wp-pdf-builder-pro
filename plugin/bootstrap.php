@@ -476,6 +476,18 @@ if (function_exists('add_action')) {
                 $cleaned = true;
             }, 1 );
 
+            // 🔄 Marquer qu'on vient de mettre à jour pour ignorer les suggestions de MAJ pendant 10 min
+            add_action('upgrader_process_complete', function($upgrader, $hook_extra) {
+                if (isset($hook_extra['plugin']) && strpos($hook_extra['plugin'], 'pdf-builder-pro') !== false) {
+                    // Notre plugin a été mis à jour
+                    // Marquer avec transient (10 min) pour que check_for_updates ignore les suggestions
+                    set_transient('pdf_builder_just_updated', 1, 10 * MINUTE_IN_SECONDS);
+                    // Purger les transients pour forcer un recalcul
+                    delete_site_transient('update_plugins');
+                    delete_transient('pdf-builder-pro_edd_update_check');
+                }
+            }, 10, 2);
+
 
             // Action AJAX de diagnostic : force le check EDD et affiche la réponse brute
             add_action('wp_ajax_pdf_builder_test_update_check', function() use ($updates_manager) {

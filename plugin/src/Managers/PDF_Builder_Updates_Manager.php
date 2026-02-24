@@ -199,6 +199,14 @@ class PDF_Builder_Updates_Manager {
 
         error_log('[PDF Builder] check_for_updates() appelé. Version locale: ' . $this->current_version);
 
+        // 🔧 HOTFIX: Après une mise à jour, ignorer les suggestions de MAJ pendant 10 minutes
+        // permet au plugin d'être correctement reloadé par WordPress
+        $last_update = get_transient('pdf_builder_just_updated');
+        if ($last_update) {
+            error_log('[PDF Builder] check_for_updates() : MAJ récente détectée, ignorer les suggestions pendant 10 min');
+            return $transient; // Retourner transient vide, pas de mise à jour
+        }
+
         // Récupérer la version disponible depuis EDD (données fraîches, pas de cache)
         $remote_version = $this->get_remote_version(true);
 

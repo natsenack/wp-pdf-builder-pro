@@ -1,4 +1,28 @@
 {
+  "1.0.3.19": {
+    "version": "1.0.3.19",
+    "released": "2026-02-24",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.3.19 - Fix bug message MAJ fant\u00f4me<\/h3>\n<ul>\n<li>🔧 <strong>D\u00e9lai transient post-MAJ<\/strong> : Apr\u00e8s mise \u00e0 jour, ignorer les suggestions de MAJ pendant 10 minutes - permet au plugin d'\u00eatre correctement recharg\u00e9 par WordPress<\/li>\n<li>✅ <strong>Transient cleanup imm\u00e9diat<\/strong> : Purger les transients de MAJ pour forcer WordPress \u00e0 recalculer l'\u00e9tat<\/li>\n<\/ul>"
+  },
+  "1.0.3.18": {
+    "version": "1.0.3.18",
+    "released": "2026-02-24",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.3.18 - Fix transient post-mise \u00e0 jour<\/h3>\n<ul>\n<li>🔧 <strong>Transient cleanup apres MAJ<\/strong> : Hook upgrader_process_complete pour purger les transients imm\u00e9diatement apr\u00e8s une mise \u00e0 jour, \u00e9vite le message \"mise \u00e0 jour disponible\" fantôme<\/li>\n<\/ul>"
+  },
+  "1.0.3.17": {
+    "version": "1.0.3.17",
+    "released": "2026-02-24",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.3.17 - Nettoyage transients + Optimisation système<\/h3>\n<ul>\n<li>🧹 <strong>Auto-cleanup transients<\/strong> : Nettoyage automatique des transients corrompus au chargement admin pour une transition en douceur<\/li>\n<li>⚡ <strong>Stabilité mise à jour<\/strong> : Refactorisation du système pour éviter un rechargement récursif des hooks WordPress<\/li>\n<li>✅ <strong>Validation système<\/strong> : Version de test pour valider le cycle de mise à jour en production<\/li>\n<\/ul>"
+  },
   "1.0.3.16": {
     "version": "1.0.3.16",
     "released": "2026-02-24",

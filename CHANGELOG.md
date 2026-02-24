@@ -2,6 +2,31 @@
 
 ## Tous les changements notables de ce projet seront documentés dans ce fichier.
 
+## Version 1.0.3.19 (2026-02-24)
+
+- 🔧 **Fix Message MAJ Fantôme** : Délai de 10 min après mise à jour pour ignorer les suggestions
+  - ✅ Permet au plugin d'être correctement rechargé par WordPress  
+  - ✅ Évite l'affichage de "nouvelle version disponible" juste après l'installation
+- ✅ **Purge transients post-MAJ** : Force WordPress à recalculer l'état des mises à jour
+
+==================================================================================================================
+
+## Version 1.0.3.18 (2026-02-24)
+
+- 🔄 **Fix Transient Post-MAJ** : Hook `upgrader_process_complete` pour purger les transients immédiatement après mise à jour
+  - ✅ Élimine le message "mise à jour disponible" qui persiste après l'installation
+  - ✅ Force WordPress à recalculer le statut des MAJ disponibles
+
+==================================================================================================================
+
+## Version 1.0.3.17 (2026-02-24)
+
+- 🧹 **Auto-cleanup Transients** : Nettoyage automatique des transients corrompus au premier accès admin
+- ⚡ **Stabilité Mise à jour** : Refactorisation pour éviter les appels récursifs des hooks WordPress
+- ✅ **Validation Système** : Version de test pour valider le cycle de mise à jour en production
+
+==================================================================================================================
+
 ## Version 1.0.3.16 (2026-02-24)
 
 - 🔧 **Hotfix Mises à jour** : Correction du système dual (utilisateurs avec/sans licence)
