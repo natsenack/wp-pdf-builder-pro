@@ -117,7 +117,7 @@ class Puppeteer_Client {
         if ( $status === 202 ) {
             $data = json_decode( $response_body, true );
             if ( empty( $data['job_id'] ) ) {
-                throw new \RuntimeException( 'Service 202 sans job_id dans la réponse.' );
+                throw new \RuntimeException( 'Service 202 sans job_id dans la réponse.' ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
             }
             $tier = $data['tier'] ?? 'free';
             $this->log( "Rendu asynchrone → tier={$tier}  job_id={$data['job_id']}" );
@@ -128,7 +128,7 @@ class Puppeteer_Client {
         // ─── Erreur HTTP ─────────────────────────────────────────────────────────
         $err_msg = "Service PDF — HTTP {$status} : " . substr( $response_body, 0, 500 );
         error_log( '[Puppeteer_Client] HTTP ERROR: ' . $err_msg );
-        throw new \RuntimeException( $err_msg );
+        throw new \RuntimeException( $err_msg ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
     }
 
     /**
@@ -192,7 +192,7 @@ class Puppeteer_Client {
         if ( $status === 202 ) {
             $data = json_decode( $response_body, true );
             if ( empty( $data['job_id'] ) ) {
-                throw new \RuntimeException( 'Service 202 sans job_id dans la réponse.' );
+                throw new \RuntimeException( 'Service 202 sans job_id dans la réponse.' ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
             }
             $this->log( "render_image async → job_id={$data['job_id']}" );
             return $this->poll_job( (string) $data['job_id'] );
@@ -200,7 +200,7 @@ class Puppeteer_Client {
 
         $err_msg = "Service Image — HTTP {$status} : " . substr( $response_body, 0, 500 );
         error_log( '[Puppeteer_Client] IMAGE ERROR: ' . $err_msg );
-        throw new \RuntimeException( $err_msg );
+        throw new \RuntimeException( $err_msg ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
     }
 
     /**
@@ -276,7 +276,7 @@ class Puppeteer_Client {
 
                 // 202 ou 409 = job toujours en cours (409 = "job_not_ready")
                 if ( $code !== 202 && $code !== 409 ) {
-                    throw new \RuntimeException( "Polling job {$job_id} – HTTP {$code} : " . substr( $body, 0, 200 ) );
+                    throw new \RuntimeException( "Polling job {$job_id} – HTTP {$code} : " . substr( $body, 0, 200 ) ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
                 }
 
                 $this->log( "Polling #{$attempts} → HTTP {$code} (en cours, on attend…)" );
@@ -285,7 +285,7 @@ class Puppeteer_Client {
             sleep( self::POLL_INTERVAL_S );
         }
 
-        throw new \RuntimeException(
+        throw new \RuntimeException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
             "Timeout après " . self::POLL_MAX_WAIT_S . " s (job_id={$job_id})"
         );
     }
@@ -326,7 +326,7 @@ class Puppeteer_Client {
         ] );
 
         if ( is_wp_error( $response ) ) {
-            throw new \RuntimeException(
+            throw new \RuntimeException( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
                 'wp_remote_post échoué : ' . $response->get_error_message()
             );
         }

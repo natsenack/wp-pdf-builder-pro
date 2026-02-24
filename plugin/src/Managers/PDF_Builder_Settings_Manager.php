@@ -41,12 +41,12 @@ class PDF_Builder_Settings_Manager
     public function settingsPage()
     {
         if (!current_user_can('manage_options')) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires.', 'pdf-builder-pro'));
+            wp_die(esc_html__('Vous n\'avez pas les permissions nécessaires.', 'pdf-builder-pro'));
         }
 
         if ((isset($_POST['save_settings']) || isset($_POST['pdf_builder_floating_save'])) && pdf_builder_verify_nonce($_POST['pdf_builder_settings_nonce'] ?? '', 'pdf_builder_settings')) {
             $this->saveSettings();
-            echo '<div class="notice notice-success"><p>' . __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro') . '</p></div>';
+            echo '<div class="notice notice-success"><p>' . esc_html__('Paramètres sauvegardés avec succès.', 'pdf-builder-pro') . '</p></div>';
         }
 
         include plugin_dir_path(dirname(__FILE__)) . '../../resources/templates/admin/settings-page.php';

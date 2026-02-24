@@ -179,10 +179,10 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                 </h4>
                 <p>
                     <?php
-                    /* translators: %d: number of templates created by the user */
                     printf(
+                        /* translators: %d: number of templates created by the user */
                         esc_html__('Vous avez créé %d template gratuit sur 1. Passez en Premium pour créer des templates illimités !', 'pdf-builder-pro'),
-                        $templates_count
+                        intval($templates_count)
                     ); ?>
                 </p>
                 <a href="#" onclick="showUpgradeModal('gallery')" class="button button-primary">
@@ -243,7 +243,7 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                 foreach ($templates as $template) {
                     $template_counter++;
                     $template_id = $template['id'];
-                    $template_name = esc_html($template['name']);
+                    $template_name = $template['name'];
                     $thumbnail_url = isset($template['thumbnail_url']) ? $template['thumbnail_url'] : '';
                     
                     // Nettoyer la thumbnail_url - rejeter les URLs invalides (0.0.0.1, localhost, etc.)
@@ -301,7 +301,7 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                     // Déterminer si c'est un template "en trop" pour les utilisateurs gratuits
                     $is_excess_template = (!$is_premium && $template_counter > 1);
 
-                    echo '<div class="pdfb-template-card template-type-' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; padding: 20px; background: ' . ($is_excess_template ? '#f8f8f8' : '#fff') . '; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; ' . ($is_excess_template ? 'opacity: 0.6;' : 'cursor: pointer;') . ' min-height: 350px; position: relative;" ' . ($is_excess_template ? '' : 'onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';"') . '>';
+                    echo '<div class="pdfb-template-card template-type-' . esc_attr($template_type) . '" style="border: 2px solid #dee2e6; border-radius: 8px; -webkit-border-radius: 8px; -moz-border-radius: 8px; -ms-border-radius: 8px; -o-border-radius: 8px; padding: 20px; background: ' . ($is_excess_template ? '#f8f8f8' : '#fff') . '; box-shadow: 0 2px 8px rgba(0,0,0,0.1); -webkit-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -moz-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -ms-box-shadow: 0 2px 8px rgba(0,0,0,0.1); -o-box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; -webkit-transition: all 0.3s ease; -moz-transition: all 0.3s ease; -o-transition: all 0.3s ease; ' . ($is_excess_template ? 'opacity: 0.6;' : 'cursor: pointer;') . ' min-height: 350px; position: relative;" ' . ($is_excess_template ? '' : 'onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';"') . '>';
 
                     // Conteneur pour organiser le contenu de la carte
                     echo '<div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; flex-direction: column; -webkit-flex-direction: column; -moz-flex-direction: column; -ms-flex-direction: column; -o-flex-direction: column; height: 100%;">';
@@ -332,7 +332,7 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
                     ];
                     $type_label = isset($type_labels[$template_type]) ? $type_labels[$template_type] : $type_labels['autre'];
 
-                    echo '<div class="pdfb-template-type-badge" style="position: absolute; top: 10px; left: 10px; background: ' . $type_color . '; color: white; padding: 4px 8px; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
+                    echo '<div class="pdfb-template-type-badge" style="position: absolute; top: 10px; left: 10px; background: ' . esc_attr($type_color) . '; color: white; padding: 4px 8px; border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px; -ms-border-radius: 12px; -o-border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
                     echo esc_html($type_label);
                     echo '</div>';
 
@@ -345,18 +345,18 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
 
                     echo '<div style="text-align: center; margin-bottom: 15px; margin-top: 40px;">';
                     // Créer un conteneur pour le preview qui sera chargé dynamiquement
-                    echo '<div id="preview-' . $template_id . '" class="pdfb-template-preview-container" data-template-id="' . intval($template_id) . '" style="width: 120px; height: 80px; margin: 0 auto 10px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">';
+                    echo '<div id="preview-' . intval($template_id) . '" class="pdfb-template-preview-container" data-template-id="' . intval($template_id) . '" style="width: 120px; height: 80px; margin: 0 auto 10px; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">';
                     echo '<div style="text-align: center; color: #999;">';
                     echo '<div style="font-size: 2rem; margin-bottom: 5px;">📄</div>';
                     echo '<div style="font-size: 11px;">Aperçu</div>';
                     echo '</div>';
                     echo '</div>';
-                    echo '<h3 style="margin: 0; color: #23282d;">' . $template_name . '</h3>';
-                    echo '<p style="color: #666; margin: 5px 0;">' . $description . '</p>';
+                    echo '<h3 style="margin: 0; color: #23282d;">' . esc_html($template_name) . '</h3>';
+                    echo '<p style="color: #666; margin: 5px 0;">' . esc_html($description) . '</p>';
                     echo '</div>';
                     echo '<div style="background: #f8f9fa; padding: 15px; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px; margin-bottom: 15px; font-size: 12px; color: #666; flex-grow: 1; -webkit-flex-grow: 1; -moz-flex-grow: 1; -ms-flex-grow: 1; -o-flex-grow: 1;">';
                     foreach ($features as $feature) {
-                        echo '<div>' . $feature . '</div>';
+                        echo '<div>' . esc_html($feature) . '</div>';
                     }
                     echo '</div>';
                     echo '<div style="display: flex; display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; gap: 10px; margin-top: auto;">';

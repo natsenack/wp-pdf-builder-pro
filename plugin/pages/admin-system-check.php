@@ -81,7 +81,7 @@ function pdf_builder_check_wkhtmltoimage() {
         <h1>✅ Test réussi!</h1>
         <p class="success">wkhtmltoimage fonctionne correctement</p>
         <p>PDF Builder Pro</p>
-        <p>' . date('d/m/Y H:i:s') . '</p>
+        '<p>' . gmdate('d/m/Y H:i:s') . '</p>'
     </div>
 </body>
 </html>';
@@ -115,8 +115,8 @@ function pdf_builder_check_wkhtmltoimage() {
     } catch (Exception $e) {
         $result['error'] = 'Erreur lors du test: ' . $e->getMessage();
     } finally {
-        @unlink($temp_html);
-        @unlink($temp_png);
+        wp_delete_file($temp_html);
+        wp_delete_file($temp_png);
     }
     
     return $result;
@@ -125,7 +125,7 @@ function pdf_builder_check_wkhtmltoimage() {
 // Action de nettoyage
 add_action('pdf_builder_cleanup_test_image', function($file_path) {
     if (file_exists($file_path)) {
-        @unlink($file_path);
+        wp_delete_file($file_path);
     }
 });
 

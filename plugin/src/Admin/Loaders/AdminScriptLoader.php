@@ -932,7 +932,7 @@ class AdminScriptLoader
         $content = ob_get_clean();
         error_log('[PDF Builder] Ending output buffering, content length: ' . strlen($content));
         $content = $this->filterElementorInlineScripts($content);
-        echo $content;
+        echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Filtered HTML output buffer content
     }
 
     /**

@@ -30,7 +30,7 @@ class PDF_Builder_Security_Manager {
      */
     public static function verify_nonce_or_die($nonce, $action) {
         if (!self::verify_nonce($nonce, $action)) {
-            wp_die(__('Security check failed', 'pdf-builder-pro'), __('Error', 'pdf-builder-pro'), array('response' => 403));
+            wp_die(esc_html__('Security check failed', 'pdf-builder-pro'), esc_html__('Error', 'pdf-builder-pro'), array('response' => 403));
         }
     }
 

@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
                     if (empty($settings['pdf_builder_license_key']) && !empty($individual_key)) {
                         $settings['pdf_builder_license_key'] = $individual_key;
                     }
-                    error_log('[PDF Builder] settings-licence.php loaded - individual_status=' . var_export($individual_status, true) . ' grouped_status=' . var_export($settings['pdf_builder_license_status'] ?? 'not set', true));
+                    error_log('[PDF Builder] settings-licence.php loaded - individual_status=' . var_export($individual_status, true) . ' grouped_status=' . var_export($settings['pdf_builder_license_status'] ?? 'not set', true)); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
 
                     $license_status = $settings['pdf_builder_license_status'] ?? 'free';
                     // La clé est chiffrée en DB — on ne la lit plus directement
@@ -62,7 +62,7 @@ if (!defined('ABSPATH')) {
                     $lic_activations = isset($lic_data['activations']) ? (int)$lic_data['activations'] : null;
 
                     // Traitement activation licence
-                    if (isset($_POST['activate_license']) && isset($_POST['pdf_builder_license_nonce'])) {
+                    if (isset($_POST['activate_license']) && isset($_POST['pdf_builder_license_nonce'])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
                      // Mode DÉMO : Activation de clés réelles désactivée
                         // Les clés premium réelles seront validées une fois le système de licence en production
                         wp_die('<div class="alert-demo">
@@ -137,7 +137,7 @@ if (!defined('ABSPATH')) {
                             <div class="pdfb-license-alert-content">
                                 <h4>Expiration imminente</h4>
                                 <p>Votre licence expire dans <strong><?php echo (int)$days_left; ?> jour<?php echo esc_html($days_left > 1 ? 's' : ''); ?></strong></p>
-                                <p class="pdfb-license-alert-date">Le <?php echo esc_html(date('d/m/Y', strtotime($license_expires))); ?></p>
+                                <p class="pdfb-license-alert-date">Le <?php echo esc_html(gmdate('d/m/Y', strtotime($license_expires))); ?></p>
                             </div>
                             <div class="pdfb-license-alert-actions">
                                 <a href="#renewal" class="pdfb-license-btn-small">Renouveler</a>
@@ -149,7 +149,7 @@ if (!defined('ABSPATH')) {
                             <div class="pdfb-license-alert-content">
                                 <h4>Licence expirée</h4>
                                 <p>Votre licence a expiré il y a <?php echo (int)abs($days_left); ?> jour<?php echo esc_html(abs($days_left) > 1 ? 's' : ''); ?></p>
-                                <p class="pdfb-license-alert-date">Le <?php echo esc_html(date('d/m/Y', strtotime($license_expires))); ?></p>
+                                <p class="pdfb-license-alert-date">Le <?php echo esc_html(gmdate('d/m/Y', strtotime($license_expires))); ?></p>
                             </div>
                             <div class="pdfb-license-alert-actions">
                                 <a href="#renewal" class="pdfb-license-btn-small primary">Renouveler maintenant</a>

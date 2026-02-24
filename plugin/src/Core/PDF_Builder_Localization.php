@@ -559,7 +559,7 @@ function __pdf_builder($text, $context = '') {
 }
 
 function _e_pdf_builder($text, $context = '') {
-    echo pdf_builder_translate($text, $context);
+    echo esc_html(pdf_builder_translate($text, $context));
 }
 
 function _n_pdf_builder($single, $plural, $number, $context = '') {

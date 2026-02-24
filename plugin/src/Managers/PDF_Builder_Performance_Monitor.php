@@ -103,8 +103,8 @@ class PDF_Builder_Performance_Monitor
         if (defined('WP_DEBUG') && WP_DEBUG && \current_user_can('manage_options')) {
             echo '<!-- PDF Builder Performance Metrics: ';
             echo 'Time: ' . number_format($execution_time, 4) . 's, ';
-            echo 'Memory: ' . size_format($memory_used) . ', ';
-            echo 'Queries: ' . $query_count . ' (' . number_format($query_time, 4) . 's)';
+            echo 'Memory: ' . esc_html( size_format( $memory_used ) ) . ', ';
+            echo 'Queries: ' . intval( $query_count ) . ' (' . esc_html( number_format( $query_time, 4 ) ) . 's)';
             echo ' -->';
         }
     }

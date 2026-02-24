@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Canvas Settings Modals
  * Modal dialogs for canvas configuration
@@ -151,8 +151,8 @@ function get_canvas_modal_value($key, $default = '') {
                             echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . ($option['premium'] && !$can_use_high_dpi ? 'opacity: 0.6;' : '') . '" class="' . esc_attr($premium_class) . '" onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'">';
                             echo '<input type="checkbox" name="pdf_builder_canvas_dpi[]" value="' . esc_attr($option['value']) . '" ' . esc_attr($checked) . ' ' . esc_attr($disabled) . '>';
                             echo '<div style="flex: 1;">';
-                            echo '<div style="font-weight: 500; color: #2c3e50;">' . $option['label'] . '</div>';
-                            echo '<div style="font-size: 12px; color: #6c757d;">' . $option['desc'] . '</div>';
+                            echo '<div style="font-weight: 500; color: #2c3e50;">' . esc_html($option['label']) . '</div>';
+                            echo '<div style="font-size: 12px; color: #6c757d;">' . esc_html($option['desc']) . '</div>';
                             echo '</div>';
                             if ($option['premium']) {
                                 echo '<span class="pdfb-premium-badge">⭐ PREMIUM</span>';
@@ -204,11 +204,11 @@ function get_canvas_modal_value($key, $default = '') {
                             $opacity_style = ($is_coming_soon || ($option['premium'] && !$can_use_extended_formats)) ? 'opacity: 0.5;' : '';
                             $pointer_style = $is_coming_soon ? 'pointer-events: none; cursor: not-allowed;' : '';
 
-                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . $opacity_style . ' ' . $pointer_style . '" class="' . esc_attr($premium_class) . '" ' . (!$is_coming_soon ? 'onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'"' : '') . '>';
+                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . esc_attr($opacity_style) . ' ' . esc_attr($pointer_style) . '" class="' . esc_attr($premium_class) . '" ' . (!$is_coming_soon ? 'onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'"' : '') . '>';
                             echo '<input type="checkbox" name="pdf_builder_canvas_formats[]" value="' . esc_attr($option['value']) . '" ' . esc_attr($checked) . ' ' . esc_attr($disabled) . '>';
                             echo '<div style="flex: 1;">';
-                            echo '<div style="font-weight: 500; color: #2c3e50;">' . $option['icon'] . ' ' . $option['label'] . '</div>';
-                            echo '<div style="font-size: 12px; color: #6c757d;">' . $option['desc'] . '</div>';
+                            echo '<div style="font-weight: 500; color: #2c3e50;">' . esc_html($option['icon']) . ' ' . esc_html($option['label']) . '</div>';
+                            echo '<div style="font-size: 12px; color: #6c757d;">' . esc_html($option['desc']) . '</div>';
                             echo '</div>';
                             if ($is_coming_soon) {
                                 echo '<span style="font-size: 11px; padding: 3px 8px; background: #e9ecef; color: #6c757d; border-radius: 4px; font-weight: 600; white-space: nowrap;">🔒 Prochainement</span>';
@@ -255,11 +255,11 @@ function get_canvas_modal_value($key, $default = '') {
                             $opacity_style = $is_coming_soon ? 'opacity: 0.5;' : 'opacity: 1;';
                             $pointer_style = $is_coming_soon ? 'pointer-events: none; cursor: not-allowed;' : '';
 
-                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . $opacity_style . ' ' . $pointer_style . '" ' . (!$is_coming_soon ? 'onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'"' : '') . '>';
+                            echo '<label style="display: flex; align-items: center; gap: 12px; margin: 0; padding: 8px; border-radius: 8px; transition: background 0.2s ease; ' . esc_attr($opacity_style) . ' ' . esc_attr($pointer_style) . '" ' . (!$is_coming_soon ? 'onmouseover="this.style.background=\'#f8f9fa\'" onmouseout="this.style.background=\'transparent\'"' : '') . '>';
                             echo '<input type="checkbox" name="pdf_builder_canvas_orientations[]" value="' . esc_attr($option['value']) . '" ' . esc_attr($checked) . ' ' . esc_attr($disabled) . '>';
                             echo '<div style="flex: 1;">';
-                            echo '<div style="font-weight: 500; color: #2c3e50;">' . $option['icon'] . ' ' . $option['label'] . '</div>';
-                            echo '<div style="font-size: 12px; color: #6c757d;">' . $option['desc'] . '</div>';
+                            echo '<div style="font-weight: 500; color: #2c3e50;">' . esc_html($option['icon']) . ' ' . esc_html($option['label']) . '</div>';
+                            echo '<div style="font-size: 12px; color: #6c757d;">' . esc_html($option['desc']) . '</div>';
                             echo '</div>';
                             if ($is_coming_soon) {
                                 echo '<span style="font-size: 11px; padding: 3px 8px; background: #e9ecef; color: #6c757d; border-radius: 4px; font-weight: 600; white-space: nowrap;">🔒 Prochainement</span>';

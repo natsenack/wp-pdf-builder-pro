@@ -19,10 +19,10 @@ if (!function_exists('add_settings_section')) {
     function add_settings_section($id, $title, $callback, $page) { return true; }
 }
 if (!function_exists('_e')) {
-    function _e($text, $domain = 'default') { echo $text; }
+    function _e($text, $domain = 'default') { echo $text; } // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 if (!function_exists('wp_die')) {
-    function wp_die($message = '', $title = '', $args = []) { die($message); }
+    function wp_die($message = '', $title = '', $args = []) { die($message); } // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 if (!function_exists('esc_html')) {
     function esc_html($text) { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8'); }
@@ -58,7 +58,7 @@ if (!function_exists('__')) {
     function __($text, $domain = 'default') { return $text; }
 }
 if (!function_exists('printf')) {
-    function printf($format, ...$args) { echo sprintf($format, ...$args); }
+    function printf($format, ...$args) { echo sprintf($format, ...$args); } // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 
 /**
@@ -267,22 +267,22 @@ class PdfBuilderCore
     {
         ?>
         <div class="wrap">
-            <h1><?php _e('PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
-            <p><?php _e('Welcome to PDF Builder Pro - Professional PDF creation made easy.', 'pdf-builder-pro'); ?></p>
+            <h1><?php esc_html_e('PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+            <p><?php esc_html_e('Welcome to PDF Builder Pro - Professional PDF creation made easy.', 'pdf-builder-pro'); ?></p>
 
             <div class="pdfb-pdf-builder-dashboard">
                 <div class="pdfb-pdf-builder-card">
-                    <h3><?php _e('Quick Start', 'pdf-builder-pro'); ?></h3>
-                    <p><?php _e('Create your first PDF template in minutes.', 'pdf-builder-pro'); ?></p>
-                    <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates'); ?>" class="button button-primary">
-                        <?php _e('Create Template', 'pdf-builder-pro'); ?>
+                    <h3><?php esc_html_e('Quick Start', 'pdf-builder-pro'); ?></h3>
+                    <p><?php esc_html_e('Create your first PDF template in minutes.', 'pdf-builder-pro'); ?></p>
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-templates')); ?>" class="button button-primary">
+                        <?php esc_html_e('Create Template', 'pdf-builder-pro'); ?>
                     </a>
                 </div>
 
                 <div class="pdfb-pdf-builder-card">
-                    <h3><?php _e('Documentation', 'pdf-builder-pro'); ?></h3>
-                    <p><?php _e('Learn how to use all features.', 'pdf-builder-pro'); ?></p>
-                    <a href="#" class="button"><?php _e('View Docs', 'pdf-builder-pro'); ?></a>
+                    <h3><?php esc_html_e('Documentation', 'pdf-builder-pro'); ?></h3>
+                    <p><?php esc_html_e('Learn how to use all features.', 'pdf-builder-pro'); ?></p>
+                    <a href="#" class="button"><?php esc_html_e('View Docs', 'pdf-builder-pro'); ?></a>
                 </div>
             </div>
         </div>
@@ -298,7 +298,7 @@ class PdfBuilderCore
     {
         // Vérifier les permissions - utiliser manage_options comme capacité principale
         if (!\current_user_can('manage_options')) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+            wp_die(esc_html__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
         // Inclure la page templates comme dans PDF_Builder_Admin
@@ -309,12 +309,12 @@ class PdfBuilderCore
             // Fallback basique si le fichier n'existe pas
             ?>
             <div class="wrap">
-                <h1><?php _e('PDF Templates', 'pdf-builder-pro'); ?></h1>
-                <p><?php _e('Manage your PDF templates.', 'pdf-builder-pro'); ?></p>
+                <h1><?php esc_html_e('PDF Templates', 'pdf-builder-pro'); ?></h1>
+                <p><?php esc_html_e('Manage your PDF templates.', 'pdf-builder-pro'); ?></p>
 
                 <div id="pdf-builder-templates-container">
                     <!-- Le contenu React sera chargé ici -->
-                    <p><?php _e('Loading PDF Builder...', 'pdf-builder-pro'); ?></p>
+                    <p><?php esc_html_e('Loading PDF Builder...', 'pdf-builder-pro'); ?></p>
                 </div>
             </div>
             <?php
@@ -336,12 +336,12 @@ class PdfBuilderCore
     {
         ?>
         <div class="wrap">
-            <h1><?php _e('PDF Builder React Editor', 'pdf-builder-pro'); ?></h1>
-            <p><?php _e('Advanced PDF template editor with React interface.', 'pdf-builder-pro'); ?></p>
+            <h1><?php esc_html_e('PDF Builder React Editor', 'pdf-builder-pro'); ?></h1>
+            <p><?php esc_html_e('Advanced PDF template editor with React interface.', 'pdf-builder-pro'); ?></p>
 
             <div id="pdf-builder-react-editor-container">
                 <!-- Le contenu React sera chargé ici -->
-                <p><?php _e('Loading React Editor...', 'pdf-builder-pro'); ?></p>
+                <p><?php esc_html_e('Loading React Editor...', 'pdf-builder-pro'); ?></p>
             </div>
         </div>
         <?php
@@ -365,21 +365,21 @@ class PdfBuilderCore
 
         ?>
         <div class="wrap">
-            <h1><?php _e('📄 Documents Récents', 'pdf-builder-pro'); ?></h1>
-            <p><?php _e('Consultez les logs de génération PDF récents.', 'pdf-builder-pro'); ?></p>
+            <h1><?php esc_html_e('📄 Documents Récents', 'pdf-builder-pro'); ?></h1>
+            <p><?php esc_html_e('Consultez les logs de génération PDF récents.', 'pdf-builder-pro'); ?></p>
 
             <?php if (empty($recent_logs)): ?>
                 <div class="notice notice-info">
-                    <p><?php _e('Aucun log récent trouvé. Commencez par créer et générer des PDF avec vos templates.', 'pdf-builder-pro'); ?></p>
+                    <p><?php esc_html_e('Aucun log récent trouvé. Commencez par créer et générer des PDF avec vos templates.', 'pdf-builder-pro'); ?></p>
                 </div>
             <?php else: ?>
                 <div class="pdfb-recent-documents-container">
                     <table class="wp-list-table widefat fixed striped">
                         <thead>
                             <tr>
-                                <th><?php _e('Date', 'pdf-builder-pro'); ?></th>
-                                <th><?php _e('Message', 'pdf-builder-pro'); ?></th>
-                                <th><?php _e('Actions', 'pdf-builder-pro'); ?></th>
+                                <th><?php esc_html_e('Date', 'pdf-builder-pro'); ?></th>
+                                <th><?php esc_html_e('Message', 'pdf-builder-pro'); ?></th>
+                                <th><?php esc_html_e('Actions', 'pdf-builder-pro'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -390,7 +390,7 @@ class PdfBuilderCore
                                     <td>
                                         <button class="button button-small"
                                                 onclick="alert('<?php echo esc_js(__('Fonctionnalité de téléchargement à implémenter', 'pdf-builder-pro')); ?>')">
-                                            📄 <?php _e('Détails', 'pdf-builder-pro'); ?>
+                                            📄 <?php esc_html_e('Détails', 'pdf-builder-pro'); ?>
                                         </button>
                                     </td>
                                 </tr>
@@ -403,11 +403,11 @@ class PdfBuilderCore
             <?php endif; ?>
 
             <div class="recent-documents-info" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-left: 4px solid #007cba;">
-                <h3><?php _e('ℹ️ Informations', 'pdf-builder-pro'); ?></h3>
+                <h3><?php esc_html_e('ℹ️ Informations', 'pdf-builder-pro'); ?></h3>
                 <ul style="margin: 0; padding-left: 20px;">
-                    <li><?php _e('Cette page affiche les logs de génération PDF des 30 derniers jours.', 'pdf-builder-pro'); ?></li>
-                    <li><?php _e('La fonctionnalité complète de téléchargement sera bientôt disponible.', 'pdf-builder-pro'); ?></li>
-                    <li><?php _e('Pour consulter vos PDF générés, vérifiez le dossier de téléchargement de votre navigateur.', 'pdf-builder-pro'); ?></li>
+                    <li><?php esc_html_e('Cette page affiche les logs de génération PDF des 30 derniers jours.', 'pdf-builder-pro'); ?></li>
+                    <li><?php esc_html_e('La fonctionnalité complète de téléchargement sera bientôt disponible.', 'pdf-builder-pro'); ?></li>
+                    <li><?php esc_html_e('Pour consulter vos PDF générés, vérifiez le dossier de téléchargement de votre navigateur.', 'pdf-builder-pro'); ?></li>
                 </ul>
             </div>
         </div>
@@ -426,8 +426,8 @@ class PdfBuilderCore
         } else {
             // Fallback si le template n'existe pas
             echo '<div class="wrap">';
-            echo '<h1>' . __('Paramètres PDF Builder Pro', 'pdf-builder-pro') . '</h1>';
-            echo '<p>' . __('Template de paramètres introuvable.', 'pdf-builder-pro') . '</p>';
+            echo '<h1>' . esc_html__('Paramètres PDF Builder Pro', 'pdf-builder-pro') . '</h1>';
+            echo '<p>' . esc_html__('Template de paramètres introuvable.', 'pdf-builder-pro') . '</p>';
             echo '</div>';
         }
     }
@@ -534,7 +534,7 @@ class PdfBuilderCore
     {
         ?>
         <div class="notice notice-error">
-            <p><?php _e('PDF Builder Pro requires PHP 7.4 or higher.', 'pdf-builder-pro'); ?></p>
+            <p><?php esc_html_e('PDF Builder Pro requires PHP 7.4 or higher.', 'pdf-builder-pro'); ?></p>
         </div>
         <?php
     }
@@ -546,7 +546,7 @@ class PdfBuilderCore
     {
         ?>
         <div class="notice notice-error">
-            <p><?php _e('PDF Builder Pro requires WordPress 5.0 or higher.', 'pdf-builder-pro'); ?></p>
+            <p><?php esc_html_e('PDF Builder Pro requires WordPress 5.0 or higher.', 'pdf-builder-pro'); ?></p>
         </div>
         <?php
     }
@@ -874,17 +874,17 @@ class PdfBuilderCore
                 </p>
             </div>
 
-            <h1><?php _e('PDF Builder - React Editor', 'pdf-builder-pro'); ?></h1>
+            <h1><?php esc_html_e('PDF Builder - React Editor', 'pdf-builder-pro'); ?></h1>
             <?php if ($template_id) : ?>
                 <?php /* translators: %d: template ID number */ ?>
-                <p><?php printf(__('Editing template #%d', 'pdf-builder-pro'), $template_id); ?></p>
+                <p><?php printf(esc_html__('Editing template #%d', 'pdf-builder-pro'), intval($template_id)); ?></p>
             <?php else : ?>
-                <p><?php _e('Create a new PDF template', 'pdf-builder-pro'); ?></p>
+                <p><?php esc_html_e('Create a new PDF template', 'pdf-builder-pro'); ?></p>
             <?php endif; ?>
 
             <div id="pdf-builder-react-editor-container">
                 <!-- Le contenu React sera chargé ici -->
-                <p><?php _e('Loading PDF Builder React Editor...', 'pdf-builder-pro'); ?></p>
+                <p><?php esc_html_e('Loading PDF Builder React Editor...', 'pdf-builder-pro'); ?></p>
             </div>
         </div>
 
@@ -892,11 +892,11 @@ class PdfBuilderCore
             // Passer les données à React de manière sécurisée
             try {
                 window.pdfBuilderData = {
-                    templateId: <?php echo $template_id ? $template_id : 'null'; ?>,
+                    templateId: <?php echo $template_id ? intval($template_id) : 'null'; ?>,
                     templateData: <?php echo $template_data ? wp_json_encode($template_data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) : 'null'; ?>,
                     isEditing: <?php echo ($template_id || $template_data) ? 'true' : 'false'; ?>,
-                    ajaxUrl: '<?php echo admin_url('admin-ajax.php'); ?>',
-                    nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
+                    ajaxUrl: '<?php echo esc_url(admin_url('admin-ajax.php')); ?>',
+                    nonce: '<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>'
                 };
             } catch (e) {
                 if (window.pdfBuilderDebugSettings?.javascript) {
@@ -906,8 +906,8 @@ class PdfBuilderCore
                     templateId: null,
                     templateData: null,
                     isEditing: false,
-                    ajaxUrl: '<?php echo admin_url('admin-ajax.php'); ?>',
-                    nonce: '<?php echo wp_create_nonce('pdf_builder_ajax'); ?>'
+                    ajaxUrl: '<?php echo esc_url(admin_url('admin-ajax.php')); ?>',
+                    nonce: '<?php echo esc_attr(wp_create_nonce('pdf_builder_ajax')); ?>'
                 };
             }
         </script>

@@ -83,7 +83,7 @@ class Security_Limits_Handler
         if ($size > $max_template_size) {
             $size_mb = round($size / 1048576, 2);
             $max_mb = round($max_template_size / 1048576, 2);
-            throw new \Exception(
+            throw new \Exception( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
                 sprintf(
                     'La taille du template (%s MB) dépasse la limite configurée (%s MB)',
                     $size_mb,

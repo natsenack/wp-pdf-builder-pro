@@ -463,7 +463,7 @@ class PdfBuilderAdminNew
      */
     public function general_section_callback()
     {
-        echo '<p>' . \__('Configuration générale du générateur de PDF.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . esc_html__('Configuration générale du générateur de PDF.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -491,7 +491,7 @@ class PdfBuilderAdminNew
      */
     public function licence_section_callback()
     {
-        echo '<p>' . \__('Configuration de la licence du plugin.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . esc_html__('Configuration de la licence du plugin.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -499,7 +499,7 @@ class PdfBuilderAdminNew
      */
     public function systeme_section_callback()
     {
-        echo '<p>' . \__('Configuration des paramètres système pour optimiser les performances.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . esc_html__('Configuration des paramètres système pour optimiser les performances.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -507,7 +507,7 @@ class PdfBuilderAdminNew
      */
     public function securite_section_callback()
     {
-        echo '<p>' . \__('Paramètres de sécurité pour protéger vos documents PDF.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . esc_html__('Paramètres de sécurité pour protéger vos documents PDF.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -515,7 +515,7 @@ class PdfBuilderAdminNew
      */
     public function pdf_section_callback()
     {
-        echo '<p>' . \__('Configuration de la génération et de la qualité des fichiers PDF.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . esc_html__('Configuration de la génération et de la qualité des fichiers PDF.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -523,7 +523,7 @@ class PdfBuilderAdminNew
      */
     public function contenu_section_callback()
     {
-        echo '<p>' . \__('Paramètres du canvas et options de design pour vos documents.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . esc_html__('Paramètres du canvas et options de design pour vos documents.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -531,7 +531,7 @@ class PdfBuilderAdminNew
      */
     public function templates_section_callback()
     {
-        echo '<p>' . \__('Configuration des templates et options de mise en cache.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . esc_html__('Configuration des templates et options de mise en cache.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -539,7 +539,7 @@ class PdfBuilderAdminNew
      */
     public function developpeur_section_callback()
     {
-        echo '<p>' .            \__('Outils et options pour les développeurs.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' .            esc_html__('Outils et options pour les développeurs.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -707,7 +707,7 @@ class PdfBuilderAdminNew
 
         // Vérifier les permissions
         if (!\current_user_can('manage_options')) {
-            \wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
+            \wp_die(esc_html__('Permissions insuffisantes.', 'pdf-builder-pro'));
         }
 
         // Récupérer l'onglet actuel depuis le formulaire
@@ -720,7 +720,7 @@ class PdfBuilderAdminNew
         // Vérifier le nonce selon l'onglet
         $nonce_name = 'pdf_builder_save_settings';
         if (!isset($_POST[$nonce_name]) || !\pdf_builder_verify_nonce($_POST[$nonce_name], $nonce_name)) {
-            \wp_die(__('Nonce de sécurité invalide.', 'pdf-builder-pro'));
+            \wp_die(esc_html__('Nonce de sécurité invalide.', 'pdf-builder-pro'));
         }
 
         // Récupérer les paramètres existants
@@ -783,7 +783,7 @@ class PdfBuilderAdminNew
         );
 
         // Rediriger pour éviter la resoumission du formulaire
-        \wp_redirect(add_query_arg(['page' => 'pdf-builder-settings', 'tab' => $current_tab, 'updated' => 'true']));
+        \wp_safe_redirect(add_query_arg(['page' => 'pdf-builder-settings', 'tab' => $current_tab, 'updated' => 'true']));
         exit;
     }
 
@@ -1236,12 +1236,12 @@ class PdfBuilderAdminNew
     public function adminPage()
     {
         if (!$this->checkAdminPermissions()) {
-            \wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+            \wp_die(esc_html__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
         // Utiliser le renderer pour afficher la page d'administration
         if ($this->admin_page_renderer) {
-            echo $this->admin_page_renderer->renderAdminPage();
+            echo $this->admin_page_renderer->renderAdminPage(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML généré en interne
         } else {
             // Fallback si le renderer n'est pas disponible
             echo '<div class="wrap"><h1>PDF Builder Pro</h1><p>Erreur: Renderer non disponible.</p></div>';
@@ -1262,7 +1262,7 @@ class PdfBuilderAdminNew
                           ($is_preview_mode && \current_user_can('edit_shop_orders'));
 
         if (!$has_permission) {
-            \wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+            \wp_die(esc_html__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
         // Récupération des paramètres
@@ -1282,7 +1282,7 @@ class PdfBuilderAdminNew
     public function templatesPage()
     {
         if (!$this->checkAdminPermissions()) {
-            \wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+            \wp_die(esc_html__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
         // Inclure la page dédiée de gestion des templates
@@ -1304,7 +1304,7 @@ class PdfBuilderAdminNew
     public function settings_page()
     {
         if (!$this->checkAdminPermissions()) {
-            \wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+            \wp_die(esc_html__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
         }
 
         // Inclure le fichier centralisé des paramètres

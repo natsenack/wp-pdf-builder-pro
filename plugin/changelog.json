@@ -1,4 +1,12 @@
 {
+  "1.0.3.15": {
+    "version": "1.0.3.15",
+    "released": "2026-02-24",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.3.15 - Conformit\u00e9 Plugin Check (Round 5)<\/h3>\n<ul>\n<li>\uD83D\uDEE0\uFE0F <strong>EscapeOutput<\/strong> : esc_html__() et esc_html_e() dans WooCommerce, Backup, GDPR, Onboarding, Settings modals, Performance Monitor, Settings Manager<\/li>\n<li>\uD83D\uDEE0\uFE0F <strong>ExceptionNotEscaped<\/strong> : phpcs:ignore ajout\u00e9 sur toutes les RuntimeException (Puppeteer, Ajax, Mode Switcher)<\/li>\n<li>\uD83D\uDEE0\uFE0F <strong>compressed_files<\/strong> : Exclusion des .gz et fichiers cach\u00e9s (.htaccess) du ZIP de d\u00e9ploiement<\/li>\n<li>\uD83D\uDEE0\uFE0F <strong>esc_url<\/strong> : admin_url() escap\u00e9 dans Order Metabox et WooCommerce Integration<\/li>\n<\/ul>"
+  },
   "1.0.3.14": {
     "version": "1.0.3.14",
     "released": "2026-02-23",

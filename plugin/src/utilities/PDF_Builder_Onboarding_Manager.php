@@ -784,13 +784,13 @@ class PDF_Builder_Onboarding_Manager {
                     <?php endif; ?>
                     <div class="progress-indicator">
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: <?php echo (($current_step / count($steps)) * 100); ?>%"></div>
+                            <div class="progress-fill" style="width: <?php echo intval(($current_step / count($steps)) * 100); ?>%"></div>
                         </div>
-                        <div class="progress-text">Étape <?php echo $current_step; ?> sur <?php echo count($steps); ?></div>
+                        <div class="progress-text">Étape <?php echo intval($current_step); ?> sur <?php echo intval(count($steps)); ?></div>
                         <div class="progress-steps">
                             <?php for ($i = 1; $i <= count($steps); $i++): ?>
                                 <div class="progress-step <?php echo $i < $current_step ? 'completed' : ($i === $current_step ? 'active' : ''); ?>"
-                                     data-step="<?php echo $i; ?>"></div>
+                                     data-step="<?php echo intval($i); ?>"></div>
                             <?php endfor; ?>
                         </div>
                     </div>
@@ -800,7 +800,7 @@ class PDF_Builder_Onboarding_Manager {
                 </div>
                 <div class="modal-body">
                     <div class="step-content">
-                        <?php echo $this->render_step_content($current_step_data, $current_step); ?>
+                        <?php echo $this->render_step_content($current_step_data, $current_step); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Internal HTML method ?>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -810,13 +810,13 @@ class PDF_Builder_Onboarding_Manager {
                         </button>
                         <?php else: ?>
                         <button class="button button-secondary" data-action="skip-onboarding">
-                            <?php \_e('Ignorer l\'assistant', 'pdf-builder-pro'); ?>
+                            <?php esc_html_e('Ignorer l\'assistant', 'pdf-builder-pro'); ?>
                         </button>
                         <?php endif; ?>
                         <?php if ($current_step_data['action']): ?>
                         <button class="button button-primary complete-step" 
-                                data-step="<?php echo $current_step; ?>" 
-                                data-action-type="<?php echo $current_step_data['action_type']; ?>"
+                                data-step="<?php echo intval($current_step); ?>" 
+                                data-action-type="<?php echo esc_attr($current_step_data['action_type']); ?>"
                                 <?php echo ($current_step_data['requires_selection'] ?? false) ? 'disabled' : ''; ?>>
                             <?php echo esc_html($current_step_data['action']); ?>
                         </button>
@@ -868,7 +868,7 @@ class PDF_Builder_Onboarding_Manager {
     public function ajax_complete_onboarding_step() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+            wp_die(esc_html__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
         $step = \intval($_POST['step']);
         $action = sanitize_text_field($_POST['step_action'] ?? '');
@@ -944,7 +944,7 @@ class PDF_Builder_Onboarding_Manager {
     public function ajax_save_template_selection() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+            wp_die(esc_html__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
         $selected_template = sanitize_text_field($_POST['selected_template'] ?? '');
         $this->onboarding_options['selected_template'] = $selected_template;
@@ -958,7 +958,7 @@ class PDF_Builder_Onboarding_Manager {
     public function ajax_save_freemium_mode() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+            wp_die(esc_html__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
         $selected_mode = sanitize_text_field($_POST['selected_mode'] ?? '');
         // Valider que le mode est valide
@@ -977,7 +977,7 @@ class PDF_Builder_Onboarding_Manager {
     public function ajax_update_onboarding_step() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+            wp_die(esc_html__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
         $step = \intval($_POST['step']);
         $this->onboarding_options['current_step'] = $step;
@@ -991,7 +991,7 @@ class PDF_Builder_Onboarding_Manager {
     public function ajax_mark_onboarding_complete() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+            wp_die(esc_html__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
         $this->onboarding_options['completed'] = true;
         $this->onboarding_options['completed_at'] = \current_time('timestamp');
@@ -1037,7 +1037,7 @@ class PDF_Builder_Onboarding_Manager {
     public function ajax_skip_onboarding() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+            wp_die(esc_html__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
         $this->onboarding_options['skipped'] = true;
         $this->onboarding_options['skipped_at'] = \current_time('timestamp');
@@ -1050,7 +1050,7 @@ class PDF_Builder_Onboarding_Manager {
     public function ajax_reset_onboarding() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+            wp_die(esc_html__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
         $this->onboarding_options = [
             'completed' => false,
@@ -1076,7 +1076,7 @@ class PDF_Builder_Onboarding_Manager {
                 <p class="step-description"><?php echo esc_html($step_data['description']); ?></p>
             </div>
             <div class="step-body">
-                <?php echo $step_data['content']; ?>
+                <?php echo wp_kses_post($step_data['content']); ?>
             </div>
         </div>
         <?php
@@ -1088,7 +1088,7 @@ class PDF_Builder_Onboarding_Manager {
     public function ajax_load_onboarding_step() {
         check_ajax_referer('pdf_builder_onboarding', 'nonce');
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+            wp_die(esc_html__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
         $step = \intval($_POST['step']);
         $steps = $this->get_onboarding_steps();

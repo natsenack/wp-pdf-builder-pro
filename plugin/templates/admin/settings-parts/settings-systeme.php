@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 
     // Récupération des paramètres depuis le tableau unifié
     $settings = pdf_builder_get_option('pdf_builder_settings', array());
-    error_log('[PDF Builder] settings-systeme.php - Full settings from DB: ' . print_r($settings, true));
+    error_log('[PDF Builder] settings-systeme.php - Full settings from DB: ' . print_r($settings, true)); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log,WordPress.PHP.DevelopmentFunctions.error_log_print_r
 
     // Préparer toutes les variables nécessaires
     $cache_enabled = $settings['pdf_builder_cache_enabled'] ?? '0';
@@ -21,8 +21,8 @@ if (!defined('ABSPATH')) {
     $last_backup = $settings['pdf_builder_last_backup'] ?? 'Jamais';
     $cache_last_cleanup = $settings['pdf_builder_cache_last_cleanup'] ?? 'Jamais';
 
-    error_log('[PDF Builder] settings-systeme.php loaded - cache_enabled: ' . $cache_enabled . ' (type: ' . gettype($cache_enabled) . '), cache_ttl: ' . $cache_ttl);
-    error_log('[PDF Builder] Toggle values - cache_enabled should be checked: ' . ($cache_enabled === '1' ? 'YES' : 'NO'));
+    error_log('[PDF Builder] settings-systeme.php loaded - cache_enabled: ' . $cache_enabled . ' (type: ' . gettype($cache_enabled) . '), cache_ttl: ' . $cache_ttl); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log,WordPress.PHP.DevelopmentFunctions.error_log_print_r
+    error_log('[PDF Builder] Toggle values - cache_enabled should be checked: ' . ($cache_enabled === '1' ? 'YES' : 'NO')); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log,WordPress.PHP.DevelopmentFunctions.error_log_print_r
 
     // Vérifier le statut premium de l'utilisateur
     $is_premium = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->is_premium();
@@ -71,7 +71,7 @@ if (!defined('ABSPATH')) {
         $last_maintenance = (function_exists('human_time_diff') ? human_time_diff(strtotime($last_maintenance)) : $last_maintenance) . ' ago';
     }
     if ($next_maintenance !== 'Non planifiée') {
-        $next_maintenance = (function_exists('date_i18n') ? date_i18n('d/m/Y H:i', strtotime($next_maintenance)) : date('d/m/Y H:i', strtotime($next_maintenance)));
+        $next_maintenance = (function_exists('date_i18n') ? date_i18n('d/m/Y H:i', strtotime($next_maintenance)) : gmdate('d/m/Y H:i', strtotime($next_maintenance)));
     }
     if ($last_backup !== 'Jamais') {
         $last_backup = (function_exists('human_time_diff') ? human_time_diff(strtotime($last_backup)) : $last_backup) . ' ago';

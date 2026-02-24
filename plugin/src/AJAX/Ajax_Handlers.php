@@ -260,7 +260,7 @@ class PDF_Builder_Settings_Ajax_Handler extends PDF_Builder_Ajax_Base {
             $all_form_data = json_decode($form_data_json, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
                 // error_log('JSON decode error: ' . json_last_error_msg() . ' for data: ' . substr($form_data_json, 0, 500));
-                throw new Exception('Données JSON invalides: ' . json_last_error_msg());
+                throw new Exception('Données JSON invalides: ' . json_last_error_msg()); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
             }
             // error_log("[AJAX HANDLER] Parsed legacy form_data successfully, forms: " . implode(', ', array_keys($all_form_data)));
             // Flatten the data

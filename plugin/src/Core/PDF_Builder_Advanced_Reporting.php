@@ -167,7 +167,7 @@ class PDF_Builder_Advanced_Reporting {
      */
     public function render_reporting_page() {
         if (!current_user_can('manage_options')) {
-            wp_die(pdf_builder_translate('Accès refusé', 'reporting'));
+            wp_die(esc_html(pdf_builder_translate('Accès refusé', 'reporting')));
         }
 
         $settings = $this->report_settings;
@@ -188,7 +188,7 @@ class PDF_Builder_Advanced_Reporting {
 
             // Vérifier les permissions
             if (!pdf_builder_user_can('view_analytics')) {
-                throw new Exception(pdf_builder_translate('Permissions insuffisantes', 'reporting'));
+                throw new Exception(pdf_builder_translate('Permissions insuffisantes', 'reporting')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
             }
 
             // Collecter les données selon le type
@@ -252,7 +252,7 @@ class PDF_Builder_Advanced_Reporting {
                 return $this->collect_system_health_data($date_range, $filters);
 
             default:
-                throw new Exception(pdf_builder_translate('Type de rapport inconnu', 'reporting'));
+                throw new Exception(pdf_builder_translate('Type de rapport inconnu', 'reporting')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
     }
 
@@ -434,7 +434,7 @@ class PDF_Builder_Advanced_Reporting {
                 return $this->generate_csv_report($report); // Excel format uses CSV
 
             default:
-                throw new Exception(pdf_builder_translate('Format non supporté', 'reporting'));
+                throw new Exception(pdf_builder_translate('Format non supporté', 'reporting')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
     }
 
@@ -443,7 +443,7 @@ class PDF_Builder_Advanced_Reporting {
      */
     private function generate_pdf_report($report) {
         if (!class_exists('TCPDF')) {
-            throw new Exception(pdf_builder_translate('TCPDF non disponible', 'reporting'));
+            throw new Exception(pdf_builder_translate('TCPDF non disponible', 'reporting')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         /** @var \TCPDF $pdf */
@@ -541,7 +541,7 @@ class PDF_Builder_Advanced_Reporting {
 
             <?php if (!empty($report['metrics'])): ?>
             <div class="metrics">
-                <h2><?php echo pdf_builder_translate('Métriques principales', 'reporting'); ?></h2>
+                <h2><?php echo esc_html(pdf_builder_translate('Métriques principales', 'reporting')); ?></h2>
                 <?php foreach ($report['metrics'] as $key => $value): ?>
                 <div class="metric">
                     <strong><?php echo esc_html($this->get_metric_label($key)); ?>:</strong> <?php echo esc_html($value); ?>
@@ -551,15 +551,15 @@ class PDF_Builder_Advanced_Reporting {
             <?php endif; ?>
 
             <div class="data">
-                <h2><?php echo pdf_builder_translate('Données détaillées', 'reporting'); ?></h2>
+                <h2><?php echo esc_html(pdf_builder_translate('Données détaillées', 'reporting')); ?></h2>
                 <?php $this->render_data_tables($report['data']); ?>
             </div>
 
             <?php if ($this->report_settings['include_charts']): ?>
             <div class="charts">
-                <h2><?php echo pdf_builder_translate('Graphiques', 'reporting'); ?></h2>
+                <h2><?php echo esc_html(pdf_builder_translate('Graphiques', 'reporting')); ?></h2>
                 <!-- Graphiques seraient générés ici avec une bibliothèque comme Chart.js -->
-                <p><?php echo pdf_builder_translate('Graphiques disponibles dans la version PDF', 'reporting'); ?></p>
+                <p><?php echo esc_html(pdf_builder_translate('Graphiques disponibles dans la version PDF', 'reporting')); ?></p>
             </div>
             <?php endif; ?>
         </body>
@@ -721,7 +721,7 @@ class PDF_Builder_Advanced_Reporting {
      */
     public function export_report($report_id, $format = null) {
         if (!isset($this->report_data[$report_id])) {
-            throw new Exception(pdf_builder_translate('Rapport introuvable', 'reporting'));
+            throw new Exception(pdf_builder_translate('Rapport introuvable', 'reporting')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         $report = $this->report_data[$report_id];
@@ -1060,14 +1060,14 @@ class PDF_Builder_Advanced_Reporting {
         // Message de génération de rapport
         if (isset($_GET['report_generated'])) {
             echo '<div class="notice notice-success is-dismissible">';
-            echo '<p>' . pdf_builder_translate('Rapport généré avec succès.', 'reporting') . '</p>';
+            echo '<p>' . esc_html(pdf_builder_translate('Rapport généré avec succès.', 'reporting')) . '</p>';
             echo '</div>';
         }
 
         // Message d'erreur de rapport
         if (isset($_GET['report_error'])) {
             echo '<div class="notice notice-error is-dismissible">';
-            echo '<p>' . pdf_builder_translate('Erreur lors de la génération du rapport.', 'reporting') . '</p>';
+            echo '<p>' . esc_html(pdf_builder_translate('Erreur lors de la génération du rapport.', 'reporting')) . '</p>';
             echo '</div>';
         }
     }
@@ -1356,7 +1356,7 @@ class PDF_Builder_Advanced_Reporting {
 
             echo '<h3>' . esc_html(ucfirst(str_replace('_', ' ', $section))) . '</h3>';
             echo '<table>';
-            echo '<thead><tr><th>' . pdf_builder_translate('Clé', 'reporting') . '</th><th>' . pdf_builder_translate('Valeur', 'reporting') . '</th></tr></thead>';
+            echo '<thead><tr><th>' . esc_html(pdf_builder_translate('Clé', 'reporting')) . '</th><th>' . esc_html(pdf_builder_translate('Valeur', 'reporting')) . '</th></tr></thead>';
             echo '<tbody>';
 
             foreach ($section_data as $key => $value) {

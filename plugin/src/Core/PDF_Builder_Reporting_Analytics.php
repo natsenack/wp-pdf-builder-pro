@@ -1163,20 +1163,20 @@ class PDF_Builder_Reporting_Analytics {
         <body>
             <div class="header">
                 <h1>Rapport PDF Builder Pro</h1>
-                <p>Période: <?php echo $data['period']; ?></p>
-                <p>Généré le: <?php echo $data['generated_at']; ?></p>
+                <p>Période: <?php echo esc_html($data['period']); ?></p>
+                <p>Généré le: <?php echo esc_html($data['generated_at']); ?></p>
             </div>
 
             <?php foreach ($data['metrics'] as $key => $value): ?>
                 <div class="metric">
-                    <h3><?php echo ucwords(str_replace('_', ' ', $key)); ?></h3>
+                    <h3><?php echo esc_html(ucwords(str_replace('_', ' ', $key))); ?></h3>
                     <?php if (is_array($value)): ?>
                         <?php if (isset($value[0]) && is_array($value[0])): ?>
                             <table>
                                 <thead>
                                     <tr>
                                         <?php foreach (array_keys($value[0]) as $col): ?>
-                                            <th><?php echo ucwords(str_replace('_', ' ', $col)); ?></th>
+                                            <th><?php echo esc_html(ucwords(str_replace('_', ' ', $col))); ?></th>
                                         <?php endforeach; ?>
                                     </tr>
                                 </thead>
@@ -1184,7 +1184,7 @@ class PDF_Builder_Reporting_Analytics {
                                     <?php foreach ($value as $row): ?>
                                         <tr>
                                             <?php foreach ($row as $cell): ?>
-                                                <td><?php echo is_array($cell) ? json_encode($cell) : $cell; ?></td>
+                                                <td><?php echo esc_html(is_array($cell) ? wp_json_encode($cell) : $cell); ?></td>
                                             <?php endforeach; ?>
                                         </tr>
                                     <?php endforeach; ?>
@@ -1194,7 +1194,7 @@ class PDF_Builder_Reporting_Analytics {
                             <div class="metric-value"><?php echo json_encode($value, JSON_PRETTY_PRINT); ?></div>
                         <?php endif; ?>
                     <?php else: ?>
-                        <div class="metric-value"><?php echo $value; ?></div>
+                        <div class="metric-value"><?php echo esc_html($value); ?></div>
                     <?php endif; ?>
                 </div>
             <?php endforeach; ?>

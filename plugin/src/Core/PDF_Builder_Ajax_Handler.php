@@ -115,7 +115,7 @@ class PDF_Builder_Ajax_Handler {
         $method = $this->get_method_from_action($action);
 
         if (!method_exists($this, $method)) {
-            throw new Exception('Action non reconnue: ' . $action);
+            throw new Exception('Action non reconnue: ' . $action); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         return $this->$method();

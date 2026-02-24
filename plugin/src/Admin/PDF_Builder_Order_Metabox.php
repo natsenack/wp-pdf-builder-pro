@@ -66,7 +66,7 @@ class PDF_Builder_Order_Metabox
         $templates = self::get_available_templates();
         
         if (empty($templates)) {
-            echo '<p style="color: #666; font-style: italic;">❌ Aucun modèle PDF disponible. <a href="' . admin_url('admin.php?page=pdf-builder-settings') . '">Créer un modèle</a></p>';
+            echo '<p style="color: #666; font-style: italic;">❌ Aucun modèle PDF disponible. <a href="' . esc_url(admin_url('admin.php?page=pdf-builder-settings')) . '">Créer un modèle</a></p>';
             return;
         }
 
@@ -167,7 +167,7 @@ class PDF_Builder_Order_Metabox
                     showLoading(true);
                     errorArea.style.display = 'none';
 
-                    fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
+                    fetch('<?php echo esc_url(admin_url('admin-ajax.php')); ?>', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
@@ -202,7 +202,7 @@ class PDF_Builder_Order_Metabox
                     errorArea.style.display = 'none';
 
                     // Simplement charger la page qui génère le PDF
-                    const url = new URL('<?php echo admin_url('admin-ajax.php'); ?>');
+                    const url = new URL('<?php echo esc_url(admin_url('admin-ajax.php')); ?>');
                     url.searchParams.set('action', 'pdf_builder_generate_order_pdf');
                     url.searchParams.set('template_id', templateId);
                     url.searchParams.set('order_id', orderId);
@@ -299,10 +299,10 @@ class PDF_Builder_Order_Metabox
             // TODO: Convertir HTML en PDF avec dompdf/wkhtmltopdf
             // Pour l'instant, retourner l'HTML
             header('Content-Type: text/html; charset=utf-8');
-            echo $html;
+            echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML template content
             exit;
         } catch (\Exception $e) {
-            wp_die('Erreur: ' . $e->getMessage(), '', ['response' => 500]);
+            wp_die('Erreur: ' . $e->getMessage(), '', ['response' => 500]); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
     }
 

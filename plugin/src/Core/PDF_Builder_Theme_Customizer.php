@@ -110,7 +110,7 @@ class PDF_Builder_Theme_Customizer {
      */
     public function render_theme_page() {
         if (!current_user_can('manage_options')) {
-            wp_die(pdf_builder_translate('Accès refusé', 'theme'));
+            wp_die(esc_html(pdf_builder_translate('Accès refusé', 'theme')));
         }
 
         $themes = $this->get_available_themes();

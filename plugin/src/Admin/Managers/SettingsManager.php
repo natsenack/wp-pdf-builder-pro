@@ -120,7 +120,7 @@ class SettingsManager
      */
     public function renderGeneralSection()
     {
-        echo '<p>' . \__('Configurez les paramètres généraux du plugin PDF Builder Pro.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . esc_html__(  'Configurez les paramètres généraux du plugin PDF Builder Pro.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -128,7 +128,7 @@ class SettingsManager
      */
     public function renderPerformanceSection()
     {
-        echo '<p>' . \__('Paramètres de performance et optimisation.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . esc_html__('Paramètres de performance et optimisation.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -136,7 +136,7 @@ class SettingsManager
      */
     public function renderCanvasSection()
     {
-        echo '<p>' . \__('Paramètres par défaut du canvas d\'édition.', 'pdf-builder-pro') . '</p>';
+        echo '<p>' . esc_html__('Paramètres par défaut du canvas d\'édition.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
@@ -153,27 +153,27 @@ class SettingsManager
 
         echo '<table class="form-table">';
         echo '<tr>';
-        echo '<th><label for="pdf_builder_company_name">' . \__('Nom de l\'entreprise', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_company_name">' . esc_html__('Nom de l\'entreprise', 'pdf-builder-pro') . '</label></th>';
         echo '<td><input type="text" id="pdf_builder_company_name" name="pdf_builder_company_name" value="' . \esc_attr($company_name) . '" class="regular-text"></td>';
         echo '</tr>';
 
         echo '<tr>';
-        echo '<th><label for="pdf_builder_company_address">' . \__('Adresse', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_company_address">' . esc_html__('Adresse', 'pdf-builder-pro') . '</label></th>';
         echo '<td><textarea id="pdf_builder_company_address" name="pdf_builder_company_address" rows="3" class="regular-text">' . \esc_textarea($company_address) . '</textarea></td>';
         echo '</tr>';
 
         echo '<tr>';
-        echo '<th><label for="pdf_builder_company_phone">' . \__('Téléphone', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_company_phone">' . esc_html__('Téléphone', 'pdf-builder-pro') . '</label></th>';
         echo '<td><input type="tel" id="pdf_builder_company_phone" name="pdf_builder_company_phone" value="' . \esc_attr($company_phone) . '" class="regular-text"></td>';
         echo '</tr>';
 
         echo '<tr>';
-        echo '<th><label for="pdf_builder_company_email">' . \__('Email', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_company_email">' . esc_html__('Email', 'pdf-builder-pro') . '</label></th>';
         echo '<td><input type="email" id="pdf_builder_company_email" name="pdf_builder_company_email" value="' . \esc_attr($company_email) . '" class="regular-text"></td>';
         echo '</tr>';
 
         echo '<tr>';
-        echo '<th><label for="pdf_builder_default_language">' . \__('Langue par défaut', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_default_language">' . esc_html__('Langue par défaut', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
         echo '<select id="pdf_builder_default_language" name="pdf_builder_default_language">';
         echo '<option value="fr" ' . \selected($default_language, 'fr', false) . '>Français</option>';
@@ -197,18 +197,18 @@ class SettingsManager
 
         echo '<table class="form-table">';
         echo '<tr>';
-        echo '<th><label for="pdf_builder_enable_cache">' . \__('Activer le cache', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_enable_cache">' . esc_html__('Activer le cache', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
         echo '<input type="checkbox" id="pdf_builder_enable_cache" name="pdf_builder_enable_cache" value="1" ' . \checked($enable_cache, '1', false) . '>';
-        echo '<p class="description">' . \__('Améliore les performances en cachant les résultats des requêtes.', 'pdf-builder-pro') . '</p>';
+        echo '<p class="description">' . esc_html__('Améliore les performances en cachant les résultats des requêtes.', 'pdf-builder-pro') . '</p>';
         echo '</td>';
         echo '</tr>';
 
         echo '<tr>';
-        echo '<th><label for="pdf_builder_cache_timeout">' . \__('Timeout du cache (secondes)', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_cache_timeout">' . esc_html__('Timeout du cache (secondes)', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
         echo '<input type="number" id="pdf_builder_cache_timeout" name="pdf_builder_cache_timeout" value="' . \esc_attr($cache_timeout) . '" min="60" max="86400" step="60">';
-        echo '<p class="description">' . \__('Durée avant expiration du cache (3600 = 1 heure).', 'pdf-builder-pro') . '</p>';
+        echo '<p class="description">' . esc_html__('Durée avant expiration du cache (3600 = 1 heure).', 'pdf-builder-pro') . '</p>';
         echo '</td>';
         echo '</tr>';
         echo '</table>';
@@ -226,26 +226,26 @@ class SettingsManager
 
         echo '<table class="form-table">';
         echo '<tr>';
-        echo '<th><label for="pdf_builder_compression_level">' . \__('Niveau de compression', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_compression_level">' . esc_html__('Niveau de compression', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
         echo '<input type="number" id="pdf_builder_compression_level" name="pdf_builder_compression_level" value="' . \esc_attr($compression_level) . '" min="0" max="9">';
-        echo '<p class="description">' . \__('Niveau de compression des images (0-9, 6 recommandé).', 'pdf-builder-pro') . '</p>';
+        echo '<p class="description">' . esc_html__('Niveau de compression des images (0-9, 6 recommandé).', 'pdf-builder-pro') . '</p>';
         echo '</td>';
         echo '</tr>';
 
         echo '<tr>';
-        echo '<th><label for="pdf_builder_memory_limit">' . \__('Limite mémoire (MB)', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_memory_limit">' . esc_html__('Limite mémoire (MB)', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
         echo '<input type="number" id="pdf_builder_memory_limit" name="pdf_builder_memory_limit" value="' . \esc_attr($memory_limit) . '" min="64" max="1024" step="64">';
-        echo '<p class="description">' . \__('Mémoire maximale allouée pour la génération PDF.', 'pdf-builder-pro') . '</p>';
+        echo '<p class="description">' . esc_html__('Mémoire maximale allouée pour la génération PDF.', 'pdf-builder-pro') . '</p>';
         echo '</td>';
         echo '</tr>';
 
         echo '<tr>';
-        echo '<th><label for="pdf_builder_max_execution_time">' . \__('Temps d\'exécution max (secondes)', 'pdf-builder-pro') . '</label></th>';
+        echo '<th><label for="pdf_builder_max_execution_time">' . esc_html__('Temps d\'exécution max (secondes)', 'pdf-builder-pro') . '</label></th>';
         echo '<td>';
         echo '<input type="number" id="pdf_builder_max_execution_time" name="pdf_builder_max_execution_time" value="' . \esc_attr($max_execution_time) . '" min="10" max="300" step="5">';
-        echo '<p class="description">' . \__('Temps maximum pour générer un PDF.', 'pdf-builder-pro') . '</p>';
+        echo '<p class="description">' . esc_html__('Temps maximum pour générer un PDF.', 'pdf-builder-pro') . '</p>';
         echo '</td>';
         echo '</tr>';
         echo '</table>';
@@ -954,7 +954,7 @@ class SettingsManager
         foreach ($all_formats as $format) {
             $checked = in_array($format, $available_formats) ? 'checked' : '';
             echo '<label style="display: flex; align-items: center; margin: 0;">';
-            echo '<input type="checkbox" name="pdf_builder_available_formats[]" value="' . esc_attr($format) . '" ' . $checked . ' style="margin-right: 5px;">';
+            echo '<input type="checkbox" name="pdf_builder_available_formats[]" value="' . esc_attr($format) . '" ' . esc_attr($checked) . ' style="margin-right: 5px;">';
             echo esc_html($format);
             echo '</label>';
         }
@@ -970,7 +970,7 @@ class SettingsManager
             $checked = in_array($orientation, $available_orientations) ? 'checked' : '';
             $label = $orientation === 'portrait' ? 'Portrait' : 'Paysage';
             echo '<label style="display: flex; align-items: center; margin: 0;">';
-            echo '<input type="checkbox" name="pdf_builder_available_orientations[]" value="' . esc_attr($orientation) . '" ' . $checked . ' style="margin-right: 5px;">';
+            echo '<input type="checkbox" name="pdf_builder_available_orientations[]" value="' . esc_attr($orientation) . '" ' . esc_attr($checked) . ' style="margin-right: 5px;">';
             echo esc_html($label);
             echo '</label>';
         }
@@ -985,7 +985,7 @@ class SettingsManager
         foreach ($all_dpi as $dpi) {
             $checked = in_array($dpi, $available_dpi) ? 'checked' : '';
             echo '<label style="display: flex; align-items: center; margin: 0;">';
-            echo '<input type="checkbox" name="pdf_builder_available_dpi[]" value="' . esc_attr($dpi) . '" ' . $checked . ' style="margin-right: 5px;">';
+            echo '<input type="checkbox" name="pdf_builder_available_dpi[]" value="' . esc_attr($dpi) . '" ' . esc_attr($checked) . ' style="margin-right: 5px;">';
             echo esc_html($dpi) . ' DPI';
             echo '</label>';
         }

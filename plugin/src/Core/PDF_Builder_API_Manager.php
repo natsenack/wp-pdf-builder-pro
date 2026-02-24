@@ -185,7 +185,7 @@ class PDF_Builder_API_Manager {
             $client_class = $this->get_client_class($service);
 
             if (!class_exists($client_class)) {
-                throw new Exception("Client API non disponible pour le service: $service");
+                throw new Exception("Client API non disponible pour le service: $service"); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
             }
 
             $this->api_clients[$service] = new $client_class($credentials);
@@ -219,7 +219,7 @@ class PDF_Builder_API_Manager {
 
         foreach ($required_fields as $field) {
             if (!isset($credentials[$field]) || empty($credentials[$field])) {
-                throw new Exception("Champ requis manquant: $field");
+                throw new Exception("Champ requis manquant: $field"); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
             }
         }
     }

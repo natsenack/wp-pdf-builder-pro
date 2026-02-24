@@ -87,7 +87,7 @@ class DIContainer
 
         // Vérifier si on a une définition
         if (!isset($this->definitions[$name])) {
-            throw new \Exception("Service non défini: {$name}");
+            throw new \Exception("Service non défini: {$name}"); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         // Créer l'instance

@@ -360,8 +360,8 @@ class PDF_Builder_Error_Handler {
                         <div class="code-block">';
             foreach ($error_data['context'] as $line) {
                 $class = $line['is_error_line'] ? 'error-line' : '';
-                echo '<span class="context-line ' . $class . '">' .
-                     str_pad($line['line'], 4, ' ', STR_PAD_LEFT) . ': ' .
+                echo '<span class="context-line ' . esc_attr($class) . '">' .
+                     esc_html(str_pad($line['line'], 4, ' ', STR_PAD_LEFT)) . ': ' .
                      esc_html($line['code']) . '</span>';
             }
             echo '</div></div>';

@@ -61,8 +61,8 @@ class PDF_Builder_Nonce_Validator {
     public static function verify_or_die(?string $nonce = null, string $action = 'pdf_builder_ajax', string $source = 'post'): bool {
         if (!self::verify($nonce, $action, $source)) {
             wp_die(
-                __('Vérification de sécurité échouée', 'pdf-builder-pro'),
-                __('Erreur de sécurité', 'pdf-builder-pro'),
+                esc_html__('Vérification de sécurité échouée', 'pdf-builder-pro'),
+                esc_html__('Erreur de sécurité', 'pdf-builder-pro'),
                 ['response' => 403]
             );
         }

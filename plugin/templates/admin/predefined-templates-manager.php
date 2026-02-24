@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 namespace PDF_Builder\Admin;
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
@@ -169,12 +169,12 @@ class PDF_Builder_Predefined_Templates_Manager
             
 
             // Vérifier le nonce
-            if (!isset($_POST['nonce'])) {
+            if (!isset($_POST['nonce'])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
                 
                 wp_send_json_error('Nonce manquant');
             }
             
-            if (!pdf_builder_verify_nonce($_POST['nonce'], 'pdf_builder_developer_auth')) {
+            if (!pdf_builder_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'pdf_builder_developer_auth')) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
                 
                 wp_send_json_error('Vérification de sécurité échouée');
             }
@@ -190,7 +190,7 @@ class PDF_Builder_Predefined_Templates_Manager
             
 
             // Récupérer et sanitizer le mot de passe
-            $password = isset($_POST['password']) ? sanitize_text_field($_POST['password']) : '';
+            $password = isset($_POST['password']) ? sanitize_text_field(wp_unslash($_POST['password'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
             $stored_password = isset($settings['pdf_builder_developer_password']) ? $settings['pdf_builder_developer_password'] : '';
 
             // Si aucun mot de passe n'est configuré, refuser (ne jamais utiliser de fallback hardcodé)
@@ -282,9 +282,9 @@ class PDF_Builder_Predefined_Templates_Manager
 
         try {
             $templates = $this->getPredefinedTemplates();
-            error_log('[PDF Builder Galerie] renderAdminPage OK — ' . count($templates) . ' templates trouvés');
+            error_log('[PDF Builder Galerie] renderAdminPage OK — ' . count($templates) . ' templates trouvés'); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
         } catch (\Throwable $e) {
-            error_log('[PDF Builder Galerie] ERREUR getPredefinedTemplates: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            error_log('[PDF Builder Galerie] ERREUR getPredefinedTemplates: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine()); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
             echo '<div class="wrap"><div class="notice notice-error"><p>Erreur : ' . esc_html($e->getMessage()) . '</p></div></div>';
             return;
         }
@@ -571,17 +571,17 @@ class PDF_Builder_Predefined_Templates_Manager
                 wp_send_json_error('Permissions insuffisantes');
             }
             // Vérifier le nonce (obligatoire pour POST, optionnel pour GET depuis URL)
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 check_ajax_referer('pdf_builder_predefined_templates', 'nonce');
             }
             // Récupération des données (POST en priorité, GET en fallback pour gros JSON)
             $old_slug = sanitize_key($_POST['old_slug'] ?? $_GET['old_slug'] ?? '');
             $slug = sanitize_key($_POST['slug'] ?? $_GET['slug'] ?? '');
-            $name = sanitize_text_field($_POST['name'] ?? $_GET['name'] ?? '');
-            $category = sanitize_key($_POST['category'] ?? $_GET['category'] ?? '');
-            $description = sanitize_textarea_field($_POST['description'] ?? $_GET['description'] ?? '');
-            $icon = sanitize_text_field($_POST['icon'] ?? $_GET['icon'] ?? '📄');
-            $json_config_raw = $_POST['json'] ?? $_GET['json'] ?? '';
+            $name = sanitize_text_field(wp_unslash($_POST['name'] ?? $_GET['name'] ?? ''));
+            $category = sanitize_key(wp_unslash($_POST['category'] ?? $_GET['category'] ?? ''));
+            $description = sanitize_textarea_field(wp_unslash($_POST['description'] ?? $_GET['description'] ?? ''));
+            $icon = sanitize_text_field(wp_unslash($_POST['icon'] ?? $_GET['icon'] ?? '📄'));
+            $json_config_raw = wp_unslash($_POST['json'] ?? $_GET['json'] ?? ''); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized via Utils::sanitizeJsonInput
             $json_config = \PDF_Builder\Admin\Utils\Utils::sanitizeJsonInput($json_config_raw);
 // Validation
             if (empty($slug) || empty($name) || empty($category) || empty($json_config)) {
@@ -623,7 +623,7 @@ class PDF_Builder_Predefined_Templates_Manager
                 $old_file_path = $this->templates_dir . $old_slug . '.json';
                 $new_file_path = $this->templates_dir . $slug . '.json';
 // Renommer le fichier
-                if (!rename($old_file_path, $new_file_path)) {
+                if (!rename($old_file_path, $new_file_path)) { // phpcs:ignore WordPress.WP.AlternativeFunctions.rename_rename
                     wp_send_json_error('Erreur lors du renommage du fichier');
                 }
                 
@@ -691,7 +691,8 @@ class PDF_Builder_Predefined_Templates_Manager
             if (!file_exists($file_path)) {
                 wp_send_json_error('Modèle non trouvé');
             }
-            if (!unlink($file_path)) {
+            wp_delete_file($file_path);
+            if (file_exists($file_path)) {
                 wp_send_json_error('Erreur lors de la suppression du fichier');
             }
             wp_send_json_success([

@@ -1296,7 +1296,7 @@ class PDF_Builder_GDPR_Manager {
         check_ajax_referer('pdf_builder_gdpr', 'nonce');
 
         if (!\current_user_can('manage_options')) {
-            \wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+            \wp_die(esc_html__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
 
         // Sauvegarder les paramètres de consentement
@@ -1309,7 +1309,7 @@ class PDF_Builder_GDPR_Manager {
 
         $this->save_gdpr_options();
 
-        \wp_send_json_success(['message' => __('Paramètres RGPD sauvegardés.', 'pdf-builder-pro')]);
+        \wp_send_json_success(['message' => esc_html__('Paramètres RGPD sauvegardés.', 'pdf-builder-pro')]);
     }
 
     /**
@@ -1319,7 +1319,7 @@ class PDF_Builder_GDPR_Manager {
         check_ajax_referer('pdf_builder_gdpr', 'nonce');
 
         if (!\current_user_can('manage_options')) {
-            \wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+            \wp_die(esc_html__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
 
         // Sauvegarder les paramètres de sécurité
@@ -1329,7 +1329,7 @@ class PDF_Builder_GDPR_Manager {
 
         $this->save_gdpr_options();
 
-        \wp_send_json_success(['message' => __('Paramètres de sécurité sauvegardés.', 'pdf-builder-pro')]);
+        \wp_send_json_success(['message' => esc_html__('Paramètres de sécurité sauvegardés.', 'pdf-builder-pro')]);
     }
 
     /**
@@ -1339,7 +1339,7 @@ class PDF_Builder_GDPR_Manager {
         check_ajax_referer('pdf_builder_gdpr', 'nonce');
 
         if (!\current_user_can('manage_options')) {
-            \wp_die(__('Permissions insuffisantes', 'pdf-builder-pro'));
+            \wp_die(esc_html__('Permissions insuffisantes', 'pdf-builder-pro'));
         }
 
         global $wpdb;

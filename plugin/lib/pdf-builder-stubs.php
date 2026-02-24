@@ -526,7 +526,7 @@ if (!function_exists('number_format_i18n')) {
 
 if (!function_exists('wp_mkdir_p')) {
     function wp_mkdir_p($target, $mode = 0777): bool {
-        return mkdir($target, $mode, true);
+        return mkdir($target, $mode, true); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir
     }
 }
 

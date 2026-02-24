@@ -1,4 +1,4 @@
-﻿<?php // Developer tab content - Updated: 2025-11-18 20:20:00
+<?php // Developer tab content - Updated: 2025-11-18 20:20:00
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 // Double-sécurité : bloquer l'accès direct sans le token développeur valide
@@ -8,7 +8,7 @@ if (!function_exists('pdf_builder_is_dev_access') || !pdf_builder_is_dev_access(
 
     // Récupération des paramètres depuis le tableau unifié
     $settings = pdf_builder_get_option('pdf_builder_settings', array());
-    error_log('[PDF Builder] settings-developpeur.php loaded - license_test_mode: ' . ($settings['pdf_builder_license_test_mode_enabled'] ?? 'not set') . ', settings count: ' . count($settings));
+    error_log('[PDF Builder] settings-developpeur.php loaded - license_test_mode: ' . ($settings['pdf_builder_license_test_mode_enabled'] ?? 'not set') . ', settings count: ' . count($settings)); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log,WordPress.PHP.DevelopmentFunctions.error_log_print_r
 
     // Variables nécessaires pour l'onglet développeur
     $license_test_mode = $settings['pdf_builder_license_test_mode_enabled'] ?? '0';

@@ -642,7 +642,7 @@ class PDF_Builder_Backup_Restore_Manager
         check_ajax_referer('pdf_builder_ajax', 'nonce');
 
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
+            wp_die(esc_html__('Permissions insuffisantes.', 'pdf-builder-pro'));
         }
 
         $result = $this->createBackup([
@@ -669,7 +669,7 @@ class PDF_Builder_Backup_Restore_Manager
         check_ajax_referer('pdf_builder_ajax', 'nonce');
 
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
+            wp_die(esc_html__('Permissions insuffisantes.', 'pdf-builder-pro'));
         }
 
         if (empty($_FILES['backup_file'])) {
@@ -726,7 +726,7 @@ class PDF_Builder_Backup_Restore_Manager
         check_ajax_referer('pdf_builder_ajax', 'nonce');
 
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
+            wp_die(esc_html__('Permissions insuffisantes.', 'pdf-builder-pro'));
         }
 
         $options = [
@@ -757,7 +757,7 @@ class PDF_Builder_Backup_Restore_Manager
         check_ajax_referer('pdf_builder_ajax', 'nonce');
 
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
+            wp_die(esc_html__('Permissions insuffisantes.', 'pdf-builder-pro'));
         }
 
         $filename = $_POST['filename'] ?? '';
@@ -795,7 +795,7 @@ class PDF_Builder_Backup_Restore_Manager
             check_ajax_referer('pdf_builder_ajax', 'nonce');
 
             if (!current_user_can('manage_options')) {
-                wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
+                wp_send_json_error(['message' => esc_html__('Permissions insuffisantes.', 'pdf-builder-pro')]);
                 return;
             }
 
@@ -819,7 +819,7 @@ class PDF_Builder_Backup_Restore_Manager
         check_ajax_referer('pdf_builder_ajax', 'nonce');
 
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
+            wp_die(esc_html__('Permissions insuffisantes.', 'pdf-builder-pro'));
         }
 
         $filename = $_POST['filename'] ?? '';

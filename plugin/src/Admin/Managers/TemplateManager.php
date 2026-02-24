@@ -126,7 +126,7 @@ class TemplateManager
         echo '</div>';
 
         echo '<p class="description">';
-        echo \__('Modifiez les données JSON du template ci-dessus. Soyez prudent avec la syntaxe JSON.', 'pdf-builder-pro');
+        echo esc_html__('Modifiez les données JSON du template ci-dessus. Soyez prudent avec la syntaxe JSON.', 'pdf-builder-pro');
         echo '</p>';
     }
 
@@ -140,23 +140,23 @@ class TemplateManager
         $categories = \get_post_meta($post->ID, '_pdf_template_categories', true);
 
         echo '<p>';
-        echo '<label for="template_type"><strong>' . \__('Type de template', 'pdf-builder-pro') . ':</strong></label><br>';
+        echo '<label for="template_type"><strong>' . esc_html__('Type de template', 'pdf-builder-pro') . ':</strong></label><br>';
         echo '<select id="template_type" name="template_type" style="width: 100%;">';
-        echo '<option value="invoice" ' . \selected($template_type, 'invoice', false) . '>' . \__('Facture', 'pdf-builder-pro') . '</option>';
-        echo '<option value="quote" ' . \selected($template_type, 'quote', false) . '>' . \__('Devis', 'pdf-builder-pro') . '</option>';
-        echo '<option value="receipt" ' . \selected($template_type, 'receipt', false) . '>' . \__('Reçu', 'pdf-builder-pro') . '</option>';
-        echo '<option value="custom" ' . \selected($template_type, 'custom', false) . '>' . \__('Personnalisé', 'pdf-builder-pro') . '</option>';
+        echo '<option value="invoice" ' . \selected($template_type, 'invoice', false) . '>' . esc_html__('Facture', 'pdf-builder-pro') . '</option>';
+        echo '<option value="quote" ' . \selected($template_type, 'quote', false) . '>' . esc_html__('Devis', 'pdf-builder-pro') . '</option>';
+        echo '<option value="receipt" ' . \selected($template_type, 'receipt', false) . '>' . esc_html__('Reçu', 'pdf-builder-pro') . '</option>';
+        echo '<option value="custom" ' . \selected($template_type, 'custom', false) . '>' . esc_html__('Personnalisé', 'pdf-builder-pro') . '</option>';
         echo '</select>';
         echo '</p>';
 
         echo '<p>';
         echo '<label><input type="checkbox" name="template_default" value="1" ' . \checked($is_default, '1', false) . '> ';
-        echo \__('Template par défaut', 'pdf-builder-pro') . '</label>';
+        echo esc_html__('Template par défaut', 'pdf-builder-pro') . '</label>';
         echo '</p>';
 
         echo '<p>';
-        echo '<label for="template_categories"><strong>' . \__('Catégories', 'pdf-builder-pro') . ':</strong></label><br>';
-        echo '<input type="text" id="template_categories" name="template_categories" value="' . esc_attr($categories) . '" style="width: 100%;" placeholder="' . \__('Séparez par des virgules', 'pdf-builder-pro') . '">';
+        echo '<label for="template_categories"><strong>' . esc_html__('Catégories', 'pdf-builder-pro') . ':</strong></label><br>';
+        echo '<input type="text" id="template_categories" name="template_categories" value="' . esc_attr($categories) . '" style="width: 100%;" placeholder="' . esc_attr__('Séparez par des virgules', 'pdf-builder-pro') . '">';
         echo '</p>';
     }
 

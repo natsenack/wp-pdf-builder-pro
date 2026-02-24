@@ -285,7 +285,7 @@ class PDF_Builder_WooCommerce_Integration
         }
 
         if (!$order) {
-            echo '<p style="color:#dc3545;">❌ ' . __('Commande introuvable.', 'pdf-builder-pro') . '</p>';
+            echo '<p style="color:#dc3545;">❌ ' . esc_html__('Commande introuvable.', 'pdf-builder-pro') . '</p>';
             return;
         }
 
@@ -308,10 +308,10 @@ class PDF_Builder_WooCommerce_Integration
             ?>
             <div style="font-size:13px;">
                 <div style="margin-bottom:8px;">
-                    <?php _e('Statut:', 'pdf-builder-pro'); ?> <strong><?php echo esc_html($status_label); ?></strong>
+                    <?php esc_html_e('Statut:', 'pdf-builder-pro'); ?> <strong><?php echo esc_html($status_label); ?></strong>
                 </div>
                 <div style="padding:10px;background:#fff3cd;border:1px solid #ffc107;border-radius:4px;color:#856404;font-size:12px;">
-                    🔒 <?php _e('La génération PDF automatique par statut est disponible en version Premium. En version gratuite, seules les commandes <strong>Terminées</strong> sont supportées.', 'pdf-builder-pro'); ?>
+                    🔒 <?php echo wp_kses(__('La génération PDF automatique par statut est disponible en version Premium. En version gratuite, seules les commandes <strong>Terminées</strong> sont supportées.', 'pdf-builder-pro'), ['strong' => []]); ?>
                 </div>
             </div>
             <?php
@@ -367,7 +367,7 @@ class PDF_Builder_WooCommerce_Integration
             <!-- Template résolu -->
             <div style="margin-bottom:10px;">
                 <div style="color:#6c757d;margin-bottom:4px;">
-                    <?php _e('Statut:', 'pdf-builder-pro'); ?> <strong><?php echo esc_html($status_label); ?></strong>
+                    <?php esc_html_e('Statut:', 'pdf-builder-pro'); ?> <strong><?php echo esc_html($status_label); ?></strong>
                     <?php if (!$is_premium): ?>
                         <span style="margin-left:6px;background:#e9ecef;color:#495057;border-radius:3px;padding:1px 5px;font-size:11px;">Gratuit</span>
                     <?php else: ?>
@@ -378,10 +378,10 @@ class PDF_Builder_WooCommerce_Integration
                     📄 <?php if ($selected_template): ?>
                         <strong><?php echo esc_html($selected_template['name']); ?></strong>
                     <?php else: ?>
-                        <em style="color:#dc3545;"><?php _e('Aucun template assigné pour ce statut.', 'pdf-builder-pro'); ?></em>
+                        <em style="color:#dc3545;"><?php esc_html_e('Aucun template assigné pour ce statut.', 'pdf-builder-pro'); ?></em>
                         <br><small style="color:#6c757d;">
-                            <a href="<?php echo admin_url('admin.php?page=pdf-builder-settings&tab=templates'); ?>">
-                                <?php _e('Configurer dans les paramètres →', 'pdf-builder-pro'); ?>
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings&tab=templates')); ?>">
+                                <?php esc_html_e('Configurer dans les paramètres →', 'pdf-builder-pro'); ?>
                             </a>
                         </small>
                     <?php endif; ?>
@@ -403,7 +403,7 @@ class PDF_Builder_WooCommerce_Integration
                             data-ajax="<?php echo esc_attr($ajax_url); ?>"
                             data-is-premium="<?php echo $is_premium ? '1' : '0'; ?>"
                             style="font-size:12px;padding:5px 8px;">
-                        📥 <?php _e('PDF', 'pdf-builder-pro'); ?>
+                        📥 <?php esc_html_e('PDF', 'pdf-builder-pro'); ?>
                     </button>
                     <button type="button"
                             id="pdf-builder-mail-btn"
@@ -415,7 +415,7 @@ class PDF_Builder_WooCommerce_Integration
                             data-order-email="<?php echo esc_attr($order->get_billing_email()); ?>"
                             data-order-number="<?php echo esc_attr($order->get_order_number()); ?>"
                             style="font-size:12px;padding:5px 8px;">
-                        ✉️ <?php _e('Mail', 'pdf-builder-pro'); ?>
+                        ✉️ <?php esc_html_e('Mail', 'pdf-builder-pro'); ?>
                     </button>
                 </div>
 
@@ -454,35 +454,35 @@ class PDF_Builder_WooCommerce_Integration
             <div id="pdf-builder-mail-modal" style="display:none;position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.55);" role="dialog" aria-modal="true">
                 <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:8px;width:400px;max-width:95vw;box-shadow:0 10px 40px rgba(0,0,0,.35);">
                     <div style="padding:14px 18px;border-bottom:1px solid #dee2e6;display:flex;justify-content:space-between;align-items:center;background:#f8f9fa;border-radius:8px 8px 0 0;">
-                        <strong style="font-size:13px;">✉️ <?php _e('Envoyer par e-mail', 'pdf-builder-pro'); ?></strong>
+                        <strong style="font-size:13px;">✉️ <?php esc_html_e('Envoyer par e-mail', 'pdf-builder-pro'); ?></strong>
                         <button type="button" id="pdf-builder-mail-close" style="background:none;border:none;font-size:20px;cursor:pointer;color:#6c757d;line-height:1;padding:0 4px;" aria-label="Fermer">&times;</button>
                     </div>
                     <div style="padding:18px;">
                         <div style="margin-bottom:12px;">
                             <label style="display:block;margin-bottom:4px;font-size:12px;font-weight:600;color:#495057;">
-                                <?php _e('Destinataire', 'pdf-builder-pro'); ?> <span style="color:#dc3545;">*</span>
+                                <?php esc_html_e('Destinataire', 'pdf-builder-pro'); ?> <span style="color:#dc3545;">*</span>
                             </label>
                             <input type="email" id="pdf-builder-mail-to" class="widefat" style="font-size:13px;" placeholder="email@exemple.com">
                         </div>
                         <div style="margin-bottom:12px;">
                             <label style="display:block;margin-bottom:4px;font-size:12px;font-weight:600;color:#495057;">
-                                <?php _e('Sujet', 'pdf-builder-pro'); ?> <span style="color:#dc3545;">*</span>
+                                <?php esc_html_e('Sujet', 'pdf-builder-pro'); ?> <span style="color:#dc3545;">*</span>
                             </label>
                             <input type="text" id="pdf-builder-mail-subject" class="widefat" style="font-size:13px;">
                         </div>
                         <div style="margin-bottom:16px;">
                             <label style="display:block;margin-bottom:4px;font-size:12px;font-weight:600;color:#495057;">
-                                <?php _e('Message', 'pdf-builder-pro'); ?>
+                                <?php esc_html_e('Message', 'pdf-builder-pro'); ?>
                             </label>
                             <textarea id="pdf-builder-mail-message" class="widefat" rows="4" style="font-size:13px;resize:vertical;"></textarea>
                         </div>
                         <div id="pdf-builder-mail-status" style="display:none;margin-bottom:12px;padding:8px 10px;border-radius:4px;font-size:12px;"></div>
                         <div style="display:flex;gap:8px;justify-content:flex-end;">
                             <button type="button" id="pdf-builder-mail-cancel" class="button button-secondary">
-                                <?php _e('Annuler', 'pdf-builder-pro'); ?>
+                                <?php esc_html_e('Annuler', 'pdf-builder-pro'); ?>
                             </button>
                             <button type="button" id="pdf-builder-mail-send" class="button button-primary">
-                                ✉️ <?php _e('Envoyer', 'pdf-builder-pro'); ?>
+                                ✉️ <?php esc_html_e('Envoyer', 'pdf-builder-pro'); ?>
                             </button>
                         </div>
                     </div>
@@ -494,8 +494,8 @@ class PDF_Builder_WooCommerce_Integration
                 <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:10px;width:340px;max-width:95vw;box-shadow:0 12px 48px rgba(0,0,0,.40);overflow:hidden;">
                     <!-- En-tête -->
                     <div style="padding:16px 20px;border-bottom:1px solid #e0e0e0;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-radius:10px 10px 0 0;">
-                        <div id="pdfb-queue-modal-title" style="font-size:15px;font-weight:700;margin-bottom:2px;">⏳ <?php _e('Génération du PDF', 'pdf-builder-pro'); ?></div>
-                        <div style="font-size:12px;opacity:.85;"><?php _e('Fichier gratuit · File d\'attente active', 'pdf-builder-pro'); ?></div>
+                        <div id="pdfb-queue-modal-title" style="font-size:15px;font-weight:700;margin-bottom:2px;">⏳ <?php esc_html_e('Génération du PDF', 'pdf-builder-pro'); ?></div>
+                        <div style="font-size:12px;opacity:.85;"><?php esc_html_e('Fichier gratuit · File d\'attente active', 'pdf-builder-pro'); ?></div>
                     </div>
                     <!-- Corps -->
                     <div style="padding:24px 20px;text-align:center;">
@@ -509,17 +509,17 @@ class PDF_Builder_WooCommerce_Integration
                         </div>
                         <!-- Position -->
                         <div id="pdfb-queue-pos-text" style="font-size:28px;font-weight:800;color:#667eea;line-height:1;margin-bottom:6px;">#<span id="pdfb-queue-pos-num">…</span></div>
-                        <div style="font-size:13px;color:#6c757d;margin-bottom:16px;"><?php _e('dans la file d\'attente', 'pdf-builder-pro'); ?></div>
+                        <div style="font-size:13px;color:#6c757d;margin-bottom:16px;"><?php esc_html_e('dans la file d\'attente', 'pdf-builder-pro'); ?></div>
                         <!-- Barre de progression -->
                         <div style="background:#e9ecef;border-radius:6px;height:8px;overflow:hidden;margin-bottom:14px;">
                             <div id="pdfb-queue-progress-bar" style="height:100%;background:linear-gradient(90deg,#667eea,#764ba2);width:0%;transition:width 0.5s ease;border-radius:6px;"></div>
                         </div>
-                        <div id="pdfb-queue-status-text" style="font-size:12px;color:#868e96;"><?php _e('Patience, votre PDF sera généré automatiquement…', 'pdf-builder-pro'); ?></div>
+                        <div id="pdfb-queue-status-text" style="font-size:12px;color:#868e96;"><?php esc_html_e('Patience, votre PDF sera généré automatiquement…', 'pdf-builder-pro'); ?></div>
                     </div>
                     <!-- Pied -->
                     <div style="padding:12px 20px;border-top:1px solid #e0e0e0;text-align:center;">
                         <button type="button" id="pdfb-queue-cancel" class="button button-secondary" style="font-size:12px;">
-                            <?php _e('Annuler', 'pdf-builder-pro'); ?>
+                            <?php esc_html_e('Annuler', 'pdf-builder-pro'); ?>
                         </button>
                     </div>
                 </div>
@@ -1029,7 +1029,7 @@ class PDF_Builder_WooCommerce_Integration
 
         if (!$order_id || !$template_id) {
             status_header(422);
-            echo 'Paramètres manquants (order_id=' . $order_id . ' template_id=' . $template_id . ')';
+            echo 'Paramètres manquants (order_id=' . intval($order_id) . ' template_id=' . esc_html($template_id) . ')';
             exit;
         }
 
@@ -1071,7 +1071,7 @@ class PDF_Builder_WooCommerce_Integration
         header('Cache-Control: private, max-age=0, must-revalidate');
         header('X-Content-Type-Options: nosniff');
 
-        echo $pdf_content;
+        echo $pdf_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Raw PDF binary stream
         exit;
     }
 

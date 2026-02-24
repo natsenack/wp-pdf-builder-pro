@@ -23,7 +23,7 @@ function pdf_builder_media_diagnostic_ajax() {
     
     // Vérifier si uploads est writable
     $upload_dir = wp_upload_dir();
-    $diagnostic['uploads_writable'] = is_writable($upload_dir['basedir']);
+    $diagnostic['uploads_writable'] = is_writable($upload_dir['basedir']); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
     
     // Lister les attachments
     $args = array(

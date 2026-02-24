@@ -114,7 +114,7 @@ class PDF_Builder_Test_Suite {
      */
     public function run_test_suite($suite_name, $options = []) {
         if (!isset($this->test_suites[$suite_name])) {
-            throw new Exception('Suite de tests introuvable: ' . $suite_name);
+            throw new Exception('Suite de tests introuvable: ' . $suite_name); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         $suite = $this->test_suites[$suite_name];

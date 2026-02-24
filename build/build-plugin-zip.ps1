@@ -92,6 +92,11 @@ function Build-PluginZip {
                 }
             }
             
+            # Exclure les fichiers compressés (.gz) et les fichiers cachés (ex: .htaccess) — WordPress.org policy
+            if ($_.Extension -eq '.gz' -or $_.Name.StartsWith('.')) {
+                $skip = $true
+            }
+
             if ($skip) {
                 return # continue
             }

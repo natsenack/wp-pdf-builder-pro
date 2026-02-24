@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Settings Helper Functions
  * Common utility functions used across all settings tabs
@@ -160,7 +160,7 @@ if (!function_exists('pdf_builder_sanitize_text')) {
         if (function_exists('sanitize_text_field')) {
             return sanitize_text_field($input);
         }
-        return strip_tags(trim($input));
+        return wp_strip_all_tags(trim($input));
     }
 }
 
@@ -235,10 +235,10 @@ if (!function_exists('pdf_builder_ensure_upload_dir')) {
         $upload_dir = pdf_builder_get_upload_dir();
 
         if (!file_exists($upload_dir)) {
-            @mkdir($upload_dir, 0755, true);
+            @mkdir($upload_dir, 0755, true); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir
         }
 
-        return is_writable($upload_dir);
+        return is_writable($upload_dir); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
     }
 }
 

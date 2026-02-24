@@ -176,7 +176,7 @@ class PDF_Builder_Integration_Manager {
      */
     public function render_integrations_page() {
         if (!current_user_can('manage_options')) {
-            wp_die(pdf_builder_translate('Accès refusé', 'integration'));
+            wp_die(esc_html(pdf_builder_translate('Accès refusé', 'integration')));
         }
 
         $services = $this->get_available_services();
@@ -259,7 +259,7 @@ class PDF_Builder_Integration_Manager {
     public function connect_service($service_id, $config = []) {
         try {
             if (!isset(self::SERVICES_CONFIG[$service_id])) {
-                throw new Exception(pdf_builder_translate('Service non supporté', 'integration'));
+                throw new Exception(pdf_builder_translate('Service non supporté', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
             }
 
             $service_config = self::SERVICES_CONFIG[$service_id];
@@ -282,7 +282,7 @@ class PDF_Builder_Integration_Manager {
                     return $this->connect_no_auth_service($service_id, $config);
 
                 default:
-                    throw new Exception(pdf_builder_translate('Type d\'authentification non supporté', 'integration'));
+                    throw new Exception(pdf_builder_translate('Type d\'authentification non supporté', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
             }
 
         } catch (Exception $e) {
@@ -306,7 +306,7 @@ class PDF_Builder_Integration_Manager {
     public function disconnect_service($service_id) {
         try {
             if (!isset($this->connections_cache[$service_id])) {
-                throw new Exception(pdf_builder_translate('Service non connecté', 'integration'));
+                throw new Exception(pdf_builder_translate('Service non connecté', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
             }
 
             // Nettoyer les données de connexion
@@ -344,7 +344,7 @@ class PDF_Builder_Integration_Manager {
     public function test_connection($service_id) {
         try {
             if ($this->get_connection_status($service_id) !== self::STATUS_CONNECTED) {
-                throw new Exception(pdf_builder_translate('Service non connecté', 'integration'));
+                throw new Exception(pdf_builder_translate('Service non connecté', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
             }
 
             $config = $this->get_service_config($service_id);
@@ -427,7 +427,7 @@ class PDF_Builder_Integration_Manager {
     private function connect_webhook_service($service_id, $config) {
         // Valider l'URL du webhook
         if (!filter_var($config['webhook_url'], FILTER_VALIDATE_URL)) {
-            throw new Exception(pdf_builder_translate('URL du webhook invalide', 'integration'));
+            throw new Exception(pdf_builder_translate('URL du webhook invalide', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         // Sauvegarder la configuration
@@ -484,7 +484,7 @@ class PDF_Builder_Integration_Manager {
         ];
 
         if (!isset($base_urls[$service_id])) {
-            throw new Exception(pdf_builder_translate('Service OAuth2 non supporté', 'integration'));
+            throw new Exception(pdf_builder_translate('Service OAuth2 non supporté', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         $service_config = self::SERVICES_CONFIG[$service_id];
@@ -515,7 +515,7 @@ class PDF_Builder_Integration_Manager {
 
         // Vérifier le nonce
         if (!pdf_builder_verify_nonce($state, 'pdf_builder_oauth_' . $service_id)) {
-            wp_die(pdf_builder_translate('État OAuth invalide', 'integration'));
+            wp_die(esc_html(pdf_builder_translate('État OAuth invalide', 'integration')));
         }
 
         try {
@@ -523,7 +523,7 @@ class PDF_Builder_Integration_Manager {
             $temp_config = pdf_builder_get_option('pdf_builder_oauth_temp_config', []);
 
             if (empty($temp_config) || $temp_config['service_id'] !== $service_id) {
-                throw new Exception(pdf_builder_translate('Configuration OAuth manquante', 'integration'));
+                throw new Exception(pdf_builder_translate('Configuration OAuth manquante', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
             }
 
             // Échanger le code contre un token
@@ -545,7 +545,7 @@ class PDF_Builder_Integration_Manager {
             delete_option('pdf_builder_oauth_temp_config');
 
             // Rediriger avec succès
-            wp_redirect(admin_url('admin.php?page=pdf-builder-integrations&oauth_success=1&service=' . $service_id));
+            wp_safe_redirect(admin_url('admin.php?page=pdf-builder-integrations&oauth_success=1&service=' . $service_id));
             exit;
 
         } catch (Exception $e) {
@@ -557,7 +557,7 @@ class PDF_Builder_Integration_Manager {
             ));
 
             // Rediriger avec erreur
-            wp_redirect(admin_url('admin.php?page=pdf-builder-integrations&oauth_error=1&service=' . $service_id));
+            wp_safe_redirect(admin_url('admin.php?page=pdf-builder-integrations&oauth_error=1&service=' . $service_id));
             exit;
         }
     }
@@ -576,7 +576,7 @@ class PDF_Builder_Integration_Manager {
         ];
 
         if (!isset($token_urls[$service_id])) {
-            throw new Exception(pdf_builder_translate('Service OAuth2 non supporté', 'integration'));
+            throw new Exception(pdf_builder_translate('Service OAuth2 non supporté', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         $redirect_uri = admin_url('admin.php?page=pdf-builder-integrations&oauth_callback=1&service=' . $service_id);
@@ -595,14 +595,14 @@ class PDF_Builder_Integration_Manager {
         ]);
 
         if (is_wp_error($response)) {
-            throw new Exception(pdf_builder_translate('Erreur lors de l\'échange du code OAuth', 'integration'));
+            throw new Exception(pdf_builder_translate('Erreur lors de l\'échange du code OAuth', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
         if (empty($data['access_token'])) {
-            throw new Exception(pdf_builder_translate('Token d\'accès manquant', 'integration'));
+            throw new Exception(pdf_builder_translate('Token d\'accès manquant', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         return [
@@ -663,7 +663,7 @@ class PDF_Builder_Integration_Manager {
         ];
 
         if (!isset($refresh_urls[$service_id])) {
-            throw new Exception(pdf_builder_translate('Service OAuth2 non supporté', 'integration'));
+            throw new Exception(pdf_builder_translate('Service OAuth2 non supporté', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         $post_data = [
@@ -679,14 +679,14 @@ class PDF_Builder_Integration_Manager {
         ]);
 
         if (is_wp_error($response)) {
-            throw new Exception(pdf_builder_translate('Erreur lors du rafraîchissement du token', 'integration'));
+            throw new Exception(pdf_builder_translate('Erreur lors du rafraîchissement du token', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
         if (empty($data['access_token'])) {
-            throw new Exception(pdf_builder_translate('Nouveau token d\'accès manquant', 'integration'));
+            throw new Exception(pdf_builder_translate('Nouveau token d\'accès manquant', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         // Mettre à jour les tokens
@@ -735,7 +735,7 @@ class PDF_Builder_Integration_Manager {
                 ];
 
                 $field_label = $field_names[$field] ?? $field;
-                throw new Exception(sprintf(pdf_builder_translate('%s est requis', 'integration'), $field_label));
+                throw new Exception(sprintf(pdf_builder_translate('%s est requis', 'integration'), $field_label)); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
             }
         }
     }
@@ -752,13 +752,13 @@ class PDF_Builder_Integration_Manager {
         ]);
 
         if (is_wp_error($response)) {
-            throw new Exception(pdf_builder_translate('Erreur de connexion Google Drive', 'integration'));
+            throw new Exception(pdf_builder_translate('Erreur de connexion Google Drive', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         $status_code = wp_remote_retrieve_response_code($response);
 
         if ($status_code !== 200) {
-            throw new Exception(pdf_builder_translate('Token Google Drive invalide', 'integration'));
+            throw new Exception(pdf_builder_translate('Token Google Drive invalide', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         return [
@@ -780,13 +780,13 @@ class PDF_Builder_Integration_Manager {
         ]);
 
         if (is_wp_error($response)) {
-            throw new Exception(pdf_builder_translate('Erreur de connexion Dropbox', 'integration'));
+            throw new Exception(pdf_builder_translate('Erreur de connexion Dropbox', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         $status_code = wp_remote_retrieve_response_code($response);
 
         if ($status_code !== 200) {
-            throw new Exception(pdf_builder_translate('Token Dropbox invalide', 'integration'));
+            throw new Exception(pdf_builder_translate('Token Dropbox invalide', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         return [
@@ -807,14 +807,14 @@ class PDF_Builder_Integration_Manager {
         ]);
 
         if (is_wp_error($response)) {
-            throw new Exception(pdf_builder_translate('Erreur de connexion Slack', 'integration'));
+            throw new Exception(pdf_builder_translate('Erreur de connexion Slack', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
         if (empty($data['ok'])) {
-            throw new Exception(pdf_builder_translate('Token Slack invalide', 'integration'));
+            throw new Exception(pdf_builder_translate('Token Slack invalide', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         return [
@@ -840,7 +840,7 @@ class PDF_Builder_Integration_Manager {
         ]);
 
         if (is_wp_error($response)) {
-            throw new Exception(pdf_builder_translate('Erreur de connexion webhook', 'integration'));
+            throw new Exception(pdf_builder_translate('Erreur de connexion webhook', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         return [
@@ -855,7 +855,7 @@ class PDF_Builder_Integration_Manager {
     private function test_generic_connection($service_id, $config, $connection) {
         // Test de base - vérifier que la configuration est présente
         if (empty($config)) {
-            throw new Exception(pdf_builder_translate('Configuration manquante', 'integration'));
+            throw new Exception(pdf_builder_translate('Configuration manquante', 'integration')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
 
         return [
@@ -946,7 +946,7 @@ class PDF_Builder_Integration_Manager {
         if (isset($_GET['oauth_success']) && isset($_GET['service'])) {
             $service_name = self::SERVICES_CONFIG[$_GET['service']]['name'] ?? $_GET['service'];
             echo '<div class="notice notice-success is-dismissible">';
-            echo '<p>' . sprintf(pdf_builder_translate('%s connecté avec succès !', 'integration'), $service_name) . '</p>';
+            echo '<p>' . esc_html(sprintf(pdf_builder_translate('%s connecté avec succès !', 'integration'), $service_name)) . '</p>';
             echo '</div>';
         }
 
@@ -954,7 +954,7 @@ class PDF_Builder_Integration_Manager {
         if (isset($_GET['oauth_error']) && isset($_GET['service'])) {
             $service_name = self::SERVICES_CONFIG[$_GET['service']]['name'] ?? $_GET['service'];
             echo '<div class="notice notice-error is-dismissible">';
-            echo '<p>' . sprintf(pdf_builder_translate('Erreur lors de la connexion à %s', 'integration'), $service_name) . '</p>';
+            echo '<p>' . esc_html(sprintf(pdf_builder_translate('Erreur lors de la connexion à %s', 'integration'), $service_name)) . '</p>';
             echo '</div>';
         }
 
@@ -963,11 +963,11 @@ class PDF_Builder_Integration_Manager {
             if ($connection['status'] === self::STATUS_ERROR && isset($connection['last_error'])) {
                 $service_name = self::SERVICES_CONFIG[$service_id]['name'] ?? $service_id;
                 echo '<div class="notice notice-warning is-dismissible">';
-                echo '<p>' . sprintf(
+                echo '<p>' . esc_html(sprintf(
                     pdf_builder_translate('Erreur de connexion %s : %s', 'integration'),
                     $service_name,
                     $connection['last_error']
-                ) . '</p>';
+                )) . '</p>';
                 echo '</div>';
             }
         }

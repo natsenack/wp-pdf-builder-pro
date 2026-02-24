@@ -214,7 +214,7 @@ class PDF_Builder_User_Manager {
      */
     public function render_user_management_page() {
         if (!current_user_can('manage_options')) {
-            wp_die(pdf_builder_translate('Accès refusé', 'user'));
+            wp_die(esc_html(pdf_builder_translate('Accès refusé', 'user')));
         }
 
         $users = $this->get_pdf_users();
@@ -745,7 +745,7 @@ function pdf_builder_get_pdf_roles() {
 // Vérifications d'accès pour les actions critiques
 function pdf_builder_check_access($capability, $context = null) {
     if (!pdf_builder_user_can($capability, null, $context)) {
-        wp_die(pdf_builder_translate('Accès refusé - Permissions insuffisantes', 'access'));
+        wp_die(esc_html(pdf_builder_translate('Accès refusé - Permissions insuffisantes', 'access')));
     }
 }
 
