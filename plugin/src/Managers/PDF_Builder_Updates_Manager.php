@@ -112,6 +112,11 @@ class PDF_Builder_Updates_Manager {
         add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_for_updates' ], 10, 1 ); // phpcs:ignore PluginCheck.CodeAnalysis.AutoUpdates.PluginUpdaterDetected
         add_filter( 'pre_set_transient_update_plugins',      [ $this, 'check_for_updates' ], 10, 1 ); // phpcs:ignore PluginCheck.CodeAnalysis.AutoUpdates.PluginUpdaterDetected
 
+        // Filtre de LECTURE : auto-corrige le transient si la version installée est déjà à jour.
+        // Cela évite le message fantôme "mise à jour disponible" après une MAJ réussie,
+        // même si le transient en base n'a pas encore été purgé.
+        add_filter( 'site_transient_update_plugins', [ $this, 'sanitize_update_transient' ], 20, 1 );
+
         // Fournit les informations du plugin quand WordPress les demande
         add_filter( 'plugins_api', [ $this, 'plugins_api_handler' ], 10, 3 );
         
@@ -119,6 +124,46 @@ class PDF_Builder_Updates_Manager {
         // Cela garantit que même si les filtres ne sont pas appelés,
         // le transient sera disponible pour la page de plugins WordPress
         add_action( 'admin_init', [ $this, 'pre_cache_update_transient' ], 5 );
+    }
+
+    /**
+     * Filtre de LECTURE du transient WordPress update_plugins.
+     * Si notre plugin apparaît dans ->response mais que la version installée est déjà >= new_version,
+     * on le déplace dans ->no_update pour supprimer le message "mise à jour disponible".
+     * Ce filtre est le filet de sécurité définitif contre les messages fantômes post-MAJ.
+     */
+    public function sanitize_update_transient( $transient ) {
+        if ( ! is_object( $transient ) || empty( $transient->response ) ) {
+            return $transient;
+        }
+
+        $plugin_basename = plugin_basename( $this->plugin_file );
+
+        if ( ! isset( $transient->response[ $plugin_basename ] ) ) {
+            return $transient;
+        }
+
+        $cached_new_version = $transient->response[ $plugin_basename ]->new_version ?? '';
+
+        // Si la version installée est >= la version en cache → pas de MAJ réelle
+        if ( $cached_new_version && version_compare( $this->current_version, $cached_new_version, '>=' ) ) {
+            error_log( '[PDF Builder] sanitize_update_transient: version installee ' . $this->current_version . ' >= ' . $cached_new_version . ' → suppression du message MAJ' );
+
+            // Déplacer dans no_update (affiche "Aucune MAJ" au lieu du message d'alerte)
+            if ( ! isset( $transient->no_update ) ) {
+                $transient->no_update = [];
+            }
+            $transient->no_update[ $plugin_basename ] = (object) [
+                'id'          => $this->item_id,
+                'slug'        => $this->plugin_slug,
+                'plugin'      => $plugin_basename,
+                'new_version' => $this->current_version,
+                'url'         => $this->store_url . '/downloads/' . $this->plugin_slug . '/',
+            ];
+            unset( $transient->response[ $plugin_basename ] );
+        }
+
+        return $transient;
     }
     
     /**

@@ -246,6 +246,12 @@ $criticalFiles = @("pdf-builder-pro.php", "src/Core/PDF_Builder_Unified_Ajax_Han
 foreach ($criticalFile in $criticalFiles) {
     $criticalPath = Join-Path $PluginDir $criticalFile
     if (Test-Path $criticalPath) {
+        # Forcer la suppression du fichier critique en destination pour garantir une copie fraîche
+        $localCriticalDest = Join-Path $LocalPath $criticalFile.Replace("/", "\")
+        if (Test-Path $localCriticalDest) {
+            Remove-Item -Force $localCriticalDest -ErrorAction SilentlyContinue
+            Write-Log "Fichier critique supprimé (copie fraîche) : $criticalFile" "INFO"
+        }
         $fileItem = Get-Item $criticalPath
         if ($filesToDeploy.FullName -notcontains $fileItem.FullName) {
             $filesToDeploy += $fileItem
