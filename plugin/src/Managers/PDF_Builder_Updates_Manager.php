@@ -61,11 +61,14 @@ class PDF_Builder_Updates_Manager {
 
     /**
      * Initialize update hooks
-     * Provides plugin information via plugins_api filter only.
      */
     public function init() {
+        // Injecte la réponse de mise à jour dans le transient WordPress
+        add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_for_updates' ], 10, 1 ); // phpcs:ignore PluginCheck.CodeAnalysis.AutoUpdates.PluginUpdaterDetected
+        add_filter( 'pre_set_transient_update_plugins',      [ $this, 'check_for_updates' ], 10, 1 ); // phpcs:ignore PluginCheck.CodeAnalysis.AutoUpdates.PluginUpdaterDetected
+
         // Fournit les informations du plugin quand WordPress les demande
-        add_filter('plugins_api', [$this, 'plugins_api_handler'], 10, 3);
+        add_filter( 'plugins_api', [ $this, 'plugins_api_handler' ], 10, 3 );
     }
 
     /**
