@@ -38,16 +38,21 @@ class DashboardDataProvider
             }
 
             if ($has_log_message) {
-                $documents_count = $wpdb->get_var( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-                    "SELECT COUNT(*) FROM $table_logs WHERE log_message LIKE '%PDF généré%' OR log_message LIKE '%Document créé%'"
-                );
+                $pdf_like  = '%' . $wpdb->esc_like( 'PDF généré' ) . '%';
+                $doc_like  = '%' . $wpdb->esc_like( 'Document créé' ) . '%';
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is safe prefix
+                $documents_count = $wpdb->get_var( $wpdb->prepare(
+                    "SELECT COUNT(*) FROM `{$table_logs}` WHERE log_message LIKE %s OR log_message LIKE %s",
+                    $pdf_like, $doc_like
+                ) );
 
                 // Documents générés aujourd'hui
                 $today = gmdate('Y-m-d');
-                $today_count = $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
-                    "SELECT COUNT(*) FROM $table_logs WHERE DATE(created_at) = %s AND (log_message LIKE '%PDF généré%' OR log_message LIKE '%Document créé%')",
-                    $today
-                ));
+                // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is safe prefix
+                $today_count = $wpdb->get_var( $wpdb->prepare(
+                    "SELECT COUNT(*) FROM `{$table_logs}` WHERE DATE(created_at) = %s AND (log_message LIKE %s OR log_message LIKE %s)",
+                    $today, $pdf_like, $doc_like
+                ) );
             } else {
                 // Si la colonne n'existe pas, compter tous les logs
                 $documents_count = $wpdb->get_var("SELECT COUNT(*) FROM $table_logs"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
