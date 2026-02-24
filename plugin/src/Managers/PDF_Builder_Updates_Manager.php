@@ -108,17 +108,24 @@ class PDF_Builder_Updates_Manager {
      * Initialize update hooks
      */
     public function init() {
+        error_log('[PDF Builder Updates Manager] init() appelé');
+        
         // Injecte la réponse de mise à jour dans le transient WordPress
         add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_for_updates' ], 10, 1 ); // phpcs:ignore PluginCheck.CodeAnalysis.AutoUpdates.PluginUpdaterDetected
+        error_log('[PDF Builder Updates Manager] Filtre pre_set_site_transient_update_plugins enregistré');
+        
         add_filter( 'pre_set_transient_update_plugins',      [ $this, 'check_for_updates' ], 10, 1 ); // phpcs:ignore PluginCheck.CodeAnalysis.AutoUpdates.PluginUpdaterDetected
+        error_log('[PDF Builder Updates Manager] Filtre pre_set_transient_update_plugins enregistré');
 
         // Fournit les informations du plugin quand WordPress les demande
         add_filter( 'plugins_api', [ $this, 'plugins_api_handler' ], 10, 3 );
+        error_log('[PDF Builder Updates Manager] Filtre plugins_api enregistré');
         
         // 🔴 HOTFIX: Pré-calculer et sauvegarder immédiatement le transient au chargement
         // Cela garantit que même si les filtres ne sont pas appelés,
         // le transient sera disponible pour la page de plugins WordPress
         add_action( 'admin_init', [ $this, 'pre_cache_update_transient' ], 5 );
+        error_log('[PDF Builder Updates Manager] Action admin_init::pre_cache_update_transient enregistrée');
     }
     
     /**
@@ -127,19 +134,23 @@ class PDF_Builder_Updates_Manager {
      * pre_set_*_transient_update_plugins ne sont pas appelés immédiatement
      */
     public function pre_cache_update_transient() {
+        error_log('[PDF Builder Updates Manager] pre_cache_update_transient() appelé lors de admin_init');
+        
         // Vérifier si le transient existe déjà et est relativement récent (< 1h)
         $transient = get_site_transient('update_plugins');
         $now = time();
         
         if (is_object($transient) && isset($transient->last_checked)) {
             $age = $now - $transient->last_checked;
+            error_log('[PDF Builder Updates Manager] Transient existant trouvé, age: ' . $age . 's');
             if ($age < 3600) { // 1 heure
                 // Transient récent, ne pas forcer le recalcul
+                error_log('[PDF Builder Updates Manager] Transient récent (< 1h), pas de recalcul');
                 return;
             }
         }
         
-        error_log('[PDF Builder Updates] admin_init: Pré-calcul du transient update_plugins');
+        error_log('[PDF Builder Updates Manager] admin_init: Pré-calcul du transient update_plugins');
         
         // Créer le transient vierge
         if (!is_object($transient)) {
@@ -154,7 +165,7 @@ class PDF_Builder_Updates_Manager {
         
         // Sauvegarder immédiatement dans le transient WordPress
         set_site_transient('update_plugins', $updated_transient, 12 * HOUR_IN_SECONDS);
-        error_log('[PDF Builder Updates] admin_init: Transient update_plugins mis en cache (12h)');
+        error_log('[PDF Builder Updates Manager] admin_init: Transient update_plugins mis en cache (12h)');
     }
 
     /**
@@ -213,6 +224,8 @@ class PDF_Builder_Updates_Manager {
         if ($remote_version && version_compare($remote_version['version'], $this->current_version, '>')) {
             // Il y a une mise à jour disponible
             $plugin_basename = plugin_basename($this->plugin_file);
+            
+            error_log('[PDF Builder] MISE À JOUR DISPONIBLE: ' . $plugin_basename . ' → v' . $remote_version['version']);
 
             $transient->response[$plugin_basename] = (object)[
                 'id'               => $this->item_id,
@@ -245,6 +258,8 @@ class PDF_Builder_Updates_Manager {
             // Pas de mise à jour disponible
             if ($remote_version) {
                 $plugin_basename = plugin_basename($this->plugin_file);
+                error_log('[PDF Builder] Pas de mise à jour : local v' . $this->current_version . ' >= remote v' . ($remote_version['version'] ?? 'N/A'));
+                
                 $transient->no_update[$plugin_basename] = (object)[
                     'id'          => $this->item_id,
                     'slug'        => $this->plugin_slug,
@@ -256,6 +271,13 @@ class PDF_Builder_Updates_Manager {
         }
 
         $transient->last_checked = time();
+        
+        // 🔴 FORCE IMMÉDIATE: Sauvegarder le transient directement après modification
+        // Cela garantit que même si le hook retour n'est pas appelé,
+        // le transient est bien stocké pour WordPress
+        set_site_transient('update_plugins', $transient, 12 * HOUR_IN_SECONDS);
+        error_log('[PDF Builder] Transient update_plugins SAUVEGARDÉ immédiatement (12h TTL)');
+        
         return $transient;
     }
 
