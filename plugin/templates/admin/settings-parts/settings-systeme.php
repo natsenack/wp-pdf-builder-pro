@@ -1,4 +1,4 @@
-﻿<?php // Systeme tab content - Updated: 2025-12-05 01:15:00
+<?php // Systeme tab content - Updated: 2025-12-05 01:15:00
 
 if (!defined('ABSPATH')) {
     exit;

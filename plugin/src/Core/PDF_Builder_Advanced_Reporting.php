@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Système de reporting et analyse avancé

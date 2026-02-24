@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
  * Canvas Save Handler - Sauvegarde 100% des éléments du canvas

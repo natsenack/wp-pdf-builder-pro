@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Template for PDF Builder Pro Dashboard
  *

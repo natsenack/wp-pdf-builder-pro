@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Gestionnaire d'APIs externes

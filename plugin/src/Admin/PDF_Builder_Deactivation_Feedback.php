@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Deactivation Feedback Modal
  * Recueille le feedback lors de la désactivation du plugin

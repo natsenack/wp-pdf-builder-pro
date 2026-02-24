@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * MaintenanceActionHandler - Gestion des actions de maintenance

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Système de Logging Avancé pour PDF Builder Pro
  *

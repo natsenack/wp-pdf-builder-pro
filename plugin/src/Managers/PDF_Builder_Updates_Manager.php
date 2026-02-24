@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // phpcs:disable PluginCheck.CodeAnalysis.Forbidden.ForbiddenPluginUpdater -- Commercial plugin with custom EDD updater, not for WordPress.org distribution
 
 namespace PDF_Builder\Managers;
