@@ -331,23 +331,72 @@ class PDF_Builder_License_Manager
 
     /**
      * Vérification périodique du statut de la licence
+     * Exécutée automatiquement via admin_init hook (hook ajouté dans __construct)
+     * 
+     * Logique :
+     *   1. Si pas de clé ou statut != 'active' → rien à faire
+     *   2. Vérification rapide locale : est-ce que la date d'expiration locale est dépassée ?
+     *   3. Si oui et que c'est expiré depuis longtemps → marquer comme 'inactive'
+     *   4. Une fois par jour : appel EDD pour vérifier le statut réel
      */
-    public function checkLicenseStatus()
+    public function check_license_status()
     {
         if (empty($this->license_key) || $this->license_status !== 'active') {
-            return;
+            return; // Pas de licence active à vérifier
         }
 
-        // Vérifier une fois par jour
-        $last_check = pdf_builder_get_option('pdf_builder_license_last_check', 0);
-        $now = time();
+        // ═══════════════════════════════════════════════════════════════════════
+        // 1️⃣ VÉRIFICATION RAPIDE LOCALE (expires_raw)
+        // ═══════════════════════════════════════════════════════════════════════
+        $expires_raw = pdf_builder_get_option('pdf_builder_license_expires', '');
+        
+        if (!empty($expires_raw) && $expires_raw !== 'lifetime') {
+            $expires_ts = strtotime($expires_raw);
+            $now_ts     = time();
+            
+            // Si la licence est expirée depuis + de 7 jours, marquer comme inactive
+            // (donne un délai de grâce au cas où EDD serait temporairement inaccessible)
+            if ($expires_ts && $now_ts > ($expires_ts + 604800)) { // 604800 = 7 jours en secondes
+                error_log('[PDF_Builder_License] check_license_status() : LICENCE EXPIRÉE depuis > 7 jours. Passage à inactive.');
+                pdf_builder_update_option('pdf_builder_license_status', 'inactive');
+                $this->license_status = 'inactive';
+                
+                // Purger les caches de mise à jour pour forcer un recheck sans la clé
+                delete_transient('pdf-builder-pro_edd_update_check');
+                delete_site_transient('update_plugins');
+                
+                return; // Arrêter ici, licence marquée comme inactive
+            } elseif ($expires_ts && $now_ts > $expires_ts) {
+                // Expiré mais depuis moins de 7 jours → log seulement
+                error_log('[PDF_Builder_License] check_license_status() : LICENCE EXPIRÉE mais délai de grâce actif.');
+            }
+        }
 
-        if ($now - $last_check > 86400) {
+        // ═══════════════════════════════════════════════════════════════════════
+        // 2️⃣ VÉRIFICATION COMPLÈTE EDD (une fois par jour)
+        // ═══════════════════════════════════════════════════════════════════════
+        $last_check = pdf_builder_get_option('pdf_builder_license_last_check', 0);
+        $now        = time();
+
+        if (($now - $last_check) > 86400) { // 86400 = 24 heures
+            error_log('[PDF_Builder_License] check_license_status() : Vérification EDD due (24h écoulées)');
+            
             $result = $this->validateLicense($this->license_key);
 
             if (!$result['success']) {
-                pdf_builder_update_option('pdf_builder_license_status', 'expired');
-                $this->license_status = 'expired';
+                error_log('[PDF_Builder_License] check_license_status() : EDD a rejeté la clé → passage à inactive');
+                pdf_builder_update_option('pdf_builder_license_status', 'inactive');
+                $this->license_status = 'inactive';
+                
+                // Purger les caches pour forcer recheck
+                delete_transient('pdf-builder-pro_edd_update_check');
+                delete_site_transient('update_plugins');
+            } else {
+                // Licence toujours valide, mettre à jour les données
+                pdf_builder_update_option('pdf_builder_license_status', 'active');
+                pdf_builder_update_option('pdf_builder_license_data', $result['data']);
+                pdf_builder_update_option('pdf_builder_license_expires', $result['data']['expires_raw'] ?? '');
+                error_log('[PDF_Builder_License] check_license_status() : Licence valide confirmée par EDD');
             }
 
             pdf_builder_update_option('pdf_builder_license_last_check', $now);

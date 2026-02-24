@@ -1,4 +1,12 @@
 {
+  "1.0.3.16": {
+    "version": "1.0.3.16",
+    "released": "2026-02-24",
+    "requires_php": "7.4",
+    "requires_wp": "5.0",
+    "tested_wp": "6.9",
+    "changelog": "<h3>Version 1.0.3.16 - Système de mise à jour robuste + Correctif Namespace<\/h3>\n<ul>\n<li>\ud83d\udd27 <strong>Hotfix Mises à jour<\/strong> : Vérification du statut de licence avant envoi à EDD. Fallback automatique vers mu-plugin <code>edd-free-update.php<\/code> si licence inactive\/expirée<\/li>\n<li>\u2705 <strong>Couverture complète<\/strong> : Tous les utilisateurs (avec\/sans\/expirée licence) reçoivent les mises à jour<\/li>\n<li>\ud83d\udd0d <strong>License Manager<\/strong> : Amélioration du statut check avec détection d'expiration locale + vérification EDD 24h<\/li>\n<li>\ud83d\udc1b <strong>Namespace Fix<\/strong> : Correction de la déclaration de namespace dans <code>PDF_Builder_WooCommerce_Integration.php<\/code><\/li>\n<\/ul>"
+  },
   "1.0.3.15": {
     "version": "1.0.3.15",
     "released": "2026-02-24",

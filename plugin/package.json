@@ -1,6 +1,6 @@
 {
   "name": "plugin",
-  "version": "1.0.3.2",
+  "version": "1.0.3.16",
   "main": "index.js",
   "directories": {
     "lib": "lib"

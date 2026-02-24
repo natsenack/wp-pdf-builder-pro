@@ -2,6 +2,18 @@
 
 ## Tous les changements notables de ce projet seront documentés dans ce fichier.
 
+## Version 1.0.3.16 (2026-02-24)
+
+- 🔧 **Hotfix Mises à jour** : Correction du système dual (utilisateurs avec/sans licence)
+  - ✅ Vérification du statut de licence avant envoi à EDD
+  - ✅ Fallback automatique vers mu-plugin `edd-free-update.php` si licence inactive/expirée
+  - ✅ Tous les utilisateurs reçoivent les mises à jour, même avec licence expirée
+- 🔍 **License Manager** : Amélioration du `check_license_status()` avec détection rapide d'expiration
+- 🐛 **Namespace Fix** : Correction de la déclaration de namespace dans `PDF_Builder_WooCommerce_Integration.php`
+- ✅ **Plugin Check** : Résolution de l'erreur fatale de namespace
+
+==================================================================================================================
+
 ## Version 1.0.3.12 (2026-02-23)
 
 - 🔒 **Plugin Check** : Correction de toutes les erreurs `EscapeOutput` — `_e()` → `esc_html_e()`, `echo __()` → `esc_html__()`, `echo admin_url()` → `esc_url()`, variables HTML échappées avec `esc_html()`/`esc_attr()`

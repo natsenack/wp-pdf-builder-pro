@@ -443,7 +443,16 @@ if (function_exists('add_action')) {
                 'plugin_url'      => PDF_BUILDER_PLUGIN_URL,
                 'license_callback' => function() {
                     if ( class_exists('PDF_Builder\\Managers\\PDF_Builder_License_Manager') ) {
-                        return \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance()->get_license_key();
+                        $license_manager = \PDF_Builder\Managers\PDF_Builder_License_Manager::getInstance();
+                        
+                        // 🔴 HOTFIX: Ne pas envoyer une clé si elle est inactive (expirée, invalide)
+                        // Cela permet au mu-plugin edd-free-update.php de prendre la relève et fournir les mises à jour
+                        if ( $license_manager->getLicenseStatus() !== 'active' ) {
+                            error_log('[PDF Builder Updates] License status is ' . $license_manager->getLicenseStatus() . ' - NOT sending license key. mu-plugin will handle free updates.');
+                            return ''; // Retourner clé vide → mu-plugin prend la relève
+                        }
+                        
+                        return $license_manager->get_license_key();
                     }
                     return '';
                 },
