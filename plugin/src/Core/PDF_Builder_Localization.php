@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Système de localisation et internationalisation
@@ -73,7 +73,7 @@ class PDF_Builder_Localization {
             // Fallback vers la langue par défaut
             $plugin_path = plugin_basename(PDF_BUILDER_PLUGIN_FILE);
             if ($plugin_path) {
-                load_plugin_textdomain(self::TEXT_DOMAIN, false, dirname($plugin_path) . '/resources/languages/');
+                load_plugin_textdomain(self::TEXT_DOMAIN, false, dirname($plugin_path) . '/resources/languages/'); // phpcs:ignore WordPress.WP.I18n.InvalidTextDomainRegistration
             }
         }
     }
@@ -374,7 +374,7 @@ class PDF_Builder_Localization {
      */
     private function generate_po_file($translations, $locale) {
         $po_content = "# PDF Builder Pro translations for {$locale}\n";
-        $po_content .= "# Generated on " . date('Y-m-d H:i:s') . "\n";
+        $po_content .= "# Generated on " . gmdate('Y-m-d H:i:s') . "\n";
         $po_content .= "\"Language: {$locale}\\n\"\n";
         $po_content .= "\"Plural-Forms: nplurals=2; plural=n != 1;\\n\"\n\n";
 
@@ -426,11 +426,11 @@ class PDF_Builder_Localization {
             if (is_dir($path)) {
                 $this->delete_directory_recursive($path);
             } else {
-                unlink($path);
+                wp_delete_file($path);
             }
         }
 
-        rmdir($dir);
+        rmdir($dir); // phpcs:ignore WordPress.WP.AlternativeFunctions
     }
 
     /**

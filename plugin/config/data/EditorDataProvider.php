@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Data;
 
@@ -128,7 +128,7 @@ class EditorDataProvider implements DataProviderInterface
     {
         return [
             'number' => $this->get('order_number', ''),
-            'date' => $this->get('order_date', date('d/m/Y')),
+            'date' => $this->get('order_date', gmdate('d/m/Y')),
             'status' => $this->get('order_status', ''),
             'total' => $this->get('order_total', ''),
         ];

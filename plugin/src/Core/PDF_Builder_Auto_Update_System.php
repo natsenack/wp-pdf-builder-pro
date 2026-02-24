@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
@@ -245,7 +245,7 @@ class PDF_Builder_Auto_Update_System {
 
             // Vérifier l'intégrité du fichier
             if (!$this->verify_download_integrity($download_path, $update_info)) {
-                unlink($download_path);
+                wp_delete_file($download_path);
                 throw new Exception('Intégrité du fichier compromise');
             }
 
@@ -497,11 +497,11 @@ class PDF_Builder_Auto_Update_System {
             if (is_dir($path)) {
                 $this->delete_directory($path);
             } else {
-                unlink($path);
+                wp_delete_file($path);
             }
         }
 
-        rmdir($dir);
+        rmdir($dir); // phpcs:ignore WordPress.WP.AlternativeFunctions
     }
 
     /**
@@ -509,7 +509,7 @@ class PDF_Builder_Auto_Update_System {
      */
     private function cleanup_installation_files($extract_path, $archive_path) {
         $this->delete_directory($extract_path);
-        unlink($archive_path);
+        wp_delete_file($archive_path);
     }
 
     /**
@@ -563,7 +563,7 @@ class PDF_Builder_Auto_Update_System {
 
         $table = $wpdb->prefix . 'pdf_builder_updates';
 
-        return $wpdb->get_row($wpdb->prepare("
+        return $wpdb->get_row($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT * FROM $table WHERE version = %s
         ", $version), ARRAY_A);
     }
@@ -614,7 +614,7 @@ class PDF_Builder_Auto_Update_System {
         $table = $wpdb->prefix . 'pdf_builder_updates';
         $retention_months = pdf_builder_config('update_retention_months', 6);
 
-        $deleted = $wpdb->query($wpdb->prepare("
+        $deleted = $wpdb->query($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             DELETE FROM $table
             WHERE status = 'installed'
             AND installed_at < DATE_SUB(NOW(), INTERVAL %d MONTH)
@@ -812,7 +812,7 @@ class PDF_Builder_Auto_Update_System {
 
         $table = $wpdb->prefix . 'pdf_builder_updates';
 
-        return $wpdb->get_results("
+        return $wpdb->get_results(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT * FROM $table
             ORDER BY created_at DESC
             LIMIT 10

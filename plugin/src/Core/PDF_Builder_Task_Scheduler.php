@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
@@ -289,7 +289,7 @@ class PDF_Builder_Task_Scheduler {
         $total_size = 0;
 
         foreach ($tables as $table) {
-            $size = $wpdb->get_var("
+            $size = $wpdb->get_var(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) as size_mb
                 FROM information_schema.tables
                 WHERE table_name = '$table'
@@ -444,7 +444,7 @@ class PDF_Builder_Task_Scheduler {
                 'description' => $task_config['description'],
                 'interval' => $task_config['interval'],
                 'scheduled' => $next_run !== false,
-                'next_run' => $next_run ? date('Y-m-d H:i:s', $next_run) : null,
+                'next_run' => $next_run ? gmdate('Y-m-d H:i:s', $next_run) : null,
                 'last_run' => get_option("pdf_builder_last_run_$task_name")
             ];
         }

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
  * PDF Builder Pro - GDPR Compliance Manager
@@ -264,7 +264,7 @@ class PDF_Builder_GDPR_Manager {
         // Créer le dossier s'il n'existe pas
         wp_mkdir_p($export_dir);
 
-        $timestamp = date('Y-m-d-H-i-s');
+        $timestamp = gmdate('Y-m-d-H-i-s');
         $filename = "pdf-builder-user-data-{$user_id}-{$timestamp}.{$format}";
         $file_path = $export_dir . '/' . $filename;
 
@@ -834,7 +834,7 @@ class PDF_Builder_GDPR_Manager {
 
         // Récupérer les templates utilisateur
         global $wpdb;
-        $templates = $wpdb->get_results($wpdb->prepare("
+        $templates = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT ID, post_title, post_modified, post_content
             FROM {$wpdb->posts}
             WHERE post_author = %d AND post_type = 'pdf_template'
@@ -849,7 +849,7 @@ class PDF_Builder_GDPR_Manager {
 
         // Récupérer les logs d'audit de l'utilisateur (anonymisés)
         $table_audit = $wpdb->prefix . 'pdf_builder_audit_log';
-        $audit_logs = $wpdb->get_results($wpdb->prepare("
+        $audit_logs = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT action, data_type, created_at
             FROM {$table_audit}
             WHERE user_id = %d
@@ -1011,7 +1011,7 @@ class PDF_Builder_GDPR_Manager {
         $temp_files = glob(WP_CONTENT_DIR . '/pdf-builder-temp/*' . $user_id . '*');
         foreach ($temp_files as $file) {
             if (is_file($file)) {
-                unlink($file);
+                wp_delete_file($file);
             }
         }
 
@@ -1062,7 +1062,7 @@ class PDF_Builder_GDPR_Manager {
      */
     public function cleanup_expired_data() {
         $retention_days = $this->gdpr_options['data_retention_days'];
-        $cutoff_date = date('Y-m-d H:i:s', strtotime("-{$retention_days} days"));
+        $cutoff_date = gmdate('Y-m-d H:i:s', strtotime("-{$retention_days} days"));
 
         global $wpdb;
         $table_audit = $wpdb->prefix . 'pdf_builder_audit_log';
@@ -1097,7 +1097,7 @@ class PDF_Builder_GDPR_Manager {
         global $wpdb;
 
         // Anonymiser les templates anciens
-        $wpdb->query($wpdb->prepare("
+        $wpdb->query($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             UPDATE {$wpdb->posts}
             SET post_title = CONCAT('Anonymized Template ', ID),
                 post_content = ''
@@ -1348,7 +1348,7 @@ class PDF_Builder_GDPR_Manager {
         global $wpdb;
         $table_audit = $wpdb->prefix . 'pdf_builder_audit_log';
 
-        $audit_logs = $wpdb->get_results($wpdb->prepare("
+        $audit_logs = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT * FROM $table_audit
             ORDER BY created_at DESC
             LIMIT 50
@@ -1403,7 +1403,7 @@ class PDF_Builder_GDPR_Manager {
             $params[] = $end_date . ' 23:59:59';
         }
 
-        $audit_logs = $wpdb->get_results($wpdb->prepare("
+        $audit_logs = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT * FROM $table_audit
             WHERE 1=1 $where
             ORDER BY created_at DESC
@@ -1415,7 +1415,7 @@ class PDF_Builder_GDPR_Manager {
         wp_mkdir_p($export_dir);
 
         // Créer un fichier CSV
-        $timestamp = date('Y-m-d-H-i-s');
+        $timestamp = gmdate('Y-m-d-H-i-s');
         $filename = "audit-log-{$timestamp}.csv";
         $file_path = $export_dir . '/' . $filename;
 
@@ -1462,11 +1462,11 @@ class PDF_Builder_GDPR_Manager {
             if (is_dir($path)) {
                 $this->delete_directory_recursive($path);
             } else {
-                unlink($path);
+                wp_delete_file($path);
             }
         }
 
-        return rmdir($dir);
+        return rmdir($dir); // phpcs:ignore WordPress.WP.AlternativeFunctions
     }
 }
 

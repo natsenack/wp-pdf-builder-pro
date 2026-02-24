@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 /**
@@ -80,7 +80,7 @@ class PDF_Builder_Thumbnail_Manager
             // Récupérer les données du template pour créer un aperçu
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-            $template = $wpdb->get_row(
+            $template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
                 ARRAY_A
             );
@@ -225,7 +225,7 @@ class PDF_Builder_Thumbnail_Manager
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
-        $template = $wpdb->get_row(
+        $template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             $wpdb->prepare("SELECT thumbnail_url FROM $table_templates WHERE id = %d", $template_id),
             ARRAY_A
         );
@@ -246,7 +246,7 @@ class PDF_Builder_Thumbnail_Manager
             $file_path = $upload_dir['basedir'] . $relative_path;
 
             if (file_exists($file_path)) {
-                unlink($file_path);
+                wp_delete_file($file_path);
             }
 
             // Supprimer l'URL de la DB
@@ -263,7 +263,7 @@ class PDF_Builder_Thumbnail_Manager
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
         // Vérifier et ajouter la colonne thumbnail_url
-        $columns = $wpdb->get_results("DESCRIBE $table_templates");
+        $columns = $wpdb->get_results("DESCRIBE $table_templates"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
         $thumbnail_exists = false;
         if ($columns) {
             foreach ($columns as $column) {
@@ -301,7 +301,7 @@ class PDF_Builder_Thumbnail_Manager
         }
 
         // Récupérer tous les templates avec thumbnails
-        $templates = $wpdb->get_results("SELECT id, thumbnail_url FROM $table_templates WHERE thumbnail_url != ''", ARRAY_A);
+        $templates = $wpdb->get_results("SELECT id, thumbnail_url FROM $table_templates WHERE thumbnail_url != ''", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
         $existing_template_ids = array_column($templates, 'id');
         $existing_thumbnails = array_column($templates, 'thumbnail_url');
@@ -317,7 +317,7 @@ class PDF_Builder_Thumbnail_Manager
 
                 // Si le template n'existe plus ou n'a plus de thumbnail, supprimer le fichier
                 if (!in_array($template_id, $existing_template_ids)) {
-                    unlink($file_path);
+                    wp_delete_file($file_path);
                     $this->logInfo("Thumbnail orphelin supprimé: $filename");
                 }
             }

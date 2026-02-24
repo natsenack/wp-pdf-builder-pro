@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
@@ -275,7 +275,7 @@ class PDF_Builder_Error_Handler {
 
         $table = $wpdb->prefix . 'pdf_builder_errors';
 
-        if ($wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) { // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             $charset_collate = $wpdb->get_charset_collate();
 
             $sql = "CREATE TABLE $table (
@@ -444,12 +444,12 @@ class PDF_Builder_Error_Handler {
         $table = $wpdb->prefix . 'pdf_builder_errors';
 
         // Supprimer les erreurs de plus de 30 jours
-        $wpdb->query($wpdb->prepare(
+        $wpdb->query($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "DELETE FROM $table WHERE created_at < DATE_SUB(NOW(), INTERVAL 30 DAY)"
         ));
 
         // Supprimer les erreurs de niveau NOTICE de plus de 7 jours
-        $wpdb->query($wpdb->prepare(
+        $wpdb->query($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "DELETE FROM $table WHERE level = 'NOTICE' AND created_at < DATE_SUB(NOW(), INTERVAL 7 DAY)"
         ));
     }
@@ -462,7 +462,7 @@ class PDF_Builder_Error_Handler {
 
         $table = $wpdb->prefix . 'pdf_builder_errors';
 
-        $stats = $wpdb->get_results($wpdb->prepare("
+        $stats = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT
                 level,
                 COUNT(*) as count,
@@ -484,7 +484,7 @@ class PDF_Builder_Error_Handler {
 
         $table = $wpdb->prefix . 'pdf_builder_errors';
 
-        return $wpdb->get_results($wpdb->prepare("
+        return $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT * FROM $table
             ORDER BY created_at DESC
             LIMIT %d

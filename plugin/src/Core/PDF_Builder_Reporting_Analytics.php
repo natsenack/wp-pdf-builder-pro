@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
@@ -311,8 +311,8 @@ class PDF_Builder_Reporting_Analytics {
                 break;
 
             case self::PERIOD_QUARTERLY:
-                $quarter_start = ceil(date('n', $now) / 3) * 3 - 2;
-                $from = strtotime(date('Y', $now) . '-' . $quarter_start . '-01');
+                $quarter_start = ceil(gmdate('n', $now) / 3) * 3 - 2;
+                $from = strtotime(gmdate('Y', $now) . '-' . $quarter_start . '-01');
                 $to = strtotime('+3 months', $from) - 1;
                 break;
 
@@ -322,8 +322,8 @@ class PDF_Builder_Reporting_Analytics {
         }
 
         return [
-            'from' => date('Y-m-d H:i:s', $from),
-            'to' => date('Y-m-d H:i:s', $to)
+            'from' => gmdate('Y-m-d H:i:s', $from),
+            'to' => gmdate('Y-m-d H:i:s', $to)
         ];
     }
 
@@ -335,7 +335,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_analytics';
 
-        return $wpdb->get_var($wpdb->prepare("
+        return $wpdb->get_var($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT COUNT(*) FROM $table
             WHERE event_type = 'pdf_generated'
             AND created_at BETWEEN %s AND %s
@@ -350,7 +350,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_analytics';
 
-        return $wpdb->get_var($wpdb->prepare("
+        return $wpdb->get_var($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT COUNT(DISTINCT user_id) FROM $table
             WHERE created_at BETWEEN %s AND %s
         ", $date_range['from'], $date_range['to']));
@@ -364,7 +364,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_analytics';
 
-        $results = $wpdb->get_results($wpdb->prepare("
+        $results = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT event_data->>'$.template_id' as template_id, COUNT(*) as count
             FROM $table
             WHERE event_type = 'pdf_generated'
@@ -385,7 +385,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_analytics';
 
-        $results = $wpdb->get_results($wpdb->prepare("
+        $results = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT event_type, COUNT(*) as count
             FROM $table
             WHERE created_at BETWEEN %s AND %s
@@ -438,8 +438,8 @@ class PDF_Builder_Reporting_Analytics {
         $duration = $current_end - $current_start;
 
         return [
-            'from' => date('Y-m-d H:i:s', $current_start - $duration),
-            'to' => date('Y-m-d H:i:s', $current_end - $duration)
+            'from' => gmdate('Y-m-d H:i:s', $current_start - $duration),
+            'to' => gmdate('Y-m-d H:i:s', $current_end - $duration)
         ];
     }
 
@@ -451,7 +451,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_performance_metrics';
 
-        return $wpdb->get_var($wpdb->prepare("
+        return $wpdb->get_var($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT AVG(execution_time) FROM $table
             WHERE operation_type = 'pdf_generation'
             AND created_at BETWEEN %s AND %s
@@ -466,7 +466,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_analytics';
 
-        $results = $wpdb->get_results($wpdb->prepare("
+        $results = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT HOUR(created_at) as hour, COUNT(*) as count
             FROM $table
             WHERE created_at BETWEEN %s AND %s
@@ -500,7 +500,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_analytics';
 
-        return $wpdb->get_var($wpdb->prepare("
+        return $wpdb->get_var($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT COUNT(*) FROM $table
             WHERE created_at BETWEEN %s AND %s
         ", $date_range['from'], $date_range['to']));
@@ -514,7 +514,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_errors';
 
-        return $wpdb->get_var($wpdb->prepare("
+        return $wpdb->get_var($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT COUNT(*) FROM $table
             WHERE created_at BETWEEN %s AND %s
         ", $date_range['from'], $date_range['to']));
@@ -528,7 +528,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_security_threats';
 
-        return $wpdb->get_var($wpdb->prepare("
+        return $wpdb->get_var($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT COUNT(*) FROM $table
             WHERE created_at BETWEEN %s AND %s
         ", $date_range['from'], $date_range['to']));
@@ -598,7 +598,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_blocked_ips';
 
-        return $wpdb->get_var($wpdb->prepare("
+        return $wpdb->get_var($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT COUNT(*) FROM $table
             WHERE blocked_at BETWEEN %s AND %s
         ", $date_range['from'], $date_range['to']));
@@ -612,7 +612,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_security_events';
 
-        return $wpdb->get_var($wpdb->prepare("
+        return $wpdb->get_var($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT COUNT(*) FROM $table
             WHERE event_type = 'failed_login'
             AND created_at BETWEEN %s AND %s
@@ -627,7 +627,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_security_events';
 
-        return $wpdb->get_results($wpdb->prepare("
+        return $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT event_type, COUNT(*) as count
             FROM $table
             WHERE created_at BETWEEN %s AND %s
@@ -659,7 +659,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_request_logs';
 
-        $results = $wpdb->get_results($wpdb->prepare("
+        $results = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT request_uri, COUNT(*) as count
             FROM $table
             WHERE created_at BETWEEN %s AND %s
@@ -679,7 +679,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_errors';
 
-        $results = $wpdb->get_results($wpdb->prepare("
+        $results = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT error_type, COUNT(*) as count
             FROM $table
             WHERE created_at BETWEEN %s AND %s
@@ -698,7 +698,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_errors';
 
-        $results = $wpdb->get_results($wpdb->prepare("
+        $results = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT error_message, COUNT(*) as count
             FROM $table
             WHERE created_at BETWEEN %s AND %s
@@ -718,7 +718,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_errors';
 
-        $results = $wpdb->get_results($wpdb->prepare("
+        $results = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT DATE(created_at) as date, COUNT(*) as count
             FROM $table
             WHERE created_at BETWEEN %s AND %s
@@ -737,7 +737,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_errors';
 
-        $results = $wpdb->get_results($wpdb->prepare("
+        $results = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT user_id, COUNT(*) as error_count
             FROM $table
             WHERE user_id IS NOT NULL
@@ -946,7 +946,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_analytics';
 
-        $results = $wpdb->get_results($wpdb->prepare("
+        $results = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT HOUR(created_at) as hour, COUNT(*) as count
             FROM $table
             WHERE created_at BETWEEN %s AND %s
@@ -965,7 +965,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_analytics';
 
-        $results = $wpdb->get_results($wpdb->prepare("
+        $results = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT DATE(created_at) as date, COUNT(*) as count
             FROM $table
             WHERE created_at BETWEEN %s AND %s
@@ -984,7 +984,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_analytics';
 
-        $results = $wpdb->get_results($wpdb->prepare("
+        $results = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT user_id, COUNT(*) as activity_count
             FROM $table
             WHERE user_id IS NOT NULL
@@ -1054,7 +1054,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_performance_metrics';
 
-        $result = $wpdb->get_row($wpdb->prepare("
+        $result = $wpdb->get_row($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT AVG(memory_peak) as avg_peak, MAX(memory_peak) as max_peak
             FROM $table
             WHERE created_at BETWEEN %s AND %s
@@ -1071,7 +1071,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_performance_metrics';
 
-        $result = $wpdb->get_row($wpdb->prepare("
+        $result = $wpdb->get_row($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT AVG(execution_time) as avg_query_time, COUNT(*) as total_queries
             FROM $table
             WHERE operation_type LIKE 'db_%'
@@ -1089,7 +1089,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_performance_metrics';
 
-        $result = $wpdb->get_row($wpdb->prepare("
+        $result = $wpdb->get_row($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT AVG(execution_time) as avg_response_time, MAX(execution_time) as max_response_time
             FROM $table
             WHERE operation_type LIKE 'api_%'
@@ -1107,7 +1107,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_performance_metrics';
 
-        $results = $wpdb->get_results($wpdb->prepare("
+        $results = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT operation_type, execution_time, created_at
             FROM $table
             WHERE execution_time > 5
@@ -1418,7 +1418,7 @@ class PDF_Builder_Reporting_Analytics {
 
         // Supprimer les anciens rapports
         $reports_table = $wpdb->prefix . 'pdf_builder_reports';
-        $deleted_reports = $wpdb->query($wpdb->prepare("
+        $deleted_reports = $wpdb->query($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             DELETE FROM $reports_table
             WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)
         ", $retention_days));
@@ -1433,7 +1433,7 @@ class PDF_Builder_Reporting_Analytics {
 
             foreach ($files as $file) {
                 if (filemtime($file) < $cutoff_time) {
-                    unlink($file);
+                    wp_delete_file($file);
                 }
             }
         }
@@ -1580,7 +1580,7 @@ class PDF_Builder_Reporting_Analytics {
 
         $table = $wpdb->prefix . 'pdf_builder_reports';
 
-        $report = $wpdb->get_row($wpdb->prepare("
+        $report = $wpdb->get_row($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT * FROM $table WHERE id = %d
         ", $report_id), ARRAY_A);
 

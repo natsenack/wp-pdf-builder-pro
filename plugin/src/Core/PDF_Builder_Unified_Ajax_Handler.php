@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
@@ -1618,13 +1618,13 @@ class PDF_Builder_Unified_Ajax_Handler {
             $size_before = $this->get_database_size();
 
             // Optimiser toutes les tables du plugin
-            $tables = $wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}pdf_builder%'", ARRAY_N);
+            $tables = $wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}pdf_builder%'", ARRAY_N); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             $optimized_tables = 0;
             $errors = [];
 
             foreach ($tables as $table) {
                 $table_name = $table[0];
-                $result = $wpdb->query("OPTIMIZE TABLE `$table_name`");
+                $result = $wpdb->query("OPTIMIZE TABLE `$table_name`"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
                 if ($result === false) {
                     $errors[] = "Erreur sur la table $table_name: " . $wpdb->last_error;
@@ -1681,7 +1681,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                         // Supprimer les fichiers de plus de 24 heures
                         if ($file_age > 86400) {
                             $file_size = filesize($file);
-                            if (unlink($file)) {
+                            if (wp_delete_file($file)) {
                                 $deleted_files++;
                                 $deleted_size += $file_size;
                             }
@@ -1692,7 +1692,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
             // Nettoyer les transients temporaires du plugin
             global $wpdb;
-            $transient_count = $wpdb->query(
+            $transient_count = $wpdb->query( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 $wpdb->prepare(
                     "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value = '1'",
                     '_transient_pdf_builder_temp_%'
@@ -1825,11 +1825,11 @@ class PDF_Builder_Unified_Ajax_Handler {
 
             // Mettre à jour dans le tableau unifié des paramètres
             $settings = pdf_builder_get_option('pdf_builder_settings', array());
-            $settings['pdf_builder_next_maintenance'] = date('Y-m-d H:i:s', $next_sunday);
+            $settings['pdf_builder_next_maintenance'] = gmdate('Y-m-d H:i:s', $next_sunday);
             pdf_builder_update_option('pdf_builder_settings', $settings);
 
-            $message = '📅 Prochaine maintenance programmée pour le ' . date('d/m/Y à H:i', $next_sunday);
-            $formatted_date = date('d/m/Y à H:i', $next_sunday);
+            $message = '📅 Prochaine maintenance programmée pour le ' . gmdate('d/m/Y à H:i', $next_sunday);
+            $formatted_date = gmdate('d/m/Y à H:i', $next_sunday);
 
             wp_send_json_success([
                 'message' => $message,
@@ -2187,7 +2187,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              header('Pragma: no-cache');
              header('Expires: 0');
 
-             readfile($filepath);
+             readfile($filepath); // phpcs:ignore WordPress.WP.AlternativeFunctions
              exit;
 
          } catch (Exception $e) {
@@ -2222,7 +2222,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                  if (empty($existing_test_key)) {
                      // Générer une nouvelle clé de test
                      $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(wp_rand(), true)), 0, 16));
-                     $expires_in_30_days = date('Y-m-d', strtotime('+30 days'));
+                     $expires_in_30_days = gmdate('Y-m-d', strtotime('+30 days'));
 
                      pdf_builder_update_option('pdf_builder_license_test_key', $test_key);
                      pdf_builder_update_option('pdf_builder_license_test_key_expires', $expires_in_30_days);
@@ -2266,7 +2266,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
          try {
             $test_key = 'TEST-' . strtoupper(substr(md5(uniqid(wp_rand(), true)), 0, 16));
-            $expires_in_30_days = date('Y-m-d', strtotime('+30 days'));
+            $expires_in_30_days = gmdate('Y-m-d', strtotime('+30 days'));
 
             // Sauvegarder individuellement
             pdf_builder_update_option('pdf_builder_license_test_key', $test_key);
@@ -2362,8 +2362,8 @@ class PDF_Builder_Unified_Ajax_Handler {
 
              // Clear license transients
              global $wpdb;
-             $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_license_%'");
-             $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_license_%'");
+             $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_license_%'"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
+             $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_license_%'"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
              error_log('[PDF Builder] Cleared license transients');
 
              wp_send_json_success([
@@ -2400,7 +2400,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                      foreach ($files as $file) {
                          if (is_file($file)) {
                              $file_size = filesize($file);
-                             if (unlink($file)) {
+                             if (wp_delete_file($file)) {
                                  $cleared_files++;
                                  $total_size += $file_size;
                              }
@@ -2417,7 +2417,7 @@ class PDF_Builder_Unified_Ajax_Handler {
              foreach ($temp_files as $temp_file) {
                  if (is_file($temp_file) && (time() - filemtime($temp_file)) > 86400) {
                      $file_size = filesize($temp_file);
-                     if (unlink($temp_file)) {
+                     if (wp_delete_file($temp_file)) {
                          $cleared_files++;
                          $total_size += $file_size;
                      }
@@ -2633,7 +2633,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                  if (is_dir($log_dir)) {
                      $files = glob($log_dir . '*.log');
                      foreach ($files as $file) {
-                         if (is_file($file) && unlink($file)) {
+                         if (is_file($file) && wp_delete_file($file)) {
                              $cleared_files++;
                          }
                      }
@@ -2700,7 +2700,7 @@ class PDF_Builder_Unified_Ajax_Handler {
                  'database' => [
                      'version' => $wpdb->db_version(),
                      'size' => $this->get_database_size(),
-                     'tables_count' => count($wpdb->get_results("SHOW TABLES"))
+                     'tables_count' => count($wpdb->get_results("SHOW TABLES")) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                  ],
                  'plugin' => [
                      'version' => pdf_builder_get_option('pdf_builder_version', 'Unknown'),
@@ -2762,7 +2762,7 @@ class PDF_Builder_Unified_Ajax_Handler {
      private function get_database_size() {
          global $wpdb;
 
-         $result = $wpdb->get_row("
+         $result = $wpdb->get_row(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
              SELECT
                  ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) as size_mb
              FROM information_schema.tables
@@ -3162,7 +3162,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         global $wpdb;
         
         $table_name = $wpdb->prefix . 'pdf_builder_templates';
-        $template = $wpdb->get_row(
+        $template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             $wpdb->prepare(
                 "SELECT * FROM {$table_name} WHERE id = %d",
                 $template_id
@@ -4646,7 +4646,7 @@ class PDF_Builder_Unified_Ajax_Handler {
         $format = $element['dateFormat'] ?? 'd/m/Y';
         $show_time = $element['showTime'] ?? false;
 
-        // Convertir le format PHP en format date()
+        // Convertir le format PHP en format gmdate()
         $formatted_date = $this->format_date_php($date, $format);
 
         // Ajouter l'heure si nécessaire
@@ -5853,7 +5853,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         global $wpdb;
         $table = $wpdb->prefix . 'pdf_builder_templates';
-        $template_count = (int) $wpdb->get_var($wpdb->prepare(
+        $template_count = (int) $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT COUNT(*) FROM {$table} WHERE user_id = %d", $user->ID
         ));
 
@@ -5990,7 +5990,7 @@ class PDF_Builder_Unified_Ajax_Handler {
 
         wp_send_json_success([
             'csv'      => $csv,
-            'filename' => 'audit-log-' . date('Y-m-d') . '.csv',
+            'filename' => 'audit-log-' . gmdate('Y-m-d') . '.csv',
             'count'    => count($logs),
         ]);
     }

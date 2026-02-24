@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - File System Helper
@@ -91,12 +91,12 @@ class FileSystemHelper
                 if (is_dir($path)) {
                     $this->deleteDirectory($path);
                 } else {
-                    @unlink($path);
+                    @wp_delete_file($path);
                 }
             }
         }
 
-        return @rmdir($directory);
+        return @rmdir($directory); // phpcs:ignore WordPress.WP.AlternativeFunctions
     }
 
     /**
@@ -132,7 +132,7 @@ class FileSystemHelper
         foreach ($files as $file) {
             if (is_file($file) && filemtime($file) < $cutoff_time) {
                 $file_size = @filesize($file);
-                if (@unlink($file)) {
+                if (@wp_delete_file($file)) {
                     $cleared_files++;
                     $total_size += $file_size;
                 }

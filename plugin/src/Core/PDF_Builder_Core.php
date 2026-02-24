@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 namespace PDF_Builder\Core;
@@ -10,7 +10,7 @@ if (!function_exists('did_action')) {
     function did_action($tag) { return 0; }
 }
 if (!function_exists('wp_mkdir_p')) {
-    function wp_mkdir_p($path) { return mkdir($path, 0755, true); }
+    function wp_mkdir_p($path) { return mkdir($path, 0755, true); } // phpcs:ignore WordPress.WP.AlternativeFunctions
 }
 if (!function_exists('add_menu_page')) {
     function add_menu_page($page_title, $menu_title, $capability, $menu_slug, $function = '', $icon_url = '', $position = null) { return ''; }
@@ -31,7 +31,7 @@ if (!function_exists('esc_html')) {
     function esc_html($text) { return htmlspecialchars($text, ENT_QUOTES, 'UTF-8'); }
 }
 if (!function_exists('date_i18n')) {
-    function date_i18n($format, $timestamp = false) { return date($format, $timestamp ?: time()); }
+    function date_i18n($format, $timestamp = false) { return gmdate($format, $timestamp ?: time()); }
 }
 if (!function_exists('get_option')) {
     function get_option($option, $default = false) { return $default; }
@@ -199,7 +199,7 @@ class PdfBuilderCore
             }
 
             $base_dir = $upload_dir['basedir'];
-            if (empty($base_dir) || !is_writable($base_dir)) {
+            if (empty($base_dir) || !is_writable($base_dir)) { // phpcs:ignore WordPress.WP.AlternativeFunctions
                 
                 return;
             }
@@ -359,7 +359,7 @@ class PdfBuilderCore
 
         // Récupérer les logs récents depuis la base de données
         $table_name = $wpdb->prefix . 'pdf_builder_logs';
-        $recent_logs = $wpdb->get_results(
+        $recent_logs = $wpdb->get_results( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT * FROM {$table_name}
              WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
              ORDER BY created_at DESC
@@ -441,17 +441,14 @@ class PdfBuilderCore
      */
     private function enqueueReactGlobalAPI()
     {
-        // Charger React et ReactDOM en premier
-        wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.0.0', true);
-        wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.0.0', true);
-
+        // React est bundlé dans les fichiers locaux (webpack) -- pas de CDN externe
         // Charger seulement l'API globale de PDF Builder React - seulement si le fichier existe
         $react_script_path = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-react-wrapper.min.js';
         if (file_exists($react_script_path)) {
             $react_script_url = PDF_BUILDER_PLUGIN_URL . 'assets/js/pdf-builder-react-wrapper.min.js';
             $cache_bust = time();
             $version_param = $this->version . '-' . $cache_bust;
-            wp_enqueue_script('pdf-builder-react-api-only', $react_script_url, ['react', 'react-dom'], $version_param, true);
+            wp_enqueue_script('pdf-builder-react-api-only', $react_script_url, [], $version_param, true);
             wp_script_add_data('pdf-builder-react-api-only', 'type', 'text/javascript');
         }
     }

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
  * Canvas Save Handler - Sauvegarde 100% des éléments du canvas
@@ -345,7 +345,7 @@ class Canvas_Save_Handler {
             $table = $wpdb->prefix . 'pdf_builder_templates';
 
             // Récupérer le template existant
-            $existing = $wpdb->get_row(
+            $existing = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 $wpdb->prepare("SELECT * FROM $table WHERE id = %d", $template_id)
             );
 

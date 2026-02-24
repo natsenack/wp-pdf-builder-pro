@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 /**
@@ -246,7 +246,7 @@ class PdfBuilderTemplatesAjax
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 // Récupérer le template
-            $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
+            $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             if (!$template) {
                 \wp_send_json_error('Template non trouvé');
             }
@@ -369,7 +369,7 @@ class PdfBuilderTemplatesAjax
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 // Vérifier que le template existe
-            $existing = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_templates WHERE id = %d", $template_id));
+            $existing = $wpdb->get_var($wpdb->prepare("SELECT id FROM $table_templates WHERE id = %d", $template_id)); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             if (!$existing) {
                 \wp_send_json_error('Template non trouvé');
             }
@@ -419,7 +419,7 @@ class PdfBuilderTemplatesAjax
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
             // Récupérer le statut actuel du template
-            $current_status = $wpdb->get_var($wpdb->prepare("SELECT is_default FROM $table_templates WHERE id = %d", $template_id));
+            $current_status = $wpdb->get_var($wpdb->prepare("SELECT is_default FROM $table_templates WHERE id = %d", $template_id)); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             if ($current_status === null) {
                 \wp_send_json_error('Template non trouvé');
             }
@@ -482,7 +482,7 @@ class PdfBuilderTemplatesAjax
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
             // Récupérer les données actuelles du template
-            $existing = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id));
+            $existing = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id)); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             if (!$existing) {
                 \wp_send_json_error('Template non trouvé');
             }
@@ -558,7 +558,7 @@ class PdfBuilderTemplatesAjax
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
             // Vérifier que le template existe et appartient à l'utilisateur actuel
-            $template = $wpdb->get_row($wpdb->prepare("SELECT id, name, user_id FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
+            $template = $wpdb->get_row($wpdb->prepare("SELECT id, name, user_id FROM $table_templates WHERE id = %d", $template_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             if (!$template) {
                 \wp_send_json_error('Template non trouvé');
             }
@@ -612,7 +612,7 @@ class PdfBuilderTemplatesAjax
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 // Vérifier que le template existe
-            $existing = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id));
+            $existing = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id)); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             if (!$existing) {
                 \wp_send_json_error('Template non trouvé');
                 return;

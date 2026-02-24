@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Puppeteer_Client — Client HMAC pour le service PDF distant threeaxe.fr
  *
@@ -418,11 +418,11 @@ class Puppeteer_Client {
         // Fallback basique si wp_generate_uuid4 non disponible
         return sprintf(
             '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
-            mt_rand( 0, 0xffff ),
-            mt_rand( 0, 0x0fff ) | 0x4000,
-            mt_rand( 0, 0x3fff ) | 0x8000,
-            mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff )
+            wp_rand( 0, 0xffff ), wp_rand( 0, 0xffff ),
+            wp_rand( 0, 0xffff ),
+            wp_rand( 0, 0x0fff ) | 0x4000,
+            wp_rand( 0, 0x3fff ) | 0x8000,
+            wp_rand( 0, 0xffff ), wp_rand( 0, 0xffff ), wp_rand( 0, 0xffff )
         );
     }
 

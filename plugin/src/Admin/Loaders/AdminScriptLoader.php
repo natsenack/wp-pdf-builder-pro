@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Admin Script Loader
@@ -346,12 +346,12 @@ class AdminScriptLoader
         }
         $scripts_loaded = true;
         
-        error_log('[WP AdminScriptLoader] loadReactEditorScripts STARTED at ' . date('Y-m-d H:i:s') . ' for page: ' . (isset($_GET['page']) ? $_GET['page'] : 'unknown') . ', hook: ' . $hook);
+        error_log('[WP AdminScriptLoader] loadReactEditorScripts STARTED at ' . gmdate('Y-m-d H:i:s') . ' for page: ' . (isset($_GET['page']) ? $_GET['page'] : 'unknown') . ', hook: ' . $hook);
 
         // CHARGER LA MÉDIATHÈQUE WORDPRESS POUR LES COMPOSANTS REACT
         \wp_enqueue_media();
 
-        $cache_bust = microtime(true) . '-' . rand(1000, 9999);
+        $cache_bust = microtime(true) . '-' . wp_rand(1000, 9999);
         $version_param = PDF_BUILDER_PRO_VERSION . '-' . $cache_bust;
 
         // AJAX throttle manager

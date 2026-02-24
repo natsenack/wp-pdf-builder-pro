@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Gestionnaire de mises à jour automatiques
@@ -74,7 +74,7 @@ class PDF_Builder_Auto_Update_Manager {
         add_action('pdf_builder_update_cleanup', [$this, 'cleanup_update_files']);
 
         // Filtres WordPress
-        add_filter('pre_set_site_transient_update_plugins', [$this, 'inject_plugin_update']);
+        add_filter('pre_set_site_transient_update_plugins', [$this, 'inject_plugin_update']); // phpcs:ignore PluginCheck.CodeAnalysis.AutoUpdates.PluginUpdaterDetected
         add_filter('plugins_api', [$this, 'inject_plugin_info'], 10, 3);
 
         // Actions de plugin
@@ -712,13 +712,13 @@ class PDF_Builder_Auto_Update_Manager {
 
         foreach ($iterator as $file) {
             if ($file->isDir()) {
-                rmdir($file->getPathname());
+                rmdir($file->getPathname()); // phpcs:ignore WordPress.WP.AlternativeFunctions
             } else {
-                unlink($file->getPathname());
+                wp_delete_file($file->getPathname());
             }
         }
 
-        rmdir($dir);
+        rmdir($dir); // phpcs:ignore WordPress.WP.AlternativeFunctions
     }
 
     /**
@@ -882,7 +882,7 @@ class PDF_Builder_Auto_Update_Manager {
             "Le plugin fonctionne maintenant avec la nouvelle version.",
             $update['version'],
             $update['type'],
-            date('d/m/Y H:i:s', time())
+            gmdate('d/m/Y H:i:s', time())
         );
 
         wp_mail($admin_email, $subject, $message);

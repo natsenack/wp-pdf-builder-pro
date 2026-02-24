@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * License Expiration Handler
@@ -99,13 +99,13 @@ class License_Expiration_Handler
         error_log('License nearing expiration: ' . $site_name . ' (remaining ' . $days_remaining . ' days) - expires: ' . $expiration_date);
 
         // Check if we already recorded an event for this date today
-        $last_notification = pdf_builder_get_option('pdf_builder_license_last_notification_' . date('Y-m-d'), '');
+        $last_notification = pdf_builder_get_option('pdf_builder_license_last_notification_' . gmdate('Y-m-d'), '');
         if (!empty($last_notification)) {
             return; // event already recorded today
         }
 
         // Record that we've logged this event today
-        pdf_builder_update_option('pdf_builder_license_last_notification_' . date('Y-m-d'), time());
+        pdf_builder_update_option('pdf_builder_license_last_notification_' . gmdate('Y-m-d'), time());
     }
 
     /**

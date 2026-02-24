@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Data;
 
@@ -64,8 +64,8 @@ class SampleDataProvider implements DataProviderInterface
 
             // Informations commande
             'order_number' => 'SAMPLE-001',
-            'order_date' => date('d/m/Y'),
-            'order_time' => date('H:i'),
+            'order_date' => gmdate('d/m/Y'),
+            'order_time' => gmdate('H:i'),
             'order_status' => 'En cours',
             'order_total' => '€127.50',
             'order_subtotal' => '€120.00',
@@ -110,7 +110,7 @@ class SampleDataProvider implements DataProviderInterface
 
             // Informations de paiement
             'payment_method' => 'Carte bancaire',
-            'payment_date' => date('d/m/Y H:i'),
+            'payment_date' => gmdate('d/m/Y H:i'),
 
             // Notes et commentaires
             'order_notes' => 'Livraison express demandée',
@@ -191,11 +191,11 @@ class SampleDataProvider implements DataProviderInterface
     {
         switch ($variable) {
             case 'current_date':
-                return date('d/m/Y');
+                return gmdate('d/m/Y');
             case 'current_time':
-                return date('H:i');
+                return gmdate('H:i');
             case 'current_datetime':
-                return date('d/m/Y H:i');
+                return gmdate('d/m/Y H:i');
             case 'order_items_count':
                 return '3';
 // Nombre d'articles dans notre exemple
@@ -322,7 +322,7 @@ class SampleDataProvider implements DataProviderInterface
             return sanitize_text_field($value);
         }
         // Fallback PHP
-        return htmlspecialchars(strip_tags($value), ENT_QUOTES, 'UTF-8');
+        return htmlspecialchars(wp_strip_all_tags($value), ENT_QUOTES, 'UTF-8');
     }
 
     /**

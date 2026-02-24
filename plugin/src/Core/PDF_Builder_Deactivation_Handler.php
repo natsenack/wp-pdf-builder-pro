@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
@@ -228,12 +228,12 @@ add_action('pdf_builder_deactivate', function() {
     );
     
     foreach ($tables as $table) {
-        $wpdb->query("DROP TABLE IF EXISTS `$table`");
+        $wpdb->query("DROP TABLE IF EXISTS `$table`"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
     }
     
-    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '%pdf_builder%' OR option_name LIKE '%pdf-builder%'");
-    $wpdb->query("DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE '%pdf_builder%'");
-    $wpdb->query("DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE '%pdf_builder%'");
+    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '%pdf_builder%' OR option_name LIKE '%pdf-builder%'"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
+    $wpdb->query("DELETE FROM {$wpdb->usermeta} WHERE meta_key LIKE '%pdf_builder%'"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
+    $wpdb->query("DELETE FROM {$wpdb->postmeta} WHERE meta_key LIKE '%pdf_builder%'"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
     
     delete_option('pdf_builder_delete_on_deactivate');
 });

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
  * PDF Builder Pro - Database Initialization
@@ -34,7 +34,7 @@ class Database_Initializer {
         $charset_collate = $wpdb->get_charset_collate();
         
         // Vérifier si la table existe déjà
-        $existing_table = $wpdb->get_var($wpdb->prepare(
+        $existing_table = $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT 1 FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
             DB_NAME,
             $table_name
@@ -67,7 +67,7 @@ class Database_Initializer {
         $charset_collate = $wpdb->get_charset_collate();
         
         // Vérifier si la table existe déjà
-        $existing_table = $wpdb->get_var($wpdb->prepare(
+        $existing_table = $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT 1 FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
             DB_NAME,
             $table_name

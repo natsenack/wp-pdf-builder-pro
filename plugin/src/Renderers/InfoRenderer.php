@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - InfoRenderer
@@ -235,7 +235,7 @@ class InfoRenderer
         $html .= '<h4 class="mentions-title">' . htmlspecialchars($templateConfig['title']) . '</h4>';
         $html .= '<div class="mentions-content">' . nl2br(htmlspecialchars($content)) . '</div>';
         if ($templateConfig['show_date']) {
-            $html .= '<div class="mentions-date">Document généré le ' . date('d/m/Y') . '</div>';
+            $html .= '<div class="mentions-date">Document généré le ' . gmdate('d/m/Y') . '</div>';
         }
 
         $html .= '</div>';
@@ -399,7 +399,7 @@ class InfoRenderer
             '[capital]' => $companyData['capital'] ?? 'XXX',
             '[vat]' => $companyData['vat'] ?? 'XXX',
             '[name]' => $companyData['name'] ?? 'XXX',
-            '[date]' => date('d/m/Y')
+            '[date]' => gmdate('d/m/Y')
         ];
         return str_replace(array_keys($replacements), array_values($replacements), $content);
     }

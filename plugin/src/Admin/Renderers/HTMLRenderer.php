@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - HTML Renderer
@@ -296,8 +296,8 @@ class HTMLRenderer
         $double_brace_replacements = array(
             '{{order_id}}' => $order->get_id(),
             '{{order_number}}' => $order->get_order_number(),
-            '{{order_date}}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y'),
-            '{{order_date_time}}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y H:i:s') : date('d/m/Y H:i:s'),
+            '{{order_date}}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : gmdate('d/m/Y'),
+            '{{order_date_time}}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y H:i:s') : gmdate('d/m/Y H:i:s'),
             '{{customer_name}}' => trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()),
             '{{customer_first_name}}' => $order->get_billing_first_name(),
             '{{customer_last_name}}' => $order->get_billing_last_name(),
@@ -338,8 +338,8 @@ class HTMLRenderer
         $bracket_replacements = array(
             '[order_id]' => $order->get_id(),
             '[order_number]' => $order->get_order_number(),
-            '[order_date]' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y'),
-            '[order_date_time]' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y H:i:s') : date('d/m/Y H:i:s'),
+            '[order_date]' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : gmdate('d/m/Y'),
+            '[order_date_time]' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y H:i:s') : gmdate('d/m/Y H:i:s'),
             '[customer_name]' => trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()),
             '[billing_first_name]' => $order->get_billing_first_name(),
             '[billing_last_name]' => $order->get_billing_last_name(),
@@ -380,8 +380,8 @@ class HTMLRenderer
         $single_brace_replacements = array(
             '{order_id}' => $order->get_id(),
             '{order_number}' => $order->get_order_number(),
-            '{order_date}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y'),
-            '{order_date_time}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y H:i:s') : date('d/m/Y H:i:s'),
+            '{order_date}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : gmdate('d/m/Y'),
+            '{order_date_time}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y H:i:s') : gmdate('d/m/Y H:i:s'),
             '{customer_name}' => trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()),
             '{billing_first_name}' => $order->get_billing_first_name(),
             '{billing_last_name}' => $order->get_billing_last_name(),

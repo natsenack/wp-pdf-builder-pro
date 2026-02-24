@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
@@ -384,7 +384,7 @@ class PDF_Builder_Continuous_Deployment {
 
         $table = $wpdb->prefix . 'pdf_builder_deployments';
 
-        return $wpdb->get_row($wpdb->prepare("
+        return $wpdb->get_row($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT * FROM $table WHERE id = %d
         ", $deployment_id), ARRAY_A);
     }
@@ -530,7 +530,7 @@ class PDF_Builder_Continuous_Deployment {
 
         // Nettoyer
         $this->cleanup_temp_files($extract_path);
-        unlink($archive_path);
+        wp_delete_file($archive_path);
     }
 
     /**
@@ -675,11 +675,11 @@ class PDF_Builder_Continuous_Deployment {
             if (is_dir($path)) {
                 $this->delete_directory($path);
             } else {
-                unlink($path);
+                wp_delete_file($path);
             }
         }
 
-        rmdir($dir);
+        rmdir($dir); // phpcs:ignore WordPress.WP.AlternativeFunctions
     }
 
     /**
@@ -722,7 +722,7 @@ class PDF_Builder_Continuous_Deployment {
         $retention_months = pdf_builder_config('deployment_retention_months', 12);
 
         $table = $wpdb->prefix . 'pdf_builder_deployments';
-        $deleted = $wpdb->query($wpdb->prepare("
+        $deleted = $wpdb->query($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             DELETE FROM $table
             WHERE status = 'success'
             AND created_at < DATE_SUB(NOW(), INTERVAL %d MONTH)
@@ -738,7 +738,7 @@ class PDF_Builder_Continuous_Deployment {
         $table = $wpdb->prefix . 'pdf_builder_deployments';
 
         // Vérifier les déploiements bloqués
-        $stuck_deployments = $wpdb->get_results($wpdb->prepare("
+        $stuck_deployments = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT * FROM $table
             WHERE status = 'deploying'
             AND created_at < DATE_SUB(NOW(), INTERVAL 1 HOUR)
@@ -933,7 +933,7 @@ class PDF_Builder_Continuous_Deployment {
 
         $table = $wpdb->prefix . 'pdf_builder_deployments';
 
-        $deployments = $wpdb->get_results($wpdb->prepare("
+        $deployments = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT * FROM $table
             ORDER BY created_at DESC
             LIMIT %d

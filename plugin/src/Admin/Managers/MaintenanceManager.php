@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Maintenance Manager
@@ -28,7 +28,7 @@ class MaintenanceManager
             foreach ($files as $file) {
                 if (is_file($file) && filemtime($file) < time() - 86400) {
                     $file_size = filesize($file);
-                    if (unlink($file)) {
+                    if (wp_delete_file($file)) {
                         $cleared_files++;
                         $total_size += $file_size;
                     }

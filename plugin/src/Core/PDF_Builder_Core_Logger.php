@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Système de Logging Avancé pour PDF Builder Pro
  *
@@ -98,7 +98,7 @@ class PDF_Builder_Core_Logger {
             wp_mkdir_p($log_dir);
         }
 
-        $this->current_log_file = $log_dir . 'pdf-builder-' . date('Y-m-d') . '.log';
+        $this->current_log_file = $log_dir . 'pdf-builder-' . gmdate('Y-m-d') . '.log';
 
         // Rotation automatique si nécessaire
         if ($this->config['auto_rotate']) {
@@ -210,14 +210,14 @@ class PDF_Builder_Core_Logger {
         }
 
         $logs = array();
-        $handle = fopen($this->current_log_file, 'r');
+        $handle = fopen($this->current_log_file, 'r'); // phpcs:ignore WordPress.WP.AlternativeFunctions
 
         if ($handle) {
             $lines = array();
             while (($line = fgets($handle)) !== false) {
                 $lines[] = $line;
             }
-            fclose($handle);
+            fclose($handle); // phpcs:ignore WordPress.WP.AlternativeFunctions
 
             // Inverser pour avoir les plus récents en premier
             $lines = array_reverse($lines);
@@ -284,7 +284,7 @@ class PDF_Builder_Core_Logger {
 
         foreach ($files as $file) {
             if (($now - $file['modified']) > $retention_seconds) {
-                if (unlink($file['path'])) {
+                if (wp_delete_file($file['path'])) {
                     $deleted++;
                 }
             }
@@ -391,10 +391,10 @@ class PDF_Builder_Core_Logger {
         $upload_dir = wp_upload_dir();
         $log_dir = $upload_dir['basedir'] . '/pdf-builder-logs/';
 
-        $timestamp = date('Y-m-d_H-i-s');
+        $timestamp = gmdate('Y-m-d_H-i-s');
         $archive_file = $log_dir . 'pdf-builder-' . $timestamp . '.log';
 
-        if (rename($this->current_log_file, $archive_file)) {
+        if (rename($this->current_log_file, $archive_file)) { // phpcs:ignore WordPress.WP.AlternativeFunctions
             $this->info("Log file rotated to: {$archive_file}");
         }
     }

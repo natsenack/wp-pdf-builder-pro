@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 /**
@@ -803,7 +803,7 @@ class PdfBuilderAdminNew
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
         // Récupérer le nombre de templates pour cet utilisateur (tous, pas seulement les personnalisés)
-        $count = $wpdb->get_var($wpdb->prepare(
+        $count = $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT COUNT(*) FROM $table_templates WHERE user_id = %d",
             $user_id
         ));
@@ -904,7 +904,7 @@ class PdfBuilderAdminNew
 
             wp_enqueue_script(
                 'html2canvas',
-                'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',
+                PDF_BUILDER_PLUGIN_URL . 'assets/js/html2canvas.min.js',
                 [], '1.4.1', true
             );
         });

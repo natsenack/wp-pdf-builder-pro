@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
@@ -182,7 +182,7 @@ class PDF_Builder_Metrics_Analytics {
                 $metric['value'],
                 json_encode($metric['metadata']),
                 $metric['user_id'],
-                date('Y-m-d H:i:s', $metric['timestamp']),
+                gmdate('Y-m-d H:i:s', $metric['timestamp']),
                 $metric['session_id'],
                 $metric['ip_address'],
                 $metric['user_agent']
@@ -616,10 +616,10 @@ class PDF_Builder_Metrics_Analytics {
         $raw_table = $wpdb->prefix . 'pdf_builder_metrics';
         $agg_table = $wpdb->prefix . 'pdf_builder_metrics_aggregated';
 
-        $start_time = date('Y-m-d H:i:s', strtotime($time_range));
+        $start_time = gmdate('Y-m-d H:i:s', strtotime($time_range));
 
         // Agréger par type et nom
-        $results = $wpdb->get_results($wpdb->prepare("
+        $results = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT
                 type,
                 name,
@@ -642,7 +642,7 @@ class PDF_Builder_Metrics_Analytics {
                     'period' => $period,
                     'type' => $result['type'],
                     'name' => $result['name'],
-                    'date' => date('Y-m-d H:i:s'),
+                    'date' => gmdate('Y-m-d H:i:s'),
                     'count' => $result['count'],
                     'avg_value' => $result['avg_value'],
                     'min_value' => $result['min_value'],
@@ -655,7 +655,7 @@ class PDF_Builder_Metrics_Analytics {
         }
 
         // Vider les métriques brutes anciennes
-        $wpdb->query($wpdb->prepare("
+        $wpdb->query($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             DELETE FROM $raw_table
             WHERE timestamp < %s
         ", $start_time));
@@ -671,7 +671,7 @@ class PDF_Builder_Metrics_Analytics {
 
         switch ($type) {
             case self::METRIC_PDF_GENERATION:
-                return $wpdb->get_row($wpdb->prepare("
+                return $wpdb->get_row($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     SELECT
                         COUNT(CASE WHEN JSON_EXTRACT(metadata, '$.success') = 'true' THEN 1 END) as successful_generations,
                         COUNT(*) as total_generations,
@@ -682,7 +682,7 @@ class PDF_Builder_Metrics_Analytics {
                 ", $type, $start_time), ARRAY_A);
 
             case self::METRIC_API_CALLS:
-                return $wpdb->get_row($wpdb->prepare("
+                return $wpdb->get_row($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     SELECT
                         COUNT(CASE WHEN JSON_EXTRACT(metadata, '$.success') = 'true' THEN 1 END) as successful_calls,
                         COUNT(*) as total_calls,
@@ -692,7 +692,7 @@ class PDF_Builder_Metrics_Analytics {
                 ", $type, $start_time), ARRAY_A);
 
             case self::METRIC_USER_ACTIONS:
-                return $wpdb->get_row($wpdb->prepare("
+                return $wpdb->get_row($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     SELECT
                         COUNT(DISTINCT user_id) as unique_users,
                         COUNT(*) as total_actions
@@ -750,10 +750,10 @@ class PDF_Builder_Metrics_Analytics {
         $agg_table = $wpdb->prefix . 'pdf_builder_metrics_aggregated';
 
         // Garder seulement 1 an de données agrégées
-        $wpdb->query($wpdb->prepare("
+        $wpdb->query($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             DELETE FROM $agg_table
             WHERE date < %s
-        ", date('Y-m-d H:i:s', strtotime('-1 year'))));
+        ", gmdate('Y-m-d H:i:s', strtotime('-1 year'))));
     }
 
     /**

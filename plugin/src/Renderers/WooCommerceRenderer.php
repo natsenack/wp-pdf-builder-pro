@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - WooCommerceRenderer
@@ -68,14 +68,14 @@ class WooCommerceRenderer
         $style = $this->buildElementStyle($elementData);
 
         // Accès standardisé aux propriétés (directes uniquement)
-        $date = $elementData['date'] ?? $elementData['orderDate'] ?? $elementData['order_date'] ?? date('d/m/Y');
+        $date = $elementData['date'] ?? $elementData['orderDate'] ?? $elementData['order_date'] ?? gmdate('d/m/Y');
         $dateFormat = $elementData['dateFormat'] ?? $elementData['format'] ?? 'd/m/Y';
         $showTime = $elementData['showTime'] ?? $elementData['time'] ?? $elementData['show_time'] ?? false;
 
         // Formatage de la date
-        $formattedDate = date($dateFormat, strtotime($date));
+        $formattedDate = gmdate($dateFormat, strtotime($date));
         if ($showTime) {
-            $formattedDate .= ' ' . date('H:i:s', strtotime($date));
+            $formattedDate .= ' ' . gmdate('H:i:s', strtotime($date));
         }
 
         return "<div class=\"pdf-element woocommerce-order-date\" style=\"{$style}\">{$formattedDate}</div>";

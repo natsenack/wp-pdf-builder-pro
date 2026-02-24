@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * MaintenanceActionHandler - Gestion des actions de maintenance
@@ -46,7 +46,7 @@ class MaintenanceActionHandler
                 if (is_file($file) && filemtime($file) < time() - 86400) {
                     // Fichiers de plus de 24h
                     $size = filesize($file);
-                    if (unlink($file)) {
+                    if (wp_delete_file($file)) {
                         $cleared_files++;
                         $total_size += $size;
                     }

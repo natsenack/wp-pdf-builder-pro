@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder MU-Plugin Blocker
  * 
@@ -51,7 +51,7 @@ class PDFBuilderMuPluginBlocker {
             
             if (file_exists($file_path)) {
                 // Essayer de supprimer le fichier
-                @unlink($file_path);
+                @wp_delete_file($file_path);
                 
                 // Log l'action
                 

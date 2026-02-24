@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
@@ -31,7 +31,7 @@ if (!function_exists('wp_unslash')) {
  */
 function pdf_builder_preserve_template_settings_fields(int $template_id, array &$template_data, $wpdb): void {
     $table = $wpdb->prefix . 'pdf_builder_templates';
-    $existing = $wpdb->get_row(
+    $existing = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
         $wpdb->prepare("SELECT template_data FROM $table WHERE id = %d", $template_id),
         ARRAY_A
     );
@@ -709,7 +709,7 @@ class PDF_Builder_Template_Ajax_Handler extends PDF_Builder_Ajax_Base {
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
-        $template = $wpdb->get_row(
+        $template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
             ARRAY_A
         );

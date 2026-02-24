@@ -309,6 +309,7 @@ class Canvas_Manager
     private function getCanvasSettingsScript()
     {
         $settings = wp_json_encode($this->settings);
+        // phpcs:disable Squiz.PHP.Heredoc.NotAllowed
         return <<<JS
 (function() {
     // Fusionner avec les settings existants au lieu d'écraser
@@ -321,6 +322,7 @@ class Canvas_Manager
     }
 })();
 JS;
+        // phpcs:enable Squiz.PHP.Heredoc.NotAllowed
     }
 
     /**

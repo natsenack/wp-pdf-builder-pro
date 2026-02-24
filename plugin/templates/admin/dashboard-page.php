@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Template for PDF Builder Pro Dashboard
  *
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
             <p class="pdfb-dashboard-subtitle">Constructeur de PDF professionnel avec éditeur visuel avancé</p>
             <div class="pdfb-dashboard-meta">
                 <span class="pdfb-version-info">Version <?php echo esc_html($plugin_version); ?></span>
-                <span class="pdfb-last-update">Dernière mise à jour: <?php echo esc_html(date('d/m/Y')); ?></span>
+                <span class="pdfb-last-update">Dernière mise à jour: <?php echo esc_html(gmdate('d/m/Y')); ?></span>
             </div>
         </div>
 

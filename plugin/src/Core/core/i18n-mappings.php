@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Internationalization Mappings
  *
@@ -563,7 +563,7 @@ class PDF_Builder_I18n_Mappings {
      */
     public static function format_date($timestamp, $locale = null) {
         $config = self::get_locale_config($locale);
-        return date($config['date_format'], $timestamp);
+        return gmdate($config['date_format'], $timestamp);
     }
 
     /**
@@ -571,7 +571,7 @@ class PDF_Builder_I18n_Mappings {
      */
     public static function format_time($timestamp, $locale = null) {
         $config = self::get_locale_config($locale);
-        return date($config['time_format'], $timestamp);
+        return gmdate($config['time_format'], $timestamp);
     }
 
     /**
@@ -600,13 +600,13 @@ class PDF_Builder_I18n_Mappings {
      */
     public static function generate_pot_file($output_path) {
         $pot_content = "# PDF Builder Pro Translation Template\n";
-        $pot_content .= "# Copyright (C) " . date('Y') . " PDF Builder Pro\n";
+        $pot_content .= "# Copyright (C) " . gmdate('Y') . " PDF Builder Pro\n";
         $pot_content .= "# This file is distributed under the same license as the PDF Builder Pro package.\n";
         $pot_content .= "msgid \"\"\n";
         $pot_content .= "msgstr \"\"\n";
         $pot_content .= "\"Project-Id-Version: PDF Builder Pro\\n\"\n";
         $pot_content .= "\"Report-Msgid-Bugs-To: \\n\"\n";
-        $pot_content .= "\"POT-Creation-Date: " . date('c') . "\\n\"\n";
+        $pot_content .= "\"POT-Creation-Date: " . gmdate('c') . "\\n\"\n";
         $pot_content .= "\"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\\n\"\n";
         $pot_content .= "\"Last-Translator: FULL NAME <EMAIL@ADDRESS>\\n\"\n";
         $pot_content .= "\"Language-Team: LANGUAGE <LL@li.org>\\n\"\n";

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -145,7 +145,7 @@ class PDF_Builder_Performance_Monitor
         self::$metrics[] = $metric;
 // Log dans le fichier de performance
         $log_file = (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : ABSPATH . 'wp-content') . '/pdf-builder-performance.log';
-        $log_entry = date('Y-m-d H:i:s') . ' - ' . json_encode($metric) . "\n";
+        $log_entry = gmdate('Y-m-d H:i:s') . ' - ' . json_encode($metric) . "\n";
 // Rotation du log (max 2MB)
         if (file_exists($log_file) && filesize($log_file) > 2 * 1024 * 1024) {
             $content = file_get_contents($log_file);

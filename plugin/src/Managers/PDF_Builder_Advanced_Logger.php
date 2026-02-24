@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Système de logging avancé
@@ -208,7 +208,7 @@ class PDF_Builder_Advanced_Logger {
 
         // Renommer le fichier actuel
         if (file_exists($this->log_file)) {
-            rename($this->log_file, $backup_file);
+            rename($this->log_file, $backup_file); // phpcs:ignore WordPress.WP.AlternativeFunctions
         }
 
         // Nettoyer les anciens fichiers de backup
@@ -230,7 +230,7 @@ class PDF_Builder_Advanced_Logger {
 
         foreach ($files as $file) {
             if (file_exists($file) && ($now - filemtime($file)) > $max_age) {
-                unlink($file);
+                wp_delete_file($file);
             }
         }
     }
@@ -250,7 +250,7 @@ class PDF_Builder_Advanced_Logger {
 
             $files_to_delete = array_slice($backup_files, 5);
             foreach ($files_to_delete as $file) {
-                unlink($file);
+                wp_delete_file($file);
             }
         }
     }

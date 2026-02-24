@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 /**
@@ -19,16 +19,16 @@ class DashboardDataProvider
 
         // Nombre de templates
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-        $templates_count = $wpdb->get_var("SELECT COUNT(*) FROM $table_templates");
+        $templates_count = $wpdb->get_var("SELECT COUNT(*) FROM $table_templates"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
         // Nombre total de documents générés (logs)
         $table_logs = $wpdb->prefix . 'pdf_builder_logs';
         $documents_count = 0;
         $today_count = 0;
 
-        if ($wpdb->get_var("SHOW TABLES LIKE '$table_logs'") == $table_logs) {
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table_logs'") == $table_logs) { // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             // Vérifier si la colonne log_message existe
-            $columns = $wpdb->get_results("DESCRIBE $table_logs");
+            $columns = $wpdb->get_results("DESCRIBE $table_logs"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             $has_log_message = false;
             foreach ($columns as $column) {
                 if ($column->Field === 'log_message') {
@@ -38,23 +38,23 @@ class DashboardDataProvider
             }
 
             if ($has_log_message) {
-                $documents_count = $wpdb->get_var(
+                $documents_count = $wpdb->get_var( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     "SELECT COUNT(*) FROM $table_logs WHERE log_message LIKE '%PDF généré%' OR log_message LIKE '%Document créé%'"
                 );
 
                 // Documents générés aujourd'hui
-                $today = date('Y-m-d');
-                $today_count = $wpdb->get_var($wpdb->prepare(
+                $today = gmdate('Y-m-d');
+                $today_count = $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     "SELECT COUNT(*) FROM $table_logs WHERE DATE(created_at) = %s AND (log_message LIKE '%PDF généré%' OR log_message LIKE '%Document créé%')",
                     $today
                 ));
             } else {
                 // Si la colonne n'existe pas, compter tous les logs
-                $documents_count = $wpdb->get_var("SELECT COUNT(*) FROM $table_logs");
+                $documents_count = $wpdb->get_var("SELECT COUNT(*) FROM $table_logs"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
                 // Documents d'aujourd'hui
-                $today = date('Y-m-d');
-                $today_count = $wpdb->get_var($wpdb->prepare(
+                $today = gmdate('Y-m-d');
+                $today_count = $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     "SELECT COUNT(*) FROM $table_logs WHERE DATE(created_at) = %s",
                     $today
                 ));

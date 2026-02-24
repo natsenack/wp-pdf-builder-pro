@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - TextRenderer
@@ -219,9 +219,9 @@ class TextRenderer
     {
         switch ($variable) {
             case 'current_date':
-                return date('d/m/Y');
+                return gmdate('d/m/Y');
             case 'current_time':
-                return date('H:i:s');
+                return gmdate('H:i:s');
             case 'page_number':
                 return '1';
 // Sera géré par le système de pagination
@@ -337,13 +337,13 @@ class TextRenderer
     {
         $number = $orderData['number'] ?? $orderData['id'] ?? 'CMD-0001';
         $format = $properties['format'] ?? 'CMD-{order_number}';
-        $date = $orderData['date'] ?? date('Y-m-d');
+        $date = $orderData['date'] ?? gmdate('Y-m-d');
 // Remplacement des placeholders dans le format
         $formatted = str_replace('{order_number}', $number, $format);
-        $formatted = str_replace('{order_year}', date('Y', strtotime($date)), $formatted);
-        $formatted = str_replace('{order_month}', date('m', strtotime($date)), $formatted);
-        $formatted = str_replace('{order_day}', date('d', strtotime($date)), $formatted);
-        $formatted = str_replace('{order_date}', date('d/m/Y', strtotime($date)), $formatted);
+        $formatted = str_replace('{order_year}', gmdate('Y', strtotime($date)), $formatted);
+        $formatted = str_replace('{order_month}', gmdate('m', strtotime($date)), $formatted);
+        $formatted = str_replace('{order_day}', gmdate('d', strtotime($date)), $formatted);
+        $formatted = str_replace('{order_date}', gmdate('d/m/Y', strtotime($date)), $formatted);
         return $formatted;
     }
 

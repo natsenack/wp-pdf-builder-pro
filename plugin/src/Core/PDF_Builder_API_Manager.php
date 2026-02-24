@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Gestionnaire d'APIs externes
@@ -278,11 +278,11 @@ class PDF_Builder_API_Manager {
     private function calculate_expiry($service, $credentials) {
         // Pour les services OAuth, utiliser expires_in si disponible
         if (isset($credentials['expires_in'])) {
-            return date('Y-m-d H:i:s', time() + $credentials['expires_in']);
+            return gmdate('Y-m-d H:i:s', time() + $credentials['expires_in']);
         }
 
         // Par défaut, expiration dans 1 an
-        return date('Y-m-d H:i:s', strtotime('+1 year'));
+        return gmdate('Y-m-d H:i:s', strtotime('+1 year'));
     }
 
     /**

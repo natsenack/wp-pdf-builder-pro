@@ -1,11 +1,14 @@
-<?php
+﻿<?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 namespace PDF_Builder\Managers;
 
 // Déclarations des fonctions WordPress et constantes pour l'IDE
 if (!function_exists('wp_mkdir_p')) {
-    function wp_mkdir_p($path) { return mkdir($path, 0755, true); }
+    function wp_mkdir_p($path) { return mkdir($path, 0755, true); } // phpcs:ignore WordPress.WP.AlternativeFunctions
 }
 if (!function_exists('wp_kses')) {
     function wp_kses($string, $allowed_html = []) { return $string; }
@@ -108,7 +111,7 @@ if (!function_exists('wp_nonce_field')) {
     function wp_nonce_field($action = -1, $name = '_wpnonce', $referer = true, $echo = true) {}
 }
 if (!function_exists('wp_mkdir_p')) {
-    function wp_mkdir_p($dir) { return mkdir($dir, 0755, true); }
+    function wp_mkdir_p($dir) { return mkdir($dir, 0755, true); } // phpcs:ignore WordPress.WP.AlternativeFunctions
 }
 if (!function_exists('wp_kses')) {
     function wp_kses($string, $allowed_html = []) { return $string; }
@@ -329,7 +332,7 @@ class PDF_Builder_WooCommerce_Integration
         if ($is_premium) {
             // Premium : chercher le template mappé au statut courant
             if (!empty($status_templates[$status_key])) {
-                $selected_template = $wpdb->get_row(
+                $selected_template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     $wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $status_templates[$status_key]),
                     ARRAY_A
                 );
@@ -337,7 +340,7 @@ class PDF_Builder_WooCommerce_Integration
         } else {
             // Gratuit : utiliser le template assigné à wc-completed
             if (!empty($status_templates['wc-completed'])) {
-                $selected_template = $wpdb->get_row(
+                $selected_template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     $wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $status_templates['wc-completed']),
                     ARRAY_A
                 );
@@ -348,7 +351,7 @@ class PDF_Builder_WooCommerce_Integration
         if (!$selected_template) {
             $mapped_id = apply_filters('pdf_builder_get_template_for_status', null, $status_key);
             if ($mapped_id) {
-                $selected_template = $wpdb->get_row(
+                $selected_template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     $wpdb->prepare("SELECT id, name FROM $table_templates WHERE id = %d", $mapped_id),
                     ARRAY_A
                 );
@@ -356,7 +359,7 @@ class PDF_Builder_WooCommerce_Integration
         }
 
         if (!$selected_template) {
-            $selected_template = $wpdb->get_row("SELECT id, name FROM $table_templates ORDER BY id ASC LIMIT 1", ARRAY_A);
+            $selected_template = $wpdb->get_row("SELECT id, name FROM $table_templates ORDER BY id ASC LIMIT 1", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
         }
 
         // --- Affichage ---
@@ -1197,7 +1200,7 @@ class PDF_Builder_WooCommerce_Integration
         $sent = \wp_mail($to, $subject, $body, $headers, $attachments);
 
         // Supprimer le fichier temporaire
-        @unlink($tmp_file);
+        @wp_delete_file($tmp_file);
 
         if ($sent) {
             // translators: %s: recipient email address
@@ -1909,7 +1912,7 @@ class PDF_Builder_WooCommerce_Integration
                 // Essayer de récupérer depuis la table pdf_builder_templates
                 global $wpdb;
                 $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-                $template = $wpdb->get_row(
+                $template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     $wpdb->prepare("SELECT id, name, template_data FROM $table_templates WHERE id = %d", $template_id),
                     ARRAY_A
                 );

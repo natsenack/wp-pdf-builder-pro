@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 namespace PDF_Builder\Admin;
@@ -316,7 +316,7 @@ class PDF_Builder_Order_Metabox
     {
         global $wpdb;
         $table = $wpdb->prefix . 'pdf_builder_templates';
-        $rows = $wpdb->get_results("SELECT id, name FROM {$table} ORDER BY name ASC", ARRAY_A);
+        $rows = $wpdb->get_results("SELECT id, name FROM {$table} ORDER BY name ASC", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
         $templates = [];
         if (is_array($rows)) {
@@ -335,7 +335,7 @@ class PDF_Builder_Order_Metabox
     {
         global $wpdb;
         $table = $wpdb->prefix . 'pdf_builder_templates';
-        $row = $wpdb->get_row(
+        $row = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             $wpdb->prepare("SELECT * FROM {$table} WHERE id = %d", intval($template_id)),
             ARRAY_A
         );

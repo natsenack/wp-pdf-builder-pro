@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable PluginCheck.CodeAnalysis.Forbidden.ForbiddenPluginUpdater -- Commercial plugin with custom EDD updater, not for WordPress.org distribution
 
 namespace PDF_Builder\Managers;
@@ -217,7 +217,7 @@ class PDF_Builder_Updates_Manager {
             'rating'           => 5,
             'ratings'          => [5 => 100],
             'downloaded'       => 0,
-            'last_updated'     => date('Y-m-d H:i:s', time()),
+            'last_updated'     => gmdate('Y-m-d H:i:s', time()),
             'added'            => '2025-01-01',
             'banners'          => [
                 'low'  => PDF_BUILDER_PLUGIN_URL . 'assets/images/plugin-banner-772x250.png',

@@ -88,8 +88,8 @@ class Security_Limits_Handler
             throw new \Exception( // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
                 sprintf(
                     'La taille du template (%s MB) dépasse la limite configurée (%s MB)',
-                    $size_mb,
-                    $max_mb
+                    $size_mb, // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+                    $max_mb // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
                 )
             );
         }

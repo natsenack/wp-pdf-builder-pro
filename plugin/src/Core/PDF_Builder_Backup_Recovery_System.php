@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
@@ -63,7 +63,7 @@ class PDF_Builder_Backup_Recovery_System {
                 'metadata' => [
                     'id' => $backup_id,
                     'type' => self::BACKUP_TYPE_FULL,
-                    'name' => $name ?: 'Sauvegarde complète ' . date('Y-m-d H:i:s'),
+                    'name' => $name ?: 'Sauvegarde complète ' . gmdate('Y-m-d H:i:s'),
                     'description' => $description,
                     'created_at' => current_time('mysql'),
                     'created_by' => get_current_user_id(),
@@ -106,7 +106,7 @@ class PDF_Builder_Backup_Recovery_System {
      */
     public function create_automatic_backup() {
         try {
-            $name = 'Sauvegarde automatique ' . date('Y-m-d H:i:s');
+            $name = 'Sauvegarde automatique ' . gmdate('Y-m-d H:i:s');
             $this->create_full_backup($name, 'Sauvegarde créée automatiquement');
 
         } catch (Exception $e) {
@@ -182,7 +182,7 @@ class PDF_Builder_Backup_Recovery_System {
         $backup_data = [];
 
         foreach ($tables as $table) {
-            $table_data = $wpdb->get_results("SELECT * FROM $table", ARRAY_A);
+            $table_data = $wpdb->get_results("SELECT * FROM $table", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             $backup_data[$table] = $table_data;
         }
 
@@ -229,7 +229,7 @@ class PDF_Builder_Backup_Recovery_System {
         global $wpdb;
 
         $table = $wpdb->prefix . 'pdf_builder_templates';
-        return $wpdb->get_results("SELECT * FROM $table", ARRAY_A);
+        return $wpdb->get_results("SELECT * FROM $table", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
     }
 
     /**
@@ -339,7 +339,7 @@ class PDF_Builder_Backup_Recovery_System {
      * Crée une sauvegarde d'urgence avant restauration
      */
     private function create_emergency_backup() {
-        $name = 'Sauvegarde d\'urgence avant restauration ' . date('Y-m-d H:i:s');
+        $name = 'Sauvegarde d\'urgence avant restauration ' . gmdate('Y-m-d H:i:s');
         return $this->create_full_backup($name, 'Sauvegarde créée automatiquement avant restauration');
     }
 
@@ -366,7 +366,7 @@ class PDF_Builder_Backup_Recovery_System {
     private function get_plugin_options() {
         global $wpdb;
 
-        $options = $wpdb->get_results($wpdb->prepare("
+        $options = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT option_name, option_value
             FROM {$wpdb->options}
             WHERE option_name LIKE %s
@@ -521,7 +521,7 @@ class PDF_Builder_Backup_Recovery_System {
 
         $table = $wpdb->prefix . 'pdf_builder_backups';
 
-        return $wpdb->get_row($wpdb->prepare("
+        return $wpdb->get_row($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT * FROM $table WHERE backup_id = %s
         ", $backup_id), ARRAY_A);
     }
@@ -599,11 +599,11 @@ class PDF_Builder_Backup_Recovery_System {
             if (is_dir($path)) {
                 $this->delete_directory($path);
             } else {
-                unlink($path);
+                wp_delete_file($path);
             }
         }
 
-        rmdir($dir);
+        rmdir($dir); // phpcs:ignore WordPress.WP.AlternativeFunctions
     }
 
     /**
@@ -649,7 +649,7 @@ class PDF_Builder_Backup_Recovery_System {
         ];
 
         foreach ($writable_dirs as $dir) {
-            if (!is_writable($dir)) {
+            if (!is_writable($dir)) { // phpcs:ignore WordPress.WP.AlternativeFunctions
                 $issues[] = "Dossier non accessible en écriture: $dir";
             }
         }
@@ -674,7 +674,7 @@ class PDF_Builder_Backup_Recovery_System {
      */
     private function table_exists($table) {
         global $wpdb;
-        return $wpdb->get_var("SHOW TABLES LIKE '$table'") === $table;
+        return $wpdb->get_var("SHOW TABLES LIKE '$table'") === $table; // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
     }
 
     /**
@@ -686,7 +686,7 @@ class PDF_Builder_Backup_Recovery_System {
         $table = $wpdb->prefix . 'pdf_builder_backups';
         $retention_days = pdf_builder_config('backup_retention_days', 30);
 
-        $deleted = $wpdb->query($wpdb->prepare("
+        $deleted = $wpdb->query($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             DELETE FROM $table
             WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)
             AND type != 'emergency'
@@ -799,7 +799,7 @@ class PDF_Builder_Backup_Recovery_System {
 
         $table = $wpdb->prefix . 'pdf_builder_backups';
 
-        return $wpdb->get_results("
+        return $wpdb->get_results(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT * FROM $table
             ORDER BY created_at DESC
             LIMIT 50

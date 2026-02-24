@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Utilitaires
@@ -201,7 +201,7 @@ class Helpers
 
         foreach ($files as $file) {
             if (is_file($file) && ($now - filemtime($file)) > $max_age) {
-                unlink($file);
+                wp_delete_file($file);
             }
         }
     }

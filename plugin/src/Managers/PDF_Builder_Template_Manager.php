@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 namespace PDF_Builder\Managers;
@@ -84,7 +84,7 @@ class PDF_Builder_Template_Manager
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
         // Récupérer tous les templates
-        $templates = $wpdb->get_results("SELECT * FROM $table_templates ORDER BY updated_at DESC", \ARRAY_A);
+        $templates = $wpdb->get_results("SELECT * FROM $table_templates ORDER BY updated_at DESC", \ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
         include \plugin_dir_path(dirname(__FILE__)) . '../../resources/templates/admin/templates-page.php';
     }
@@ -120,8 +120,8 @@ class PDF_Builder_Template_Manager
             if (self::isDebugMode()) {
                 $upload_dir = wp_upload_dir();
                 $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
-                // file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVE START - REQUEST: ' . print_r($_REQUEST, true) . "\n", FILE_APPEND);
-                // file_put_contents($log_file, date('Y-m-d H:i:s') . ' POST data keys: ' . implode(', ', array_keys($_POST)) . "\n", FILE_APPEND);
+                // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . ' SAVE START - REQUEST: ' . print_r($_REQUEST, true) . "\n", FILE_APPEND);
+                // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . ' POST data keys: ' . implode(', ', array_keys($_POST)) . "\n", FILE_APPEND);
             }
 
             // Vérification des permissions
@@ -273,12 +273,12 @@ class PDF_Builder_Template_Manager
                 if (self::isDebugMode()) {
                     $upload_dir = wp_upload_dir();
                     $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
-                    // file_put_contents($log_file, date('Y-m-d H:i:s') . ' ELEMENTS COUNT: ' . count($elements_data) . "\n", FILE_APPEND);
+                    // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . ' ELEMENTS COUNT: ' . count($elements_data) . "\n", FILE_APPEND);
 
                     // ✅ CRITICAL: Log TOUTES les propriétés de tous les éléments avant de créer template_structure
-                    // file_put_contents($log_file, date('Y-m-d H:i:s') . ' ===== COMPLETE ELEMENTS BEFORE STRUCTURE =====' . "\n", FILE_APPEND);
+                    // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . ' ===== COMPLETE ELEMENTS BEFORE STRUCTURE =====' . "\n", FILE_APPEND);
                     foreach ($elements_data as $idx => $el) {
-                        // file_put_contents($log_file, date('Y-m-d H:i:s') . " Element[$idx] " . ($el['type'] ?? 'unknown') . " keys: " . implode(',', array_keys($el)) . "\n", FILE_APPEND);
+                        // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . " Element[$idx] " . ($el['type'] ?? 'unknown') . " keys: " . implode(',', array_keys($el)) . "\n", FILE_APPEND);
                     }
                 }
 
@@ -390,7 +390,7 @@ class PDF_Builder_Template_Manager
                 $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
                 // Créer la table si elle n'existe pas
-                if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
+                if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) { // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     
                     $charset_collate = $wpdb->get_charset_collate();
                     $sql = "CREATE TABLE $table_templates (
@@ -413,7 +413,7 @@ class PDF_Builder_Template_Manager
                 // Vérifier d'abord si le template existe dans la table personnalisée
                 $existing_template = null;
                 if ($template_id > 0) {
-                    $existing_template = $wpdb->get_row(
+                    $existing_template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                         $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
                         \ARRAY_A
                     );
@@ -467,11 +467,11 @@ class PDF_Builder_Template_Manager
                     if (self::isDebugMode()) {
                         $upload_dir = wp_upload_dir();
                         $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
-                        // file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO CUSTOM TABLE - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
+                        // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . ' SAVED TO CUSTOM TABLE - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
                         
                         // Re-check what was saved
                         if (isset($saved_decoded['elements'])) {
-                            // file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED ELEMENTS COUNT: ' . count($saved_decoded['elements']) . "\n", FILE_APPEND);
+                            // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . ' SAVED ELEMENTS COUNT: ' . count($saved_decoded['elements']) . "\n", FILE_APPEND);
                         }
                     }
                 } else {
@@ -517,8 +517,8 @@ class PDF_Builder_Template_Manager
                     if (self::isDebugMode()) {
                         $upload_dir = wp_upload_dir();
                         $log_file = $upload_dir['basedir'] . '/debug_pdf_save.log';
-                        // file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED TO POST META - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
-                        // file_put_contents($log_file, date('Y-m-d H:i:s') . ' SAVED DATA: ' . substr($template_data, 0, 500) . "\n", FILE_APPEND);
+                        // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . ' SAVED TO POST META - ID: ' . $template_id . ', DATA LENGTH: ' . strlen($template_data) . "\n", FILE_APPEND);
+                        // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . ' SAVED DATA: ' . substr($template_data, 0, 500) . "\n", FILE_APPEND);
                     }
                 }
             } catch (\Exception $e) {
@@ -529,7 +529,7 @@ class PDF_Builder_Template_Manager
             // Vérification post-sauvegarde
             if ($existing_template) {
                 // Vérification pour la table personnalisée
-                $saved_template = $wpdb->get_row(
+                $saved_template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
                     \ARRAY_A
                 );
@@ -616,7 +616,7 @@ class PDF_Builder_Template_Manager
             // Charger le template existant pour récupérer le canvas
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-            $template_row = $wpdb->get_row(
+            $template_row = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
                 \ARRAY_A
             );
@@ -742,7 +742,7 @@ class PDF_Builder_Template_Manager
             // Chercher d'abord dans la table personnalisée (custom table)
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-            $template_row = $wpdb->get_row(
+            $template_row = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
                 \ARRAY_A
             );
@@ -846,8 +846,8 @@ class PDF_Builder_Template_Manager
 
         // Vider le cache des transients
         global $wpdb;
-        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
-        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_%'");
+        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
+        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_pdf_builder_%'"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
         \wp_send_json_success('Cache REST vidé avec succès');
     }
@@ -863,50 +863,50 @@ class PDF_Builder_Template_Manager
         // Log pour débogage (only in debug mode)
         if (self::isDebugMode()) {
             $log_file = WP_CONTENT_DIR . '/debug_pdf_template.log';
-            // file_put_contents($log_file, date('Y-m-d H:i:s') . " - Loading template ID: $template_id\n", FILE_APPEND);
-            // file_put_contents($log_file, date('Y-m-d H:i:s') . " - Table: $table_templates\n", FILE_APPEND);
+            // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . " - Loading template ID: $template_id\n", FILE_APPEND);
+            // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . " - Table: $table_templates\n", FILE_APPEND);
 
             // Vérifier si la table existe
-            $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_templates'") === $table_templates;
-            // file_put_contents($log_file, date('Y-m-d H:i:s') . " - Table exists: " . ($table_exists ? 'YES' : 'NO') . "\n", FILE_APPEND);
+            $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_templates'") === $table_templates; // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
+            // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . " - Table exists: " . ($table_exists ? 'YES' : 'NO') . "\n", FILE_APPEND);
 
             if (!$table_exists) {
-                // file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Table does not exist\n", FILE_APPEND);
+                // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . " - ERROR: Table does not exist\n", FILE_APPEND);
                 return false;
             }
 
-            $template = $wpdb->get_row(
+            $template = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
                 \ARRAY_A
             );
 
-            // file_put_contents($log_file, date('Y-m-d H:i:s') . " - SQL Result: " . ($template ? 'FOUND' : 'NOT FOUND') . "\n", FILE_APPEND);
+            // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . " - SQL Result: " . ($template ? 'FOUND' : 'NOT FOUND') . "\n", FILE_APPEND);
 
             if (!$template) {
-                // file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Template not found in database\n", FILE_APPEND);
+                // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . " - ERROR: Template not found in database\n", FILE_APPEND);
                 return false;
             }
 
             $template_data_raw = $template['template_data'];
-            // file_put_contents($log_file, date('Y-m-d H:i:s') . " - Raw template data length: " . strlen($template_data_raw) . "\n", FILE_APPEND);
+            // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . " - Raw template data length: " . strlen($template_data_raw) . "\n", FILE_APPEND);
 
             // Vérifier si les données contiennent des backslashes (échappement PHP)
             if (strpos($template_data_raw, '\\') !== false) {
                 $template_data_raw = stripslashes($template_data_raw);
-                // file_put_contents($log_file, date('Y-m-d H:i:s') . " - Applied stripslashes\n", FILE_APPEND);
+                // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . " - Applied stripslashes\n", FILE_APPEND);
             }
 
             $template_data = json_decode($template_data_raw, true);
             $json_error = json_last_error();
-            // file_put_contents($log_file, date('Y-m-d H:i:s') . " - JSON decode result: " . ($template_data === null ? 'NULL' : 'VALID') . ", Error: " . $json_error . "\n", FILE_APPEND);
+            // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . " - JSON decode result: " . ($template_data === null ? 'NULL' : 'VALID') . ", Error: " . $json_error . "\n", FILE_APPEND);
 
             if ($template_data === null && $json_error !== JSON_ERROR_NONE) {
-                // file_put_contents($log_file, date('Y-m-d H:i:s') . " - ERROR: Invalid JSON data\n", FILE_APPEND);
+                // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . " - ERROR: Invalid JSON data\n", FILE_APPEND);
                 return false;
             }
         }
 
-        // file_put_contents($log_file, date('Y-m-d H:i:s') . " - SUCCESS: Template loaded successfully\n", FILE_APPEND);
+        // file_put_contents($log_file, gmdate('Y-m-d H:i:s') . " - SUCCESS: Template loaded successfully\n", FILE_APPEND);
         return [
             'name' => $template['name'],
             'data' => $template_data

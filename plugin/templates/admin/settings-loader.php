@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * PDF Builder Pro - Settings Loader
  * Charge les styles et scripts pour la page de paramètres
@@ -96,7 +96,7 @@ function pdf_builder_load_settings_assets($hook) {
             'pdf-builder-settings-tabs',
             PDF_BUILDER_PLUGIN_URL . 'assets/js/settings-tabs.min.js',
             array('jquery', 'wp-element', 'wp-components', 'wp-data', 'wp-hooks'), // Updated dependencies
-            PDF_BUILDER_VERSION . '-' . time() . '-' . rand(1000, 9999), // Cache busting très agressif
+            PDF_BUILDER_VERSION . '-' . time() . '-' . wp_rand(1000, 9999), // Cache busting très agressif
             false // Chargé dans le header pour une exécution précoce
         );
 

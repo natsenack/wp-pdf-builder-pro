@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -657,7 +657,7 @@ class PDF_Builder_Asset_Optimizer
 
         foreach ($iterator as $file) {
             if ($file->isFile() && $file->getMTime() < $cutoff_time) {
-                unlink($file->getPathname());
+                wp_delete_file($file->getPathname());
             }
         }
     }

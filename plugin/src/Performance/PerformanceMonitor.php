@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Performance Monitor
@@ -296,7 +296,7 @@ class PerformanceMonitor
      */
     private static function exportToLog(array $data): string
     {
-        $log = "[" . date('Y-m-d H:i:s') . "] Performance Report\n";
+        $log = "[" . gmdate('Y-m-d H:i:s') . "] Performance Report\n";
         $log .= "=====================================\n";
         foreach ($data['summary'] as $key => $value) {
             $log .= ucfirst(str_replace('_', ' ', $key)) . ": {$value}\n";

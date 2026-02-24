@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 /**
@@ -46,11 +46,11 @@ class TemplateProcessor
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
             // Vérifier que la table existe
-            if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
+            if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) { // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 return $this->getDefaultInvoiceTemplate();
             }
 
-            $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
+            $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             if (!$template) {
                 return $this->getDefaultInvoiceTemplate();
             }
@@ -231,7 +231,7 @@ class TemplateProcessor
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 // Ajouter un flag de corruption (on peut utiliser un champ meta ou modifier le nom)
-        $current_name = $wpdb->get_var($wpdb->prepare("SELECT name FROM $table_templates WHERE id = %d", $template_id));
+        $current_name = $wpdb->get_var($wpdb->prepare("SELECT name FROM $table_templates WHERE id = %d", $template_id)); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
         if ($current_name && strpos($current_name, '[CORROMPU]') !== 0) {
             $wpdb->update($table_templates, ['name' => '[CORROMPU] ' . $current_name], ['id' => $template_id]);
         }
@@ -269,7 +269,7 @@ class TemplateProcessor
     {
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-        $template_data = $wpdb->get_var($wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id));
+        $template_data = $wpdb->get_var($wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id)); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
         if (!$template_data) {
             return null;
         }

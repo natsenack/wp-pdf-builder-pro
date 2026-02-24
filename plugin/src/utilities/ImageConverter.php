@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Utilities;
 
@@ -40,7 +40,7 @@ class ImageConverter
             if (extension_loaded('imagick') && class_exists('Imagick')) {
                 $result = self::convertWithImagick($temp_pdf_path, $format, $quality);
                 if ($result['success']) {
-                    unlink($temp_pdf_path);
+                    wp_delete_file($temp_pdf_path);
                     return $result;
                 }
             }
@@ -49,13 +49,13 @@ class ImageConverter
             if (extension_loaded('gd')) {
                 $result = self::convertWithGD($temp_pdf_path, $format, $quality);
                 if ($result['success']) {
-                    unlink($temp_pdf_path);
+                    wp_delete_file($temp_pdf_path);
                     return $result;
                 }
             }
 
             // Nettoyer et retourner erreur
-            unlink($temp_pdf_path);
+            wp_delete_file($temp_pdf_path);
             return [
                 'success' => false,
                 'error' => 'Aucune extension d\'image disponible (Imagick ou GD requis)',
@@ -65,7 +65,7 @@ class ImageConverter
         } catch (\Exception $e) {
             // Nettoyer en cas d'erreur
             if (isset($temp_pdf_path) && file_exists($temp_pdf_path)) {
-                unlink($temp_pdf_path);
+                wp_delete_file($temp_pdf_path);
             }
             return [
                 'success' => false,

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -58,10 +58,10 @@ class PDF_Builder_Secure_Shell_Manager
      */
     private static function logSecurityEvent($command, $output, $success)
     {
-        $security_log = sprintf("[SECURITY] Shell command executed - Time: %s - Command: %s - Success: %s - IP: %s - User: %s", date('Y-m-d H:i:s'), $command, $success ? 'YES' : 'NO', $_SERVER['REMOTE_ADDR'] ?? 'CLI', \get_current_user_id());
+        $security_log = sprintf("[SECURITY] Shell command executed - Time: %s - Command: %s - Success: %s - IP: %s - User: %s", gmdate('Y-m-d H:i:s'), $command, $success ? 'YES' : 'NO', $_SERVER['REMOTE_ADDR'] ?? 'CLI', \get_current_user_id());
 // Log dans un fichier séparé pour la sécurité
         $security_log_file = WP_CONTENT_DIR . '/pdf-builder-security.log';
-        $log_entry = date('Y-m-d H:i:s') . ' - ' . $security_log . "\n";
+        $log_entry = gmdate('Y-m-d H:i:s') . ' - ' . $security_log . "\n";
 // Limiter la taille du fichier de log (max 1MB)
         if (file_exists($security_log_file) && filesize($security_log_file) > 1024 * 1024) {
             $content = file_get_contents($security_log_file);

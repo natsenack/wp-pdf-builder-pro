@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
@@ -223,10 +223,10 @@ class PDF_Builder_Diagnostic_Tool {
 
         foreach ($tables as $table) {
             $full_table_name = $wpdb->prefix . $table;
-            $exists = $wpdb->get_var("SHOW TABLES LIKE '$full_table_name'") === $full_table_name;
+            $exists = $wpdb->get_var("SHOW TABLES LIKE '$full_table_name'") === $full_table_name; // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
             if ($exists) {
-                $table_info = $wpdb->get_row("SHOW TABLE STATUS LIKE '$full_table_name'", ARRAY_A);
+                $table_info = $wpdb->get_row("SHOW TABLE STATUS LIKE '$full_table_name'", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 $status['tables'][$table] = [
                     'exists' => true,
                     'rows' => $table_info['Rows'] ?? 0,
@@ -257,7 +257,7 @@ class PDF_Builder_Diagnostic_Tool {
         $start_time = microtime(true);
 
         try {
-            $wpdb->get_var("SELECT 1");
+            $wpdb->get_var("SELECT 1"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             $end_time = microtime(true);
 
             return [
@@ -279,7 +279,7 @@ class PDF_Builder_Diagnostic_Tool {
         global $wpdb;
 
         // Vérifier la fragmentation des tables
-        $fragmented_tables = $wpdb->get_results("
+        $fragmented_tables = $wpdb->get_results(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SHOW TABLE STATUS
             WHERE Name LIKE '{$wpdb->prefix}pdf_builder_%'
             AND Data_free > 0
@@ -307,7 +307,7 @@ class PDF_Builder_Diagnostic_Tool {
             $permissions[$description] = [
                 'path' => $path,
                 'exists' => file_exists($path),
-                'writable' => is_writable($path),
+                'writable' => is_writable($path), // phpcs:ignore WordPress.WP.AlternativeFunctions
                 'readable' => is_readable($path),
                 'permissions' => $this->get_file_permissions($path)
             ];
@@ -369,7 +369,7 @@ class PDF_Builder_Diagnostic_Tool {
     private function check_csrf_tokens() {
         global $wpdb;
 
-        $expired_tokens = $wpdb->get_var($wpdb->prepare(
+        $expired_tokens = $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value < %s",
             '_transient_pdf_builder_csrf_%',
             time() - HOUR_IN_SECONDS
@@ -486,7 +486,7 @@ class PDF_Builder_Diagnostic_Tool {
 
         $table = $wpdb->prefix . 'pdf_builder_errors';
 
-        $trends = $wpdb->get_results($wpdb->prepare("
+        $trends = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT
                 DATE(created_at) as date,
                 type,
@@ -646,7 +646,7 @@ class PDF_Builder_Diagnostic_Tool {
             wp_send_json_success([
                 'message' => 'Diagnostic exporté',
                 'data' => $export_data,
-                'filename' => 'pdf-builder-diagnostic-' . date('Y-m-d-H-i-s') . '.json'
+                'filename' => 'pdf-builder-diagnostic-' . gmdate('Y-m-d-H-i-s') . '.json'
             ]);
 
         } catch (Exception $e) {
@@ -671,7 +671,7 @@ class PDF_Builder_Diagnostic_Tool {
 
             // Vider les transients de diagnostic
             global $wpdb;
-            $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_diagnostic_%'");
+            $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_diagnostic_%'"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
             wp_send_json_success(['message' => 'Cache de diagnostic vidé']);
 

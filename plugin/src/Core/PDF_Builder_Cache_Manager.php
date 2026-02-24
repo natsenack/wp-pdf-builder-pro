@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
  * PDF Builder Pro - Gestionnaire de Cache
@@ -170,7 +170,7 @@ class PDF_Builder_Cache_Manager {
         // Supprimer les transients en base
         $like       = $wpdb->esc_like('_transient_' . self::TRANSIENT_PREFIX) . '%';
         $like_to    = $wpdb->esc_like('_transient_timeout_' . self::TRANSIENT_PREFIX) . '%';
-        $deleted    = (int) $wpdb->query($wpdb->prepare(
+        $deleted    = (int) $wpdb->query($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
             $like, $like_to
         ));
@@ -201,7 +201,7 @@ class PDF_Builder_Cache_Manager {
     public function get_status(): array {
         global $wpdb;
 
-        $transient_count = (int) $wpdb->get_var($wpdb->prepare(
+        $transient_count = (int) $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s",
             $wpdb->esc_like('_transient_' . self::TRANSIENT_PREFIX) . '%'
         ));
@@ -225,13 +225,13 @@ class PDF_Builder_Cache_Manager {
     public function get_metrics(): array {
         global $wpdb;
 
-        $transient_count = (int) $wpdb->get_var($wpdb->prepare(
+        $transient_count = (int) $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s",
             $wpdb->esc_like('_transient_' . self::TRANSIENT_PREFIX) . '%'
         ));
 
         // Taille estimée en base (en Ko)
-        $db_size_kb = (float) $wpdb->get_var($wpdb->prepare(
+        $db_size_kb = (float) $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT ROUND(SUM(LENGTH(option_value)) / 1024, 1)
                FROM {$wpdb->options}
               WHERE option_name LIKE %s",
@@ -401,7 +401,7 @@ class PDF_Builder_Cache_Manager {
      */
     private function delete_expired_transients(): int {
         global $wpdb;
-        return (int) $wpdb->query(
+        return (int) $wpdb->query( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "DELETE a, b FROM {$wpdb->options} a
              INNER JOIN {$wpdb->options} b
                ON b.option_name = REPLACE(a.option_name, '_transient_timeout_', '_transient_')
@@ -415,12 +415,12 @@ class PDF_Builder_Cache_Manager {
         $dirs    = $this->get_cache_dirs();
 
         foreach ($dirs as $dir) {
-            if (!is_dir($dir) || !is_writable($dir)) {
+            if (!is_dir($dir) || !is_writable($dir)) { // phpcs:ignore WordPress.WP.AlternativeFunctions
                 continue;
             }
             $files = glob($dir . '/*') ?: [];
             foreach ($files as $file) {
-                if (is_file($file) && @unlink($file)) {
+                if (is_file($file) && @wp_delete_file($file)) {
                     $deleted++;
                 }
             }

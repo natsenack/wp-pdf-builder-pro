@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Système de reporting et analyse avancé
@@ -489,7 +489,7 @@ class PDF_Builder_Advanced_Reporting {
      * Génère un rapport CSV
      */
     private function generate_csv_report($report) {
-        $output = fopen('php://temp', 'r+');
+        $output = fopen('php://temp', 'r+'); // phpcs:ignore WordPress.WP.AlternativeFunctions
 
         // En-tête
         fputcsv($output, ['Metric', 'Value']);
@@ -507,7 +507,7 @@ class PDF_Builder_Advanced_Reporting {
 
         rewind($output);
         $csv_content = stream_get_contents($output);
-        fclose($output);
+        fclose($output); // phpcs:ignore WordPress.WP.AlternativeFunctions
 
         return $csv_content;
     }
@@ -901,7 +901,7 @@ class PDF_Builder_Advanced_Reporting {
         // Nettoyer les fichiers temporaires
         foreach ($attachments as $attachment) {
             if (file_exists($attachment)) {
-                unlink($attachment);
+                wp_delete_file($attachment);
             }
         }
     }

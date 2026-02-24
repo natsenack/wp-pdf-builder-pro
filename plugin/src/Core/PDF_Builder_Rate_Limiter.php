@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * PDF Builder Pro - Rate Limiter
@@ -285,7 +285,7 @@ class PdfBuilderRateLimiter
     private static function maybeSendAdminAlert($action, $identifier, $current_count)
     {
         // Évite les spam d'alertes (une alerte par heure max)
-        $alert_key = 'pdf_rate_alert_' . $action . '_' . date('Y-m-d-H');
+        $alert_key = 'pdf_rate_alert_' . $action . '_' . gmdate('Y-m-d-H');
         if (get_transient($alert_key)) {
             return;
         }

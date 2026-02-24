@@ -1,4 +1,4 @@
-<?php // Systeme tab content - Updated: 2025-12-05 01:15:00
+﻿<?php // Systeme tab content - Updated: 2025-12-05 01:15:00
 
 if (!defined('ABSPATH')) {
     exit;
@@ -53,7 +53,7 @@ if (!defined('ABSPATH')) {
     if (isset($GLOBALS['wpdb']) && function_exists('get_option')) {
         global $wpdb;
         try {
-            $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'");
+            $transient_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '_transient_pdf_builder_%'"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
         } catch (Exception $e) {
             $transient_count = 0;
         }

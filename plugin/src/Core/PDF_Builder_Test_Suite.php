@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
@@ -370,7 +370,7 @@ class PDF_Builder_Test_Suite {
 
         // Test de connexion à la base de données
         $results['connection'] = $this->assert_not_null(
-            $wpdb->get_var("SELECT 1"),
+            $wpdb->get_var("SELECT 1"), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             'Connexion à la base de données réussie'
         );
 
@@ -393,7 +393,7 @@ class PDF_Builder_Test_Suite {
         $test_data = [
             'cache_key' => 'test_key_' . time(),
             'cache_value' => json_encode(['test' => 'data']),
-            'expires_at' => date('Y-m-d H:i:s', time() + 3600)
+            'expires_at' => gmdate('Y-m-d H:i:s', time() + 3600)
         ];
 
         $insert_result = $wpdb->insert($test_table, $test_data);
@@ -403,7 +403,7 @@ class PDF_Builder_Test_Suite {
         );
 
         if ($insert_result) {
-            $retrieved = $wpdb->get_row($wpdb->prepare(
+            $retrieved = $wpdb->get_row($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 "SELECT * FROM $test_table WHERE cache_key = %s",
                 $test_data['cache_key']
             ));
@@ -450,12 +450,12 @@ class PDF_Builder_Test_Suite {
 
         // Test de suppression de fichier
         $results['delete_file'] = $this->assert_true(
-            unlink($test_file),
+            wp_delete_file($test_file),
             'Suppression de fichier réussie'
         );
 
         // Nettoyer le répertoire
-        rmdir($test_dir);
+        rmdir($test_dir); // phpcs:ignore WordPress.WP.AlternativeFunctions
 
         return $this->summarize_test_results($results, 'Tests des opérations de fichiers');
     }
@@ -705,7 +705,7 @@ class PDF_Builder_Test_Suite {
         // Cette requête devrait être sécurisée
         global $wpdb;
         $query = $wpdb->prepare("SELECT * FROM {$wpdb->users} WHERE user_login = %s", $malicious_input);
-        $result = $wpdb->get_var($query);
+        $result = $wpdb->get_var($query); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
         $results['sql_protection'] = $this->assert_not_false(
             $result !== false, // La requête ne devrait pas échouer à cause de l'injection
@@ -925,7 +925,7 @@ class PDF_Builder_Test_Suite {
 
     private function table_exists($table) {
         global $wpdb;
-        return $wpdb->get_var("SHOW TABLES LIKE '$table'") === $table;
+        return $wpdb->get_var("SHOW TABLES LIKE '$table'") === $table; // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
     }
 
     /**
@@ -1008,7 +1008,7 @@ class PDF_Builder_Test_Suite {
         $retention_days = pdf_builder_config('test_results_retention_days', 90);
 
         $table = $wpdb->prefix . 'pdf_builder_test_results';
-        $deleted = $wpdb->query($wpdb->prepare("
+        $deleted = $wpdb->query($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             DELETE FROM $table
             WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)
         ", $retention_days));
@@ -1094,7 +1094,7 @@ class PDF_Builder_Test_Suite {
 
         $table = $wpdb->prefix . 'pdf_builder_test_results';
 
-        $results = $wpdb->get_results($wpdb->prepare("
+        $results = $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT * FROM $table
             ORDER BY created_at DESC
             LIMIT %d

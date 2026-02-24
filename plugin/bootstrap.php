@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
@@ -1225,7 +1225,7 @@ function pdf_builder_ajax_get_template()
     // Récupérer le template depuis la table personnalisée
     global $wpdb;
     $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-    $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), \ARRAY_A);
+    $template = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), \ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
     // Si le template n'est pas trouvé dans la table personnalisée, chercher dans wp_posts
     if (!$template) {
@@ -1572,7 +1572,7 @@ if (\is_admin() && isset($_GET['page']) && $_GET['page'] === 'pdf-builder-settin
 
 // Gestionnaire AJAX des paramètres développeur
 add_action('wp_ajax_pdf_builder_developer_save_settings', function() {
-    // error_log('PDF Builder Développeur: Gestionnaire AJAX DÉMARRÉ à ' . date('Y-m-d H:i:s'));
+    // error_log('PDF Builder Développeur: Gestionnaire AJAX DÉMARRÉ à ' . gmdate('Y-m-d H:i:s'));
 
     try {
         // Journaliser toutes les données POST pour le débogage

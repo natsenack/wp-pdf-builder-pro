@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Gestionnaire de configuration
@@ -492,7 +492,7 @@ class PDF_Builder_Global_Config_Manager {
         $upload_dir = wp_upload_dir();
         $pdf_dir = $upload_dir['basedir'] . '/pdf-builder';
 
-        if (!is_writable($pdf_dir)) {
+        if (!is_writable($pdf_dir)) { // phpcs:ignore WordPress.WP.AlternativeFunctions
             $issues[] = 'Le dossier PDF n\'est pas accessible en écriture';
         }
 

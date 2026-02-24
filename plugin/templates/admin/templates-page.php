@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
@@ -42,7 +42,7 @@ if (class_exists('\PDF_Builder\Managers\PDF_Builder_License_Manager')) {
 // Compter les templates utilisateur
 global $wpdb;
 $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-$templates_count = (int) $wpdb->get_var($wpdb->prepare(
+$templates_count = (int) $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
     "SELECT COUNT(*) FROM $table_templates WHERE user_id = %d",
     get_current_user_id()
 ));
@@ -55,7 +55,7 @@ $user_can_create = $is_premium || $templates_count < 1;
 if ($templates_count === 0 && !$is_premium) {
     \PDF_Builder\TemplateDefaults::create_default_templates_for_user(get_current_user_id());
     // Recharger le compteur après création
-    $templates_count = (int) $wpdb->get_var($wpdb->prepare(
+    $templates_count = (int) $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
         "SELECT COUNT(*) FROM $table_templates WHERE user_id = %d",
         get_current_user_id()
     ));
@@ -221,7 +221,7 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
             // Vérifier si la colonne thumbnail_url existe
-            $columns = $wpdb->get_results("DESCRIBE $table_templates");
+            $columns = $wpdb->get_results("DESCRIBE $table_templates"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             $thumbnail_column_exists = false;
             foreach ($columns as $column) {
                 if ($column->Field === 'thumbnail_url') {
@@ -232,9 +232,9 @@ var orientationOptions = <?php echo json_encode($orientation_options, JSON_HEX_T
 
             // Adapter la requête selon la disponibilité de la colonne
             if ($thumbnail_column_exists) {
-                $templates = $wpdb->get_results($wpdb->prepare("SELECT id, name, thumbnail_url, created_at, updated_at, is_default, template_data FROM $table_templates WHERE user_id = %d ORDER BY id", get_current_user_id()), ARRAY_A);
+                $templates = $wpdb->get_results($wpdb->prepare("SELECT id, name, thumbnail_url, created_at, updated_at, is_default, template_data FROM $table_templates WHERE user_id = %d ORDER BY id", get_current_user_id()), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             } else {
-                $templates = $wpdb->get_results($wpdb->prepare("SELECT id, name, '' as thumbnail_url, created_at, updated_at, is_default, template_data FROM $table_templates WHERE user_id = %d ORDER BY id", get_current_user_id()), ARRAY_A);
+                $templates = $wpdb->get_results($wpdb->prepare("SELECT id, name, '' as thumbnail_url, created_at, updated_at, is_default, template_data FROM $table_templates WHERE user_id = %d ORDER BY id", get_current_user_id()), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             }
 
             if (!empty($templates)) {

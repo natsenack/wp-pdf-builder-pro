@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 namespace PDF_Builder\Managers;
@@ -108,7 +108,7 @@ class PDF_Builder_Backup_Restore_Manager
             }
 
             // Générer le nom du fichier
-            $filename = 'pdf-builder-backup-' . date('Y-m-d-H-i-s', $backup_data['timestamp']) . '.json';
+            $filename = 'pdf-builder-backup-' . gmdate('Y-m-d-H-i-s', $backup_data['timestamp']) . '.json';
 
             // Sauvegarder dans un fichier
             $filepath = $this->backup_dir . $filename;
@@ -119,7 +119,7 @@ class PDF_Builder_Backup_Restore_Manager
                 if (isset($options['compress']) && $options['compress']) {
                     $zip_filepath = $this->compressBackup($filepath);
                     if ($zip_filepath) {
-                        unlink($filepath); // Supprimer le fichier JSON original
+                        wp_delete_file($filepath); // Supprimer le fichier JSON original
                         $filepath = $zip_filepath;
                         $filename = basename($zip_filepath);
                     }
@@ -207,7 +207,7 @@ class PDF_Builder_Backup_Restore_Manager
 
             // Nettoyer le fichier temporaire si décompressé
             if (isset($json_filepath) && file_exists($json_filepath)) {
-                unlink($json_filepath);
+                wp_delete_file($json_filepath);
             }
 
             return [
@@ -239,12 +239,12 @@ class PDF_Builder_Backup_Restore_Manager
             $table_name = $wpdb->prefix . 'pdf_builder_templates';
 
             // Vérifier si la table existe
-            if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+            if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) { // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 // La table n'existe pas, retourner un tableau vide
                 return $templates;
             }
 
-            $results = $wpdb->get_results(
+            $results = $wpdb->get_results( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 "SELECT * FROM $table_name ORDER BY created_at DESC",
                 ARRAY_A
             );
@@ -355,7 +355,7 @@ class PDF_Builder_Backup_Restore_Manager
         foreach ($templates_data as $template_data) {
             try {
                 // Vérifier si le template existe déjà
-                $existing = $wpdb->get_var($wpdb->prepare(
+                $existing = $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     "SELECT id FROM $table_name WHERE name = %s",
                     $template_data['name']
                 ));
@@ -595,7 +595,7 @@ class PDF_Builder_Backup_Restore_Manager
                 ];
             }
 
-            if (unlink($filepath)) {
+            if (wp_delete_file($filepath)) {
                 return [
                     'success' => true,
                     'message' => __('Sauvegarde supprimée avec succès.', 'pdf-builder-pro')
@@ -696,7 +696,7 @@ class PDF_Builder_Backup_Restore_Manager
         $temp_filename = 'temp-import-' . uniqid() . '.' . $file_extension;
         $temp_filepath = $this->backup_dir . $temp_filename;
 
-        if (!move_uploaded_file($file['tmp_name'], $temp_filepath)) {
+        if (!move_uploaded_file($file['tmp_name'], $temp_filepath)) { // phpcs:ignore WordPress.WP.AlternativeFunctions
             wp_send_json_error(['message' => __('Erreur lors du déplacement du fichier.', 'pdf-builder-pro')]);
         }
 
@@ -707,7 +707,7 @@ class PDF_Builder_Backup_Restore_Manager
         ]);
 
         // Supprimer le fichier temporaire
-        unlink($temp_filepath);
+        wp_delete_file($temp_filepath);
 
         if ($result['success']) {
             wp_send_json_success([

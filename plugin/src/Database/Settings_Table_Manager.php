@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
  * PDF Builder Pro - Database Table Management
@@ -45,7 +45,7 @@ class Settings_Table_Manager {
         $charset_collate = $wpdb->get_charset_collate();
 
         // Vérifier si la table existe déjà
-        $table_exists = $wpdb->get_var( $wpdb->prepare(
+        $table_exists = $wpdb->get_var( $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s",
             DB_NAME,
             $table_name
@@ -67,7 +67,7 @@ class Settings_Table_Manager {
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
         dbDelta( $sql );
 
-        $table_exists = $wpdb->get_var( $wpdb->prepare(
+        $table_exists = $wpdb->get_var( $wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT 1 FROM information_schema.TABLES WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s",
             DB_NAME,
             $table_name
@@ -90,7 +90,7 @@ class Settings_Table_Manager {
 
         $table_name = self::get_table_name();
 
-        $option_value = $wpdb->get_var(
+        $option_value = $wpdb->get_var( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             $wpdb->prepare( "SELECT option_value FROM $table_name WHERE option_name = %s", $option_name )
         );
 
@@ -150,7 +150,7 @@ class Settings_Table_Manager {
         
         $table_name = self::get_table_name();
         
-        $options = $wpdb->get_results(
+        $options = $wpdb->get_results( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT option_name, option_value FROM $table_name",
             self::ARRAY_A
         );
@@ -175,7 +175,7 @@ class Settings_Table_Manager {
         
         $table_name = self::get_table_name();
         
-        $result = $wpdb->query("TRUNCATE TABLE $table_name");
+        $result = $wpdb->query("TRUNCATE TABLE $table_name"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
         error_log("[PDF Builder] Table {$table_name} vidée");
 

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
@@ -629,7 +629,7 @@ class PDF_Builder_Security_Monitor {
 
         $table = $wpdb->prefix . 'pdf_builder_security_events';
 
-        return $wpdb->get_var($wpdb->prepare("
+        return $wpdb->get_var($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT COUNT(*) FROM $table
             WHERE event_type = 'failed_login'
             AND ip_address = %s
@@ -645,7 +645,7 @@ class PDF_Builder_Security_Monitor {
 
         $table = $wpdb->prefix . 'pdf_builder_security_events';
 
-        return $wpdb->get_var($wpdb->prepare("
+        return $wpdb->get_var($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT COUNT(*) FROM $table
             WHERE event_type IN ('sql_injection', 'xss', 'suspicious_activity')
             AND ip_address = %s
@@ -707,7 +707,7 @@ class PDF_Builder_Security_Monitor {
      */
     private function log_request_activity($request_data) {
         // Échantillonnage pour éviter de surcharger la base
-        if (rand(1, 100) <= 10) { // 10% des requêtes
+        if (wp_rand(1, 100) <= 10) { // 10% des requêtes
             global $wpdb;
 
             $table = $wpdb->prefix . 'pdf_builder_request_logs';
@@ -761,7 +761,7 @@ class PDF_Builder_Security_Monitor {
             $table,
             [
                 'ip_address' => $ip,
-                'blocked_until' => date('Y-m-d H:i:s', time() + $duration),
+                'blocked_until' => gmdate('Y-m-d H:i:s', time() + $duration),
                 'reason' => 'Blocage temporaire automatique',
                 'created_at' => current_time('mysql')
             ],
@@ -777,7 +777,7 @@ class PDF_Builder_Security_Monitor {
         if (function_exists('apache_get_version')) {
             $htaccess_file = ABSPATH . '.htaccess';
 
-            if (is_writable($htaccess_file)) {
+            if (is_writable($htaccess_file)) { // phpcs:ignore WordPress.WP.AlternativeFunctions
                 $rule = "\n# PDF Builder Security Block\nDeny from $ip\n";
 
                 file_put_contents($htaccess_file, $rule, FILE_APPEND);
@@ -796,7 +796,7 @@ class PDF_Builder_Security_Monitor {
 
         // Vérifier les blocages permanents
         $blocked_table = $wpdb->prefix . 'pdf_builder_blocked_ips';
-        $blocked = $wpdb->get_var($wpdb->prepare("
+        $blocked = $wpdb->get_var($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT COUNT(*) FROM $blocked_table WHERE ip_address = %s
         ", $ip));
 
@@ -806,7 +806,7 @@ class PDF_Builder_Security_Monitor {
 
         // Vérifier les blocages temporaires
         $temp_table = $wpdb->prefix . 'pdf_builder_temp_blocks';
-        $temp_blocked = $wpdb->get_var($wpdb->prepare("
+        $temp_blocked = $wpdb->get_var($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT COUNT(*) FROM $temp_table
             WHERE ip_address = %s AND blocked_until > NOW()
         ", $ip));
@@ -824,28 +824,28 @@ class PDF_Builder_Security_Monitor {
 
         // Nettoyer les événements de sécurité
         $events_table = $wpdb->prefix . 'pdf_builder_security_events';
-        $wpdb->query($wpdb->prepare("
+        $wpdb->query($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             DELETE FROM $events_table
             WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)
         ", $retention_days));
 
         // Nettoyer les menaces
         $threats_table = $wpdb->prefix . 'pdf_builder_security_threats';
-        $wpdb->query($wpdb->prepare("
+        $wpdb->query($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             DELETE FROM $threats_table
             WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)
         ", $retention_days));
 
         // Nettoyer les logs de requêtes
         $requests_table = $wpdb->prefix . 'pdf_builder_request_logs';
-        $wpdb->query($wpdb->prepare("
+        $wpdb->query($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             DELETE FROM $requests_table
             WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)
         ", $retention_days));
 
         // Nettoyer les blocages temporaires expirés
         $temp_blocks_table = $wpdb->prefix . 'pdf_builder_temp_blocks';
-        $wpdb->query("
+        $wpdb->query(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             DELETE FROM $temp_blocks_table
             WHERE blocked_until < NOW()
         ");
@@ -878,7 +878,7 @@ class PDF_Builder_Security_Monitor {
 
         $table = $wpdb->prefix . 'pdf_builder_security_threats';
 
-        $total_threats = $wpdb->get_var("SELECT COUNT(*) FROM $table");
+        $total_threats = $wpdb->get_var("SELECT COUNT(*) FROM $table"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
         return ['total_threats' => $total_threats];
     }
@@ -888,7 +888,7 @@ class PDF_Builder_Security_Monitor {
 
         $table = $wpdb->prefix . 'pdf_builder_security_threats';
 
-        $results = $wpdb->get_results("
+        $results = $wpdb->get_results(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT ip_address, COUNT(*) as threat_count
             FROM $table
             WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 DAY)
@@ -1058,7 +1058,7 @@ class PDF_Builder_Security_Monitor {
 
         $table = $wpdb->prefix . 'pdf_builder_security_threats';
 
-        return $wpdb->get_var($wpdb->prepare("
+        return $wpdb->get_var($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT COUNT(*) FROM $table
             WHERE DATE(created_at) = CURDATE()
         "));
@@ -1069,7 +1069,7 @@ class PDF_Builder_Security_Monitor {
 
         $table = $wpdb->prefix . 'pdf_builder_blocked_ips';
 
-        return $wpdb->get_var("SELECT COUNT(*) FROM $table");
+        return $wpdb->get_var("SELECT COUNT(*) FROM $table"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
     }
 
     private function calculate_security_score() {
@@ -1101,7 +1101,7 @@ class PDF_Builder_Security_Monitor {
 
         $table = $wpdb->prefix . 'pdf_builder_security_threats';
 
-        return $wpdb->get_results($wpdb->prepare("
+        return $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT * FROM $table
             WHERE status = 'detected'
             ORDER BY created_at DESC

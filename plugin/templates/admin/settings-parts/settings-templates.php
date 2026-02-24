@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
     /**
      * Templates par statut tab content
@@ -103,7 +103,7 @@ if (!defined('ABSPATH')) {
             global $wpdb;
 
             // Templates WordPress
-            $templates_wp = $wpdb->get_results("
+            $templates_wp = $wpdb->get_results(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 SELECT ID, post_title
                 FROM {$wpdb->posts}
                 WHERE post_type = 'pdf_template'
@@ -120,7 +120,7 @@ if (!defined('ABSPATH')) {
 
             // Templates personnalisés
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-            $templates_custom = $wpdb->get_results("
+            $templates_custom = $wpdb->get_results(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 SELECT id, name
                 FROM {$table_templates}
                 ORDER BY name ASC
@@ -203,7 +203,7 @@ if (!defined('ABSPATH')) {
 
             foreach ($plugin_indicators as $plugin_key => $indicators) {
                 foreach ($indicators['options'] as $option_pattern) {
-                    $option_exists = $wpdb->get_var($wpdb->prepare(
+                    $option_exists = $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                         "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s LIMIT 1",
                         $option_pattern . '%'
                     ));
@@ -213,7 +213,7 @@ if (!defined('ABSPATH')) {
                 }
 
                 if (!empty($indicators['transient_prefix'])) {
-                    $transient_exists = $wpdb->get_var($wpdb->prepare(
+                    $transient_exists = $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                         "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s LIMIT 1",
                         '_transient_' . $indicators['transient_prefix'] . '%'
                     ));
@@ -238,7 +238,7 @@ if (!defined('ABSPATH')) {
             foreach ($active_plugins as $plugin_file) {
                 $plugin_slug = dirname($plugin_file);
 
-                $plugin_options = $wpdb->get_results($wpdb->prepare(
+                $plugin_options = $wpdb->get_results($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     "SELECT option_name, option_value FROM {$wpdb->options}
                     WHERE option_name LIKE %s
                     AND (option_name LIKE %s OR option_name LIKE %s)
@@ -258,7 +258,7 @@ if (!defined('ABSPATH')) {
             foreach ($active_plugins as $plugin_file) {
                 $plugin_slug = dirname($plugin_file);
 
-                $transient_exists = $wpdb->get_var($wpdb->prepare(
+                $transient_exists = $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                     "SELECT option_name FROM {$wpdb->options}
                     WHERE option_name LIKE %s
                     AND (option_name LIKE %s OR option_name LIKE %s)

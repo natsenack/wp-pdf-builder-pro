@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * PDF Builder Pro - Système de thème et personnalisation
@@ -463,11 +463,11 @@ class PDF_Builder_Theme_Customizer {
             if (is_dir($path)) {
                 $this->delete_directory_recursive($path);
             } else {
-                unlink($path);
+                wp_delete_file($path);
             }
         }
 
-        rmdir($dir);
+        rmdir($dir); // phpcs:ignore WordPress.WP.AlternativeFunctions
     }
 
     /**

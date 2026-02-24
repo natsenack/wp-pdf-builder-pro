@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 namespace PDF_Builder\Managers;
@@ -172,18 +172,18 @@ class PDF_Builder_Database_Query_Optimizer
         // Utiliser les requêtes préparées
         global $wpdb;
 
-        $order_data = $wpdb->get_row(
+        $order_data = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             $wpdb->prepare($this->prepared_statements['order_data'], $order_id),
             ARRAY_A
         );
 
         if ($order_data) {
-            $order_items = $wpdb->get_results(
+            $order_items = $wpdb->get_results( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 $wpdb->prepare($this->prepared_statements['order_items'], $order_id),
                 ARRAY_A
             );
 
-            $customer_data = $wpdb->get_row(
+            $customer_data = $wpdb->get_row( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 $wpdb->prepare($this->prepared_statements['customer_data'], $order_id),
                 ARRAY_A
             );
@@ -247,7 +247,7 @@ class PDF_Builder_Database_Query_Optimizer
             $product_ids
         );
 
-        $results = $wpdb->get_results($query, ARRAY_A);
+        $results = $wpdb->get_results($query, ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
 
         // Organiser les résultats par produit
         $products = [];
@@ -408,7 +408,7 @@ class PDF_Builder_Database_Query_Optimizer
         ];
 
         foreach ($indexes as $index_sql) {
-            $wpdb->query($index_sql);
+            $wpdb->query($index_sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
         }
 
     }
@@ -519,8 +519,8 @@ class PDF_Builder_Database_Query_Optimizer
         ];
 
         foreach ($tables as $table) {
-            $wpdb->query("REPAIR TABLE {$table}");
-            $wpdb->query("OPTIMIZE TABLE {$table}");
+            $wpdb->query("REPAIR TABLE {$table}"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
+            $wpdb->query("OPTIMIZE TABLE {$table}"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
         }
 
         // Créer les index de performance

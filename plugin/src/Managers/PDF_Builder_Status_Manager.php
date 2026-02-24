@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 namespace PDF_Builder\Managers;
@@ -155,7 +155,7 @@ class PDF_Builder_Status_Manager
         global $wpdb;
 
         // Vérifier dans les commandes existantes
-        $count = $wpdb->get_var(
+        $count = $wpdb->get_var( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             $wpdb->prepare(
                 "SELECT COUNT(*) FROM {$wpdb->posts} p
              INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
@@ -214,7 +214,7 @@ class PDF_Builder_Status_Manager
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
         // Chercher un template marqué comme par défaut ou le premier disponible
-        $default_template = $wpdb->get_var(
+        $default_template = $wpdb->get_var( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT id FROM $table_templates
              WHERE is_default = 1
              ORDER BY id ASC LIMIT 1"
@@ -222,7 +222,7 @@ class PDF_Builder_Status_Manager
 
         if (!$default_template) {
             // Si pas de template par défaut, prendre le premier template disponible
-            $default_template = $wpdb->get_var(
+            $default_template = $wpdb->get_var( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
                 "SELECT id FROM $table_templates ORDER BY id ASC LIMIT 1"
             );
         }

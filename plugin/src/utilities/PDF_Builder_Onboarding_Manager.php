@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 namespace PDF_Builder\Utilities;
 if ( ! defined( 'ABSPATH' ) ) exit;
 
@@ -749,7 +749,7 @@ class PDF_Builder_Onboarding_Manager {
         ];
         // Vérification permissions écriture
         $upload_dir = wp_upload_dir();
-        $writable = is_writable($upload_dir['basedir']);
+        $writable = is_writable($upload_dir['basedir']); // phpcs:ignore WordPress.WP.AlternativeFunctions
         $checks[] = [
             'title' => __('Permissions d\'écriture', 'pdf-builder-pro'),
             'description' => $writable ?

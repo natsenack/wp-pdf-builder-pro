@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
  * Système de Reporting Avancé pour PDF Builder Pro
@@ -376,7 +376,7 @@ class PDF_Builder_Reporting_System {
         global $wpdb;
 
         $stats = array(
-            'total_templates' => intval($wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}pdf_builder_templates")),
+            'total_templates' => intval($wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}pdf_builder_templates")), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             'total_pdfs_generated' => intval(pdf_builder_get_option('pdf_builder_total_pdfs', 0)),
             'active_users' => count(get_users(array('meta_key' => 'pdf_builder_last_activity', 'meta_compare' => '>', 'meta_value' => strtotime('-30 days')))), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key,WordPress.DB.SlowDBQuery.slow_db_query_meta_value
             'total_logins' => intval(pdf_builder_get_option('pdf_builder_total_logins', 0)),
@@ -400,7 +400,7 @@ class PDF_Builder_Reporting_System {
         global $wpdb;
 
         return array(
-            'table_count' => count($wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}%'")),
+            'table_count' => count($wpdb->get_results("SHOW TABLES LIKE '{$wpdb->prefix}%'")), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             'database_size' => $this->get_database_size(),
             'connection_status' => $this->check_database_connection(),
             'slow_queries' => intval(pdf_builder_get_option('pdf_builder_slow_queries', 0)),
@@ -425,7 +425,7 @@ class PDF_Builder_Reporting_System {
      */
     private function get_mysql_version() {
         global $wpdb;
-        return $wpdb->get_var("SELECT VERSION()");
+        return $wpdb->get_var("SELECT VERSION()"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
     }
 
     private function get_memory_usage_percentage() {
@@ -448,7 +448,7 @@ class PDF_Builder_Reporting_System {
 
     private function get_cpu_usage() {
         // Estimation simple - en production, utiliser un monitoring réel
-        return rand(10, 50); // Placeholder
+        return wp_rand(10, 50); // Placeholder
     }
 
     private function get_average_response_time() {
@@ -477,7 +477,7 @@ class PDF_Builder_Reporting_System {
 
     private function get_database_size() {
         global $wpdb;
-        $result = $wpdb->get_row("SELECT
+        $result = $wpdb->get_row("SELECT // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) as size_mb
             FROM information_schema.TABLES
             WHERE table_schema = '{$wpdb->dbname}'");
@@ -577,7 +577,7 @@ class PDF_Builder_Reporting_System {
         // Pour l'instant, retourner le contenu - en production, générer un fichier
         wp_send_json_success(array(
             'content' => $report,
-            'filename' => 'pdf-builder-report-' . date('Y-m-d') . '.' . $format,
+            'filename' => 'pdf-builder-report-' . gmdate('Y-m-d') . '.' . $format,
         ));
     }
 
@@ -588,7 +588,7 @@ class PDF_Builder_Reporting_System {
         $report = $this->generate_full_report('html');
 
         // Sauvegarder le rapport
-        $filename = 'weekly-report-' . date('Y-m-d') . '.html';
+        $filename = 'weekly-report-' . gmdate('Y-m-d') . '.html';
         $upload_dir = wp_upload_dir();
         $reports_dir = $upload_dir['basedir'] . '/pdf-builder-reports/';
 

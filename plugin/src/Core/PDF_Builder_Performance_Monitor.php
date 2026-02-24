@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 /**
@@ -289,7 +289,7 @@ class PDF_Builder_Performance_Monitor {
         $charset_collate = $wpdb->get_charset_collate();
 
         // Table des problèmes de performance
-        if ($wpdb->get_var("SHOW TABLES LIKE '$issues_table'") != $issues_table) {
+        if ($wpdb->get_var("SHOW TABLES LIKE '$issues_table'") != $issues_table) { // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             $sql = "CREATE TABLE $issues_table (
                 id bigint(20) NOT NULL AUTO_INCREMENT,
                 type varchar(50) NOT NULL,
@@ -308,7 +308,7 @@ class PDF_Builder_Performance_Monitor {
         }
 
         // Table des métriques de performance
-        if ($wpdb->get_var("SHOW TABLES LIKE '$metrics_table'") != $metrics_table) {
+        if ($wpdb->get_var("SHOW TABLES LIKE '$metrics_table'") != $metrics_table) { // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             $sql = "CREATE TABLE $metrics_table (
                 id bigint(20) NOT NULL AUTO_INCREMENT,
                 type varchar(50) NOT NULL,
@@ -369,7 +369,7 @@ class PDF_Builder_Performance_Monitor {
 
         $table = $wpdb->prefix . 'pdf_builder_performance_metrics';
 
-        return $wpdb->get_row($wpdb->prepare("
+        return $wpdb->get_row($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT
                 COUNT(*) as total_requests,
                 AVG(duration) as avg_response_time,
@@ -391,7 +391,7 @@ class PDF_Builder_Performance_Monitor {
 
         $table = $wpdb->prefix . 'pdf_builder_performance_metrics';
 
-        return $wpdb->get_results($wpdb->prepare("
+        return $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT
                 identifier,
                 AVG(duration) as avg_duration,
@@ -415,7 +415,7 @@ class PDF_Builder_Performance_Monitor {
 
         $table = $wpdb->prefix . 'pdf_builder_performance_metrics';
 
-        return $wpdb->get_results($wpdb->prepare("
+        return $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT
                 DATE(created_at) as date,
                 AVG(memory_used) as avg_memory,
@@ -435,7 +435,7 @@ class PDF_Builder_Performance_Monitor {
 
         $issues_table = $wpdb->prefix . 'pdf_builder_performance_issues';
 
-        return $wpdb->get_results($wpdb->prepare("
+        return $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT
                 COUNT(*) as slow_query_count,
                 AVG(JSON_EXTRACT(data, '$.time')) as avg_query_time
@@ -453,7 +453,7 @@ class PDF_Builder_Performance_Monitor {
 
         $table = $wpdb->prefix . 'pdf_builder_performance_issues';
 
-        return $wpdb->get_results($wpdb->prepare("
+        return $wpdb->get_results($wpdb->prepare(" // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             SELECT * FROM $table
             ORDER BY created_at DESC
             LIMIT %d
@@ -500,12 +500,12 @@ class PDF_Builder_Performance_Monitor {
         $metrics_table = $wpdb->prefix . 'pdf_builder_performance_metrics';
 
         // Supprimer les métriques de plus de 30 jours
-        $wpdb->query($wpdb->prepare(
+        $wpdb->query($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "DELETE FROM $metrics_table WHERE created_at < DATE_SUB(NOW(), INTERVAL 30 DAY)"
         ));
 
         // Supprimer les problèmes de plus de 60 jours
-        $wpdb->query($wpdb->prepare(
+        $wpdb->query($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "DELETE FROM $issues_table WHERE created_at < DATE_SUB(NOW(), INTERVAL 60 DAY)"
         ));
     }

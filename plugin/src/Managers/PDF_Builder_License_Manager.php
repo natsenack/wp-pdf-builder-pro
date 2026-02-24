@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace PDF_Builder\Managers;
 
@@ -362,7 +362,7 @@ class PDF_Builder_License_Manager
             'status' => $this->license_status,
             'is_premium' => $this->is_premium(),
             'tier' => isset($this->license_data['tier']) ? $this->license_data['tier'] : 'free',
-            'expires' => isset($this->license_data['expires']) ? date('d/m/Y', $this->license_data['expires']) : null,
+            'expires' => isset($this->license_data['expires']) ? gmdate('d/m/Y', $this->license_data['expires']) : null,
             'features' => isset($this->license_data['features']) ? $this->license_data['features'] : []
         ];
     }

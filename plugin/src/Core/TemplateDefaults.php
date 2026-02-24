@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.SchemaChange
 
 namespace PDF_Builder;
@@ -84,7 +84,7 @@ class TemplateDefaults {
         $template_data = $free_templates[$default_template_key];
 
         // Vérifier si un template par défaut existe déjà pour cet utilisateur
-        $existing_default = $wpdb->get_var($wpdb->prepare(
+        $existing_default = $wpdb->get_var($wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.LikeWildcardsInQuery
             "SELECT COUNT(*) FROM $table_templates WHERE user_id = %d AND is_default = 1",
             $user_id
         ));

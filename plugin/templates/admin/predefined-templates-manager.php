@@ -69,9 +69,10 @@ class PDF_Builder_Predefined_Templates_Manager
         if ($hook !== 'pdf-builder_page_pdf-builder-predefined-templates') {
             return;
         }
-        wp_enqueue_script('codemirror', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/codemirror.min.js', [], '6.0.1', true);
-        wp_enqueue_script('codemirror-mode-javascript', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/mode/javascript/javascript.min.js', ['codemirror'], '6.0.1', true);
-        wp_enqueue_style('codemirror', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.0.1/codemirror.min.css', [], '6.0.1');
+        // CodeMirror - utilise la version bundlée de WordPress (wp-codemirror)
+        wp_enqueue_script('codemirror', includes_url('js/codemirror/codemirror.js'), [], '5.29.1-alpha-ee20357', true);
+        wp_enqueue_script('codemirror-mode-javascript', includes_url('js/codemirror/mode/javascript/javascript.js'), ['codemirror'], '5.29.1-alpha-ee20357', true);
+        wp_enqueue_style('codemirror', includes_url('js/codemirror/codemirror.css'), [], '5.29.1-alpha-ee20357');
         
         // Styles personnalisés
         wp_enqueue_style('pdf-builder-predefined-templates', PDF_BUILDER_PRO_ASSETS_URL . 'css/predefined-templates.css', [], '1.1.0');
