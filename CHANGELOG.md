@@ -5,7 +5,7 @@
 ## Version 1.0.3.19 (2026-02-24)
 
 - 🔧 **Fix Message MAJ Fantôme** : Délai de 10 min après mise à jour pour ignorer les suggestions
-  - ✅ Permet au plugin d'être correctement rechargé par WordPress  
+  - ✅ Permet au plugin d'être correctement rechargé par WordPress
   - ✅ Évite l'affichage de "nouvelle version disponible" juste après l'installation
 - ✅ **Purge transients post-MAJ** : Force WordPress à recalculer l'état des mises à jour
 
