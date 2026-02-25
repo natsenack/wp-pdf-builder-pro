@@ -310,20 +310,16 @@ class Canvas_Manager
     private function getCanvasSettingsScript()
     {
         $settings = wp_json_encode($this->settings);
-        // phpcs:disable PluginCheck.CodeAnalysis.Heredoc.NotAllowed
-        return <<<JS
-(function() {
-    // Fusionner avec les settings existants au lieu d'écraser
-    if (typeof window.pdfBuilderCanvasSettings === 'undefined') {
-        window.pdfBuilderCanvasSettings = {};
-    }
-    Object.assign(window.pdfBuilderCanvasSettings, {$settings});
-    if (typeof window.pdfBuilderSettings !== 'undefined') {
-        window.pdfBuilderSettings.canvas = window.pdfBuilderCanvasSettings;
-    }
-})();
-JS;
-        // phpcs:enable PluginCheck.CodeAnalysis.Heredoc.NotAllowed
+        $js  = '(function() {' . "\n";
+        $js .= '    if (typeof window.pdfBuilderCanvasSettings === \'undefined\') {' . "\n";
+        $js .= '        window.pdfBuilderCanvasSettings = {};' . "\n";
+        $js .= '    }' . "\n";
+        $js .= '    Object.assign(window.pdfBuilderCanvasSettings, ' . $settings . ');' . "\n";
+        $js .= '    if (typeof window.pdfBuilderSettings !== \'undefined\') {' . "\n";
+        $js .= '        window.pdfBuilderSettings.canvas = window.pdfBuilderCanvasSettings;' . "\n";
+        $js .= '    }' . "\n";
+        $js .= '})();';
+        return $js;
     }
 
     /**

@@ -92,21 +92,18 @@ function pdf_builder_inject_nonce() {
     $ajax_url = admin_url('admin-ajax.php');
     
     // Générer le script en bloc unique
-    $script = <<<'SCRIPT'
-<script type="text/javascript">
-(function() {
-    window.pdfBuilderData = {
-        nonce: '%NONCE%',
-        ajaxUrl: '%AJAX_URL%',
-        templateId: null,
-        _timestamp: %TIMESTAMP%
-    };
-    window.pdfBuilderNonce = '%NONCE%';
-    
-})();
-</script>
-
-SCRIPT;
+    $script  = "<script type=\"text/javascript\">\n";
+    $script .= "(function() {\n";
+    $script .= "    window.pdfBuilderData = {\n";
+    $script .= "        nonce: '%NONCE%',\n";
+    $script .= "        ajaxUrl: '%AJAX_URL%',\n";
+    $script .= "        templateId: null,\n";
+    $script .= "        _timestamp: %TIMESTAMP%\n";
+    $script .= "    };\n";
+    $script .= "    window.pdfBuilderNonce = '%NONCE%';\n";
+    $script .= "\n";
+    $script .= "})();\n";
+    $script .= "</script>\n";
     
     // Remplacer les placeholders
     $script = str_replace('%NONCE%', $nonce ? \esc_js($nonce) : '', $script);
@@ -427,13 +424,14 @@ if (function_exists('add_action')) {
             require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Nonce_Validator.php';
         }
         
-        // ✅ INITIALISER LE SYSTÈME DE MISES À JOUR AUTOMATIQUES
+        // ✅ INITIALISER LE SYSTÈME DE LICENCES
+        // Note : les mises à jour sont gérées par WordPress.org
         if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_License_Manager.php')) {
             require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_License_Manager.php';
         }
-        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Updates_Manager.php')) {
+        if (false && file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Updates_Manager.php')) {
             require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Updates_Manager.php';
-            // Initialiser les hooks WordPress pour les mises à jour automatiques
+            // Désactivé : les mises à jour passent par WordPress.org
             $updates_manager = new \PDF_Builder\Managers\PDF_Builder_Updates_Manager([
                 'store_url'       => 'https://hub.threeaxe.fr',
                 'item_id'         => 19,

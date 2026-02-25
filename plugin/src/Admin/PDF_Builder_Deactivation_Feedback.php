@@ -111,8 +111,13 @@ class PDF_Builder_Deactivation_Feedback {
             'pluginSlug' => 'pdf-builder-pro',
         ]);
         
-        // Inline styles pour le modal
-        wp_add_inline_style('wp-admin', $this->get_modal_styles());
+        // Styles du modal depuis fichier CSS dédié
+        wp_enqueue_style(
+            'pdf-builder-deactivation-modal',
+            plugin_dir_url( PDF_BUILDER_PLUGIN_FILE ) . 'assets/css/deactivation-modal.css',
+            [],
+            $this->get_version()
+        );
     }
     
     /**
@@ -238,222 +243,42 @@ class PDF_Builder_Deactivation_Feedback {
         $reason_label  = isset($reason_labels[$reason]) ? $reason_labels[$reason] : $reason;
         $server_soft   = isset($_SERVER['SERVER_SOFTWARE']) ? esc_html($_SERVER['SERVER_SOFTWARE']) : 'N/A';
 
-        // phpcs:disable PluginCheck.CodeAnalysis.Heredoc.NotAllowed
-        $html = <<<EMAIL
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 5px 5px 0 0; }
-        .header h2 { margin: 0; font-size: 18px; }
-        .content { padding: 20px; border: 1px solid #e0e0e0; border-top: none; }
-        .field { margin: 15px 0; }
-        .field-label { font-weight: bold; color: #667eea; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
-        .field-value { margin-top: 4px; font-size: 15px; }
-        .meta { background: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 20px; font-size: 12px; color: #777; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h2>🔔 Feedback de désactivation – PDF Builder Pro</h2>
-        </div>
-        <div class="content">
-            <div class="field">
-                <div class="field-label">Raison</div>
-                <div class="field-value">{$reason_label}</div>
-            </div>
-EMAIL;
+        $html  = '<!DOCTYPE html><html><head><meta charset="UTF-8">';
+        $html .= '<style>';
+        $html .= "body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }";
+        $html .= '.container { max-width: 600px; margin: 0 auto; padding: 20px; }';
+        $html .= '.header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 5px 5px 0 0; }';
+        $html .= '.header h2 { margin: 0; font-size: 18px; }';
+        $html .= '.content { padding: 20px; border: 1px solid #e0e0e0; border-top: none; }';
+        $html .= '.field { margin: 15px 0; }';
+        $html .= '.field-label { font-weight: bold; color: #667eea; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }';
+        $html .= '.field-value { margin-top: 4px; font-size: 15px; }';
+        $html .= '.meta { background: #f5f5f5; padding: 15px; border-radius: 5px; margin-top: 20px; font-size: 12px; color: #777; }';
+        $html .= '</style></head><body><div class="container">';
+        $html .= '<div class="header"><h2>Feedback de desactivation - PDF Builder Pro</h2></div>';
+        $html .= '<div class="content">';
+        $html .= '<div class="field"><div class="field-label">Raison</div><div class="field-value">' . esc_html( $reason_label ) . '</div></div>';
 
         if (!empty($message)) {
-            $html .= <<<EMAIL
-            <div class="field">
-                <div class="field-label">Commentaire</div>
-                <div class="field-value" style="white-space:pre-wrap;">{$message}</div>
-            </div>
-EMAIL;
+            $html .= '<div class="field"><div class="field-label">Commentaire</div><div class="field-value" style="white-space:pre-wrap;">' . esc_html( $message ) . '</div></div>';
         }
 
-        $html .= <<<EMAIL
-            <div class="meta">
-                <strong>Infos du site :</strong><br>
-                URL : {$site_url}<br>
-                Email admin : {$admin_email}<br>
-                Serveur : {$server_soft}<br>
-                Date : {$date_now}
-            </div>
-        </div>
-    </div>
-</body>
-</html>
-EMAIL;
-        // phpcs:enable PluginCheck.CodeAnalysis.Heredoc.NotAllowed
+        $html .= '<div class="meta"><strong>Infos du site :</strong><br>';
+        $html .= 'URL : ' . esc_html( $site_url ) . '<br>';
+        $html .= 'Email admin : ' . esc_html( $admin_email ) . '<br>';
+        $html .= 'Serveur : ' . esc_html( $server_soft ) . '<br>';
+        $html .= 'Date : ' . esc_html( $date_now ) . '</div>';
+        $html .= '</div></div></body></html>';
 
         return $html;
     }
     
     /**
-     * Retourner les styles CSS du modal
+     * Styles du modal: voir assets/css/deactivation-modal.css
+     * @deprecated Remplacé par wp_enqueue_style dans enqueue_deactivation_script()
      */
     private function get_modal_styles() {
-        // phpcs:disable PluginCheck.CodeAnalysis.Heredoc.NotAllowed
-        return <<<CSS
-#pdf-builder-deactivation-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 999999;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    justify-content: center;
-    align-items: center;
-}
-
-#pdf-builder-deactivation-modal.show {
-    display: flex;
-}
-
-#pdf-builder-deactivation-modal .modal-content {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    max-width: 500px;
-    width: 90%;
-    padding: 0;
-    overflow: hidden;
-}
-
-#pdf-builder-deactivation-modal .modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 20px;
-    margin: 0;
-}
-
-#pdf-builder-deactivation-modal .modal-header h2 {
-    margin: 0;
-    font-size: 18px;
-}
-
-#pdf-builder-deactivation-modal .modal-body {
-    padding: 20px;
-}
-
-#pdf-builder-deactivation-modal .feedback-group {
-    margin-bottom: 15px;
-}
-
-#pdf-builder-deactivation-modal .feedback-option {
-    display: flex;
-    align-items: flex-start;
-    padding: 10px;
-    border: 1px solid #e0e0e0;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 8px;
-    transition: all 0.2s;
-}
-
-#pdf-builder-deactivation-modal .feedback-option:hover {
-    background: #f9f9f9;
-    border-color: #667eea;
-}
-
-#pdf-builder-deactivation-modal .feedback-option input[type="radio"] {
-    margin-top: 2px;
-    margin-right: 10px;
-    cursor: pointer;
-}
-
-#pdf-builder-deactivation-modal .feedback-option label {
-    cursor: pointer;
-    flex: 1;
-}
-
-#pdf-builder-deactivation-modal textarea {
-    width: 100%;
-    min-height: 80px;
-    padding: 10px;
-    border: 1px solid #e0e0e0;
-    border-radius: 5px;
-    font-family: inherit;
-    display: none;
-}
-
-#pdf-builder-deactivation-modal textarea.show {
-    display: block;
-}
-
-#pdf-builder-deactivation-modal .email-field {
-    margin-bottom: 15px;
-    display: none;
-}
-
-#pdf-builder-deactivation-modal .email-field.show {
-    display: block;
-}
-
-#pdf-builder-deactivation-modal .email-field input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #e0e0e0;
-    border-radius: 5px;
-    box-sizing: border-box;
-}
-
-#pdf-builder-deactivation-modal .modal-footer {
-    display: flex;
-    gap: 10px;
-    padding: 20px;
-    background: #f5f5f5;
-    justify-content: space-between;
-}
-
-#pdf-builder-deactivation-modal .skip-button {
-    padding: 8px 12px;
-    border: none;
-    background: transparent;
-    color: #999;
-    cursor: pointer;
-    font-size: 12px;
-    opacity: 0.6;
-    transition: opacity 0.2s;
-}
-
-#pdf-builder-deactivation-modal .skip-button:hover {
-    opacity: 0.8;
-}
-
-#pdf-builder-deactivation-modal .deactivate-button {
-    padding: 10px 20px;
-    border: none;
-    background: #dc3545;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background 0.2s;
-}
-
-#pdf-builder-deactivation-modal .deactivate-button:hover {
-    background: #c82333;
-}
-
-#pdf-builder-deactivation-modal .deactivate-button.loading {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-#pdf-builder-deactivation-modal .deactivate-button.loading:after {
-    content: '...';
-}
-CSS;
-        // phpcs:enable PluginCheck.CodeAnalysis.Heredoc.NotAllowed
+        return '';
     }
 }
 

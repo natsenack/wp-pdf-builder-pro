@@ -108,22 +108,8 @@ class PDF_Builder_Updates_Manager {
      * Initialize update hooks
      */
     public function init() {
-        // Injecte la réponse de mise à jour dans le transient WordPress
-        add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_for_updates' ], 10, 1 ); // phpcs:ignore PluginCheck.CodeAnalysis.AutoUpdates.PluginUpdaterDetected
-        add_filter( 'pre_set_transient_update_plugins',      [ $this, 'check_for_updates' ], 10, 1 ); // phpcs:ignore PluginCheck.CodeAnalysis.AutoUpdates.PluginUpdaterDetected
-
-        // Filtre de LECTURE : auto-corrige le transient si la version installée est déjà à jour.
-        // Cela évite le message fantôme "mise à jour disponible" après une MAJ réussie,
-        // même si le transient en base n'a pas encore été purgé.
-        add_filter( 'site_transient_update_plugins', [ $this, 'sanitize_update_transient' ], 20, 1 );
-
-        // Fournit les informations du plugin quand WordPress les demande
-        add_filter( 'plugins_api', [ $this, 'plugins_api_handler' ], 10, 3 );
-        
-        // 🔴 HOTFIX: Pré-calculer et sauvegarder immédiatement le transient au chargement
-        // Cela garantit que même si les filtres ne sont pas appelés,
-        // le transient sera disponible pour la page de plugins WordPress
-        add_action( 'admin_init', [ $this, 'pre_cache_update_transient' ], 5 );
+        // Les mises à jour sont gérées par WordPress.org.
+        // Ce manager ne doit pas interférer avec le système natif de WordPress.
     }
 
     /**

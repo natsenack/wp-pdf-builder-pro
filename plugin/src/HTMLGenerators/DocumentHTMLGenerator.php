@@ -64,54 +64,17 @@ class DocumentHTMLGenerator
      */
     private function generateStyles()
     {
-        $css = <<<'CSS'
-        <style>
-            * {
-                box-sizing: border-box;
-            }
-            
-            body {
-                margin: 0;
-                padding: 20px;
-                font-family: Arial, sans-serif;
-                background: #f5f5f5;
-            }
-            
-            .pdf-canvas {
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                font-family: Arial, sans-serif;
-            }
-            
-            .pdf-element {
-                box-sizing: border-box;
-            }
-            
-            .pdf-text {
-                word-wrap: break-word;
-                white-space: pre-wrap;
-            }
-            
-            .pdf-company-info {
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-start;
-                overflow: hidden;
-            }
-            
-            .pdf-product-table table {
-                font-size: 12px;
-            }
-            
-            .pdf-product-table table th,
-            .pdf-product-table table td {
-                text-align: left;
-            }
-            
-            .pdf-customer-info {
-                line-height: 1.6;
-            }
-        </style>
-        CSS;
+        $css  = '<style>';
+        $css .= '* { box-sizing: border-box; }';
+        $css .= 'body { margin: 0; padding: 20px; font-family: Arial, sans-serif; background: #f5f5f5; }';
+        $css .= '.pdf-canvas { box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-family: Arial, sans-serif; }';
+        $css .= '.pdf-element { box-sizing: border-box; }';
+        $css .= '.pdf-text { word-wrap: break-word; white-space: pre-wrap; }';
+        $css .= '.pdf-company-info { display: flex; flex-direction: column; justify-content: flex-start; overflow: hidden; }';
+        $css .= '.pdf-product-table table { font-size: 12px; }';
+        $css .= '.pdf-product-table table th, .pdf-product-table table td { text-align: left; }';
+        $css .= '.pdf-customer-info { line-height: 1.6; }';
+        $css .= '</style>';
 
         return $css;
     }
